@@ -14,6 +14,7 @@ using Vaiona.Logging.Aspects;
 using System.Threading.Tasks;
 using System.Data;
 using BExIS.Dlm.Orm.NH.Utils;
+using BExIS.Dlm.Services.Helpers;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -474,7 +475,7 @@ namespace BExIS.Dlm.Services.Data
                 uow.Commit();
             }
             // if any problem was detected during the commit, an exception will be thrown!
-            dropMaterializedView(buildViewName(datasetId));
+            dropMaterializedView(datasetId);
             return (true);
         }
 
@@ -647,34 +648,37 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersionId"></param>
         /// <returns></returns>
-        public DataTable GetDatasetVersionEffectiveTuples(long datasetVersionId)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId)
         {
-            // perform all the required checks, like other get effective tuple functions
-            var dsVersion = DatasetVersionRepo.Get(datasetVersionId);
-            
-            /// 1: build the MV name
-            long datasetId = dsVersion.Dataset.Id;
-            string mvName = buildViewName(datasetId);
-            
-            /// 2: check if the MV exist, if not BUILD it. NOTE: MV creation can be done at checkin time
-            if (!existsMaterializedView(mvName))
-            {
-                createMaterializedView(datasetId);
-                //refreshMaterializedView(mvName);
-            }
-            
-            /// 3: retreive its data in a data table. NOTE: do not refresh, it is done with checkin
+            // check if the dataset is in a proper state: checked-in
+                        
             try
             { 
                 DataTable table = queryMaterializedView(datasetId);
                 return table;
             }
-            catch(Exception ex)
-            {
-                // fallback to the traditional method
-                List<AbstractTuple> tuples =  getDatasetVersionEffectiveTuples(dsVersion);
-                DataTable table = convertDataTuplesToDataTable(tuples);
+            catch(Exception ex) // fallback to the traditional method
+            {                
+                DataTable table = convertDataTuplesToDataTable(this.GetDatasetLatestVersion(datasetId));
                 return table;
+            }
+        }
+
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, int pageNumber, int pageSize)
+        {
+            // check if the dataset is in a proper state: checked-in
+
+            try
+            {
+                return queryMaterializedView(datasetId, pageNumber, pageSize);
+            }
+            catch (Exception ex) // fallback to the traditional method
+            {
+                // shaould use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
+                //var tuples = getDatasetVersionEffectiveTuples(this.GetDatasetLatestVersion(datasetId), pageNumber, pageSize);
+                //DataTable table = convertDataTuplesToDataTable(dsv, tuples);
+                //return table;
+                return null;
             }
         }
 
@@ -720,7 +724,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId">The identifier of the dataset.</param>
         /// <returns>The list of checked-in versions of the dataset requested.</returns>
         /// <remarks>The checked-out version, if exists, is not included in the return list.</remarks>
-        public List<DatasetVersion> GetDatasettVersions(Int64 datasetId)
+        public List<DatasetVersion> GetDatasetVersions(Int64 datasetId)
         {
             List<DatasetVersion> dsVersions = DatasetVersionRepo.Query(p => 
                 p.Dataset.Id == datasetId 
@@ -931,6 +935,12 @@ namespace BExIS.Dlm.Services.Data
                 return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
             }
         }
+
+        public DataTable ConvertToDataTable(DatasetVersion dsVersion)
+        {
+            return this.convertDataTuplesToDataTable(dsVersion);
+        }
+
 
         public DatasetVersion GetDatasetWorkingCopy(Int64 datasetId)
         {
@@ -1839,19 +1849,12 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private string buildViewName(long datasetId)
-        {
-            return "mvDataset" + datasetId;
-        }
-
-
         private void updateMaterializedView(long datasetId)
         {
-            string viewName = buildViewName(datasetId);
-            if (!existsMaterializedView(viewName))
+            if (!existsMaterializedView(datasetId))
                 createMaterializedView(datasetId); // creating an MV refreshes the data, too. 
             else
-                refreshMaterializedView(viewName);
+                refreshMaterializedView(datasetId);
         }
 
         private void createMaterializedView(long datasetId)
@@ -1869,7 +1872,7 @@ namespace BExIS.Dlm.Services.Data
                                            ;
                     try
                     {
-                        MaterializedViewHelper mvHelper = new MaterializedViewHelper(this.GetIsolatedUnitOfWork());
+                        MaterializedViewHelper mvHelper = new MaterializedViewHelper();
                         mvHelper.Create(datasetId, columnDefinitionList);
                     }
                     catch (Exception ex)
@@ -1881,28 +1884,17 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void refreshMaterializedView(string viewName)
+        private void refreshMaterializedView(long datasetId)
         {
-            // refresh query is also native, goes to dialact specific query files
-            string sql = string.Format("REFRESH MATERIALIZED VIEW {0}", viewName);
-            using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
-            {
-                uow.ExecuteDynamic<int>(sql);
-            }
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            mvHelper.Refresh(datasetId);
         }
 
-        private bool existsMaterializedView(string viewName)
+        private bool existsMaterializedView(long datasetId)
         {
-            // sql query to check whether the view exists...
-            // This query is native, goes to dialact specific query files
-            //string sql = string.Format("... {0} ...", viewName);
-            //using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
-            //{
-            //    int result  = uow.ExecuteDynamic<int>(sql);
-            //    if (result > 0) // must be double checked
-            //        return true;
-            //}
-            return false;
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            bool result = mvHelper.ExistsForDataset(datasetId);
+            return result;
         }
 
         /// <summary>
@@ -1910,24 +1902,30 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetId"></param>
         /// <returns></returns>
-        private void dropMaterializedView(string viewName)
+        private void dropMaterializedView(long datasetId)
         {
-            // drop query is native, goes to dialact specific query files
-            string sql = string.Format("DROP MATERIALIZED VIEW {0}", viewName);
-            using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            mvHelper.Drop(datasetId);
+        }
+
+        private DataTable convertDataTuplesToDataTable(DatasetVersion dsVersion)
+        {
+            DatasetConvertor dsConvertor = new DatasetConvertor();
+            DataTable table = dsConvertor.ConvertDatasetVersion(this, dsVersion);
+            return table;
+        }
+
+        private DataTable queryMaterializedView(long datasetId, int pageNumber=0, int pageSize=0)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            if (pageNumber == 0 && pageSize == 0)
             {
-                uow.ExecuteDynamic<int>(sql);
+                return mvHelper.Retrieve(datasetId);
             }
-        }
-
-        private DataTable convertDataTuplesToDataTable(List<AbstractTuple> tuples)
-        {
-            return new DataTable();
-        }
-
-        private DataTable queryMaterializedView(long datasetId)
-        {
-            return new DataTable();
+            else
+            {
+                return mvHelper.Retrieve(datasetId, pageNumber, pageSize);
+            }
         }
 
 

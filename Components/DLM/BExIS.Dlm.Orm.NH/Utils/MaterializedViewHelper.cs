@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,48 @@ namespace BExIS.Dlm.Orm.NH.Utils
 {
     public class MaterializedViewHelper
     {
-        IUnitOfWork uow;
-        public MaterializedViewHelper(IUnitOfWork uow)
+        public MaterializedViewHelper()
         {
-            this.uow = uow;
+        }
+
+        public DataTable Retrieve(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0};", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    DataTable table = uow.ExecuteQuery(mvBuilder.ToString());
+                    return table;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+        public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    DataTable table = uow.ExecuteQuery(mvBuilder.ToString());
+                    return table;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
         }
 
         /// <summary>
@@ -24,71 +63,114 @@ namespace BExIS.Dlm.Orm.NH.Utils
         {
             StringBuilder mvBuilder = new StringBuilder();
             // build MV's name
-            mvBuilder
-                .Append("CREATE MATERIALIZED VIEW")
-                .Append(" ")
-                .Append(this.BuildName(datasetId))
-                .Append(" ")
-                .AppendLine("AS")
-                ;
+            mvBuilder.AppendLine(string.Format("CREATE MATERIALIZED VIEW {0} AS", this.BuildName(datasetId)));
             // build MV's SELECT statement
-            StringBuilder selectBuilder = new StringBuilder("SELECT"); // all the strings come form the tamplates
+            StringBuilder selectBuilder = new StringBuilder("SELECT").AppendLine(); // all the strings come form the tamplates
             selectBuilder
-                .Append(" ").Append("t.id").Append(", ")
-                .Append(" ").Append("t.versionno").Append(", ")
-                .Append(" ").Append("t.orderno").Append(", ")
-                .Append(" ").Append("t.timestamp").Append(", ")
-                .Append(" ").Append("t.datasetversionref").Append(", ")
+                .AppendLine(string.Format("{0},", "t.id"))
+                .AppendLine(string.Format("{0},", "t.versionno"))
+                .AppendLine(string.Format("{0},", "t.orderno"))
+                .AppendLine(string.Format("{0},", "t.timestamp"))
+                .AppendLine(string.Format("{0},", "t.datasetversionref"))
                 ;
+            int counter = 0;
             foreach (var columnDefinition in columnDefinitionList.OrderBy(p=>p.Item3)) // item3 is the variable order in its data structure
             {
+                counter++;
                 string columnStr = buildViewField(columnDefinition.Item1, columnDefinition.Item2, columnDefinition.Item3, columnDefinition.Item4);
-                selectBuilder
-                    .Append(" ")
-                    .Append(columnStr)
-                    .Append(", ");
+                if(counter < columnDefinitionList.Count)
+                    selectBuilder.AppendLine(string.Format("{0},", columnStr));
+                else
+                    selectBuilder.AppendLine(string.Format("{0}", columnStr)); // no comma for the last column
             }
-            //remove the latest comma
             selectBuilder
-                .Remove(selectBuilder.Length - 2, 1)
-                .AppendLine();
-            selectBuilder
-                .AppendLine("FROM datatuples t")
-                .Append("WHERE  t.datasetversionref = ")
-                .Append(datasetId.ToString())
+                .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
+                .Append(string.Format("WHERE v.datasetref = {0}", datasetId))
                 ;
 
             // build the satetment
-
-            mvBuilder.Append(" ")
+            mvBuilder
+                //.Append(" ")
                 .Append(selectBuilder)
                 .AppendLine(";")
                 ;
             // execute the statement
-            using (uow)
+            try
             {
-                uow.ExecuteDynamic<int>(mvBuilder.ToString());
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    int result = uow.ExecuteNonQuery(mvBuilder.ToString());
+                }
             }
-
+            catch (Exception ex)
+            {
+                throw ex; // ex is cought here for inspection purposes!
+            }
         }
+
+        public bool ExistsForDataset(long datasetId)
+        {            
+            StringBuilder mvBuilder = new StringBuilder();
+            // the functions should obtain a reference to the DB dialect and based on that 1) load the templates from the native objects folder and 2) decide to use lowercase,uppercase, or natural case for object names.
+            mvBuilder.AppendLine(string.Format("SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class c WHERE  c.relname = '{0}' AND c.relkind = 'm');", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    object objRes = uow.ExecuteScalar(mvBuilder.ToString());
+                    bool result = Convert.ToBoolean(objRes);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public void Refresh(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("REFRESH MATERIALIZED VIEW {0};", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    uow.ExecuteNonQuery(mvBuilder.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                // what to do?
+            }
+        }
+
+        public void Drop(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("DROP MATERIALIZED VIEW {0};", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    uow.ExecuteNonQuery(mvBuilder.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                // what to do?
+            }
+        }
+
 
         public string BuildName(long datasetId)
         {
             return "mvDataset" + datasetId; // the strings must come from the mappings, nativeObjects/templates.xml. considering dialects and hierarchy
         }
 
-        public bool ExistsForDataset(long datasetId)
-        {
-            string viewName = BuildName(datasetId);
-            string sql = string.Format("... {0} ...", viewName);
-            using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
-            {
-                int result = uow.ExecuteDynamic<int>(sql);
-                if (result > 0) // must be double checked
-                    return true;
-            }
-            return false;
-        }
         /// <summary>
         /// Using a column definition, creates a projection phrase to be used in the view's select.
         /// </summary>
@@ -128,9 +210,9 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "string", "character varying(255)" }
             };
             if (typeTable.ContainsKey(variableDataType.ToLower()))
-                return typeTable[variableDataType]; // change this
+                return typeTable[variableDataType.ToLower()]; // change this
             else
-                return "character varying(255)";
+                return typeTable["string"];
         }
     }
 }
