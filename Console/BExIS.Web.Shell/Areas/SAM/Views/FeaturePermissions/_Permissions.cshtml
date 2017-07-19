@@ -2,8 +2,8 @@
 @using Telerik.Web.Mvc.UI
 
 @model long
-    
-<button id="target" type="button" class="bx-button function">Add Subject(s)</button>
+
+<button id="button_addsubjects" type="button" class="bx-button function">Add Subject(s)</button>
 
 @(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
     .Name("gridFeaturePermissions")
@@ -31,13 +31,40 @@
         pageable.Position(GridPagerPosition.Bottom);
     })
     .Sortable()
-      )
-
+)
 
 <script type="text/javascript">
 
-    $("#target").click(function () {
-        alert("Handler for .click() called.");
-    });
+    $("#button_addsubjects").click(function () {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Add", "FeaturePermissions")',
+            data: { FeatureId: @Model },
+            dataType: 'html',
+            success: function(htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Add Subjects",
+                    html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function() {
+                        $("#windowCreate").data('tWindow').destroy();
+                        $("#gridUsers .t-refresh").trigger('click');
+                    }
+                });
 
+                windowElement.attr('id', 'windowCreate');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    });
 </script>

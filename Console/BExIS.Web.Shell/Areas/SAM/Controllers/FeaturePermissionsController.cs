@@ -17,9 +17,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class FeaturePermissionsController : Controller
     {
-        public ActionResult Add()
+        public ActionResult Add(long featureId)
         {
-            return PartialView("_Add", new CreateFeaturePermissionGridRowModel());
+            return PartialView("_Add", featureId);
         }
 
         [HttpPost]
@@ -116,9 +116,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 selectedSubjects.Add(item, 0);
             }
 
-            Session["Selectedsubjects"] = selectedSubjects;
-
-            var groupManager = new GroupManager();
+            Session["SelectedSubjects"] = selectedSubjects;
 
             var subjectManager = new SubjectManager();
             var featurePermissionManager = new FeaturePermissionManager();

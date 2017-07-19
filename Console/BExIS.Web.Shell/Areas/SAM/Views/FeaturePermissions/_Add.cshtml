@@ -1,7 +1,9 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
-@(Html.Telerik().Grid<CreateFeaturePermissionGridRowModel>()
+@model long
+
+    @(Html.Telerik().Grid<CreateFeaturePermissionGridRowModel>()
     .Name("gridGroups")
     .Columns(columns =>
     {
