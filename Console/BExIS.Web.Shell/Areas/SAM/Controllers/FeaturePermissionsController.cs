@@ -19,6 +19,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Add(long featureId)
         {
+            var featurePermissionManager = new FeaturePermissionManager();
+            var subjects = featurePermissionManager.FeaturePermissions.Where(x => x.Feature.Id == featureId)
+                    .Select(x => new KeyValuePair<long, int>(x.Subject.Id, (int)x.PermissionType));
+
+            subjects.ToDictionary(x => x.Key, x => x.Value);
+
+            Session["SelectedSubjects"] = subjects.ToDictionary(x => x.Key, x => x.Value);
+
             return PartialView("_Add", featureId);
         }
 
@@ -74,12 +82,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             // Data
             var data = featurePermissions.ToList().Select(FeaturePermissionGridRowModel.Convert);
 
-            return
-                View(new GridModel
-                {
-                    Data = data,
-                    Total = total
-                });
+            return View(new GridModel<FeaturePermissionGridRowModel>
+            {
+                Data = data,
+                Total = total
+            });
         }
 
         [GridAction(EnableCustomBinding = true)]
@@ -119,10 +126,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
             Session["SelectedSubjects"] = selectedSubjects;
 
             var subjectManager = new SubjectManager();
-            var featurePermissionManager = new FeaturePermissionManager();
 
             // Source + Transformation - Data
-            var subjects = subjectManager.Subjects.Except(featurePermissionManager.FeaturePermissions.Where(x => x.Feature.Id == featureId).Select(y => y.Subject));
+            var subjects = subjectManager.Subjects;
             var total = subjects.Count();
 
             // Filtering
@@ -140,10 +146,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             // Paging
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
-            // Paging
+            // Data
             var data = paged.Select(x => CreateFeaturePermissionGridRowModel.Convert(x, selectedSubjects));
 
-            return View(new GridModel<CreateFeaturePermissionGridRowModel> { Data = data, Total = total });
+            return View(new GridModel<CreateFeaturePermissionGridRowModel>
+            {
+                Data = data,
+                Total = total
+            });
         }
     }
 }

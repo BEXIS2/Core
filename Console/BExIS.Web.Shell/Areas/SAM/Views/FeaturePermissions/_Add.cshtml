@@ -8,21 +8,21 @@
     .Columns(columns =>
     {
         columns.Bound(m => m.PermissionType)
-            .ClientTemplate("<input type='radio' name='grants' value='<#= Id #>' <#= PermissionType == 1 ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='radio' name='<#= Id #>' value='1' <#= PermissionType == 1 ? checked='checked' : '' #> />")
                    .Title("Grant")
                    .Width(50)
                    .Filterable(false)
                    .Sortable(false)
                    .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
         columns.Bound(m => m.PermissionType)
-            .ClientTemplate("<input type='radio' name='neutrals' value='<#= Id #>' <#= PermissionType == 2 ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='radio' name='<#= Id #>' value='2' <#= PermissionType == 2 ? checked='checked' : '' #> />")
                    .Title("None")
                    .Width(50)
                    .Filterable(false)
                    .Sortable(false)
                    .HtmlAttributes(new { style = "text-align:center" });
         columns.Bound(m => m.PermissionType)
-            .ClientTemplate("<input type='radio' name='denies' value='<#= Id #>' <#= PermissionType == 0 ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='radio' name='<#= Id #>' value='0' <#= PermissionType == 0 ? checked='checked' : '' #> />")
                    .Title("Deny")
                    .Width(50)
                    .Filterable(false)

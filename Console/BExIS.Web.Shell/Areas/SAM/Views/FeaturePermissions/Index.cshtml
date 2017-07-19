@@ -10,7 +10,6 @@
     <script src="@Url.Content("~/Scripts/2013.2.611/telerik.common.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/2013.2.611/telerik.draganddrop.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/2013.2.611/telerik.window.min.js")" type="text/javascript"></script>
-    
 
     <script type="text/javascript">
 
@@ -49,19 +48,23 @@
 
         function onDataBinding(e) {
 
-            var grants = [];
-            $("input[name='grants']:checked").each(function () {
-                grants.push($(this).val());
-            });
-
-            var denies = [];
-            $("input[name='denies']:checked").each(function () {
-                denies.push($(this).val());
-            });
-
             var all = [];
-            $("input[name='neutrals']").each(function () {
-                all.push($(this).val());
+            var denies = [];
+            var grants = [];
+
+            $("input:radio:checked").each(function () {
+                var id = $(this).attr('name');
+                var value = $(this).attr('value');
+
+                if (value == 1) {
+                    grants.push(id);
+                }
+
+                if (value == 0) {
+                    denies.push(id);
+                }
+
+                all.push(id);
             });
 
             // pass additional values by setting the "data" field of the event argument
