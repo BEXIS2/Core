@@ -308,6 +308,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             List<DataAttribute> allDataAttributes = dam.DataAttributeRepo.Get().ToList();
 
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+            //Sorting necessary to prevent problems when inserting the tuples
+            MappedHeaders.Sort( (head1, head2) => head1.Item1.CompareTo(head2.Item1) );
             List<VariableIdentifier> identifiers = new List<VariableIdentifier>();
             foreach (Tuple<int, string, UnitInfo> Entry in MappedHeaders)
             {
