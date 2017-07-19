@@ -3,26 +3,46 @@
 
 @model long
 
-<button id="button_addsubjects" type="button" class="bx-button function">Add Subject(s)</button>
+<button style="margin-right: 1px" type="button" id="button_featurepermissions_save" class="bx-button action">Save</button>
+<button style="margin-left: 1px" type="button" class="bx-button action">Cancel</button>
 
 @(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
     .Name("gridFeaturePermissions")
     .Columns(columns =>
     {
-        columns.Bound(u => u.Id);
-        columns.Bound(u => u.SubjectId);
-        columns.Bound(u => u.SubjectName);
-        columns.Bound(u => u.SubjectType);
-        columns.Bound(u => u.PermissionType);
-
+        columns.Bound(m => m.PermissionType)
+            .ClientTemplate("<input type='radio' name='<#= Id #>' value='1' <#= PermissionType == 1 ? checked='checked' : '' #> />")
+                   .Title("Grant")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
+        columns.Bound(m => m.PermissionType)
+            .ClientTemplate("<input type='radio' name='<#= Id #>' value='2' <#= PermissionType == 2 ? checked='checked' : '' #> />")
+                   .Title("None")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.PermissionType)
+            .ClientTemplate("<input type='radio' name='<#= Id #>' value='0' <#= PermissionType == 0 ? checked='checked' : '' #> />")
+                   .Title("Deny")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
+        columns.Bound(g => g.Id);
+        columns.Bound(g => g.Name);
+        columns.Bound(g => g.Type);
     })
     .ClientEvents(events =>
     {
+        events.OnDataBinding("onDataBinding");
         events.OnDataBound("onDataBound");
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Permissions_Select", "FeaturePermissions", new { FeatureId = Model })
+        .Select("FeaturePermissions_Select", "FeaturePermissions")
     )
     .EnableCustomBinding(true)
     .Filterable()
@@ -32,41 +52,15 @@
         pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
         pageable.Position(GridPagerPosition.Bottom);
     })
-    .Sortable()
-)
+          .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Ascending())))
 
 <script type="text/javascript">
-
-    $("#button_addsubjects").click(function () {
-        $.ajax({
-            type: 'GET',
-            url: '@Url.Action("AddSubjects", "FeaturePermissions")',
-            data: { FeatureId: @Model },
-            dataType: 'html',
-            success: function(htmlData) {
-                var windowElement = $.telerik.window.create({
-                    title: "Add Subjects",
-                    html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
-                    contentUrl: "",
-                    actions: ["Close"],
-                    modal: true,
-                    width: 500,
-                    height: 500,
-                    resizable: false,
-                    draggable: true,
-                    scrollable: false,
-                    onClose: function() {
-                        $("#windowCreate").data('tWindow').destroy();
-                        $("#gridFeaturePermissions .t-refresh").trigger('click');
-                    }
-                });
-
-                windowElement.attr('id', 'windowCreate');
-                var window = $(windowElement).data('tWindow');
-                window.center().open();
-
-                resetAllTelerikIconTitles();
-            }
+    $("#button_featurepermissions_save").click(function () {
+        $("#gridFeaturePermissions tbody").preloader(40, "Update", 300);
+        $.post('@Url.Action("FeaturePermissions_Save", "FeaturePermissions")', { Selection: getSelection(), FeatureId: @Model }, function () {
+            $("#gridFeaturePermissions .t-refresh").trigger('click');
+            $("#gridFeaturePermissions tbody").removePreloader();    
+            
         });
     });
 </script>

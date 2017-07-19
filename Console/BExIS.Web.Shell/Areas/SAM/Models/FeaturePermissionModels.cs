@@ -1,47 +1,27 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.Filters;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public class CreateFeaturePermissionGridRowModel
-    {
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public int PermissionType { get; set; }
-        public string Type { get; set; }
-
-        public static CreateFeaturePermissionGridRowModel Convert(Subject subject, Dictionary<long, int> permissionTypes)
-        {
-            return new CreateFeaturePermissionGridRowModel()
-            {
-                Id = subject.Id,
-                Name = subject.Name,
-                Type = subject is User ? "User" : "Group",
-                PermissionType = permissionTypes.ContainsKey(subject.Id) ? permissionTypes[subject.Id] : 2
-            };
-        }
-    }
-
     public class FeaturePermissionGridRowModel
     {
-        public long FeatureId { get; set; }
-        public long Id { get; set; }
         public int PermissionType { get; set; }
-        public long SubjectId { get; set; }
-        public string SubjectName { get; set; }
-        public string SubjectType { get; set; }
+        [Query(typeof(Subject), "Id")]
+        public long Id { get; set; }
 
-        public static FeaturePermissionGridRowModel Convert(FeaturePermission featurePermission)
+        [Query(typeof(Subject), "Name")]
+        public string Name { get; set; }
+        public string Type { get; set; }
+
+        public static FeaturePermissionGridRowModel Convert(Subject subject, Dictionary<long, int> permissionTypes)
         {
             return new FeaturePermissionGridRowModel()
             {
-                FeatureId = featurePermission.Feature.Id,
-                Id = featurePermission.Id,
-                SubjectType = featurePermission.Subject is User ? "User" : "Group",
-                SubjectName = featurePermission.Subject.Name,
-                SubjectId = featurePermission.Subject.Id,
-                PermissionType = (int)featurePermission.PermissionType
+                Type = subject is User ? "User" : "Group",
+                Name = subject.Name,
+                Id = subject.Id,
+                PermissionType = permissionTypes.ContainsKey(subject.Id) ? permissionTypes[subject.Id] : 2
             };
         }
     }

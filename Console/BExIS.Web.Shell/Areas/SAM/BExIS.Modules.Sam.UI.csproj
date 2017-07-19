@@ -238,7 +238,6 @@
     <Content Include="Views\Datasets\Purge.cshtml" />
     <Content Include="Views\Datasets\Version.cshtml" />
     <Content Include="Views\Datasets\Versions.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Add.cshtml" />
     <Content Include="Views\Users\_Create.cshtml" />
     <Content Include="Views\Users\_Membership.cshtml" />
     <Content Include="Views\Users\_Update.cshtml" />
