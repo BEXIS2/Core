@@ -24,9 +24,10 @@
 
     <script type="text/javascript">
 
-        $("#treeViewFeatures li div").click(function (e) {
-            $(e.target).find(".t-in").trigger("click");
-        });
+        $("#treeViewFeatures li div")
+            .click(function(e) {
+                $(e.target).find(".t-in").trigger("click");
+            });
 
         function GetTreeView() {
             return $('#treeViewFeatures').data('tTreeView');
@@ -44,7 +45,7 @@
 
             $.get('@Url.Action("Permissions", "FeaturePermissions")',
                 { FeatureId: featureId },
-                function (contentData) {
+                function(contentData) {
 
                     $('#permissions').html(contentData);
 
@@ -57,34 +58,29 @@
             resetAllTelerikIconTitles();
         }
 
+        function getSelection() {
+            var selection = [];
+
+            $("input:radio:checked")
+                .each(function () {
+                    var id = $(this).attr('name');
+                    var value = $(this).attr('value');
+
+                    selection.push({
+                        key: id,
+                        value: value
+                    });
+                });
+
+            return selection;
+        }
+
         function onDataBinding(e) {
-
-            var all = [];
-            var denies = [];
-            var grants = [];
-
-            $("input:radio:checked").each(function () {
-                var id = $(this).attr('name');
-                var value = $(this).attr('value');
-
-                if (value == 1) {
-                    grants.push(id);
-                }
-
-                if (value == 0) {
-                    denies.push(id);
-                }
-
-                all.push(id);
-            });
-
-            // pass additional values by setting the "data" field of the event argument
-            e.data = {
-                // the key ("category") specifies the variable name of the action method which will contain the specified value
-                grants: grants,
-                denies: denies,
-                all: all
+            e.data =
+            {
+                selection: getSelection()
             };
         }
+
     </script>
 }

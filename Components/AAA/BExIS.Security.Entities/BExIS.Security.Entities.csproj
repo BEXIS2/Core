@@ -56,7 +56,6 @@
     <Compile Include="Authentication\Login.cs" />
     <Compile Include="Authorization\EntityPermission.cs" />
     <Compile Include="Authorization\FeaturePermission.cs" />
-    <Compile Include="Authorization\PermissionType.cs" />
     <Compile Include="Notifications\EmailNotification.cs" />
     <Compile Include="Notifications\Message.cs" />
     <Compile Include="Notifications\Notification.cs" />

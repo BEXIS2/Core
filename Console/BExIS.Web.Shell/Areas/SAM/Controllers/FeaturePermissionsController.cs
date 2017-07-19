@@ -85,35 +85,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Subjects_Select(long[] grants, long[] denies, long[] all, long featureId, GridCommand command)
+        public ActionResult Subjects_Select(Dictionary<long, int> selection, long featureId, GridCommand command)
         {
-            if (grants == null)
-                grants = new long[] { };
-
-            if (denies == null)
-                denies = new long[] { };
-
-            if (all == null)
-                all = new long[] { };
+            if (selection == null)
+                selection = new Dictionary<long, int>();
 
             // Selected Groups
             Dictionary<long, int> selectedSubjects = new Dictionary<long, int>();
             if (Session["SelectedSubjects"] != null)
                 selectedSubjects = Session["SelectedSubjects"] as Dictionary<long, int>;
 
-            foreach (var item in all)
+            foreach (var item in selection)
             {
-                selectedSubjects.Remove(item);
-            }
-
-            foreach (var item in grants)
-            {
-                selectedSubjects.Add(item, 1);
-            }
-
-            foreach (var item in denies)
-            {
-                selectedSubjects.Add(item, 0);
+                if (item.Value != 2)
+                {
+                    selectedSubjects[item.Key] = item.Value;
+                }
             }
 
             Session["SelectedSubjects"] = selectedSubjects;
@@ -150,7 +137,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SubmitSubjects(long featureId)
+        public ActionResult SubmitSubjects(Dictionary<long, int> selection, long featureId)
         {
             var selectedSubjects = new Dictionary<long, int>();
 
@@ -162,8 +149,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             var feature = featureManager.FindById(featureId);
 
-            feature.Permissions = new List<FeaturePermission>();
-            featureManager.Update(feature);
+            foreach (var featurePermission in feature.Permissions)
+            {
+                featurePermissionManager.Delete(featurePermission);
+            }
 
             foreach (var subject in selectedSubjects)
             {

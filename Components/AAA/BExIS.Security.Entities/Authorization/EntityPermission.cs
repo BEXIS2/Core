@@ -30,7 +30,6 @@ namespace BExIS.Security.Entities.Authorization
     {
         public virtual Entity Entity { get; set; }
         public virtual long Key { get; set; }
-        public virtual PermissionType PermissionType { get; set; }
         public virtual int Rights { get; set; }
         public virtual Subject Subject { get; set; }
     }

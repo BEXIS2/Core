@@ -16,9 +16,6 @@
     <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
     <property name="Key" type="Int64" />
     <property name="Rights" type="Int32" />
-    <property name="PermissionType" type="BExIS.Security.Entities.Authorization.PermissionType, BExIS.Security.Entities">
-      <column name="PermissionType" not-null="true" sql-type="int" />
-    </property>
     <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" />
   </class>
 </hibernate-mapping>

@@ -59,10 +59,8 @@
 <script type="text/javascript">
 
     $("#button_submitsubjects").click(function () {
-        alert("ldsf");
-        $.post('@Url.Action("SubmitSubjects", "FeaturePermissions")', { FeatureId: @Model }, function () {
+        $.post('@Url.Action("SubmitSubjects", "FeaturePermissions")', { Selection: getSelection(), FeatureId: @Model }, function () {
             $('#windowCreate').data('tWindow').close();
         });
     });
-
 </script>
