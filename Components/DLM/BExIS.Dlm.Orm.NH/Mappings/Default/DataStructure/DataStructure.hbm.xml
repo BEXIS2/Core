@@ -91,7 +91,7 @@
 
     <set name="Views" table="DataStructures_Views" lazy="true">
       <key column="DataStructureRef"/>
-      <many-to-many column="ViewRef" class="DataView"/>
+      <many-to-many column="DatasetViewRef" class="DatasetView"/>
     </set>
 
     <set name="ResearchPlans" inverse="true" table="ResearchPlans_DataStructures" lazy="true" cascade="all-delete-orphan">

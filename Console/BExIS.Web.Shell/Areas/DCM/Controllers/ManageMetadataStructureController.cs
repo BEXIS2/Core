@@ -6,7 +6,6 @@ using BExIS.Security.Services.Objects;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
 using Ionic.Zip;
 using NHibernate.Util;
 using System;
@@ -208,7 +207,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                       new EntityModel()
                       {
                           Name = e.Name,
-                          ClassPath = e.ClassPath
+                          ClassPath = e.EntityType.FullName
                       }
                   )
             );

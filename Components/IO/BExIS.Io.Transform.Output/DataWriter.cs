@@ -18,10 +18,9 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using DocumentFormat.OpenXml.Drawing;
 using Path = System.IO.Path;
-using BExIS.RPM.Output;
+using BExIS.IO.Transform.Output;
 
 /// <summary>
 ///

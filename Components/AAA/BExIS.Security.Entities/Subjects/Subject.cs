@@ -8,6 +8,5 @@ namespace BExIS.Security.Entities.Subjects
     {
         public virtual string Name { get; set; }
         public virtual ICollection<Permission> Permissions { get; set; }
-        public virtual ICollection<Role> Roles { get; set; }
     }
 }

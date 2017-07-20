@@ -7,12 +7,12 @@ using System.Web.Mvc;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
-using BExIS.Web.Shell.Areas.RPM.Models;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using BExIS.Modules.Rpm.UI.Models;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class DataAttributeController : Controller
     {

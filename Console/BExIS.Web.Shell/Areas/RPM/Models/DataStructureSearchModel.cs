@@ -6,9 +6,9 @@ using BExIS.Dlm.Services.DataStructure;
 using System.Xml;
 using BExIS.Xml.Helpers;
 using System.Xml.Linq;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.Modules.Rpm.UI.Classes;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class VariablePreview
     {

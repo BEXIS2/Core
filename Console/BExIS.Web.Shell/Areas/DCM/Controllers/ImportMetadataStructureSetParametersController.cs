@@ -3,12 +3,12 @@ using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Models;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -207,6 +207,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 long metadatstructureId = Convert.ToInt64(TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID]);
                 model.MetadataNodes = GetMetadataNodes();
+                model.Entities = GetEntityList();
                 model.StepInfo.notExecuted = true;
             }
 
@@ -325,11 +326,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<string> GetEntityList()
         {
             EntityManager entityManager = new EntityManager();
+            List<string> tmp = new List<string>();
 
-            IEnumerable<string> tmp = entityManager.Entities.Select(e => e.ClassPath);
+            foreach (var entity in entityManager.Entities)
+            {
+                tmp.Add(entity.Name);
+            }
+
+            //IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
 
             return tmp.ToList();
         }
+
+
 
         private List<SearchMetadataNode> GetMetadataNodes()
         {
@@ -376,7 +385,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // add Description
             xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
 
-            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+            EntityManager entityManager = new EntityManager();
+
+            if (entityManager.EntityRepository.Get().Any(e => { return e.Name != null && e.Name.Equals(entity); }))
+            {
+                Entity e = entityManager.EntityRepository.Get().FirstOrDefault(x => x.Name != null && x.Name.Equals(entity));
+                if (e != null)
+                    xmlDoc = AddReferenceToMetadatStructure(e.Name, e.EntityType.FullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+            }
 
             // add mappingFilePath
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);

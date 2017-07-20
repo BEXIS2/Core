@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.IO;
 using System.Text;
-using System.Data;
-using System.Net.Http;
 
-namespace BExIS.Modules.Dim.UI.Models.Formatters
+namespace BExIS.Modules.Dim.UI.Models
 {
     // used: http://www.asp.net/web-api/overview/formats-and-model-binding/media-formatters
     // see: App_Start folder -> WebApiConfi.cs

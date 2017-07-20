@@ -1,8 +1,7 @@
 ﻿@model BExIS.Web.Shell.Models.EntitySelectorModel
-@using System.CodeDom
 @using System.Data;
-@using BExIS.Dlm.Services.TypeSystem
-@using BExIS.IO.Transform.Validation.ValueCheck
+@using Newtonsoft.Json
+@using Telerik.Web.Mvc.UI
 
 @{
     ViewBag.Title = "";
@@ -48,6 +47,8 @@
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
 
+
+    string parameters = JsonConvert.SerializeObject(@Model.Parameters);
 }
 <div>
     @if (String.IsNullOrEmpty(Model.IDKey))
@@ -73,53 +74,41 @@
     else
     {
 
-        @(Html.Telerik().Grid(Model.Data)
-                .Name(@idAsString)
-                .HtmlAttributes(new {@class= "bx-selection-grid" })
-              .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
-              .DataKeys(keys => keys
-                .Add(Model.IDKey)
-              )
-              .Selectable()
-              .Pageable()
-
-          .Columns(columns =>
-          {
-              foreach (DataColumn dc in Model.Data.Columns)
+        @(Html.Telerik().Grid(Model.Data).Name(@idAsString).HtmlAttributes(new {@class = "bx-selection-grid"}).DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client)).DataKeys(keys => keys
+              .Add(Model.IDKey)
+              ).Selectable().Pageable().Columns(columns =>
               {
-                  if (dc.DataType == typeof(int)
-                  || dc.DataType == typeof(Int32)
-                  || dc.DataType == typeof(Int64)
-                  || dc.DataType == typeof(Int16)
-                  || dc.DataType == typeof(long))
+                  foreach (DataColumn dc in Model.Data.Columns)
                   {
-                      columns.Bound(dc.DataType, dc.ColumnName)
-                          .Width(70);
+                      if (dc.DataType == typeof(int)
+                          || dc.DataType == typeof(Int32)
+                          || dc.DataType == typeof(Int64)
+                          || dc.DataType == typeof(Int16)
+                          || dc.DataType == typeof(long))
+                      {
+                          columns.Bound(dc.DataType, dc.ColumnName)
+                              .Width(70);
+                      }
+                      else
+                      {
+                          columns.Bound(dc.DataType, dc.ColumnName);
+                      }
                   }
-                  else
-                  {
-                      columns.Bound(dc.DataType, dc.ColumnName);
-                  }
-              }
-          })
-
-          .Filterable()
-          .Sortable()
-          .TableHtmlAttributes(new {
-              idIndex = @idIndex,
-              submitId = @submitId,
-              link = "/" + @Model.Reciever.Area + "/" + @Model.Reciever.Controller + "/" + @Model.Reciever.Action,
-              style="width:"+@width+"px;"
-          })
-          .Pageable(paging =>
-                paging.PageSize(10, new int[] { 5, 10, 50 })
-                    .Total(Model.Data.Rows.Count)
-                    .Style(pagerStyles)
-                    )
-          .ClientEvents(events =>
-            events.OnRowSelect("OnRowSelection")
-            .OnDataBound("OnDataBound"))
-
+              }).Filterable().Sortable().TableHtmlAttributes(new
+              {
+                  idIndex = @idIndex,
+                  submitId = @submitId,
+                  link = "/" + @Model.Reciever.Area + "/" + @Model.Reciever.Controller + "/" + @Model.Reciever.Action,
+                  style = "width:" + @width + "px;"
+              }).Pageable(paging =>
+                  paging.PageSize(10, new int[] {5, 10, 50})
+                      .Total(Model.Data.Rows.Count)
+                      .Style(pagerStyles)
+              ).ClientEvents(events =>
+              {
+                  events.OnRowSelect("OnRowSelection");
+                  events.OnDataBound("OnDataBound");
+              })
         )
     }
 </div>
@@ -134,15 +123,16 @@
         }
         else
         {
-            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM" },
+            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM", parameters=@parameters},
             new AjaxOptions
             {
-                HttpMethod = "GET",
+                HttpMethod = "POST",
                 InsertionMode = InsertionMode.Replace,
                 UpdateTargetId = targetId,
                 OnSuccess= "OnSucess()"
             },
-            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId })
+            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
+            });
 
         }
 
@@ -168,13 +158,16 @@
         var link = table.attr("link");
         var dataid = $(e.row).find("td")[idIndex].innerHTML;
 
-        //console.log("submitbuttonid: " + submitId);
 
-        link += "?id=" + dataid;
+        var submitEntitySelection = $('#' + submitId).attr("href");
+        console.log("-->" + submitEntitySelection);
 
-        //console.log(link);
+        console.log('@parameters');
+        submitEntitySelection += "&id=" + dataid;
 
-        $('#' + submitId).attr("href", link);
+        console.log(submitEntitySelection);
+
+        $('#' + submitId).attr("href", submitEntitySelection);
         $('#' + submitId).removeClass("bx-disabled");
     }
 

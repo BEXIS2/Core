@@ -43,12 +43,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\..\Libraries\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Helpers">
@@ -63,8 +71,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Web.Services" />
@@ -241,6 +250,7 @@
     <Content Include="Views\SubmitValidation\Validation.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -253,7 +263,6 @@
     <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\SubmitSelectAFile\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -299,6 +308,10 @@
       <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -316,7 +329,7 @@
       <Name>BExIS.Dcm.CreateDatasetWizard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.ImportMetadataStructure\BExIS.Dcm.ImportMetadataStructureWizard.csproj">
-      <Project>{99B0AA63-9CA5-4D42-9CF6-5E8896CD5D25}</Project>
+      <Project>{99b0aa63-9ca5-4d42-9cf6-5e8896cd5d25}</Project>
       <Name>BExIS.Dcm.ImportMetadataStructureWizard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
@@ -326,6 +339,14 @@
     <ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
       <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>

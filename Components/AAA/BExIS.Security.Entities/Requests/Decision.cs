@@ -15,6 +15,7 @@ namespace BExIS.Security.Entities.Requests
     {
         public virtual DateTime DecisionDate { get; set; }
         public virtual User DecisionMaker { get; set; }
+        public virtual string Reason { get; set; }
         public virtual Request Request { get; set; }
         public virtual DecisionStatus Status { get; set; }
     }

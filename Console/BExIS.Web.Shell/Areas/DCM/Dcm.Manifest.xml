@@ -5,7 +5,10 @@
     ddm provides a sophisticated search facility over registered data sets.
   </Description>
   <Assemblies>
-    <!--<Assembly fullName="" role=""/>-->
+    <!--<Assembly fullName="BExIS.Dcm.Wizard" role=""/>-->
+    <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role=""/>
+    <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role=""/>
+    <Assembly fullName="BExIS.Dcm.UploadWizard" role=""/>
   </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
@@ -41,5 +44,17 @@
             controller="home" action="index"
             extends="./apiRoot"
             />
+
+    <!-- INTERNAL-->
+
+    <Export tag="internalApi" id="loadFromFromExternal"
+            title="load Metadata Form" description="load Metadata Form" icon=""
+            controller="Form" action="LoadMetadataFromExternal"
+            extends="" />
+
+    <Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
+            title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
+            controller="Form" action="SetAdditionalFunctions"
+            extends="" />
   </Exports>
 </Manifest>

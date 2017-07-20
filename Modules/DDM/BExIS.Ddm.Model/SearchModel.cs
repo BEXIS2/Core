@@ -1,10 +1,9 @@
-﻿using BExIS.Utils.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Ddm.Model
+namespace BExIS.Utils.Models
 {
     /// <summary>
     ///

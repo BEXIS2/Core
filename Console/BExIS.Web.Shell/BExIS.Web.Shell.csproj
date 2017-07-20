@@ -59,6 +59,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DataAnnotationsExtensions">
       <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
@@ -200,6 +204,10 @@
       <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
       <Private>True</Private>
@@ -292,6 +300,10 @@
     <Reference Include="WebActivator">
       <HintPath>..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
     </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
       <Private>True</Private>
@@ -372,40 +384,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
     <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
     <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
-    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
-    <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Legacy\DataAttributeController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Legacy\HomeController.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
-    <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Legacy\UnitController.cs" />
-    <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
-    <Compile Include="Areas\RPM\Helpers\SeedData\AttributeCreator.cs" />
-    <Compile Include="Areas\RPM\Helpers\SeedData\MappingReader.cs" />
-    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
-    <Compile Include="Areas\RPM\Models\StructureModel.cs" />
-    <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
-    <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
-    <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataTypeManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\UnitManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataAttributeModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataStructureDesignerModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataStructureTreeModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\UnitDimenstionModel.cs" />
-    <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
@@ -416,6 +405,7 @@
     <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
+    <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -428,17 +418,6 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.js" />
-    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
-    <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.bexis.min.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.min.js" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructure.css" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
-    <Content Include="Areas\RPM\Stylesheets\RPM.css" />
-    <Content Include="Areas\RPM\Views\Help\Informations.xml" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -464,6 +443,8 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.backup.js" />
     <Content Include="Scripts\autosize\autosize.js" />
     <Content Include="Scripts\autosize\autosize.min.js" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
@@ -479,24 +460,11 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -528,6 +496,11 @@
     <Content Include="Scripts\minimap\minimap.js" />
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
     <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
@@ -541,7 +514,6 @@
     <Content Include="Scripts\2012.3.1018\telerik.extensions.js" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.autocomplete.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.calendar.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.chart.min.js" />
@@ -856,37 +828,37 @@
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
     <Content Include="Views\Terms\Index.cshtml" />
-    <Content Include="Views\Account\EmailConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalSignInConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalSignInFailure.cshtml" />
+    <Content Include="Views\Footer\Content.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SendCode.cshtml" />
-    <Content Include="Views\Account\SignIn.cshtml" />
-    <Content Include="Views\Account\SignUp.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Account\_ExternalSignIns.cshtml" />
-    <Content Include="Views\Account\_RemoveAccount.cshtml" />
-    <Content Include="Views\Shared\Info.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\LockOut.cshtml" />
-    <Content Include="Views\Footer\Content.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\BAM\Views\Shared\" />
-    <Folder Include="Areas\RPM\Images\RPM_UserGuide_files_images\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -949,25 +921,6 @@
     <Content Include="Views\Test\XmlEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\RPM\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\Unit\UnitManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_addVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editClassifier.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editDataType.cshtml" />
-    <Content Include="Areas\RPM\Views\Unit\_editUnit.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -1028,6 +981,10 @@
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -1044,34 +1001,20 @@
       <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
       <Name>BExISMigration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
+      <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
+      <Name>BExIS.Dcm.Wizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_patternConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_rangeConstraintView.cshtml" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff2" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.ttf" />

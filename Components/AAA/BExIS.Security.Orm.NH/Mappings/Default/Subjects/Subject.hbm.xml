@@ -14,9 +14,5 @@
       <key column="SubjectRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.Permission, BExIS.Security.Entities" />
     </set>
-    <set name="Roles" table="Subjects_Roles" cascade="all" lazy="true">
-      <key column="SubjectRef" />
-      <many-to-many column="RolesRef" class="BExIS.Security.Entities.Authorization.Role, BExIS.Security.Entities" />
-    </set>
   </class>
 </hibernate-mapping>

@@ -1,5 +1,4 @@
 ﻿@using System.Net.Configuration
-@using BExIS.Dim.Entities.Mapping
 @model BExIS.Modules.Dim.UI.Models.Mapping.SimpleMappingModel
 
 @{
@@ -63,11 +62,12 @@
             .change(function() {
 
                 var tmpString = $("#" + '@id' + " #Example").val();
-
-                var exp = $(this).val();
-
+                var exp = new RegExp($(this).val(),"g");
+                //alert($(this).val());
+                //alert(exp);
                 var result = tmpString.match(exp);
 
+                //alert(result);
 
                 console.log("input: " + tmpString);
                 console.log("regex: " + exp);
@@ -93,9 +93,8 @@
         $("#" + '@id' + " #Example")
             .change(function() {
 
-                var tmpString = $(this).val();
-
-                var exp = $("#" + '@id' + " #RegExPattern").val();
+                 var tmpString = $("#" + '@id' + " #Example").val();
+                var exp = new RegExp($(this).val(),"g");
 
                 var result = tmpString.match(exp);
 

@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.Modules.Rpm.UI.Models;
+using System.Web.Mvc;
+using BExIS.IO.Transform.Output;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class StructuresController : ApiController
+    public class StructuresController : Controller
     {
         // GET: api/Structures
         public IEnumerable<string> Get()
@@ -17,10 +19,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         }
 
         // GET: api/Structures/5
-        public Structure Get(long id)
+        public DataStructureDataTable Get(long id)
         {
             // The model object, Structure, can not have access to the services, or data
-            return new Structure(id);
+            return new DataStructureDataTable(id);
         }
 
         // POST: api/Structures

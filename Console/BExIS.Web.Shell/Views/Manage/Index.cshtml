@@ -1,0 +1,87 @@
+﻿@model BExIS.Web.Shell.Models.IndexViewModel
+@{
+    ViewBag.Title = "Verwalten";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Kontoeinstellungen ändern</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Kennwort:</dt>
+        <dd>
+            [
+            @if (Model.HasPassword)
+            {
+                @Html.ActionLink("Kennwort ändern", "ChangePassword")
+            }
+            else
+            {
+                @Html.ActionLink("Erstellen", "SetPassword")
+            }
+            ]
+        </dd>
+        <dt>Externe Anmeldungen:</dt>
+        <dd>
+            @Model.Logins.Count [
+            @Html.ActionLink("Verwalten", "ManageLogins") ]
+        </dd>
+        @*
+            Telefonnummern können als zweite Stufe in einem zweistufigen Authentifizierungssystem verwendet werden.
+             
+             In <a href="http://go.microsoft.com/fwlink/?LinkId=403804">diesem Artikel</a>
+                finden Sie Details zum Einrichten dieser ASP.NET-Anwendung für die Unterstützung zweistufiger Authentifizierung mithilfe von SMS.
+             
+             Entfernen Sie den Kommentar für den folgenden Block, nachdem Sie zweistufige Authentifizierung eingerichtet haben.
+        *@
+        @*  
+            <dt>Telefonnummer:</dt>
+            <dd>
+                @(Model.PhoneNumber ?? "None")
+                @if (Model.PhoneNumber != null)
+                {
+                    <br />
+                    <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
+                    using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
+                    }
+                }
+                else
+                {
+                    <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
+                }
+            </dd>
+        *@
+        <dt>Zweistufige Authentifizierung:</dt>
+        <dd>
+            <p>
+                Es sind keine Anbieter für zweistufige Authentifizierung konfiguriert. In <a href="http://go.microsoft.com/fwlink/?LinkId=403804">diesem Artikel</a>
+                            finden Sie Details zum Einrichten dieser ASP.NET-Anwendung für die Unterstützung  zweistufiger Authentifizierung.
+            </p>
+            @*@if (Model.TwoFactor)
+                {
+                    using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <text>Aktiviert
+                        <input type="submit" value="Deaktivieren" class="btn btn-link" />
+                        </text>
+                    }
+                }
+                else
+                {
+                    using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <text>Deaktiviert
+                        <input type="submit" value="Aktivieren" class="btn btn-link" />
+                        </text>
+                    }
+                }*@
+        </dd>
+    </dl>
+</div>

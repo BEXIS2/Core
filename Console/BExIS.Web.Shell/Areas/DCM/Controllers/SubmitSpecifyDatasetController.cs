@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using System.Web.Routing;
-using BExIS.Dcm.UploadWizard;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -10,8 +7,11 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Xml.Services;
-using BExIS.Dcm.Wizard;
+using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
 
-                if(datasetId > 0)
+                if (datasetId > 0)
                 {
                     // add title to model
                     model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
@@ -111,7 +111,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //reload model
                     model.StepInfo = TaskManager.Current();
                     if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
-              }
+                }
             }
 
             return PartialView(model);
@@ -129,7 +129,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             DatasetVersion datasetVersion;
 
-            if(datasetManager.IsDatasetCheckedIn(datasetId))
+            if (datasetManager.IsDatasetCheckedIn(datasetId))
             {
                 addSelectedDatasetToBus(datasetId);
             }
@@ -147,10 +147,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
                 model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                model.SelectedDatasetId = Convert.ToInt32(id);
+            model.SelectedDatasetId = Convert.ToInt32(id);
             return PartialView("SpecifyDataset", model);
         }
- 
+
         #region private methods
 
 
