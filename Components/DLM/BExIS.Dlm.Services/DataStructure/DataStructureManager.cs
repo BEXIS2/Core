@@ -306,7 +306,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="variableUnit">A specific unit for the variable. If not provided the unit of the <paramref name="dataAttibute"/> is used.
         /// If provided, its dimension must be equal to the dimension of the <paramref name="dataAttribute"/>'s unit.</param>
         /// <returns>A created and persisted variable object.</returns>
-        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description, Unit variableUnit = null)
+        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description, Unit variableUnit = null, Int32 order = 0)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
@@ -335,6 +335,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 MissingValue = missingValue,
                 Description = description,
                 Unit = (variableUnit != null ? variableUnit : dataAttribute.Unit),
+                OrderNo = order > 0 ? order: dataStructure.Variables.Count() + 1,
             };
             dataAttribute.UsagesAsVariable.Add(usage);
             dataStructure.Variables.Add(usage);
@@ -376,7 +377,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <param name="missingValue"></param>
         /// <returns></returns>
-        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description)
+        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description, Int32 order = 0)
         {
             Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
@@ -403,7 +404,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
                 DefaultValue = defaultValue,
                 MissingValue = missingValue,
-                Description = description
+                Description = description,
+                OrderNo = order > 0 ? order : variableUsage.Parameters.Count() + 1,
             };
             dataAttribute.UsagesAsParameter.Add(usage);
             variableUsage.Parameters.Add(usage);

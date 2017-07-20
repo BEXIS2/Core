@@ -151,6 +151,7 @@
     <Compile Include="DataStructure\DataTypeManager.cs" />
     <Compile Include="DataStructure\UnitManager.cs" />
     <Compile Include="DataStructure\ViewManager.cs" />
+    <Compile Include="Helpers\DatasetConvertor.cs" />
     <Compile Include="MetadataStructure\MetadataPackageManager.cs" />
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />
     <Compile Include="MetadataStructure\MetadataStructureManager.cs" />
@@ -170,6 +171,10 @@
     <ProjectReference Include="..\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj">
+      <Project>{E234118C-1B89-493C-B17A-6990F6B98A9F}</Project>
+      <Name>BExIS.Dlm.Orm.NH</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
