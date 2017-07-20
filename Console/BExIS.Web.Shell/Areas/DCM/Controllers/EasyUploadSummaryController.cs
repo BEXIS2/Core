@@ -319,7 +319,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //No matching DataAttribute => Create a new one
                     CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(Entry.Item2), Entry.Item2, "", false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
                 }
-
+                //ToDo EASY Upload Failes here
                 Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, Entry.Item2, "", "", "");
                 VariableIdentifier vi = new VariableIdentifier();
                 vi.name = newVariable.Label;
