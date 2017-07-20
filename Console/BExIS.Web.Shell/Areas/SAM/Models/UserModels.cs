@@ -26,21 +26,21 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class UserMembershipGridRowModel
     {
-        public string Email { get; set; }
+        public string Description { get; set; }
+        public GroupType GroupType { get; set; }
         public long Id { get; set; }
-        public bool IsAdministrator { get; set; }
-        public string UserName { get; set; }
         public bool IsMember { get; set; }
+        public string Name { get; set; }
 
-        public static UserMembershipGridRowModel Convert(User user, List<long> memberships)
+        public static UserMembershipGridRowModel Convert(Group group, List<long> memberships)
         {
             return new UserMembershipGridRowModel()
             {
-                Email = user.Email,
-                UserName = user.UserName,
-                IsAdministrator = user.IsAdministrator,
-                Id = user.Id,
-                IsMember = memberships.Contains(user.Id)
+                Description = group.Description,
+                Name = group.Name,
+                GroupType = group.GroupType,
+                Id = group.Id,
+                IsMember = memberships.Contains(group.Id)
             };
         }
     }

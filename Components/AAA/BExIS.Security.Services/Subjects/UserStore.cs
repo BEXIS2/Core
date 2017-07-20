@@ -37,12 +37,10 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult<int>(0);
         }
 
-        public Task AddToGroupAsync(User user, string groupName)
+        public void AddToGroupAsync(User user, long groupId)
         {
-            user.Groups.Add(GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault());
+            user.Groups.Add(GroupRepository.Get(groupId));
             UpdateAsync(user);
-
-            return Task.FromResult(0);
         }
 
         public Task CreateAsync(User user)
@@ -87,6 +85,11 @@ namespace BExIS.Security.Services.Subjects
         public Task<User> FindByIdAsync(long userId)
         {
             return Task.FromResult(UserRepository.Get(userId));
+        }
+
+        public User FindById(long userId)
+        {
+            return UserRepository.Get(userId);
         }
 
         public Task<User> FindByNameAsync(string userName)
@@ -171,12 +174,10 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()));
         }
 
-        public Task RemoveFromGroupAsync(User user, string groupName)
+        public void RemoveFromGroupAsync(User user, long groupId)
         {
-            user.Groups.Remove(GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault());
+            user.Groups.Remove(GroupRepository.Get(groupId));
             UpdateAsync(user);
-
-            return Task.FromResult(0);
         }
 
         public Task RemoveLoginAsync(User user, UserLoginInfo login)

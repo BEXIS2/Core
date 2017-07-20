@@ -146,7 +146,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             // Paging
             var userIds = Session["UserIds"] as List<long>;
-            var data = paged.Select(x => UserMembershipGridRowModel.Convert(x, userIds));
+            var data = paged.Select(x => UserMembershipGridRowModel.Convert(null, userIds));
 
             return View(new GridModel<UserMembershipGridRowModel> { Data = data, Total = total });
         }

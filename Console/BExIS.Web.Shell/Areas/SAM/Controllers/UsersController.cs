@@ -18,11 +18,29 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Create", new CreateUserModel());
         }
 
+        public ActionResult Memberships(long userId)
+        {
+            var userStore = new UserStore();
+            var groups = userStore.FindById(userId).Groups.Select(x => x.Id);
+
+            Session["SelectedGroups"] = groups as HashSet<long>;
+
+            return PartialView("_Memberships", userId);
+        }
+
         [HttpPost]
         public ActionResult Create(CreateUserModel model)
         {
             if (ModelState.IsValid)
             {
+                var userManager = new UserManager(new UserStore());
+                userManager.CreateAsync(new User()
+                {
+                    Email = model.Email,
+                    UserName = model.UserName,
+                    IsAdministrator = model.IsAdministrator
+                });
+
                 RedirectToAction("Index");
             }
 
@@ -46,7 +64,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Groups_Select(Dictionary<long, bool> selection, GridCommand command)
+        public ActionResult Memberships_Select(Dictionary<long, bool> selection, long userId, GridCommand command)
         {
             updateSelection(selection);
 
@@ -74,6 +92,31 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, Session["SelectedGroups"] as HashSet<long>));
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = data, Total = total });
+        }
+
+        public ActionResult Memberships_Save(Dictionary<long, bool> selection, long userId)
+        {
+            updateSelection(selection);
+
+            var userStore = new UserStore();
+            var userManager = new UserManager(userStore);
+
+            var user = userStore.FindById(userId);
+
+            var memberships = user.Groups.Select(p => p.Id).ToArray();
+            foreach (var id in memberships)
+            {
+                userStore.RemoveFromGroupAsync(user, id);
+            }
+
+            foreach (var groupId in Session["SelectedGroups"] as HashSet<long>)
+            {
+                userStore.AddToGroupAsync(user, groupId);
+            }
+
+            Session["SelectedGroups"] = null;
+
+            return Json(new { success = true });
         }
 
         public ActionResult Index()

@@ -7,7 +7,7 @@
         width: auto !important;
     }
 
-    #gridGroups {
+    #gridMemberships {
         width: 80vw !important;
     }
 </style>
@@ -29,12 +29,14 @@
         columns.Bound(u => u.IsAdministrator);
         columns.Template(@<text>
         <button type="button" class="bx bx-grid-function bx-edit"></button>
+        <button type="button" class="bx bx-grid-function bx-group"></button>
         <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
         .ClientTemplate(
             "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
+            "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\"></button>" +
             "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
-        .Width(70);
+        .Width(110);
     })
     .ClientEvents(events =>
     {
@@ -94,14 +96,6 @@
             });
         });
 
-    function editUser(id) {
-
-    }
-
-    function deleteUser(id) {
-
-        }
-
     function getSelection() {
         var selection = [];
 
@@ -142,7 +136,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update User: " + username + " (Id: " + id + ")",
+                                title: "Update User (Id: " + $(this).attr("value") + ")",
                                 html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
@@ -169,8 +163,71 @@
 
             $('.bx-trash')
                 .click(function () {
-                    alert($(this).attr("value"));
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Update", "Users")',
+                        data: { UserId: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: "Update User: " + username + " (Id: " + id + ")",
+                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#windowEdit").data('tWindow').destroy();
+                                    $("#gridUsers .t-refresh").trigger('click');
+                                }
+                            });
+
+                            windowElement.attr('id', 'windowUpdate');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
+
+                            resetAllTelerikIconTitles();
+                        }
+                    });
                 });
+
+            $('.bx-group')
+    .click(function () {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Memberships", "Users")',
+            data: { UserId: $(this).attr("value") },
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "User Membership (Id: " + $(this).attr("value") + ")",
+                    html: "<div id='contentMembership' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowMembership").data('tWindow').destroy();
+                        $("#gridUsers .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowMembership');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    });
         }
     </script>
 }
