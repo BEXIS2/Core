@@ -58,6 +58,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -143,6 +144,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\RequestsController.cs" />
@@ -155,6 +157,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
+    <Compile Include="Models\DatasetModels.cs" />
     <Compile Include="Models\DecisionModels.cs" />
     <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
@@ -235,6 +238,11 @@
     <Content Include="Views\Requests\_Requests.cshtml" />
     <Content Include="Views\FeaturePermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Decisions.cshtml" />
+    <Content Include="Views\Datasets\Delete.cshtml" />
+    <Content Include="Views\Datasets\Index.cshtml" />
+    <Content Include="Views\Datasets\Purge.cshtml" />
+    <Content Include="Views\Datasets\Version.cshtml" />
+    <Content Include="Views\Datasets\Versions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -278,6 +286,10 @@
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

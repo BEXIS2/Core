@@ -3,19 +3,17 @@
 @using Microsoft.AspNet.Identity
 @using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc
-
 @*@if (!Request.IsAuthenticated)
-{
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#menubar").css("background-color", "transparent");
-        });
-    </script>
-}*@
-
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#menubar").css("background-color", "transparent");
+            });
+        </script>
+    }*@
 @{
-    //var menuStructure = Html.ExportTree();
-    //Use this variable to build the menu strcuture
+//var menuStructure = Html.ExportTree();
+//Use this variable to build the menu strcuture
 }
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
     <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
@@ -31,33 +29,28 @@
                 @Html.Brand(Html.GetTenant().LogoPath, Html.GetTenant().ShortName)
             </a>
         </div>
-
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
             @*menubar*@
             <ul class="nav navbar-nav">
                 @Html.MenuBar()
             </ul>
-
             <ul class="nav navbar-nav navbar-right">
-
                 @if (Html.GetTenant().ExtendedMenus != null)
                 {
                     @Html.RenderExtendedMenu(Html.GetTenant().ExtendedMenus.Element("ExtendedMenu"))
                 }
-
                 @Html.LaunchBar()
-
                 @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
                 @if (Request.IsAuthenticated)
                 {
-                    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                    using (Html.BeginForm("LogOff", "Account", new { Area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                     {
                         @Html.AntiForgeryToken()
 
                         <ul class="nav navbar-nav">
                             <li>
-                                @Html.ActionLink("Hallo " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                                @Html.ActionLink("Hallo " + User.Identity.GetUserName() + "!", "Index", "Manage", new { Area = "" }, htmlAttributes: new { title = "Manage" })
                             </li>
                             <li><a href="javascript:document.getElementById('logoutForm').submit()">Abmelden</a></li>
                         </ul>
@@ -66,11 +59,10 @@
                 else
                 {
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Registrieren", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-                        <li>@Html.ActionLink("Anmelden", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                        <li>@Html.ActionLink("Registrieren", "Register", "Account", new { Area = "" }, htmlAttributes: new { id = "registerLink" })</li>
+                        <li>@Html.ActionLink("Anmelden", "Login", "Account", new { Area = "" }, htmlAttributes: new { id = "loginLink" })</li>
                     </ul>
                 }
-
                 @Html.Settings()
             </ul>
         </div>
