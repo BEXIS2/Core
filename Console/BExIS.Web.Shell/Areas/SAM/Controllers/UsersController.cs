@@ -95,6 +95,37 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Update", model);
         }
 
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Users_Select(GridCommand command)
+        {
+            var userManager = new UserManager(new UserStore());
+
+            // Source + Transformation - Data
+            var users = userManager.Users;
+            var total = users.Count();
+
+            // Filtering
+            var filters = command.FilterDescriptors as List<FilterDescriptor>;
+
+            if (filters != null)
+            {
+                users = users.FilterBy<User, UserGridRowModel>(filters);
+            }
+
+            // Sorting
+            var sorted = users.Sort(command.SortDescriptors) as IQueryable<User>;
+
+            // Paging
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+                .Take(command.PageSize)
+                .ToList();
+
+            // Data
+            var data = paged.Select(UserGridRowModel.Convert);
+
+            return View(new GridModel<UserGridRowModel> { Data = data, Total = total });
+        }
+
         public void updateSelection(Dictionary<long, bool> selection)
         {
             if (selection == null)
