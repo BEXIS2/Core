@@ -80,7 +80,7 @@ namespace BExIS.Dim.Helpers.Mapping
             if (mappings.Any())
             {
                 // all mappings belong to the same parent
-                long parentTypeId = mappings.FirstOrDefault().Source.ElementId;
+                long parentTypeId = mappings.FirstOrDefault().Source.Parent.ElementId;
 
                 // all Masks are the same
                 string mask = mappings.FirstOrDefault().Target.Mask;
@@ -107,7 +107,8 @@ namespace BExIS.Dim.Helpers.Mapping
                         List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
                         string placeHolderName = attrValue.CustomAttribute.Name;
 
-                        mask = replace(mask, regExResultList, placeHolderName);
+
+                        mask = setOrReplace(mask, regExResultList, placeHolderName);
 
 
                     }
@@ -149,12 +150,16 @@ namespace BExIS.Dim.Helpers.Mapping
             return tmp;
         }
 
-        private static string replace(string mask, List<string> replacers, string attrName)
+        private static string setOrReplace(string mask, List<string> replacers, string attrName)
         {
             foreach (var r in replacers)
             {
                 string completePlaceHolderName = attrName + "[" + replacers.IndexOf(r) + "]";
-                mask = mask.Replace(completePlaceHolderName, r);
+
+                if (mask.Contains(completePlaceHolderName))
+                    mask = mask.Replace(completePlaceHolderName, r);
+                else
+                    mask += r;
             }
 
             return mask;
