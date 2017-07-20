@@ -21,7 +21,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         public IEnumerable<string> ReIndex()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.Reload();
             return null;
         }
@@ -36,7 +36,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </remarks>
         public HttpResponseMessage Redinex(int id)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.UpdateSingleDatasetIndex(id, IndexingAction.CREATE);
             return null;
         }
@@ -50,7 +50,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         public SearchModel Get(string value)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             return provider?.GetTextBoxSearchValues(value, "", "new", 10);
         }
     }
