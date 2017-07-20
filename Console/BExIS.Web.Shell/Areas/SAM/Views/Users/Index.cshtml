@@ -101,26 +101,33 @@
 
     function deleteUser(id) {
 
+        }
+
+    function getSelection() {
+        var selection = [];
+
+        $("input[name='selectedGroups']").each(function(){
+            selection.push({
+                key: $(this).attr('value'),
+                value: false
+            });
+        });
+
+        $("input[name='selectedGroups']:checked").each(function () {
+            selection.push({
+                key: $(this).attr('value'),
+                value: true
+            });
+        });
+
+        return selection;
     }
 
         function onDataBinding(e) {
-
-            var checkboxes = [];
-            $("input[name='selectedGroups']").each(function(){
-                checkboxes.push($(this).val());
-            });
-
-            var selectedCheckboxes = [];
-            $("input[name='selectedGroups']:checked").each(function () {
-                selectedCheckboxes.push($(this).val());
-            });
-
-        // pass additional values by setting the "data" field of the event argument
-        e.data = {
-            // the key ("category") specifies the variable name of the action method which will contain the specified value
-            checkboxes: checkboxes,
-            selectedCheckboxes: selectedCheckboxes
-        };
+            e.data =
+            {
+                selection: getSelection()
+            };
         }
 
         function onDataBound() {

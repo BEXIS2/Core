@@ -46,28 +46,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Groups_Select(long[] checkboxes, long[] selectedCheckboxes, GridCommand command)
+        public ActionResult Groups_Select(Dictionary<long, bool> selection, GridCommand command)
         {
-            if (checkboxes == null)
-                checkboxes = new long[] { };
-
-            if (selectedCheckboxes == null)
-                selectedCheckboxes = new long[] { };
-
-            // Selected Groups
-            HashSet<long> selectedGroups = new HashSet<long>();
-            if (Session["SelectedGroups"] != null)
-            {
-                selectedGroups = Session["SelectedGroups"] as HashSet<long>;
-            }
-
-            foreach (var checkbox in checkboxes)
-            {
-                selectedGroups.Remove(checkbox);
-            }
-            selectedGroups.AddRange(selectedCheckboxes);
-
-            Session["SelectedGroups"] = selectedGroups;
+            updateSelection(selection);
 
             var groupManager = new GroupManager();
 
@@ -90,7 +71,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
             // Paging
-            var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, selectedGroups));
+            var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, Session["SelectedGroups"] as HashSet<long>));
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = data, Total = total });
         }
@@ -114,35 +95,29 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Update", model);
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Select(GridCommand command)
+        public void updateSelection(Dictionary<long, bool> selection)
         {
-            var userManager = new UserManager(new UserStore());
+            if (selection == null)
+                selection = new Dictionary<long, bool>();
 
-            // Source + Transformation - Data
-            var users = userManager.Users;
-            var total = users.Count();
+            // Selected Groups
+            var selectedGroups = new HashSet<long>();
+            if (Session["SelectedGroups"] != null)
+                selectedGroups = Session["SelectedGroups"] as HashSet<long>;
 
-            // Filtering
-            var filters = command.FilterDescriptors as List<FilterDescriptor>;
-
-            if (filters != null)
+            foreach (var item in selection)
             {
-                users = users.FilterBy<User, UserGridRowModel>(filters);
+                if (item.Value)
+                {
+                    selectedGroups.Add(item.Key);
+                }
+                else
+                {
+                    selectedGroups.Remove(item.Key);
+                }
             }
 
-            // Sorting
-            var sorted = users.Sort(command.SortDescriptors) as IQueryable<User>;
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize)
-                .ToList();
-
-            // Data
-            var data = paged.Select(UserGridRowModel.Convert);
-
-            return View(new GridModel<UserGridRowModel> { Data = data, Total = total });
+            Session["SelectedGroups"] = selectedGroups;
         }
     }
 }

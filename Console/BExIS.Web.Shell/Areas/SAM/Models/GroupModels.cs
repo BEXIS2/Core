@@ -61,17 +61,17 @@ namespace BExIS.Modules.Sam.UI.Models
     public class GroupMembershipGridRowModel
     {
         public string Description { get; set; }
-        public string GroupName { get; set; }
         public GroupType GroupType { get; set; }
         public long Id { get; set; }
         public bool IsMember { get; set; }
+        public string Name { get; set; }
 
         public static GroupMembershipGridRowModel Convert(Group group, HashSet<long> memberships)
         {
             return new GroupMembershipGridRowModel()
             {
                 Description = group.Description,
-                GroupName = group.Name,
+                Name = group.Name,
                 GroupType = group.GroupType,
                 Id = group.Id,
                 IsMember = memberships.Contains(group.Id)
