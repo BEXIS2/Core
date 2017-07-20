@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using System.IO;
-using System.Linq.Expressions;
-using Vaiona.Utils.Cfg;
-using System.Data;
-using System.Globalization;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -27,19 +26,19 @@ namespace BExIS.IO.Transform.Output
             switch (mimeType)
             {
                 case "text/csv":
-                {
+                    {
                         contentDescriptorTitle = "generatedCSV";
                         ext = ".csv";
                         textSeperator = TextSeperator.semicolon;
                         break;
-                }
+                    }
                 default:
-                {
+                    {
                         contentDescriptorTitle = "generatedTXT";
                         ext = ".txt";
                         textSeperator = TextSeperator.tab;
                         break;
-                }
+                    }
             }
 
 
@@ -47,10 +46,10 @@ namespace BExIS.IO.Transform.Output
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
             long datasetVersionId = datasetVersion.Id;
             AsciiWriter writer = new AsciiWriter(textSeperator);
-            
+
             string path = "";
 
-            
+
 
             //ascii allready exist
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
@@ -71,7 +70,7 @@ namespace BExIS.IO.Transform.Output
 
                     path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "Data", ext, writer);
 
-                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,ext);
+                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
 
                     writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
 
@@ -279,7 +278,7 @@ namespace BExIS.IO.Transform.Output
         #region datatable
 
         //[MeasurePerformance]
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetManager datasetManager, DatasetVersion datasetVersion, string tableName="", bool useLabelsAsColumnNames=false)
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetManager datasetManager, DatasetVersion datasetVersion, string tableName = "", bool useLabelsAsColumnNames = false)
         {
             DataTable dt = new DataTable();
             if (string.IsNullOrEmpty(tableName))
@@ -402,7 +401,7 @@ namespace BExIS.IO.Transform.Output
             string columnName = "";
             foreach (var vv in t.VariableValues)
             {
-                columnName = useLabelsAsColumnName == true? vv.Variable.Label :  "ID" + vv.VariableId.ToString();
+                columnName = useLabelsAsColumnName == true ? vv.Variable.Label : "ID" + vv.VariableId.ToString();
 
                 if (vv.VariableId > 0)
                 {
@@ -419,7 +418,7 @@ namespace BExIS.IO.Transform.Output
                         switch (varr.DataAttribute.DataType.SystemType)
                         {
                             case "String":
-                            {
+                                {
                                     dr[columnName] = valueAsString;
 
                                     break;
@@ -530,9 +529,9 @@ namespace BExIS.IO.Transform.Output
                 if (!visibleColumns.Contains(column.ColumnName.ToUpper()))
                 {
                     columnTobeDeleted.Add(column);
-                }                
+                }
             }
-            columnTobeDeleted.ForEach(p=> dt.Columns.Remove(p));
+            columnTobeDeleted.ForEach(p => dt.Columns.Remove(p));
             return dt;
         }
 
@@ -544,7 +543,7 @@ namespace BExIS.IO.Transform.Output
             {
                 newDt.ImportRow(row);
             }
-           
+
 
             return newDt;
         }

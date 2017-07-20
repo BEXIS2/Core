@@ -1,5 +1,7 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
@@ -2038,8 +2040,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
-        public ActionResult _AutoCompleteAjaxLoading(string text, string id)
+        public ActionResult _AutoCompleteAjaxLoading(string text, long id)
         {
+
+            var x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex
             /*
@@ -2052,7 +2057,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
             // WORKAROUND: return always an empty list
-            return new JsonResult { Data = new SelectList(new List<string>(), "Value", "Name") };
+            return new JsonResult { Data = new SelectList(x) };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
