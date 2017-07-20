@@ -1,0 +1,265 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.SelectVerificationModel
+@using Telerik.Web.Mvc.UI;
+@using Telerik.Web.Mvc.Resources;
+@using BExIS.Modules.Dcm.UI.Models;
+@using BExIS.Dlm.Entities.DataStructure;
+@using BExIS.Modules.Dcm.UI.Helpers;
+
+
+
+<div id="Step3" class="uploadWizardStep">
+
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="uploadWizardStep_Description stepper">
+        </div>
+
+        <div class="uploadWizardStep_Content stepper" style="height: inherit; width: 800px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable name</th>
+                        <th>Unit</th>
+                        <th>Datatype</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.HeaderFields.Length; i++)
+                    {
+                        <tr>
+                            <td varName="@Html.Name(Model.HeaderFields[i])" index=@i>
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true" title=""></i>
+                                @*Html.Name(Model.HeaderFields[i])*@
+
+                                <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
+                                <select style="min-width: 90%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
+
+                                    <!--The default option is the name of the column in the submitted table-->
+                                    <option data-unit="1" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
+
+                                    <!--Create an option for each variable in the respective suggestions
+                                        make sure that the one that is registered as selected is actually shown as selected in the list-->
+                                    @foreach (EasyUploadSuggestion sug in Model.Suggestions[i])
+                                    {
+                                        string selected = "";
+
+                                        if (Model.AssignedHeaderUnits.Count > 0)
+                                        {
+                                            Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => (t.Item1 == i) && (t.Item2 == sug.attributeName) && (t.Item3.UnitId == sug.unitID) && (t.Item3.SelectedDataTypeId == sug.dataTypeID)).FirstOrDefault();
+                                            if (tuple != null)
+                                            {
+                                                selected = "selected";
+                                            }
+                                        }
+                                        
+                                        string display = sug.attributeName + " - " + sug.unitName + " - " + sug.datatypeName;
+                                        <option @Html.Raw(selected) data-unit="@sug.unitID" data-datatype="@sug.dataTypeID" value="@sug.attributeName">@display</option>
+                                    }
+                                </select>
+                            </td>
+
+                            <td>
+                                <!--Unit Selector-->
+                                <select name="Unit" headerfieldId="@(i)">
+                                    @foreach (UnitInfo unit in Model.AvailableUnits)
+                                    {
+                                        string selected = "";
+
+                                        if (Model.AssignedHeaderUnits.Count > 0)
+                                        {
+
+                                            //Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item2 == Model.HeaderFields[i]).FirstOrDefault();
+                                            Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item1 == i).FirstOrDefault();
+
+                                            if (tuple != null)
+                                            {
+                                                selected = "selected";
+                                            }
+
+                                        }
+                                        <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(unit.UnitId))" title="@Html.Name(unit.Description)">@Html.Name(unit.Name) (@Html.Name(unit.Abbreviation))</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <!--Datatype Selector-->
+                                <select name="Datatype" headerfieldId="@(i)">
+                                    @{
+
+                                        Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
+
+                                        if (tupleBla != null && tupleBla.Item3.UnitId >= 0)
+                                        {
+                                            foreach (DataTypeInfo dataTypeInfo in ((UnitInfo)tupleBla.Item3).DataTypeInfos)
+                                            {
+                                                string selected = "";
+
+                                                if (tupleBla.Item3.SelectedDataTypeId == dataTypeInfo.DataTypeId)
+                                                {
+                                                    selected = "selected";
+                                                }
+
+                                                <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="none" tilte="">Please select an unit</option>
+                                        }
+
+                                    }
+
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+
+        <div style="float:left; padding-top: 10px">
+            <button id="validateBtn" onClick="validateData()" class="t-button action" title="Validate Selection">Validate</button>
+        </div>
+
+    </div>
+
+    <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
+        {
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                {
+                    <ul>
+                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        {
+                            <li>@s.ToString()</li>
+                        }
+                    </ul>
+
+                }
+            }
+
+        }
+    </div>
+</div>
+
+<style>
+    .fa-exclamation-triangle {
+        display: none;
+        color: darkorange;
+    }
+
+    .fa-check {
+        color: green;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function validateData() {
+
+        $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
+            console.log(response);
+                if (response.errors.length > 0) {
+                    for (var i = 0; i < response.errors.length; i++) {
+                        var error = response.errors[i];
+                        //var VariableName = error.VariableName;
+                        //var TitleCell = $('td[varName="' + VariableName + '"] > i');
+                        var TitleCell = $('td[index="' + error.Item1 + '"] > i');
+
+                        if (TitleCell.is(":visible")) {
+                            var currentTitle = TitleCell.attr("title");
+                            var currentErrorCount = currentTitle.split("\n").length;
+
+                            if (currentErrorCount < 50) {
+                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2DataType);
+                            }
+                            if (currentErrorCount == 50) {
+                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                                TitleCell.attr("title", currentTitle + "\nand more...");
+                            }
+                        } else {
+                            TitleCell.show();
+                            TitleCell.attr("title", error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                        }
+                    }
+                } else {
+                    $('td > i').each(function () {
+                        $(this).removeClass("fa-exclamation-triangle");
+                        $(this).addClass("fa-check");
+                    });
+                }
+            });
+    }
+
+    $(document).ready(function () {
+
+        /*
+        //Is this function even needed?
+        $('select[name="DataType"]').each(function (index) {
+            var selectId = $(this).attr('headerfieldId');
+            var val = $('select[name="Unit"][headerfieldId="' + selectId + '"]').val();
+            if(val > 0)
+            {
+                $(this).prop("disabled", false);
+
+            }
+        });*/
+
+        $('select[name="Unit"]').change(function () {
+            if ($(this).val() != null && $(this).val() != '') {
+                var selectOptionId = $(this).val();
+                var selectId = $(this).attr('headerfieldId');
+
+                // send to bus
+                $.post('@Url.Action("SaveUnitSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { selectFieldId: selectId, selectOptionId: selectOptionId }, function (response) {
+                    $("#Step3").html(response);
+                });
+            }
+        });
+
+        $('select[name="Datatype"]').change(function () {
+            var selectedDataTypeId = $(this).val();
+            var headerfieldId = $(this).attr('headerfieldId');
+
+            // send to bus
+            $.post('@Url.Action("SaveDataTypeSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { headerfieldId: headerfieldId, selectedDataTypeId: selectedDataTypeId }, function (response) {
+                $("#Step3").html(response);
+            });
+        });
+    });
+
+    function suggestionSelected(suggestionSelectObject, i) {
+        //Find the selected option object
+        var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
+
+        var selectedVariableName = selectedOption.value;
+        //Now grab the unitID and datatype from the html attributes of the selected option element
+        var unitID = selectedOption.getAttribute("data-unit");
+        var datatypeID = selectedOption.getAttribute("data-datatype");
+        var selectedVariableId = selectedOption.getAttribute("data-attributeid");
+
+        //Send selection to Bus
+        $.post('@Url.Action("SaveSuggestionSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })',
+            {
+                headerfieldId: i,
+                selectedVariableName: selectedVariableName,
+                selectedVariableId: selectedVariableId,
+                selectedUnitId: unitID,
+                selectedDataTypeId: datatypeID
+            }, function (response) {
+            $("#Step3").html(response);
+        });
+    }
+
+</script>
