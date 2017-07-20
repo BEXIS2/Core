@@ -1,7 +1,6 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Utils.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -63,35 +62,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Memberships_Select(Dictionary<long, bool> selection, long userId, GridCommand command)
+        [GridAction]
+        public ActionResult Memberships_Select(long userId)
         {
-            updateSelection(selection);
-
             var groupManager = new GroupManager();
+            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();
 
-            // Source + Transformation - Data
-            var groups = groupManager.Groups;
-            var total = groups.Count();
-
-            // Filtering
-            var filters = command.FilterDescriptors as List<FilterDescriptor>;
-
-            if (filters != null)
-            {
-                groups = groups.FilterBy<Group, GroupMembershipGridRowModel>(filters);
-            }
-
-            // Sorting
-            var sorted = groups.Sort(command.SortDescriptors) as IQueryable<Group>;
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
-
-            // Paging
-            var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, Session["SelectedGroups"] as HashSet<long>));
-
-            return View(new GridModel<GroupMembershipGridRowModel> { Data = data, Total = total });
+            return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
         }
 
         public ActionResult Memberships_Save(Dictionary<long, bool> selection, long userId)
@@ -121,7 +98,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Index()
         {
-            return View(new GridModel<UserGridRowModel>());
+            return View();
         }
 
         public ActionResult Update(long userId)
@@ -133,40 +110,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(UpdateUserModel model)
+        public ActionResult Update(UpdateUserModel model, List<long> selectedGroups)
         {
             return PartialView("_Update", model);
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Select(GridCommand command)
+        [GridAction]
+        public ActionResult Users_Select()
         {
             var userManager = new UserManager(new UserStore());
+            var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
 
-            // Source + Transformation - Data
-            var users = userManager.Users;
-            var total = users.Count();
-
-            // Filtering
-            var filters = command.FilterDescriptors as List<FilterDescriptor>;
-
-            if (filters != null)
-            {
-                users = users.FilterBy<User, UserGridRowModel>(filters);
-            }
-
-            // Sorting
-            var sorted = users.Sort(command.SortDescriptors) as IQueryable<User>;
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize)
-                .ToList();
-
-            // Data
-            var data = paged.Select(UserGridRowModel.Convert);
-
-            return View(new GridModel<UserGridRowModel> { Data = data, Total = total });
+            return View(new GridModel<UserGridRowModel> { Data = users });
         }
 
         public void updateSelection(Dictionary<long, bool> selection)

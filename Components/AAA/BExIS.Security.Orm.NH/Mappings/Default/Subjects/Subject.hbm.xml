@@ -1,6 +1,7 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Subject" table="Subjects" abstract="true" dynamic-update="true">
-    <id name="Id" type="long" column="Id">
+    <id name="Id" type="long">
+      <column name="Id" index="idx_Subjects_id"/>
       <generator class="hilo" />
     </id>
     <version name="VersionNo" type="Int32">

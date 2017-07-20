@@ -1,5 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -26,21 +26,21 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class UserMembershipGridRowModel
     {
-        public string Description { get; set; }
-        public GroupType GroupType { get; set; }
+        public string Email { get; set; }
+        public bool IsAdministrator { get; set; }
         public long Id { get; set; }
-        public bool IsMember { get; set; }
+        public bool IsUserInGroup { get; set; }
         public string Name { get; set; }
 
-        public static UserMembershipGridRowModel Convert(Group group, List<long> memberships)
+        public static UserMembershipGridRowModel Convert(User user, long featureId)
         {
             return new UserMembershipGridRowModel()
             {
-                Description = group.Description,
-                Name = group.Name,
-                GroupType = group.GroupType,
-                Id = group.Id,
-                IsMember = memberships.Contains(group.Id)
+                Email = user.Email,
+                IsAdministrator = user.IsAdministrator,
+                Id = user.Id,
+                IsUserInGroup = user.Groups.Any(g => g.Id == featureId),
+                Name = user.Name
             };
         }
     }
