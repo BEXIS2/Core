@@ -5,7 +5,7 @@
     ddm provides a sophisticated search facility over registered data sets.
   </Description>
   <Assemblies>
-    <Assembly fullName="BExIS.Dcm.Wizard" role=""/>
+    <!--<Assembly fullName="BExIS.Dcm.Wizard" role=""/>-->
     <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role=""/>
     <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role=""/>
     <Assembly fullName="BExIS.Dcm.UploadWizard" role=""/>

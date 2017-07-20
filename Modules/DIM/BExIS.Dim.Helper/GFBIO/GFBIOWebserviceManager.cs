@@ -157,9 +157,9 @@ namespace BExIS.Dim.Helpers.GFBIO
 
             //json = "[{ \"name\":\"test\",\"description\":\"test description\",\"submitterid\":16297,\"researchobjecttype\":\"x\"}]";
 
-            string encodedParameters = WebServiceHelper.Encode(json);
+            string body = WebServiceHelper.Encode(json);
 
-            return await BasicWebService.Call(url, Broker.UserName, Broker.Password, encodedParameters);
+            return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", body);
         }
 
         #endregion
@@ -170,10 +170,15 @@ namespace BExIS.Dim.Helpers.GFBIO
     {
         public long submitterid { get; set; }
         public long projectid { get; set; }
+
+        // length 200
         public string name { get; set; }
+        // length 15000
         public string description { get; set; }
         public string researchobjecttype { get; set; }
+        // length 1500
         public List<string> authornames { get; set; }
+        // length 1500
         public string extendeddata { get; set; }
         public string metadatalabel { get; set; }
 
