@@ -14,6 +14,8 @@ namespace BExIS.Dlm.Orm.NH.Utils
         // use this to access proper templates. All the templates are in one XML file under nativeObjects
         // they can be in default, or specific dialect folder
         string dbDialect = AppConfiguration.DatabaseDialect;
+        List<string> columnLabels = new List<string>();
+
         public MaterializedViewHelper()
         {
         }
@@ -28,11 +30,25 @@ namespace BExIS.Dlm.Orm.NH.Utils
             StringBuilder mvBuilder = new StringBuilder();
             mvBuilder.AppendLine(string.Format("SELECT * FROM {0};", this.BuildName(datasetId).ToLower()));
             // execute the statement
+            return retrieve(mvBuilder.ToString(), datasetId);
+        }
+
+        public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
+            // execute the statement
+            return retrieve(mvBuilder.ToString(), datasetId);
+        }
+
+        private DataTable retrieve(string queryStr, long datasetId)
+        {
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-                    DataTable table = uow.ExecuteQuery(mvBuilder.ToString());
+                    DataTable table = uow.ExecuteQuery(queryStr);
+                    table = applyColumnLabels(table, datasetId);
                     return table;
                 }
             }
@@ -43,24 +59,36 @@ namespace BExIS.Dlm.Orm.NH.Utils
 
         }
 
-        public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
+        private DataTable applyColumnLabels(DataTable table, long datasetId)
         {
-            StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
-            // execute the statement
-            try
+            DataTable metadata = null;
+            StringBuilder metadataQueryBuilder = new StringBuilder();
+            metadataQueryBuilder.AppendLine(string.Format("SELECT a.attrelid, a.attnum, a.attname AS columnname, d.description, c.relname"));
+            metadataQueryBuilder.AppendLine(string.Format("FROM pg_class c  JOIN pg_attribute a on c.oid = a.attrelid  JOIN pg_description d on c.oid = d.objoid"));
+            metadataQueryBuilder.AppendLine(string.Format("WHERE a.attnum > 0 AND NOT a.attisdropped AND c.relname = '{0}' AND a.attnum = d.objsubid", this.BuildName(datasetId).ToLower()));
+            metadataQueryBuilder.AppendLine(string.Format("ORDER BY a.attnum"));
+            metadataQueryBuilder.Append(string.Format(";"));
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    DataTable table = uow.ExecuteQuery(mvBuilder.ToString());
-                    return table;
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
+                metadata = uow.ExecuteQuery(metadataQueryBuilder.ToString());
             }
 
+            if (metadata == null || metadata.Rows == null || metadata.Rows.Count <= 0)
+                return table;
+            // setting default caption for all columns
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+                table.Columns[i].Caption = table.Columns[i].ColumnName;
+            }
+            // setting captions for variables, coming from the MV metadata (created and saved at MV cretaion time)
+            foreach (DataRow row in metadata.Rows)
+            {
+                var columnName = row["columnname"].ToString();
+                var columnLabel = row["description"].ToString();
+                table.Columns[columnName].Caption = columnLabel;
+            }
+            return table;
         }
 
         /// <summary>
@@ -70,6 +98,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         /// <param name="columnDefinitionList">A list of column definitions coming from the data structure of the dataset. Each definition conatins: variable's name, data type, order, and Id</param>
         public void Create(long datasetId, List<Tuple<string, string, int, long>> columnDefinitionList)
         {
+
             StringBuilder mvBuilder = new StringBuilder();
             // build MV's name
             mvBuilder.AppendLine(string.Format("CREATE MATERIALIZED VIEW {0} AS", this.BuildName(datasetId)));
@@ -86,14 +115,20 @@ namespace BExIS.Dlm.Orm.NH.Utils
             {
                 counter++;
                 string columnStr = buildViewField(columnDefinition.Item1, columnDefinition.Item2, columnDefinition.Item3, columnDefinition.Item4);
-                if(counter < columnDefinitionList.Count)
+                if (counter < columnDefinitionList.Count)
                     selectBuilder.AppendLine(string.Format("{0},", columnStr));
                 else
                     selectBuilder.AppendLine(string.Format("{0}", columnStr)); // no comma for the last column
+
+                columnLabels.Add(string.Format("COMMENT ON COLUMN {0}.{1} IS '{2}';",
+                                    this.BuildName(datasetId).ToLower(),
+                                    this.BuildColumnName(columnDefinition.Item4).ToLower(),
+                                    columnDefinition.Item1));
             }
             selectBuilder
                 .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
-                .Append(string.Format("WHERE v.datasetref = {0}", datasetId))
+                .AppendLine(string.Format("WHERE v.datasetref = {0}", datasetId))
+                .Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
 
             // build the satetment
@@ -109,11 +144,20 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 {
                     int result = uow.ExecuteNonQuery(mvBuilder.ToString());
                 }
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    columnLabels.ForEach(p => uow.ExecuteNonQuery(p));
+                }
             }
             catch (Exception ex)
             {
                 throw ex; // ex is cought here for inspection purposes!
             }
+        }
+
+        private string BuildColumnName(long variableId)
+        {
+            return "var" + variableId;
         }
 
         public bool ExistsForDataset(long datasetId)
@@ -191,18 +235,11 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}"
             string template = @"cast(unnest(cast(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
 
-            string def = string.Format(template, order, dbDataType(dataType), variableName.Replace(" ", "_"));
+            string def = string.Format(template, order, dbDataType(dataType), this.BuildColumnName(Id).ToLower());// variableName.Replace(" ", "_"));
             return def;
         }
 
-        /// <summary>
-        /// Each supported runtime type has a corrsponsing type in the nativeObjects/lookups.xml under datatypes node <datatype key="" dbType="" hasSize="false"></datatype>
-        /// </summary>
-        /// <param name="variableDataType"></param>
-        /// <returns></returns>
-        private string dbDataType(string variableDataType, int size = 0)
-        {
-            Dictionary<string, string> typeTable = new Dictionary<string, string>
+        private static Dictionary<string, string> typeTable = new Dictionary<string, string>
             {
                 { "bool", "bool" },
                 { "boolean", "bool" },
@@ -217,6 +254,14 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "text", "text" },
                 { "string", "character varying(255)" }
             };
+
+        /// <summary>
+        /// Each supported runtime type has a corrsponsing type in the nativeObjects/lookups.xml under datatypes node <datatype key="" dbType="" hasSize="false"></datatype>
+        /// </summary>
+        /// <param name="variableDataType"></param>
+        /// <returns></returns>
+        private string dbDataType(string variableDataType, int size = 0)
+        {
             if (typeTable.ContainsKey(variableDataType.ToLower()))
                 return typeTable[variableDataType.ToLower()]; // change this
             else
