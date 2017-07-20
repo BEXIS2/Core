@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using BExIS.Ddm.Model;
+﻿using BExIS.Utils.Models;
+using System.Collections.Generic;
 
-/// <summary>
-///
-/// </summary>        
+
 namespace BExIS.Ddm.Api
 {
     /// <summary>

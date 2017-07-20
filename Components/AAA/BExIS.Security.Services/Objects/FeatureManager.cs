@@ -1,114 +1,85 @@
-﻿using System;
+﻿using BExIS.Security.Entities.Objects;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using BExIS.Security.Entities.Objects;
 using Vaiona.Persistence.Api;
-       
+
 namespace BExIS.Security.Services.Objects
-{      
-    public class FeatureManager : IFeatureManager
-    {      
+{
+    public class FeatureManager
+    {
         public FeatureManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
+            var uow = this.GetUnitOfWork();
 
-            this.FeaturesRepo = uow.GetReadOnlyRepository<Feature>();
-            this.TasksRepo = uow.GetReadOnlyRepository<Task>();
+            FeatureRepository = uow.GetReadOnlyRepository<Feature>();
         }
 
-        #region Data Reader
-    
-        public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; }
-       
-        public IReadOnlyRepository<Task> TasksRepo { get; private set; }
+        public IQueryable<Feature> Entities => FeatureRepository.Query();
+        public IReadOnlyRepository<Feature> FeatureRepository { get; }
 
-        #endregion
-
-        public bool AddTaskToFeature(long taskId, long featureId)
+        public void Create(Feature feature)
         {
-            Task task = TasksRepo.Get(taskId);
-            Feature feature = FeaturesRepo.Get(featureId);
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork())
             {
-                IRepository<Feature> repo = uow.GetRepository<Feature>();
-
-                repo.LoadIfNot(feature.Tasks);
-                if (!feature.Tasks.Contains(task))
-                {
-                    feature.Tasks.Add(task);
-                    task.Feature = feature;
-                    uow.Commit();
-
-                    return (true);
-                }
-
-                return (false);
+                var featureRepository = uow.GetRepository<Feature>();
+                featureRepository.Put(feature);
+                uow.Commit();
             }
         }
 
-        public Feature CreateFeature(string name, string description, long parentId = 0)
+        public Feature Create(string name, string description, Feature parent = null)
         {
-            Feature feature = new Feature()
+            var feature = new Feature()
             {
                 Name = name,
                 Description = description,
-                Parent = GetFeatureById(parentId)
+                Parent = parent
             };
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork())
             {
-                IRepository<Feature> featuresRepo = uow.GetRepository<Feature>();
-                featuresRepo.Put(feature);
-
+                var featureRepository = uow.GetRepository<Feature>();
+                featureRepository.Put(feature);
                 uow.Commit();
+
             }
 
-            return (feature);
+            return feature;
         }
 
-        public bool DeleteFeatureById(long id)
+        public void Delete(Feature feature)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool ExistsFeatureId(long id)
-        {
-            return FeaturesRepo.Get(id) != null ? true : false;
-        }
-
-        public IQueryable<Feature> GetAllFeatures()
-        {
-            return FeaturesRepo.Query();
-        }
-
-        public IQueryable<Feature> GetRoots()
-        {
-            return FeaturesRepo.Query(f => f.Parent == null);
-        }
-
-        public Feature GetFeatureById(long id)
-        {
-            return FeaturesRepo.Get(id);
-        }
-
-        public bool RemoveTaskFromFeature(long taskId, long featureId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Feature UpdateFeature(Feature feature)
-        {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork())
             {
-                IRepository<Feature> featuresRepo = uow.GetRepository<Feature>();
-                featuresRepo.Put(feature);
+                var featureRepository = uow.GetRepository<Feature>();
+                featureRepository.Delete(feature);
                 uow.Commit();
             }
+        }
 
-            return (feature);
+        public Feature FindById(long featureId)
+        {
+            return FeatureRepository.Get(featureId);
+        }
+
+        public Feature FindByName(string groupName)
+        {
+            return FeatureRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
+        }
+
+        public List<Feature> FindRoots()
+        {
+            return FeatureRepository.Query(f => f.Parent == null).ToList();
+        }
+
+        public void Update(Feature feature)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetRepository<Feature>();
+                featureRepository.Put(feature);
+                uow.Commit();
+            }
         }
     }
 }

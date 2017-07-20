@@ -437,7 +437,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// </summary>
         /// <param name="dataStructure">The structured data structure to add the data view to.</param>
         /// <param name="view">The data view to be linked to the data structure as a spanning view.</param>
-        public void AddDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DataView view)
+        public void AddDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DatasetView view)
         {
             // view should not be connected to a Dataset. if so throw an exception and the caller must remove the relationship to that dataset and then add to a data structure
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
@@ -472,7 +472,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// </summary>
         /// <param name="dataStructure">The unstructured data structure to add the data view to.</param>
         /// <param name="view">The data view to be linked to the data structure as a spanning view.</param>
-        public void AddDataView(BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure dataStructure, DataView view)
+        public void AddDataView(BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure dataStructure, DatasetView view)
         {
             // view should not be connected to a Dataset. if so throw an exception and the caller must remove the relationship to that dataset and then add to a data structure
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
@@ -507,7 +507,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// </summary>
         /// <param name="dataStructure">The data structure to be release from the relationship.</param>
         /// <param name="view">The view to be release from the relationship.</param>
-        public void RemoveDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DataView view)
+        public void RemoveDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DatasetView view)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(view != null && view.Id >= 0);
@@ -541,7 +541,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// </summary>
         /// <param name="dataStructure">The data structure to be release from the relationship.</param>
         /// <param name="view">The view to be release from the relationship.</param>
-        public void RemoveDataView(BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure dataStructure, DataView view)
+        public void RemoveDataView(BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure dataStructure, DatasetView view)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(view != null && view.Id >= 0);

@@ -1,19 +1,17 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Models;
+using BExIS.Xml.Helpers;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using BExIS.IO.Transform.Output;
-using System.Data;
-using BExIS.Modules.Dim.UI.Models;
-using BExIS.Modules.Dim.UI.Models.Formatters;
-using BExIS.Xml.Services;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -49,7 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public HttpResponseMessage Get(int id)
         {
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
 
             OutputDataManager ioOutputDataManager = new OutputDataManager();
 
@@ -81,14 +79,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 var response = Request.CreateResponse();
                 response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                
-                
+
+
                 //set headers on the "response"
                 return response;
 
                 //return model;
 
-            } else
+            }
+            else
             {
                 return Request.CreateResponse();
             }

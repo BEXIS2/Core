@@ -1,26 +1,24 @@
-﻿using System;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Utils.Cfg;
-using BExIS.IO;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadSelectAFileController : Controller
     {
 
         private EasyUploadTaskManager TaskManager;
         private List<String> supportedExtensions = new List<string>() { ".xlsx", ".xlsm" };
-        
+
         [HttpGet]
         public ActionResult SelectAFile(int index)
         {
@@ -44,7 +42,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.StepInfo = TaskManager.Current();
 
             model.serverFileList = GetServerFileList();
-            
+
             return PartialView(model);
         }
 
@@ -74,9 +72,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
 
                             //TaskManager.AddToBus(EasyUploadTaskManager.IS_TEMPLATE, "false");
-                            
+
                             TaskManager.Current().SetValid(true);
-                            
+
                         }
                         catch
                         {
@@ -227,7 +225,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return false;
         }
-        
+
 
         #endregion
     }

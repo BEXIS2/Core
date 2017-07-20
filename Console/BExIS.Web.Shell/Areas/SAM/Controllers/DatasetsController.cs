@@ -1,18 +1,15 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
-using Vaiona.Web.Mvc.Models;
-using BExIS.Ddm.Api;
-using Vaiona.IoC;
 using Vaiona.Web.Extensions;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Entities.Objects;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -21,31 +18,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
     /// </summary>
     public class DatasetsController : Controller
     {
-        /// <summary>
-        /// Shows a berif intro about the functions available as well as some warnings that inofrom the user about non recoverability of some of the operations
-        /// such as purge.
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Checkin(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", this.Session.GetTenant());
+            return View();
+        }
 
-            DatasetManager dm = new DatasetManager();
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-
-            User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
-
-            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
-
-            List<long> datasetIds = new List<long>();
-            if (user != null)
-            {
-                datasetIds.AddRange(permissionManager.GetAllDataIds(user.Id, 1, RightType.Delete));
-            }
-
-            ViewData["DatasetIds"] = datasetIds;
-            return View(datasets);
+        public ActionResult Checkout(int id)
+        {
+            return View();
         }
 
         /// <summary>
@@ -57,24 +37,50 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Delete(long id)
         {
-            DatasetManager dm = new DatasetManager();
-            PermissionManager pm = new PermissionManager();
+            var datasetManager = new DatasetManager();
+            var entityPermissionManager = new EntityPermissionManager();
 
             try
             {
-                if (dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true))
+                if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
                 {
-                    pm.DeleteDataPermissionsByEntity(1, id);
-                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                    entityPermissionManager.Delete(typeof(Dataset), id);
+
+                    // ToDo: refactor the indexing after "delete dataset" process
+                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    //provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
                 }
             }
             catch (Exception e)
             {
-                ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be deleted.", id));
+                ViewData.ModelState.AddModelError("", $@"Dataset {id} could not be deleted.");
             }
             return View();
             //return RedirectToAction("List");
+        }
+
+        /// <summary>
+        /// Shows a berif intro about the functions available as well as some warnings that inofrom the user about non recoverability of some of the operations
+        /// such as purge.
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", Session.GetTenant());
+
+            DatasetManager dm = new DatasetManager();
+            var entityPermissionManager = new EntityPermissionManager();
+
+            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+
+            List<long> datasetIds = new List<long>();
+            if (HttpContext.User.Identity.Name != null)
+            {
+                datasetIds.AddRange(entityPermissionManager.GetKeys<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
+            }
+
+            ViewData["DatasetIds"] = datasetIds;
+            return View(datasets);
         }
 
         /// <summary>
@@ -85,18 +91,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Purge(long id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", Session.GetTenant());
 
             DatasetManager dm = new DatasetManager();
-            PermissionManager pm = new PermissionManager();
+            var entityPermissionManager = new EntityPermissionManager();
 
             try
             {
                 if (dm.PurgeDataset(id))
                 {
-                    pm.DeleteDataPermissionsByEntity(1, id);
-                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                    entityPermissionManager.Delete(typeof(Dataset), id);
+
+                    // ToDo: refactor the indexing after "delete dataset" process
+                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    //provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
                 }
             }
             catch (Exception e)
@@ -106,18 +114,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Having the identifier of a dataset, lists all its versions.
-        /// </summary>
-        /// <param name="id">the identifier of the dataset.</param>
-        /// <returns></returns>
-        public ActionResult Versions(int id)
+        public ActionResult Rollback(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Versions", this.Session.GetTenant());
-            DatasetManager dm = new DatasetManager();
-            List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
-            ViewBag.VersionId = id;
-            return View(versions);
+            return View();
         }
 
         /// <summary>
@@ -127,7 +126,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Version(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Version", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Version", Session.GetTenant());
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.DatasetVersionRepo.Get(p => p.Id == id).First();
@@ -144,23 +143,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 ViewBag.Variables = new List<Variable>();
             }
 
-
             return View(tuples);
         }
 
-        public ActionResult Checkout(int id)
+        /// <summary>
+        /// Having the identifier of a dataset, lists all its versions.
+        /// </summary>
+        /// <param name="id">the identifier of the dataset.</param>
+        /// <returns></returns>
+        public ActionResult Versions(int id)
         {
-            return View();
-        }
-
-        public ActionResult Checkin(int id)
-        {
-            return View();
-        }
-
-        public ActionResult Rollback(int id)
-        {
-            return View();
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Versions", Session.GetTenant());
+            DatasetManager dm = new DatasetManager();
+            List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
+            ViewBag.VersionId = id;
+            return View(versions);
         }
     }
 }

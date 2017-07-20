@@ -9,7 +9,7 @@ using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Services.TypeSystem;
 using System.Xml;
 
-namespace BExIS.Web.Shell.Areas.RPM.Helpers
+namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
     public class AttributeCreator
     {

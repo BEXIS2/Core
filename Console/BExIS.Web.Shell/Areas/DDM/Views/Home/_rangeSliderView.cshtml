@@ -1,4 +1,6 @@
-﻿@model BExIS.Ddm.Model.Property
+﻿@using Telerik.Web.Mvc.UI;
+
+@model BExIS.Utils.ModelsProperty
 
 <div>
 <br />
@@ -23,17 +25,17 @@
          var id = e.currentTarget.id;
 
 
-         $.post('@Url.Action("FilterByRangeSlider", "Home", new RouteValueDictionary { { "area", "DDM" } })', { start: start, end: end, parent: id }, function (response) {
+         $.post('@Url.Action("FilterByRangeSlider", "Home", new RouteValueDictionary { { "area", "ddm" } })', { start: start, end: end, parent: id }, function (response) {
              // alert(response);
              $(".searchBreadcrumbNavigation").html(response);
          });
 
-         $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+         $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
              $("#resultContent").html(response);
 
          })
 
-         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
              $("#searchTreeView").html(response);
          })
         

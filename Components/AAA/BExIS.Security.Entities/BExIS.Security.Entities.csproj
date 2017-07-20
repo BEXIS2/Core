@@ -43,46 +43,33 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authentication\Authenticator.cs" />
-    <Compile Include="Authorization\DataPermission.cs" />
+    <Compile Include="Authentication\Login.cs" />
+    <Compile Include="Authorization\EntityPermission.cs" />
     <Compile Include="Authorization\FeaturePermission.cs" />
     <Compile Include="Authorization\Permission.cs" />
-    <Compile Include="Authorization\Role.cs" />
-    <Compile Include="Objects\AuthenticatorType.cs" />
+    <Compile Include="Notifications\EmailNotification.cs" />
+    <Compile Include="Notifications\Message.cs" />
+    <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Objects\Entity.cs" />
     <Compile Include="Objects\Feature.cs" />
-    <Compile Include="Objects\PermissionType.cs" />
-    <Compile Include="Objects\RightType.cs" />
-    <Compile Include="Objects\SecurityQuestion.cs" />
-    <Compile Include="Objects\Task.cs" />
+    <Compile Include="Objects\Operation.cs" />
+    <Compile Include="Objects\Workflow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests\Decision.cs" />
+    <Compile Include="Requests\Request.cs" />
     <Compile Include="Subjects\Group.cs" />
     <Compile Include="Subjects\Subject.cs" />
     <Compile Include="Subjects\User.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

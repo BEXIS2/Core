@@ -13,7 +13,6 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Xml.Services;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Utils.Cfg;

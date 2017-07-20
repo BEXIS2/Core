@@ -6,12 +6,12 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Xml;
 using BExIS.Dlm.Services.Data;
-using BExIS.Xml.Services;
 using System.IO;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Xml.Helpers.Mapping;
 using System.Text;
 using BExIS.IO.Transform.Output;
+using BExIS.Xml.Helpers;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {

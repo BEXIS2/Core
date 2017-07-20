@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace BExIS.Web.Shell.Areas.DCM.Helpers
+namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class EasyUploadSuggestion
     {
@@ -13,7 +10,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Helpers
         public string unitName;
         public string datatypeName;
         public Boolean selected;
-        
+
         public EasyUploadSuggestion(string attributeName, long unitID, long dataTypeID, string unitName, string datatypeName, Boolean selected)
         {
             this.attributeName = attributeName;

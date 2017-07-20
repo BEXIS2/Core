@@ -1,21 +1,18 @@
-﻿using System;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Utils.Helpers;
+using BExIS.Utils.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using System.IO;
-using Vaiona.Logging;
-using BExIS.IO.Transform.Input;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Web.Shell.Helpers;
-using BExIS.Utils.Models;
-using BExIS.Utils.Helpers;
-using System.Collections.Generic;
 using System.Web.Script.Serialization;
+using Vaiona.Logging;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadSelectAreasController : Controller
     {
@@ -87,7 +84,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                 }
             }
-            
+
 
 
 
@@ -103,7 +100,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             model.StepInfo = TaskManager.Current();
-            
+
             return PartialView(model);
 
         }
@@ -214,7 +211,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     model.DataArea = new List<string>();
                 }
-                if( dataArea != "")
+                if (dataArea != "")
                 {
                     var serializer = new JavaScriptSerializer();
                     int[] newArea = serializer.Deserialize<int[]>(dataArea);
@@ -223,13 +220,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         int[] oldArea = serializer.Deserialize<int[]>(area);
                         //If one of the already selected areas contains the new one, don't add the new one to the selection (prevents duplicate selection)
-                        if( oldArea[0] <= newArea[0] && oldArea[2] >= newArea[2] &&
-                            oldArea[1] <= newArea[1] && oldArea[3] >= newArea[3] )
+                        if (oldArea[0] <= newArea[0] && oldArea[2] >= newArea[2] &&
+                            oldArea[1] <= newArea[1] && oldArea[3] >= newArea[3])
                         {
                             contains = true;
                         }
                     }
-                    if(!contains)
+                    if (!contains)
                         model.DataArea.Add(dataArea);
                 }
 
@@ -244,7 +241,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             Session["TaskManager"] = TaskManager;
-            
+
             model.StepInfo = TaskManager.Current();
 
             return PartialView("SelectAreas", model);

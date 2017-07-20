@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.Wizard;
-using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 using System;
+using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class SelectMetaDataModel
     {

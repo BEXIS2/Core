@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+using BExIS.Modules.Dcm.UI.Models.Metadata;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class CreateDatasetViewModel
     {

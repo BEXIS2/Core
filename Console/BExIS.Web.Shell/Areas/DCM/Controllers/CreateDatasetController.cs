@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.Dcm.CreateDatasetWizard;
+﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Ddm.Api;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -16,26 +9,33 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Entities.Objects;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
-using Vaiona.Web.Mvc.Models;
-using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
-using Vaiona.IoC;
+using BExIS.Web.Shell.Models;
+using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Routing;
+using System.Xml;
+using System.Xml.Linq;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class CreateDatasetController : Controller
     {
         private CreateTaskmanager TaskManager;
-  
+
         #region Create a Dataset Setup Page
 
         //
@@ -56,7 +56,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager == null)
             {
-
                 TaskManager = new CreateTaskmanager();
 
                 Session["CreateDatasetTaskmanager"] = TaskManager;
@@ -64,11 +63,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Session["DataStructureViewList"] = LoadDataStructureViewList();
                 Session["DatasetViewList"] = LoadDatasetViewList();
 
-
                 setAdditionalFunctions();
 
                 //set Entity to TaskManager
-                TaskManager.AddToBus(CreateTaskmanager.ENTITY_CLASS_PATH,"BExIS.Dlm.Entities.Data.Dataset");
+                TaskManager.AddToBus(CreateTaskmanager.ENTITY_CLASS_PATH, "BExIS.Dlm.Entities.Data.Dataset");
 
                 SetupModel Model = GetDefaultModel();
 
@@ -99,7 +97,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                         Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
                 }
-
 
                 return View(Model);
             }
@@ -133,7 +130,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Model.BlockDatasetId = false;
 
                 TaskManager.AddToBus(CreateTaskmanager.COPY_OF_ENTITY_ID, id);
-
             }
 
             if (id != -1 && type.ToLower().Equals("metadatastructureid"))
@@ -151,7 +147,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     Model.BlockMetadataStructureId = true;
                     Model.BlockDatasetId = false;
                 }
-
             }
 
             if (id != -1 && type.ToLower().Equals("datastructureid"))
@@ -175,6 +170,41 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return View("Index", Model);
         }
 
+        [HttpPost]
+        public ActionResult StoreSelectedDataset(long id)
+        {
+            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = dm.GetDataset(id);
+
+            SetupModel Model = GetDefaultModel();
+
+            if (id == -1)
+            {
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
+                    Model.SelectedDataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
+
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+                    Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            }
+            else
+            {
+                Model.SelectedDatasetId = id;
+                Model.SelectedDataStructureId = dataset.DataStructure.Id;
+                Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
+
+                Model.BlockMetadataStructureId = true;
+
+                //add to Bus
+                TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
+                TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, dataset.MetadataStructure.Id);
+                TaskManager.AddToBus(CreateTaskmanager.COPY_OF_ENTITY_ID, dataset.Id);
+            }
+
+            return PartialView("Index", Model);
+        }
+
         public ActionResult StoreSelectedDatasetSetup(SetupModel model)
         {
             CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -188,7 +218,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model = LoadLists(model);
 
-            if (ModelState.IsValid )
+            if (ModelState.IsValid)
             {
                 TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                 TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
@@ -226,49 +256,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
                 }
 
- 
                 return RedirectToAction("StartMetadataEditor", "Form");
-
             }
 
             return View("Index", model);
-        }
-
-        [HttpPost]
-        public ActionResult StoreSelectedDataset(long id)
-        {
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            DatasetManager dm = new DatasetManager();
-            Dataset dataset = dm.GetDataset(id);
-
-            SetupModel Model = GetDefaultModel();
-
-            if (id == -1)
-            {
-
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
-                    Model.SelectedDataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
-
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                    Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-
-            }
-            else
-            {
-                Model.SelectedDatasetId = id;
-                Model.SelectedDataStructureId = dataset.DataStructure.Id;
-                Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
-
-                Model.BlockMetadataStructureId = true;
-
-                //add to Bus
-                TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
-                TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, dataset.MetadataStructure.Id);
-                TaskManager.AddToBus(CreateTaskmanager.COPY_OF_ENTITY_ID, dataset.Id);
-            }
-
-            return PartialView("Index", Model);
         }
 
         [HttpPost]
@@ -321,11 +312,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             List<ListViewItemWithType> datastructures = LoadDataStructureViewList();
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
-                 datastructures, new List<string>{"Id", "Title","Description","Type"},
+                 datastructures, new List<string> { "Id", "Title", "Description", "Type" },
                  new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
 
             model.Title = "Select a Data Structure";
-
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
@@ -354,7 +344,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return RedirectToAction("ReloadIndex", "CreateDataset", new { id = id, type = "MetadataStructureId" });
         }
 
-        #endregion
+        #endregion setup parameter selection actions
 
         private SetupModel GetDefaultModel()
         {
@@ -390,11 +380,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return model;
         }
 
-        #endregion
+        #endregion Create a Dataset Setup Page
 
         /// <summary>
         /// Store the incoming xmldocument in the bus of the Create TaskManager with
-        /// the METADATA_XML key 
+        /// the METADATA_XML key
         /// </summary>
         /// <param name="metadataXml"></param>
         private void SetXml(XDocument metadataXml)
@@ -416,14 +406,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 else
                     TaskManager.Bus.Add(CreateTaskmanager.SETUP_LOADED, true);
             }
-
         }
 
         #region Submit And Create And Finish And Cancel and Reset
 
         public ActionResult Submit()
         {
-            // create and submit Dataset 
+            // create and submit Dataset
             long datasetId = SubmitDataset();
 
             bool editMode = false;
@@ -433,8 +422,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.EDIT_MODE))
                 editMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
 
-            if(editMode)
-                return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = false, fromEditMode = true});
+            if (editMode)
+                return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = false, fromEditMode = true });
             else
                 return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = true });
         }
@@ -480,17 +469,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     // add security
                     if (GetUsernameOrDefault() != "DEFAULT")
                     {
-                        PermissionManager pm = new PermissionManager();
-                        SubjectManager sm = new SubjectManager();
-
-                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
-
-                        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                        {
-                            pm.CreateDataPermission(user.Id, 1, ds.Id, rightType);
-                        }
+                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
-
                 }
                 else
                 {
@@ -506,13 +487,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                     {
                         XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-                        workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
+                        workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
                     }
 
                     string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
-                    if(String.IsNullOrEmpty(title)) title = "No Title available.";
+                    if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
-                    TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title );//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+                    TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
@@ -520,62 +501,34 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     //add to index
                     // ToDo check which SearchProvider it is, default luceneprovider
-                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                    // BUG: invalid call to ddm method
+                    // TODO: mODULARITY ->Call DDM Reindex
+                    /*
+                     <Export tag="internalApi" id="SearchIndex"
+                    title="Reindex Search" description="Reindex Search" icon=""
+                    controller="SearchIndex" action="Get"
+                    extends="" />
+                     */
+                    // WORKAROUND: do not reindex
+                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                    var x = this.Run("DDM", "SearchIndex", "ReIndex", new RouteValueDictionary() { { "id", datasetId } });
+
 
                     LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
-
                 }
 
                 return datasetId;
             }
 
-            #endregion
+            #endregion create dataset
 
             return -1;
         }
 
         #region Options
-
-        /// <summary>
-        /// Load the UploadWizard with preselected parameters
-        /// and redirect to "UploadWizard", "Submit", area = "DCM"
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult StartUploadWizard()
-        {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            BExIS.Dcm.UploadWizard.DataStructureType type = new BExIS.Dcm.UploadWizard.DataStructureType();
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_TYPE))
-            {
-                type = (BExIS.Dcm.UploadWizard.DataStructureType)TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_TYPE];
-            }
-
-            long datasetid = 0;
-            // set parameters for upload process to pass it with the action
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-            {
-                datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-            }
-
-            Session["CreateDatasetTaskmanager"] = null;
-            TaskManager = null;
-
-            return RedirectToAction("UploadWizard", "Submit", new { area = "DCM", type = type , datasetid = datasetid });
-  
-        }
-
-        /// <summary>
-        /// redirect to the DDM/Data/ShowData Action
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult ShowData(long id)
-        {
-            return RedirectToAction("ShowData", "Data", new { area="DDM" , id = id } );
-        }
 
         public ActionResult Cancel()
         {
@@ -603,10 +556,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     created = true;
                 }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
+        }
+
+        public ActionResult Copy()
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+                {
+                    long datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+
+                    return RedirectToAction("Index", "CreateDataset", new { id = datasetid, type = "DatasetId" });
+                }
+            }
+            //Index(long id = -1, string type = "")
+            return RedirectToAction("Index", "CreateDataset", new { id = -1, type = "DatasetId" });
         }
 
         public ActionResult Reset()
@@ -635,39 +604,59 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     created = true;
                 }
 
-              
-
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
         }
 
-        public ActionResult Copy()
+        /// <summary>
+        /// redirect to the DDM/Data/ShowData Action
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult ShowData(long id)
         {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            if (TaskManager != null)
-            {
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-                {
-                    long datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-
-                    return RedirectToAction("Index", "CreateDataset", new { id = datasetid, type = "DatasetId" });
-
-                }
-            }
-            //Index(long id = -1, string type = "")
-            return RedirectToAction("Index", "CreateDataset", new { id = -1, type = "DatasetId" });
+            return this.Run2("DDM", "Data", "ShowData", new RouteValueDictionary { { "id", id } });
         }
 
-        #endregion
+        /// <summary>
+        /// Load the UploadWizard with preselected parameters
+        /// and redirect to "UploadWizard", "Submit", area = "Dcm"
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult StartUploadWizard()
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            #endregion
+            BExIS.Dcm.UploadWizard.DataStructureType type = new BExIS.Dcm.UploadWizard.DataStructureType();
 
-            #region Helper
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_TYPE))
+            {
+                type = (BExIS.Dcm.UploadWizard.DataStructureType)TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_TYPE];
+            }
 
-            // chekc if user exist
-            // if true return usernamem otherwise "DEFAULT"
+            long datasetid = 0;
+            // set parameters for upload process to pass it with the action
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+            {
+                datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+            }
+
+            Session["CreateDatasetTaskmanager"] = null;
+            TaskManager = null;
+
+            return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
+        }
+
+        #endregion Options
+
+        #endregion Submit And Create And Finish And Cancel and Reset
+
+        #region Helper
+
+        // chekc if user exist
+        // if true return usernamem otherwise "DEFAULT"
         public string GetUsernameOrDefault()
         {
             string username = string.Empty;
@@ -680,39 +669,29 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        private DataStructureType GetDataStructureType(long id)
+        public List<ListViewItem> LoadDatasetViewList()
         {
-            DataStructureManager dataStructuremanager = new DataStructureManager();
-            DataStructure dataStructure = dataStructuremanager.AllTypesDataStructureRepo.Get(id);
-
-            if (dataStructure is StructuredDataStructure)
-            {
-                return DataStructureType.Structured;
-            }
-
-            if (dataStructure is UnStructuredDataStructure)
-            {
-                return DataStructureType.Unstructured;
-            }
-
-            return DataStructureType.Structured;
-        }
-
-        public List<ListViewItem> LoadMetadataStructureViewList()
-        {
-            MetadataStructureManager msm = new MetadataStructureManager();
+            DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
-            foreach (MetadataStructure metadataStructure in msm.Repo.Get())
-            {
-                if (XmlDatasetHelper.IsActive(metadataStructure.Id) && 
-                    XmlDatasetHelper.HasEntityType(metadataStructure.Id,"bexis.dlm.entities.data.dataset"))
-                {
-                    string title = metadataStructure.Name;
+            //get all datasetsid where the current userer has access to
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager(new UserStore());
 
-                    temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+            List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
+                typeof(Dataset), RightType.Write);
+
+            foreach (long id in datasetIds)
+            {
+                if (datasetManager.IsDatasetCheckedIn(id))
+                {
+                    string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                    string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+
+                    temp.Add(new ListViewItem(id, title, description));
                 }
             }
+
 
             return temp.OrderBy(p => p.Title).ToList();
         }
@@ -742,33 +721,41 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp.OrderBy(p => p.Title).ToList();
         }
 
-        public List<ListViewItem> LoadDatasetViewList()
+        public List<ListViewItem> LoadMetadataStructureViewList()
         {
-            PermissionManager pm = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-            DatasetManager datasetManager = new DatasetManager();
+            MetadataStructureManager msm = new MetadataStructureManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
-            //get all datasetsid where the current userer has access to
-            long userid = -1;
-            if (subjectManager.ExistsUsername(GetUsernameOrDefault()))
-                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-
-            if (userid != -1)
+            foreach (MetadataStructure metadataStructure in msm.Repo.Get())
             {
-                foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
+                if (XmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                    XmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
                 {
-                    if (datasetManager.IsDatasetCheckedIn(id))
-                    {
-                        string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                        string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                    string title = metadataStructure.Name;
 
-                        temp.Add(new ListViewItem(id, title, description));
-                    }
+                    temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
                 }
             }
 
             return temp.OrderBy(p => p.Title).ToList();
+        }
+
+        private DataStructureType GetDataStructureType(long id)
+        {
+            DataStructureManager dataStructuremanager = new DataStructureManager();
+            DataStructure dataStructure = dataStructuremanager.AllTypesDataStructureRepo.Get(id);
+
+            if (dataStructure is StructuredDataStructure)
+            {
+                return DataStructureType.Structured;
+            }
+
+            if (dataStructure is UnStructuredDataStructure)
+            {
+                return DataStructureType.Unstructured;
+            }
+
+            return DataStructureType.Structured;
         }
 
         private void setAdditionalFunctions()
@@ -796,15 +783,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             submitAction.ControllerName = "CreateDataset";
             submitAction.AreaName = "DCM";
 
-
             TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
             TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
             TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
             TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
-
         }
 
-        #endregion
-
+        #endregion Helper
     }
 }

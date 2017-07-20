@@ -1,9 +1,9 @@
 ﻿
 @using BExIS.Modules.Dim.UI.Models.Mapping
-@model BExIS.Modules.Dim.UI.Models.Mapping.LinkElementModel
+@model LinkElementModel
 
 @{
-    string id = Model.Type+ "_"+Model.ElementId+"_"+ @Model.Position+"_"+@Model.Name;
+    string id = /*Model.Type +*/ "_"+Model.ElementId+"_"+ @Model.Position+"_"+@Model.Name;
     string c = "le-simple-" + @Model.Position;
 }
 

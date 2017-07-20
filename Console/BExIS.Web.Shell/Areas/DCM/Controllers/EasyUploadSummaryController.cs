@@ -1,47 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using System.Threading.Tasks;
-using System.Threading;
-using NHibernate.Util;
-using Vaiona.Logging;
-using Vaiona.Logging.Aspects;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Entities.Administration;
-using System.Xml;
-using BExIS.Xml.Helpers;
-using System.Xml.Linq;
-using BExIS.Xml.Services;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.ValueCheck;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Entities.Objects;
+using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation;
-using BExIS.IO.Transform.Validation.ValueCheck;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.Web.Shell.Helpers;
-using BExIS.Web.Shell.Areas.DCM.Helpers;
+using System.Xml;
+using System.Xml.Linq;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadSummaryController : Controller
     {
@@ -110,7 +96,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     areaDataValuesList.Add(serializer.Deserialize<int[]>(jsonArray));
                 }
-                foreach(int[] areaDataValues in areaDataValuesList)
+                foreach (int[] areaDataValues in areaDataValuesList)
                 {
                     if (model.FileFormat.ToLower() == "leftright")
                     {
@@ -122,7 +108,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         model.NumberOfData += (areaDataValues[2]) - (areaDataValues[0]) + 1;
                     }
                 }
-                
+
             }
 
             return PartialView("EasyUploadSummary", model);
@@ -181,12 +167,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     JavaScriptSerializer serializer = new JavaScriptSerializer();
                     List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                     List<int[]> areaDataValuesList = new List<int[]>();
-                    foreach(string area in selectedDataAreaJsonArray)
+                    foreach (string area in selectedDataAreaJsonArray)
                     {
                         areaDataValuesList.Add(serializer.Deserialize<int[]>(area));
                     }
 
-                    foreach(int[] areaDataValues in areaDataValuesList)
+                    foreach (int[] areaDataValues in areaDataValuesList)
                     {
                         if (model.FileFormat.ToLower() == "leftright")
                         {
@@ -198,7 +184,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
                         }
                     }
-                    
+
                 }
 
                 #endregion
@@ -309,7 +295,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             //Sorting necessary to prevent problems when inserting the tuples
-            MappedHeaders.Sort( (head1, head2) => head1.Item1.CompareTo(head2.Item1) );
+            MappedHeaders.Sort((head1, head2) => head1.Item1.CompareTo(head2.Item1));
             List<VariableIdentifier> identifiers = new List<VariableIdentifier>();
             foreach (Tuple<int, string, UnitInfo> Entry in MappedHeaders)
             {
@@ -387,7 +373,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 PermissionManager pm = new PermissionManager();
                 SubjectManager sm = new SubjectManager();
 
-                User user = sm.GetUserByName(GetUsernameOrDefault());
+                //User user = sm.GetUserByName(GetUsernameOrDefault());
 
                 //Rights-Management
                 /*
@@ -403,7 +389,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
                 {
                     //The user gets full permissions
-                    pm.CreateDataPermission(user.Id, 1, ds.Id, rightType);
+                    // add security
+                    if (GetUsernameOrDefault() != "DEFAULT")
+                    {
+                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    }
 
                     // adding the rights for the pis
                     /*foreach (long piId in piList)
@@ -439,7 +430,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             #region excel reader
-            
+
             int packageSize = 10000;
             //HACK ?
             TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
@@ -467,7 +458,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             List<int[]> areaDataValuesList = new List<int[]>();
-            foreach(string area in selectedDataAreaJsonArray)
+            foreach (string area in selectedDataAreaJsonArray)
             {
                 areaDataValuesList.Add(serializer.Deserialize<int[]>(area));
             }
@@ -488,7 +479,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     break;
             }
 
-            foreach(int[] areaDataValues in areaDataValuesList)
+            foreach (int[] areaDataValues in areaDataValuesList)
             {
                 EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
                 fri.DataStartRow = areaDataValues[0] + 1;
@@ -507,15 +498,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 reader.setSubmittedVariableIdentifiers(identifiers);
 
                 rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
-                
+
             }
 
             //After reading all the rows, add them to the dataset
-            if(rows != null)
+            if (rows != null)
                 dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
 
             Stream.Close();
-            
+
 
             #endregion
 
@@ -573,12 +564,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();
-            foreach(string area in DataArea)
+            foreach (string area in DataArea)
             {
                 IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
             }
-            
-            foreach(int[] IntDataArea in IntDataAreaList)
+
+            foreach (int[] IntDataArea in IntDataAreaList)
             {
                 string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
 
@@ -657,7 +648,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                 }
             }
-           
+
             return ErrorList;
         }
 

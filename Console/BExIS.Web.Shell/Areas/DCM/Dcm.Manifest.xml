@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="dcm" displayName="Data Collection Module" version="1.0.0" builtin="true">
+  <Description>
+    <!--add proper description-->
+    ddm provides a sophisticated search facility over registered data sets.
+  </Description>
+  <Assemblies>
+    <!--<Assembly fullName="BExIS.Dcm.Wizard" role=""/>-->
+    <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role=""/>
+    <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role=""/>
+    <Assembly fullName="BExIS.Dcm.UploadWizard" role=""/>
+  </Assemblies>
+  <Dependencies>
+    <Dependency moduleId="dcm" version="*.*.*" />
+  </Dependencies>
+  <Exports>
+    <!--add proper menu items-->
+    <Export tag="settings" id="manageMetadata" order="1"
+            title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
+            controller="ManageMetadataStructure" action="Index" argument=""
+            extends="./settingsRoot"
+            />
+
+    <Export tag="menubar" id="createDataset" order="1"
+            title="Create Dataset" description="Create new Dataset" icon=""
+            controller="CreateDataset" action="index"
+            extends="./menubarRoot/collect" />
+    <Export tag="menubar" id="uploaddata" order="2"
+            title="Upload Data" description="Upload data to a dataset" icon=""
+            controller="Submit" action="index"
+            extends="./menubarRoot/collect" />
+    <Export tag="menubar" id="createDataset" order="3"
+            title="Push Big File" description="Push big file to the server to use it later" icon=""
+            controller="Push" action="index"
+            extends="./menubarRoot/collect" />
+
+    <Export tag="lunchbar" id="helpDcm" order="1"
+            title="Data Collection" description="Data Collection Help Manual" icon=""
+            controller="help" action="index"
+            extends="./lunchbarRoot/help" />
+    
+    <Export tag="api" id="tntList"
+            title="No thing" description="Change me!" icon=""
+            controller="home" action="index"
+            extends="./apiRoot"
+            />
+
+    <!-- INTERNAL-->
+
+    <Export tag="internalApi" id="loadFromFromExternal"
+            title="load Metadata Form" description="load Metadata Form" icon=""
+            controller="Form" action="LoadMetadataFromExternal"
+            extends="" />
+
+    <Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
+            title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
+            controller="Form" action="SetAdditionalFunctions"
+            extends="" />
+  </Exports>
+</Manifest>

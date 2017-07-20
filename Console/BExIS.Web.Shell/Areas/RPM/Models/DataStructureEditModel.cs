@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.Modules.Rpm.UI.Classes;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public struct ItemStruct
     {
@@ -181,12 +181,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.inUse = false;
         }
 
-        public VariablePreviewStruct fill(long attributeId)
+        public new VariablePreviewStruct fill(long attributeId)
         {
             return this.fill(attributeId, true);
         }
 
-        public VariablePreviewStruct fill(long attributeId, bool getConstraints)
+        public new VariablePreviewStruct fill(long attributeId, bool getConstraints)
         {
             DataContainerManager dataAttributeManager = new DataContainerManager();
             DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
@@ -280,7 +280,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
     public class AttributeEditStruct : AttributePreviewStruct
     {
-        public ItemStruct DataType { get; set; }
+        public new ItemStruct DataType { get; set; }
         public List<ItemStruct> Units { get; set; }
         public List<ItemStruct> DataTypes { get; set; }
 

@@ -1,30 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Xml;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
+﻿using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using Vaiona.Utils.Cfg;
-using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
-using System.Xml.Linq;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using System.Web.Routing;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitSpecifyDatasetController : Controller
     {
@@ -54,7 +43,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
 
-                if(datasetId > 0)
+                if (datasetId > 0)
                 {
                     // add title to model
                     model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
@@ -122,7 +111,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     //reload model
                     model.StepInfo = TaskManager.Current();
                     if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
-              }
+                }
             }
 
             return PartialView(model);
@@ -140,7 +129,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             DatasetVersion datasetVersion;
 
-            if(datasetManager.IsDatasetCheckedIn(datasetId))
+            if (datasetManager.IsDatasetCheckedIn(datasetId))
             {
                 addSelectedDatasetToBus(datasetId);
             }
@@ -158,10 +147,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
                 model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                model.SelectedDatasetId = Convert.ToInt32(id);
+            model.SelectedDatasetId = Convert.ToInt32(id);
             return PartialView("SpecifyDataset", model);
         }
- 
+
         #region private methods
 
 

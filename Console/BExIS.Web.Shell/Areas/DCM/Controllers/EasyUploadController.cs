@@ -1,27 +1,16 @@
 ﻿using BExIS.Dcm.UploadWizard;
-using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
+using BExIS.Modules.Dcm.UI.Models;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadController : Controller
     {
@@ -40,7 +29,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             Session["TaskManager"] = null;
             TaskManager = null;
-            
+
             try
             {
                 string path = "";
@@ -53,7 +42,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Session["TaskManager"] = EasyUploadTaskManager.Bind(xmlTaskInfo);
 
                 TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-                
+
             }
             catch (Exception e)
             {
@@ -127,7 +116,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Session["Taskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "EasyUpload", new RouteValueDictionary { { "area", "DCM" }});
+            return RedirectToAction("UploadWizard", "EasyUpload", new RouteValueDictionary { { "area", "DCM" } });
         }
 
         public ActionResult ShowData(long id)

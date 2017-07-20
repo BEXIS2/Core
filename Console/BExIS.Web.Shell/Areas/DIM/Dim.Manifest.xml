@@ -5,11 +5,11 @@
     It allows for exporting data, metadata, and schema.
   </Description>
   <Assemblies>
-    <Assembly fullName="BExIS.Dim.Entities" role="Entity"/>
-    <Assembly fullName="BExIS.Dim.Helpers" role="Entity"/>
-    <Assembly fullName="BExIS.Dim.Orm.NH" role="Entity"/>
-    <Assembly fullName="BExIS.Dim.Services" role="Entity"/>
-    <Assembly fullName="BExIS.Modules.Dim.UI" role="Entity"/>
+    <Assembly fullName="BExIS.Dim.Entities" role=""/>
+    <Assembly fullName="BExIS.Dim.Helpers" role=""/>
+    <!--<Assembly fullName="BExIS.Dim.Orm.NH" role=""/>-->
+    <Assembly fullName="BExIS.Dim.Services" role=""/>
+    <!--<Assembly fullName="BExIS.Modules.Dim.UI" role="UI"/>-->
   </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
@@ -20,5 +20,17 @@
             controller="admin" action="index"
             extends="./settingsRoot"
             />
+    <Export tag="lunchbar" id="helpDim" order="1"
+            title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
+            controller="Help" action="index"
+            extends="./lunchbarRoot/help"
+            />
+
+    <Export tag="inaternalAction" id="publishDataset" order="1"
+                title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""
+                controller="Submission" action="getPublishDataPartialView"
+                extends=""
+            />
+    
   </Exports>
 </Manifest>

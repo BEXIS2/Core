@@ -1,7 +1,7 @@
 ﻿@model SearchAttributeViewModel
 
-@using BExIS.Ddm.Model;
-@using BExIS.Web.Shell.Areas.DDM.Models;
+@using BExIS.Utils.Models;
+@using BExIS.Modules.Ddm.UI.Models;
 
 @{
     
@@ -291,7 +291,7 @@
         var window = $('#EditSearchAttribute').data('tWindow');
         window.close();
 
-        @*$.post('@Url.Action("SearchDesigner", "Admin", new RouteValueDictionary { { "area", "DDM" } })', function (response) {
+        @*$.post('@Url.Action("SearchDesigner", "Admin", new RouteValueDictionary { { "area", "ddm" } })', function (response) {
             $("body").html(response);
         })*@
     }

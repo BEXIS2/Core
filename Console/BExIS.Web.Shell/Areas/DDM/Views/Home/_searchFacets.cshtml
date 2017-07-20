@@ -1,5 +1,7 @@
-﻿@using BExIS.Ddm.Model;
-@using BExIS.Web.Shell.Areas.DDM.Helpers;
+﻿@using BExIS.Utils.Models
+@using Telerik.Web.Mvc.UI;
+@using SearchModel = BExIS.Utils.Models.SearchModel
+
 
 @model Tuple<SearchModel,IEnumerable<Facet>>
            
@@ -61,13 +63,13 @@
                                    subitem.ActionName = "OnSelectTreeViewItem";
                                    subitem.ControllerName = "Home";
                                    subitem.LinkHtmlAttributes["title"] = t.Text + " (" + t.Count + ")";
-                                   subitem.Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "DDM" }, { "SelectedItem", subitem.Value }, { "Parent", item.Value } });
+                                   subitem.Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "ddm" }, { "SelectedItem", subitem.Value }, { "Parent", item.Value } });
                                }
 
                            }
 
                            //Get Count from Facets
-                           Facet tmp = Model.Item1.SearchComponent.Facets.Where(p => p.Name == facet.Name).FirstOrDefault();
+                           Facet tmp = Model.Item1.SearchComponent.Facets.Where(p => p.Name.Equals(facet.Name)).FirstOrDefault();
                            int count = tmp.Childrens.Where(c => c.Count > 0).Count();
 
                            if (item.Items.Count < count && count > 0)
@@ -143,7 +145,7 @@
             var detailWindow = $("#MoreWindow").data("tWindow");
 
 
-            $.post('@Url.Action("ShowMoreWindow", "Home", new RouteValueDictionary {{"area", "DDM"}})',
+            $.post('@Url.Action("ShowMoreWindow", "Home")',
                 { parent: parent },
                 function(response) {
                     $("#search_more").html(response);
@@ -180,13 +182,13 @@
         // find all checkboxes and disable it during server request
         facets_disable();
 
-        $.post('@Url.Action("CheckedTreeViewItem", "Home", new RouteValueDictionary {{"area", "DDM"}})',
+        $.post('@Url.Action("CheckedTreeViewItem", "Home", new RouteValueDictionary {{"area", "ddm"}})',
             { SelectedItem: selectedItemValue, Parent: parent },
             function(response) {
                 $("#searchTreeView").html(response);
                 facets_disable();
 
-                $.post('@Url.Action("GetDataForBreadCrumbView", "Home", new RouteValueDictionary {{"area", "DDM"}})',
+                $.post('@Url.Action("GetDataForBreadCrumbView", "Home", new RouteValueDictionary {{"area", "ddm"}})',
                     {},
                     function(response) {
                         $("#breadCrumb").replaceWith(response);

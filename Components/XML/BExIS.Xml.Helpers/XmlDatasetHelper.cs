@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Helpers;
-using NHibernate.Persister.Collection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
-namespace BExIS.Xml.Services
+namespace BExIS.Xml.Helpers
 {
     public class XmlDatasetHelper
     {
@@ -47,7 +44,7 @@ namespace BExIS.Xml.Services
                 datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
             {
                 MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
                 XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
                     xDoc);
 
@@ -91,11 +88,11 @@ namespace BExIS.Xml.Services
         public static string GetInformationPath(MetadataStructure metadataStructure, NameAttributeValues name)
         {
 
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
-                    xDoc);
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                xDoc);
 
-                string xpath = temp.Attribute("value").Value.ToString();
+            string xpath = temp.Attribute("value").Value.ToString();
 
             return xpath;
         }
@@ -131,7 +128,7 @@ namespace BExIS.Xml.Services
                 datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
             {
                 MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
                 IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), "type",
                     type.ToString(), xDoc);
 
@@ -179,7 +176,7 @@ namespace BExIS.Xml.Services
                 MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
 
-                Dictionary<string,string> queryDic = new Dictionary<string, string>();
+                Dictionary<string, string> queryDic = new Dictionary<string, string>();
                 queryDic.Add(AttributeNames.name.ToString(), name);
                 queryDic.Add(AttributeNames.type.ToString(), type.ToString());
 
@@ -266,7 +263,7 @@ namespace BExIS.Xml.Services
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
                 IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
                     type.ToString(), xDoc);
-                
+
                 foreach (var element in temp)
                 {
                     tmpList.Add(element.Attribute(returnType.ToString()).Value);
@@ -299,7 +296,7 @@ namespace BExIS.Xml.Services
                 }
                 catch (Exception)
                 {
-                    
+
                     return false;
                 }
             }
@@ -418,7 +415,7 @@ namespace BExIS.Xml.Services
                     foreach (var entity in tmp)
                     {
                         string tmpEntityClassPath = "";
-                        if (entity.HasAttributes && entity.Attribute("value")!= null)
+                        if (entity.HasAttributes && entity.Attribute("value") != null)
                             tmpEntityClassPath = entity.Attribute("value").Value.ToLower();
 
                         if (tmpEntityClassPath.Equals(entityClassPath.ToLower())) return true;
@@ -550,7 +547,7 @@ namespace BExIS.Xml.Services
     }
 
     public enum nodeNames
-    { 
+    {
         nodeRef,
         convertRef,
         entity,

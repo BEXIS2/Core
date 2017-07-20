@@ -1,27 +1,23 @@
-﻿using System;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.ValueCheck;
+using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Utils.Models;
+using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using System.IO;
-using OfficeOpenXml;
-using System.Web.UI.WebControls;
-using Vaiona.Logging;
-using System.Collections.Generic;
-using BExIS.Dlm.Entities.DataStructure;
 using System.Web.Script.Serialization;
-using BExIS.Dlm.Services.DataStructure;
-using System.Linq;
-using BExIS.IO.Transform.Validation.ValueCheck;
-using BExIS.IO;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Web.Shell.Areas.DCM.Helpers;
-using System.Globalization;
-using BExIS.Utils.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadVerificationController : Controller
     {
@@ -108,7 +104,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS, model.AvailableUnits);
             }
-        
+
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             string selectedHeaderAreaJson = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
 
@@ -155,7 +151,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //Accept suggestion if the similarity is greater than some threshold
                 double threshold = 0.5;
                 IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold);
-                
+
                 //Order the suggestions according to the similarity
                 List<DataAttribute> ordered = suggestions.ToList<DataAttribute>();
                 ordered.Sort((x, y) => (similarity(y.Name, model.HeaderFields[i])).CompareTo(similarity(x.Name, model.HeaderFields[i])));
@@ -177,7 +173,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS, model.Suggestions);
 
-            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);            
+            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
 
             // when jumping back to this step
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
@@ -216,7 +212,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         }
                     }
                     model.AssignedHeaderUnits = mappedHeaderUnits;
-                    
+
                     TaskManager.Current().SetValid(true);
                 }
                 else
@@ -645,8 +641,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
 
-            List< Tuple<int, Error> > ErrorList = ValidateRows(JsonArray);
-            List< Tuple<int, ErrorInfo> > ErrorMessageList = new List< Tuple<int, ErrorInfo> >();
+            List<Tuple<int, Error>> ErrorList = ValidateRows(JsonArray);
+            List<Tuple<int, ErrorInfo>> ErrorMessageList = new List<Tuple<int, ErrorInfo>>();
 
             if (ErrorList.Count <= 50)
             {
@@ -667,7 +663,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         #region private methods
-        
+
         /// <summary>
         /// Determin whether the selected datatypes are suitable
         /// </summary>
@@ -677,7 +673,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             var serializer = new JavaScriptSerializer();
             string[][] DeserializedJsonArray = serializer.Deserialize<string[][]>(JsonArray);
 
-            List<Tuple<int, Error>> ErrorList = new List< Tuple<int, Error> >();
+            List<Tuple<int, Error>> ErrorList = new List<Tuple<int, Error>>();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
@@ -685,12 +681,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();
-            foreach(string area in DataArea)
+            foreach (string area in DataArea)
             {
                 IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
             }
 
-            foreach(int[] IntDataArea in IntDataAreaList)
+            foreach (int[] IntDataArea in IntDataAreaList)
             {
                 string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
 
@@ -769,7 +765,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                 }
             }
-           
+
             return ErrorList;
         }
 
@@ -861,7 +857,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private double similarityDiceCoefficient(string a, string b)
         {
             //Workaround for |a| == |b| == 1
-            if ( a.Length <= 1 && b.Length <= 1)
+            if (a.Length <= 1 && b.Length <= 1)
             {
                 if (a.Equals(b))
                     return 1.0;

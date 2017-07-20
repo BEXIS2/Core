@@ -1,5 +1,4 @@
-﻿
-@using BExIS.Modules.Sam.UI.Models
+﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
 <button type="button" class="bx-button function" onclick="tenantCreate_onClick()">Create Tenant</button>
@@ -27,7 +26,7 @@
             {
                 <button type="button" class="bx bx-grid-function bx-edit" onclick="tenantEdit_onClick('@item.ShortName', '@item.Id')"></button>
                 <button type="button" class="bx bx-grid-function bx-trash" disabled="disabled" onclick="tenantDelete_onClick('@item.ShortName', '@item.Id')"></button>
-            }   
+            }
             </text>)
             .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"tenantEdit_onClick(\'<#= ShortName #>\', \'<#= Id #>\');\" value=\"<#= Id #>\"></button>" +
                             "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"tenantDelete_onClick(\'<#= ShortName #>\', \'<#= Id #>\');\" value=\"<#= Id #>\" <#= IsDeletable ? disabled='' : 'disabled' #> ></button>")
@@ -107,7 +106,7 @@
     function windowEdit_onCancel() {
         $('#windowEdit').data('tWindow').close();
     }
-    
+
     function tenantDelete_onClick(shortName, id) {
         var result = confirm('Are you sure you want to delete this tenant (Username:' + shortName + ', Id:' + id + ')?');
 
@@ -117,6 +116,4 @@
             });
         }
     }
-
 </script>
-

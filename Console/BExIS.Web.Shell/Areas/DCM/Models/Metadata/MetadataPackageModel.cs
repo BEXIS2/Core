@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.Dcm.Wizard;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Dcm.CreateDatasetWizard;
-using System.Xml.Linq;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Utils.Data.MetadataStructure;
+using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
+namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
-    public class MetadataPackageModel:AbstractMetadataStepModel
+    public class MetadataPackageModel : AbstractMetadataStepModel
     {
 
         public MetadataPackageModel()
@@ -99,7 +94,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                     {
                         foreach (MetadataAttributeUsage usage in mp.MetadataAttributeUsages)
                         {
-                            if (UsageHelper.IsSimple(usage))
+                            if (MetadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mpu, metadataStructureId, Number, stepId));
                             }

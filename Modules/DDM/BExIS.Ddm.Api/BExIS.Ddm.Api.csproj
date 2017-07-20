@@ -61,6 +61,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
       <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
       <Name>BExIS.Ddm.Model</Name>

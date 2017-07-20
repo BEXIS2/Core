@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using BExIS.IO;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.Push
+namespace BExIS.Modules.Dcm.UI.Models.Push
 {
     public class SendBigFilesToServerModel
     {

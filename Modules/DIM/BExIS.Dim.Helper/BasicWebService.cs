@@ -33,8 +33,56 @@ namespace BExIS.Dim.Helpers
                     AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Authorization = ahv;
 
+
                     string requesturl = url + parameters;
                     HttpResponseMessage response = await client.GetAsync(requesturl);
+                    Debug.WriteLine(requesturl);
+                    //Debug.WriteLine(Server.UrlEncode(parameters));
+                    response.EnsureSuccessStatusCode();
+                    returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                }
+                return returnValue;
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+        }
+
+        public static async Task<string> Call(string url, string user, string password, string parameters = "", string body = "")
+        {
+            string returnValue = "";
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    //generate url
+
+                    Debug.WriteLine(url);
+
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    //ToDO set data as json to body
+                    //
+
+
+                    //test@testerer.de:WSTest
+                    var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
+
+                    // "basic "+ Convert.ToBase64String(byteArray)
+                    AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = ahv;
+
+
+                    StringContent sContent = new StringContent(body, Encoding.UTF8, "application/xml");
+
+
+
+                    string requesturl = url + parameters;
+                    HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
                     Debug.WriteLine(requesturl);
                     //Debug.WriteLine(Server.UrlEncode(parameters));
                     response.EnsureSuccessStatusCode();

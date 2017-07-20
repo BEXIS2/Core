@@ -10,8 +10,7 @@ using System.IO;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 
-
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     public class ShowPrimaryDataModel
     {

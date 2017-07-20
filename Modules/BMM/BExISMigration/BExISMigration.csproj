@@ -171,21 +171,9 @@
       <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
       <Name>BExIS.Ddm.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
-      <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
-      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +188,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

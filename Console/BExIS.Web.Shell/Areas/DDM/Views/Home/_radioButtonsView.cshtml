@@ -1,4 +1,4 @@
-﻿@model BExIS.Ddm.Model.Property
+﻿@model BExIS.Utils.ModelsProperty
 
 <p><p class="PropertyHeader">@Model.DisplayName</p>
    
@@ -46,17 +46,17 @@
 
         function confirmSubmit(e) {
 
-            $.post('@Url.Action("FilterByCheckBox", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: e.value, node: e.name, isChecked: e.checked }, function (response) {
+            $.post('@Url.Action("FilterByCheckBox", "Home", new RouteValueDictionary { { "area", "ddm" } })', { value: e.value, node: e.name, isChecked: e.checked }, function (response) {
                 // alert(response);
                 $(".searchBreadcrumbNavigation").html(response);
             });
 
-//            $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+//            $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
 //                $("#resultContent").html(response);
 
 //            })
 
-            $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+            $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
                 $("#searchTreeView").html(response);
             })
         

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -49,56 +48,27 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Mappings\DB2Dialect\" />
-    <Folder Include="Mappings\Default\Base\" />
-    <Folder Include="Mappings\Default\NativeObjects\" />
-    <Folder Include="Mappings\Default\PostObjects\" />
-    <Folder Include="Mappings\Default\Security\" />
-    <Folder Include="Mappings\PostgreSQL82Dialect\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Objects\Feature.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Objects\Task.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Subjects\Subject.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Subjects\User.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Subjects\Group.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Authentication\Authenticator.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Authorization\DataPermission.hbm.xml">
+    <Content Include="Mappings\Default\Authentication\Login.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\EntityPermission.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\Permission.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Entity.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Operation.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Workflow.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\Decision.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\Request.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Group.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Subject.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\User.hbm.xml">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Objects\Entity.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Authorization\Permission.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Mappings\Default\Objects\SecurityQuestion.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -111,7 +81,6 @@ C:\Windows\System32\xcopy "$(ProjectDir)Mappings" "$(SolutionDir)Console\Workspa
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

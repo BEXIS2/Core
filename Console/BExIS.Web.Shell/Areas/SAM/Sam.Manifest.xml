@@ -2,31 +2,48 @@
 <Manifest moduleId="SAM" displayName="System Administration Module" version="1.0.1" builtin="true">
   <Description>
     SAM provides the features to allow users (normally administrators) to configure different aspects of the application and module functions.
-    It gives the user information about the application and database version, registered modules and their versions. 
-    Also un/installation, and in/activation of the modules is done by here. 
+    It gives the user information about the application and database version, registered modules and their versions.
+    Also un/installation, and in/activation of the modules is done by here.
     SAM also manages system features such as users, groups, permission, and dataset backup and maintenance.
   </Description>
   <Assemblies>
-    <Assembly fullName="" role=""/>
+    <Assembly fullName="" role="" />
   </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
   </Dependencies>
   <Exports>
+<!--     
     <Export tag="settings" id="usrList" order="1"
-            title="List Users" description="List Only users without groups" icon=""
+            title="Manage Users" description="List Only users without groups" icon=""
             controller="subjets" action="index" argument="user"
-            extends="./settingsRoot"
-            />
-    <Export tag="menubar" id="dstList" order="1"
-            title="List Datasets" description="List datasets and their status" icon=""
-            controller="datasets" action="index"
-            extends="./menubarRoot/collect" 
-            />
+            extends="./settingsRoot" />
+-->
+    <Export tag="settings" id="users" order="1"
+            title="Manage Users" description="Manage Users" icon=""
+            controller="users" action="index" argument="Users"
+            extends="./settingsRoot" />
+    <Export tag="settings" id="groups" order="2"
+                title="Manage Groups" description="Manage Groups" icon=""
+                controller="groups" action="index" argument="Groups"
+                extends="./settingsRoot" />
+    <Export tag="settings" id="features" order="3"
+                title="Manage Features Permissions" description="Manage Features Permissions" icon=""
+                controller="FeaturePermissions" action="index" argument="Features"
+                extends="./settingsRoot" />
+    <Export tag="settings" id="permissions" order="4"
+                title="Manage Data Permissions" description="Manage Data Permissions" icon=""
+                controller="permissions" action="index" argument="Permissions"
+                extends="./settingsRoot" />
+
+    <Export tag="lunchbar" id="helpSam" order="1"
+            title="Administration" description="Administration Help Manual" icon=""
+            controller="help" action="index"
+            extends="./lunchbarRoot/help" />
+    
     <Export tag="api" id="tntList"
             title="List Tenants" description="List tenants and their status" icon=""
             controller="tenants" action="index"
-            extends="./apiRoot"
-            />
+            extends="./apiRoot" />
   </Exports>
 </Manifest>

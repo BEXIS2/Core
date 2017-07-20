@@ -3,15 +3,12 @@ using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Modules.Dcm.UI.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadSheetSelectMetaDataController : Controller
     {
@@ -159,7 +156,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager.AddToBus(EasyUploadTaskManager.SCHEMA, model.SelectedMetaDataId);
                 TaskManager.Current().SetValid(true);
-                
+
 
                 //Store all other information in the model
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))

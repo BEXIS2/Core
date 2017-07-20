@@ -9,16 +9,12 @@
         <a href="/SAM/Help/Index/#_Toc451422053" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
 }
-
 @{
     var DatasetIds = new List<long>();
-
     if (ViewData["DatasetIds"] != null)
     {
         DatasetIds = ViewData["DatasetIds"] as List<long>;
     }
-
-
 }
 <h2>The dataset management functions accessible from here may have unrecoverable effets! Use them with care.</h2>
 <h3>Datasets</h3>
@@ -32,7 +28,6 @@
     {
         <tr>
             <td>@(item.Id)</td>
-
             @if (DatasetIds.Contains(item.Id))
             {
                 if (item.Status == DatasetStatus.CheckedIn)

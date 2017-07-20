@@ -1,75 +1,80 @@
-﻿using System;
+﻿using BExIS.Security.Entities.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BExIS.Security.Entities.Objects;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public sealed class EntityManager : IEntityManager
+    public class EntityManager
     {
         public EntityManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
+            var uow = this.GetUnitOfWork();
 
-            this.EntitiesRepo = uow.GetReadOnlyRepository<Entity>();
+            EntityRepository = uow.GetReadOnlyRepository<Entity>();
         }
 
-        public IReadOnlyRepository<Entity> EntitiesRepo { get; private set; }
+        public IQueryable<Entity> Entities => EntityRepository.Query();
+        public IReadOnlyRepository<Entity> EntityRepository { get; }
 
-        public Entity CreateEntity(string name, string classPath, string assemblyPath, bool isSecureable = false, bool useWithMetadata = false)
+        public void Create(Entity entity)
         {
-            Entity entity = new Entity()
+            using (var uow = this.GetUnitOfWork())
             {
-                Name = name,
-                ClassPath = classPath,
-                AssemblyPath = assemblyPath,
-                Securable = isSecureable,
-                UseMetadata = useWithMetadata,
+                var entityRepository = uow.GetRepository<Entity>();
+                entityRepository.Put(entity);
+                uow.Commit();
+            }
+        }
+
+        public Entity Create(Type entityType, Type entityStoreType, Entity parent = null)
+        {
+            var entity = new Entity()
+            {
+                EntityType = entityType,
+                EntityStoreType = entityStoreType,
+                Parent = parent
             };
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork())
             {
-                IRepository<Entity> usersRepo = uow.GetRepository<Entity>();
-                usersRepo.Put(entity);
-
+                var entityRepository = uow.GetRepository<Entity>();
+                entityRepository.Put(entity);
                 uow.Commit();
             }
 
-            return (entity);
+            return entity;
         }
 
-        public bool DeleteEntityById(long id)
+        public void Delete(Entity entity)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool ExistsEntityId(long id)
-        {
-            return EntitiesRepo.Get(id) != null ? true : false;
-        }
-
-        public IQueryable<Entity> GetAllEntities()
-        {
-            return EntitiesRepo.Query();
-        }
-
-        public Entity GetEntityById(long id)
-        {
-            return EntitiesRepo.Get(id);
-        }
-
-        public Entity UpdateEntity(Entity entity)
-        {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork())
             {
-                IRepository<Entity> entitiesRepo = uow.GetRepository<Entity>();
-                entitiesRepo.Put(entity);
+                var entityRepository = uow.GetRepository<Entity>();
+                entityRepository.Delete(entity);
                 uow.Commit();
             }
+        }
 
-            return (entity);
+        public Entity FindById(long entityId)
+        {
+            return EntityRepository.Get(entityId);
+        }
+
+        public List<Entity> FindRoots()
+        {
+            return EntityRepository.Query(e => e.Parent == null).ToList();
+        }
+
+        public void Update(Entity entity)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRepository = uow.GetRepository<Entity>();
+                entityRepository.Put(entity);
+                uow.Commit();
+            }
         }
     }
 }

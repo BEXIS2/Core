@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using Vaiona.Entities.Common;
-
-/// <summary>
+﻿/// <summary>
 ///
 /// </summary>        
 namespace BExIS.Utils.Models
 {
-    public class SheetArea : BaseEntity
+    public class SheetArea
     {
         #region Attributes
 
@@ -16,7 +13,7 @@ namespace BExIS.Utils.Models
         public int EndRow { get; private set; }
 
         #endregion
-    
+
         #region Methods
 
         /// <summary>

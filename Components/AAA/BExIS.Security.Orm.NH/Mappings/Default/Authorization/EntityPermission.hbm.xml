@@ -1,0 +1,7 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Authorization">
+  <union-subclass xmlns="urn:nhibernate-mapping-2.2" name="EntityPermission" table="EntityPermissions" extends="Permission" dynamic-update="true">
+    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    <property name="Key" type="Int64" />
+    <property name="Rights" type="Int32" />
+  </union-subclass>
+</hibernate-mapping>

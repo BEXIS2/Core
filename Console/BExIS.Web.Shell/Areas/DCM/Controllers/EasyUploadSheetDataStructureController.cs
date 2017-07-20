@@ -1,17 +1,12 @@
 ﻿using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Modules.Dcm.UI.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadSheetDataStructureController : Controller
     {
@@ -62,9 +57,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null)
             {
                 TaskManager.Current().SetValid(false);
-                
+
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))  //Check if there is a Sheet Format on the bus
-                                                                            //it's only added to the bus if it's valid so there's no need to double check that
+                                                                                      //it's only added to the bus if it's valid so there's no need to double check that
                 {
                     TaskManager.Current().SetValid(true);
                 }
