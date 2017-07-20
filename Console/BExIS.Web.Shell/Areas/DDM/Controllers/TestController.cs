@@ -12,7 +12,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
             // test Reindex
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             provider?.Reload();
 
             return View();

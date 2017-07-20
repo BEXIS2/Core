@@ -38,7 +38,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
                 //if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
                 //{
@@ -72,7 +72,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
 
             if (searchType == "new")
@@ -113,7 +113,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             SetFilterAC(SelectedFilter);
 
             return View("Index", provider);
@@ -127,7 +127,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
         }
 
@@ -140,7 +140,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public void ChangeSearchValuesACBySearchType(string value)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             Session["SearchType"] = value;
         }
 
@@ -161,7 +161,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult CheckedTreeViewItem(string SelectedItem, string Parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
@@ -170,13 +170,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult UpdateFacets()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
         }
 
         public ActionResult GetDataForBreadCrumbView()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
             return PartialView("_searchBreadCrumb", provider.WorkingSearchModel);
         }
@@ -194,7 +194,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
@@ -211,7 +211,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
             List<string> selectedValues = new List<string>();
             string parent = GetParentOfSelectAbleCategories();
@@ -246,7 +246,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         public ActionResult ShowMoreWindow(string parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
             SetParentOfSelectAbleCategories(parent);
 
@@ -278,7 +278,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
             RemoveFromPropertiesDic(parent, value, provider.WorkingSearchModel.CriteriaComponent);
 
@@ -301,7 +301,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [GridAction]
         public ActionResult _CustomBinding(GridCommand command)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             DataTable table = provider.Get(provider.WorkingSearchModel.CriteriaComponent).ResultComponent.ConvertToDataTable();
 
             return View(new GridModel(table));
@@ -322,14 +322,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult FilterByRangeSlider(int start, int end, string parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             return PartialView("_searchBreadcrumb", provider.WorkingSearchModel);
         }
 
         [HttpPost]
         public ActionResult FilterBySlider(int value, string parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
             UpdatePropertiesDic(parent, value.ToString());
             provider.WorkingSearchModel.UpdateSearchCriteria(parent, value.ToString(), SearchComponentBaseType.Property, false, true);
@@ -341,7 +341,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult FilterByDropDown(string value, string node)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
 
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
@@ -354,7 +354,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>(this.Session.SessionID) as ISearchProvider;
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
 

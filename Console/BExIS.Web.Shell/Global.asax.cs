@@ -71,7 +71,7 @@ namespace BExIS.Web.Shell
 
         private void initIoC()
         {
-            IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
+            IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer");
         }
 
         private void initModules()
@@ -159,7 +159,7 @@ namespace BExIS.Web.Shell
             }
 
             //set session culture using DefaultCulture key
-            IoCFactory.Container.StartSessionLevelContainer();
+            IoCFactory.Container.StartSessionLevelContainer(this.Session.SessionID);
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
@@ -171,7 +171,7 @@ namespace BExIS.Web.Shell
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.ShutdownConversation();
-            IoCFactory.Container.ShutdownSessionLevelContainer();
+            IoCFactory.Container.ShutdownSessionLevelContainer(this.Session.SessionID);
         }
 
         protected virtual void Application_BeginRequest()
