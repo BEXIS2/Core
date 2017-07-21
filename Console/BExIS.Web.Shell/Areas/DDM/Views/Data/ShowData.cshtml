@@ -76,7 +76,7 @@
 
               tabs.Add()
                   .Text("Publish")
-                  .Content(@Html.Run("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                  .Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
                     .Enabled(false)
                     .HtmlAttributes(new { id = "prepare" });
 

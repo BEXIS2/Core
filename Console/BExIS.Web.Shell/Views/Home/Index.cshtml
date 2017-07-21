@@ -23,7 +23,7 @@
 
 @if (Request.IsAuthenticated)
 {
-    @Html.Run("ddm", "home", "ShowMyDatasets");
+    @Html.Render("ddm", "home", "ShowMyDatasets");
 }
     else
     {

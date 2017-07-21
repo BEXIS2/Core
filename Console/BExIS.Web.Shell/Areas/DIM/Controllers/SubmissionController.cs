@@ -68,7 +68,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 DatasetManager datasetManager = new DatasetManager();
                 datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId).Id;
-                versions = datasetManager.GetDatasettVersions(datasetId).Select(d => d.Id).ToList();
+                versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
             }
 
             //todo check if datasetversion id is correct
@@ -118,7 +118,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 DatasetManager datasetManager = new DatasetManager();
                 datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId).Id;
-                versions = datasetManager.GetDatasettVersions(datasetId).Select(d => d.Id).ToList();
+                versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
             }
 
             //todo check if datasetversion id is correct

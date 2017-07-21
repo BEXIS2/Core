@@ -14,6 +14,7 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         public MappingMainModel()
         {
             ParentMappings = new List<ComplexMappingModel>();
+            SelectionList = new List<LinkElementRootListItem>();
         }
 
     }
@@ -44,6 +45,7 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
 
         public LinkElementRootModel(LinkElementType type, long elementId, string name, LinkElementPostion position)
         {
+            Id = ElementId;
             ElementId = elementId;
             Type = type;
             Name = name;
