@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Manifest moduleId="BAM" displayName="Business administration module" version="1.0.0" builtin="false">
+<Manifest moduleId="BAM" displayName="Business Administration Module" version="1.0.0" builtin="false">
   <Description>
     <!--add proper description-->
   </Description>
@@ -15,7 +15,7 @@
     <Export tag="menubar" id="createDataset" order="1"
             title="Party Manager" description="xx" icon=""
             controller="Party" action="index"
-            extends="./menubarRoot/BAM" />
+            extends="./menubarRoot/bam" />
 
     <!-- INTERNAL-->
 
