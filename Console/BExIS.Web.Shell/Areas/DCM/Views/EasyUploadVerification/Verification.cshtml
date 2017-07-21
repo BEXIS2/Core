@@ -44,26 +44,32 @@
                                         make sure that the one that is registered as selected is actually shown as selected in the list-->
                                     @foreach (EasyUploadSuggestion sug in Model.Suggestions[i])
                                     {
-                                        string selected = "";
-
-                                        if (Model.AssignedHeaderUnits.Count > 0)
+                                        if (@sug.show)
                                         {
-                                            Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => (t.Item1 == i) && (t.Item2 == sug.attributeName) && (t.Item3.UnitId == sug.unitID) && (t.Item3.SelectedDataTypeId == sug.dataTypeID)).FirstOrDefault();
-                                            if (tuple != null)
+                                            string selected = "";
+                                            if (Model.AssignedHeaderUnits.Count > 0)
                                             {
-                                                selected = "selected";
+                                                Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => (t.Item1 == i) &&
+                                                                                                                    (t.Item2 == sug.attributeName) &&
+                                                                                                                    (t.Item3.UnitId == sug.unitID) &&
+                                                                                                                    (t.Item3.SelectedDataTypeId == sug.dataTypeID)).FirstOrDefault();
+                                                if (tuple != null)
+                                                {
+                                                    selected = "selected";
+                                                }
                                             }
+
+                                            string display = sug.attributeName + " - " + sug.unitName + " - " + sug.datatypeName;
+
+                                            <option @Html.Raw(selected) data-unit="@sug.unitID" data-datatype="@sug.dataTypeID" value="@sug.attributeName">@display</option>
                                         }
-                                        
-                                        string display = sug.attributeName + " - " + sug.unitName + " - " + sug.datatypeName;
-                                        <option @Html.Raw(selected) data-unit="@sug.unitID" data-datatype="@sug.dataTypeID" value="@sug.attributeName">@display</option>
                                     }
                                 </select>
                             </td>
 
                             <td>
                                 <!--Unit Selector-->
-                                <select name="Unit" headerfieldId="@(i)">
+                                <select name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
                                     @foreach (UnitInfo unit in Model.AvailableUnits)
                                     {
                                         string selected = "";
@@ -86,7 +92,7 @@
                             </td>
                             <td>
                                 <!--Datatype Selector-->
-                                <select name="Datatype" headerfieldId="@(i)">
+                                <select name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
                                     @{
 
                                         Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
@@ -169,7 +175,6 @@
     function validateData() {
 
         $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
-            console.log(response);
                 if (response.errors.length > 0) {
                     for (var i = 0; i < response.errors.length; i++) {
                         var error = response.errors[i];
@@ -182,7 +187,7 @@
                             var currentErrorCount = currentTitle.split("\n").length;
 
                             if (currentErrorCount < 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2DataType);
+                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
                             }
                             if (currentErrorCount == 50) {
                                 TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
@@ -215,7 +220,7 @@
 
             }
         });*/
-
+        
         $('select[name="Unit"]').change(function () {
             if ($(this).val() != null && $(this).val() != '') {
                 var selectOptionId = $(this).val();
@@ -240,6 +245,7 @@
     });
 
     function suggestionSelected(suggestionSelectObject, i) {
+        console.log("Selected " + i + "   " + suggestionSelectObject);
         //Find the selected option object
         var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
 
@@ -260,6 +266,19 @@
             }, function (response) {
             $("#Step3").html(response);
         });
+    }
+
+    //Necessary to trigger onChange even when the same option is selected again
+    function deselect(select) {
+        $(select).data('storedIndex', select.selectedIndex);
+        select.selectedIndex = -1;
+    }
+
+    //Necessary to restore the previously selected option in case the user opens the dropdown and closes without selecting
+    function reselect(select) {
+        if (select.selectedIndex === -1) {
+            select.selectedIndex = $(select).data('storedIndex');
+        }
     }
 
 </script>

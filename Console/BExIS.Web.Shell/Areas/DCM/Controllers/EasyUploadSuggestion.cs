@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Web.Shell.Areas.DCM.Helpers
+namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class EasyUploadSuggestion
     {

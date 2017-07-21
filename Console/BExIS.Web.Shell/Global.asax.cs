@@ -49,11 +49,11 @@ namespace BExIS.Web.Shell
         {
             MvcHandler.DisableMvcResponseHeader = true;
 
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
-            initPersistence();
             initModules();
+            initPersistence();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

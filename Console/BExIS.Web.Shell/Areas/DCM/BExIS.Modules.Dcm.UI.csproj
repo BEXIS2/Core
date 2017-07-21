@@ -163,6 +163,7 @@
     <Compile Include="Controllers\EasyUploadSelectAreasController.cs" />
     <Compile Include="Controllers\EasyUploadSheetDataStructureController.cs" />
     <Compile Include="Controllers\EasyUploadSheetSelectMetaDataController.cs" />
+    <Compile Include="Controllers\EasyUploadSuggestion.cs" />
     <Compile Include="Controllers\EasyUploadSummaryController.cs" />
     <Compile Include="Controllers\EasyUploadVerificationController.cs" />
     <Compile Include="Controllers\FormController.cs" />
@@ -270,7 +271,6 @@
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
     <Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
     <Content Include="Views\EasyUploadSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <Content Include="Views\EasyUploadSheetDataStructure\SheetDataStructure.cshtml" />
     <Content Include="Views\EasyUploadSheetSelectMetaData\SheetSelectMetaData.cshtml" />
     <Content Include="Views\EasyUploadSummary\EasyUploadSummary.cshtml" />
@@ -278,6 +278,7 @@
     <Content Include="Views\EasyUpload\UploadWizard.cshtml" />
     <Content Include="Views\EasyUpload\_taskListView.cshtml" />
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
+    <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

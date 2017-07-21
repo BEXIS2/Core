@@ -1,21 +1,25 @@
-﻿using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.IO.Transform.Validation.ValueCheck;
-using BExIS.Modules.Dcm.UI.Helpers;
-using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Utils.Models;
-using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System;
 using System.Web.Mvc;
 using System.Web.Routing;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.Modules.Dcm.UI.Models;
+using System.IO;
+using OfficeOpenXml;
+using System.Web.UI.WebControls;
+using Vaiona.Logging;
+using System.Collections.Generic;
+using BExIS.Dlm.Entities.DataStructure;
 using System.Web.Script.Serialization;
+using BExIS.Dlm.Services.DataStructure;
+using System.Linq;
+using BExIS.IO.Transform.Validation.ValueCheck;
+using BExIS.IO;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Modules.Dcm.UI.Helpers;
+using System.Globalization;
+using BExIS.Utils.Models;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -104,7 +108,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS, model.AvailableUnits);
             }
-
+        
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             string selectedHeaderAreaJson = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
 
@@ -151,7 +155,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //Accept suggestion if the similarity is greater than some threshold
                 double threshold = 0.5;
                 IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold);
-
+                
                 //Order the suggestions according to the similarity
                 List<DataAttribute> ordered = suggestions.ToList<DataAttribute>();
                 ordered.Sort((x, y) => (similarity(y.Name, model.HeaderFields[i])).CompareTo(similarity(x.Name, model.HeaderFields[i])));
@@ -159,11 +163,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //Add the ordered suggestions to the model
                 foreach (DataAttribute att in ordered)
                 {
-                    model.Suggestions[i].Add(new EasyUploadSuggestion(att.Name, att.Unit.Id, att.DataType.Id, att.Unit.Name, att.DataType.Name, false));
+                    model.Suggestions[i].Add(new EasyUploadSuggestion(att.Name, att.Unit.Id, att.DataType.Id, att.Unit.Name, att.DataType.Name, true));
                 }
 
                 //Use the following to order suggestions alphabetically instead of ordering according to the metric
-                //model.Suggestions[i] = model.Suggestions[i].Distinct().OrderBy(s => s.Item1).ToList<Tuple<String, String, String, String, String>>();
+                //model.Suggestions[i] = model.Suggestions[i].Distinct().OrderBy(s => s.attributeName).ToList<EasyUploadSuggestion>();
 
                 //Each Name-Unit-Datatype-Tuple should be unique
                 model.Suggestions[i] = model.Suggestions[i].Distinct().ToList<EasyUploadSuggestion>();
@@ -173,7 +177,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS, model.Suggestions);
 
-            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
+            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);            
 
             // when jumping back to this step
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
@@ -199,20 +203,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 TaskManager.Current().SetValid(false);
 
-
-
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS))
                 {
                     List<Tuple<int, String, UnitInfo>> mappedHeaderUnits = (List<Tuple<int, String, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
-                    foreach (Tuple<int, String, UnitInfo> tuple in mappedHeaderUnits)
+                    //Moved handling of this case to SaveUnitSelection, just leaving it here in case of problems: 
+                    /*foreach (Tuple<int, String, UnitInfo> tuple in mappedHeaderUnits)
                     {
+                        
                         if (tuple.Item3.SelectedDataTypeId < 0)
                         {
                             tuple.Item3.SelectedDataTypeId = tuple.Item3.DataTypeInfos.FirstOrDefault().DataTypeId;
                         }
-                    }
+                    }*/
                     model.AssignedHeaderUnits = mappedHeaderUnits;
-
+                    
                     TaskManager.Current().SetValid(true);
                 }
                 else
@@ -274,8 +278,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.AssignedHeaderUnits = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             }
 
+            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS))
+            {
+                model.Suggestions = (Dictionary<int, List<EasyUploadSuggestion>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
+            }
+
             /*
              * Find the selected unit and adjust the AssignedHeaderUnits
+             * Also resets the Variable name
              * */
             if (selectFieldId != null && selectOptionId != null)
             {
@@ -291,6 +301,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.AssignedHeaderUnits.Remove(existingTuple);
                 }
                 model.AssignedHeaderUnits.Add(new Tuple<int, string, UnitInfo>((int)selectFieldId, currentHeader, currentUnit));
+
+                //Set the Datatype to the first one suitable for the selected unit
+                if (currentUnit.SelectedDataTypeId < 0)
+                {
+                    currentUnit.SelectedDataTypeId = currentUnit.DataTypeInfos.FirstOrDefault().DataTypeId;
+                }
+
+                //Filter the suggestions to only show those, that use the selected unit
+                int index = selectFieldId ?? -1;
+                List<EasyUploadSuggestion> suggestionList = null;
+                if( model.Suggestions.TryGetValue(index, out suggestionList) )
+                {
+                    if (suggestionList != null)
+                    {
+                        foreach (EasyUploadSuggestion suggestion in suggestionList)
+                        {
+                            suggestion.show = (suggestion.unitID == selectOptionId);
+                        }
+                    }
+                }       
             }
 
             TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
@@ -304,8 +334,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 model.AvailableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
             }
-
-            model.Suggestions = (Dictionary<int, List<EasyUploadSuggestion>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
 
 
             Session["TaskManager"] = TaskManager;
@@ -379,12 +407,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.AvailableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
             }
 
+            //Grab the suggestions from the bus and filter them to only show those, that use the selected datatype
             model.Suggestions = (Dictionary<int, List<EasyUploadSuggestion>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
+            //Filter the suggestions to only show those, that use the selected unit
+            int index = selectFieldId ?? -1;
+            List<EasyUploadSuggestion> suggestionList = null;
+            if (model.Suggestions.TryGetValue(index, out suggestionList))
+            {
+                if (suggestionList != null)
+                {
+                    foreach (EasyUploadSuggestion suggestion in suggestionList)
+                    {
+                        suggestion.show = (suggestion.dataTypeID == selectedDataTypeId);
+                    }
+                }
+            }
 
             Session["TaskManager"] = TaskManager;
 
-
-            //create Model
             model.StepInfo = TaskManager.Current();
 
             //Submit default datatype id
@@ -641,8 +681,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
 
-            List<Tuple<int, Error>> ErrorList = ValidateRows(JsonArray);
-            List<Tuple<int, ErrorInfo>> ErrorMessageList = new List<Tuple<int, ErrorInfo>>();
+            List< Tuple<int, Error> > ErrorList = ValidateRows(JsonArray);
+            List< Tuple<int, ErrorInfo> > ErrorMessageList = new List< Tuple<int, ErrorInfo> >();
 
             if (ErrorList.Count <= 50)
             {
@@ -663,7 +703,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #region private methods
-
+        
         /// <summary>
         /// Determin whether the selected datatypes are suitable
         /// </summary>
@@ -673,7 +713,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var serializer = new JavaScriptSerializer();
             string[][] DeserializedJsonArray = serializer.Deserialize<string[][]>(JsonArray);
 
-            List<Tuple<int, Error>> ErrorList = new List<Tuple<int, Error>>();
+            List<Tuple<int, Error>> ErrorList = new List< Tuple<int, Error> >();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
@@ -681,12 +721,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();
-            foreach (string area in DataArea)
+            foreach(string area in DataArea)
             {
                 IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
             }
 
-            foreach (int[] IntDataArea in IntDataAreaList)
+            foreach(int[] IntDataArea in IntDataAreaList)
             {
                 string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
 
@@ -702,14 +742,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         DataType datatype = null;
 
+                        //Moved handling of this case to SaveUnitSelection, just leaving it here in case of problems: 
+                        /*
                         if (mappedHeader.Item3.SelectedDataTypeId == -1)
                         {
                             datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
                         }
                         else
-                        {
-                            datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                        }
+                        {*/
+                        datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
+                        //}
 
                         string datatypeName = datatype.SystemType;
 
@@ -765,7 +807,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
             }
-
+           
             return ErrorList;
         }
 
@@ -857,7 +899,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private double similarityDiceCoefficient(string a, string b)
         {
             //Workaround for |a| == |b| == 1
-            if (a.Length <= 1 && b.Length <= 1)
+            if ( a.Length <= 1 && b.Length <= 1)
             {
                 if (a.Equals(b))
                     return 1.0;
