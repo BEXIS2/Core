@@ -1,0 +1,119 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+<button type="button" class="bx-button function" onclick="tenantCreate_onClick()">Create Tenant</button>
+
+@(Html.Telerik().Grid<TenantGridRowModel>()
+    .Name("gridTenants")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.Id);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(s => s.Id);
+        columns.Bound(m => m.ShortName);
+        columns.Bound(m => m.Description);
+        columns.Bound(m => m.IsDefault);
+        columns.Bound(m => m.Status);
+        columns.Template(@<text>
+            @if (item.IsDeletable)
+            {
+                <button type="button" class="bx bx-grid-function bx-edit" onclick="tenantEdit_onClick('@item.ShortName', '@item.Id')"></button>
+                <button type="button" class="bx bx-grid-function bx-trash" onclick="tenantDelete_onClick('@item.ShortName', '@item.Id')"></button>
+            }
+            else
+            {
+                <button type="button" class="bx bx-grid-function bx-edit" onclick="tenantEdit_onClick('@item.ShortName', '@item.Id')"></button>
+                <button type="button" class="bx bx-grid-function bx-trash" disabled="disabled" onclick="tenantDelete_onClick('@item.ShortName', '@item.Id')"></button>
+            }
+            </text>)
+            .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"tenantEdit_onClick(\'<#= ShortName #>\', \'<#= Id #>\');\" value=\"<#= Id #>\"></button>" +
+                            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"tenantDelete_onClick(\'<#= ShortName #>\', \'<#= Id #>\');\" value=\"<#= Id #>\" <#= IsDeletable ? disabled='' : 'disabled' #> ></button>")
+            .Width(70);
+    })
+    .ClientEvents(clientEvents =>
+        {
+            clientEvents.OnDataBound("gridTenants_onDataBound");
+        })
+        .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .OperationMode(GridOperationMode.Client)
+            .Select("Tenants_Select", "Tenants")
+        )
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(m => m.ShortName)
+            .Ascending()
+        )
+    )
+)
+
+<script type="text/javascript">
+
+    function gridTenants_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+        $(":disabled").addClass("bx-disabled");
+    }
+
+    function tenantEdit_onClick(shortName, id) {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Edit", "Tenants")',
+            data: { Id:id },
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Edit Tenant: " + shortName + " (Id: " + id + ")",
+                    html: "<div id='contentEdit' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowEdit").data('tWindow').destroy();
+                        $("#gridTenants .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowEdit');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
+    function tenantEdit_onSuccess(data) {
+        if (data.success) {
+            $('#windowEdit').data('tWindow').close();
+        }
+    }
+
+    function windowEdit_onCancel() {
+        $('#windowEdit').data('tWindow').close();
+    }
+
+    function tenantDelete_onClick(shortName, id) {
+        var result = confirm('Are you sure you want to delete this tenant (Username:' + shortName + ', Id:' + id + ')?');
+
+        if (result) {
+            $.post('@Url.Action("Delete", "Tenants")', { Id: id }, function (e) {
+                $("#gridTenants .t-refresh").trigger('click');
+            });
+        }
+    }
+</script>

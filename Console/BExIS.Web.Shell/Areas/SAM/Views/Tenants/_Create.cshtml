@@ -1,0 +1,12 @@
+﻿@using Telerik.Web.Mvc.UI
+@model BExIS.Modules.Sam.UI.Models.TenantCreateModel
+
+@using (Html.BeginForm("Create", "Tenants", FormMethod.Post, new { enctype = "multipart/form-data" } ))
+{
+    @(Html.Telerik().Upload()
+        .Name("Files")
+        .Multiple(false)
+        .ShowFileList(true))
+
+    <input type="submit" value="Upload" />
+}
