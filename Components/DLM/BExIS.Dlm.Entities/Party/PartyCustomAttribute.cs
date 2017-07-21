@@ -19,6 +19,8 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string Name { get; set; }
         public virtual string Description { get; set; }
         public virtual bool IsValueOptional { get; set; }
+        public virtual bool IsUnique { get; set; }
+        public virtual bool IsMain { get; set; }
         public virtual int DisplayOrder { get; set; }
         public virtual string DataType { get; set; } // the type of value. mainly used for UI rendering and validation purposes
         // restricts the vlaues allowed at the corresponding attribute's values. dictionary is chosen to have internal code/ UI friendly names.

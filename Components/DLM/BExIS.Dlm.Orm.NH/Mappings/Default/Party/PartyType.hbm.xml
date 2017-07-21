@@ -24,7 +24,11 @@
       <column name="Description"  />
     </property>
 
-    <set name="Parties" table="Parties" lazy="true" >
+    <property name="DisplayName" type="String" >
+      <column name="DisplayName"  />
+    </property>
+    
+    <set name="Parties" table="Parties" lazy="false" >
       <key column="PartyTypeRef"/>
       <one-to-many class="Party"/>
     </set>
@@ -38,5 +42,16 @@
       <key column="PartyTypeRef"/>
       <one-to-many class="PartyStatusType"/>
     </set>
+
+    <set name="PartyTypePairSources" table="PartyTypePairs" lazy="true">
+      <key column="AlowedSourceRef"/>
+      <one-to-many class="PartyTypePair"/>
+    </set>
+
+    <set name="PartyTypePairTargets" table="PartyTypePairs" lazy="true">
+      <key column="AlowedTargetRef"/>
+      <one-to-many class="PartyTypePair"/>
+    </set>
+    
   </class>
 </hibernate-mapping>

@@ -140,7 +140,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
             //Task t12 = taskManager.CreateTask("DCM", "CreateSummary", "*");
             //t12.Feature = f11;
             //taskManager.UpdateTask(t12);
-
+            
             //Task t15 = taskManager.CreateTask("DCM", "Push", "*");
             //t15.Feature = f12;
             //taskManager.UpdateTask(t15);

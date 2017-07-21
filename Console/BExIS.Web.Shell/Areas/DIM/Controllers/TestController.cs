@@ -22,7 +22,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 PartyStatusType partyStatusType = partyTypeManager.AddStatusType(partyType, "just created",
                     "this is for test data", 0);
 
-                var p = partyManager.Create(partyType, "David Blaa", "", "desc", null, null, partyStatusType);
+                var p = partyManager.Create(partyType, "David Blaa", "desc", null, null, partyStatusType);
                 // add value
                 var pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "David");
@@ -34,7 +34,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "ds@test.de");
 
                 /***********************************/
-                p = partyManager.Create(partyType, "Sven Thiel", "", "desc", null, null, partyStatusType);
+                p = partyManager.Create(partyType, "Sven Thiel", "desc", null, null, partyStatusType);
                 // add value
                 pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Sven");
@@ -46,7 +46,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "st@test.de");
 
                 /***********************************/
-                p = partyManager.Create(partyType, "Martin Hohmuth", "", "desc", null, null, partyStatusType);
+                p = partyManager.Create(partyType, "Martin Hohmuth", "desc", null, null, partyStatusType);
                 // add value
                 pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Martin");
