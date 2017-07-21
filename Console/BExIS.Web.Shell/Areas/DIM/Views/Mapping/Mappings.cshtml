@@ -1,0 +1,18 @@
+﻿@using BExIS.Modules.Dim.UI.Models.Mapping
+@using System.Linq
+@model List<ComplexMappingModel>
+
+<div id="dim-mapping-middle" class="middle">
+
+
+    <div id="newMapContainer">
+        @Html.Partial("Mapping", new ComplexMappingModel())
+    </div>
+
+    @foreach (var map in @Model.OrderByDescending(m=>m.Id))
+    {
+        @Html.Partial("Mapping", map)
+    }
+
+</div>
+

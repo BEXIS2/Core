@@ -259,7 +259,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Images\help\" />
     <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
