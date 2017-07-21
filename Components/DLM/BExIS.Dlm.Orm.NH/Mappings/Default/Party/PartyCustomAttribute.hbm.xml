@@ -24,7 +24,7 @@
       <column name="Description"  />
     </property>
 
-    <property name="ValidValues" type="String" >
+    <property name="ValidValues" type="StringClob" length="1000000" >
       <column name="ValidValues"  />
     </property>
     
@@ -32,6 +32,14 @@
       <column name="IsValueOptional"  />
     </property>
 
+      <property name="IsUnique" type="yes_no" >
+      <column name="IsUnique"  />
+    </property>
+
+    <property name="IsMain" type="yes_no" >
+      <column name="IsMain"  />
+    </property>
+    
     <property name="DisplayOrder" type="int" >
       <column name="DisplayOrder"  />
     </property>

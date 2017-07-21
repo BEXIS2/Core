@@ -389,12 +389,7 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
-    <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
-    <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
-    <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -477,14 +472,6 @@
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
-    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
-    <Content Include="Areas\BAM\Views\web.config" />
-    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -864,7 +851,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\BAM\Views\Shared\" />
+    <Folder Include="Areas\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

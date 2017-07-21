@@ -1,28 +1,55 @@
-﻿@model List<BExIS.Dlm.Entities.Party.Party>
-
+﻿@model Dictionary<String, List<String>>
 <div class="bx-rpm-buttons">
     @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button function" })
 </div>
+<div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" style="background-color:none !important;">
+        <li id="" class="ui-state-default ui-corner-top ui-state-active">
+            <a class="ui-tabs-anchor">
+                <span>All</span>
+            </a>
+        </li>
+        @foreach (var rootPartyType in Model)
+        {
+            var partyTypes=string.Join(",", rootPartyType.Value);
+            <li partyTypes="@partyTypes" class="ui-state-default ui-corner-top">
+                <a class="ui-tabs-anchor">
+                    <span>@rootPartyType.Key</span>
+                </a>
+            </li>
+        }
+        @*ui-tabs-active*@
+    </ul>
 
-@(Html.Telerik().Grid(Model)
-            .Name("bx-rpm-attributeGrid")
-            .Sortable()
-            .Filterable()
-            .Columns(columns =>
-            {
-            columns.Bound(c => c.Id);
-            columns.Bound(c => c.Name);
-            columns.Bound(c => c.CurrentStatus);
-            columns.Bound(c => c.StartDate);
-            columns.Bound(c => c.EndDate);
-            columns.Bound(c => c.Description);
-            columns.Template(
-                @<text>
-                    <div>
-                        @Html.ActionLink(" ", "View", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-show", title = "View Party \"" + item.Name + "\"" })
-                        @Html.ActionLink(" ", "Edit", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-edit", title = "Edit Party \"" + item.Name + "\"" })
-                        @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-trash ", title = "Delete Party \"" + item.Name + "\"" })
-                    </div>
-                </text>
-                        );
-            }))
+    <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartiesLoading" />
+    <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
+        
+
+
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#tabs li").on("click", function () {
+        $("#tabs li").removeClass("ui-state-active");
+        $(this).addClass("ui-state-active");
+        loadParties($(this).attr("partyTypes"));
+    });
+
+    function loadParties(partyTypes)
+    {
+        if (!partyTypes)
+            partyTypes = '';
+        $('#imgPartiesLoading').show();
+        $('#divPartiesGrid').html("");
+        $('#divPartiesGrid').load('/BAM/Party/LoadParties/?party_types=' + partyTypes, function (response, status, xhr) {
+            if (status == "error") {
+                $('#divPartiesGrid').html("")
+                alert(response);
+            }
+            $('#imgPartiesLoading').hide();
+        });
+    }
+
+    loadParties('');
+</script>
