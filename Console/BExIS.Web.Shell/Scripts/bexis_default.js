@@ -3,8 +3,9 @@ $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
-	//console.log("on document ready");
-
+    //console.log("on document ready");
+    //Bootstrat tooltip
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 function resetAllTelerikIconTitles()

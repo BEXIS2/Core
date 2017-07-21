@@ -355,12 +355,15 @@
 
         @using (Html.BeginForm("sendForm", "UiTest"))
         {
-            @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
+           // @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
             @Html.ValidationMessageFor(m => m.Name)
             <br />
 
-            @Html.BexisUI().Slider().Name("slider").Min(0).Max(1000).Value(100).Steps(10).Render();
+          //  @Html.BexisUI().Slider().Name("slider").Min(0).Max(1000).Value(100).Steps(10).Render();
+          <br />
+          <text>Tooltip examle. - Hover on the icon</text><br />
 
+          <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Hooray!" />
             <button class="bx-button" type="submit">send</button>
         }
 

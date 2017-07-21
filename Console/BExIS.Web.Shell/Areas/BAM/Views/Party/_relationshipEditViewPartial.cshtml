@@ -1,0 +1,91 @@
+﻿@model BExIS.Dlm.Entities.Party.PartyRelationship
+
+@{
+    var viewMode = (Boolean)(ViewBag.viewMode);
+}
+@Html.HiddenFor(m => m.Id)
+<table>
+    <tr>
+        <td style="width:200px">Title</td>
+        <td>
+            @Html.HiddenFor(item => item.Id)
+            @(viewMode ? Html.ValueFor(m => m.Title) : Html.TextBoxFor(m => m.Title,new {@class= "t-input bx-input" }))
+            @Html.ValidationMessageFor(m => m.Title)
+
+        </td>
+    </tr>
+    <tr>
+        <td style="width:200px">Description</td>
+        <td>
+            @(viewMode ? Html.ValueFor(m => m.Description) : Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" }))
+            @Html.ValidationMessageFor(m => m.Description)
+        </td>
+    </tr>
+    <tr>
+        <td style="width:200px">StartDate</td>
+        <td>
+            @if (viewMode)
+            {
+                @Html.ValueFor(m => m.StartDate);
+            }
+            else
+            {
+                @Html.Telerik().DatePicker().Name("StartDate").ShowButton(false).TodayButton("d").OpenOnFocus(true).Format("dd/MM/yyyy").Value(Model.StartDate.ToString("dd/MM/yyyy")).HtmlAttributes(new { @class = "t-input bx-input" });
+
+            }
+        </td>
+    </tr>
+    <tr>
+        <td style="width:200px">EndDate</td>
+        <td>
+            @if (viewMode)
+            {
+                @Html.ValueFor(m => m.EndDate);
+            }
+            else
+            {
+                @Html.Telerik().DatePicker().Name("EndDate").ShowButton(false).TodayButton("d").OpenOnFocus(true).Format("dd/MM/yyyy").Value(Model.EndDate.ToString("dd/MM/yyyy")).HtmlAttributes( new { @class = "t-input bx-input" });
+            }
+        </td>
+    </tr>
+    <tr>
+        <td style="width:200px">Scope</td>
+        <td>
+            @(viewMode ? Html.ValueFor(m => m.Scope) : Html.TextBoxFor(m => m.Scope, new { @class = "t-input bx-input" }))
+        </td>
+    </tr>
+</table>
+@if (!viewMode)
+{
+    <div>
+        <button type="button" value="Save" id="savePartyRelationship" class="t-button" style="border:0px;">Save</button>
+    </div>
+}
+<script>
+    $("#savePartyRelationship").bind("click", function () {
+        var partyRelationshipData={partyRelationship:{
+            description:$("#Description").val(),
+            id: @Model.Id,
+            scope:$("#Scope").val() ,
+            startDate:$("#StartDate").val(),
+            endDate:$("#EndDate").val(),
+            title:$("#Title").val()
+        }};
+
+        $.ajax({
+            url: '/BAM/Party/EditPartyRelationship/' ,
+            type: 'POST',
+            data: JSON.stringify(partyRelationshipData),
+            contentType: "application/json; charset=utf-8",
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                window.location.href = window.location.pathname+"?"+$.param({'relationTabAsDefault':'true'})
+            },
+            async: true,
+            processData: false
+        });
+    });
+
+</script>
