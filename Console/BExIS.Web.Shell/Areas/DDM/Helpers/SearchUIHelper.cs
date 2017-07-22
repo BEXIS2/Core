@@ -14,6 +14,8 @@ using System.Xml.Linq;
 using System.Xml.Xsl;
 using Vaiona.Utils.Cfg;
 
+// Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BExIS.Dlm.Services.Helpers.DatasetConvertor. 
+// All the dataset related functions of the two classes must be moved to the DatasetConvertor
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class SearchUIHelper

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
@@ -14,7 +15,6 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string Description { get; set; }
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime EndDate { get; set; }
-
         public Party()
         {
             CustomAttributeValues = new List<PartyCustomAttributeValue>();
@@ -22,9 +22,9 @@ namespace BExIS.Dlm.Entities.Party
             History = new List<PartyStatus>();
         }
         #region Associations
+       
         public virtual PartyType PartyType { get; set; }
         public virtual ICollection<PartyCustomAttributeValue> CustomAttributeValues { get; set; }
-
         public virtual ICollection<PartyStatus> History { get; set; }
         //Check late
         //It should be filled by the last CustomAttributeValue from CustomAttributeValues

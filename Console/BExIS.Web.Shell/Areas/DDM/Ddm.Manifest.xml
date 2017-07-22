@@ -52,5 +52,10 @@
             controller="SearchIndex" action="Get"
             extends="" />
 
+    <Export tag="internalApi" id="showDatasetsInDashboard"
+            title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""
+            controller="home" action="ShowMyDatasets"
+            extends="" />
+
   </Exports>
 </Manifest>

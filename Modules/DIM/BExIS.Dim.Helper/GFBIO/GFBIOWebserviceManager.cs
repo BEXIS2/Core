@@ -144,7 +144,7 @@ namespace BExIS.Dim.Helpers.GFBIO
             string functionName = "create-research-object";
             string entityName = "researchobject";
 
-            string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName + "/" + addtionalPath + "/";
+            string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName/* + "/" + addtionalPath + "/"*/;
 
             string json = "[{\"userid\":" + userid + "," +
                           "\"name\":\"" + name + "\"," +

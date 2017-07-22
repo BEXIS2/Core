@@ -166,21 +166,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Images\Help\help_img1.png" />
-    <Content Include="Content\Images\Help\help_img10.png" />
-    <Content Include="Content\Images\Help\help_img11.png" />
-    <Content Include="Content\Images\Help\help_img2.png" />
-    <Content Include="Content\Images\Help\help_img3.png" />
-    <Content Include="Content\Images\Help\help_img4.png" />
-    <Content Include="Content\Images\Help\help_img5.png" />
-    <Content Include="Content\Images\Help\help_img6.png" />
-    <Content Include="Content\Images\Help\help_img7.png" />
-    <Content Include="Content\Images\Help\help_img8.png" />
-    <Content Include="Content\Images\Help\help_img9.png" />
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
+    <Content Include="Scripts\ddm.js" />
     <Content Include="Views\Help\Information.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -224,7 +214,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Scripts\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
