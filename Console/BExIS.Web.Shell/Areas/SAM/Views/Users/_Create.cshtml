@@ -3,7 +3,7 @@
 
 @model BExIS.Modules.Sam.UI.Models.CreateUserModel
 
-@using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "onSuccess" }))
+@using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createuser", OnSuccess = "onsuccess_createuser" }))
 {
     <table class="bx-table-form">
         <tr>

@@ -17,16 +17,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Create", new CreateUserModel());
         }
 
-        public ActionResult Memberships(long userId)
-        {
-            var userStore = new UserStore();
-            var groups = userStore.FindById(userId).Groups.Select(x => x.Id);
-
-            Session["SelectedGroups"] = groups as HashSet<long>;
-
-            return PartialView("_Memberships", userId);
-        }
-
         [HttpPost]
         public ActionResult Create(CreateUserModel model)
         {
@@ -62,6 +52,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         [GridAction]
         public ActionResult Memberships_Select(long userId)
         {
@@ -69,36 +64,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
-        }
-
-        public ActionResult Memberships_Save(Dictionary<long, bool> selection, long userId)
-        {
-            updateSelection(selection);
-
-            var userStore = new UserStore();
-            var userManager = new UserManager(userStore);
-
-            var user = userStore.FindById(userId);
-
-            var memberships = user.Groups.Select(p => p.Id).ToArray();
-            foreach (var id in memberships)
-            {
-                userStore.RemoveFromGroupAsync(user, id);
-            }
-
-            foreach (var groupId in Session["SelectedGroups"] as HashSet<long>)
-            {
-                userStore.AddToGroupAsync(user, groupId);
-            }
-
-            Session["SelectedGroups"] = null;
-
-            return Json(new { success = true });
-        }
-
-        public ActionResult Index()
-        {
-            return View();
         }
 
         public ActionResult Update(long userId)
@@ -113,15 +78,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Update(UpdateUserModel model, List<long> selectedGroups)
         {
             return PartialView("_Update", model);
-        }
-
-        [GridAction]
-        public ActionResult Users_Select()
-        {
-            var userManager = new UserManager(new UserStore());
-            var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
-
-            return View(new GridModel<UserGridRowModel> { Data = users });
         }
 
         public void updateSelection(Dictionary<long, bool> selection)
@@ -147,6 +103,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
 
             Session["SelectedGroups"] = selectedGroups;
+        }
+
+        [GridAction]
+        public ActionResult Users_Select()
+        {
+            var userManager = new UserManager(new UserStore());
+            var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
+
+            return View(new GridModel<UserGridRowModel> { Data = users });
         }
     }
 }

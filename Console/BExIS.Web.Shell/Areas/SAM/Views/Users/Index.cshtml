@@ -20,7 +20,7 @@
     </p>
 }
 <button id="button_createuser" type="button" class="bx-button function">Create User</button>
-@(Html.Telerik().Grid<UserGridRowModel>().Name("gridUsers")
+@(Html.Telerik().Grid<UserGridRowModel>().Name("grid_users")
       .Columns(columns =>
       {
           columns.Bound(u => u.Id);
@@ -28,9 +28,9 @@
           columns.Bound(u => u.Email);
           columns.Bound(u => u.IsAdministrator);
           columns.Template(@<text>
-                               <button type="button" class="bx bx-grid-function bx-edit"></button>
-                               <button type="button" class="bx bx-grid-function bx-trash"></button>
-                            </text>)
+        <button type="button" class="bx bx-grid-function bx-edit"></button>
+        <button type="button" class="bx bx-grid-function bx-trash"></button>
+        </text>)
               .ClientTemplate(
                   "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
                   "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
@@ -38,7 +38,7 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("onDataBound");
+          events.OnDataBound("ondatabound_grid_users");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
@@ -71,7 +71,7 @@
                 success: function(htmlData) {
                     var windowElement = $.telerik.window.create({
                         title: "Create User",
-                        html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
+                        html: "<div id='content_createuser' class='bx-window'>" + htmlData + "</div>",
                         contentUrl: "",
                         actions: ["Close"],
                         modal: true,
@@ -81,12 +81,12 @@
                         draggable: true,
                         scrollable: false,
                         onClose: function() {
-                            $("#windowCreate").data('tWindow').destroy();
-                            $("#gridUsers .t-refresh").trigger('click');
+                            $("#window_createuser").data('tWindow').destroy();
+                            $("#grid_users .t-refresh").trigger('click');
                         }
                     });
 
-                    windowElement.attr('id', 'windowCreate');
+                    windowElement.attr('id', 'window_createuser');
                     var window = $(windowElement).data('tWindow');
                     window.center().open();
 
@@ -95,8 +95,7 @@
             });
         });
 
-
-        function onDataBound() {
+        function ondatabound_grid_users() {
             addTooltips();
             resetAllTelerikIconTitles();
 
@@ -110,7 +109,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update User (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_updateuser' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -120,12 +119,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#windowEdit").data('tWindow').destroy();
-                                    $("#gridUsers .t-refresh").trigger('click');
+                                    $("#window_updateuser").data('tWindow').destroy();
+                                    $("#grid_users .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'windowUpdate');
+                            windowElement.attr('id', 'window_updateuser');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 
@@ -136,36 +135,13 @@
 
             $('.bx-trash')
                 .click(function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: '@Url.Action("Update", "Users")',
-                        data: { UserId: $(this).attr("value") },
-                        dataType: 'html',
-                        success: function (htmlData) {
-                            var windowElement = $.telerik.window.create({
-                                title: "Update User: " + username + " (Id: " + id + ")",
-                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
-                                contentUrl: "",
-                                actions: ["Close"],
-                                modal: true,
-                                width: 500,
-                                height: 500,
-                                resizable: false,
-                                draggable: true,
-                                scrollable: false,
-                                onClose: function () {
-                                    $("#windowEdit").data('tWindow').destroy();
-                                    $("#gridUsers .t-refresh").trigger('click');
-                                }
-                            });
-
-                            windowElement.attr('id', 'windowUpdate');
-                            var window = $(windowElement).data('tWindow');
-                            window.center().open();
-
-                            resetAllTelerikIconTitles();
-                        }
-                    });
+                    var r = confirm("Press a button!");
+                    if (r == true) {
+                        txt = "You pressed OK!";
+                        $("#grid_users .t-refresh").trigger('click');
+                    } else {
+                        txt = "You pressed Cancel!";
+                    }
                 });
         }
     </script>

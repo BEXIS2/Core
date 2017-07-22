@@ -2,35 +2,38 @@
 @using Telerik.Web.Mvc.UI
 
 @(Html.Telerik().Grid<GroupMembershipGridRowModel>()
-      .Name("gridUserMemberships")
+      .Name("grid_usermemberships")
       .Columns(columns =>
       {
           columns.Bound(g => g.IsUserInGroup)
               .Template(@<text>
             @if (item.IsUserInGroup)
             {
-                <input type='checkbox' name='selectedUsers' value='@item.Id' checked='checked' />
+                <input type='checkbox' name='selectedGroups' value='@item.Id' checked='checked' />
             }
             else
             {
-                <input type='checkbox' name='selectedUsers' value='@item.Id' />
+                <input type='checkbox' name='selectedGroups' value='@item.Id' />
             }
             </text>)
-              .ClientTemplate("<input type='checkbox' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='checkbox' name='selectedGroups' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
               .Title("Member")
               .Width(64)
               .Filterable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(g => g.Id);
           columns.Bound(g => g.Name);
-          columns.Bound(g => g.Email);
-          columns.Bound(g => g.IsAdministrator);
+          columns.Bound(g => g.Description);
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("onDataBound");
+          events.OnDataBinding("ondatabinding_grid_usermembership");
+          events.OnDataBound("ondatabound_grid_usermembership");
       })
-      .EnableCustomBinding(true)
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+          .OperationMode(GridOperationMode.Client)
+          .Select("Memberships_Select", "Users"))
       .Filterable()
       .Pageable(pageable =>
       {
@@ -39,3 +42,14 @@
           pageable.Position(GridPagerPosition.Bottom);
       })
       .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
+
+<script>
+    function ondatabound_grid_usermembership() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+    function ondatabinding_grid_usermembership() {
+        alert("jksdlf");
+    }
+</script>

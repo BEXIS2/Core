@@ -1,5 +1,4 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -86,26 +85,19 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class UpdateGroupModel
     {
-        public long Id { get; set; }
         public string Description { get; set; }
-        public string Name { get; set; }
         public int GroupType { get; set; }
-        public List<UserMembershipGridRowModel> UserMemberships { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
 
-        public UpdateGroupModel()
-        {
-            UserMemberships = new List<UserMembershipGridRowModel>();
-        }
-
-        public static UpdateGroupModel Convert(Group group, List<UserMembershipGridRowModel> userMemberships)
+        public static UpdateGroupModel Convert(Group group)
         {
             return new UpdateGroupModel()
             {
                 Id = group.Id,
                 Name = group.Name,
                 Description = group.Description,
-                GroupType = (int)group.GroupType,
-                UserMemberships = userMemberships
+                GroupType = (int)group.GroupType
             };
         }
     }

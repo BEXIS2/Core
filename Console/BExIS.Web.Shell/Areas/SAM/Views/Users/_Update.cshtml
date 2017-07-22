@@ -1,24 +1,43 @@
 ﻿@using Telerik.Web.Mvc.UI
 @model BExIS.Modules.Sam.UI.Models.UpdateUserModel
 
-@using (Ajax.BeginForm("Update", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "onSuccess" }))
+@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateuser", OnSuccess = "consuccess_updateuser" }))
 {
     @(Html.Telerik().TabStrip()
-        .Name("tabStripUser")
+        .Name("tabstrip_updateuser")
         .SelectedIndex(0)
         .Items(tabs =>
         {
             tabs.Add()
                 .Text("Details")
                 .Content(@<text>
-                    @Html.Partial("_Details", Model)
+                    <table class="bx-table-form">
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.UserName)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
+                                @Html.ValidationMessageFor(m => m.UserName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.Email)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </td>
+                        </tr>
+                    </table>
                 </text>);
 
 tabs.Add()
-        .Text("Membership")
-        .Content(@<text>
-            @Html.Partial("_Membership")
-        </text>);
+.Text("Membership")
+.Content(@<text>
+                    @Html.Partial("_Memberships")
+</text>);
 
         })
     )

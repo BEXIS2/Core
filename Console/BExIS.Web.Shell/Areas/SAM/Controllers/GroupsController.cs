@@ -21,25 +21,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View("_Create");
         }
 
-        public ActionResult Update(long groupId)
-        {
-            var groupManager = new GroupManager();
-
-            var group = groupManager.FindById(groupId);
-
-            var userManager = new UserManager(new UserStore());
-            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, group.Id)).ToList();
-
-
-            return View("_Update", UpdateGroupModel.Convert(group, userMemberships));
-        }
-
-        [HttpPost]
-        public ActionResult Update(UpdateGroupModel model, List<long> selectedUsers)
-        {
-            return View("_Update");
-        }
-
         [GridAction]
         public ActionResult Groups_Select()
         {
@@ -54,6 +35,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult Update(long groupId)
+        {
+            var groupManager = new GroupManager();
+
+            var group = groupManager.FindById(groupId);
+
+            var userManager = new UserManager(new UserStore());
+            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, group.Id)).ToList();
+
+            return View("_Update", UpdateGroupModel.Convert(group));
+        }
+
+        [HttpPost]
+        public ActionResult Update(UpdateGroupModel model, List<long> selectedUsers)
+        {
+            return View("_Update");
+        }
 
         [GridAction]
         public ActionResult UserMemberships_Select(long groupId = 0)
