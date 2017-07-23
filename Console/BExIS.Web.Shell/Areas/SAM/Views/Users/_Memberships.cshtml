@@ -50,6 +50,26 @@
     }
 
     function ondatabinding_grid_usermembership() {
-        alert("jksdlf");
+        e.data = { selection: getSelection() };
+    }
+
+    function getSelection() {
+        var selection = [];
+
+        $("input[name='selectedGroups']").each(function () {
+            selection.push({
+                key: $(this).attr('value'),
+                value: false
+            });
+        });
+
+        $("input[name='selectedGroups']:checked").each(function () {
+            selection.push({
+                key: $(this).attr('value'),
+                value: true
+            });
+        });
+
+        return selection;
     }
 </script>

@@ -58,7 +58,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction]
-        public ActionResult Memberships_Select(long userId)
+        public ActionResult Memberships_Select(Dictionary<long, bool> selection, long userId)
         {
             var groupManager = new GroupManager();
             var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();

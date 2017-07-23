@@ -1,7 +1,7 @@
 ﻿@using Telerik.Web.Mvc.UI
 @model BExIS.Modules.Sam.UI.Models.UpdateUserModel
 
-@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateuser", OnSuccess = "consuccess_updateuser" }))
+@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateuser", OnSuccess = "onsuccess_updateuser" }))
 {
     @(Html.Telerik().TabStrip()
         .Name("tabstrip_updateuser")
