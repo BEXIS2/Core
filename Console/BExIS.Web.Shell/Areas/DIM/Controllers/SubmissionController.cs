@@ -5,6 +5,7 @@ using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
@@ -389,7 +390,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     // add datastructure
                     //ToDo put that functiom to the outputDatatructureManager
                     #region datatructure
-                    /*
+
                     DataStructureManager dataStructureManager = new DataStructureManager();
 
                     long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
@@ -397,21 +398,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     if (dataStructure != null)
                     {
-                        // get datastructure as json
-                        //ToDo it is not allowed to call a action from a other controller, so we need to generate a function in the outputDatastructureManager of generating a structure 
-                        // -> its not solve right now, because of sturtcure is using also entities under rpm/models
-                        // we need to find a way to switch this functionality to the io libary an calling that from the api and here
-                        BExIS.Web.Shell.Areas.RPM.Controllers.StructuresController dataStructureApi = new StructuresController();
 
                         try
                         {
                             string dynamicPathOfDS = "";
-                            dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion,
-                                "datastructure", ".txt");
+                            dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "datastructure", ".txt");
                             string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
-                            Structure structure = dataStructureApi.Get(datasetId);
 
-                            string json = JsonConvert.SerializeObject(structure);
+                            string json = OutputDataStructureManager.GetDataStructureAsJson(datasetId);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
@@ -422,7 +416,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             throw ex;
                         }
                     }
-                    */
+
                     #endregion
 
                     ZipFile zip = new ZipFile();
@@ -493,6 +487,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (publication == null)
             {
 
+                //ToDo [SUBMISSION] -> create broker specfic function
                 // check case for gfbio
                 if (datarepo.ToLower().Equals("gfbio"))
                 {
@@ -535,7 +530,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         else
                         {
 
-
+                            //ToDo [SUBMISSION] -> add infos from metadata via system mapping
                             string projectName = "Bexis 2 Instance Project";
                             string projectDescription = "Bexis 2 Instance Project Description";
 
@@ -673,6 +668,60 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return Json(true);
         }
 
-        #endregion
+
+        #region helper
+
+
+        private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
+        {
+
+            string name = "";
+            string mimeType = "";
+
+            if (ext.Contains("csv"))
+            {
+                name = "datastructure";
+                mimeType = "text/comma-separated-values";
+            }
+
+
+            // create the generated FileStream and determine its location
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
+            //Register the generated data FileStream as a resource of the current dataset version
+            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+            //{
+            //    OrderNo = 1,
+            //    Name = name,
+            //    MimeType = mimeType,
+            //    URI = dynamicPath,
+            //    DatasetVersion = datasetVersion,
+            //};
+
+            DatasetManager dm = new DatasetManager();
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+            {   // remove the one contentdesciptor 
+                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    if (cd.Name == name)
+                    {
+                        cd.URI = dynamicPath;
+                        dm.UpdateContentDescriptor(cd);
+                    }
+                }
+            }
+            else
+            {
+                // add current contentdesciptor to list
+                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+            }
+
+            //dm.EditDatasetVersion(datasetVersion, null, null, null);
+            return dynamicPath;
+        }
+
     }
+
+    #endregion
+    #endregion
 }
