@@ -2,9 +2,9 @@
 using Vaiona.Web.Mvc.Modularity;
 namespace BExIS.Modules.Bam.UI
 {
-    public class BAMModule : ModuleBase
+    public class BamModule : ModuleBase
     {
-        public BAMModule(): base("bam")
+        public BamModule(): base("bam")
         {
         }
         public override void Install()

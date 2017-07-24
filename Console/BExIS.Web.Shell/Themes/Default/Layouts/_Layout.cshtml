@@ -6,7 +6,6 @@
 @using Vaiona.Web.Mvc;
 @using Vaiona.Web.Mvc.Modularity;
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,18 +41,17 @@
     <script src="@Url.Content("~/Scripts/bexis_default.js")" type="text/javascript"></script>
 
     <style>
-        .t-window-content
-        {
-           height: auto !important;
-           width: auto !important;
+        .t-window-content {
+            height: auto !important;
+            width: auto !important;
         }
     </style>
-  
+
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
     @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
-                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/" 
+                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
 
                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
@@ -62,29 +60,28 @@
                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
 
         //.Add("telerik.common.css")
-        //.Add("~" + Themes.GetResourcePath("Styles", "Copy of telerik.default.min.css")) 
-        //.Add("~" + Themes.GetResourcePath("Styles", "telerik.default.min.css")) 
+        //.Add("~" + Themes.GetResourcePath("Styles", "Copy of telerik.default.min.css"))
+        //.Add("~" + Themes.GetResourcePath("Styles", "telerik.default.min.css"))
         //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
         // add RTL support when internationalization is enabled
         .Combined(true)
         .Compress(true)))
-    
+
     @Scripts.Render("~/bundles/modernizr")
 
     @Scripts.Render("~/bundles/jquery")
-    @(Html.Telerik().ScriptRegistrar()
-        .DefaultGroup(group => group.Combined(true).Compress(true)
-        //.DefaultPath("~/Scripts/2013.2.611/")
-        )
-        .jQuery(false)
-    )
+    @*@(Html.Telerik().ScriptRegistrar()
+            .DefaultGroup(group => group.Combined(true).Compress(true)
+            //.DefaultPath("~/Scripts/2013.2.611/")
+            )
+            .jQuery(false)
+        )*@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/autosize")
     @Scripts.Render("~/bundles/minimap")
     @Scripts.Render("~/bundles/switchery")
     @Scripts.Render("~/bundles/bexis")
-    
 </head>
 
 <body>
@@ -92,19 +89,19 @@
         @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
         @Html.RenderAuto("Menu")
 
-    <div class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
-        <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
-        <div class="collapse" id="information">
-            <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
-                @RenderSection("Information", false)
+        <div class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
+            <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
+            <div class="collapse" id="information">
+                <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
+                    @RenderSection("Information", false)
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     @*<div class="container-fluid">
-        @Html.RenderAuto("Breadcrumb")
-    </div>*@
+            @Html.RenderAuto("Breadcrumb")
+        </div>*@
 
     <div class="container-fluid" style="margin-top: 36pt; width: 100%;">
         <table style="table-layout: fixed;">
@@ -124,7 +121,6 @@
                     <div>
                         @RenderBody()
                     </div>
-
                 </td>
 
                 @if (IsSectionDefined("RightPane"))
@@ -140,12 +136,12 @@
             </tr>
         </table>
     </div>
-    @*@(Html.Telerik().ScriptRegistrar()
-        .DefaultGroup(group => group.Combined(true).Compress(true)
-        //.DefaultPath("~/Scripts/2013.2.611/")
-        )
-        .jQuery(false)
-    )*@
+    @(Html.Telerik().ScriptRegistrar()
+            .DefaultGroup(group => group.Combined(true).Compress(true)
+            //.DefaultPath("~/Scripts/2013.2.611/")
+            )
+            .jQuery(false)
+    )
 
     @Html.RenderAuto("Footer")
 
@@ -155,10 +151,9 @@
 
 @*<script type="text/javascript">
 
-    $(document)
-        .ready(function() {
-            resetAllTelerikIconTitles();
-            addTooltips();
-        });
-
-</script>*@
+        $(document)
+            .ready(function() {
+                resetAllTelerikIconTitles();
+                addTooltips();
+            });
+    </script>*@
