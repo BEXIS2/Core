@@ -38,10 +38,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public bool IsFeatureInEveryoneGroup(long featureId)
         {
-            var permissionManager = new PermissionManager();
+            var featurePermissionManager = new FeaturePermissionManager();
             var subjectManager = new SubjectManager();
 
-            return permissionManager.ExistsFeaturePermission(subjectManager.GetGroupByName("everyone").Id, featureId);
+            return featurePermissionManager.ExistsFeaturePermission(0, featureId);
         }
 
         public bool SetFeaturePermission(long subjectId, long featureId, int value)
