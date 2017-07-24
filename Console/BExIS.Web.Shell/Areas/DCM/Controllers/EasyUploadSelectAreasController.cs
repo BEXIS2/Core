@@ -227,7 +227,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
                     if (!contains)
+                    {
+                        //If the new area contains one (or several) of the already selected areas, remove the old ones
+                        for (int i = model.DataArea.Count - 1; i >= 0; i--)
+                        {
+                            int[] oldArea = serializer.Deserialize<int[]>(model.DataArea[i]);
+
+                            if (newArea[0] <= oldArea[0] && newArea[2] >= oldArea[2] &&
+                                newArea[1] <= oldArea[1] && newArea[3] >= oldArea[3])
+                            {
+                                model.DataArea.RemoveAt(i);
+                            }
+                        }
+
+                        //Insert the new area
                         model.DataArea.Add(dataArea);
+                    }
                 }
 
 
