@@ -114,12 +114,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
 
-            var result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
-            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
-            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
-            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
+            var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
+            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
+            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
+            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
 
-            var view = this.Run("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
+            var view = this.Render("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
             {
                 { "entityId", entityId },
                 { "title", title },
@@ -218,10 +218,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
 
-                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
-                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
-
-                    DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                    // Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
+                    //
+                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
+                    //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                    DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, 0, 100);
 
                     Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 

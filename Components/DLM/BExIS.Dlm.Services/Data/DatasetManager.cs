@@ -13,6 +13,9 @@ using System.Linq.Expressions;
 using Vaiona.Logging.Aspects;
 using System.Threading.Tasks;
 using System.Data;
+using BExIS.Dlm.Orm.NH.Utils;
+using BExIS.Dlm.Services.Helpers;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -215,6 +218,7 @@ namespace BExIS.Dlm.Services.Data
                 return true;
             return (checkOutDataset(datasetId, username, DateTime.UtcNow));
         }
+   
         /// <summary>
         /// This version of the checlout accpes a timestamp, which is likely a past time. The prpuse is to support dataset migarations by preserving their original sumission date.        
         /// </summary>
@@ -236,8 +240,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId">The identifier of the dataset to be checked-in</param>
         /// <param name="comment">A free form text to describe what has changed with this check-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
-        /// <remarks>Does not support simultaneous check-ins</remarks>
-        
+        /// <remarks>Does not support simultaneous check-ins</remarks>      
         //[Diagnose]
         public void CheckInDataset(Int64 datasetId, string comment, string username)
         {
@@ -646,32 +649,37 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersionId"></param>
         /// <returns></returns>
-        public DataTable GetDatasetVersionEffectiveTuples(long datasetVersionId)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId)
         {
-            // perform all the required checks, like other get effective tuple functions
-            var dsVersion = DatasetVersionRepo.Get(datasetVersionId);
-            /// 1: build the MV name
-            long datasetId = dsVersion.Dataset.Id;
-            string mvName = buildViewName(datasetId);
-            /// 2: check if the MV exist, if not BUILD it. NOTE: MV creation can be done at checkin time
-            if(!existsMaterializedView(dsVersion.Dataset.Id))
-            {
-                //throw new Exception(string.Format("..."));
-                createMaterializedView(datasetId);
-                refreshMaterializedView(datasetId);
-            }
-            /// 3: retreive its data in a data table. NOTE: do not refresh, it is done with checkin
+            // check if the dataset is in a proper state: checked-in
+                        
             try
             { 
                 DataTable table = queryMaterializedView(datasetId);
                 return table;
             }
-            catch(Exception ex)
-            {
-                // fallback to the traditional method
-                List<AbstractTuple> tuples =  getDatasetVersionEffectiveTuples(dsVersion);
-                DataTable table = convertDataTuplesToDataTable(tuples);
+            catch(Exception ex) // fallback to the traditional method
+            {                
+                DataTable table = convertDataTuplesToDataTable(this.GetDatasetLatestVersion(datasetId));
                 return table;
+            }
+        }
+
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, int pageNumber, int pageSize)
+        {
+            // check if the dataset is in a proper state: checked-in
+
+            try
+            {
+                return queryMaterializedView(datasetId, pageNumber, pageSize);
+            }
+            catch (Exception ex) // fallback to the traditional method
+            {
+                // shaould use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
+                //var tuples = getDatasetVersionEffectiveTuples(this.GetDatasetLatestVersion(datasetId), pageNumber, pageSize);
+                //DataTable table = convertDataTuplesToDataTable(dsv, tuples);
+                //return table;
+                return null;
             }
         }
 
@@ -717,7 +725,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId">The identifier of the dataset.</param>
         /// <returns>The list of checked-in versions of the dataset requested.</returns>
         /// <remarks>The checked-out version, if exists, is not included in the return list.</remarks>
-        public List<DatasetVersion> GetDatasettVersions(Int64 datasetId)
+        public List<DatasetVersion> GetDatasetVersions(Int64 datasetId)
         {
             List<DatasetVersion> dsVersions = DatasetVersionRepo.Query(p => 
                 p.Dataset.Id == datasetId 
@@ -900,7 +908,6 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
-
         /// <summary>
         /// Returns a list of the latest versions of all datasets associated to a data structure, including/ excluding the checked out versions.
         /// </summary>
@@ -929,6 +936,12 @@ namespace BExIS.Dlm.Services.Data
                 return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
             }
         }
+
+        public DataTable ConvertToDataTable(DatasetVersion dsVersion)
+        {
+            return this.convertDataTuplesToDataTable(dsVersion);
+        }
+
 
         public DatasetVersion GetDatasetWorkingCopy(Int64 datasetId)
         {
@@ -1837,52 +1850,52 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private string buildViewName(long datasetId)
-        {
-            return "mvDataset" + datasetId;
-        }
-
-
         private void updateMaterializedView(long datasetId)
         {
             if (!existsMaterializedView(datasetId))
-                createMaterializedView(datasetId);
-            refreshMaterializedView(datasetId);
+                createMaterializedView(datasetId); // creating an MV refreshes the data, too. 
+            else
+                refreshMaterializedView(datasetId);
         }
 
         private void createMaterializedView(long datasetId)
         {
-            string viewName = buildViewName(datasetId);
-            //Session session = (Session)em.getDelegate();
-            //SessionFactoryImplementor sfi = (SessionFactoryImplementor)session.getSessionFactory();
-            //ConnectionProvider cp = sfi.getConnectionProvider();
-            //Connection connection = cp.getConnection();
-            //Statement statement = connection.createStatement();
-            // get the sql from the DB dialcet, change the view name to "mv_dataset_<datasetId>"
-            //Query query = em.createNativeQuery(sql);
-            //query.executeUpdate();
+            Dataset ds = DatasetRepo.Get(datasetId);
+            if(ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure )
+            {
+                StructuredDataStructure sds = (StructuredDataStructure)ds.DataStructure.Self;
+                if(sds.Variables != null && sds.Variables.Count() > 0)
+                {
+                    List<Tuple<string, string, int, long>> columnDefinitionList = new List<Tuple<string, string, int, long>>();
+                    columnDefinitionList = (from c in sds.Variables
+                                            select new Tuple<string, string, int, long>(c.Label, c.DataAttribute.DataType.SystemType, c.OrderNo, c.Id))
+                                           .ToList()
+                                           ;
+                    try
+                    {
+                        MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+                        mvHelper.Create(datasetId, columnDefinitionList);
+                    }
+                    catch (Exception ex)
+                    {
+                        // could not create and/or install the materialized view
+                    }
+
+                }
+            }
         }
 
         private void refreshMaterializedView(long datasetId)
         {
-            string viewName = buildViewName(datasetId);
-
-            // refresh query is also native, goes to dialact specific query files, getNamedQuery, ...
-            //String sql = "refresh materialized view mv_all_operations; refresh materialized view mv_all_members;";
-            //createNativeQuery(sql).executeUpdate();
-
-            //// by calling addSynchronizedEntityClass method we inform hibernate that any Person  
-            //// persistent object should be synchronized with database before invoking query  
-            //session.createSQLQuery("{call DBMS_MVIEW.REFRESH('PERSON_AGGREGATE')}")
-            //    .addSynchronizedEntityClass(Person.class).executeUpdate();
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            mvHelper.Refresh(datasetId);
         }
 
         private bool existsMaterializedView(long datasetId)
         {
-            string viewName = buildViewName(datasetId);
-
-            // sql query to check whether the view exists...
-            return false;
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            bool result = mvHelper.ExistsForDataset(datasetId);
+            return result;
         }
 
         /// <summary>
@@ -1890,22 +1903,30 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetId"></param>
         /// <returns></returns>
-        private bool dropMaterializedView(long datasetId)
+        private void dropMaterializedView(long datasetId)
         {
-            string viewName = buildViewName(datasetId);
-
-            // sql query to check whether the view exists...
-            return false;
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            mvHelper.Drop(datasetId);
         }
 
-        private DataTable convertDataTuplesToDataTable(List<AbstractTuple> tuples)
+        private DataTable convertDataTuplesToDataTable(DatasetVersion dsVersion)
         {
-            return new DataTable();
+            DatasetConvertor dsConvertor = new DatasetConvertor();
+            DataTable table = dsConvertor.ConvertDatasetVersion(this, dsVersion);
+            return table;
         }
 
-        private DataTable queryMaterializedView(long datasetId)
+        private DataTable queryMaterializedView(long datasetId, int pageNumber=0, int pageSize=0)
         {
-            return new DataTable();
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            if (pageNumber == 0 && pageSize == 0)
+            {
+                return mvHelper.Retrieve(datasetId);
+            }
+            else
+            {
+                return mvHelper.Retrieve(datasetId, pageNumber, pageSize);
+            }
         }
 
 

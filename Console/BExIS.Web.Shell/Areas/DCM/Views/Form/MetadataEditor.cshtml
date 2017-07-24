@@ -454,7 +454,9 @@ function OnSuccess() {
 
         var show = '@showOptional';
 
-        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        alert("switch");
+
+        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form","DCM")',
             { show: show },
             function(response) {
                 $('#MetadataEditor').replaceWith(response);

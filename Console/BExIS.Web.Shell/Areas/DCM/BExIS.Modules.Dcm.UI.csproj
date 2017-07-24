@@ -47,6 +47,10 @@
       <HintPath>..\..\..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
       <Private>True</Private>
@@ -73,6 +77,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
@@ -153,6 +158,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CreateDatasetController.cs" />
+    <Compile Include="Controllers\EasyUploadController.cs" />
+    <Compile Include="Controllers\EasyUploadSelectAFileController.cs" />
+    <Compile Include="Controllers\EasyUploadSelectAreasController.cs" />
+    <Compile Include="Controllers\EasyUploadSheetDataStructureController.cs" />
+    <Compile Include="Controllers\EasyUploadSheetSelectMetaDataController.cs" />
+    <Compile Include="Controllers\EasyUploadSuggestion.cs" />
+    <Compile Include="Controllers\EasyUploadSummaryController.cs" />
+    <Compile Include="Controllers\EasyUploadVerificationController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ImportMetadataStructureController.cs" />
@@ -171,12 +184,14 @@
     <Compile Include="Controllers\SubmitValidationController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
+    <Compile Include="Helpers\EasyUploadSuggestion.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Models\CreateDatasetViewModel.cs" />
     <Compile Include="Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
+    <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
     <Compile Include="Models\GetFileInformationModel.cs" />
@@ -192,7 +207,11 @@
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
+    <Compile Include="Models\SelectAreasModel.cs" />
     <Compile Include="Models\SelectFileViewModel.cs" />
+    <Compile Include="Models\SelectMetaDataModel.cs" />
+    <Compile Include="Models\SelectSheetFormatModel.cs" />
+    <Compile Include="Models\SelectVerificationModel.cs" />
     <Compile Include="Models\SummaryModel.cs" />
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
@@ -251,6 +270,15 @@
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
     <Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Views\EasyUploadSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Views\EasyUploadSheetDataStructure\SheetDataStructure.cshtml" />
+    <Content Include="Views\EasyUploadSheetSelectMetaData\SheetSelectMetaData.cshtml" />
+    <Content Include="Views\EasyUploadSummary\EasyUploadSummary.cshtml" />
+    <Content Include="Views\EasyUploadVerification\Verification.cshtml" />
+    <Content Include="Views\EasyUpload\UploadWizard.cshtml" />
+    <Content Include="Views\EasyUpload\_taskListView.cshtml" />
+    <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
+    <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -259,7 +287,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Images\help\" />
     <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
@@ -339,6 +366,14 @@
     <ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
       <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>

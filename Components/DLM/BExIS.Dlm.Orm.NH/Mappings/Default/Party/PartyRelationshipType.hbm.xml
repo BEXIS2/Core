@@ -19,7 +19,11 @@
     <property name="Title" type="String" >
       <column name="Title"  />
     </property>
-
+    
+    <property name="DisplayName" type="String" >
+      <column name="DisplayName"  />
+    </property>
+    
     <property name="Description" type="String" >
       <column name="Description"  />
     </property>

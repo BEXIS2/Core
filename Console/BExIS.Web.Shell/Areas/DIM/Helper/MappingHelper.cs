@@ -87,6 +87,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 }
 
                 model = CreateLinkElementContainerModels(model);
+                model.Id = id;
             }
             return model;
         }

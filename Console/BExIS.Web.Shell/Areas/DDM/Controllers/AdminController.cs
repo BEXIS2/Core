@@ -319,7 +319,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 sd.Dispose();
 
-                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
                 provider.Reload();
             }
 
