@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Security.Entities.Objects;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
-using BExIS.Security.Entities.Objects;
-using BExIS.Web.Shell.Areas.SAM.Controllers;
+using BExIS.Modules.Sam.UI.Controllers;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -18,7 +17,7 @@ namespace BExIS.Modules.Sam.UI.Models
 
         [Display(Name = "Feature Name")]
         [RegularExpression("^([A-Za-z]+)$", ErrorMessage = "The role name must consist only of letters.")]
-        [Remote("ValidateFeatureName", "Features", AdditionalFields = "Id")]
+        //[Remote("ValidateFeatureName", "Features", AdditionalFields = "Id")]
         [Required]
         [StringLength(50, ErrorMessage = "The feature name must be {2} - {1} characters long.", MinimumLength = 3)]
         public string FeatureName { get; set; }

@@ -41,7 +41,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var featurePermissionManager = new FeaturePermissionManager();
             var subjectManager = new SubjectManager();
 
-            return featurePermissionManager.ExistsFeaturePermission(0, featureId);
+            return featurePermissionManager.Exists(0, featureId);
         }
 
         public bool SetFeaturePermission(long subjectId, long featureId, int value)
@@ -124,7 +124,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 var data = subjectManager.Subjects;
 
-                data.ToList().ForEach(s => featurePermissions.Add(FeaturePermissionGridRowModel.Convert(s, feature, featurePermissionManager.GetFeaturePermissionType(s.Id, feature.Id), featurePermissionManager.HasSubjectFeatureAccess(s.Id, feature.Id))));
+                data.ToList().ForEach(s => featurePermissions.Add(FeaturePermissionGridRowModel.Convert(s, feature, featurePermissionManager.GetPermissionType(s.Id, feature.Id), featurePermissionManager.HasAccess(s.Id, feature.Id))));
             }
 
             return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
