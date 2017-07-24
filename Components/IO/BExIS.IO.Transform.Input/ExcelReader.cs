@@ -29,20 +29,20 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>     
     public class ExcelReader:DataReader
     {
-        private SharedStringItem[] _sharedStrings;
-        private Stylesheet _stylesheet = new Stylesheet();
-        SpreadsheetDocument spreadsheetDocument;
-        private Worksheet worksheet;
-        private DefinedNameVal _areaOfData = new DefinedNameVal();
-        private DefinedNameVal _areaOfVariables = new DefinedNameVal();
+        protected SharedStringItem[] _sharedStrings;
+        protected Stylesheet _stylesheet = new Stylesheet();
+        protected SpreadsheetDocument spreadsheetDocument;
+        protected Worksheet worksheet;
+        protected DefinedNameVal _areaOfData = new DefinedNameVal();
+        protected DefinedNameVal _areaOfVariables = new DefinedNameVal();
 
         // read data 
-        int startColumn = 0;
-        int endColumn = 0;
-        int numOfColumns = 0;
-        int offset = 0;
+        protected int startColumn = 0;
+        protected int endColumn = 0;
+        protected int numOfColumns = 0;
+        protected int offset = 0;
 
-        int rows = 0;
+        protected int rows = 0;
 
         private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
@@ -922,7 +922,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="startRow">start row</param>       
         /// <param name="endRow">end row</param> 
         /// <returns>List of variableIdentifier</returns>
-        private List<VariableIdentifier> GetSubmitedVariableIdentifier(WorksheetPart worksheetPart, int startRow, int endRow)
+        protected List<VariableIdentifier> GetSubmitedVariableIdentifier(WorksheetPart worksheetPart, int startRow, int endRow)
         {
             //NEW OPENXMLREADER
             if (this.SubmitedVariableIdentifiers == null || this.SubmitedVariableIdentifiers.Count == 0)
