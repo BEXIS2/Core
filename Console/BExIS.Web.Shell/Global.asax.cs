@@ -49,16 +49,25 @@ namespace BExIS.Web.Shell
         {
             MvcHandler.DisableMvcResponseHeader = true;
 
+            // This line registers an assembly resolver for the dynamically loaded modules. It also takes care of modules' statuses, so that inactive modules are not resolved.
+            // This MUST be before IoC initiatiolzation.
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            // This method initializes the registered modules. It MUST be before initializing the persistence! 
             initModules();
+            // The persistnce service starts up the ORM, binds the mapping files to the database and the entities and depndeing on the modules' statuses upgrades the database schema.
+            // Also, it generates the seed data of the modules by calling their install methods.
             initPersistence();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            // This method builds a tree of the actions and apis exposed by each module. It tries to put them in a proper order and resolves name conflicts by some resolution rules.
             ModuleManager.BuildExportTree();
+            //This method identifies and loads the current tenant of the application. Many other methods and layout sections depends upon the tenant identified here.
             initTenancy();
+            // At application start, each modules obtains a chance to perform some initialization and warmup tasks. They are coded in each module's Start method.
+            // This call starts them. 
             ModuleManager.StartModules();
         }
 
