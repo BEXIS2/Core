@@ -2690,7 +2690,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserEditAccessRights(long entityId)
         {
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-            return featurePermissionManager.HasAccess(GetUsernameOrDefault(), typeof(User), "DCM", "CreateDataset", "*");
+            return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
         }
 
         /// <summary>

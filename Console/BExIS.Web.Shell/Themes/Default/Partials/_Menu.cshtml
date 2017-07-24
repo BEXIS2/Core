@@ -50,7 +50,7 @@
 
                         <ul class="nav navbar-nav">
                             <li>
-                                @Html.ActionLink("Hallo " + User.Identity.GetUserName() + "!", "Index", "Manage", new { Area = "" }, htmlAttributes: new { title = "Manage" })
+                                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", new { Area = "" }, htmlAttributes: new { title = "Manage" })
                             </li>
                             <li><a href="javascript:document.getElementById('logoutForm').submit()">Abmelden</a></li>
                         </ul>
@@ -59,8 +59,8 @@
                 else
                 {
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Registrieren", "Register", "Account", new { Area = "" }, htmlAttributes: new { id = "registerLink" })</li>
-                        <li>@Html.ActionLink("Anmelden", "Login", "Account", new { Area = "" }, htmlAttributes: new { id = "loginLink" })</li>
+                        <li>@Html.ActionLink("Register", "Register", "Account", new { Area = "" }, htmlAttributes: new { id = "registerLink" })</li>
+                        <li>@Html.ActionLink("Login", "Login", "Account", new { Area = "" }, htmlAttributes: new { id = "loginLink" })</li>
                     </ul>
                 }
                 @Html.Settings()

@@ -25,13 +25,13 @@
 {
     @Html.Render("ddm", "home", "ShowMyDatasets");
 }
-    else
-    {
+else
+{
     <div style="text-align: center;">
         @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
     </div>
     <div style="text-align: center; margin-top: 24pt">
-        @Html.ActionLink("Sign In", "SignIn", "Account", null, new { @class = "t-button function" })
-        @Html.ActionLink("Sign Up", "SignUp", "Account", null, new { @class = "t-button function" })
+        @Html.ActionLink("Login", "Login", "Account", new { Area = "" }, new { @class = "t-button function" })
+        @Html.ActionLink("Register", "Register", "Account", new { Area = "" }, new { @class = "t-button function" })
     </div>
 }
