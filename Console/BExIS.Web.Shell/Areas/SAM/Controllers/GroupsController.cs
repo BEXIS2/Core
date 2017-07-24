@@ -1,6 +1,6 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
@@ -12,104 +12,54 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Create()
         {
-            return View();
+            return View("_Create");
         }
 
         [HttpPost]
         public ActionResult Create(CreateGroupModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var groupManager = new GroupManager();
-
-                groupManager.Create(new Group() { Name = model.GroupName, Description = model.Description, GroupType = (GroupType)model.GroupType });
-
-                return RedirectToAction("Index");
-            }
-
-            return View();
+            return View("_Create");
         }
 
-        public ActionResult Delete(long id)
-        {
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public ActionResult Delete(DeleteGroupModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction("Index");
-            }
-
-            return View();
-        }
-
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Groups_Select(GridCommand command)
+        [GridAction]
+        public ActionResult Groups_Select()
         {
             var groupManager = new GroupManager();
+            var groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
 
-            // Source + Transformation - Data
-            var groups = groupManager.Groups.ToGroupGridRowModel();
-
-            // Filtering
-            var filtered = groups.Where(ExpressionBuilder.Expression<GroupGridRowModel>(command.FilterDescriptors));
-            var total = filtered.Count();
-
-            // Sorting
-            var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
-        }
-
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Memberships_Select(GridCommand command)
-        {
-            var userManager = new UserManager(new UserStore());
-
-            // Source + Transformation - Data
-            var users = userManager.Users.ToUserMembershipGridRowModel();
-
-            // Filtering
-            var filtered = users;
-            var total = filtered.Count();
-
-            // Sorting
-            var sorted = (IQueryable<UserMembershipGridRowModel>)filtered.Sort(command.SortDescriptors);
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<UserMembershipGridRowModel> { Data = paged.ToList(), Total = total });
-        }
-
-        public ActionResult Update()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Update(UpdateGroupModel model)
-        {
-            return View();
+            return View(new GridModel<GroupGridRowModel> { Data = groups });
         }
 
         public ActionResult Index()
         {
-            var groupManager = new GroupManager();
-            for (int i = 0; i < 100; i++)
-            {
-                groupManager.Create(new Group() { Name = $"Group {i}", Description = $"Description of Group {i}", GroupType = GroupType.Private });
-            }
-
             return View();
+        }
+
+        public ActionResult Update(long groupId)
+        {
+            var groupManager = new GroupManager();
+
+            var group = groupManager.FindById(groupId);
+
+            var userManager = new UserManager(new UserStore());
+            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, group.Id)).ToList();
+
+            return View("_Update", UpdateGroupModel.Convert(group));
+        }
+
+        [HttpPost]
+        public ActionResult Update(UpdateGroupModel model, List<long> selectedUsers)
+        {
+            return View("_Update");
+        }
+
+        [GridAction]
+        public ActionResult UserMemberships_Select(long groupId = 0)
+        {
+            var userManager = new UserManager(new UserStore());
+            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, groupId)).ToList();
+
+            return View(new GridModel<UserMembershipGridRowModel> { Data = userMemberships });
         }
     }
 }

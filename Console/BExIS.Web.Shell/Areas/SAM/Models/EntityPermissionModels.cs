@@ -19,7 +19,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public string SubjectName { get; set; }
         public string SubjectType { get; set; }
         public int Rights { get; set; }
-        public int PermissionType { get; set; }
 
         public static EntityPermissionGridRowModel Convert(EntityPermission entityPermission)
         {
@@ -32,7 +31,6 @@ namespace BExIS.Modules.Sam.UI.Models
                 SubjectType = entityPermission.Subject.GetType().FullName,
                 SubjectName = entityPermission.Subject.Name,
                 SubjectId = entityPermission.Subject.Id,
-                PermissionType = (int)entityPermission.PermissionType
             };
         }
     }

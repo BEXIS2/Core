@@ -37,12 +37,10 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult<int>(0);
         }
 
-        public Task AddToGroupAsync(User user, string groupName)
+        public void AddToGroupAsync(User user, long groupId)
         {
-            user.Groups.Add(GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault());
+            user.Groups.Add(GroupRepository.Get(groupId));
             UpdateAsync(user);
-
-            return Task.FromResult(0);
         }
 
         public Task CreateAsync(User user)
@@ -55,6 +53,18 @@ namespace BExIS.Security.Services.Subjects
             }
 
             return Task.FromResult(0);
+        }
+
+        public void Delete(long userId)
+        {
+            var user = UserRepository.Get(userId);
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                userRepository.Delete(user);
+                uow.Commit();
+            }
         }
 
         public Task DeleteAsync(User user)
@@ -84,6 +94,11 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(UserRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
         }
 
+        public User FindById(long userId)
+        {
+            return UserRepository.Get(userId);
+        }
+
         public Task<User> FindByIdAsync(long userId)
         {
             return Task.FromResult(UserRepository.Get(userId));
@@ -107,6 +122,11 @@ namespace BExIS.Security.Services.Subjects
         public Task<bool> GetEmailConfirmedAsync(User user)
         {
             return Task.FromResult(user.IsEmailConfirmed);
+        }
+
+        public Task<IList<string>> GetGroupsAsync(User user)
+        {
+            return Task.FromResult((IList<string>)user.Groups.Select(m => m.Name).ToList());
         }
 
         public Task<bool> GetLockoutEnabledAsync(User user)
@@ -140,11 +160,6 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(user.Password);
         }
 
-        public Task<IList<string>> GetGroupsAsync(User user)
-        {
-            return Task.FromResult((IList<string>)user.Groups.Select(m => m.Name).ToList());
-        }
-
         public Task<string> GetSecurityStampAsync(User user)
         {
             return Task.FromResult(user.SecurityStamp);
@@ -171,12 +186,10 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()));
         }
 
-        public Task RemoveFromGroupAsync(User user, string groupName)
+        public void RemoveFromGroupAsync(User user, long groupId)
         {
-            user.Groups.Remove(GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault());
+            user.Groups.Remove(GroupRepository.Get(groupId));
             UpdateAsync(user);
-
-            return Task.FromResult(0);
         }
 
         public Task RemoveLoginAsync(User user, UserLoginInfo login)
