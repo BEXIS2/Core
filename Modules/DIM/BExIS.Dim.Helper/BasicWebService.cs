@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -66,8 +67,11 @@ namespace BExIS.Dim.Helpers
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     //ToDO set data as json to body
-                    //
 
+                    //client.
+                    StringContent sContent = new StringContent(body, Encoding.UTF8, "application/json");
+                    var parameterDic = new Dictionary<string, string> { { "requestJson", sContent.ToString() } };
+                    var encodedContent = new FormUrlEncodedContent(parameterDic);
 
                     //test@testerer.de:WSTest
                     var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
@@ -77,12 +81,14 @@ namespace BExIS.Dim.Helpers
                     client.DefaultRequestHeaders.Authorization = ahv;
 
 
-                    StringContent sContent = new StringContent(body, Encoding.UTF8, "application/xml");
-
 
 
                     string requesturl = url + parameters;
-                    HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
+
+
+
+                    //HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
+                    HttpResponseMessage response = await client.PostAsync(requesturl, encodedContent);
                     Debug.WriteLine(requesturl);
                     //Debug.WriteLine(Server.UrlEncode(parameters));
                     response.EnsureSuccessStatusCode();

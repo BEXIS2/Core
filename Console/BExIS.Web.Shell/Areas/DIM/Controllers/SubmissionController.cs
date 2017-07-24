@@ -468,200 +468,214 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
-            string zipfilepath = "";
-            if (Session["ZipFilePath"] != null)
-                zipfilepath = Session["ZipFilePath"].ToString();
-
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-            PublicationManager publicationManager = new PublicationManager();
-
-            Publication publication =
-                publicationManager.GetPublication()
-                    .Where(
-                        p =>
-                            p.DatasetVersion.Id.Equals(datasetVersion.Id) &&
-                            p.Broker.Name.ToLower().Equals(datarepo.ToLower()))
-                    .FirstOrDefault();
-
-            if (publication == null)
+            try
             {
+                string zipfilepath = "";
+                if (Session["ZipFilePath"] != null)
+                    zipfilepath = Session["ZipFilePath"].ToString();
 
-                //ToDo [SUBMISSION] -> create broker specfic function
-                // check case for gfbio
-                if (datarepo.ToLower().Equals("gfbio"))
+                DatasetManager datasetManager = new DatasetManager();
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                PublicationManager publicationManager = new PublicationManager();
+
+                Publication publication =
+                    publicationManager.GetPublication()
+                        .Where(
+                            p =>
+                                p.DatasetVersion.Id.Equals(datasetVersion.Id) &&
+                                p.Broker.Name.ToLower().Equals(datarepo.ToLower()))
+                        .FirstOrDefault();
+
+                if (publication == null)
                 {
-                    #region GFBIO
-                    //SubmissionManager publishingManager = new SubmissionManager();
-                    //publishingManager.Load();
-                    //DataRepository dataRepository = publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
 
-                    Broker broker =
-                        publicationManager.GetBroker()
-                            .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
-                            .FirstOrDefault();
-
-
-                    if (broker != null)
+                    //ToDo [SUBMISSION] -> create broker specfic function
+                    // check case for gfbio
+                    if (datarepo.ToLower().Equals("gfbio"))
                     {
-                        //create a gfbio api webservice manager
-                        GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(broker);
-                        GFBIOException gfbioException = null;
-                        //get user from system
-                        string username = HttpContext.User.Identity.Name;
-                        UserManager userManager = new UserManager(new UserStore());
+                        #region GFBIO
 
-                        User user = userManager.FindByName(username);
+                        //SubmissionManager publishingManager = new SubmissionManager();
+                        //publishingManager.Load();
+                        //DataRepository dataRepository = publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
 
-                        //check if user exist and api user has access
-                        string jsonresult = await gfbioWebserviceManager.GetUserByEmail(user.Email);
-                        GFBIOUser gfbioUser = new JavaScriptSerializer().Deserialize<GFBIOUser>(jsonresult);
+                        Broker broker =
+                            publicationManager.GetBroker()
+                                .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                                .FirstOrDefault();
 
-                        //if user not exist, api call was failed
-                        if (gfbioUser.userid == 0)
+
+                        if (broker != null)
                         {
-                            //get the exception
-                            gfbioException = new JavaScriptSerializer().Deserialize<GFBIOException>(jsonresult);
+                            //create a gfbio api webservice manager
+                            GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(broker);
+                            GFBIOException gfbioException = null;
+                            //get user from system
+                            string username = HttpContext.User.Identity.Name;
+                            UserManager userManager = new UserManager(new UserStore());
 
-                            if (!String.IsNullOrEmpty(gfbioException.exception))
-                                return Json(jsonresult);
-                        }
-                        //user exist and api user has access to the api´s
-                        else
-                        {
+                            User user = userManager.FindByName(username);
 
-                            //ToDo [SUBMISSION] -> add infos from metadata via system mapping
-                            string projectName = "Bexis 2 Instance Project";
-                            string projectDescription = "Bexis 2 Instance Project Description";
+                            //check if user exist and api user has access
+                            string jsonresult = await gfbioWebserviceManager.GetUserByEmail(user.Email);
+                            GFBIOUser gfbioUser = new JavaScriptSerializer().Deserialize<GFBIOUser>(jsonresult);
 
-
-                            // ToDo submission test users, set project and more parameters
-                            if (user.Name.ToLower().Equals("drwho"))
+                            //if user not exist, api call was failed
+                            if (gfbioUser.userid == 0)
                             {
-                                projectName = "Time Traveler";
-                                projectDescription = "Project to find places that are awesome!!";
+                                //get the exception
+                                gfbioException = new JavaScriptSerializer().Deserialize<GFBIOException>(jsonresult);
+
+                                if (!String.IsNullOrEmpty(gfbioException.exception))
+                                    return Json(jsonresult);
                             }
-
-
-                            if (user.Name.ToLower().Equals("mcfly"))
-                            {
-                                projectName = "Back to the Future";
-                                projectDescription = "Meet your parents in the past";
-
-                            }
-
-                            if (user.Name.ToLower().Equals("arthurdent"))
-                            {
-                                projectName = "Per Anhalter durch die Galaxie";
-                                projectDescription = "Find the answer of life and so.";
-                            }
-
-                            //create or get project
-                            string projectJsonResult = await gfbioWebserviceManager.GetProjectsByUser(gfbioUser.userid);
-
-                            var projects = new JavaScriptSerializer().Deserialize<List<GFBIOProject>>(projectJsonResult);
-
-                            GFBIOProject gbfioProject = new GFBIOProject();
-
-                            if (!projects.Any(p => p.name.Equals(projectName)))
-                            {
-                                string createProjectJsonResult = await gfbioWebserviceManager.CreateProject(
-                                    gfbioUser.userid, projectName, projectDescription);
-
-                                gbfioProject =
-                                    new JavaScriptSerializer().Deserialize<GFBIOProject>(createProjectJsonResult);
-
-                                //if (!String.IsNullOrEmpty(gfbioException.exception))
-                                //return Json(createProjectJsonResult);
-                            }
+                            //user exist and api user has access to the api´s
                             else
                             {
-                                gbfioProject = projects.Where(p => p.name.Equals(projectName)).FirstOrDefault();
 
-                            }
-
-
-
-                            string name = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                            string description = XmlDatasetHelper.GetInformation(datasetId,
-                                NameAttributeValues.description);
+                                //ToDo [SUBMISSION] -> add infos from metadata via system mapping
+                                string projectName = "Bexis 2 Instance Project";
+                                string projectDescription = "Bexis 2 Instance Project Description";
 
 
-                            //TODO based on the data policy there must be a decision what should be in the extended data as a example of the dataset. at first metadata is added            
-                            //create extended Data
-                            XmlDocument metadataExportFormat = OutputMetadataManager.GetConvertedMetadata(datasetId,
-                                TransmissionType.mappingFileExport,
-                                broker.MetadataFormat);
+                                // ToDo submission test users, set project and more parameters
+                                if (user.Name.ToLower().Equals("drwho"))
+                                {
+                                    projectName = "Time Traveler";
+                                    projectDescription = "Project to find places that are awesome!!";
+                                }
 
-                            string extendedDataAsJSON = JsonConvert.SerializeXmlNode(metadataExportFormat);
 
-                            string roJsonResult = await gfbioWebserviceManager.CreateResearchObject(
-                                gfbioUser.userid,
-                                gbfioProject.projectid,
-                                name,
-                                description,
-                                "Dataset",
-                                extendedDataAsJSON,
-                                null
-                                );
+                                if (user.Name.ToLower().Equals("mcfly"))
+                                {
+                                    projectName = "Back to the Future";
+                                    projectDescription = "Meet your parents in the past";
 
-                            List<GFBIOResearchObjectResult> gfbioResearchObjectList =
-                                new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectResult>>(roJsonResult);
-                            GFBIOResearchObjectResult gfbioResearchObject = gfbioResearchObjectList.FirstOrDefault();
+                                }
 
-                            if (gfbioResearchObject != null && gfbioResearchObject.researchobjectid > 0)
-                            {
-                                // reseachhobject exist
+                                if (user.Name.ToLower().Equals("arthurdent"))
+                                {
+                                    projectName = "Per Anhalter durch die Galaxie";
+                                    projectDescription = "Find the answer of life and so.";
+                                }
 
-                                string roStatusJsonResult =
-                                    await
-                                        gfbioWebserviceManager.GetStatusByResearchObjectById(
-                                            gfbioResearchObject.researchobjectid);
+                                //create or get project
+                                string projectJsonResult =
+                                    await gfbioWebserviceManager.GetProjectsByUser(gfbioUser.userid);
 
-                                //get status and store ro
-                                List<GFBIOResearchObjectStatus> gfbioRoStatusList =
-                                    new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectStatus>>(
-                                        roStatusJsonResult);
-                                GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
+                                var projects =
+                                    new JavaScriptSerializer().Deserialize<List<GFBIOProject>>(projectJsonResult);
 
-                                //Store ro in db
-                                string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
-                                publicationManager.CreatePublication(datasetVersion, broker, title,
-                                    gfbioRoStatus.researchobjectid, zipfilepath, "",
-                                    gfbioRoStatus.status);
+                                GFBIOProject gbfioProject = new GFBIOProject();
 
-                            }
-                            else
-                            {
-                                gfbioException = new JavaScriptSerializer().Deserialize<GFBIOException>(roJsonResult);
+                                if (!projects.Any(p => p.name.Equals(projectName)))
+                                {
+                                    string createProjectJsonResult = await gfbioWebserviceManager.CreateProject(
+                                        gfbioUser.userid, projectName, projectDescription);
 
-                                //if (!String.IsNullOrEmpty(gfbioException.exception))
-                                return Json(roJsonResult);
+                                    gbfioProject =
+                                        new JavaScriptSerializer().Deserialize<GFBIOProject>(createProjectJsonResult);
+
+                                    //if (!String.IsNullOrEmpty(gfbioException.exception))
+                                    //return Json(createProjectJsonResult);
+                                }
+                                else
+                                {
+                                    gbfioProject = projects.Where(p => p.name.Equals(projectName)).FirstOrDefault();
+
+                                }
+
+
+
+                                string name = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+                                string description = XmlDatasetHelper.GetInformation(datasetId,
+                                    NameAttributeValues.description);
+
+
+                                //TODO based on the data policy there must be a decision what should be in the extended data as a example of the dataset. at first metadata is added            
+                                //create extended Data
+                                XmlDocument metadataExportFormat = OutputMetadataManager.GetConvertedMetadata(datasetId,
+                                    TransmissionType.mappingFileExport,
+                                    broker.MetadataFormat);
+
+                                string extendedDataAsJSON = JsonConvert.SerializeXmlNode(metadataExportFormat);
+
+                                string roJsonResult = await gfbioWebserviceManager.CreateResearchObject(
+                                    gfbioUser.userid,
+                                    gbfioProject.projectid,
+                                    name,
+                                    description,
+                                    "Dataset",
+                                    extendedDataAsJSON,
+                                    null
+                                    );
+
+                                List<GFBIOResearchObjectResult> gfbioResearchObjectList =
+                                    new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectResult>>(roJsonResult);
+                                GFBIOResearchObjectResult gfbioResearchObject = gfbioResearchObjectList.FirstOrDefault();
+
+                                if (gfbioResearchObject != null && gfbioResearchObject.researchobjectid > 0)
+                                {
+                                    // reseachhobject exist
+
+                                    string roStatusJsonResult =
+                                        await
+                                            gfbioWebserviceManager.GetStatusByResearchObjectById(
+                                                gfbioResearchObject.researchobjectid);
+
+                                    //get status and store ro
+                                    List<GFBIOResearchObjectStatus> gfbioRoStatusList =
+                                        new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectStatus>>(
+                                            roStatusJsonResult);
+                                    GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
+
+                                    //Store ro in db
+                                    string title = XmlDatasetHelper.GetInformation(datasetVersion,
+                                        NameAttributeValues.title);
+                                    publicationManager.CreatePublication(datasetVersion, broker, title,
+                                        gfbioRoStatus.researchobjectid, zipfilepath, "",
+                                        gfbioRoStatus.status);
+
+                                }
+                                else
+                                {
+                                    gfbioException = new JavaScriptSerializer().Deserialize<GFBIOException>(roJsonResult);
+
+                                    //if (!String.IsNullOrEmpty(gfbioException.exception))
+                                    return Json(roJsonResult);
+                                }
+
                             }
 
                         }
 
+                        #endregion
                     }
-                    #endregion
+
+
+                    if (datarepo.ToLower().Equals("generic"))
+                    {
+                        #region GENERIC
+
+                        Broker broker =
+                            publicationManager.BrokerRepo.Get()
+                                .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                                .FirstOrDefault();
+                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
+                            "created");
+
+                        #endregion
+                    }
                 }
-
-
-                if (datarepo.ToLower().Equals("generic"))
+                else
                 {
-                    #region GENERIC
-                    Broker broker =
-                        publicationManager.BrokerRepo.Get()
-                            .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
-                            .FirstOrDefault();
-                    string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
-                    publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
-                        "created");
-                    #endregion
+                    Json("Publication exist.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Json("Publication exist.");
+                return Json(ex.Message);
             }
 
 

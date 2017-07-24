@@ -164,9 +164,9 @@ namespace BExIS.Dim.Helpers.GFBIO
 
             //json = "[{ \"name\":\"test\",\"description\":\"test description\",\"submitterid\":16297,\"researchobjecttype\":\"x\"}]";
 
-            string body = WebServiceHelper.Encode(json);
+            //string body = WebServiceHelper.Encode(json);
 
-            return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", body);
+            return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", json);
         }
 
         #endregion
