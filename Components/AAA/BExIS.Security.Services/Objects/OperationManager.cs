@@ -36,5 +36,12 @@ namespace BExIS.Security.Services.Objects
 
             return operation;
         }
+
+        public Operation Find(string module, string controller, string action)
+        {
+            return
+                OperationRepository.Query(x => x.Module == module && x.Controller == controller && x.Action == action)
+                    .FirstOrDefault();
+        }
     }
 }

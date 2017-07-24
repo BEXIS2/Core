@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
@@ -17,12 +16,14 @@ namespace BExIS.Security.Services.Authorization
             FeaturePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
             FeatureRepository = uow.GetReadOnlyRepository<Feature>();
             SubjectRepository = uow.GetReadOnlyRepository<Subject>();
+            OperationRepository = uow.GetReadOnlyRepository<Operation>();
         }
 
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }
         public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
         public IReadOnlyRepository<Feature> FeatureRepository { get; }
         public IReadOnlyRepository<Subject> SubjectRepository { get; }
+        public IReadOnlyRepository<Operation> OperationRepository { get; }
 
         public void Create(FeaturePermission featurePermission)
         {
@@ -173,8 +174,17 @@ namespace BExIS.Security.Services.Authorization
             return FeaturePermissionRepository.Get(id);
         }
 
-        public bool HasAccess(string subjectName, Type subjecType, string module, string controller, string action)
+        public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
+            var operation =
+                OperationRepository.Query(x => x.Module == module && x.Controller == controller && x.Action == action)
+                    .FirstOrDefault();
+
+            var feature = operation?.Workflow.Feature;
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            if (feature != null && subject != null)
+                return HasAccess(subject.Id, feature.Id);
+
             return false;
         }
 
