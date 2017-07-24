@@ -1,6 +1,9 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
@@ -11,7 +14,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Create()
         {
-            return View();
+            return PartialView("_Create");
         }
 
         [HttpPost]
@@ -19,53 +22,80 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userManager = new UserManager(new UserStore());
+                userManager.CreateAsync(new User()
+                {
+                    Email = model.Email,
+                    UserName = model.UserName,
+                    IsAdministrator = model.IsAdministrator
+                });
+
                 RedirectToAction("Index");
             }
 
-            return View();
-        }
-
-        public ActionResult Delete(long id)
-        {
-            return View();
+            return PartialView("_Create", model);
         }
 
         [HttpPost]
-        public ActionResult Delete(DeleteUserModel model)
+        public void Delete(long userId)
         {
-            if (ModelState.IsValid)
+            var userStore = new UserStore();
+            userStore.Delete(userId);
+        }
+
+        public void Groups_Save(UserMembershipGridRowModel[] groups)
+        {
+            Session["SelectedGroups"] = groups.Where(g => g.IsUserInGroup).Select(g => g.Id).ToList();
+        }
+
+        [GridAction]
+        public ActionResult Groups_Select(long userId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            List<long> test = new List<long>();
+            if (Session["SelectedGroups"] == null)
             {
-                RedirectToAction("Index");
+                test.AddRange(user.Groups.Select(g => g.Id).ToList());
+            }
+            else
+            {
+                test.AddRange(Session["SelectedGroups"] as List<long>);
             }
 
-            return View();
+            var groupManager = new GroupManager();
+            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, test)).ToList();
+
+            return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
         }
 
         public ActionResult Index()
         {
-            return View(new GridModel<UserGridRowModel>());
+            return View();
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Select(GridCommand command)
+        public ActionResult Update(long userId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            return PartialView("_Update", UpdateUserModel.Convert(user));
+        }
+
+        [HttpPost]
+        public ActionResult Update(UpdateUserModel model)
+        {
+            return PartialView("_Update", model);
+        }
+
+        [GridAction]
+        public ActionResult Users_Select()
         {
             var userManager = new UserManager(new UserStore());
+            var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
 
-            // Source + Transformation - Data
-            var users = userManager.Users.ToUserGridRowModel();
-
-            // Filtering
-            var filtered = users.Where(ExpressionBuilder.Expression<GroupGridRowModel>(command.FilterDescriptors));
-            var total = filtered.Count();
-
-            // Sorting
-            var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
+            return View(new GridModel<UserGridRowModel> { Data = users });
         }
     }
 }

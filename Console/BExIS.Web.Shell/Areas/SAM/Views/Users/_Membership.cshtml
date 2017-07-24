@@ -1,0 +1,61 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+@model long
+
+@(Html.Telerik().Grid<GroupMembershipGridRowModel>()
+      .Name("Grid_Groups")
+      .Columns(columns =>
+      {
+          columns.Bound(g => g.IsUserInGroup)
+              .Template(@<text>
+            @if (item.IsUserInGroup)
+            {
+                <input type='checkbox' name='selectedGroups' value='@item.Id' checked='checked' />
+            }
+            else
+            {
+                <input type='checkbox' name='selectedGroups' value='@item.Id' />
+            }
+            </text>)
+              .ClientTemplate("<input type='checkbox' name='selectedGroups' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .Title("Member")
+              .Width(64)
+              .Filterable(false)
+              .HtmlAttributes(new { style = "text-align:center" });
+          columns.Bound(g => g.Id);
+          columns.Bound(g => g.Name);
+          columns.Bound(g => g.Description);
+      })
+      .ClientEvents(events =>
+      {
+          events.OnDataBound("Grid_Groups_OnDataBound");
+      })
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+          .OperationMode(GridOperationMode.Client)
+          .Select("Groups_Select", "Users", new { UserId = Model }))
+      .Filterable()
+      .Pageable(pageable =>
+      {
+          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+          pageable.Position(GridPagerPosition.Bottom);
+      })
+      .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
+
+<script>
+    function Grid_Groups_OnDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("input[name='selectedGroups']").click(function () {
+            var rows = $("#Grid_Groups").data("tGrid").data;
+            for (var i = 0; i < rows.length; ++i) {
+                if (rows[i].Id == $(this).attr('value')) {
+                    rows[i].IsUserInGroup = $(this).is(':checked');
+                }
+            }
+        });
+    }
+</script>
