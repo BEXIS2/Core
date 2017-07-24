@@ -72,7 +72,7 @@
         $('#Content_Subjects').empty();
 
         $.get('@Url.Action("Subjects", "FeaturePermissions")',
-            { Id: featureID },
+            { FeatureId: featureID },
             function(contentData) {
 
                 $('#Content_Subjects').html(contentData);

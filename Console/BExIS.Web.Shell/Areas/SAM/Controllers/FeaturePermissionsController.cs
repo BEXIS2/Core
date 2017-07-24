@@ -17,7 +17,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
     public class FeaturePermissionsController : Controller
     {
-        public ActionResult Features()
+        public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
 
@@ -26,14 +26,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var features = new List<FeatureTreeViewModel>();
 
             var roots = featureManager.FindRoots();
-            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f, new IsFeatureInEveryoneGroupDelegate(IsFeatureInEveryoneGroup))));
+            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f, IsFeatureInEveryoneGroup)));
 
-            return PartialView("_Features", features.AsEnumerable());
-        }
-
-        public ActionResult Index()
-        {
-            return View();
+            return View(features.AsEnumerable());
         }
 
         public bool IsFeatureInEveryoneGroup(long featureId)
@@ -100,11 +95,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return false;
         }
 
-        public ActionResult Subjects(long id)
+        public ActionResult Subjects(long featureId)
         {
-            ViewData["FeatureId"] = id;
-
-            return PartialView("_Subjects");
+            return PartialView("_Subjects", featureId);
         }
 
         [GridAction]

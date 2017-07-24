@@ -1,6 +1,7 @@
-﻿@using Telerik.Web.Mvc.UI
-@model List<BExIS.Modules.Sam.UI.Models.FeaturePermissionGridRowModel>
-@(Html.Telerik().Grid(Model)
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+@model long
+@(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
       .Name("Grid_Subjects")
       .DataKeys(keys =>
       {
@@ -41,7 +42,7 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .Select("Subjects_Select", "FeaturePermissions", (long)ViewData["FeatureId"])
+          .Select("Subjects_Select", "FeaturePermissions", new { FeatureId = Model})
       )
       .Filterable()
       .Pageable(pageable =>
