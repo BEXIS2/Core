@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BExIS.Web.Shell.Models
 {
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
-        [Display(Name = "E-Mail")]
+        [EmailAddress]
+        [Display(Name = "Email")]
         public string Email { get; set; }
     }
 
     public class ExternalLoginListViewModel
     {
+        public string Action { get; set; }
         public string ReturnUrl { get; set; }
     }
 
@@ -19,49 +20,61 @@ namespace BExIS.Web.Shell.Models
     {
         [Required]
         [EmailAddress]
-        [Display(Name = "E-Mail")]
-        public string Email { get; set; }
-    }
-
-    public class ForgotViewModel
-    {
-        [Required]
-        [Display(Name = "E-Mail")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
     }
 
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "E-Mail")]
         [EmailAddress]
+        [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Kennwort")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Speichern?")]
+        [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+    }
+
+    public class ManageUserViewModel
+    {
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "New password")]
+        public string NewPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current password")]
+        public string OldPassword { get; set; }
     }
 
     public class RegisterViewModel
     {
         [DataType(DataType.Password)]
-        [Display(Name = "Kennwort bestätigen")]
-        [Compare("Password", ErrorMessage = "Das Kennwort entspricht nicht dem Bestätigungskennwort.")]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         [Required]
         [EmailAddress]
-        [Display(Name = "E-Mail")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "\"{0}\" muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Kennwort")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
     }
 
@@ -70,43 +83,19 @@ namespace BExIS.Web.Shell.Models
         public string Code { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Kennwort bestätigen")]
-        [Compare("Password", ErrorMessage = "Das Kennwort stimmt nicht mit dem Bestätigungskennwort überein.")]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         [Required]
         [EmailAddress]
-        [Display(Name = "E-Mail")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "\"{0}\" muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Kennwort")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
-    }
-
-    public class SendCodeViewModel
-    {
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
-        public bool RememberMe { get; set; }
-        public string ReturnUrl { get; set; }
-        public string SelectedProvider { get; set; }
-    }
-
-    public class VerifyCodeViewModel
-    {
-        [Required]
-        [Display(Name = "Code")]
-        public string Code { get; set; }
-
-        [Required]
-        public string Provider { get; set; }
-
-        [Display(Name = "Diesen Browser merken?")]
-        public bool RememberBrowser { get; set; }
-
-        public bool RememberMe { get; set; }
-        public string ReturnUrl { get; set; }
     }
 }

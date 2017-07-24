@@ -1,6 +1,6 @@
 ﻿@model BExIS.Web.Shell.Models.RegisterViewModel
 @{
-    ViewBag.Title = "Registrieren";
+    ViewBag.Title = "Register";
 }
 
 <h2>@ViewBag.Title.</h2>
@@ -8,7 +8,7 @@
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4>Neues Konto erstellen.</h4>
+    <h4>Create a new account.</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group">
@@ -31,7 +31,7 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Registrieren" />
+            <input type="submit" class="btn btn-default" value="Register" />
         </div>
     </div>
 }
