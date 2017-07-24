@@ -36,20 +36,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Create", model);
         }
 
-        public ActionResult Delete(long id)
-        {
-            return View();
-        }
-
         [HttpPost]
-        public ActionResult Delete(DeleteUserModel model)
+        public void Delete(long userId)
         {
-            if (ModelState.IsValid)
-            {
-                RedirectToAction("Index");
-            }
-
-            return View();
+            var userStore = new UserStore();
+            userStore.Delete(userId);
         }
 
         public void Groups_Save(UserMembershipGridRowModel[] groups)

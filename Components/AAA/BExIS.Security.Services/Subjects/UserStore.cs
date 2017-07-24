@@ -55,6 +55,18 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(0);
         }
 
+        public void Delete(long userId)
+        {
+            var user = UserRepository.Get(userId);
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                userRepository.Delete(user);
+                uow.Commit();
+            }
+        }
+
         public Task DeleteAsync(User user)
         {
             using (var uow = this.GetUnitOfWork())
@@ -82,14 +94,14 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(UserRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
         }
 
-        public Task<User> FindByIdAsync(long userId)
-        {
-            return Task.FromResult(UserRepository.Get(userId));
-        }
-
         public User FindById(long userId)
         {
             return UserRepository.Get(userId);
+        }
+
+        public Task<User> FindByIdAsync(long userId)
+        {
+            return Task.FromResult(UserRepository.Get(userId));
         }
 
         public Task<User> FindByNameAsync(string userName)
@@ -110,6 +122,11 @@ namespace BExIS.Security.Services.Subjects
         public Task<bool> GetEmailConfirmedAsync(User user)
         {
             return Task.FromResult(user.IsEmailConfirmed);
+        }
+
+        public Task<IList<string>> GetGroupsAsync(User user)
+        {
+            return Task.FromResult((IList<string>)user.Groups.Select(m => m.Name).ToList());
         }
 
         public Task<bool> GetLockoutEnabledAsync(User user)
@@ -141,11 +158,6 @@ namespace BExIS.Security.Services.Subjects
         public Task<string> GetPasswordHashAsync(User user)
         {
             return Task.FromResult(user.Password);
-        }
-
-        public Task<IList<string>> GetGroupsAsync(User user)
-        {
-            return Task.FromResult((IList<string>)user.Groups.Select(m => m.Name).ToList());
         }
 
         public Task<string> GetSecurityStampAsync(User user)
