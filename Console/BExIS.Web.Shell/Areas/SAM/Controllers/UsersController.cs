@@ -14,7 +14,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Create()
         {
-            return PartialView("_Create", new CreateUserModel());
+            return PartialView("_Create");
         }
 
         [HttpPost]
@@ -52,57 +52,50 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public void Groups_Save(UserMembershipGridRowModel[] groups)
+        {
+            Session["SelectedGroups"] = groups.Where(g => g.IsUserInGroup).Select(g => g.Id).ToList();
+        }
+
+        [GridAction]
+        public ActionResult Groups_Select(long userId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            List<long> selectedGroups = new List<long>();
+            if (Session["SelectedGroups"] == null)
+            {
+                selectedGroups.AddRange(user.Groups.Select(g => g.Id).ToList());
+            }
+            else
+            {
+                selectedGroups.AddRange(Session["SelectedGroups"] as List<long>);
+            }
+
+            var groupManager = new GroupManager();
+            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, selectedGroups)).ToList();
+
+            return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
+        }
+
         public ActionResult Index()
         {
             return View();
         }
 
-        [GridAction]
-        public ActionResult Memberships_Select(Dictionary<long, bool> selection, long userId)
-        {
-            var groupManager = new GroupManager();
-            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();
-
-            return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
-        }
-
         public ActionResult Update(long userId)
         {
-            // get user
-            var model = new UpdateUserModel();
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
 
-            return PartialView("_Update", model);
+            return PartialView("_Update", UpdateUserModel.Convert(user));
         }
 
         [HttpPost]
-        public ActionResult Update(UpdateUserModel model, List<long> selectedGroups)
+        public ActionResult Update(UpdateUserModel model)
         {
             return PartialView("_Update", model);
-        }
-
-        public void updateSelection(Dictionary<long, bool> selection)
-        {
-            if (selection == null)
-                selection = new Dictionary<long, bool>();
-
-            // Selected Groups
-            var selectedGroups = new HashSet<long>();
-            if (Session["SelectedGroups"] != null)
-                selectedGroups = Session["SelectedGroups"] as HashSet<long>;
-
-            foreach (var item in selection)
-            {
-                if (item.Value)
-                {
-                    selectedGroups.Add(item.Key);
-                }
-                else
-                {
-                    selectedGroups.Remove(item.Key);
-                }
-            }
-
-            Session["SelectedGroups"] = selectedGroups;
         }
 
         [GridAction]

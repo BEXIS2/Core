@@ -1,8 +1,10 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
+@model long
+
 @(Html.Telerik().Grid<GroupMembershipGridRowModel>()
-      .Name("grid_usermemberships")
+      .Name("Grid_Groups")
       .Columns(columns =>
       {
           columns.Bound(g => g.IsUserInGroup)
@@ -27,13 +29,12 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBinding("ondatabinding_grid_usermembership");
-          events.OnDataBound("ondatabound_grid_usermembership");
+          events.OnDataBound("Grid_Groups_OnDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
           .OperationMode(GridOperationMode.Client)
-          .Select("Memberships_Select", "Users"))
+          .Select("Groups_Select", "Users", new { UserId = Model }))
       .Filterable()
       .Pageable(pageable =>
       {
@@ -44,32 +45,17 @@
       .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
 
 <script>
-    function ondatabound_grid_usermembership() {
+    function Grid_Groups_OnDataBound() {
         addTooltips();
         resetAllTelerikIconTitles();
-    }
 
-    function ondatabinding_grid_usermembership() {
-        e.data = { selection: getSelection() };
-    }
-
-    function getSelection() {
-        var selection = [];
-
-        $("input[name='selectedGroups']").each(function () {
-            selection.push({
-                key: $(this).attr('value'),
-                value: false
-            });
+        $("input[name='selectedGroups']").click(function () {
+            var rows = $("#Grid_Groups").data("tGrid").data;
+            for (var i = 0; i < rows.length; ++i) {
+                if (rows[i].Id == $(this).attr('value')) {
+                    rows[i].IsUserInGroup = $(this).is(':checked');
+                }
+            }
         });
-
-        $("input[name='selectedGroups']:checked").each(function () {
-            selection.push({
-                key: $(this).attr('value'),
-                value: true
-            });
-        });
-
-        return selection;
     }
 </script>

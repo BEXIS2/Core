@@ -1,10 +1,12 @@
 ﻿@using Telerik.Web.Mvc.UI
 @model BExIS.Modules.Sam.UI.Models.UpdateUserModel
 
-@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateuser", OnSuccess = "onsuccess_updateuser" }))
+@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Update", OnSuccess = "Update_OnSuccess" }))
 {
+    @Html.ValidationSummary(true)
+
     @(Html.Telerik().TabStrip()
-        .Name("tabstrip_updateuser")
+        .Name("TabStrip_Update")
         .SelectedIndex(0)
         .Items(tabs =>
         {
@@ -12,6 +14,15 @@
                 .Text("Details")
                 .Content(@<text>
                     <table class="bx-table-form">
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
+                                @Html.HiddenFor(m => m.Id)
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 @Html.LabelFor(m => m.UserName)
@@ -32,11 +43,10 @@
                         </tr>
                     </table>
                 </text>);
-
 tabs.Add()
 .Text("Membership")
 .Content(@<text>
-                    @Html.Partial("_Memberships")
+                    @Html.Partial("_Membership", Model.Id)
 </text>);
 
         })
@@ -47,3 +57,9 @@ tabs.Add()
         <button style="margin-left: 1px" type="button" class="bx-button action">Cancel</button>
     </div>
 }
+
+<script>
+    $("button[type='submit']").click(function () {
+        $.post('@Url.Action("Groups_Save", "Users")', { Groups: $("#Grid_Groups").data("tGrid").dataSource._data });
+    });
+</script>

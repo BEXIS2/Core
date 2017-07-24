@@ -238,7 +238,7 @@
     <Content Include="Views\Datasets\Version.cshtml" />
     <Content Include="Views\Datasets\Versions.cshtml" />
     <Content Include="Views\Users\_Create.cshtml" />
-    <Content Include="Views\Users\_Memberships.cshtml" />
+    <Content Include="Views\Users\_Membership.cshtml" />
     <Content Include="Views\Users\_Update.cshtml" />
     <Content Include="Views\Groups\_Create.cshtml" />
     <Content Include="Views\Groups\_Membership.cshtml" />

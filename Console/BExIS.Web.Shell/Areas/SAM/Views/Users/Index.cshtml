@@ -20,7 +20,7 @@
     </p>
 }
 <button id="button_createuser" type="button" class="bx-button function">Create User</button>
-@(Html.Telerik().Grid<UserGridRowModel>().Name("grid_users")
+@(Html.Telerik().Grid<UserGridRowModel>().Name("Grid_Users")
       .Columns(columns =>
       {
           columns.Bound(u => u.Id);
@@ -38,7 +38,7 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("ondatabound_grid_users");
+          events.OnDataBound("Grid_Users_OnDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
@@ -71,7 +71,7 @@
                 success: function(htmlData) {
                     var windowElement = $.telerik.window.create({
                         title: "Create User",
-                        html: "<div id='content_createuser' class='bx-window'>" + htmlData + "</div>",
+                        html: "<div id='Content_Create' class='bx-window'>" + htmlData + "</div>",
                         contentUrl: "",
                         actions: ["Close"],
                         modal: true,
@@ -81,12 +81,12 @@
                         draggable: true,
                         scrollable: false,
                         onClose: function() {
-                            $("#window_createuser").data('tWindow').destroy();
-                            $("#grid_users .t-refresh").trigger('click');
+                            $("#Window_Create").data('tWindow').destroy();
+                            $("#Grid_Users .t-refresh").trigger('click');
                         }
                     });
 
-                    windowElement.attr('id', 'window_createuser');
+                    windowElement.attr('id', 'Window_Create');
                     var window = $(windowElement).data('tWindow');
                     window.center().open();
 
@@ -95,7 +95,7 @@
             });
             });
 
-        function ondatabound_grid_users() {
+        function Grid_Users_OnDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
 
@@ -109,7 +109,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update User (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='content_updateuser' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='Content_Update' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -119,12 +119,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#window_updateuser").data('tWindow').destroy();
-                                    $("#grid_users .t-refresh").trigger('click');
+                                    $("#Window_Update").data('tWindow').destroy();
+                                    $("#Grid_Users .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'window_updateuser');
+                            windowElement.attr('id', 'Window_Update');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 
