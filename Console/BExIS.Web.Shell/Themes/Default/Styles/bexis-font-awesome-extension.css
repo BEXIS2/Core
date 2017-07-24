@@ -833,7 +833,9 @@
   content: "\f0b2";
 }
 .fa-group:before,
-.fa-users:before {
+.fa-users:before,
+.bx-group:before,
+.bx-users:before {
   content: "\f0c0";
 }
 .fa-chain:before,

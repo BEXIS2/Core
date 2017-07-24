@@ -1,4 +1,5 @@
 ﻿using BExIS.Dim.Entities.Publication;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -144,14 +145,20 @@ namespace BExIS.Dim.Helpers.GFBIO
             string functionName = "create-research-object";
             string entityName = "researchobject";
 
-            string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName + "/" + addtionalPath + "/";
+            string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName/* + "/" + addtionalPath + "/"*/;
 
-            string json = "[{\"userid\":" + userid + "," +
-                          "\"name\":\"" + name + "\"," +
-                          "\"projectid\":" + projectid + "," +
-                          "\"description\":\"" + description + "\"," +
-                          "\"extendeddata\":{" + extendedData + "}," +
-                          "\"researchobjecttype\":\"" + researchobjecttype + "\"}]";
+            GFBIOResearchObjectJSON researchObject = new GFBIOResearchObjectJSON();
+
+            researchObject.userid = userid;
+            researchObject.projectid = projectid;
+            researchObject.name = name;
+            researchObject.description = description;
+            researchObject.researchobjecttype = researchobjecttype;
+            researchObject.extendeddata = extendedData;
+
+            string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
+
+
             //"," +
             //"\"authornames\":[" + string.Join(",", authornames) + "]}";
 
@@ -166,9 +173,30 @@ namespace BExIS.Dim.Helpers.GFBIO
 
     }
 
+    ///// <summary>
+    ///// Gfbio Post  Research Object
+    ///// what you should send to the create a reseachbject
+    ///// </summary>
+    //public class GFBIOResearchObjectPostJSON
+    //{
+    //    public long userid { get; set; }
+    //    public string name { get; set; }
+    //    public long projectid { get; set; }
+    //    public string extendeddata { get; set; }
+    //    public long researchobjecttype { get; set; }
+
+
+    //}
+
+
+    /// <summary>
+    /// GFBIO Recieve Research Object
+    /// WHat you get after call a get ResearchObject webservice
+    /// or the returen result from a create research object
+    /// </summary>
     public class GFBIOResearchObjectJSON
     {
-        public long submitterid { get; set; }
+        public long userid { get; set; }
         public long projectid { get; set; }
 
         // length 200
@@ -184,7 +212,7 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         public GFBIOResearchObjectJSON()
         {
-            submitterid = 0;
+            userid = 0;
             projectid = 0;
             name = "";
             description = "";

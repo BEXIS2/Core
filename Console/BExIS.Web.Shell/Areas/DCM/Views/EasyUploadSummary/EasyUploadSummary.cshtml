@@ -1,0 +1,82 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.EasyUploadSummaryModel
+
+<div id="Step6" class="uploadWizardStep">
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="uploadWizardStep_Description stepper">
+        </div>
+
+        <div class="uploadWizardStep_Content stepper">
+            <table>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m => m.DatasetTitle)</b>
+                    </td>
+                    <td>
+                        @Model.DatasetTitle
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m => m.MetadataSchemaTitle)</b>
+
+                    </td>
+                    <td>
+                        @Model.MetadataSchemaTitle
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m => m.NumberOfHeaders)</b>
+
+                    </td>
+                    <td>
+                        @Model.NumberOfHeaders
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m => m.NumberOfData)</b>
+
+                    </td>
+                    <td>
+                        @Model.NumberOfData
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="uploadWizardStep_Success stepper">
+        <div id="progress"></div>
+    </div>
+
+    <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
+        {
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                {
+                    <ul>
+                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        {
+                            <li>@s.ToString()</li>
+                        }
+                    </ul>
+
+                }
+            }
+
+        }
+    </div>
+
+</div>
