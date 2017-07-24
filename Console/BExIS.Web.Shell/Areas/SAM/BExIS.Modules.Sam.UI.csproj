@@ -218,10 +218,8 @@
     <Content Include="Views\Tenants\_Create.cshtml" />
     <Content Include="Views\Tenants\_Edit.cshtml" />
     <Content Include="Views\EntityPermissions\Index.cshtml" />
-    <Content Include="Views\FeaturePermissions\Index.cshtml" />
     <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Features.cshtml" />
     <Content Include="Views\EntityPermissions\_Entities.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
@@ -230,7 +228,6 @@
     <Content Include="Views\Requests\_Entities.cshtml" />
     <Content Include="Views\Requests\Index.cshtml" />
     <Content Include="Views\Requests\_Requests.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Decisions.cshtml" />
     <Content Include="Views\Datasets\Delete.cshtml" />
     <Content Include="Views\Datasets\Index.cshtml" />
@@ -243,6 +240,9 @@
     <Content Include="Views\Groups\_Create.cshtml" />
     <Content Include="Views\Groups\_Membership.cshtml" />
     <Content Include="Views\Groups\_Update.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Features.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
+    <Content Include="Views\FeaturePermissions\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

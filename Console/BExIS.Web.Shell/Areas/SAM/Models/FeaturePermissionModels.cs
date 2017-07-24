@@ -1,28 +1,37 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Utils.Filters;
-using System.Collections.Generic;
+﻿using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
     public class FeaturePermissionGridRowModel
     {
-        public int PermissionType { get; set; }
-        [Query(typeof(Subject), "Id")]
-        public long Id { get; set; }
+        public bool EffectiveRight { get; set; }
+        public long FeatureId { get; set; }
 
-        [Query(typeof(Subject), "Name")]
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public int FeaturePermissionType { get; set; }
+        public long SubjectId { get; set; }
 
-        public static FeaturePermissionGridRowModel Convert(Subject subject, Dictionary<long, int> permissionTypes)
+        public string SubjectName { get; set; }
+
+        public string SubjectType { get; set; }
+
+        public static FeaturePermissionGridRowModel Convert(Subject subject, Feature feature, int featurePermissionType, bool effectiveRight)
         {
             return new FeaturePermissionGridRowModel()
             {
-                Type = subject is User ? "User" : "Group",
-                Name = subject.Name,
-                Id = subject.Id,
-                PermissionType = permissionTypes.ContainsKey(subject.Id) ? permissionTypes[subject.Id] : 2
+                FeatureId = feature.Id,
+
+                SubjectId = subject.Id,
+                SubjectName = subject.Name,
+                SubjectType = subject is User ? "User" : "Group",
+
+                EffectiveRight = effectiveRight,
+                FeaturePermissionType = featurePermissionType
             };
         }
+    }
+
+    public class FeaturePermissionReadModel
+    {
     }
 }

@@ -1,71 +1,28 @@
-﻿@section LeftPane
+﻿@model BExIS.Modules.Sam.UI.Models.FeatureTreeViewModel
+    <style>
+        #Grid_Subjects .t-grid-content {
+            height: auto !important;
+            max-height: 475px !important;
+        }
+    </style>
+
+    @section LeftPane
 {
-    @Html.Partial("_Features")
-}
+        @Html.Partial("_Features", Model)
+    }
 
-<div id="permissions"></div>
-
-@section Scripts
+    @section Information
 {
-    <script type="text/javascript">
+        Here you are able to manage how users (or groups) have access to individual system features or entire modules.
+        Please click on the name in the tree structure on left to view individual permissions.
+        Ticking the checkboxes in the navigation tree will make a feature accessible without authentification (public access).
+        Please use with care!
+        By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module).
+        Individual grants on features rule out higher level settings. Effective permissions are shown in the first column of the table.
+        Please note that any change will take effect immediately without further confirmation or save/submit action.
+        <p>
+            <a href="/SAM/Help/Index/#_Toc451422051" class="bx-informationLink" title="go to help" target="_blank">More</a>
+        </p>
+    }
 
-        $("#treeViewFeatures li div")
-            .click(function(e) {
-                $(e.target).find(".t-in").trigger("click");
-            });
-
-        function GetTreeView() {
-            return $('#treeViewFeatures').data('tTreeView');
-        }
-
-        function OnSelect(e) {
-            var featureId = GetTreeView().getItemValue(e.item);
-            var prevSelectedDiv = $(".bx-selected");
-            if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
-
-            var selectedDiv = $(e.item).find("div")[0];
-            $(selectedDiv).addClass("bx-selected");
-
-            $('#permissions').empty();
-
-            $.get('@Url.Action("Permissions", "FeaturePermissions")',
-                { FeatureId: featureId },
-                function(contentData) {
-
-                    $('#permissions').html(contentData);
-
-                    truncateTitle();
-                });
-        }
-
-        function onDataBound() {
-            addTooltips();
-            resetAllTelerikIconTitles();
-        }
-
-        function getSelection() {
-            var selection = [];
-
-            $("input:radio:checked")
-                .each(function () {
-                    var id = $(this).attr('name');
-                    var value = $(this).attr('value');
-
-                    selection.push({
-                        key: id,
-                        value: value
-                    });
-                });
-
-            return selection;
-        }
-
-        function onDataBinding(e) {
-            e.data =
-            {
-                selection: getSelection()
-            };
-        }
-
-    </script>
-}
+    <div id="Content_Subjects"></div>

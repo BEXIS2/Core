@@ -54,18 +54,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var userStore = new UserStore();
             var user = userStore.FindById(userId);
 
-            List<long> selectedGroups = new List<long>();
+            List<long> test = new List<long>();
             if (Session["SelectedGroups"] == null)
             {
-                selectedGroups.AddRange(user.Groups.Select(g => g.Id).ToList());
+                test.AddRange(user.Groups.Select(g => g.Id).ToList());
             }
             else
             {
-                selectedGroups.AddRange(Session["SelectedGroups"] as List<long>);
+                test.AddRange(Session["SelectedGroups"] as List<long>);
             }
 
             var groupManager = new GroupManager();
-            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, selectedGroups)).ToList();
+            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, test)).ToList();
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
         }

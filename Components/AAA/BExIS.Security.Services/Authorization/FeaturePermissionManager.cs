@@ -60,6 +60,37 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public void Delete(long featureId, long subjectId)
+        {
+            var featurePermission = Find(featureId, subjectId);
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
+                featurePermissionRepository.Delete(featurePermission);
+                uow.Commit();
+            }
+        }
+
+        public bool ExistsFeaturePermission(long subjectId, long featureId, PermissionType permissionType = PermissionType.Grant)
+        {
+            if (FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public FeaturePermission Find(long featureId, long subjectId)
+        {
+            return
+                FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId)
+                    .FirstOrDefault();
+        }
+
         public FeaturePermission Find(Feature feature, Subject subject)
         {
             return
