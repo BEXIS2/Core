@@ -134,7 +134,7 @@ namespace BExIS.Web.Shell
                     }
                     catch (Exception ex)
                     {
-                        LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                        LoggerFactory.GetFileLogger().LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
                     }
                 }
             }
