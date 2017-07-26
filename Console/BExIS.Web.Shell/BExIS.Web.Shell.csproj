@@ -470,6 +470,7 @@
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP211.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DCM\Form.js" />
     <Content Include="Scripts\DIM\bexis.dim.mapping.js" />

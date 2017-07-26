@@ -222,6 +222,7 @@
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />

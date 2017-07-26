@@ -159,9 +159,6 @@
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
@@ -206,6 +203,7 @@
     <Content Include="Scripts\draggabilly.pkgd.js" />
     <Content Include="Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
+    <None Include="Properties\PublishProfiles\BPP211_Rpm.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
