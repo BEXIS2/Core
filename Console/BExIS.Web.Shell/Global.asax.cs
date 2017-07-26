@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell
             MvcHandler.DisableMvcResponseHeader = true;
 
             // This line registers an assembly resolver for the dynamically loaded modules. It also takes care of modules' statuses, so that inactive modules are not resolved.
-            // This MUST be before IoC initiatiolzation.
+            // This MUST be before IoC initialization.
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
@@ -134,7 +134,7 @@ namespace BExIS.Web.Shell
                     }
                     catch (Exception ex)
                     {
-                        LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                        LoggerFactory.GetFileLogger().LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
                     }
                 }
             }

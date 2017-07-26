@@ -352,8 +352,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         /*
-         * Saves the selected datatype in the MappedheaderUnits and saves them on the bus
-         * */
+ * Saves the selected datatype in the MappedheaderUnits and saves them on the bus
+ * */
         [HttpPost]
         public ActionResult SaveDataTypeSelection()
         {
@@ -383,19 +383,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 model.AssignedHeaderUnits = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             }
-            List<Tuple<int, string, UnitInfo>> newAssignedHeaderUnits = new List<Tuple<int, string, UnitInfo>>();
-            List<Tuple<int, string, UnitInfo>> oldAssignedHeaderUnits = model.AssignedHeaderUnits;
-
 
             //Reset the name of the variable and save the new Datatype
             string[] headerFields = (string[])TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_HEADERFIELDS];
             string currentHeader = headerFields.ElementAt((int)selectFieldId);
-            Tuple<int, string, UnitInfo> existingTuple = oldAssignedHeaderUnits.Where(t => t.Item1 == selectFieldId).FirstOrDefault();
-            int j = model.AssignedHeaderUnits.FindIndex(i => i.Equals(existingTuple));
+            Tuple<int, string, UnitInfo> existingTuple = model.AssignedHeaderUnits.Where(t => t.Item1 == selectFieldId).FirstOrDefault();
+
+            existingTuple = new Tuple<int, string, UnitInfo>(existingTuple.Item1, existingTuple.Item2, (UnitInfo)existingTuple.Item3.Clone());
+
+            int j = model.AssignedHeaderUnits.FindIndex(i => ((i.Item1 == existingTuple.Item1)));
+
             model.AssignedHeaderUnits[j] = new Tuple<int, string, UnitInfo>(existingTuple.Item1, currentHeader, existingTuple.Item3);
             model.AssignedHeaderUnits[j].Item3.SelectedDataTypeId = Convert.ToInt32(selectedDataTypeId);
 
-            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, oldAssignedHeaderUnits);
+            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS))
             {
@@ -433,7 +434,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
             return PartialView("Verification", model);
-
         }
 
         /*
