@@ -87,8 +87,7 @@ namespace BExIS.Web.Shell
         {
             ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
             AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
-            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
-            //ModuleBootstrapper.Initialize();
+            // at the time of this call, the PluginInitilizer has already loaded the plug-ins. this call causes the module entry points to be instantiated.
         }
 
         private void initPersistence()
