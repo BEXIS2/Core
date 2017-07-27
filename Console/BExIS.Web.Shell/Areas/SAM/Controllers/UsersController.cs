@@ -49,7 +49,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction]
-        public ActionResult Groups_Select(long userId)
+        public ActionResult Groups_Select(long userId, Dictionary<long, bool> selection, GridCommand gridCommand)
         {
             var userStore = new UserStore();
             var user = userStore.FindById(userId);
