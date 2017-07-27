@@ -1,4 +1,6 @@
 ﻿using BExIS.Modules.Dcm.UI.Helpers;
+using System;
+using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI
@@ -7,12 +9,24 @@ namespace BExIS.Modules.Dcm.UI
     {
         public DcmModule() : base("dcm")
         {
+            LoggerFactory.GetFileLogger().LogCustom("...ctor of dcm...");
         }
 
         public override void Install()
         {
-            base.Install();
-            DcmSeedDataGenerator.GenerateSeedData();
+            LoggerFactory.GetFileLogger().LogCustom("...start install of dim...");
+            try
+            {
+                base.Install();
+                DcmSeedDataGenerator.GenerateSeedData();
+            }
+            catch (Exception e)
+            {
+                LoggerFactory.GetFileLogger().LogCustom(e.Message);
+                LoggerFactory.GetFileLogger().LogCustom(e.StackTrace);
+            }
+
+            LoggerFactory.GetFileLogger().LogCustom("...end install of dim...");
         }
     }
 }

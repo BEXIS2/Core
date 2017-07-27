@@ -28,7 +28,7 @@ namespace BExIS.Web.Shell
         {
             filters.Add(new PersistenceContextProviderFilterAttribute());
 #if !DEBUG
-            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+//filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
 #endif
             filters.Add(new HandleErrorAttribute());
         }
@@ -38,11 +38,12 @@ namespace BExIS.Web.Shell
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-               "Default", // Route name
-               "{controller}/{action}/{id}", // URL with parameters
-               new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
-               , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
-           );
+                "Default", // Route name
+                "{controller}/{action}/{id}", // URL with parameters
+                new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
+                , new[] { "BExIS.Web.Shell.Controllers" }
+                // to prevent conflict between root controllers and area controllers that have same names
+            );
         }
 
         protected void Application_Start()
@@ -68,13 +69,22 @@ namespace BExIS.Web.Shell
             initTenancy();
             // At application start, each modules obtains a chance to perform some initialization and warmup tasks. They are coded in each module's Start method.
             // This call starts them. 
-            ModuleManager.StartModules();
+            try
+            {
+                ModuleManager.StartModules();
+            }
+            catch (Exception e)
+            {
+                LoggerFactory.GetFileLogger().LogCustom(e.Message + "\n" + e.StackTrace);
+            }
+
         }
 
         private void initTenancy()
         {
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
-            ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
+            ITenantPathProvider pathProvider = new BExISTenantPathProvider();
+            // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
             tenantResolver.Load(pathProvider);
         }
 
@@ -85,16 +95,20 @@ namespace BExIS.Web.Shell
 
         private void initModules()
         {
-            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
+            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml"));
+            // this should be called before RegisterAllAreas
+            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration);
+            // this is the starting point of geting modules registered
             // at the time of this call, the PluginInitilizer has already loaded the plug-ins
             //ModuleBootstrapper.Initialize();
         }
 
         private void initPersistence()
         {
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
-            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            // just to prepare data access environment
+            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString,
+                AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
             {
                 pManager.ExportSchema();
@@ -118,7 +132,8 @@ namespace BExIS.Web.Shell
                     pManager.UpdateSchema();
                 }
                 catch (Exception ex)
-                { }
+                {
+                }
                 // When the pending modules' schemas are ported, their potential seed data should be generated.
                 // This is done through calling Install method.
                 foreach (var moduleId in ModuleManager.PendingModules())
@@ -134,7 +149,8 @@ namespace BExIS.Web.Shell
                     }
                     catch (Exception ex)
                     {
-                        LoggerFactory.GetFileLogger().LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                        LoggerFactory.GetFileLogger()
+                            .LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
                     }
                 }
             }
