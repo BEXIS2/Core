@@ -42,9 +42,10 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Client)
+          .OperationMode(GridOperationMode.Server)
           .Select("Users_Select", "Users")
       )
+      .EnableCustomBinding(true)
       .Filterable()
       .Pageable(pageable =>
       {
