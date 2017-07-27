@@ -1,23 +1,34 @@
-﻿using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Modules.Ddm.UI.Helpers;
+﻿using BExIS.Modules.Ddm.UI.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI
 {
     public class DdmModule : ModuleBase
     {
-        public DdmModule(): base("ddm")
+        public DdmModule() : base("ddm")
         {
+            LoggerFactory.GetFileLogger().LogCustom("...ctor of ddm...");
         }
 
         public override void Install()
         {
-            base.Install();
-            DdmSeedDataGenerator.GenerateSeedData();
+            LoggerFactory.GetFileLogger().LogCustom("...start install of ddm...");
+            try
+            {
+                base.Install();
+                DdmSeedDataGenerator.GenerateSeedData();
+            }
+            catch (Exception e)
+            {
+                LoggerFactory.GetFileLogger().LogCustom(e.Message);
+                LoggerFactory.GetFileLogger().LogCustom(e.StackTrace);
+            }
+
+            LoggerFactory.GetFileLogger().LogCustom("...end install of ddm...");
+
+
         }
 
         public override void Start()
