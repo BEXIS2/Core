@@ -85,9 +85,8 @@ namespace BExIS.Web.Shell
 
         private void initModules()
         {
-            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
-            // at the time of this call, the PluginInitilizer has already loaded the plug-ins. this call causes the module entry points to be instantiated.
+           ModuleManager.InitModules(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml"), GlobalConfiguration.Configuration); // this should be called before RegisterAllAreas
+           //AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); 
         }
 
         private void initPersistence()
@@ -104,13 +103,18 @@ namespace BExIS.Web.Shell
             // Installation means, the modules' Install method is called, which usually generates the seed data
             if (AppConfiguration.CreateDatabase)
             {
-                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
-                {
-                    ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
-                }
+                installModuleOnFreshDatabase();
             }
             // if there are pending modules, their schema (if exists) must be applied.
             else if (ModuleManager.HasPendingInstallation())
+            {
+                insatllPendingModules(pManager);
+            }
+        }
+
+        private void insatllPendingModules(IPersistenceManager pManager)
+        {
+            if (!AppConfiguration.CreateDatabase && ModuleManager.HasPendingInstallation())
             {
                 try
                 {
@@ -127,13 +131,45 @@ namespace BExIS.Web.Shell
                     try
                     {
                         ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
-                        // For security reasons, pending modules go to the "inactive" status after schema export.
-                        // An administrator can endable them via the management console
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to install module '{0}' while in pending state. Details: {1}.", moduleId, ex.Message);
+                        LoggerFactory.GetFileLogger().LogCustom(message);
+                        throw new Exception(message);
+                    }
+
+                    // For security reasons, pending modules go to the "inactive" status after schema export.
+                    // An administrator can endable them via the management console
+                    try
+                    {
                         ModuleManager.Disable(moduleId);
                     }
                     catch (Exception ex)
                     {
-                        LoggerFactory.GetFileLogger().LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                        string message = string.Format("Unable to diable module '{0}' after recovering from pending state. Details: {1}.", moduleId, ex.Message);
+                        LoggerFactory.GetFileLogger().LogCustom(message);
+                        throw new Exception(message);
+                    }
+                }
+            }
+        }
+
+        private void installModuleOnFreshDatabase()
+        {
+            if (AppConfiguration.CreateDatabase)
+            {
+                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+                {
+                    try
+                    {
+                        ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to install module '{0}'. Details: {1}.", module.Id, ex.Message);
+                        LoggerFactory.GetFileLogger().LogCustom(message);
+                        throw new Exception(message);
                     }
                 }
             }
