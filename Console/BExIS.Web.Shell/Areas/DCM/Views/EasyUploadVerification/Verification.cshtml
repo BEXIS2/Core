@@ -221,6 +221,9 @@
             }
         });*/
 
+        //Destroy the handsontable from the last step because it's causing performance problems
+        hot.destroy();
+
         $('select[name="Unit"]').change(function () {
             if ($(this).val() != null && $(this).val() != '') {
                 var selectOptionId = $(this).val();
