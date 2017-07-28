@@ -115,6 +115,10 @@
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
@@ -164,6 +168,8 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP211_bam.pubxml" />
+    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -183,7 +189,6 @@
     <Content Include="Views\Party\CreateEdit.cshtml" />
     <Content Include="Views\Party\DeleteConfirm.cshtml" />
     <Content Include="Views\Party\View.cshtml" />
-    <Content Include="Views\Party\_addPartyRelationshipPartial.cshtml" />
     <Content Include="Views\Party\_customAttributesPartial.cshtml" />
     <Content Include="Views\Party\_partiesPartial.cshtml" />
     <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />

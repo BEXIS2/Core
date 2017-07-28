@@ -218,7 +218,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
 
-                    // Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
+                    //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
                     //
                     //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
                     //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);

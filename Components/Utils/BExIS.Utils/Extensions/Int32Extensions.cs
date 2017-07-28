@@ -10,7 +10,7 @@ namespace BExIS.Utils.Extensions
         public static List<RightType> ToRightTypes(this int rights)
         {
             var binary = Convert.ToString(rights, 2);
-            return Enum.GetValues(typeof(RightType)).Cast<int>().Where(right => binary.ElementAt((binary.Length - 1) - right) == '1').Cast<RightType>().ToList();
+            return Enum.GetValues(typeof(RightType)).Cast<int>().Where(right => right <= binary.Length && binary.ElementAt(binary.Length - right) == '1').Cast<RightType>().ToList();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
@@ -14,19 +15,25 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             //operations = einzelne actions
 
             //1.controller -> 1.Operation
-
-
             FeatureManager featureManager = new FeatureManager();
+            List<Feature> features = featureManager.FeatureRepository.Get().ToList();
 
-
-            Feature DataDiscovery = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Discovery"));
+            Feature DataDiscovery = features.FirstOrDefault(f => f.Name.Equals("Data Discovery"));
             if (DataDiscovery == null) DataDiscovery = featureManager.Create("Data Discovery", "Data Discovery");
 
-            Feature SearchFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search") && f.Parent.Id.Equals(DataDiscovery.Id));
-            if (SearchFeature == null) SearchFeature = featureManager.Create("Search", "Search");
+            Feature SearchFeature = features.FirstOrDefault(f =>
+                f.Name.Equals("Search") &&
+                f.Parent != null &&
+                f.Parent.Id.Equals(DataDiscovery.Id));
 
-            Feature SearchManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search Management") && f.Parent.Id.Equals(DataDiscovery.Id));
-            if (SearchManagementFeature == null) SearchManagementFeature = featureManager.Create("Search Management", "Search Management");
+            if (SearchFeature == null) SearchFeature = featureManager.Create("Search", "Search", DataDiscovery);
+
+            Feature SearchManagementFeature = features.FirstOrDefault(f =>
+                f.Name.Equals("Search Managment") &&
+                f.Parent != null &&
+                f.Parent.Id.Equals(DataDiscovery.Id));
+
+            if (SearchManagementFeature == null) SearchManagementFeature = featureManager.Create("Search Management", "Search Management", DataDiscovery);
 
 
 
@@ -37,13 +44,16 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             Workflow workflow = new Workflow();
             OperationManager operationManager = new OperationManager();
 
+            List<Workflow> workflows = workflowManager.WorkflowRepository.Get().ToList();
 
             #region Help Workflow
 
             workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Search Help") && w.Feature.Id.Equals(DataDiscovery.Id));
+                workflows.FirstOrDefault(w =>
+                w.Name.Equals("Search Help") &&
+                w.Feature != null &&
+                w.Feature.Id.Equals(DataDiscovery.Id));
+
             if (workflow == null) workflow = workflowManager.Create("Search Help", "", DataDiscovery);
 
             operationManager.Create("DDM", "Help", "*", null, workflow);
@@ -52,10 +62,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             #region Search Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Search") && w.Feature.Id.Equals(SearchFeature.Id));
+            workflow = workflows.FirstOrDefault(w =>
+                w.Name.Equals("Search") &&
+                w.Feature != null &&
+                w.Feature.Id.Equals(SearchFeature.Id));
+
+
             if (workflow == null) workflow = workflowManager.Create("Search", "", SearchFeature);
 
             operationManager.Create("DDM", "Home", "*", null, workflow);
@@ -65,10 +77,11 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             #region Search Admin Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Search Managment") && w.Feature.Id.Equals(SearchManagementFeature.Id));
+            workflow = workflows.FirstOrDefault(w =>
+                w.Name.Equals("Search Managment") &&
+                w.Feature != null &&
+                w.Feature.Id.Equals(SearchManagementFeature.Id));
+
             if (workflow == null) workflow = workflowManager.Create("Search", "", SearchManagementFeature);
 
             operationManager.Create("DDM", "Admin", "*", null, workflow);

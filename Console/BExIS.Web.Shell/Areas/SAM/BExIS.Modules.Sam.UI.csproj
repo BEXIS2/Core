@@ -195,6 +195,7 @@
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
     <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\SAM.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />

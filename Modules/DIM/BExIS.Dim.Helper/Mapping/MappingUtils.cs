@@ -11,6 +11,8 @@ namespace BExIS.Dim.Helpers.Mapping
     public class MappingUtils
     {
 
+        #region GET FROM SYSTEM
+
         public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType, string value = "")
         {
             long destinationElementRootId = 0;
@@ -164,5 +166,10 @@ namespace BExIS.Dim.Helpers.Mapping
 
             return mask;
         }
+
+        #endregion
+
+
+
     }
 }

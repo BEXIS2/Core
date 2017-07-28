@@ -491,7 +491,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     //ToDo [SUBMISSION] -> create broker specfic function
                     // check case for gfbio
-                    if (datarepo.ToLower().Equals("gfbio"))
+                    if (datarepo.ToLower().Contains("gfbio"))
                     {
                         #region GFBIO
 

@@ -1,7 +1,6 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Web.Mvc;
@@ -51,21 +50,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Groups_Select(long userId)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
-
-            List<long> test = new List<long>();
-            if (Session["SelectedGroups"] == null)
-            {
-                test.AddRange(user.Groups.Select(g => g.Id).ToList());
-            }
-            else
-            {
-                test.AddRange(Session["SelectedGroups"] as List<long>);
-            }
-
             var groupManager = new GroupManager();
-            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, test)).ToList();
+            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
         }

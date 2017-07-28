@@ -137,8 +137,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             workflow =
                 workflowManager.WorkflowRepository
                     .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Create Dataset") && w.Feature.Id.Equals(DataCollectionFeature.Id));
-            if (workflow == null) workflow = workflowManager.Create("Create Dataset", "", DataCollectionFeature);
+                    .FirstOrDefault(w => w.Name.Equals("Create Dataset") && w.Feature.Id.Equals(DatasetCreationFeature.Id));
+            if (workflow == null) workflow = workflowManager.Create("Create Dataset", "", DatasetCreationFeature);
 
             operationManager.Create("DCM", "CreateDataset", "*", null, workflow);
             operationManager.Create("DCM", "Form", "*", null, workflow);
