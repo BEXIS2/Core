@@ -212,7 +212,7 @@ namespace BExIS.Security.Services.Authorization
             var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
 
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);
-            return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
+            return (int)rightType <= binary.Length && binary.ElementAt(binary.Length - (int)rightType) == '1';
         }
 
         public bool HasRight(long subjectId, long entityId, long key, RightType rightType)
