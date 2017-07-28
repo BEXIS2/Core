@@ -154,10 +154,21 @@ namespace BExIS.Dim.Helpers.GFBIO
             researchObject.name = name;
             researchObject.description = description;
             researchObject.researchobjecttype = researchobjecttype;
-            researchObject.extendeddata = extendedData;
+            //researchObject.extendeddata = "{\"x\"}";//extendedData;
+            researchObject.metadatalabel = "abcd";
+            //researchObject.authornames = new List<string> { "david schöne" };
 
-            string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
+            //string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
 
+
+            GFBIOResearchObjectMiniJSON x = new GFBIOResearchObjectMiniJSON();
+
+
+            x.userid = userid;
+            x.name = name;
+            x.description = description;
+            x.researchobjecttype = researchobjecttype;
+            string json = "[" + JsonConvert.SerializeObject(x) + "]";
 
             //"," +
             //"\"authornames\":[" + string.Join(",", authornames) + "]}";
@@ -188,6 +199,17 @@ namespace BExIS.Dim.Helpers.GFBIO
 
     //}
 
+
+    public class GFBIOResearchObjectMiniJSON
+    {
+        public long userid { get; set; }
+
+        // length 200
+        public string name { get; set; }
+        // length 15000
+        public string description { get; set; }
+        public string researchobjecttype { get; set; }
+    }
 
     /// <summary>
     /// GFBIO Recieve Research Object

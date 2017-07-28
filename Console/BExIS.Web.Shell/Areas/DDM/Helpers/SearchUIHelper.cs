@@ -43,8 +43,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 StringWriter stringWriter = new StringWriter();
                 xslt.Transform(xmlReader, xsltArgumentList, stringWriter);
                 return stringWriter.ToString().Replace("bgc:", "");
-
-
             }
 
             return "";
