@@ -86,7 +86,7 @@ namespace BExIS.Web.Shell
         private void initModules()
         {
            ModuleManager.InitModules(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml"), GlobalConfiguration.Configuration); // this should be called before RegisterAllAreas
-           //AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); 
+          //AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); 
         }
 
         private void initPersistence()
