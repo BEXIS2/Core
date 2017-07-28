@@ -42,10 +42,9 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
+          .OperationMode(GridOperationMode.Client)
           .Select("Users_Select", "Users")
       )
-      .EnableCustomBinding(true)
       .Filterable()
       .Pageable(pageable =>
       {
@@ -63,37 +62,37 @@
 
     <script type="text/javascript">
 
-    $('#button_createuser')
-        .click(function() {
-            $.ajax({
-                type: 'GET',
-                url: '@Url.Action("Create", "Users")',
-                dataType: 'html',
-                success: function(htmlData) {
-                    var windowElement = $.telerik.window.create({
-                        title: "Create User",
-                        html: "<div id='Content_Create' class='bx-window'>" + htmlData + "</div>",
-                        contentUrl: "",
-                        actions: ["Close"],
-                        modal: true,
-                        width: 500,
-                        height: 500,
-                        resizable: false,
-                        draggable: true,
-                        scrollable: false,
-                        onClose: function() {
-                            $("#Window_Create").data('tWindow').destroy();
-                            $("#Grid_Users .t-refresh").trigger('click');
-                        }
-                    });
+        $('#button_createuser')
+            .click(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("Create", "Users")',
+                    dataType: 'html',
+                    success: function (htmlData) {
+                        var windowElement = $.telerik.window.create({
+                            title: "Create User",
+                            html: "<div id='Content_Create' class='bx-window'>" + htmlData + "</div>",
+                            contentUrl: "",
+                            actions: ["Close"],
+                            modal: true,
+                            width: 500,
+                            height: 500,
+                            resizable: false,
+                            draggable: true,
+                            scrollable: false,
+                            onClose: function () {
+                                $("#Window_Create").data('tWindow').destroy();
+                                $("#Grid_Users .t-refresh").trigger('click');
+                            }
+                        });
 
-                    windowElement.attr('id', 'Window_Create');
-                    var window = $(windowElement).data('tWindow');
-                    window.center().open();
+                        windowElement.attr('id', 'Window_Create');
+                        var window = $(windowElement).data('tWindow');
+                        window.center().open();
 
-                    resetAllTelerikIconTitles();
-                }
-            });
+                        resetAllTelerikIconTitles();
+                    }
+                });
             });
 
         function Grid_Users_OnDataBound() {
