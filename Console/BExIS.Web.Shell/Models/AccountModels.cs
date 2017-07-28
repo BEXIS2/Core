@@ -27,9 +27,8 @@ namespace BExIS.Web.Shell.Models
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "UserName")]
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -61,6 +60,10 @@ namespace BExIS.Web.Shell.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [Display(Name = "UserName")]
+        public string UserName { get; set; }
+
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
