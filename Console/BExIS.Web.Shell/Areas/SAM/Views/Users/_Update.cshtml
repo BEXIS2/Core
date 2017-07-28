@@ -57,9 +57,3 @@
         <button style="margin-left: 1px" type="button" class="bx-button action">Cancel</button>
     </div>
 }
-
-<script>
-    $("button[type='submit']").click(function () {
-        $.post('@Url.Action("Groups_Save", "Users")', { Groups: $("#Grid_Groups").data("tGrid").dataSource._data });
-    });
-</script>

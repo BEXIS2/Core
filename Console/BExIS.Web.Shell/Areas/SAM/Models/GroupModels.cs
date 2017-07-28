@@ -1,6 +1,6 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -66,7 +66,7 @@ namespace BExIS.Modules.Sam.UI.Models
         public bool IsUserInGroup { get; set; }
         public string Name { get; set; }
 
-        public static GroupMembershipGridRowModel Convert(Group group, long userId)
+        public static GroupMembershipGridRowModel Convert(Group group, HashSet<long> selectedGroups)
         {
             return new GroupMembershipGridRowModel()
             {
@@ -74,7 +74,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 Name = group.Name,
                 GroupType = group.GroupType,
                 Id = group.Id,
-                IsUserInGroup = group.Users.Any(u => u.Id == userId)
+                IsUserInGroup = selectedGroups.Contains(group.Id)
             };
         }
     }

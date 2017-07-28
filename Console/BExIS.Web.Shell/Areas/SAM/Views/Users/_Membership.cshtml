@@ -34,9 +34,7 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
           .Select("Groups_Select", "Users", new { UserId = Model }))
-      .EnableCustomBinding(true)
       .Filterable()
       .Pageable(pageable =>
       {
@@ -44,7 +42,7 @@
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })
-      .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
+      .Sortable(sortable => sortable.OrderBy(order => order.Add(g => g.Id).Descending())))
 
 <script>
     function Grid_Groups_OnDataBound() {
