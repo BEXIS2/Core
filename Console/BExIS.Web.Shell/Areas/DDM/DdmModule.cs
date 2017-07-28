@@ -1,4 +1,5 @@
 ﻿using System;
+using BExIS.Modules.Ddm.UI.Helpers;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -22,7 +23,7 @@ namespace BExIS.Modules.Ddm.UI
                 // at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
                 // at BExIS.Modules.Ddm.UI.Helpers.DdmSeedDataGenerator.GenerateSeedData() in C: \Users\standard\Source\BExIS\Core\Repos\Code\Console\BExIS.Web.Shell\Areas\DDM\Helpers\DdmSeedDataGenerator.cs:line 25
                 // at BExIS.Modules.Ddm.UI.DdmModule.Install() in C: \Users\standard\Source\BExIS\Core\Repos\Code\Console\BExIS.Web.Shell\Areas\DDM\DdmModule.cs:line 21
-                //DdmSeedDataGenerator.GenerateSeedData();
+                DdmSeedDataGenerator.GenerateSeedData();
             }
             catch (Exception e)
             {
