@@ -35,7 +35,7 @@
                                 @*Html.Name(Model.HeaderFields[i])*@
 
                                 <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
-                                <select style="min-width: 90%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
+                                <select style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
 
                                     <!--The default option is the name of the column in the submitted table-->
                                     <option data-unit="1" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
@@ -69,7 +69,7 @@
 
                             <td>
                                 <!--Unit Selector-->
-                                <select name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
+                                <select style="width: 90%" name="Unit" headerfieldId="@(i)" onfocus="deselect(this)" onblur="reselect(this)">
                                     @foreach (UnitInfo unit in Model.AvailableUnits)
                                     {
                                         string selected = "";
@@ -92,7 +92,7 @@
                             </td>
                             <td>
                                 <!--Datatype Selector-->
-                                <select name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
+                                <select style="width: 90%" name="Datatype" headerfieldId="@(i)" onfocus="deselect(this)" onblur="reselect(this)">
                                     @{
 
                                         Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
@@ -220,7 +220,7 @@
 
             }
         });*/
-        
+
         $('select[name="Unit"]').change(function () {
             if ($(this).val() != null && $(this).val() != '') {
                 var selectOptionId = $(this).val();
