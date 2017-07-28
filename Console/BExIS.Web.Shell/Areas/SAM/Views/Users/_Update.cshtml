@@ -1,7 +1,7 @@
 ﻿@using Telerik.Web.Mvc.UI
 @model BExIS.Modules.Sam.UI.Models.UpdateUserModel
 
-@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Update", OnSuccess = "Update_OnSuccess" }))
+@using (Ajax.BeginForm("Update", "Users", new { param1 = ""}, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Update", OnSuccess = "Update_OnSuccess" }))
 {
     @Html.ValidationSummary(true)
 

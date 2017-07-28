@@ -22,7 +22,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (ModelState.IsValid)
             {
                 var userStore = new UserStore();
-                userStore.Create(model.UserName, model.Email, model.IsAdministrator);
+                var user = userStore.Create(model.UserName, model.Email, model.IsAdministrator);
                 RedirectToAction("Index");
             }
 
@@ -91,7 +91,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(UpdateUserModel model)
+        public ActionResult Update(UpdateUserModel model, string test)
         {
             return PartialView("_Update", model);
         }

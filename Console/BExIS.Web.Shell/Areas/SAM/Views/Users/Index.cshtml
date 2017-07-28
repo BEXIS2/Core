@@ -93,6 +93,16 @@
                 });
             });
 
+        function Create_OnSuccess(data) {
+            if (data.success) {
+                $('#Window_Create').data('tWindow').close();
+            }
+        }
+
+        function Create_OnBegin() {
+            alert("jlkj");
+        }
+
         function Grid_Users_OnDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
