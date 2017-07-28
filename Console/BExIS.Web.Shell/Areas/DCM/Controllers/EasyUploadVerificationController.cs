@@ -137,7 +137,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             for (int i = 0; i < model.HeaderFields.Length; i++)
             {
-                UnitInfo currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                //Default unit should be "none" if it exists, otherwise just take the first unit
+                UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+                if( currentUnitInfo != null)
+                {
+                    currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+                }
+                else
+                {
+                    currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                }
                 DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
                 currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
                 ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
