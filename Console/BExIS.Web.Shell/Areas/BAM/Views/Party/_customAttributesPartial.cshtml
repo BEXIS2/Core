@@ -43,19 +43,17 @@
                     
                     if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
                     {
-                        <select name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique?"isUniqe='true'":"")  class="t-input bx-input">
+                        <select name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique?"isUniqe='true'":"")  class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;">
                             @foreach (var option in partyCustomAttr.ValidValues.Split(','))
                             {
-                                <option value="@option" @(partyCustomAttributeValueStr == @option ? "selected='selected'" : "")  class="t-input bx-input">@option</option>
+                                <option value="@option" @(partyCustomAttributeValueStr == @option ? "selected='selected'" : "")  >@option</option>
                             }
-
                         </select>
                     }
                     else if (partyCustomAttr.DataType == "bool" || partyCustomAttr.DataType == "boolean")
                     {
                         <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]"  class="t-input bx-input" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique?"isUniqe='true'":"")  /><label>True</label>
                         <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]"  class="t-input bx-input" @(partyCustomAttributeValueStr == "false" ? "checked" : "") value="false" @(partyCustomAttr.IsUnique?"isUniqe='true'":"") /><label>False</label>
-
                     }
                     else
                     {

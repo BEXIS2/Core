@@ -56,7 +56,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <param name="party"></param>
         /// <param name="partyCustomAttributeValues"></param>
         /// <param name="partyRelationships"></param>
-        /// <param name="userName">if there is, it will attach to the party</param>
+        /// <param name="callBackUrl">if there is, after creating the party, it will redirect to this</param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult Create(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships, string callBackUrl)
@@ -95,9 +95,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
             ViewBag.RelationTabAsDefault = relationTabAsDefault;
-            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetPartyRelationshipTypeWithAllowedAssociated(id).Where(cc => cc.MinCardinality > 0);
-            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == model.Party.Id && cc.SecondParty.Id == model.Party.Id);
-            //foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
+           // var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == model.Party.Id && cc.SecondParty.Id == model.Party.Id);
+            // var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetPartyRelationshipTypeWithAllowedAssociated(id).Where(cc => cc.MinCardinality > 0);
+           //foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
             //{
             //    if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
             //        model.Errors.Add(new IO.Transform.Validation.Exceptions.Error(ErrorType.Other, "At lease on relationship type '" + requiredPartyRelationType.DisplayName + "' for this party is required."));

@@ -49,7 +49,7 @@
             {
                 tabs.Add()
                         .Text("Party").Content(@<text>
-                    <table class="bx-table-form">
+                    <table class="bx-table-form" id="tblParty">
                         <tr>
                             <td><b title="Required" style="color: red">*</b></td>
                             <td style="width:300px;">
@@ -63,7 +63,7 @@
                                 }
                                 else
                                 {
-                                    @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("Party.PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:auto;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
+                                    @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("Party.PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
 
                                     @Html.ValidationMessageFor(m => m.Party.PartyType.Id, "Select party type")
                                     <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
@@ -79,10 +79,10 @@
                             </td>
                             <td>
                                 @(Html.Telerik().DatePickerFor(m => m.Party.StartDate)
-                                    .HtmlAttributes(new { @Style = "border:none;display: inline-block;", @class = "t-input bx-input" })
+                                    .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
                                 )
-                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Start date" />
-                            </td>
+                                
+                              </td>
                         </tr>
                         <tr>
                             <td><b title="Required" style="color: red">*</b></td>
@@ -90,8 +90,8 @@
                                 @Html.LabelFor(m => m.Party.EndDate)
                             </td>
                             <td>
-                                @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;", @class = "t-input bx-input" }))
-                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="End date" />
+                                @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
+                                <div id="divDatesError"></div>
                             </td>
                         </tr>
                         <tr>
@@ -117,6 +117,7 @@
     )
     <div id="divSubmitButtons" style="background-color: rgb(245, 245, 245); margin-top: -2px;">
         <button type="submit" id="submitBtn" class="t-button" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
+         @Html.ActionLink("Cancel", "Index", "Party", new { area = "BAM" })
     </div>
 }
 <div id="divPartyRelation"></div>
@@ -128,6 +129,7 @@
     //if it is in create mode and the first tab is activate;it opens the next tab
     function submitClick()
     {
+        checkDateRange();
         var validationError=false;
         var $form = $("#frmParty");
         $form.valid();
@@ -138,7 +140,7 @@
                 partyTabStrip.select(element);
                 validationError=true;
                 if(index!=0)
-                    $("#submitBtn").html("Save");
+                    $("#submitBtn").html("Save and add relationships");
                 return false;
             }
         });
@@ -154,6 +156,19 @@
         }
         return true;
     }
+
+    function checkDateRange() {
+        $parentElement = $("#tblParty");
+        startDate = new Date($parentElement.find("[id*='StartDate']").val());
+        endDate = new Date($parentElement.find("[id*='EndDate']").val());
+        $warningElement = $parentElement.find("#divDatesError");
+        if ((startDate > endDate))
+            //first span should be there for the class and is not usable because of automatic changing by validation 
+            $warningElement.html("<span class='input-validation-error' ></span><span id='endDateValidation-error' style='background-color: #ffeeee;border: 1px solid #ff0000;'>End date should be equal or greater than start date.</span>");
+        else
+            $warningElement.html("");       
+    }
+
     function OnChangePartyType(e) {
         var partyTypeId = e.value;
         if (!partyTypeId)

@@ -52,7 +52,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
                 {
                     var title = partyTypeNode.Attributes["Name"].Value;
-                    var displayName = partyTypeNode.Attributes["DisplayName"] == null ? "" : partyTypeNode.Attributes["DisplayName"].Value; 
+                    var displayName = partyTypeNode.Attributes["DisplayName"] == null ? "" : partyTypeNode.Attributes["DisplayName"].Value;
                     var partyType = partyTypeManager.Repo.Get(item => item.Title == title).FirstOrDefault();
                     //If there is not such a party type
                     if (partyType == null)
@@ -60,7 +60,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         var partyStatusTypes = new List<PartyStatusType>();
                         partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
                         partyType = partyTypeManager.Create(title, "Imported from partyTypes.xml", displayName, partyStatusTypes);
-
+                        var customAttrs = new List<PartyCustomAttribute>();
                         foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                         {
                             var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
@@ -69,11 +69,26 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
                             var isUnique = customAttrNode.Attributes["isUnique"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isUnique"].Value);
                             var isMain = customAttrNode.Attributes["isMain"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isMain"].Value);
-                            var partyCustomAttribute = partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description, validValues, isValueOptional, isUnique, isMain);
+                            customAttrs.Add(new PartyCustomAttribute()
+                            {
+                                DataType = customAttrType,
+                                Description = description,
+                                IsMain = isMain,
+                                IsUnique = isUnique,
+                                IsValueOptional = isValueOptional,
+                                Name = customAttrNode.Attributes["Name"].Value,
+                                PartyType = partyType,
+                                ValidValues = validValues
+                            });
                         }
+                        if (!customAttrs.Any(c => c.IsMain))
+                            customAttrs[0].IsMain = true;
+                        foreach (var customAttr in customAttrs)
+                            partyTypeManager.CreatePartyCustomAttribute(customAttr);
                     }
                     else
                     {
+                        var customAttrs = new List<PartyCustomAttribute>();
                         foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                         {
                             var customAttrName = customAttrNode.Attributes["Name"].Value;
@@ -86,9 +101,23 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                 var customAttrIsValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
                                 var customAttrIsUnique = customAttrNode.Attributes["IsUnique"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["IsUnique"].Value);
                                 var customAttrIsMain = customAttrNode.Attributes["isMain"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isMain"].Value);
-                                var customAttribute = partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrName, customAttrDescription, customAttrValidValues, customAttrIsValueOptional, customAttrIsUnique, customAttrIsMain);
+                                customAttrs.Add(new PartyCustomAttribute()
+                                {
+                                    DataType = customAttrType,
+                                    Description = customAttrDescription,
+                                    IsMain = customAttrIsMain,
+                                    IsUnique = customAttrIsUnique,
+                                    IsValueOptional = customAttrIsValueOptional,
+                                    Name = customAttrName,
+                                    PartyType = partyType,
+                                    ValidValues = customAttrValidValues
+                                });
                             }
                         }
+                        if (!customAttrs.Any(c => c.IsMain))
+                            throw new Exception("There is no main field. Each party type needs at least one main field.");
+                        foreach (var customAttr in customAttrs)
+                            partyTypeManager.CreatePartyCustomAttribute(customAttr);
                     }
 
                 }
@@ -119,7 +148,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedTargetTitle + " is not a party type!!");
 
                         var typePairTitle = partyTypesPairNode.Attributes["Title"].Value;
-                        var typePairDescription = partyTypesPairNode.Attributes["Description"] == null ?"": partyTypesPairNode.Attributes["Description"].Value;
+                        var typePairDescription = partyTypesPairNode.Attributes["Description"] == null ? "" : partyTypesPairNode.Attributes["Description"].Value;
                         var typePairDefault = partyTypesPairNode.Attributes["Default"] == null ? false : Convert.ToBoolean(partyTypesPairNode.Attributes["Default"].Value);
 
                         partyTypePairs.Add(new PartyTypePair()

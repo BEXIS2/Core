@@ -24,21 +24,33 @@
 
     <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" cascade="all" column="PartyRef" />
 
-    <!--<sql-insert check="none">
-      UPDATE public.parties
-      SET name= (SELECT string_agg(value , ' ') AS mainValues
-      FROM public.partycustomattributevalues
-      inner join public.partycustomattributes on partycustomattributes.id=partycustomattributevalues.customattributeref
-      where partycustomattributes.ismain='Y' and partyref=NEW.partyref)
-      WHERE id=NEW.partyref;
-    </sql-insert>
-    <sql-update check="none">
-      UPDATE public.parties
-      SET name= (SELECT string_agg(value , ' ') AS mainValues
-      FROM public.partycustomattributevalues
-      inner join public.partycustomattributes on partycustomattributes.id=partycustomattributevalues.customattributeref
-      where partycustomattributes.ismain='Y' and partyref=NEW.partyref)
-      WHERE id=NEW.partyref;
-    </sql-update>-->
   </class>
+  <database-object>
+    <create>
+      CREATE OR REPLACE FUNCTION public.updatepartyname()
+      RETURNS trigger AS $updatepartyname$
+      BEGIN
+      UPDATE public.parties
+      SET name= (SELECT string_agg(value , ' ') AS mainValues
+      FROM public.partycustomattributevalues
+      inner join public.partycustomattributes on partycustomattributes.id=partycustomattributevalues.customattributeref
+      where partycustomattributes.ismain='Y' and partyref=NEW.partyref)
+      WHERE id=NEW.partyref;
+      RETURN NEW;
+      END;
+      $updatepartyname$ LANGUAGE plpgsql;
+
+
+      CREATE TRIGGER updatepartyname
+      BEFORE INSERT OR UPDATE
+      ON public.partycustomattributevalues
+      FOR EACH ROW
+      EXECUTE PROCEDURE public.updatepartyname();
+
+    </create>
+    <drop>
+      DROP TRIGGER updatepartyname ON public.partycustomattributevalues;
+      DROP FUNCTION public.updatepartyname();
+    </drop>
+  </database-object>
 </hibernate-mapping>

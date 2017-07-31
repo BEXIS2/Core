@@ -155,25 +155,7 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
         
-        // Find the main fields of custom attributes and merge them for party name
-        // party name comes from the custom attribute valies which are the main fields (isMain == true)
-        private void UpdatePartyName(PartyX party)
-        {
-            //TODO: change it to a trigger
-            //using (IUnitOfWork uow = this.GetBulkUnitOfWork())
-            //{
-            //    IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-            //    party = repo.Reload(party);
-            //    var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
-            //    string name = "";
-            //    if (mainValues.Length > 0)
-            //        name = string.Join(" ", mainValues);
-            //    party.Name = name;
-            //    repo.Put(party);
-            //    uow.Commit();
-            //}
-
-        }
+      
         #endregion
 
 
@@ -342,8 +324,7 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
 
-            }
-            UpdatePartyName(party);
+            }           
             return (entity);
         }
 
@@ -389,7 +370,6 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            UpdatePartyName(party);
             return party.CustomAttributeValues;
         }
 
@@ -418,7 +398,6 @@ namespace BExIS.Dlm.Services.Party
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            UpdatePartyName(entity.Party);
             return (entity);
         }
 
@@ -441,7 +420,6 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(entity.Party);
             return (entity);
         }
         //public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute, PartyX party, string value)
@@ -481,7 +459,6 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
         }
 
@@ -500,8 +477,6 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            if (entities.Any())
-                UpdatePartyName(entities.First().Party);
             return (true);
         }
 

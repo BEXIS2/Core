@@ -1,6 +1,6 @@
 ﻿@using System.Collections.Generic;
 @using System.Data;
-@using BExIS.Ddm.Model;
+@*@using BExIS.Ddm.Model;*@
 @using FluentBootstrap;
 @using BExIS.Web.Shell.Models;
 
@@ -89,53 +89,53 @@
 
     //facets
 
-    List<Facet> facets = new List<Facet>();
+    //List<Facet> facets = new List<Facet>();
 
-    //Facet 1
-    Facet f1 = new Facet();
-    f1.DisplayName = "f1";
-    f1.Name = "f1";
-    f1.Text = "text f1";
-    f1.Value = "f1";
-    f1.Childrens = new List<Facet>();
-    f1.Childrens.Add(new Facet()
-    {
-        DisplayName = "ff1",
-        Name = "ff1",
-        Value = "ff1",
-        Parent = f1
-    });
-    f1.Childrens.Add(new Facet()
-    {
-        DisplayName = "ff2",
-        Name = "ff2",
-        Value = "ff2",
-        Parent = f1
-    });
+    ////Facet 1
+    //Facet f1 = new Facet();
+    //f1.DisplayName = "f1";
+    //f1.Name = "f1";
+    //f1.Text = "text f1";
+    //f1.Value = "f1";
+    //f1.Childrens = new List<Facet>();
+    //f1.Childrens.Add(new Facet()
+    //{
+    //    DisplayName = "ff1",
+    //    Name = "ff1",
+    //    Value = "ff1",
+    //    Parent = f1
+    //});
+    //f1.Childrens.Add(new Facet()
+    //{
+    //    DisplayName = "ff2",
+    //    Name = "ff2",
+    //    Value = "ff2",
+    //    Parent = f1
+    //});
 
-    Facet f2 = new Facet();
-    f2.DisplayName = "f1";
-    f2.Name = "f1";
-    f2.Value = "f1";
-    f2.Text = "text f2";
-    f2.Childrens = new List<Facet>();
-    f2.Childrens.Add(new Facet()
-    {
-        DisplayName = "ff21",
-        Name = "ff21",
-        Value = "ff21",
-        Parent = f2
-    });
-    f2.Childrens.Add(new Facet()
-    {
-        DisplayName = "ff22",
-        Name = "ff22",
-        Value = "ff22",
-        Parent = f2
-    });
+    //Facet f2 = new Facet();
+    //f2.DisplayName = "f1";
+    //f2.Name = "f1";
+    //f2.Value = "f1";
+    //f2.Text = "text f2";
+    //f2.Childrens = new List<Facet>();
+    //f2.Childrens.Add(new Facet()
+    //{
+    //    DisplayName = "ff21",
+    //    Name = "ff21",
+    //    Value = "ff21",
+    //    Parent = f2
+    //});
+    //f2.Childrens.Add(new Facet()
+    //{
+    //    DisplayName = "ff22",
+    //    Name = "ff22",
+    //    Value = "ff22",
+    //    Parent = f2
+    //});
 
-    facets.Add(f1);
-    facets.Add(f2);
+    //facets.Add(f1);
+    //facets.Add(f2);
 
 
     #endregion
@@ -671,7 +671,7 @@
         )
     </div>
 
-    <div style="padding: 10px">
+    @*<div style="padding: 10px">
         @(Html.Telerik().TreeView()
        .Name("TreeView")
        .ShowCheckBox(true)
@@ -740,7 +740,7 @@
                            }
                        }
           ))
-    </div>
+    </div>*@
 
     <b>telerik table</b>
     <div style="padding: 10px">
