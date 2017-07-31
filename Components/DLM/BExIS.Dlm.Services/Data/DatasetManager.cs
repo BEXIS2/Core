@@ -1355,11 +1355,11 @@ namespace BExIS.Dlm.Services.Data
             Contract.Ensures(Contract.Result<DatasetVersion>() != null && Contract.Result<DatasetVersion>().Id >= 0);
 
             // be sure you are working on the latest version (working copy). applyTupleChanges takes the working copy from the DB            
-            List<DataTupleVersion> tobeAdded = new List<DataTupleVersion>();
+            List<DataTupleVersion> tupleVersionTobeAdded = new List<DataTupleVersion>();
             List<DataTuple> tobeDeleted = new List<DataTuple>();
             List<DataTuple> tobeEdited = new List<DataTuple>();
 
-            DatasetVersion editedVersion = applyTupleChanges(workingCopyDatasetVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            DatasetVersion editedVersion = applyTupleChanges(workingCopyDatasetVersion, ref tupleVersionTobeAdded, ref tobeDeleted, ref tobeEdited, createdTuples, editedTuples, deletedTuples, unchangedTuples);
 
             #region main code
             //using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -1428,16 +1428,16 @@ namespace BExIS.Dlm.Services.Data
                     }
                 }
 
-                if (tobeAdded != null && tobeAdded.Count > 0)
+                if (tupleVersionTobeAdded != null && tupleVersionTobeAdded.Count > 0)
                 {
                     int batchSize = uow.PersistenceManager.PreferredPushSize;
                     List<DataTupleVersion> processedTuples = null;
-                    long iterations = tobeAdded.Count / batchSize;
-                    if (iterations * batchSize < tobeAdded.Count)
+                    long iterations = tupleVersionTobeAdded.Count / batchSize;
+                    if (iterations * batchSize < tupleVersionTobeAdded.Count)
                         iterations++;
                     for(int round = 0; round < iterations; round++)
                     {
-                        processedTuples = tobeAdded.Skip(round * batchSize).Take(batchSize).ToList();
+                        processedTuples = tupleVersionTobeAdded.Skip(round * batchSize).Take(batchSize).ToList();
                         tupleVersionRepo.Put(processedTuples);
                         uow.ClearCache(true); //flushes one batch of tuples 
                         processedTuples.Clear();
@@ -1453,12 +1453,12 @@ namespace BExIS.Dlm.Services.Data
                 {
                     int batchSize = uow.PersistenceManager.PreferredPushSize;
                     List<DataTupleVersion> processedTuples = null;
-                    long iterations = tobeAdded.Count / batchSize;
-                    if (iterations * batchSize < tobeAdded.Count)
+                    long iterations = tupleVersionTobeAdded.Count / batchSize;
+                    if (iterations * batchSize < tupleVersionTobeAdded.Count)
                         iterations++;
                     for (int round = 0; round < iterations; round++)
                     {
-                        processedTuples = tobeAdded.Skip(round * batchSize).Take(batchSize).ToList();
+                        processedTuples = tupleVersionTobeAdded.Skip(round * batchSize).Take(batchSize).ToList();
                         tupleVersionRepo.Delete(processedTuples);
                         uow.ClearCache(true); //flushes one batch of tuples 
                         processedTuples.Clear();
@@ -2065,8 +2065,9 @@ namespace BExIS.Dlm.Services.Data
                         if (orginalTuple == null || orginalTuple.Id <= 0) // maybe the tuple is in the edited list by a mistake!
                             continue;
                         //check if the history record for this data tuple has been created before. in cases of multiple edits in a single version for example
-                        if (DataTupleVerionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id && p.DatasetVersion.Id == orginalTuple.DatasetVersion.Id).Count() <= 0) // it is the first time the orginalTuple is getting editedVersion. so add a history record. the history record, keeps the tuple as was before the first edit!
+                        if (DataTupleVerionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id && p.DatasetVersion.Id == orginalTuple.DatasetVersion.Id).Count() <= 0)                             
                         {
+                            // it is the first time the orginalTuple is getting edited. So add a history record. the history record keeps the tuple as it was before the edit!
                             DataTupleVersion tupleVersion = new DataTupleVersion()
                             {
                                 TupleAction = TupleAction.Edited,
@@ -2080,8 +2081,12 @@ namespace BExIS.Dlm.Services.Data
                                 DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                 ActingDatasetVersion = workingCopyVersion,
                             };
-                            //DataTuple merged = 
+                            tupleVersionsTobeAdded.Add(tupleVersion);
                             //orginalTuple.History.Add(tupleVersion);
+                        }
+                        else
+                        {
+                            // what to do if a tuple has been changed several times in the course of a single che ckeckout/checkin
                         }
 
                         //need a better way to preserve changes during the fetch of the original tuple. Maybe deep copy/ evict/ merge works
