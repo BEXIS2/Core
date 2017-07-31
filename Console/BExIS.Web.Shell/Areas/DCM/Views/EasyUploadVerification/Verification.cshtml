@@ -222,7 +222,10 @@
         });*/
 
         //Destroy the handsontable from the last step because it's causing performance problems
-        hot.destroy();
+        if (hotActive) {
+            hot.destroy();
+            hotActive = false;
+        }
 
         $('select[name="Unit"]').change(function () {
             if ($(this).val() != null && $(this).val() != '') {
@@ -244,11 +247,11 @@
             $.post('@Url.Action("SaveDataTypeSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { headerfieldId: headerfieldId, selectedDataTypeId: selectedDataTypeId }, function (response) {
                 $("#Step3").html(response);
             });
+
         });
     });
 
     function suggestionSelected(suggestionSelectObject, i) {
-        console.log("Selected " + i + "   " + suggestionSelectObject);
         //Find the selected option object
         var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
 

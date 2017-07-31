@@ -33,6 +33,7 @@
 
 <script>
     var hot = null;
+    var hotActive = false;
     var currentButton = null;
     var selectedDataArea = null;
 
@@ -73,6 +74,8 @@
                 return cellProperties;
             }
         });
+
+        hotActive = true;
 
         hot.render();
 
