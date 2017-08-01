@@ -187,15 +187,15 @@
                             var currentErrorCount = currentTitle.split("\n").length;
 
                             if (currentErrorCount < 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                                TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                             }
                             if (currentErrorCount == 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                                TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                                 TitleCell.attr("title", currentTitle + "\nand more...");
                             }
                         } else {
                             TitleCell.show();
-                            TitleCell.attr("title", error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                            TitleCell.attr("title", "\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                         }
                     }
                 } else {
