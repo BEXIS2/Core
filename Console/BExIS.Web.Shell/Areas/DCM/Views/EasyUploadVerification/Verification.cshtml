@@ -128,7 +128,7 @@
         </div>
 
         <div style="float:left; padding-top: 10px">
-            <button id="validateBtn" onClick="validateData()" class="t-button action" title="Validate Selection">Validate</button>
+            <button id="validateBtn" onClick="validateData(this)" class="t-button action" title="Validate Selection">Validate</button>
         </div>
 
     </div>
@@ -172,7 +172,9 @@
 
 <script type="text/javascript">
 
-    function validateData() {
+    function validateData(button) {
+        //Hide the results of previous validation attempts
+        $(button).closest('tr').find('i').prop('title', "");
 
         $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
                 if (response.errors.length > 0) {
