@@ -769,7 +769,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         double DummyValue = 0;
                         //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
                         //Should be removed as soon as this is fixed
-                        Boolean skipDataTypeCheck = false;
+                        /*Boolean skipDataTypeCheck = false;
                         if (datatypeName == "Double")
                         {
                             if (!Double.TryParse(vv, out DummyValue))
@@ -787,10 +787,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
                             }
-                        }
+                        }*/
 
-                        if (!skipDataTypeCheck)
-                        {
+                        //if (!skipDataTypeCheck)
+                        //{
                             if (Double.TryParse(vv, out DummyValue))
                             {
                                 if (vv.Contains("."))
@@ -812,7 +812,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
                             }
-                        }
+                        //}
                     }
                 }
             }
