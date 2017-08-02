@@ -57,11 +57,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View(model);
         }
 
-        public ActionResult Switch(long sourceId = 1, long targetId = 0,
+        public ActionResult Mapping(long sourceId = 1, long targetId = 0,
             LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System,
             LinkElementPostion position = LinkElementPostion.Target)
         {
-
             MappingMainModel model = new MappingMainModel();
 
             // load from mds example
@@ -73,7 +72,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
              */
             #region load Source from Target
 
-            switch (targetType)
+            switch (sourceType)
             {
                 case LinkElementType.System:
                     {
@@ -83,7 +82,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 case LinkElementType.MetadataStructure:
                     {
-                        model.Source = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Source);
+                        model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source);
                         if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                         break;
                     }
@@ -91,8 +90,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             #endregion
 
-            #region load Target from Source
-            switch (sourceType)
+            #region load Target
+            switch (targetType)
             {
                 case LinkElementType.System:
                     {
@@ -102,7 +101,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 case LinkElementType.MetadataStructure:
                     {
-                        model.Target = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Target);
+                        model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
                         if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                         break;
                     }
@@ -128,8 +127,22 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
             }
 
-
             return View("Index", model);
+        }
+
+        public ActionResult Switch(long sourceId = 1, long targetId = 0,
+            LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System,
+            LinkElementPostion position = LinkElementPostion.Target)
+        {
+
+            return RedirectToAction("Mapping", new
+            {
+                sourceId = targetId,
+                targetId = sourceId,
+                sourceType = targetType,
+                targetType = sourceType,
+                position = position
+            });
         }
 
         public ActionResult ReloadTarget(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
