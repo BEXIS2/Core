@@ -1,4 +1,7 @@
-﻿using BExIS.Modules.Rpm.UI.Helpers;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Helpers;
+using BExIS.Modules.Rpm.UI.Classes;
 using System;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
@@ -19,6 +22,11 @@ namespace BExIS.Modules.Rpm.UI
             {
                 base.Install();
                 RPMSeedDataGenerator.GenerateSeedData();
+                DataStructureManager dsm = new DataStructureManager();
+                foreach(StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
+                {
+                    DataStructureIO.convertOrder(sds);
+                }
             }
             catch (Exception e)
             {
