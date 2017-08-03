@@ -1,7 +1,6 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Utils.Models;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Web.Mvc;
 using Vaiona.IoC;
 
@@ -12,7 +11,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     /// This Search Index API is only for internal comminication
     /// 
     /// </summary>
-    public class SearchIndexController: Controller
+    public class SearchIndexController : Controller
     {
         // GET: api/SearchIndex
         /// <summary>
@@ -23,24 +22,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.Reload();
+
             return null;
         }
 
-        // GET: api/SearchIndex/5
-        /// <summary>
-        /// id = dataset id and this get will reindex search based on the dataset
-        /// </summary>
-        /// <param name="id">Dataset Id</param>
-        /// <returns></returns>
-        /// <remarks> 
-        /// </remarks>
-        public HttpResponseMessage Redinex(int id)
+        public IEnumerable<string> ReIndexSingle(long id = 0)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            provider?.UpdateSingleDatasetIndex(id, IndexingAction.CREATE);
+
+            if (id == 0)
+            {
+                provider?.Reload();
+            }
+            else
+            {
+                provider?.UpdateSingleDatasetIndex(id, IndexingAction.CREATE);
+
+            }
             return null;
         }
-
 
 
         /// <summary>
