@@ -758,6 +758,10 @@ namespace BExIS.IO.Transform.Input
                                 }
 
                             }
+                            else
+                            {
+                                value = c.CellValue.Text;
+                            }
 
                             // define index based on cell refernce - offset 
                             int index = cellReferencAsInterger - offset - 1;
