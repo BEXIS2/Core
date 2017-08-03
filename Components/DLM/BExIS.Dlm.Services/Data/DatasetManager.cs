@@ -1852,10 +1852,10 @@ namespace BExIS.Dlm.Services.Data
 
         private void updateMaterializedView(long datasetId)
         {
-            if (!existsMaterializedView(datasetId))
-                createMaterializedView(datasetId); // creating an MV refreshes the data, too. 
+            if (! existsMaterializedView(datasetId))
+                 createMaterializedView(datasetId); // creating an MV refreshes the data, too. 
             else
-                refreshMaterializedView(datasetId);
+                 refreshMaterializedView(datasetId);
         }
 
         private void createMaterializedView(long datasetId)
@@ -1867,7 +1867,7 @@ namespace BExIS.Dlm.Services.Data
                 if(sds.Variables != null && sds.Variables.Count() > 0)
                 {
                     List<Tuple<string, string, int, long>> columnDefinitionList = new List<Tuple<string, string, int, long>>();
-                    columnDefinitionList = (from c in sds.Variables
+                    columnDefinitionList = (from c in sds.Variables.OrderBy(p=>p.OrderNo)
                                             select new Tuple<string, string, int, long>(c.Label, c.DataAttribute.DataType.SystemType, c.OrderNo, c.Id))
                                            .ToList()
                                            ;
@@ -1918,6 +1918,9 @@ namespace BExIS.Dlm.Services.Data
 
         private DataTable queryMaterializedView(long datasetId, int pageNumber=0, int pageSize=0)
         {
+#if DEBUG
+            updateMaterializedView(datasetId);
+#endif
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             if (pageNumber == 0 && pageSize == 0)
             {
