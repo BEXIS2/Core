@@ -469,7 +469,6 @@
     <None Include="Properties\PublishProfiles\BPP211.pubxml" />
     <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\DCM\Form.js" />
     <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
     <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
     <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
