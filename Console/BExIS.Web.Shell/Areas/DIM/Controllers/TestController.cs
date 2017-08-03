@@ -4,6 +4,8 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -35,8 +37,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
+
             List<string> tmp = MappingUtils.GetValuesFromMetadata(partyCustomtAttr, type,
-                datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata);
+                datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+            tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key,
+               datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
 
             return View("Index");
