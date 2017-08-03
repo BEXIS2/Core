@@ -232,10 +232,10 @@ namespace BExIS.Dlm.Orm.NH.Utils
         /// <returns></returns>
         private string buildViewField(string variableName, string dataType, int order, long Id)
         {
-            // @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}"
-            string template = @"cast(unnest(cast(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
+            // string template = @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}";
+            string template = @"cast(unnest(cast(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
 
-            string def = string.Format(template, order, dbDataType(dataType), this.BuildColumnName(Id).ToLower());// variableName.Replace(" ", "_"));
+            string def = string.Format(template, Id, dbDataType(dataType), this.BuildColumnName(Id).ToLower());// variableName.Replace(" ", "_"));
             return def;
         }
 

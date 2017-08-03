@@ -58,12 +58,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
         }
         public static List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
-            Variable[] orderedVariables  = new Variable[structuredDataStructure.Variables.Count];
-            foreach (Variable v in structuredDataStructure.Variables)
-            {
-                orderedVariables[v.OrderNo - 1] = v;
-            }
-            return orderedVariables.ToList();
+            return structuredDataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
         }
         public static StructuredDataStructure setVariableOrder(StructuredDataStructure structuredDataStructure, List<long> orderList)
         {
@@ -82,22 +77,25 @@ namespace BExIS.Modules.Rpm.UI.Classes
 
             if (doc != null)
             {
-                order = doc.GetElementsByTagName("order")[0];
-                List<long> orderedVariableIDs = new List<long>();
-                if (structuredDataStructure.Variables.Count != 0)
+                if (doc.GetElementsByTagName("order").Count > 0)
                 {
-                    foreach (XmlNode x in order)
+                    order = doc.GetElementsByTagName("order")[0];
+                    List<long> orderedVariableIDs = new List<long>();
+                    if (structuredDataStructure.Variables.Count != 0)
                     {
-                        foreach (Variable v in structuredDataStructure.Variables)
+                        foreach (XmlNode x in order)
                         {
-                            if (v.Id == Convert.ToInt64(x.InnerText))
-                                orderedVariableIDs.Add(v.Id);
+                            foreach (Variable v in structuredDataStructure.Variables)
+                            {
+                                if (v.Id == Convert.ToInt64(x.InnerText))
+                                    orderedVariableIDs.Add(v.Id);
 
+                            }
                         }
                     }
+                    setVariableOrder(structuredDataStructure, orderedVariableIDs);
+                    doc.RemoveChild(order);
                 }
-                doc.RemoveChild(order);
-                setVariableOrder(structuredDataStructure,orderedVariableIDs);
             }
         }
 
