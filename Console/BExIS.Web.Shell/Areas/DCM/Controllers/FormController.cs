@@ -791,7 +791,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+
+            //get the usage
+            var stepModelHelperParent = GetStepModelhelper(parentStepId);
 
             var parentUsage = LoadUsage(stepModelHelperParent.Usage);
             var pNumber = stepModelHelperParent.Number;
@@ -971,7 +973,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var stepModelHelperParent = GetStepModelhelper(parentStepId);
 
             //find the right element in the list
             var removeAttributeModel = stepModelHelperParent.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(id) && m.Number.Equals(number)).First();
