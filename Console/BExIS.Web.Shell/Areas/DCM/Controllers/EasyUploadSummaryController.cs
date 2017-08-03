@@ -479,6 +479,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     break;
             }
 
+            Uri worksheetUri = null;
+            //Get the Uri to identify the correct worksheet
+            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.WORKSHEET_URI))
+            {
+                worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
+            }
+
             foreach (int[] areaDataValues in areaDataValuesList)
             {
                 EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
@@ -497,7 +504,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 reader.setSubmittedVariableIdentifiers(identifiers);
 
-                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
+                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, worksheetUri);
 
             }
 

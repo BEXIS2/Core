@@ -17,7 +17,7 @@ namespace BExIS.IO.Transform.Input
     {
         private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
-        public DataTuple[] ReadFile(Stream file, string fileName, EasyUploadFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public DataTuple[] ReadFile(Stream file, string fileName, EasyUploadFileReaderInfo fri, StructuredDataStructure sds, long datasetId, Uri worksheetUri)
         {
             this.FileStream = file;
             this.FileName = fileName;
@@ -77,9 +77,8 @@ namespace BExIS.IO.Transform.Input
 
                 int endRowData = fri.DataEndRow;
 
-                // select worksheetpart by selected defined name area like data in sheet
-                // sheet where data area is inside
-                WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
+                // select worksheetpart by Uri
+                WorksheetPart worksheetPart = workbookPart.WorksheetParts.Where(ws => ws.Uri == worksheetUri).FirstOrDefault();
 
                 // get styleSheet
                 _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
@@ -88,7 +87,7 @@ namespace BExIS.IO.Transform.Input
                 _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
 
-                if (this.SubmitedVariableIdentifiers != null)
+                if (this.SubmitedVariableIdentifiers != null && worksheetPart != null)
                 {
                     ReadRows(worksheetPart, fri.DataStartRow, endRowData);
                 }
