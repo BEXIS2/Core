@@ -89,8 +89,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 else
                 {
+                    Boolean hasDatatype = false; //Make sure only units that have at least one datatype are shown
+
                     foreach (DataType dummyDataType in unit.AssociatedDataTypes)
                     {
+                        if (!hasDatatype)
+                            hasDatatype = true;
+
                         DataTypeInfo dataTypeInfo = new DataTypeInfo();
 
                         DataType fullDataType = dataTypeManager.Repo.Get(dummyDataType.Id);
@@ -100,9 +105,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         unitInfo.DataTypeInfos.Add(dataTypeInfo);
                     }
-                    model.AvailableUnits.Add(unitInfo);
+                    if(hasDatatype)
+                        model.AvailableUnits.Add(unitInfo);
                 }
             }
+
+            //Sort the units by name
+            model.AvailableUnits.Sort(delegate (UnitInfo u1, UnitInfo u2)
+            {
+               return String.Compare(u1.Name, u2.Name, StringComparison.InvariantCultureIgnoreCase);
+            });
 
             if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS))
             {
@@ -145,7 +157,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 else
                 {
-                    currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                    currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault(u => u.DataTypeInfos.Count > 0).Clone();
                 }
                 DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
                 currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;

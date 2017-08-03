@@ -44,7 +44,8 @@ namespace BExIS.Utils.Helpers
             _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
             //get worksheet part
-            WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+            string sheetId = workbookPart.Workbook.Descendants<Sheet>().First().Id;
+            WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheetId);
             this.worksheetUri = worksheetPart.Uri;
 
             OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
@@ -132,6 +133,10 @@ namespace BExIS.Utils.Helpers
                                             value = c.CellValue.Text;
                                         }
 
+                                    }
+                                    else
+                                    {
+                                        value = c.CellValue.Text;
                                     }
 
                                     rowAsStringList.Add(value);
