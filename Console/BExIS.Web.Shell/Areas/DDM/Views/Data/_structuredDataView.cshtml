@@ -111,6 +111,9 @@
                     DataColumn column = Model.Data.Columns[i];
 
                     string title;
+                    bool visible = false;
+
+
 
                     if (column.Caption == "")
                     {
@@ -121,26 +124,32 @@
                         title = column.Caption;
                     }
 
-                    DisplayFormatObject dfo = Model.DisplayFormats.Where(o=>o.Column.Equals(title)).FirstOrDefault();
-                    string format = "";
-
-                    if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+                    if (column.ColumnName.ToLower().StartsWith("var"))
                     {
-                        //string unit = "";
-                        //if (dfo.Unit != "None") unit = dfo.Unit;
-
-                        format = "{0:" + dfo.Format +"}";
-
-                        columns.Bound(column.DataType, column.ColumnName)
-                           .Title(title).Format(format);
+                        visible = true;
                     }
-                    else
-                    {
-                        columns.Bound(column.DataType, column.ColumnName)
-                           .Title(title);
+                
+
+                DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(o => o.Column.Equals(title));
+                        string format = "";
+
+                        if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+                        {
+                            //string unit = "";
+                            //if (dfo.Unit != "None") unit = dfo.Unit;
+
+                            format = "{0:" + dfo.Format +"}";
+
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title).Format(format).Hidden(!visible);
+                        }
+                        else
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title).Hidden(!visible);
+                        }
                     }
-                }
-            })
+                })
 
 
             .Pageable(paging =>

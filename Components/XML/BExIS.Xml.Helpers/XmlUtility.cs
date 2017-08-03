@@ -328,6 +328,11 @@ namespace BExIS.Xml.Helpers
             return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
         }
 
+        public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, string value, XDocument xDoc)
+        {
+            return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -379,6 +384,30 @@ namespace BExIS.Xml.Helpers
 
             return elements;
         }
+
+        public static IEnumerable<XElement> GetXElementsByAttribute(Dictionary<string, string> AttrValueDic, XDocument xDoc)
+        {
+            string name = "";
+            IEnumerable<XElement> elements = new List<XElement>();
+
+            foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+            {
+                IEnumerable<XElement> newElements = GetXElementsByAttribute(keyValuePair.Key, keyValuePair.Value, xDoc);
+
+                if (elements.Count() > 0)
+                {
+                    elements = elements.Intersect(newElements);
+                    if (elements == null || elements.Count() == 0)
+                        return elements;
+                }
+                else
+                    elements = newElements;
+
+            }
+
+            return elements;
+        }
+
 
         /// <summary>
         /// 

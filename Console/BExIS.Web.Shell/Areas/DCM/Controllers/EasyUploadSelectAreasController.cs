@@ -70,6 +70,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
                     }
 
+                    TaskManager.AddToBus(EasyUploadTaskManager.WORKSHEET_URI, EUEReader.getWorksheetUri());
+
                     model.JsonTableData = jsonTable;
                 }
                 catch (Exception ex)
