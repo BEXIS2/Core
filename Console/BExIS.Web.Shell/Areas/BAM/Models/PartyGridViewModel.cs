@@ -12,6 +12,6 @@ namespace BExIS.Modules.Bam.UI.Models
         public DateTime EndDate { get; set; }
         public string Name { get; set; }
         public string PartyTypeTitle { get; set; }
-        
+        public bool IsTemp { get; set; }
     }
 }

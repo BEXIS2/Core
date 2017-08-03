@@ -26,6 +26,37 @@ namespace BExIS.Modules.Bam.UI.Helpers
         {
             return (string.IsNullOrWhiteSpace(partyRelatinshipType.DisplayName) ? partyRelatinshipType.Title : partyRelatinshipType.DisplayName);
         }
+
+        public static String ValidateRelationships(IEnumerable<PartyRelationshipType> requiredPartyRelationTypes, long partyId)
+        {
+            var partyManager = new PartyManager();
+            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == partyId);
+            String messages = "";
+            foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
+            {
+                if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
+                    messages += (String.Format("<br/>{0} relationship type '{1}'.", requiredPartyRelationType.MinCardinality, requiredPartyRelationType.DisplayName));
+            }
+            if (!string.IsNullOrEmpty(messages))
+                messages = "these relationship types are required : " + messages;
+            return messages;
+        }
+        public static String ValidateRelationships(long partyId)
+        {
+            var partyManager = new PartyManager();
+            var party = partyManager.Repo.Get(partyId);
+            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(party.PartyType.Id).Where(cc => cc.MinCardinality > 0);
+            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == party.Id);
+            String messages = "";
+            foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
+            {
+                if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
+                    messages += (String.Format("<li>{0} more relationship type of '{1}'.</li>", requiredPartyRelationType.MinCardinality- partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count(), requiredPartyRelationType.DisplayName));
+            }
+            if (!string.IsNullOrEmpty(messages))
+                messages = "These relationship types are required : <ul>" + messages+"</ul>";
+            return messages;
+        }
     }
 
     public class BAMSeedDataGenerator
@@ -138,12 +169,12 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     var partyTypePairs = new List<PartyTypePair>();
                     foreach (XmlNode partyTypesPairNode in partyRelationshipTypesNode.ChildNodes[0].ChildNodes)
                     {
-                        var allowedSourceTitle = partyTypesPairNode.Attributes["AllowedSource"].Value;
-                        var allowedTargetTitle = partyTypesPairNode.Attributes["AllowedTarget"].Value;
-                        var allowedSource = partyTypeManager.Repo.Get(item => item.Title == allowedSourceTitle).FirstOrDefault();
+                        var allowedSourceTitle = partyTypesPairNode.Attributes["AllowedSource"].Value.ToLower();
+                        var allowedTargetTitle = partyTypesPairNode.Attributes["AllowedTarget"].Value.ToLower();
+                        var allowedSource = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedSourceTitle).FirstOrDefault();
                         if (allowedSource == null)
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedSourceTitle + " is not a party type!!");
-                        var allowedTarget = partyTypeManager.Repo.Get(item => item.Title == allowedTargetTitle).FirstOrDefault();
+                        var allowedTarget = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedTargetTitle).FirstOrDefault();
                         if (allowedTarget == null)
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedTargetTitle + " is not a party type!!");
 

@@ -42,7 +42,7 @@
 
 
       CREATE TRIGGER updatepartyname
-      BEFORE INSERT OR UPDATE
+      AFTER INSERT OR UPDATE
       ON public.partycustomattributevalues
       FOR EACH ROW
       EXECUTE PROCEDURE public.updatepartyname();

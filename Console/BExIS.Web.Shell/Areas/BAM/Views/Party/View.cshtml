@@ -6,7 +6,7 @@
     @Html.HiddenFor(m => m.Party.PartyType.Id)
     @(Html.Telerik().TabStrip()
             .Name("ShowDataTabStrip")
-            .ClientEvents(events => events.OnSelect("tabSelected"))
+            .ClientEvents(events => events.OnSelect("tabSelected")).SelectedIndex(0)
             .Items(tabs =>
             {
 

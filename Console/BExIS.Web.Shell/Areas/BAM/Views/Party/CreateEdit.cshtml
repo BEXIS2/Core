@@ -5,11 +5,7 @@
     if (Request.QueryString["relationTabAsDefault"] != null)
     {
         addRelationship = true;
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $("#divSubmitButtons").hide();
-            });
-        </script>
+
     }
     else
     { addRelationship = (bool)ViewBag.RelationTabAsDefault; }
@@ -37,89 +33,88 @@
         }
     }
 }
-
- <span style="color:red">@errorMessage</span>
 @using (Html.BeginForm("CreateEdit", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
 {
     @Html.HiddenFor(m => m.Party.Id)
     @(Html.Telerik().TabStrip()
-            .Name("ShowDataTabStrip").ClientEvents(item => item.OnLoad("onLoad"))
-            .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
-            .Items(tabs =>
-            {
-                tabs.Add()
-                        .Text("Party").Content(@<text>
-                    <table class="bx-table-form" id="tblParty">
-                        <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
-                            <td style="width:300px;">
-                                @Html.LabelFor(m => m.Party.PartyType)
-                            </td>
-                            <td>
-                                @if (!createMode)
-                                {
-                                    @Html.HiddenFor(m => m.Party.PartyType.Id)
-                                    @Model.Party.PartyType.Title
-                                }
-                                else
-                                {
-                                    @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("Party.PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
-
-                                    @Html.ValidationMessageFor(m => m.Party.PartyType.Id, "Select party type")
-                                    <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
+        .Name("ShowDataTabStrip").ClientEvents(item => item.OnLoad("onLoad"))
+        .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
+        .Items(tabs =>
+        {
+        tabs.Add()
+                    .Text(Model.Party.PartyType == null ? "Party" : Model.Party.PartyType.Title).Content(@<text>
+                <table class="bx-table-form" id="tblParty">
+                    <tr>
+                        <td><b title="Required" style="color: red">*</b></td>
+                        <td style="width:300px;">
+                            @Html.LabelFor(m => m.Party.PartyType)
+                        </td>
+                        <td>
+                            @if (!createMode)
+                            {
+                                @Html.HiddenFor(m => m.Party.PartyType.Id)
+                                @Model.Party.PartyType.Title
+                            }
+                            else
+                            {
+                                @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("Party.PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
+                                @Html.ValidationMessageFor(m => m.Party.PartyType.Id, "Select party type")
+                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
                                     <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
-                                }
+                            }
 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
-                            <td>
-                                @Html.LabelFor(m => m.Party.StartDate)
-                            </td>
-                            <td>
-                                @(Html.Telerik().DatePickerFor(m => m.Party.StartDate)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b title="Required" style="color: red">*</b></td>
+                        <td>
+                            @Html.LabelFor(m => m.Party.StartDate)
+                        </td>
+                        <td>
+                            @(Html.Telerik().DatePickerFor(m => m.Party.StartDate)
                                     .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
-                                )
-                                
-                              </td>
-                        </tr>
-                        <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
-                            <td>
-                                @Html.LabelFor(m => m.Party.EndDate)
-                            </td>
-                            <td>
-                                @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
-                                <div id="divDatesError"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                @Html.LabelFor(m => m.Party.Description)
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(m => m.Party.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
-                                @Html.ValidationMessageFor(m => m.Party.Description)
-                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Description" />
-                            </td>
-                        </tr>
-                    </table>
-                        </text>);
-                tabs.Add().Text("Custom Attributes").Enabled((createMode ? false : true)).Content(@<text>
-                            <div id="divPartyCustomAttr"></div>
-                </text>);
-                tabs.Add().Text("Relationships").Enabled((createMode ? false : true)).Content(@<text>
-                    @Html.Partial("_partyRelationshipsPartial", Model)
-                </text>);
-            })
-    )
-    <div id="divSubmitButtons" style="background-color: rgb(245, 245, 245); margin-top: -2px;">
-        <button type="submit" id="submitBtn" class="t-button" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
-         @Html.ActionLink("Cancel", "Index", "Party", new { area = "BAM" })
+                            )
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b title="Required" style="color: red">*</b></td>
+                        <td>
+                            @Html.LabelFor(m => m.Party.EndDate)
+                        </td>
+                        <td>
+                            @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
+                            <div id="divDatesError"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            @Html.LabelFor(m => m.Party.Description)
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.Party.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
+                            @Html.ValidationMessageFor(m => m.Party.Description)
+                            <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Description" />
+                        </td>
+                    </tr>
+                </table>
+                    </text>);
+        tabs.Add().Text("Additional attributes").Enabled((createMode ? false : true)).Content(@<text>
+                        <div id="divPartyCustomAttr"></div>
+        </text>);
+        tabs.Add().Text("Relationships").Enabled((createMode ? false : true)).Content(@<text>
+            @Html.Partial("_partyRelationshipsPartial", Model)
+        </text>);
+        })
+    )<span style="color:red" id="errorsMsgSpan">@errorMessage</span>
+
+    <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
+        <button type="submit" id="submitBtn" class="bx-button action" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
+        @Html.ActionLink("Cancel", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
     </div>
 }
+
 <div id="divPartyRelation"></div>
 <script type="text/javascript">
 
@@ -130,6 +125,10 @@
     function submitClick()
     {
         checkDateRange();
+        if(!validateRelationships())
+        {
+            return false;
+        }
         var validationError=false;
         var $form = $("#frmParty");
         $form.valid();
@@ -140,7 +139,7 @@
                 partyTabStrip.select(element);
                 validationError=true;
                 if(index!=0)
-                    $("#submitBtn").html("Save and add relationships");
+                    $("#submitBtn").html("Next");
                 return false;
             }
         });
@@ -150,7 +149,7 @@
             {
                 var customAttrTab=$(".t-item", partyTabStrip.element)[1];
                 partyTabStrip.select(customAttrTab);
-                $("#submitBtn").html("Save");
+                $("#submitBtn").html("Next");
                 return false;
             }
         }
@@ -163,10 +162,10 @@
         endDate = new Date($parentElement.find("[id*='EndDate']").val());
         $warningElement = $parentElement.find("#divDatesError");
         if ((startDate > endDate))
-            //first span should be there for the class and is not usable because of automatic changing by validation 
+            //first span should be there for the class and is not usable because of automatic changing by validation
             $warningElement.html("<span class='input-validation-error' ></span><span id='endDateValidation-error' style='background-color: #ffeeee;border: 1px solid #ff0000;'>End date should be equal or greater than start date.</span>");
         else
-            $warningElement.html("");       
+            $warningElement.html("");
     }
 
     function OnChangePartyType(e) {
@@ -185,8 +184,28 @@
             });
         }
     }
+
+    function validateRelationships()
+    {
+        var valid=true;
+        if(@Model.Party.Id != 0)
+        {
+            $.post('/BAM/Party/ValidateRelationships',
+            { partyId: @Model.Party.Id },
+            function(response) {
+                if(response!=""){
+                    valid=false;
+                    //  $("#divSubmitButtons").hide();
+                }
+                $("#errorsMsgSpan").html(""+response+"");
+            });
+        }
+        return valid;
+    }
+
     function tabSelected(tab)
     {
+        validateRelationships();
         if($(tab.item).text()=="Relationships")
             $("#divSubmitButtons").hide();
         else
@@ -213,7 +232,13 @@
         if ('@createMode'=='False')
         {
             OnChangePartyType({value:@Model.Party.PartyType.Id });
+
         }
+
     }
+    $(document).ready(function(){
+        validateRelationships()
+    });
+
 
 </script>

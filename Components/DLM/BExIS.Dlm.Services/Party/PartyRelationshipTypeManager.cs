@@ -146,7 +146,13 @@ namespace BExIS.Dlm.Services.Party
             }
             return (true);
         }
-        public IEnumerable<PartyRelationshipType> GetPartyRelationshipTypeWithAllowedAssociated(int sourcePartyTypeId)
+
+        /// <summary>
+        /// return all relationship type which has at least one source party type in their party types pair
+        /// </summary>
+        /// <param name="sourcePartyTypeId"></param>
+        /// <returns></returns>
+        public IEnumerable<PartyRelationshipType> GetAllPartyRelationshipTypes(long sourcePartyTypeId)
         {
             Contract.Requires(sourcePartyTypeId > 0);
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -155,10 +161,13 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyRelationshipType> repoPRT = uow.GetRepository<PartyRelationshipType>();
                 IRepository<PartyTypePair> repoPTP = uow.GetRepository<PartyTypePair>();
                 PartyType sourcePartyType = repoPT.Get(sourcePartyTypeId);
-                var partyRelationshipTypes = repoPRT.Get().OrderBy(item => item.Title);
-                foreach (var partyRelationshipType in partyRelationshipTypes)
-                    partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => item.AllowedSource.Id == sourcePartyType.Id).ToList();
-                return partyRelationshipTypes.ToList();
+                var partyRelationshipTypes = repoPRT.Get(cc => cc.AssociatedPairs.Any(item => item.AllowedSource.Id == sourcePartyTypeId)).OrderBy(item => item.Title);
+                //foreach (var partyRelationshipType in partyRelationshipTypes)
+                //{
+                //    var typepairs = repoPTP.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).ToList();
+                //    partyRelationshipType.AssociatedPairs = repoPTP.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id && cc.AllowedSource.Id == sourcePartyTypeId).ToList();
+                //}
+                return partyRelationshipTypes;
             }
         }
 
@@ -272,7 +281,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
                 var inheritencePartyTypepairs = repoPartyTypePair.Get(item => item.PartyRelationshipType.IndicatesHierarchy).ToList();
                 var inheritenceTargetParties = inheritencePartyTypepairs.Select(cc => cc.AllowedTarget).ToList();
-                return inheritencePartyTypepairs.Where(cc => !inheritenceTargetParties.Contains(cc.AllowedSource)).Select(cc=>cc.AllowedSource);
+                return inheritencePartyTypepairs.Where(cc => !inheritenceTargetParties.Contains(cc.AllowedSource)).Select(cc => cc.AllowedSource);
             }
 
         }

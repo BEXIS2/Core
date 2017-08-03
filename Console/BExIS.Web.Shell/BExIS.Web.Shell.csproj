@@ -433,6 +433,7 @@
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.png" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.png" />
+    <Content Include="Content\Images\Bad.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
     <Content Include="css\font-awesome.css" />

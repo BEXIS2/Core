@@ -1,12 +1,12 @@
 ﻿@model List<BExIS.Dlm.Entities.Party.PartyRelationshipType>
 @{ var hasParty = false;
-    var sourcePartyId = (long)ViewBag.sourcePartyId;
+    var sourceParty = (BExIS.Dlm.Entities.Party.Party)ViewBag.sourceParty;
 }
 <h2>Relationships:</h2>
 <div style="max-height:420px;overflow:auto;">
     <form action="/BAM/Party/CreatePartyRelationships" method="post" id="frmRelationship">
         <input type="hidden" name="partyId" id="PartyRelationWindowPartyId" value="" />
-        @*Find all the allowed partyRelationType*@ 
+        @*Find all the allowed partyRelationType*@
         @foreach (var partyRelationType in Model)
         {
             if (!partyRelationType.AssociatedPairs.Any(item => item.AllowedTarget.Parties.Any()))
@@ -18,13 +18,14 @@
                 hasParty = true;
 
             }
-            var cntRelations = (sourcePartyId != 0 ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourcePartyId, partyRelationType) : 0);
+            var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
             <table>
                 <tr>
                     <td colspan="2">
                         <input type="checkbox" onclick="togglePartyRelDetail(@partyRelationType.Id,this)" @(cntRelations >= partyRelationType.MaxCardinality && (partyRelationType.MaxCardinality != -1) ? "disabled" : "") class="chkPartyRelationshipType" /><label>
-                            <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3></label>
-                        
+                            <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3>
+                        </label>
+
                         @if (partyRelationType.MaxCardinality != -1)
                         {
                             @Html.Raw("(<span style=" + (cntRelations >= partyRelationType.MaxCardinality ? "color:red;" : "") + ">" + cntRelations + " of " + partyRelationType.MaxCardinality + "</span>)");
@@ -32,7 +33,7 @@
                         <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
                     </td>
                 </tr>
-                @foreach (var partyTypePair in partyRelationType.AssociatedPairs)
+                @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
                 {
                     <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
                         <td>
@@ -57,17 +58,18 @@
                 }
             </table>
         }
+        @if (hasParty)
+        {
+            <div>
+                <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Save</button>
+            </div>
+        }
+        else
+        {
+            <div id="divRelationshipNotFoundTitle">There is not any allowed related parties for making relationship!</div>
+        }
     </form>
-</div>@if (hasParty)
-{
-    <div>
-        <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Save</button>
-    </div>
-}
-else
-{
-    <div id="divRelationshipNotFoundTitle">There is not any allowed related parties for making relationship!</div>
-}
+</div>
 <script type="text/javascript">
     function togglePartyRelDetail(partyRelationTypeId, checkboxElement) {
         if ($(checkboxElement).is(":checked"))
@@ -84,7 +86,6 @@ else
         $warningElement = $parentElement.find(".dateWarning");
         startDate = new Date($parentElement.find("[id*='StartDate']").val());
         endDate = new Date($parentElement.find("[id*='EndDate']").val());
-
         targetStartDate = new Date($thisElement.closest(".divPartyRelationship").attr("startDate"));
         targetEndDate = new Date($thisElement.closest(".divPartyRelationship").attr("endDate"));
         $warningElement.html("");
@@ -92,7 +93,7 @@ else
             $warningElement.html("Start date should be less than end date.");
         if ((startDate < targetStartDate) || (endDate > targetEndDate)) {
             var lblPartyRel = $thisElement.closest(".partyRelationship").find("#lblPartyName").text();
-            $warningElement.html($warningElement.html() + " Dates should be in the range of " + lblPartyRel + "'s dates. From " + targetStartDate.toLocaleDateString() + " to " + targetEndDate.toLocaleDateString());
+            $warningElement.html($warningElement.html() + " dates should be in the range of " + lblPartyRel + "'s dates. From " + targetStartDate.toLocaleDateString() + " to " + targetEndDate.toLocaleDateString());
         }
     }
 

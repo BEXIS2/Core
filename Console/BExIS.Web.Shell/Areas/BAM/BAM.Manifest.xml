@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="BAM" displayName="Business Administration Module" version="1.0.0" builtin="false">
   <Description>
-    <!--add proper description-->
+    All the packages related to the core of system belong to this module such as Party Package.
   </Description>
   <Assemblies>
     <Assembly fullName="" role=""/>
@@ -12,10 +12,10 @@
   <Exports>
     <!--add proper menu items-->
 
-    <Export tag="menubar" id="createDataset" order="1"
-            title="Party Manager" description="xx" icon=""
+    <Export tag="settings" id="createDataset" order="1"
+            title="Party Manager" description="" icon=""
             controller="Party" action="index"
-            extends="./menubarRoot/bam" />
+            extends="./settingsRoot" />
 
     <!-- INTERNAL-->
 
