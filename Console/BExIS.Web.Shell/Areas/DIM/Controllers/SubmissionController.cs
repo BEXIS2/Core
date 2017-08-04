@@ -606,7 +606,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     name,
                                     description,
                                     "Dataset",
-                                    extendedDataAsJSON,
+                                    metadataExportFormat,
                                     null
                                     );
 

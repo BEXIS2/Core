@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml;
 
 
 namespace BExIS.Dim.Helpers.GFBIO
@@ -140,7 +141,7 @@ namespace BExIS.Dim.Helpers.GFBIO
         /// <param name="researchobjecttype"></param>
         /// <param name="authornames"></param>
         /// <returns></returns>
-        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, string extendedData, string[] authornames)
+        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, XmlDocument extendedData, string[] authornames)
         {
             string functionName = "create-research-object";
             string entityName = "researchobject";
@@ -154,26 +155,11 @@ namespace BExIS.Dim.Helpers.GFBIO
             researchObject.name = name;
             researchObject.description = description;
             researchObject.researchobjecttype = researchobjecttype;
-            //researchObject.extendeddata = "{\"x\"}";//extendedData;
+            researchObject.extendeddata = extendedData;
             researchObject.metadatalabel = "abcd";
-            //researchObject.authornames = new List<string> { "david schöne" };
+            researchObject.authornames = new List<string> { "david schöne" };
 
-            //string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
-
-
-            GFBIOResearchObjectMiniJSON x = new GFBIOResearchObjectMiniJSON();
-
-
-            x.userid = userid;
-            x.name = name;
-            x.description = description;
-            x.researchobjecttype = researchobjecttype;
-            string json = "[" + JsonConvert.SerializeObject(x) + "]";
-
-            //"," +
-            //"\"authornames\":[" + string.Join(",", authornames) + "]}";
-
-            //json = "[{ \"name\":\"test\",\"description\":\"test description\",\"submitterid\":16297,\"researchobjecttype\":\"x\"}]";
+            string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
 
             //string body = WebServiceHelper.Encode(json);
 
@@ -229,7 +215,7 @@ namespace BExIS.Dim.Helpers.GFBIO
         // length 1500
         public List<string> authornames { get; set; }
         // length 1500
-        public string extendeddata { get; set; }
+        public XmlDocument extendeddata { get; set; }
         public string metadatalabel { get; set; }
 
         public GFBIOResearchObjectJSON()
@@ -240,7 +226,7 @@ namespace BExIS.Dim.Helpers.GFBIO
             description = "";
             researchobjecttype = "";
             authornames = new List<string>();
-            extendeddata = "";
+            extendeddata = new XmlDocument();
             metadatalabel = "";
         }
     }

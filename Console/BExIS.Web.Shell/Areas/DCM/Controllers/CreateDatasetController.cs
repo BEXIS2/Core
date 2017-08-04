@@ -514,11 +514,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                     //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
-                    var x = this.Run("DDM", "SearchIndex", "ReIndex", new RouteValueDictionary() { { "id", datasetId } });
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    {
 
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
+                    }
 
                     LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
                 }
+
 
                 return datasetId;
             }

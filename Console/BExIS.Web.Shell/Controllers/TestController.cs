@@ -27,9 +27,19 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
+            getDatasetVersionIdsThatHaveSOmeTuples(1);
+            //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
             return View("Index");
+        }
+
+        private void getDatasetVersionIdsThatHaveSOmeTuples(long datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IReadOnlyRepository< DatasetVersion > repo= uow.GetReadOnlyRepository<DatasetVersion>();
+                var versionIds1 = repo.Query().Where(p => p.Dataset.Id == 1 && p.PriliminaryTuples.Count() >= 1).Select(p => p.Id).ToList();
+            }
         }
 
         //[RecordCall]

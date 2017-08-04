@@ -33,6 +33,7 @@
 
 <script>
     var hot = null;
+    var hotActive = false;
     var currentButton = null;
     var selectedDataArea = null;
 
@@ -73,6 +74,8 @@
                 return cellProperties;
             }
         });
+
+        hotActive = true;
 
         hot.render();
 
@@ -278,7 +281,7 @@
         </div>
 
         <div class="uploadWizardStep_Description stepper">
-            <p>Please mark your header and data area</p>
+            <p>Please mark your header (the names of the variables) and data area.</p>
         </div>
 
         <div class="uploadWizardStep_Content stepper">

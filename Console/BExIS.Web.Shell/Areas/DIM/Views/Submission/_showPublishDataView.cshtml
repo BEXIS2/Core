@@ -124,7 +124,7 @@
         $.post('@Url.Action("PrepareData", "Submission", new RouteValueDictionary {{"area", "dim"}})',
                 { datasetid: id, datarepo: input },
                 function(response) {
-                    //alert(response);
+                    //alert("prepare data copmplete");
                     $("#publishContentContainer").replaceWith(response);
 
                     sendDataToDataRepo(id, input);
@@ -134,10 +134,14 @@
 
     function sendDataToDataRepo(id,input) {
 
+        //alert("start send data to repo ");
+
         $.post('@Url.Action("SendDataToDataRepo", "Submission", new RouteValueDictionary {{"area", "dim"}})',
             { datasetid: id, datarepo: input },
             function(response) {
 
+               // alert("end send data to repo ");
+               // alert(response);
 
                 if(response !== "true")
                 {

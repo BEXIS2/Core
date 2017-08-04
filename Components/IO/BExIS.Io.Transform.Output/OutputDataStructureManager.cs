@@ -247,57 +247,12 @@ namespace BExIS.IO.Transform.Output
 
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
-            return getOrderedVariables(structuredDataStructure.Id, structuredDataStructure.Variables.ToList());
+            return getOrderedVariables(structuredDataStructure.Variables.ToList());
         }
 
-        public List<Variable> getOrderedVariables(long dataStructureID, List<Variable> Variables)
+        public List<Variable> getOrderedVariables(List<Variable> Variables)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureID);
-            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
-            XmlNode order;
-            XmlNodeList temp;
-            if (doc == null)
-            {
-                doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(System.Xml.XmlNodeType.Element, "extra", null);
-                doc.AppendChild(root);
-            }
-            if (doc.GetElementsByTagName("order").Count == 0)
-            {
-
-                if (structuredDataStructure.Variables.Count != 0)
-                {
-                    order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order.AppendChild(variable);
-                    }
-                    doc.FirstChild.AppendChild(order);
-                    structuredDataStructure.Extra = doc;
-                    dataStructureManager.UpdateStructuredDataStructure(structuredDataStructure);
-                }
-            }
-
-            temp = doc.GetElementsByTagName("order");
-            order = temp[0];
-            List<Variable> orderedVariables = new List<Variable>();
-            if (Variables.Count != 0)
-            {
-                foreach (XmlNode x in order)
-                {
-                    foreach (Variable v in Variables)
-                    {
-                        if (v.Id == Convert.ToInt64(x.InnerText))
-                            orderedVariables.Add(v);
-
-                    }
-                }
-            }
-            return orderedVariables;
+            return Variables.OrderBy(v => v.OrderNo).ToList();
         }
 
         public string CreateTemplate(StructuredDataStructure dataStructure)
@@ -342,7 +297,7 @@ namespace BExIS.IO.Transform.Output
             if (dataStructure != null)
             {
                 List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
-                variables = getOrderedVariables(dataStructureId, variables);
+                variables = getOrderedVariables(variables);
                 return CreateTemplate(variables, path, filename);
             }
             else

@@ -68,9 +68,10 @@ namespace BExIS.Dim.Helpers
 
                     //ToDO set data as json to body
 
+
+
                     //client.
-                    StringContent sContent = new StringContent(body, Encoding.UTF8, "application/json");
-                    var parameterDic = new Dictionary<string, string> { { "requestJson", sContent.ToString() } };
+                    var parameterDic = new Dictionary<string, string> { { "requestJson", body } };
                     var encodedContent = new FormUrlEncodedContent(parameterDic);
 
                     //test@testerer.de:WSTest
@@ -80,12 +81,7 @@ namespace BExIS.Dim.Helpers
                     AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Authorization = ahv;
 
-
-
-
                     string requesturl = url + parameters;
-
-
 
                     //HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
                     HttpResponseMessage response = await client.PostAsync(requesturl, encodedContent);
@@ -93,6 +89,7 @@ namespace BExIS.Dim.Helpers
                     //Debug.WriteLine(Server.UrlEncode(parameters));
                     response.EnsureSuccessStatusCode();
                     returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+
                 }
                 return returnValue;
             }

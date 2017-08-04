@@ -1,5 +1,12 @@
-﻿using BExIS.Dlm.Entities.Party;
+﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.Party;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
+using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -11,6 +18,40 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult Index()
         {
 
+
+
+            ////get all
+            //var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
+            //// get all where value = david
+            //x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage,"David");
+
+
+            // get value from metadata over the system
+            // partytpe person - attr firstname
+
+            long partyCustomtAttr = 1;
+            LinkElementType type = LinkElementType.PartyCustomType;
+
+            long datasetId = 7;
+
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+
+            List<string> tmp = MappingUtils.GetValuesFromMetadata(partyCustomtAttr, type,
+                datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+            tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key,
+               datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+
+            return View("Index");
+        }
+
+
+
+        private void CreatePartys()
+        {
             #region CREATE PARTYS
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
@@ -63,13 +104,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
             #endregion
-
-            ////get all
-            //var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
-            //// get all where value = david
-            //x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage,"David");
-
-            return View("Index");
         }
     }
 }

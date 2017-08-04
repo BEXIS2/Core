@@ -40,53 +40,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string jsonTable = "{}";
 
             SelectAreasModel model = new SelectAreasModel();
-
-            // When jumping back to this step
-            // Check if the json-table has already been created, if yes, use it
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
+            
+            try
             {
-                if (!String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA])))
+                fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+                string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
+
+                SheetFormat CurrentSheetFormat = 0;
+                Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
+
+                JsonTableGenerator EUEReader = new JsonTableGenerator();
+                EUEReader.Open(fis);
+                jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
+
+                if (!String.IsNullOrEmpty(jsonTable))
                 {
-                    model.JsonTableData = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+                    TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+                }
+
+                TaskManager.AddToBus(EasyUploadTaskManager.WORKSHEET_URI, EUEReader.getWorksheetUri());
+
+                model.JsonTableData = jsonTable;
+            }
+            catch (Exception ex)
+            {
+                LoggerFactory.LogCustom(ex.Message);
+            }
+            finally
+            {
+                if (fis != null)
+                {
+                    fis.Close();
                 }
             }
-            else //Create a new json-table
-            {
-                try
-                {
-                    fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-                    string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
-
-                    SheetFormat CurrentSheetFormat = 0;
-                    Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
-
-                    JsonTableGenerator EUEReader = new JsonTableGenerator();
-                    EUEReader.Open(fis);
-                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
-
-                    if (!String.IsNullOrEmpty(jsonTable))
-                    {
-                        TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
-                    }
-
-                    model.JsonTableData = jsonTable;
-                }
-                catch (Exception ex)
-                {
-                    LoggerFactory.LogCustom(ex.Message);
-                }
-                finally
-                {
-                    if (fis != null)
-                    {
-                        fis.Close();
-                    }
-                }
-            }
-
-
-
 
             // Check if the areas have already been selected, if yes, use them (Important when jumping back to this step)
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))

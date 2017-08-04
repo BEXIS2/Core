@@ -2,9 +2,11 @@
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
+using BExIS.Xml.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -32,7 +34,7 @@ namespace BExIS.Dim.Helpers.Mapping
             //get All mappings for the destination
             foreach (var mapping in mappings)
             {
-                LinkElement root = GetIdOfRoot(mapping.Source);
+                LinkElement root = getIdOfRoot(mapping.Source);
                 if (root != null && root.ElementId.Equals(destinationElementRootId) &&
                      root.Type.Equals(destinationType))
                     mappingsForDestiantion.Add(mapping);
@@ -48,22 +50,15 @@ namespace BExIS.Dim.Helpers.Mapping
              * Person/SecondName    Blaa
              * 
              * 
-             * => all mappings know must be opnly the Person/FirstName & Person/SecondName
+             * => all mappings know must be only the Person/FirstName & Person/SecondName
              */
 
 
-            tmp = GetAllValuesFromSystem(mappingsForDestiantion, value);
+            tmp = getAllValuesFromSystem(mappingsForDestiantion, value);
 
 
 
             return tmp;
-        }
-
-        private static LinkElement GetIdOfRoot(LinkElement element)
-        {
-            if (element.Parent == null) return element;
-
-            return GetIdOfRoot(element.Parent);
         }
 
         /// <summary>
@@ -72,7 +67,7 @@ namespace BExIS.Dim.Helpers.Mapping
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
-        private static List<string> GetAllValuesFromSystem(List<Entities.Mapping.Mapping> mappings, string value)
+        private static List<string> getAllValuesFromSystem(List<Entities.Mapping.Mapping> mappings, string value)
         {
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
@@ -126,6 +121,89 @@ namespace BExIS.Dim.Helpers.Mapping
         }
 
 
+
+        #endregion
+
+        #region GET FROM Specific MetadataStructure // Source 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetType"></param>
+        /// <param name="sourceRootId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static List<string> GetValuesFromMetadata(long targetElementId, LinkElementType targetType,
+            long sourceRootId, XDocument metadata)
+        {
+
+            List<string> tmp = new List<string>();
+
+            long destinationElementRootId = sourceRootId;
+            LinkElementType destinationType = LinkElementType.MetadataStructure;
+
+            MappingManager _mappingManager = new MappingManager();
+            //getAll mappings
+            var mappings = _mappingManager.GetMappings().Where(m =>
+                m.Target.ElementId.Equals(targetElementId) &&
+                m.Target.Type.Equals(targetType));
+
+            List<Entities.Mapping.Mapping> mappingsForDestiantion = new List<Entities.Mapping.Mapping>();
+
+            //get All mappings for the destination
+            foreach (var mapping in mappings)
+            {
+                LinkElement root = getIdOfRoot(mapping.Source);
+                if (root != null && root.ElementId.Equals(destinationElementRootId) &&
+                     root.Type.Equals(destinationType) && mapping.Level == 2)
+                    mappingsForDestiantion.Add(mapping);
+            }
+
+
+            foreach (var m in mappingsForDestiantion)
+            {
+
+                Dictionary<string, string> AttrDic = new Dictionary<string, string>();
+
+                if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                    m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                {
+                    AttrDic.Add("id", m.Source.ElementId.ToString());
+                    AttrDic.Add("name", m.Source.Name);
+                    AttrDic.Add("type", "MetadataAttributeUsage");
+
+                    //find sourceelement in xmldocument
+                    IEnumerable<XElement> elements = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+
+                    foreach (var element in elements)
+                    {
+                        tmp.Add(element.Value);
+                    }
+                }
+
+
+
+            }
+
+            return tmp;
+        }
+
+
+        #endregion
+
+
+        #region Helpers
+
+        private static LinkElement getIdOfRoot(LinkElement element)
+        {
+            if (element.Parent == null) return element;
+
+            return getIdOfRoot(element.Parent);
+        }
+
+
         private static List<string> transform(string value, TransformationRule transformationRule)
         {
             List<string> tmp = new List<string>();
@@ -168,8 +246,6 @@ namespace BExIS.Dim.Helpers.Mapping
         }
 
         #endregion
-
-
 
     }
 }

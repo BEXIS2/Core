@@ -3,7 +3,9 @@
     public enum Key
     {
         Title = 1,
-        Description = 2
+        Description = 2,
+        OwnerName = 3,
+        ProjectTitle
     }
 
     public enum LinkElementComplexity
