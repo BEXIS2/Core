@@ -194,6 +194,7 @@
     <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />
     <Content Include="Views\Party\_relationshipEditViewPartial.cshtml" />
     <Content Include="Views\Party\_userRegisterationPartial.cshtml" />
+    <Content Include="Views\Party\_addPartyRelationshipPartial.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

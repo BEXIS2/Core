@@ -31,11 +31,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
             {
                 // var childPartyTypes = new PartyRelationshipTypeManager().GetChildPartyTypes(id);
                 foreach (var party in partyManager.Repo.Get(cc => partyTypes.Contains(cc.PartyType.Title)))//childPartyTypes.Contains(c.PartyType)))
-                    partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
+                    partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate,IsTemp=party.IsTemp });
             }
             else
                 foreach (var party in partyManager.Repo.Get())
-                    partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
+                    partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate ,IsTemp=party.IsTemp});
             return PartialView("_partiesPartial", partiesForGrid);
 
         }
@@ -56,7 +56,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <param name="party"></param>
         /// <param name="partyCustomAttributeValues"></param>
         /// <param name="partyRelationships"></param>
-        /// <param name="userName">if there is, it will attach to the party</param>
+        /// <param name="callBackUrl">if there is, after creating the party, it will redirect to this</param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult Create(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships, string callBackUrl)
@@ -78,7 +78,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     var partyRelationshipType = partyRelationshipManager.Repo.Get(partyRelationship.PartyRelationshipType.Id);
                     partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
                 }
-            
+
             if (!string.IsNullOrEmpty(callBackUrl))
                 //TODO: Sven impementing the callback 
                 return RedirectToAction(callBackUrl + "&PID=" + party.Id);
@@ -95,14 +95,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
             ViewBag.RelationTabAsDefault = relationTabAsDefault;
-            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetPartyRelationshipTypeWithAllowedAssociated(id).Where(cc => cc.MinCardinality > 0);
-            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == model.Party.Id && cc.SecondParty.Id == model.Party.Id);
-            //foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
-            //{
-            //    if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
-            //        model.Errors.Add(new IO.Transform.Validation.Exceptions.Error(ErrorType.Other, "At lease on relationship type '" + requiredPartyRelationType.DisplayName + "' for this party is required."));
-
-            //}
             return View("CreateEdit", model);
         }
 
@@ -126,6 +118,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     party.Description = partyModel.Party.Description;
                     party.StartDate = partyModel.Party.StartDate;
                     party.EndDate = partyModel.Party.EndDate;
+                    //if relationship rules are satisfied, it is not temp
+                    if (string.IsNullOrWhiteSpace(Helpers.Helper.ValidateRelationships(party.Id)))
+                        party.IsTemp = false;
+                    else
+                        party.IsTemp = true;
                     party = partyManager.Update(party);
                     foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
                     {
@@ -138,17 +135,31 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 {
                     var partyType = partyTypeManager.Repo.Get(partyModel.Party.PartyType.Id);
                     var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+                    // save party as temp if the reationships are required
+                    var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(partyType.Id).Where(cc => cc.MinCardinality > 0);
+
                     //Create party
-                    party = partyManager.Create(partyType, partyModel.Party.Alias, partyModel.Party.Description, partyModel.Party.StartDate, partyModel.Party.EndDate, partyStatusType);
+                    party = partyManager.Create(partyType, partyModel.Party.Alias, partyModel.Party.Description, partyModel.Party.StartDate, partyModel.Party.EndDate, partyStatusType, requiredPartyRelationTypes.Any());
                     //Add customAttriuteValue to party
                     newAddPartyCustomAttrValues = ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues);
-                    redirectAction = RedirectToAction("CreateEdit", new { id = party.Id, relationTabAsDefault = true });
+                    //if relationship rules are satisfied, it is not temp
+                    if (string.IsNullOrWhiteSpace(Helpers.Helper.ValidateRelationships(requiredPartyRelationTypes,party.Id)))
+                        party.IsTemp = false;
+                    else
+                        party.IsTemp = true;
+                    if (requiredPartyRelationTypes.Any())
+                        redirectAction = RedirectToAction("CreateEdit", new { id = party.Id, relationTabAsDefault = true });
                 }
                 partyManager.AddPartyCustomAttriuteValues(party, newAddPartyCustomAttrValues);
             }
             return redirectAction;
         }
 
+
+        public JsonResult ValidateRelationships(int partyId)
+        {
+            return Json(Helpers.Helper.ValidateRelationships(partyId));
+        }
         public ActionResult View(int id)
         {
             PartyManager partyManager = new PartyManager();
@@ -356,9 +367,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult LoadPartyRelationshipType(int id)
         {
             var partyRelManager = new PartyRelationshipTypeManager();
-
-            ViewBag.sourcePartyId = Request.Params["partyId"] != null ? long.Parse(Request.Params["partyId"]) : 0;
-            return PartialView("_addPartyRelationshipPartial", partyRelManager.GetPartyRelationshipTypeWithAllowedAssociated(id));
+            var party = Request.Params["partyId"] != null ? new PartyManager().Repo.Get(long.Parse(Request.Params["partyId"])):null;
+            ViewBag.sourceParty = party;
+            var partyRelationshipTypes = partyRelManager.GetAllPartyRelationshipTypes(party.PartyType.Id);
+            
+            return PartialView("_addPartyRelationshipPartial", partyRelationshipTypes.ToList());
         }
         /// <summary>
         /// 

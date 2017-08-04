@@ -1,7 +1,7 @@
 ﻿@using Telerik.Web.Mvc.UI
 @model BExIS.Modules.Sam.UI.Models.UpdateUserModel
 
-@using (Ajax.BeginForm("Update", "Users", new { param1 = ""}, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Update", OnSuccess = "Update_OnSuccess" }))
+@using (Ajax.BeginForm("Update", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Update", OnSuccess = "Update_OnSuccess" }))
 {
     @Html.ValidationSummary(true)
 
@@ -57,3 +57,9 @@
         <button style="margin-left: 1px" type="button" class="bx-button action">Cancel</button>
     </div>
 }
+
+<script>
+    $("button[type='submit']").click(function () {
+        $.post('@Url.Action("Groups_Save", "Users")', { Groups: $("#Grid_Groups").data("tGrid").dataSource._data });
+    });
+</script>

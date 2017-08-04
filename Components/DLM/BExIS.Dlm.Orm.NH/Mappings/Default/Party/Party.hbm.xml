@@ -35,6 +35,10 @@
     <property name="EndDate" type="DateTime" >
       <column name="EndDate"  />
     </property>
+    
+    <property name="IsTemp" type="yes_no" >
+      <column name="IsTemp"  />
+    </property>
 
     <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"  lazy="false" />
 

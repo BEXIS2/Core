@@ -19,6 +19,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Data.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -791,9 +792,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-
-            //get the usage
-            var stepModelHelperParent = GetStepModelhelper(parentStepId);
+            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
 
             var parentUsage = LoadUsage(stepModelHelperParent.Usage);
             var pNumber = stepModelHelperParent.Number;
@@ -973,7 +972,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            var stepModelHelperParent = GetStepModelhelper(parentStepId);
+            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
 
             //find the right element in the list
             var removeAttributeModel = stepModelHelperParent.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(id) && m.Number.Equals(number)).First();

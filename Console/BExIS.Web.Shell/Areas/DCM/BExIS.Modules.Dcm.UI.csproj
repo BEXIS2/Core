@@ -71,10 +71,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -224,10 +220,6 @@
     </Content>
     <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
-    <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
-    <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
-    <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
-    <Content Include="Scripts\Form.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -292,6 +284,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>

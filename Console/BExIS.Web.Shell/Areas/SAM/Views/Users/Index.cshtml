@@ -1,4 +1,5 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc
 @using Telerik.Web.Mvc.UI
 <style>
     .t-window-content {
@@ -41,6 +42,7 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
+          .OperationMode(GridOperationMode.Client)
           .Select("Users_Select", "Users")
       )
       .Filterable()
@@ -92,16 +94,6 @@
                     }
                 });
             });
-
-        function Create_OnSuccess(data) {
-            if (data.success) {
-                $('#Window_Create').data('tWindow').close();
-            }
-        }
-
-        function Create_OnBegin() {
-            alert("jlkj");
-        }
 
         function Grid_Users_OnDataBound() {
             addTooltips();

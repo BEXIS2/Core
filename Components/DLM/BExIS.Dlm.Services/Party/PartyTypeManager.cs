@@ -192,6 +192,52 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
 
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyCustomAttribute partyCustomeAttribute)
+        {
+            Contract.Requires(partyCustomeAttribute != null);
+            Contract.Requires(partyCustomeAttribute.PartyType != null);
+            Contract.Requires(!string.IsNullOrWhiteSpace(partyCustomeAttribute.Name));
+            Contract.Ensures(Contract.Result<PartyCustomAttribute>() != null && Contract.Result<PartyCustomAttribute>().Id >= 0);
+
+            var entity = new PartyCustomAttribute()
+            {
+                DataType = partyCustomeAttribute.DataType.ToLower(),
+                Description = partyCustomeAttribute.Description,
+                PartyType = partyCustomeAttribute.PartyType,
+                ValidValues = partyCustomeAttribute.ValidValues,
+                IsValueOptional = partyCustomeAttribute.IsValueOptional,
+                IsUnique = partyCustomeAttribute.IsUnique,
+                IsMain = partyCustomeAttribute.IsMain,
+                Name = partyCustomeAttribute.Name
+            };
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
+                //Name is unique for PartyCustomAttribute with the same party type
+                if (repo.Get(item => item.Name == partyCustomeAttribute.Name && item.PartyType == partyCustomeAttribute.PartyType).Count > 0)
+                    BexisException.Throw(entity, "This name for this type of 'PartyCustomAttribute' is already exist.", BexisException.ExceptionType.Add);
+                //Calculate displayorder
+                var partyCustomAttrs = repo.Get(item => item.PartyType == partyCustomeAttribute.PartyType);
+                if (partyCustomAttrs.Count() == 0)
+                    entity.DisplayOrder = 0;
+                //if displayOrder is null then it goes to the last                
+                else if (partyCustomeAttribute.DisplayOrder==0)
+                    entity.DisplayOrder = partyCustomAttrs.Max(item => item.DisplayOrder) + 1;
+                //else it push the other items with the same displayOrder or greater than
+                else
+                {
+                    entity.DisplayOrder = partyCustomeAttribute.DisplayOrder;
+                    partyCustomAttrs.Where(item => item.DisplayOrder >= partyCustomeAttribute.DisplayOrder)
+                        .ToList().ForEach(item => item.DisplayOrder = item.DisplayOrder + 1);
+
+                }
+                repo.Put(entity);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+
         public PartyCustomAttribute UpdatePartyCustomAttribute(PartyCustomAttribute partyCustomAttribute)
         {
             Contract.Requires(partyCustomAttribute != null, "Provided entities can not be null");

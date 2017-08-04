@@ -55,25 +55,6 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(0);
         }
 
-        public User Create(string userName, string email, bool isAdministrator = false)
-        {
-            var user = new User()
-            {
-                UserName = userName,
-                Email = email,
-                IsAdministrator = isAdministrator
-            };
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Put(user);
-                uow.Commit();
-            }
-
-            return user;
-        }
-
         public void Delete(long userId)
         {
             var user = UserRepository.Get(userId);

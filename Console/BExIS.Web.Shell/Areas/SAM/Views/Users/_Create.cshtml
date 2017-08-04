@@ -29,7 +29,7 @@
                 @Html.LabelFor(m => m.IsAdministrator)
             </td>
             <td>
-                @Html.CheckBoxFor(m => m.IsAdministrator)
+                @Html.CheckBoxFor(m => m.IsAdministrator, new { @class = "t-input bx-input" })
                 @Html.ValidationMessageFor(m => m.IsAdministrator)
             </td>
         </tr>

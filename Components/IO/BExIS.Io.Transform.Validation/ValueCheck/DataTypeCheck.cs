@@ -288,7 +288,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                         }
                         
                     //TODO Boolean check
-                    /*case "Boolean":
+                    case "Boolean":
                         {
 
                             Boolean converted;
@@ -300,7 +300,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-                        }*/
+                        }
 
                 }
             }

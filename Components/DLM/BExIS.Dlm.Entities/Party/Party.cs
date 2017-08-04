@@ -15,6 +15,9 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string Description { get; set; }
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime EndDate { get; set; }
+        public virtual bool IsTemp { get; set; }
+        
+
         public Party()
         {
             CustomAttributeValues = new List<PartyCustomAttributeValue>();

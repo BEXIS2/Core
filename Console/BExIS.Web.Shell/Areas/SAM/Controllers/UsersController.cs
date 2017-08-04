@@ -1,6 +1,6 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Web.Mvc;
@@ -21,8 +21,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userStore = new UserStore();
-                var user = userStore.Create(model.UserName, model.Email, model.IsAdministrator);
+                var userManager = new UserManager(new UserStore());
+                userManager.CreateAsync(new User()
+                {
+                    Email = model.Email,
+                    UserName = model.UserName,
+                    IsAdministrator = model.IsAdministrator
+                });
+
                 RedirectToAction("Index");
             }
 
@@ -42,39 +48,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction]
-        public ActionResult Groups_Select(long userId, Dictionary<long, bool> selection)
+        public ActionResult Groups_Select(long userId)
         {
-            updateSelection(selection);
-
             var groupManager = new GroupManager();
-            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, Session["SelectedGroups"] as HashSet<long>)).ToList();
+            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
-        }
-
-        private void updateSelection(Dictionary<long, bool> selection)
-        {
-            if (selection == null)
-                selection = new Dictionary<long, bool>();
-
-            // Selected Groups
-            var selectedGroups = new HashSet<long>();
-            if (Session["SelectedGroups"] != null)
-                selectedGroups = Session["SelectedGroups"] as HashSet<long>;
-
-            foreach (var item in selection)
-            {
-                if (item.Value)
-                {
-                    selectedGroups.Add(item.Key);
-                }
-                else
-                {
-                    selectedGroups.Remove(item.Key);
-                }
-            }
-
-            Session["SelectedGroups"] = selectedGroups;
         }
 
         public ActionResult Index()
@@ -91,7 +70,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(UpdateUserModel model, string test)
+        public ActionResult Update(UpdateUserModel model)
         {
             return PartialView("_Update", model);
         }

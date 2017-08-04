@@ -34,7 +34,7 @@ namespace BExIS.Dlm.Services.Party
         #region Methods
 
         //Currently there is no need to use name due to the conversation in a project meeting on December</param>
-        public PartyX Create(PartyType partyType, string alias, string description, DateTime? startDate, DateTime? endDate, PartyStatusType initialStatusType)
+        public PartyX Create(PartyType partyType, string alias, string description, DateTime? startDate, DateTime? endDate, PartyStatusType initialStatusType,bool isTemp=true)
         {
             //Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(partyType != null);
@@ -45,8 +45,8 @@ namespace BExIS.Dlm.Services.Party
                 startDate = DateTime.MinValue;
             if (endDate == null || endDate == DateTime.MinValue)
                 endDate = DateTime.MaxValue;
-            if (endDate <= startDate)
-                BexisException.Throw(null, "End date should be equal or greater than start date.");
+            if (startDate> endDate )
+                BexisException.Throw(null, "End date should be greater than start date.");
 
             //Create a create status
             PartyStatus initialStatus = new PartyStatus();
@@ -61,7 +61,8 @@ namespace BExIS.Dlm.Services.Party
                 Description = description,
                 StartDate = startDate.Value,
                 EndDate = endDate.Value,
-                CurrentStatus = initialStatus
+                CurrentStatus = initialStatus,
+                IsTemp=isTemp
             };
             initialStatus.Party = entity;
             entity.History = new List<PartyStatus>();
@@ -154,26 +155,22 @@ namespace BExIS.Dlm.Services.Party
             }
             return (entity);
         }
-        
-        // Find the main fields of custom attributes and merge them for party name
-        // party name comes from the custom attribute valies which are the main fields (isMain == true)
-        private void UpdatePartyName(PartyX party)
-        {
-            //TODO: change it to a trigger
-            //using (IUnitOfWork uow = this.GetBulkUnitOfWork())
-            //{
-            //    IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-            //    party = repo.Reload(party);
-            //    var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
-            //    string name = "";
-            //    if (mainValues.Length > 0)
-            //        name = string.Join(" ", mainValues);
-            //    party.Name = name;
-            //    repo.Put(party);
-            //    uow.Commit();
-            //}
 
+        public bool TempPartyToPermanent(int partyId)
+        {
+            Contract.Requires(partyId >= 0, "Provided entity must have a permanent ID");
+          
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+                var party=repo.Get(partyId);
+                party.IsTemp = false;
+                repo.Put(party); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return true;
         }
+
         #endregion
 
 
@@ -194,7 +191,7 @@ namespace BExIS.Dlm.Services.Party
                 startDate = DateTime.MinValue;
             if (endDate == null)
                 endDate = DateTime.MaxValue;
-            if (endDate <= startDate)
+            if (startDate>endDate)
                 BexisException.Throw(firstParty, "End date should be greater than start date.");
             var entity = new PartyRelationship()
             {
@@ -235,6 +232,8 @@ namespace BExIS.Dlm.Services.Party
         {
             Contract.Requires(!string.IsNullOrEmpty(title), "Title can not be empty");
             Contract.Requires(id >= 0, "a permanent ID is required.");
+            if (startDate > endDate)
+                BexisException.Throw(new PartyRelationship(){ Id =id}, "End date should be greater than start date.");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -342,8 +341,7 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
 
-            }
-            UpdatePartyName(party);
+            }           
             return (entity);
         }
 
@@ -389,7 +387,6 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            UpdatePartyName(party);
             return party.CustomAttributeValues;
         }
 
@@ -418,7 +415,6 @@ namespace BExIS.Dlm.Services.Party
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            UpdatePartyName(entity.Party);
             return (entity);
         }
 
@@ -441,7 +437,6 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(entity.Party);
             return (entity);
         }
         //public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute, PartyX party, string value)
@@ -481,7 +476,6 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
         }
 
@@ -500,8 +494,6 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            if (entities.Any())
-                UpdatePartyName(entities.First().Party);
             return (true);
         }
 
@@ -570,39 +562,39 @@ namespace BExIS.Dlm.Services.Party
         }
         #endregion
 
-        #region Account
-        public void AddPartyUser(PartyX party, long userId)
-        {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                var partyUser = new PartyUser();
-                partyUser.UserId = userId;
-                partyUser.PartyId = party.Id;
-                partyUser.Party = party;
-                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-                repo.Put(partyUser);
-                uow.Commit();
-            }
-        }
+        //#region Account
+        //public void AddPartyUser(PartyX party, long userId)
+        //{
+        //    using (IUnitOfWork uow = this.GetUnitOfWork())
+        //    {
+        //        var partyUser = new PartyUser();
+        //        partyUser.UserId = userId;
+        //        partyUser.PartyId = party.Id;
+        //        partyUser.Party = party;
+        //        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+        //        repo.Put(partyUser);
+        //        uow.Commit();
+        //    }
+        //}
 
-        //public PartyX GetPartyByUser(int userId)
+        ////public PartyX GetPartyByUser(int userId)
+        ////{
+        ////    using (IUnitOfWork uow = this.GetUnitOfWork())
+        ////    {
+        ////        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+        ////        return repo.Get(c => c.UserId == userId).Select(c=>c.Party).FirstOrDefault();
+        ////    }
+        ////}
+
+        //public long GetUserIdByParty(int partyId)
         //{
         //    using (IUnitOfWork uow = this.GetUnitOfWork())
         //    {
         //        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-        //        return repo.Get(c => c.UserId == userId).Select(c=>c.Party).FirstOrDefault();
+        //        return repo.Get(c => c.PartyId == partyId).Select(c => c.UserId).FirstOrDefault();
         //    }
         //}
-
-        public long GetUserIdByParty(int partyId)
-        {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-                return repo.Get(c => c.PartyId == partyId).Select(c => c.UserId).FirstOrDefault();
-            }
-        }
-        #endregion 
+        //#endregion 
 
         /// <summary>
         /// make a hash from isUniqe custom attributes and check it with all of the other parties hash 

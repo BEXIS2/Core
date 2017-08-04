@@ -40,7 +40,7 @@
       <column name="MaxCardinality"  />
     </property>
 
-    <set name="AssociatedPairs" table="PartyTypePairs" lazy="true">
+    <set name="AssociatedPairs" table="PartyTypePairs" lazy="false">
       <key column="PartyRelationshipTypeRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>
