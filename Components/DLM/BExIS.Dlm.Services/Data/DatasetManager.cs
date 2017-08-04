@@ -33,7 +33,7 @@ namespace BExIS.Dlm.Services.Data
         public int PreferedBatchSize { get; set; }
         public DatasetManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
+            IUnitOfWork uow = this.GetUnitOfWork(); // test this with an isolated UOW to see whether memory usage is reduced.
             this.PreferedBatchSize = uow.PersistenceManager.PreferredPushSize;
             this.DatasetRepo = uow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
@@ -1858,7 +1858,7 @@ namespace BExIS.Dlm.Services.Data
                  refreshMaterializedView(datasetId);
         }
 
-        private void createMaterializedView(long datasetId)
+        private async Task createMaterializedView(long datasetId)
         {
             Dataset ds = DatasetRepo.Get(datasetId);
             if(ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure )
@@ -1874,7 +1874,7 @@ namespace BExIS.Dlm.Services.Data
                     try
                     {
                         MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-                        mvHelper.Create(datasetId, columnDefinitionList);
+                        await Task.Run(() => mvHelper.Create(datasetId, columnDefinitionList));
                     }
                     catch (Exception ex)
                     {
@@ -1885,10 +1885,10 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void refreshMaterializedView(long datasetId)
+        private async Task refreshMaterializedView(long datasetId)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-            mvHelper.Refresh(datasetId);
+            await Task.Run(() => mvHelper.Refresh(datasetId));
         }
 
         private bool existsMaterializedView(long datasetId)
@@ -1919,7 +1919,7 @@ namespace BExIS.Dlm.Services.Data
         private DataTable queryMaterializedView(long datasetId, int pageNumber=0, int pageSize=0)
         {
 #if DEBUG
-            updateMaterializedView(datasetId);
+            //updateMaterializedView(datasetId);
 #endif
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             if (pageNumber == 0 && pageSize == 0)

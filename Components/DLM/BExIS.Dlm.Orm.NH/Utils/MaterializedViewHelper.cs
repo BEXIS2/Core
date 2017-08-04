@@ -36,7 +36,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
@@ -143,10 +143,11 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     int result = uow.ExecuteNonQuery(mvBuilder.ToString());
-                }
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    columnLabels.ForEach(p => uow.ExecuteNonQuery(p));
+                    foreach (var columnLabel in columnLabels)
+                    {
+                        uow.ExecuteNonQuery(columnLabel);
+                    }
+                    //columnLabels.ForEach(columnLabel => uow.ExecuteNonQuery(columnLabel));
                 }
             }
             catch (Exception ex)

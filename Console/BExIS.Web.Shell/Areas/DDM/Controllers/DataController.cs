@@ -261,15 +261,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
-                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
-                    command.PageSize);
-                //List<AbstractTuple> dataTuples2 = dm.DataTupleRepo.Query(dt => dt.DatasetVersion.Equals(dsv))
-                //    .Skip((command.Page - 1)*command.PageSize)
-                //    .Take(command.PageSize).ToList();
+
+                // commented by Javad. Now the new API is called
+                //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
+                //    command.PageSize);
+                //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, command.Page - 1, command.PageSize);
 
                 Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
-                DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
                 model = new GridModel(table);
                 model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
             }
