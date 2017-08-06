@@ -29,10 +29,12 @@
           columns.Bound(u => u.IsAdministrator);
           columns.Template(@<text>
         <button type="button" class="bx bx-grid-function bx-edit"></button>
+        <button type="button" class="bx bx-grid-function bx-group"></button>
         <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
               .ClientTemplate(
                   "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\"></button>" +
                   "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
               .Width(110);
       })
@@ -125,6 +127,40 @@
                             });
 
                             windowElement.attr('id', 'Window_Update');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
+
+                            resetAllTelerikIconTitles();
+                        }
+                    });
+                });
+
+            $('.bx-group')
+                .click(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Groups", "Users")',
+                        data: { UserId: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: "Update User (Id: " + $(this).attr("value") + ")",
+                                html: "<div id='Content_Groups' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#Window_Groups").data('tWindow').destroy();
+                                    $("#Grid_Users .t-refresh").trigger('click');
+                                }
+                            });
+
+                            windowElement.attr('id', 'Window_Groups');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 

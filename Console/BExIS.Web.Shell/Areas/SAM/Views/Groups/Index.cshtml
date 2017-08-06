@@ -15,7 +15,7 @@
 @Html.ActionLink("Create Group", "Create", "Groups", null, new { @class = "bx-button function" })
 
 @(Html.Telerik().Grid<GroupGridRowModel>()
-      .Name("gridGroups")
+      .Name("Grid_Groups")
       .Columns(columns =>
       {
           columns.Bound(g => g.Id);
@@ -24,24 +24,24 @@
           columns.Bound(g => g.Description);
           columns.Template(@<text>
         <button type="button" class="bx bx-grid-function bx-edit"></button>
+        <button type="button" class="bx bx-grid-function bx-users"></button>
         <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
               .ClientTemplate(
                   "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= Id #>\"></button>" +
                   "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
-              .Width(70);
+              .Width(110);
       })
       .ClientEvents(events =>
       {
-          events.OnDataBinding("onDataBinding");
           events.OnDataBound("onDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Client)
+          .OperationMode(GridOperationMode.Server)
           .Select("Groups_Select", "Groups")
       )
-      .EnableCustomBinding(true)
       .Filterable()
       .Pageable(pageable =>
       {
@@ -59,19 +59,15 @@
 
     <script type="text/javascript">
 
-        function onDataBinding() {
-            alert("test");
-        }
-
         function onDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
 
             $('.bx-edit')
-                            .click(function () {
-                                $.ajax({
-                                    type: 'GET',
-                                    url: '@Url.Action("Update", "Groups")',
+                .click(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Update", "Groups")',
                                     data: { GroupId: $(this).attr("value") },
                                     dataType: 'html',
                                     success: function (htmlData) {
@@ -87,8 +83,8 @@
                                             draggable: true,
                                             scrollable: false,
                                             onClose: function () {
-                                                $("#windowUpdate").data('tWindow').destroy();
-                                                $("#gridGroups .t-refresh").trigger('click');
+                                                $("#Window_Update").data('tWindow').destroy();
+                                                $("#Grid_Groups .t-refresh").trigger('click');
                                             }
                                         });
 
@@ -99,22 +95,46 @@
                                         resetAllTelerikIconTitles();
                                     }
                                 });
+                });
+
+            $('.bx-users')
+                .click(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Users", "Groups")',
+                        data: { UserId: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: "Update User (Id: " + $(this).attr("value") + ")",
+                                html: "<div id='Content_Users' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#Window_Users").data('tWindow').destroy();
+                                    $("#Grid_Groups .t-refresh").trigger('click');
+                                }
                             });
+
+                            windowElement.attr('id', 'Window_Groups');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
+
+                            resetAllTelerikIconTitles();
+                        }
+                    });
+                });
 
             $('.bx-trash')
                 .click(function() {
                     alert($(this).attr("value"));
                 });
         }
-
-        $("input[name='selectedUsers']").click(function () {
-            var rows = $("#gridUserMemberships").data("tGrid").data;
-
-            for (var i = 0; i < rows.length; ++i) {
-                if (rows[i].Id == $(this).attr('value')) {
-                    rows[i].IsUserInGroup = $(this).is(':checked');
-                }
-            }
-        });
     </script>
 }

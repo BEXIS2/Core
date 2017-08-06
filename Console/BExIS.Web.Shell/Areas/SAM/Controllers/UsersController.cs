@@ -11,6 +11,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class UsersController : Controller
     {
+        [HttpPost]
+        public void AddUserToGroup(long userId, long groupId)
+        {
+        }
+
         public ActionResult Create()
         {
             return PartialView("_Create");
@@ -42,9 +47,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
             userStore.Delete(userId);
         }
 
-        public void Groups_Save(UserMembershipGridRowModel[] groups)
+        public ActionResult Groups(long userId)
         {
-            Session["SelectedGroups"] = groups.Where(g => g.IsUserInGroup).Select(g => g.Id).ToList();
+            return PartialView("_Groups");
         }
 
         [GridAction]
@@ -59,6 +64,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost]
+        public void RemoveUserFromGroup(long userId, long groupId)
+        {
         }
 
         public ActionResult Update(long userId)

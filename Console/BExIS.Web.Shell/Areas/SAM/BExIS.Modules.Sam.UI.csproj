@@ -236,10 +236,10 @@
     <Content Include="Views\Datasets\Version.cshtml" />
     <Content Include="Views\Datasets\Versions.cshtml" />
     <Content Include="Views\Users\_Create.cshtml" />
-    <Content Include="Views\Users\_Membership.cshtml" />
+    <Content Include="Views\Users\_Groups.cshtml" />
     <Content Include="Views\Users\_Update.cshtml" />
     <Content Include="Views\Groups\_Create.cshtml" />
-    <Content Include="Views\Groups\_Membership.cshtml" />
+    <Content Include="Views\Groups\_Users.cshtml" />
     <Content Include="Views\Groups\_Update.cshtml" />
     <Content Include="Views\FeaturePermissions\_Features.cshtml" />
     <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
