@@ -14,6 +14,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void AddUserToGroup(long userId, long groupId)
         {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            userStore.AddToGroupAsync(user, groupId);
         }
 
         public ActionResult Create()
@@ -69,6 +73,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void RemoveUserFromGroup(long userId, long groupId)
         {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            userStore.RemoveFromGroupAsync(user, groupId);
         }
 
         public ActionResult Update(long userId)

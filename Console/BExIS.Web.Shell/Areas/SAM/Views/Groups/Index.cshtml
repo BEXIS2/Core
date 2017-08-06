@@ -39,7 +39,6 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
           .Select("Groups_Select", "Groups")
       )
       .Filterable()
@@ -59,6 +58,26 @@
 
     <script type="text/javascript">
 
+        function createGroup_onSuccess(data) {
+            if (data.success) {
+                $('#window_createGroup').data('tWindow').close();
+            }
+        }
+
+        function createGroup_onCancel() {
+            $('#window_createGroup').data('tWindow').close();
+        }
+
+        function updateGroup_onSuccess(data) {
+            if (data.success) {
+                $('#window_updateGroup').data('tWindow').close();
+            }
+        }
+
+        function updateGroup_onCancel() {
+            $('#window_updateGroup').data('tWindow').close();
+        }
+
         function onDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
@@ -68,33 +87,33 @@
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Update", "Groups")',
-                                    data: { GroupId: $(this).attr("value") },
-                                    dataType: 'html',
-                                    success: function (htmlData) {
-                                        var windowElement = $.telerik.window.create({
-                                            title: "Update Group (Id: " + $(this).attr("value") + ")",
-                                            html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
-                                            contentUrl: "",
-                                            actions: ["Close"],
-                                            modal: true,
-                                            width: 500,
-                                            height: 500,
-                                            resizable: false,
-                                            draggable: true,
-                                            scrollable: false,
-                                            onClose: function () {
-                                                $("#Window_Update").data('tWindow').destroy();
-                                                $("#Grid_Groups .t-refresh").trigger('click');
-                                            }
-                                        });
+                        data: { GroupId: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: "Update Group (Id: " + $(this).attr("value") + ")",
+                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#Window_Update").data('tWindow').destroy();
+                                    $("#Grid_Groups .t-refresh").trigger('click');
+                                }
+                            });
 
-                                        windowElement.attr('id', 'windowUpdate');
-                                        var window = $(windowElement).data('tWindow');
-                                        window.center().open();
+                            windowElement.attr('id', 'windowUpdate');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
 
-                                        resetAllTelerikIconTitles();
-                                    }
-                                });
+                            resetAllTelerikIconTitles();
+                        }
+                    });
                 });
 
             $('.bx-users')

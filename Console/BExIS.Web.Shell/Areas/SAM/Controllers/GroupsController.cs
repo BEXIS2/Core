@@ -1,6 +1,7 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
@@ -10,15 +11,47 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class GroupsController : Controller
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupId"></param>
+        [HttpPost]
+        public void AddUserToGroup(long userId, long groupId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            userStore.AddToGroupAsync(user, groupId);
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             return View("_Create");
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Create(CreateGroupModel model)
         {
-            return View("_Create");
+            if (!ModelState.IsValid) return PartialView("_Create", model);
+
+            var groupManager = new GroupManager();
+            groupManager.Create(new Group()
+            {
+                Name = model.Name,
+                Description = model.Description
+            });
+
+            return Json(new { success = true });
         }
 
         [GridAction]
@@ -30,36 +63,110 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(new GridModel<GroupGridRowModel> { Data = groups });
         }
 
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             return View();
         }
 
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupId"></param>
+        [HttpPost]
+        public void RemoveUserFromGroup(long userId, long groupId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            userStore.RemoveFromGroupAsync(user, groupId);
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         public ActionResult Update(long groupId)
         {
             var groupManager = new GroupManager();
-
             var group = groupManager.FindById(groupId);
-
-            var userManager = new UserManager(new UserStore());
-            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, group.Id)).ToList();
-
             return View("_Update", UpdateGroupModel.Convert(group));
         }
 
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult Update(UpdateGroupModel model, List<long> selectedUsers)
+        public ActionResult Update(UpdateGroupModel model)
         {
-            return View("_Update");
+            if (!ModelState.IsValid) return PartialView("_Update", model);
+
+            var groupManager = new GroupManager();
+            var group = groupManager.FindById(model.Id);
+
+            if (group == null) return PartialView("_Update", model);
+
+            group.Name = model.Name;
+            group.Description = model.Description;
+
+            groupManager.Update(group);
+            return Json(new { success = true });
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public ActionResult Users(long groupId)
+        {
+            return PartialView("_Users", groupId);
         }
 
         [GridAction]
-        public ActionResult UserMemberships_Select(long groupId = 0)
+        public ActionResult Users_Select(long groupId = 0)
         {
             var userManager = new UserManager(new UserStore());
             var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, groupId)).ToList();
 
             return View(new GridModel<UserMembershipGridRowModel> { Data = userMemberships });
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="groupName"></param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public JsonResult ValidateGroupName(string groupName, long groupId = 0)
+        {
+            var groupManager = new GroupManager();
+            var group = groupManager.FindByName(groupName);
+
+            if (group == null)
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                if (group.Id == groupId)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var error = string.Format(CultureInfo.InvariantCulture, "The group name already exists.");
+
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
+            }
         }
     }
 }

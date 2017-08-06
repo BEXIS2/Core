@@ -19,8 +19,8 @@
         <a href="/SAM/Help/Index/#_Toc451422044" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
 }
-<button id="button_createuser" type="button" class="bx-button function">Create User</button>
-@(Html.Telerik().Grid<UserGridRowModel>().Name("Grid_Users")
+<button id="button_createUser" type="button" class="bx-button function">Create User</button>
+@(Html.Telerik().Grid<UserGridRowModel>().Name("grid_users")
       .Columns(columns =>
       {
           columns.Bound(u => u.Id);
@@ -40,11 +40,10 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("Grid_Users_OnDataBound");
+          events.OnDataBound("grid_users_onDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Client)
           .Select("Users_Select", "Users")
       )
       .Filterable()
@@ -64,7 +63,7 @@
 
     <script type="text/javascript">
 
-        $('#button_createuser')
+        $('#button_createUser')
             .click(function () {
                 $.ajax({
                     type: 'GET',
@@ -73,7 +72,7 @@
                     success: function (htmlData) {
                         var windowElement = $.telerik.window.create({
                             title: "Create User",
-                            html: "<div id='Content_Create' class='bx-window'>" + htmlData + "</div>",
+                            html: "<div id='content_createUser' class='bx-window'>" + htmlData + "</div>",
                             contentUrl: "",
                             actions: ["Close"],
                             modal: true,
@@ -83,12 +82,12 @@
                             draggable: true,
                             scrollable: false,
                             onClose: function () {
-                                $("#Window_Create").data('tWindow').destroy();
-                                $("#Grid_Users .t-refresh").trigger('click');
+                                $("#window_createUser").data('tWindow').destroy();
+                                $("#grid_users .t-refresh").trigger('click');
                             }
                         });
 
-                        windowElement.attr('id', 'Window_Create');
+                        windowElement.attr('id', 'window_createUser');
                         var window = $(windowElement).data('tWindow');
                         window.center().open();
 
@@ -96,6 +95,26 @@
                     }
                 });
             });
+
+        function createUser_onSuccess(data) {
+            if (data.success) {
+                $('#window_createUser').data('tWindow').close();
+            }
+        }
+
+        function createUser_onCancel() {
+            $('#window_createUser').data('tWindow').close();
+        }
+
+        function updateUser_onSuccess(data) {
+            if (data.success) {
+                $('#window_updateUser').data('tWindow').close();
+            }
+        }
+
+        function updateUser_onCancel() {
+            $('#window_updateUser').data('tWindow').close();
+        }
 
         function Grid_Users_OnDataBound() {
             addTooltips();
@@ -111,7 +130,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update User (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='Content_Update' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_updateUser' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -121,12 +140,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#Window_Update").data('tWindow').destroy();
-                                    $("#Grid_Users .t-refresh").trigger('click');
+                                    $("#window_updateUser").data('tWindow').destroy();
+                                    $("#grid_users .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'Window_Update');
+                            windowElement.attr('id', 'window_updateUser');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 
@@ -145,7 +164,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update User (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='Content_Groups' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_groups' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -155,12 +174,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#Window_Groups").data('tWindow').destroy();
-                                    $("#Grid_Users .t-refresh").trigger('click');
+                                    $("#window_groups").data('tWindow').destroy();
+                                    $("#grid_users .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'Window_Groups');
+                            windowElement.attr('id', 'window_groups');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 

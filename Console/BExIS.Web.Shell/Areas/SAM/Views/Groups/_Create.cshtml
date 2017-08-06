@@ -3,46 +3,30 @@
 
 @model BExIS.Modules.Sam.UI.Models.CreateGroupModel
 
-@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "onSuccess" }))
+@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createGroup", OnSuccess = "createGroup_onSuccess" }))
 {
-    @(Html.Telerik().TabStrip()
-        .Name("tabStripUser")
-        .SelectedIndex(0)
-        .Items(tabs =>
-        {
-            tabs.Add()
-                .Text("Details")
-                .Content(@<text>
-                    <table class="bx-table-form">
-                        <tr>
-                            <td>
-                                @Html.LabelFor(m => m.GroupName)
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(m => m.GroupName, new { @class = "t-input bx-input" })
-                                @Html.ValidationMessageFor(m => m.GroupName)
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @Html.LabelFor(m => m.Description)
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" })
-                                @Html.ValidationMessageFor(m => m.Description)
-                            </td>
-                        </tr>
-                    </table>
-                </text>);
+    @Html.ValidationSummary(true)
 
-tabs.Add()
-        .Text("Membership")
-        .Content(@<text>
-            @Html.Partial("_Membership")
-        </text>);
-
-        })
-    )
+    <table class="bx-table-form">
+        <tr>
+            <td>
+                @Html.LabelFor(m => m.Name)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Name, new { @class = "t-input bx-input" })
+                @Html.ValidationMessageFor(m => m.Name)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.LabelFor(m => m.Description)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" })
+                @Html.ValidationMessageFor(m => m.Description)
+            </td>
+        </tr>
+    </table>
 
     <div class="bx-footer right">
         <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
