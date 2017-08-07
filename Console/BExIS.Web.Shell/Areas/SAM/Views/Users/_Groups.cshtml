@@ -4,21 +4,11 @@
 @model long
 
 @(Html.Telerik().Grid<GroupMembershipGridRowModel>()
-      .Name("Grid_Groups")
+      .Name("grid_groups")
       .Columns(columns =>
       {
           columns.Bound(g => g.IsUserInGroup)
-              .Template(@<text>
-            @if (item.IsUserInGroup)
-            {
-                <input type='checkbox' name='selectedGroups' value='@item.Id' checked='checked' />
-            }
-            else
-            {
-                <input type='checkbox' name='selectedGroups' value='@item.Id' />
-            }
-            </text>)
-              .ClientTemplate("<input type='checkbox' name='selectedGroups' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='checkbox' name='selectedGroups' data-groupid='<#= Id #>' data-userid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
               .Title("Member")
               .Width(64)
               .Filterable(false)
@@ -29,11 +19,10 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("Grid_Groups_OnDataBound");
+          events.OnDataBound("grid_groups_onDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
           .Select("Groups_Select", "Users", new { UserId = Model }))
       .Filterable()
       .Pageable(pageable =>
@@ -43,23 +32,3 @@
           pageable.Position(GridPagerPosition.Bottom);
       })
       .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
-
-<script>
-    function Grid_Groups_OnDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-
-        $("input[name='selectedGroups']:checkbox")
-            .click(function () {
-                if ($(this).is(':checked')) {
-                    $.post('@Url.Action("AddUserToGroup", "Users")', { UserId: @Model, GroupId: $(this).attr('value') }, function () {
-                        $("#grid_users .t-refresh").trigger('click');
-                    });
-                } else {
-                    $.post('@Url.Action("RemoveUserFromGroup", "Users")', { UserId: @Model, GroupId: $(this).attr('value') }, function () {
-                        $("#grid_users .t-refresh").trigger('click');
-                    });
-                }
-            });
-    }
-</script>
