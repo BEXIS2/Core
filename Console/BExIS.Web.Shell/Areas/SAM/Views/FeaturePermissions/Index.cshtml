@@ -74,7 +74,6 @@
         resetAllTelerikIconTitles();
 
         $("input[name^='permissionType']:radio").click(function () {
-            alert("Action!!!");
             switch ($(this).data('permissiontype')) {
                 case 2:
                     $.post('@Url.Action("DeleteFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid') }, function () {
