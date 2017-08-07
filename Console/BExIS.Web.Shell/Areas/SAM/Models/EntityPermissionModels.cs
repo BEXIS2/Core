@@ -12,13 +12,13 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class EntityPermissionGridRowModel
     {
-        public long Id { get; set; }
         public long EntityId { get; set; }
+        public long Id { get; set; }
         public long Key { get; set; }
+        public int Rights { get; set; }
         public long SubjectId { get; set; }
         public string SubjectName { get; set; }
         public string SubjectType { get; set; }
-        public int Rights { get; set; }
 
         public static EntityPermissionGridRowModel Convert(EntityPermission entityPermission)
         {

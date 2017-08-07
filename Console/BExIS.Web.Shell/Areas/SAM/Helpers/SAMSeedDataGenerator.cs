@@ -35,8 +35,6 @@ namespace BExIS.Modules.Sam.UI.Helpers
             groupManager.Create(new Group() { Name = "Admin", Description = "Admin" });
 
             //// Features
-            
-
 
             //// Users - DO NOT CREATE A USER, BECAUSE OF MISSING INFORMATION, E.G. EMAIL
 
@@ -140,7 +138,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
             //Task t12 = taskManager.CreateTask("DCM", "CreateSummary", "*");
             //t12.Feature = f11;
             //taskManager.UpdateTask(t12);
-            
+
             //Task t15 = taskManager.CreateTask("DCM", "Push", "*");
             //t15.Feature = f12;
             //taskManager.UpdateTask(t15);
