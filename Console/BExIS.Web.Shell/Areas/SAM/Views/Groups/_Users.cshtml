@@ -4,7 +4,7 @@
 @model long
 
 @(Html.Telerik().Grid<UserMembershipGridRowModel>()
-      .Name("Grid_Users")
+      .Name("grid_users")
       .Columns(columns =>
       {
           columns.Bound(g => g.IsUserInGroup)
@@ -30,11 +30,10 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("onDataBound");
+          events.OnDataBound("grid_users_onDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
           .Select("Users_Select", "Groups", new { GroupId = Model }))
       .Filterable()
       .Pageable(pageable =>
@@ -46,7 +45,7 @@
           .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
 
 <script>
-    function Grid_Groups_OnDataBound() {
+    function grid_users_onDataBound() {
         addTooltips();
         resetAllTelerikIconTitles();
 

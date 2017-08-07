@@ -12,6 +12,17 @@
     </p>
 }
 
+<style>
+    .t-window-content {
+        height: auto !important;
+        width: auto !important;
+    }
+
+    #grid_users {
+        width: 80vw !important;
+    }
+</style>
+
 <button id="button_createGroup" type="button" class="bx-button function">Create Group</button>
 @(Html.Telerik().Grid<GroupGridRowModel>()
       .Name("grid_groups")
@@ -124,7 +135,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update Group (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_updateGroup' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -134,12 +145,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#Window_Update").data('tWindow').destroy();
-                                    $("#Grid_Groups .t-refresh").trigger('click');
+                                    $("#window_updateGroup").data('tWindow').destroy();
+                                    $("#grid_groups .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'windowUpdate');
+                            windowElement.attr('id', 'window_updateGroup');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 
@@ -158,7 +169,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update User (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='Content_Users' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_users' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -168,12 +179,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#Window_Users").data('tWindow').destroy();
-                                    $("#Grid_Groups .t-refresh").trigger('click');
+                                    $("#window_users").data('tWindow').destroy();
+                                    $("#grid_groups .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'Window_Groups');
+                            windowElement.attr('id', 'window_users');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 
