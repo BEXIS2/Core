@@ -42,7 +42,6 @@ namespace BExIS.Security.Services.Objects
                 var featureRepository = uow.GetRepository<Feature>();
                 featureRepository.Put(feature);
                 uow.Commit();
-
             }
 
             return feature;

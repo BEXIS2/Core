@@ -22,7 +22,7 @@
     </set>
 
     <property name="Name" type="String" />
-    
+
     <property name="Securable" type="Boolean">
       <column name="Securable" default="false" />
     </property>
