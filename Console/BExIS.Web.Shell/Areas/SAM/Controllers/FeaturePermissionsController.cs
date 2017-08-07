@@ -17,6 +17,46 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
     public class FeaturePermissionsController : Controller
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="featureId"></param>
+        public void AddFeatureToPublic(long featureId)
+        {
+            var featureManager = new FeatureManager();
+            var feature = featureManager.FindById(featureId);
+            feature.IsPublic = true;
+            featureManager.Update(feature);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="subjectId"></param>
+        /// <param name="featureId"></param>
+        /// <param name="permissionType"></param>
+        public void CreateOrUpdateFeaturePermission(long subjectId, long featureId, int permissionType)
+        {
+            var featurePermissionManager = new FeaturePermissionManager();
+            var featurePermission = featurePermissionManager.Find(subjectId, featureId);
+
+            if (featurePermission != null)
+            {
+                featurePermission.PermissionType = (PermissionType)permissionType;
+                featurePermissionManager.Update(featurePermission);
+            }
+            else
+            {
+                featurePermissionManager.Create(subjectId, featureId, (PermissionType)permissionType);
+            }
+        }
+
+        public void DeleteFeaturePermission(long subjectId, long featureId, int permissionType)
+        {
+            var featurePermissionManager = new FeaturePermissionManager();
+            featurePermissionManager.Delete(subjectId, featureId);
+        }
+
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
@@ -37,6 +77,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var subjectManager = new SubjectManager();
 
             return featurePermissionManager.Exists(0, featureId);
+        }
+
+        public void RemoveFeatureFromPublic(long featureId)
+        {
+            var featureManager = new FeatureManager();
+            var feature = featureManager.FindById(featureId);
+            feature.IsPublic = false;
+            featureManager.Update(feature);
         }
 
         public bool SetFeaturePermission(long subjectId, long featureId, int value)

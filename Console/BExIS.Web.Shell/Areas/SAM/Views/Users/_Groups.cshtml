@@ -53,11 +53,11 @@
             .click(function () {
                 if ($(this).is(':checked')) {
                     $.post('@Url.Action("AddUserToGroup", "Users")', { UserId: @Model, GroupId: $(this).attr('value') }, function () {
-                        $("#Grid_Users .t-refresh").trigger('click');
+                        $("#grid_users .t-refresh").trigger('click');
                     });
                 } else {
                     $.post('@Url.Action("RemoveUserFromGroup", "Users")', { UserId: @Model, GroupId: $(this).attr('value') }, function () {
-                        $("#Grid_Users .t-refresh").trigger('click');
+                        $("#grid_users .t-refresh").trigger('click');
                     });
                 }
             });

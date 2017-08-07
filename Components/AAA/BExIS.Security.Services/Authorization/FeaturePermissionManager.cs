@@ -22,8 +22,8 @@ namespace BExIS.Security.Services.Authorization
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }
         public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
         public IReadOnlyRepository<Feature> FeatureRepository { get; }
-        public IReadOnlyRepository<Subject> SubjectRepository { get; }
         public IReadOnlyRepository<Operation> OperationRepository { get; }
+        public IReadOnlyRepository<Subject> SubjectRepository { get; }
 
         public void Create(FeaturePermission featurePermission)
         {
@@ -66,6 +66,8 @@ namespace BExIS.Security.Services.Authorization
         {
             var featurePermission = Find(featureId, subjectId);
 
+            if (featurePermission == null) return;
+
             using (var uow = this.GetUnitOfWork())
             {
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
@@ -74,14 +76,38 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public bool Exists(long subjectId, long featureId, PermissionType permissionType = PermissionType.Grant)
+        public bool Exists(long subjectId, long featureId, PermissionType permissionType)
         {
             return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
+        }
+
+        public bool Exists(long subjectId, long featureId)
+        {
+            return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count == 1;
         }
 
         public bool Exists(IEnumerable<long> subjectIds, IEnumerable<long> featureIds, PermissionType permissionType = PermissionType.Grant)
         {
             return FeaturePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any();
+        }
+
+        public FeaturePermission Find(long subjectId, long featureId)
+        {
+            return
+                FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId)
+                    .FirstOrDefault();
+        }
+
+        public FeaturePermission Find(Subject subject, Feature feature)
+        {
+            return
+                FeaturePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id)
+                    .FirstOrDefault();
+        }
+
+        public FeaturePermission FindById(long id)
+        {
+            return FeaturePermissionRepository.Get(id);
         }
 
         public int GetPermissionType(long subjectId, long featureId)
@@ -153,25 +179,6 @@ namespace BExIS.Security.Services.Authorization
             }
 
             return false;
-        }
-
-        public FeaturePermission Find(long subjectId, long featureId)
-        {
-            return
-                FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId)
-                    .FirstOrDefault();
-        }
-
-        public FeaturePermission Find(Subject subject, Feature feature)
-        {
-            return
-                FeaturePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id)
-                    .FirstOrDefault();
-        }
-
-        public FeaturePermission FindById(long id)
-        {
-            return FeaturePermissionRepository.Get(id);
         }
 
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
