@@ -28,20 +28,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Create(CreateUserModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return PartialView("_Create", model);
+
+            var userStore = new UserStore();
+            userStore.Create(new User()
             {
-                var userManager = new UserManager(new UserStore());
-                userManager.CreateAsync(new User()
-                {
-                    Email = model.Email,
-                    UserName = model.UserName,
-                    IsAdministrator = model.IsAdministrator
-                });
+                Email = model.Email,
+                UserName = model.UserName,
+                IsAdministrator = model.IsAdministrator
+            });
 
-                RedirectToAction("Index");
-            }
-
-            return PartialView("_Create", model);
+            return Json(new { success = true });
         }
 
         [HttpPost]
@@ -53,7 +50,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Groups(long userId)
         {
-            return PartialView("_Groups");
+            return PartialView("_Groups", userId);
         }
 
         [GridAction]
@@ -90,7 +87,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Update(UpdateUserModel model)
         {
-            return PartialView("_Update", model);
+            if (!ModelState.IsValid) return PartialView("_Update", model);
+
+            var userStore = new UserStore();
+            var user = userStore.FindById(model.Id);
+
+            if (user == null) return PartialView("_Update", model);
+
+            user.Email = model.Email;
+            user.IsAdministrator = model.IsAdministrator;
+
+            userStore.Update(user);
+            return Json(new { success = true });
         }
 
         [GridAction]

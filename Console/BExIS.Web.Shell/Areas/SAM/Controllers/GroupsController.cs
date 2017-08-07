@@ -31,7 +31,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Create()
         {
-            return View("_Create");
+            return PartialView("_Create");
         }
 
         /// <summary>

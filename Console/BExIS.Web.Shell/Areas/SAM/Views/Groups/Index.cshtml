@@ -12,10 +12,9 @@
     </p>
 }
 
-@Html.ActionLink("Create Group", "Create", "Groups", null, new { @class = "bx-button function" })
-
+<button id="button_createGroup" type="button" class="bx-button function">Create Group</button>
 @(Html.Telerik().Grid<GroupGridRowModel>()
-      .Name("Grid_Groups")
+      .Name("grid_groups")
       .Columns(columns =>
       {
           columns.Bound(g => g.Id);
@@ -35,7 +34,7 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("onDataBound");
+          events.OnDataBound("grid_groups_onDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
@@ -58,6 +57,39 @@
 
     <script type="text/javascript">
 
+        $('#button_createGroup')
+            .click(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("Create", "Groups")',
+                    dataType: 'html',
+                    success: function (htmlData) {
+                        var windowElement = $.telerik.window.create({
+                            title: "Create Group",
+                            html: "<div id='content_createGroup' class='bx-window'>" + htmlData + "</div>",
+                            contentUrl: "",
+                            actions: ["Close"],
+                            modal: true,
+                            width: 500,
+                            height: 500,
+                            resizable: false,
+                            draggable: true,
+                            scrollable: false,
+                            onClose: function () {
+                                $("#window_createGroup").data('tWindow').destroy();
+                                $("#grid_groups .t-refresh").trigger('click');
+                            }
+                        });
+
+                        windowElement.attr('id', 'window_createGroup');
+                        var window = $(windowElement).data('tWindow');
+                        window.center().open();
+
+                        resetAllTelerikIconTitles();
+                    }
+                });
+            });
+
         function createGroup_onSuccess(data) {
             if (data.success) {
                 $('#window_createGroup').data('tWindow').close();
@@ -78,7 +110,7 @@
             $('#window_updateGroup').data('tWindow').close();
         }
 
-        function onDataBound() {
+        function grid_groups_onDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
 
