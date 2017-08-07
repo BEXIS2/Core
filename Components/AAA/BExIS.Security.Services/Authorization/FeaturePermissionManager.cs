@@ -64,7 +64,7 @@ namespace BExIS.Security.Services.Authorization
 
         public void Delete(long subjectId, long featureId)
         {
-            var featurePermission = Find(featureId, subjectId);
+            var featurePermission = Find(subjectId, featureId);
 
             if (featurePermission == null) return;
 
@@ -86,7 +86,7 @@ namespace BExIS.Security.Services.Authorization
             return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count == 1;
         }
 
-        public bool Exists(IEnumerable<long> subjectIds, IEnumerable<long> featureIds, PermissionType permissionType = PermissionType.Grant)
+        public bool Exists(IEnumerable<long> subjectIds, IEnumerable<long> featureIds, PermissionType permissionType)
         {
             return FeaturePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any();
         }
@@ -133,7 +133,7 @@ namespace BExIS.Security.Services.Authorization
             {
                 while (feature != null)
                 {
-                    featurePermission = Find(feature.Id, subject.Id);
+                    featurePermission = Find(subject.Id, feature.Id);
 
                     if (featurePermission != null)
                     {
@@ -153,7 +153,7 @@ namespace BExIS.Security.Services.Authorization
 
                 while (feature != null)
                 {
-                    featurePermission = Find(feature.Id, subject.Id);
+                    featurePermission = Find(subjectId, featureId);
 
                     if (featurePermission != null)
                     {
@@ -164,12 +164,10 @@ namespace BExIS.Security.Services.Authorization
                     {
                         return false;
                     }
-                    else
+
+                    if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
                     {
-                        if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
 
                     feature = feature.Parent;
