@@ -43,6 +43,16 @@ namespace BExIS.Security.Services.Subjects
             UpdateAsync(user);
         }
 
+        public void Create(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                userRepository.Put(user);
+                uow.Commit();
+            }
+        }
+
         public Task CreateAsync(User user)
         {
             using (var uow = this.GetUnitOfWork())
@@ -260,6 +270,16 @@ namespace BExIS.Security.Services.Subjects
         {
             user.IsTwoFactorEnabled = enabled;
             return Task.FromResult(0);
+        }
+
+        public void Update(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                userRepository.Put(user);
+                uow.Commit();
+            }
         }
 
         public Task UpdateAsync(User user)
