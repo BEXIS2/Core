@@ -25,4 +25,68 @@
         </p>
     }
 
-    <div id="Content_Subjects"></div>
+<div id="content_subjects"></div>
+
+<script>
+    $("#treeView_features li div").click(function (e) {
+        $(e.target).find(".t-in").trigger("click");
+    });
+
+    function getTreeView() {
+        return $('#treeView_features').data('tTreeView');
+    }
+
+    function treeView_features_onChecked(e) {
+        if (e.checked) {
+            $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")', { FeatureId: getTreeView().getItemValue(e.item) }, function () {
+                getTreeView().dataSource.read();
+            });
+        } else {
+            $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")', { FeatureId: getTreeView().getItemValue(e.item) }, function () {
+                getTreeView().dataSource.read();
+            });
+        }
+
+    }
+
+    function treeView_features_onSelect(e) {
+        var featureId = getTreeView().getItemValue(e.item);
+
+        var prevSelectedDiv = $(".bx-selected");
+
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
+
+        $('#content_subjects').empty();
+
+        $.get('@Url.Action("Subjects", "FeaturePermissions")', { FeatureId: featureId }, function (contentData) {
+            $('#content_subjects').html(contentData);
+            truncateTitle();
+        });
+    }
+
+    $(":checkbox").attr("title", "Checked \t -> \t public feature \nUnchecked \t -> \t NOT public feature");
+
+    function grid_subjects_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("input[name^='permissionType']:radio").click(function () {
+            alert("Action!!!");
+            switch ($(this).data('permissiontype')) {
+                case 2:
+                    $.post('@Url.Action("DeleteFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid') }, function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+
+                    break;
+                default:
+                    $.post('@Url.Action("CreateOrUpdateFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid'), PermissionType: $(this).data('permissiontype') }, function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+            }
+        });
+    }
+</script>

@@ -60,7 +60,7 @@
               {
                   item.Text = feature.FeatureName;
                   item.Value = feature.Id.ToString();
-                  item.Checked = feature.IsFeatureInEveryoneGroup;
+                  item.Checked = feature.IsPublic;
                   item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
               })
               .Children(feature => feature.Children));
@@ -73,47 +73,3 @@
 
       .ExpandAll(true)
 )
-
-<script type="text/javascript">
-
-    $("#TreeView_Features li div").click(function (e) {
-        $(e.target).find(".t-in").trigger("click");
-    });
-
-    function getTreeView() {
-        return $('#TreeView_Features').data('tTreeView');
-    }
-
-    function treeView_features_onChecked(e) {
-        if (e.checked) {
-            $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")', { FeatureId: getTreeView().getItemValue(e.item) }, function () {
-                getTreeView().dataSource.read();
-            });
-        } else {
-            $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")', { FeatureId: getTreeView().getItemValue(e.item) }, function (e) {
-                getTreeView().dataSource.read();
-            });
-        }
-
-    }
-
-    function OnSelect(e) {
-        var featureId = getTreeView().getItemValue(e.item);
-
-        var prevSelectedDiv = $(".bx-selected");
-
-        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
-
-        var selectedDiv = $(e.item).find("div")[0];
-        $(selectedDiv).addClass("bx-selected");
-
-        $('#content_subjects').empty();
-
-        $.get('@Url.Action("Subjects", "FeaturePermissions")', { FeatureId: featureId }, function (contentData) {
-            $('#content_subjects').html(contentData);
-            truncateTitle();
-        });
-    }
-
-    $(":checkbox").attr("title", "Checked \t -> \t public feature \nUnchecked \t -> \t NOT public feature");
-</script>

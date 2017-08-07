@@ -13,8 +13,6 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public delegate bool IsFeaturePublicDelegate(long featureId);
-
     public class FeaturePermissionsController : Controller
     {
         /// <summary>
@@ -57,7 +55,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="subjectId"></param>
         /// <param name="featureId"></param>
         /// <param name="permissionType"></param>
-        public void DeleteFeaturePermission(long subjectId, long featureId, int permissionType)
+        public void DeleteFeaturePermission(long subjectId, long featureId)
         {
             var featurePermissionManager = new FeaturePermissionManager();
             featurePermissionManager.Delete(subjectId, featureId);
@@ -76,7 +74,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var features = new List<FeatureTreeViewModel>();
 
             var roots = featureManager.FindRoots();
-            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f, new IsFeaturePublicDelegate(IsFeaturePublic))));
+            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f)));
 
             return View(features.AsEnumerable());
         }

@@ -1,5 +1,4 @@
-﻿using BExIS.Modules.Sam.UI.Controllers;
-using BExIS.Security.Entities.Objects;
+﻿using BExIS.Security.Entities.Objects;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -45,19 +44,17 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public string FeatureName { get; set; }
         public long Id { get; set; }
-        public bool IsFeatureInEveryoneGroup { get; set; }
+        public bool IsPublic { get; set; }
 
-        public static FeatureTreeViewModel Convert(Feature feature, IsFeaturePublicDelegate isFeaturePublicDelegate)
+        public static FeatureTreeViewModel Convert(Feature feature)
         {
             return new FeatureTreeViewModel()
             {
                 Id = feature.Id,
                 FeatureName = feature.Name,
                 Description = feature.Description,
-
-                IsFeatureInEveryoneGroup = isFeaturePublicDelegate(feature.Id),
-
-                Children = feature.Children.Select(c => Convert(c, isFeaturePublicDelegate)).ToList()
+                IsPublic = feature.IsPublic,
+                Children = feature.Children.Select(Convert).ToList()
             };
         }
     }
