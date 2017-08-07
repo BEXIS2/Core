@@ -27,6 +27,7 @@ namespace BExIS.Security.Entities.Objects
             }
         }
 
+        public virtual bool IsPublic { get; set; }
         public virtual ICollection<Feature> Children { get; set; }
         public virtual string Description { get; set; }
         public virtual string Name { get; set; }
