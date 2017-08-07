@@ -2,7 +2,6 @@
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
-using Microsoft.Owin.Security.Google;
 using Owin;
 
 namespace BExIS.Security.Services.Utilities
@@ -38,11 +37,11 @@ namespace BExIS.Security.Services.Utilities
             //   appId: "sfg",
             //   appSecret: "ffffffffffff");
 
-            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            {
-                ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
-                ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
-            });
+            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            //{
+            //    ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
+            //    ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
+            //});
         }
     }
 }
