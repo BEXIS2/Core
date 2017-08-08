@@ -89,7 +89,7 @@ namespace BExIS.IO.Transform.Output
                             dataRow["Label"] = vs.Label;
                             dataRow["Description"] = vs.Description;
                             dataRow["isOptional"] = vs.IsValueOptional;
-                            dataRow["Unit"] = vs.Unit;
+                            dataRow["Unit"] = vs.Unit.Name;
                             dataRow["DataType"] = vs.DataAttribute.DataType.Name;
                             dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
                             this.Variables.Rows.Add(dataRow);
