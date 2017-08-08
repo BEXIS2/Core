@@ -27,10 +27,10 @@ namespace BExIS.Security.Entities.Objects
             }
         }
 
-        public virtual string Name { get; set; }
         public virtual ICollection<Entity> Children { get; set; }
         public virtual Type EntityStoreType { get; set; }
         public virtual Type EntityType { get; set; }
+        public virtual string Name { get; set; }
         public virtual Entity Parent { get; set; }
         public virtual ICollection<EntityPermission> Permissions { get; set; }
 

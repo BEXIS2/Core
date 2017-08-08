@@ -11,6 +11,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class UsersController : Controller
     {
+        [HttpPost]
+        public void AddUserToGroup(long userId, long groupId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            userStore.AddToGroupAsync(user, groupId);
+        }
+
         public ActionResult Create()
         {
             return PartialView("_Create");
@@ -19,20 +28,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Create(CreateUserModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return PartialView("_Create", model);
+
+            var userStore = new UserStore();
+            userStore.Create(new User()
             {
-                var userManager = new UserManager(new UserStore());
-                userManager.CreateAsync(new User()
-                {
-                    Email = model.Email,
-                    UserName = model.UserName,
-                    IsAdministrator = model.IsAdministrator
-                });
+                Email = model.Email,
+                UserName = model.UserName,
+                IsAdministrator = model.IsAdministrator
+            });
 
-                RedirectToAction("Index");
-            }
-
-            return PartialView("_Create", model);
+            return Json(new { success = true });
         }
 
         [HttpPost]
@@ -42,15 +48,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
             userStore.Delete(userId);
         }
 
-        public void Groups_Save(UserMembershipGridRowModel[] groups)
+        public ActionResult Groups(long userId)
         {
-            Session["SelectedGroups"] = groups.Where(g => g.IsUserInGroup).Select(g => g.Id).ToList();
+            return PartialView("_Groups", userId);
         }
 
         [GridAction]
-        public ActionResult Groups_Select(long userId)
+        public ActionResult Groups_Select(long userId = 0)
         {
             var groupManager = new GroupManager();
+            var userStore = new UserStore();
             var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, userId)).ToList();
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
@@ -59,6 +66,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost]
+        public void RemoveUserFromGroup(long userId, long groupId)
+        {
+            var userStore = new UserStore();
+            var user = userStore.FindById(userId);
+
+            userStore.RemoveFromGroupAsync(user, groupId);
         }
 
         public ActionResult Update(long userId)
@@ -72,7 +88,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Update(UpdateUserModel model)
         {
-            return PartialView("_Update", model);
+            if (!ModelState.IsValid) return PartialView("_Update", model);
+
+            var userStore = new UserStore();
+            var user = userStore.FindById(model.Id);
+
+            if (user == null) return PartialView("_Update", model);
+
+            user.Email = model.Email;
+            user.IsAdministrator = model.IsAdministrator;
+
+            userStore.Update(user);
+            return Json(new { success = true });
         }
 
         [GridAction]

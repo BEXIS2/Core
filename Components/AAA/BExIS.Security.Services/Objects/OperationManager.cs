@@ -13,8 +13,8 @@ namespace BExIS.Security.Services.Objects
             OperationRepository = uow.GetReadOnlyRepository<Operation>();
         }
 
-        public IQueryable<Operation> Operations => OperationRepository.Query();
         public IReadOnlyRepository<Operation> OperationRepository { get; }
+        public IQueryable<Operation> Operations => OperationRepository.Query();
 
         public Operation Create(string module, string controller, string action, Operation parent = null, Workflow workflow = null)
         {

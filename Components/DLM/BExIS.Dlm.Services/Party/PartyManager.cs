@@ -41,7 +41,7 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(initialStatusType != null);
             Contract.Requires(partyType.StatusTypes.Contains(initialStatusType));
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0);
-            if (startDate == null)
+            if (startDate== null)
                 startDate = DateTime.MinValue;
             if (endDate == null || endDate == DateTime.MinValue)
                 endDate = DateTime.MaxValue;
@@ -99,13 +99,10 @@ namespace BExIS.Dlm.Services.Party
                     latest.History.ToList().ForEach(a => a.Party = null);
                     latest.History.Clear();
                 }
+
                 //remove all 'CustomAttributeValues'
                 repoCustomeAttrVal.Delete(latest.CustomAttributeValues);
                 latest.CustomAttributeValues.Clear();
-
-
-
-
                 //delete the entity
                 repo.Delete(latest);
                 // commit changes

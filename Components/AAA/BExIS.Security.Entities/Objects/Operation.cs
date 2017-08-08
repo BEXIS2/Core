@@ -5,12 +5,12 @@ namespace BExIS.Security.Entities.Objects
 {
     public class Operation : BaseEntity
     {
-        public virtual string Module { get; set; }
-        public virtual string Controller { get; set; }
+        public Operation()
+        {
+            Children = new List<Operation>();
+        }
+
         public virtual string Action { get; set; }
-        public virtual Workflow Workflow { get; set; }
-        public virtual Operation Parent { get; set; }
-        public virtual ICollection<Operation> Children { get; set; }
 
         public virtual ICollection<Operation> Ancestors
         {
@@ -26,9 +26,10 @@ namespace BExIS.Security.Entities.Objects
             }
         }
 
-        public Operation()
-        {
-            Children = new List<Operation>();
-        }
+        public virtual ICollection<Operation> Children { get; set; }
+        public virtual string Controller { get; set; }
+        public virtual string Module { get; set; }
+        public virtual Operation Parent { get; set; }
+        public virtual Workflow Workflow { get; set; }
     }
 }

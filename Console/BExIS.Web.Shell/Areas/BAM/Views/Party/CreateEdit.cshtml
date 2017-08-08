@@ -42,7 +42,7 @@
         .Items(tabs =>
         {
         tabs.Add()
-                    .Text(Model.Party.PartyType == null ? "Party" : Model.Party.PartyType.Title).Content(@<text>
+                    .Text(Model.Party.PartyType != null && !string.IsNullOrEmpty(Model.Party.PartyType.Title) ? Model.Party.PartyType.Title: "Party").Content(@<text>
                 <table class="bx-table-form" id="tblParty">
                     <tr>
                         <td><b title="Required" style="color: red">*</b></td>
@@ -207,11 +207,18 @@
     {
         validateRelationships();
         if($(tab.item).text()=="Relationships")
-            $("#divSubmitButtons").hide();
+        {
+            $("#submitBtn").attr("disabled","true");
+            $("#submitBtn").css("background-color","#f5f5f5");
+            $("#submitBtn").attr("title","Every change in relationships will save immediately. No need to save!");
+        }
         else
-            $("#divSubmitButtons").show();
+        {
+            $("#submitBtn").removeAttr("disabled");
+            $("#submitBtn").removeAttr("title");
+            $("#submitBtn").css("background-color","");
+        }
     }
-
 
     //Enable dynamic validation in every ajax request because they will disable each time
     $(function () {
@@ -230,14 +237,18 @@
     function onLoad(){
         partyTabStrip = $("#ShowDataTabStrip").data("t-TabStrip");
         if ('@createMode'=='False')
-        {
             OnChangePartyType({value:@Model.Party.PartyType.Id });
-
+        validateRelationships();
+        if(partyTabStrip.getSelectedTabIndex()==2)
+        {
+            $("#submitBtn").attr("disabled","true");
+            $("#submitBtn").css("background-color","#f5f5f5");
+            $("#submitBtn").attr("title","Every change in relationships will save immediately. No need to save!");
         }
 
     }
     $(document).ready(function(){
-        validateRelationships()
+       
     });
 
 

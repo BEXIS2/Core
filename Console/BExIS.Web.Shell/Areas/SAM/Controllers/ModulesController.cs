@@ -1,14 +1,13 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using System.Linq;
-using System.Web;
-using System.IO;
-using System;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -29,10 +28,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Modules_Select()
         {
-            // load 
+            // load
             List<ModuleGridRowModel> modules = new List<ModuleGridRowModel>();
             var q = ModuleManager.Catalog.Elements("Module")
-                        .OrderBy(p => int.Parse(p.Attribute("order").Value));                    
+                        .OrderBy(p => int.Parse(p.Attribute("order").Value));
             foreach (var catalogEntry in q)
             {
                 ModuleGridRowModel row = new ModuleGridRowModel()
@@ -77,8 +76,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return Json(new { success = true });
         }
 
-
-
         public ActionResult Details(string id)
         {
             return View();
@@ -96,13 +93,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View("Index");
         }
 
-
         //public ActionResult Install()
         //{
         //    return PartialView("_Create", null);
         //}
-
-
 
         /// <summary>
         /// Installs a module from its zipped bundle.
@@ -118,7 +112,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 // this function writes into the Areas folder and may overwrite the module's resources!
                 // passing false, prevents it from copying the module's resources. Only the catalog is updated.
                 ModuleManager.Install(moduleZip, false);
-#else 
+#else
                 // Installs the bundle for production.
                 ModuleManager.Install(moduleZip, true);
 #endif
@@ -151,6 +145,5 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             return View();
         }
-
     }
 }

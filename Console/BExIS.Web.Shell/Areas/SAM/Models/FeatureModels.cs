@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using BExIS.Modules.Sam.UI.Controllers;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -22,7 +21,7 @@ namespace BExIS.Modules.Sam.UI.Models
         [StringLength(50, ErrorMessage = "The feature name must be {2} - {1} characters long.", MinimumLength = 3)]
         public string FeatureName { get; set; }
 
-        [Display(Name = "Feature ID")]
+        [Display(Name = "Feature Id")]
         [Editable(false)]
         [Required]
         public long Id { get; set; }
@@ -34,7 +33,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = feature.Id,
                 FeatureName = feature.Name,
                 Description = feature.Description,
-                Children = feature.Children.Select(c => FeatureModel.Convert(c)).ToList<FeatureModel>()
+                Children = feature.Children.Select(Convert).ToList()
             };
         }
     }
@@ -45,19 +44,17 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public string FeatureName { get; set; }
         public long Id { get; set; }
-        public bool IsFeatureInEveryoneGroup { get; set; }
+        public bool IsPublic { get; set; }
 
-        public static FeatureTreeViewModel Convert(Feature feature, IsFeatureInEveryoneGroupDelegate isFeatureInEveryoneGroupDelegate)
+        public static FeatureTreeViewModel Convert(Feature feature)
         {
             return new FeatureTreeViewModel()
             {
                 Id = feature.Id,
                 FeatureName = feature.Name,
                 Description = feature.Description,
-
-                IsFeatureInEveryoneGroup = isFeatureInEveryoneGroupDelegate(feature.Id),
-
-                Children = feature.Children.Select(c => FeatureTreeViewModel.Convert(c, isFeatureInEveryoneGroupDelegate)).ToList<FeatureTreeViewModel>()
+                IsPublic = feature.IsPublic,
+                Children = feature.Children.Select(Convert).ToList()
             };
         }
     }

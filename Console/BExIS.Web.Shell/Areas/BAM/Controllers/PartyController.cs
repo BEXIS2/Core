@@ -36,7 +36,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             else
                 foreach (var party in partyManager.Repo.Get())
                     partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate ,IsTemp=party.IsTemp});
-            return PartialView("_partiesPartial", partiesForGrid);
+            return PartialView("_partiesPartial", partiesForGrid.OrderByDescending(cc=>cc.IsTemp).ThenByDescending(cc=>cc.StartDate).ThenBy(cc=>cc.Name).ToList());
 
         }
 

@@ -18,6 +18,7 @@
       <one-to-many class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
     </set>
     <property name="Description" type="String" />
+    <property name="IsPublic" type="yes_no" />
     <property name="Name" type="String" />
     <many-to-one name="Parent" column="ParentRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
     <set name="Permissions" inverse="true" lazy="true">

@@ -30,7 +30,7 @@
             }
             else
             {
-                @Html.Telerik().DatePicker().Name("StartDate").ShowButton(false).TodayButton("d").OpenOnFocus(true).Format("dd/MM/yyyy").Value(Model.StartDate.ToString("dd/MM/yyyy")).HtmlAttributes(new { @class = "t-input bx-input" });
+                @Html.Telerik().DatePicker().Name("StartDate").HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
 
             }
         </td>
@@ -44,7 +44,7 @@
             }
             else
             {
-                @Html.Telerik().DatePicker().Name("EndDate").ShowButton(false).TodayButton("d").OpenOnFocus(true).Format("dd/MM/yyyy").Value(Model.EndDate.ToString("dd/MM/yyyy")).HtmlAttributes( new { @class = "t-input bx-input" });
+                @Html.Telerik().DatePicker().Name("EndDate").HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
             }
         </td>
     </tr>
@@ -57,8 +57,8 @@
 </table>
 @if (!viewMode)
 {
-    <div>
-        <button type="button" value="Save" id="savePartyRelationship" class="t-button" style="border:0px;">Save</button>
+    <div id="" class="bx-footer right" style="text-align:left;">
+        <button type="button" value="Save" id="savePartyRelationship" class="bx-button action" style="border:0px;" >Save</button>
     </div>
 }
 <script>
@@ -67,8 +67,8 @@
             description:$("#Description").val(),
             id: @Model.Id,
             scope:$("#Scope").val() ,
-            startDate:$("#StartDate").val(),
-            endDate:$("#EndDate").val(),
+            startDate:new Date($("#StartDate").val()),
+            endDate:new Date($("#EndDate").val()),
             title:$("#Title").val()
         }};
 
@@ -87,5 +87,8 @@
             processData: false
         });
     });
-
+    $(document).ready(function(){
+        resetAllTelerikIconTitles();
+    });
+   
 </script>
