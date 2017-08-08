@@ -93,7 +93,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
             ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
-            model.Party = partyManager.Repo.Get(id);
+            var party = partyManager.Repo.Get(id);
+            model.Description = party.Description;
+            model.EndDate = party.EndDate;
+            model.Id = party.Id;
+            model.PartyType = party.PartyType;
+            model.StartDate = party.StartDate;           
             ViewBag.RelationTabAsDefault = relationTabAsDefault;
             return View("CreateEdit", model);
         }
@@ -111,13 +116,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     return View(partyModel);
                 var newAddPartyCustomAttrValues = new Dictionary<PartyCustomAttribute, string>();
                 var party = new Party();
-                if (partyModel.Party.Id != 0)
+                if (partyModel.Id != 0)
                 {
-                    party = partyManager.Repo.Reload(partyModel.Party);
+                    party = partyManager.Repo.Get(partyModel.Id);
                     //Update some fields
-                    party.Description = partyModel.Party.Description;
-                    party.StartDate = partyModel.Party.StartDate;
-                    party.EndDate = partyModel.Party.EndDate;
+                    party.Description = partyModel.Description;
+                    party.StartDate = partyModel.StartDate;
+                    party.EndDate = partyModel.EndDate;
                     //if relationship rules are satisfied, it is not temp
                     if (string.IsNullOrWhiteSpace(Helpers.Helper.ValidateRelationships(party.Id)))
                         party.IsTemp = false;
@@ -133,13 +138,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
                 else
                 {
-                    var partyType = partyTypeManager.Repo.Get(partyModel.Party.PartyType.Id);
+                    var partyType = partyTypeManager.Repo.Get(partyModel.PartyType.Id);
                     var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                     // save party as temp if the reationships are required
                     var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(partyType.Id).Where(cc => cc.MinCardinality > 0);
 
                     //Create party
-                    party = partyManager.Create(partyType, partyModel.Party.Alias, partyModel.Party.Description, partyModel.Party.StartDate, partyModel.Party.EndDate, partyStatusType, requiredPartyRelationTypes.Any());
+                    party = partyManager.Create(partyType, "", partyModel.Description, partyModel.StartDate, partyModel.EndDate, partyStatusType, requiredPartyRelationTypes.Any());
                     //Add customAttriuteValue to party
                     newAddPartyCustomAttrValues = ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues);
                     //if relationship rules are satisfied, it is not temp
@@ -167,7 +172,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
             ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
-            model.Party = partyManager.Repo.Get(id);
+            var party = partyManager.Repo.Get(id);
+            model.Description = party.Description;
+            model.EndDate = party.EndDate;
+            model.Id = party.Id;
+            model.PartyType = party.PartyType;
+            model.StartDate = party.StartDate; ;
 
             return View(model);
         }
@@ -179,7 +189,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
             ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
-            model.Party = partyManager.Repo.Get(id);
+            var party = partyManager.Repo.Get(id);
+            model.Description = party.Description;
+            model.EndDate = party.EndDate;
+            model.Id = party.Id;
+            model.PartyType = party.PartyType;
+            model.StartDate = party.StartDate;
             model.ViewMode = true;
             return PartialView("View", model);
         }
@@ -250,13 +265,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         private void validateAttribute(PartyModel partyModel)
         {
-            if (partyModel.Party.StartDate > partyModel.Party.EndDate)
+            if (partyModel.StartDate > partyModel.EndDate)
                 partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Start date is greater than end date!"));
-            if (partyModel.Party.PartyType.Id == 0)
+            if (partyModel.PartyType.Id == 0)
                 partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please select party type!"));
-            //if (string.IsNullOrEmpty(partyModel.Party.Name))
-            //    partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please enter a name for party!"));
-            //Start and end date validation
+           
         }
 
         /// <summary>
@@ -300,6 +313,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     partyRelationship.EndDate = DateTime.MaxValue;
                 partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
             }
+            //if relationship rules are satisfied, it is not temp
+            if (string.IsNullOrWhiteSpace(Helpers.Helper.ValidateRelationships(party.Id)))
+                party.IsTemp = false;
+            else
+                party.IsTemp = true;
+            partyManager.Update(party);
             return RedirectToAction("CreateEdit", "party", new { id = partyId, relationTabAsDefault = true });
         }
         [HttpGet]
@@ -317,6 +336,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             try
             {
                 partyManager.RemovePartyRelationship(partyManager.RepoPartyRelationships.Get(id));
+
                 return "successfull";
             }
             catch (Exception ex)
@@ -354,9 +374,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult LoadPartyRelationships(int id)
         {
             var partyManager = new PartyManager();
-            var partyModel = new PartyModel();
-            partyModel.Party = partyManager.Repo.Get(id);
-            return PartialView("_partyRelationshipsPartial", partyModel);
+            var model = new PartyModel();
+            var party = partyManager.Repo.Get(id);
+            model.Description = party.Description;
+            model.EndDate = party.EndDate;
+            model.Id = party.Id;
+            model.PartyType = party.PartyType;
+            model.StartDate = party.StartDate;
+            return PartialView("_partyRelationshipsPartial", model);
         }
 
         /// <summary>

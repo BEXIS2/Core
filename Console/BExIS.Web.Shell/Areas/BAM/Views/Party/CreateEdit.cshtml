@@ -1,6 +1,6 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
 @{
-    bool createMode = (Model.Party.PartyType.Id == 0);
+    bool createMode = (Model.PartyType.Id == 0);
     bool addRelationship = true;
     if (Request.QueryString["relationTabAsDefault"] != null)
     {
@@ -35,30 +35,30 @@
 }
 @using (Html.BeginForm("CreateEdit", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
 {
-    @Html.HiddenFor(m => m.Party.Id)
+    @Html.HiddenFor(m => m.Id)
     @(Html.Telerik().TabStrip()
         .Name("ShowDataTabStrip").ClientEvents(item => item.OnLoad("onLoad"))
         .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
         .Items(tabs =>
         {
         tabs.Add()
-                    .Text(Model.Party.PartyType != null && !string.IsNullOrEmpty(Model.Party.PartyType.Title) ? Model.Party.PartyType.Title: "Party").Content(@<text>
+                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? Model.PartyType.Title: "Party").Content(@<text>
                 <table class="bx-table-form" id="tblParty">
                     <tr>
                         <td><b title="Required" style="color: red">*</b></td>
                         <td style="width:300px;">
-                            @Html.LabelFor(m => m.Party.PartyType)
+                            @Html.LabelFor(m => m.PartyType)
                         </td>
                         <td>
                             @if (!createMode)
                             {
-                                @Html.HiddenFor(m => m.Party.PartyType.Id)
-                                @Model.Party.PartyType.Title
+                                @Html.HiddenFor(m => m.PartyType.Id)
+                                @Model.PartyType.Title
                             }
                             else
                             {
-                                @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("Party.PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
-                                @Html.ValidationMessageFor(m => m.Party.PartyType.Id, "Select party type")
+                                @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
+                                @Html.ValidationMessageFor(m => m.PartyType.Id, "Select party type")
                                 <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
                                     <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
                             }
@@ -66,35 +66,35 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><b title="Required" style="color: red">*</b></td>
+                        <td></td>
                         <td>
-                            @Html.LabelFor(m => m.Party.StartDate)
+                            @Html.LabelFor(m => m.StartDate)
                         </td>
                         <td>
-                            @(Html.Telerik().DatePickerFor(m => m.Party.StartDate)
+                            @(Html.Telerik().DatePickerFor(m => m.StartDate)
                                     .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
                             )
 
                         </td>
                     </tr>
                     <tr>
-                        <td><b title="Required" style="color: red">*</b></td>
+                        <td></td>
                         <td>
-                            @Html.LabelFor(m => m.Party.EndDate)
+                            @Html.LabelFor(m => m.EndDate)
                         </td>
                         <td>
-                            @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
+                            @(Html.Telerik().DatePickerFor(m => m.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
                             <div id="divDatesError"></div>
                         </td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>
-                            @Html.LabelFor(m => m.Party.Description)
+                            @Html.LabelFor(m => m.Description)
                         </td>
                         <td>
-                            @Html.TextBoxFor(m => m.Party.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
-                            @Html.ValidationMessageFor(m => m.Party.Description)
+                            @Html.TextBoxFor(m => m.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
+                            @Html.ValidationMessageFor(m => m.Description)
                             <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Description" />
                         </td>
                     </tr>
@@ -119,8 +119,6 @@
 <script type="text/javascript">
 
     var partyTabStrip =undefined;
-
-
     //if it is in create mode and the first tab is activate;it opens the next tab
     function submitClick()
     {
@@ -130,30 +128,37 @@
             return false;
         }
         var validationError=false;
-        var $form = $("#frmParty");
-        $form.valid();
-        $(".t-item", partyTabStrip.element).each(function(index,element){
-
-            if ($(partyTabStrip.getContentElement(index)).find(".input-validation-error").length)
-            {
-                partyTabStrip.select(element);
-                validationError=true;
-                if(index!=0)
-                    $("#submitBtn").html("Next");
-                return false;
-            }
-        });
-        if ('@createMode'=='True' && !validationError)
+        if(!$("#PartyType_Id").val())  
         {
-            if(partyTabStrip.getSelectedTabIndex()==0)
-            {
-                var customAttrTab=$(".t-item", partyTabStrip.element)[1];
-                partyTabStrip.select(customAttrTab);
-                $("#submitBtn").html("Next");
-                return false;
-            }
+            $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
+            return false;
         }
-        return true;
+        else
+        {
+            var $form = $("#frmParty");
+            $form.valid();
+            $(".t-item", partyTabStrip.element).each(function(index,element){
+                if ($(partyTabStrip.getContentElement(index)).find(".input-validation-error").length)
+                {
+                    partyTabStrip.select(element);
+                    validationError=true;
+                    if(index!=0)
+                        $("#submitBtn").html("Save");
+                    return false;
+                }
+            });
+            if ('@createMode'=='True' && !validationError)
+            {
+                if(partyTabStrip.getSelectedTabIndex()==0)
+                {
+                    var customAttrTab=$(".t-item", partyTabStrip.element)[1];
+                    partyTabStrip.select(customAttrTab);
+                    $("#submitBtn").html("Save");
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     function checkDateRange() {
@@ -171,11 +176,16 @@
     function OnChangePartyType(e) {
         var partyTypeId = e.value;
         if (!partyTypeId)
+        {
             partyTabStrip.disable($(".t-item", partyTabStrip.element)[1]);
+            $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
+        }
         else {
+            $("[data-valmsg-for='PartyType.Id']").addClass("field-validation-valid").removeClass("field-validation-error");
+      
             partyTabStrip.enable($(".t-item", partyTabStrip.element)[1]);
             $('#imgPartyCustomeAttrLoading').show();
-            $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Party.Id, function (response, status, xhr) {
+            $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Id, function (response, status, xhr) {
                 if (status == "error") {
                     $('#divPartyCustomAttr').html("")
                     alert(response);
@@ -188,10 +198,10 @@
     function validateRelationships()
     {
         var valid=true;
-        if(@Model.Party.Id != 0)
+        if(@Model.Id != 0)
         {
             $.post('/BAM/Party/ValidateRelationships',
-            { partyId: @Model.Party.Id },
+            { partyId: @Model.Id },
             function(response) {
                 if(response!=""){
                     valid=false;
@@ -237,7 +247,7 @@
     function onLoad(){
         partyTabStrip = $("#ShowDataTabStrip").data("t-TabStrip");
         if ('@createMode'=='False')
-            OnChangePartyType({value:@Model.Party.PartyType.Id });
+            OnChangePartyType({value:@Model.PartyType.Id });
         validateRelationships();
         if(partyTabStrip.getSelectedTabIndex()==2)
         {
@@ -247,9 +257,5 @@
         }
 
     }
-    $(document).ready(function(){
-       
-    });
-
 
 </script>

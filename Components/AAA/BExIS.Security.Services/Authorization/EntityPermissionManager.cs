@@ -20,10 +20,10 @@ namespace BExIS.Security.Services.Authorization
             SubjectRepository = uow.GetReadOnlyRepository<Subject>();
         }
 
-        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; private set; }
+        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
         public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
-        public IReadOnlyRepository<Entity> EntityRepository { get; private set; }
-        public IReadOnlyRepository<Subject> SubjectRepository { get; private set; }
+        public IReadOnlyRepository<Entity> EntityRepository { get; }
+        public IReadOnlyRepository<Subject> SubjectRepository { get; }
 
         public void Create(EntityPermission entityPermission)
         {

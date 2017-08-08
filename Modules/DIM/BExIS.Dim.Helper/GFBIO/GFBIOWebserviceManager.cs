@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Entities.Publication;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -141,7 +142,7 @@ namespace BExIS.Dim.Helpers.GFBIO
         /// <param name="researchobjecttype"></param>
         /// <param name="authornames"></param>
         /// <returns></returns>
-        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, XmlDocument extendedData, string[] authornames)
+        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, XmlDocument extendedData, List<string> authornames, string metadataLabel)
         {
             string functionName = "create-research-object";
             string entityName = "researchobject";
@@ -156,8 +157,8 @@ namespace BExIS.Dim.Helpers.GFBIO
             researchObject.description = description;
             researchObject.researchobjecttype = researchobjecttype;
             researchObject.extendeddata = extendedData;
-            researchObject.metadatalabel = "abcd";
-            researchObject.authornames = new List<string> { "david schöne" };
+            researchObject.metadatalabel = metadataLabel;
+            researchObject.authornames = authornames.ToList();
 
             string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
 

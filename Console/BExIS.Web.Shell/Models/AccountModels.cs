@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BExIS.Utils.Filters;
+using System.ComponentModel.DataAnnotations;
 
 namespace BExIS.Web.Shell.Models
 {
@@ -79,6 +80,10 @@ namespace BExIS.Web.Shell.Models
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+        [Display(Name = "Terms and Conditions")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
+        public bool TermsAndConditions { get; set; }
     }
 
     public class ResetPasswordViewModel

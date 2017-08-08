@@ -23,11 +23,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -372,7 +370,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // add security
             if (GetUsernameOrDefault() != "DEFAULT")
             {
-                PermissionManager pm = new PermissionManager();
+                //PermissionManager pm = new PermissionManager();
                 SubjectManager sm = new SubjectManager();
 
                 //User user = sm.GetUserByName(GetUsernameOrDefault());
@@ -639,27 +637,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         //if (!skipDataTypeCheck)
                         //{
-                            if (Double.TryParse(vv, out DummyValue))
-                            {
-                                if (vv.Contains("."))
-                                {
-                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                                }
-                                else
-                                {
-                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
-                                }
-                            }
-                            else
+                        if (Double.TryParse(vv, out DummyValue))
+                        {
+                            if (vv.Contains("."))
                             {
                                 dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
                             }
-
-                            var ValidationResult = dtc.Execute(vv, y);
-                            if (ValidationResult is Error)
+                            else
                             {
-                                ErrorList.Add((Error)ValidationResult);
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
                             }
+                        }
+                        else
+                        {
+                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                        }
+
+                        var ValidationResult = dtc.Execute(vv, y);
+                        if (ValidationResult is Error)
+                        {
+                            ErrorList.Add((Error)ValidationResult);
+                        }
                         //}
                     }
                 }

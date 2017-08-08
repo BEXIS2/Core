@@ -27,13 +27,14 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public Feature Create(string name, string description, Feature parent = null)
+        public Feature Create(string name, string description, Feature parent = null, bool isPublic = false)
         {
             var feature = new Feature()
             {
                 Name = name,
                 Description = description,
-                Parent = parent
+                Parent = parent,
+                IsPublic = isPublic
             };
 
             using (var uow = this.GetUnitOfWork())
@@ -41,7 +42,6 @@ namespace BExIS.Security.Services.Objects
                 var featureRepository = uow.GetRepository<Feature>();
                 featureRepository.Put(feature);
                 uow.Commit();
-
             }
 
             return feature;

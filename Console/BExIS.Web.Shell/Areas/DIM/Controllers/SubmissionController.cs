@@ -1,6 +1,8 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Publication;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.GFBIO;
+using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -16,7 +18,6 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using Microsoft.AspNet.Identity;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -88,6 +89,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     FilePath = pub.FilePath,
                     Status = pub.Status
                 });
+
+                //update status
+
+
             }
 
             return View("_showPublishDataView", model);
@@ -475,6 +480,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     zipfilepath = Session["ZipFilePath"].ToString();
 
                 DatasetManager datasetManager = new DatasetManager();
+
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 PublicationManager publicationManager = new PublicationManager();
 
@@ -532,32 +538,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //user exist and api user has access to the api´s
                             else
                             {
+                                //load metadata from version
+                                Dataset dataset = datasetManager.GetDataset(datasetId);
+                                XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(datasetId);
+
+
 
                                 //ToDo [SUBMISSION] -> add infos from metadata via system mapping
                                 string projectName = "Bexis 2 Instance Project";
                                 string projectDescription = "Bexis 2 Instance Project Description";
 
 
-                                // ToDo submission test users, set project and more parameters
-                                if (user.Name.ToLower().Equals("drwho"))
-                                {
-                                    projectName = "Time Traveler";
-                                    projectDescription = "Project to find places that are awesome!!";
-                                }
+                                //grab project from metadata
+                                projectName = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.ProjectTitle), LinkElementType.Key, dataset.MetadataStructure.Id,
+                                    XmlUtility.ToXDocument(metadata)).FirstOrDefault();
 
 
-                                if (user.Name.ToLower().Equals("mcfly"))
-                                {
-                                    projectName = "Back to the Future";
-                                    projectDescription = "Meet your parents in the past";
 
-                                }
-
-                                if (user.Name.ToLower().Equals("arthurdent"))
-                                {
-                                    projectName = "Per Anhalter durch die Galaxie";
-                                    projectDescription = "Find the answer of life and so.";
-                                }
 
                                 //create or get project
                                 string projectJsonResult =
@@ -586,10 +583,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 }
 
 
+                                //grab title from metadata
+                                string name = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key, dataset.MetadataStructure.Id,
+                                    XmlUtility.ToXDocument(metadata)).FirstOrDefault();
 
-                                string name = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                                string description = XmlDatasetHelper.GetInformation(datasetId,
-                                    NameAttributeValues.description);
+                                //grab description from metadata
+                                string description = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Description), LinkElementType.Key, dataset.MetadataStructure.Id,
+                                    XmlUtility.ToXDocument(metadata)).FirstOrDefault();
+
+                                //grab authores from metadata
+                                List<string> authorList = new List<string>();
+                                authorList = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Author), LinkElementType.Key, dataset.MetadataStructure.Id,
+                                    XmlUtility.ToXDocument(metadata));
+
+                                string metadataLabel = dataset.MetadataStructure.Name;
 
 
                                 //TODO based on the data policy there must be a decision what should be in the extended data as a example of the dataset. at first metadata is added            
@@ -598,7 +605,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     TransmissionType.mappingFileExport,
                                     broker.MetadataFormat);
 
-                                string extendedDataAsJSON = JsonConvert.SerializeXmlNode(metadataExportFormat);
 
                                 string roJsonResult = await gfbioWebserviceManager.CreateResearchObject(
                                     gfbioUser.userid,
@@ -607,7 +613,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     description,
                                     "Dataset",
                                     metadataExportFormat,
-                                    null
+                                    authorList,
+                                    metadataLabel
                                     );
 
                                 List<GFBIOResearchObjectResult> gfbioResearchObjectList =
@@ -682,6 +689,38 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return Json(true);
         }
 
+
+
+        #region webservices calls STATUS
+
+        /// <summary>
+        /// Get Status from publiction
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<string> GetStatus(Publication publication)
+        {
+
+            if (publication.Broker != null)
+            {
+                //create a gfbio api webservice manager
+                GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(publication.Broker);
+
+                string roStatusJsonResult = await gfbioWebserviceManager.GetStatusByResearchObjectById(publication.Id);
+
+                //get status and store ro
+                List<GFBIOResearchObjectStatus> gfbioRoStatusList =
+                    new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectStatus>>(
+                        roStatusJsonResult);
+                GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
+                return gfbioRoStatus.status;
+
+            }
+
+            return "no status";
+        }
+
+        #endregion
 
         #region helper
 

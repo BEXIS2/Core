@@ -2,7 +2,7 @@
 @using Telerik.Web.Mvc.UI
 @model long
 @(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
-      .Name("Grid_Subjects")
+      .Name("grid_subjects")
       .DataKeys(keys =>
       {
           keys.Add(m => m.SubjectId);
@@ -16,21 +16,21 @@
               .Filterable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(m => m.FeaturePermissionType)
-              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(1, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='1' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
               .Title("Grant")
               .Width(50)
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
           columns.Bound(m => m.FeaturePermissionType)
-              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='2' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
               .Title("None")
               .Width(50)
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(m => m.FeaturePermissionType)
-              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='0' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
               .Title("Deny")
               .Width(50)
               .Filterable(false)
@@ -42,7 +42,7 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .Select("Subjects_Select", "FeaturePermissions", new { FeatureId = Model})
+          .Select("Subjects_Select", "FeaturePermissions", new { FeatureId = Model })
       )
       .Filterable()
       .Pageable(pageable =>
@@ -59,14 +59,6 @@
       )
       .ClientEvents(events =>
       {
-          events.OnDataBound("onDataBound");
+          events.OnDataBound("grid_subjects_onDataBound");
       })
 )
-
-<script type="text/javascript">
-
-    function onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-    }
-</script>

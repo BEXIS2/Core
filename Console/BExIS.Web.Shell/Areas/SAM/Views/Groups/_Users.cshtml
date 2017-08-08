@@ -1,0 +1,45 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+@model long
+
+@(Html.Telerik().Grid<UserMembershipGridRowModel>()
+      .Name("grid_users")
+      .Columns(columns =>
+      {
+          columns.Bound(g => g.IsUserInGroup)
+              .Template(@<text>
+            @if (item.IsUserInGroup)
+            {
+                <input type='checkbox' name='selectedUsers' value='@item.Id' checked='checked' />
+            }
+            else
+            {
+                <input type='checkbox' name='selectedUsers' value='@item.Id' />
+            }
+            </text>)
+              .ClientTemplate("<input type='checkbox' name='selectedUsers' data-userid='<#= Id #>' data-groupid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .Title("Member")
+              .Width(64)
+              .Filterable(false)
+              .HtmlAttributes(new { style = "text-align:center" });
+          columns.Bound(g => g.Id);
+          columns.Bound(g => g.Name);
+          columns.Bound(g => g.Email);
+          columns.Bound(g => g.IsAdministrator);
+      })
+      .ClientEvents(events =>
+      {
+          events.OnDataBound("grid_users_onDataBound");
+      })
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+          .Select("Users_Select", "Groups", new { GroupId = Model }))
+      .Filterable()
+      .Pageable(pageable =>
+      {
+          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+          pageable.Position(GridPagerPosition.Bottom);
+      })
+          .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))

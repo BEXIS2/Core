@@ -9,10 +9,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
 
         [Required]
-        public string GroupName { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public int GroupType { get; set; }
+        public int Type { get; set; }
     }
 
     public class DeleteGroupModel

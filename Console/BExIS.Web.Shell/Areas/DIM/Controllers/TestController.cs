@@ -1,5 +1,8 @@
 ﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
@@ -8,7 +11,9 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -48,7 +53,35 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View("Index");
         }
 
+        public async Task<ActionResult> GetStatus(long id)
+        {
 
+            PublicationManager publicationManager = new PublicationManager();
+
+            Broker broker =
+                                       publicationManager.GetBroker()
+                                           .Where(b => b.Name.ToLower().Equals("gfbio dev1"))
+                                           .FirstOrDefault();
+
+
+            if (broker != null)
+            {
+                //create a gfbio api webservice manager
+                GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(broker);
+
+                string roStatusJsonResult = await gfbioWebserviceManager.GetStatusByResearchObjectById(id);
+
+                //get status and store ro
+                List<GFBIOResearchObjectStatus> gfbioRoStatusList =
+                    new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectStatus>>(
+                        roStatusJsonResult);
+                GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
+                return Content(gfbioRoStatus.status);
+
+            }
+
+            return Content("no status");
+        }
 
         private void CreatePartys()
         {
