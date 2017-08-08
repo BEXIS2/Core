@@ -98,6 +98,10 @@
                         var window = $(windowElement).data('tWindow');
                         window.center().open();
 
+                        $('#button_createUser_cancel').click(function () {
+                            $('#window_createUser').data('tWindow').close();
+                        });
+
                         resetAllTelerikIconTitles();
                     }
                 });
@@ -109,18 +113,10 @@
             }
         }
 
-        function createUser_onCancel() {
-            $('#window_createUser').data('tWindow').close();
-        }
-
         function updateUser_onSuccess(data) {
             if (data.success) {
                 $('#window_updateUser').data('tWindow').close();
             }
-        }
-
-        function updateUser_onCancel() {
-            $('#window_updateUser').data('tWindow').close();
         }
 
         function grid_users_onDataBound() {
@@ -155,6 +151,10 @@
                             windowElement.attr('id', 'window_updateUser');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
+
+                            $('#button_updateUser_cancel').click(function () {
+                                $('#window_updateUser').data('tWindow').close();
+                            });
 
                             resetAllTelerikIconTitles();
                         }
@@ -215,11 +215,11 @@
                 .click(function () {
                     if ($(this).is(':checked')) {
                         $.post('@Url.Action("AddUserToGroup", "Users")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function () {
-                            $("#grid_users .t-refresh").trigger('click');
+                            $("#grid_groups .t-refresh").trigger('click');
                         });
                     } else {
                         $.post('@Url.Action("RemoveUserFromGroup", "Users")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function () {
-                            $("#grid_users .t-refresh").trigger('click');
+                            $("#grid_groups .t-refresh").trigger('click');
                         });
                     }
                 });
