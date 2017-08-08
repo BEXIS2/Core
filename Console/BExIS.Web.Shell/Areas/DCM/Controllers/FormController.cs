@@ -19,7 +19,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Data.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
