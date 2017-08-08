@@ -18,7 +18,7 @@
                 <input type='checkbox' name='selectedUsers' value='@item.Id' />
             }
             </text>)
-              .ClientTemplate("<input type='checkbox' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='checkbox' name='selectedUsers' data-userid='<#= Id #>' data-groupid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
               .Title("Member")
               .Width(64)
               .Filterable(false)
@@ -43,23 +43,3 @@
           pageable.Position(GridPagerPosition.Bottom);
       })
           .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
-
-<script>
-    function grid_users_onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-
-        $("input[name='selectedUsers']:checkbox")
-            .click(function () {
-                if ($(this).is(':checked')) {
-                    $.post('@Url.Action("AddUserToGroup", "Groups")', { UserId: $(this).attr('value'), GroupId: Model }, function (e) {
-                        $("#Grid_Users .t-refresh").trigger('click');
-                    });
-                } else {
-                    $.post('@Url.Action("RemoveUserFromGroup", "Groups")', { UserId: $(this).attr('value'), GroupId: Model }, function (e) {
-                        $("#Grid_Users .t-refresh").trigger('click');
-                    });
-                }
-            });
-    }
-</script>
