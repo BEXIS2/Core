@@ -92,7 +92,8 @@ namespace BExIS.Modules.Dim.UI.Helper
             return model;
         }
 
-        public static void addUsageAsLinkElement(BaseUsage usage, string parentXpath, LinkElementRootModel rootModel, LinkElementModel parent)
+        public static void addUsageAsLinkElement(BaseUsage usage, string parentXpath, LinkElementRootModel rootModel,
+            LinkElementModel parent)
         {
             int min = usage.MinCardinality;
             string childName = "";
@@ -150,8 +151,11 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 }
 
+                if (u.MetadataAttribute.Self is MetadataSimpleAttribute)
+                {
+                    complexity = LinkElementComplexity.Simple;
+                }
             }
-
 
             // add usage
             xPath = parentXpath + "/" + usageName.Replace(" ", string.Empty) + "/" + typeName;
@@ -185,7 +189,10 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 linkElement =
                     mappingManager.LinkElementRepo.Get()
-                        .FirstOrDefault(le => le.ElementId.Equals(typeId) && le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
+                        .FirstOrDefault(
+                            le =>
+                                le.ElementId.Equals(typeId) &&
+                                le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
 
                 if (linkElement != null)
                 {
@@ -229,6 +236,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 //AddChildrens
                 //addLinkElementsFromChildrens(usage, xPath, rootModel);
             }
+
         }
 
         #endregion
