@@ -76,14 +76,18 @@
         $("input[name^='permissionType']:radio").click(function () {
             switch ($(this).data('permissiontype')) {
                 case 2:
+                    $("input[name^='permissionType']:radio").attr('disabled', true);
                     $.post('@Url.Action("DeleteFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid') }, function () {
                         $("#grid_subjects .t-refresh").trigger('click');
+                        $("input[name^='permissionType']:radio").attr('disabled', false);
                     });
 
                     break;
                 default:
+                    $("input[name^='permissionType']:radio").attr('disabled', true);
                     $.post('@Url.Action("CreateOrUpdateFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid'), PermissionType: $(this).data('permissiontype') }, function () {
                         $("#grid_subjects .t-refresh").trigger('click');
+                        $("input[name^='permissionType']:radio").attr('disabled', false);
                     });
             }
         });

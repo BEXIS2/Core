@@ -23,7 +23,8 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .Select("Groups_Select", "Users", new { UserId = Model }))
+          .Select("Groups_Select", "Users", new { UserId = Model })
+        )
       .Filterable()
       .Pageable(pageable =>
       {

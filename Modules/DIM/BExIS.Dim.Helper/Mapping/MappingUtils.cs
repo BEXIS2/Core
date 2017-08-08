@@ -27,7 +27,9 @@ namespace BExIS.Dim.Helpers.Mapping
             //getAll mappings
             var mappings = _mappingManager.GetMappings().Where(m =>
                 m.Target.ElementId.Equals(targetElementId) &&
-                m.Target.Type.Equals(targetType));
+                m.Target.Type.Equals(targetType) &&
+                m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                );
 
             List<Entities.Mapping.Mapping> mappingsForDestiantion = new List<Entities.Mapping.Mapping>();
 
@@ -92,6 +94,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     foreach (var mapping in mappings)
                     {
                         long attributeId = mapping.Source.ElementId;
+
 
                         PartyCustomAttributeValue attrValue =
                             partyManager.RepoCustomAttrValues.Get()
