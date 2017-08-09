@@ -35,7 +35,7 @@
                                 @*Html.Name(Model.HeaderFields[i])*@
 
                                 <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
-                                <select style="min-width: 90%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
+                                <select  style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
 
                                     <!--The default option is the name of the column in the submitted table-->
                                     <option data-unit="1" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
@@ -69,7 +69,7 @@
 
                             <td>
                                 <!--Unit Selector-->
-                                <select name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
+                                <select style="width: 80%" name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
                                     @foreach (UnitInfo unit in Model.AvailableUnits)
                                     {
                                         string selected = "";
@@ -92,7 +92,7 @@
                             </td>
                             <td>
                                 <!--Datatype Selector-->
-                                <select name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
+                                <select style="width: 80%" name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
                                     @{
 
                                         Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
@@ -128,7 +128,7 @@
         </div>
 
         <div style="float:left; padding-top: 10px">
-            <button id="validateBtn" onClick="validateData()" class="t-button action" title="Validate Selection">Validate</button>
+            <button id="validateBtn" onClick="validateData(this)" class="t-button action" title="Validate Selection">Validate</button>
         </div>
 
     </div>
@@ -172,7 +172,9 @@
 
 <script type="text/javascript">
 
-    function validateData() {
+    function validateData(button) {
+        //Hide the results of previous validation attempts
+        $(button).closest('tr').find('i').prop('title', "");
 
         $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
                 if (response.errors.length > 0) {
@@ -187,15 +189,15 @@
                             var currentErrorCount = currentTitle.split("\n").length;
 
                             if (currentErrorCount < 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                                TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                             }
                             if (currentErrorCount == 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                                TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                                 TitleCell.attr("title", currentTitle + "\nand more...");
                             }
                         } else {
                             TitleCell.show();
-                            TitleCell.attr("title", error.Item2.Value + " is not valid as " + error.Item2.DataType);
+                            TitleCell.attr("title", "\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                         }
                     }
                 } else {
