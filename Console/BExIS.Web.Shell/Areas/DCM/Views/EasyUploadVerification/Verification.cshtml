@@ -220,6 +220,12 @@
 
             }
         });*/
+
+        //Destroy the handsontable from the last step because it's causing performance problems
+        if (hotActive) {
+            hot.destroy();
+            hotActive = false;
+        }
         
         $('select[name="Unit"]').change(function () {
             if ($(this).val() != null && $(this).val() != '') {
@@ -245,7 +251,6 @@
     });
 
     function suggestionSelected(suggestionSelectObject, i) {
-        console.log("Selected " + i + "   " + suggestionSelectObject);
         //Find the selected option object
         var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
 
