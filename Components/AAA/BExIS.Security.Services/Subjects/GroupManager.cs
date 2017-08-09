@@ -16,7 +16,14 @@ namespace BExIS.Security.Services.Subjects
             GroupRepository = uow.GetReadOnlyRepository<Group>();
         }
 
+        /// <summary>
+        /// This property returns all persisted groups.
+        /// </summary>
         public IQueryable<Group> Groups => GroupRepository.Query();
+
+        /// <summary>
+        /// This pri
+        /// </summary>
         private IReadOnlyRepository<Group> GroupRepository { get; }
 
         /// <summary>
@@ -100,6 +107,10 @@ namespace BExIS.Security.Services.Subjects
             return GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
         }
 
+        /// <summary>
+        /// The method takes a given group and updates it - e.g. modify description or other properties.
+        /// </summary>
+        /// <param name="group">The group that should be updated.</param>
         public void Update(Group group)
         {
             using (var uow = this.GetUnitOfWork())
