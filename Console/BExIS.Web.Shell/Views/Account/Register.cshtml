@@ -36,6 +36,14 @@
         </div>
     </div>
     <div class="form-group">
+        <div class="col-md-2 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.TermsAndConditions)
+            I accept <a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
+            @Html.ValidationMessageFor(m => m.TermsAndConditions)
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" class="btn btn-default" value="Register" />
         </div>
