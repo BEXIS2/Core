@@ -44,7 +44,7 @@
                 @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
                 @if (Request.IsAuthenticated)
                 {
-                    using (Html.BeginForm("LogOff", "Account", new { Area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                    using (Html.BeginForm("LogOff", "Account", new { Area = "" }, FormMethod.Post, new { @class = "navbar-right" }))
                     {
                         @Html.AntiForgeryToken()
 
@@ -52,7 +52,7 @@
                             <li>
                                 @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", new { Area = "" }, htmlAttributes: new { title = "Manage" })
                             </li>
-                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Abmelden</a></li>
+                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log Off</a></li>
                         </ul>
                     }
                 }
