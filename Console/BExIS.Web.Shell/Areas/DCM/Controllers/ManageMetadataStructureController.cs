@@ -7,13 +7,13 @@ using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using Ionic.Zip;
-using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -198,21 +198,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
+        // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.  
         private List<EntityModel> GetEntityModelList()
         {
             EntityManager entityManager = new EntityManager();
 
-            List<EntityModel> tmp = new List<EntityModel>();
-            entityManager.Entities.Where(e => e.UseMetadata).ForEach(e => tmp.Add(
+            return entityManager.Entities.Where(e => e.UseMetadata).Select(e =>
                       new EntityModel()
                       {
                           Name = e.Name,
                           ClassPath = e.EntityType.FullName
                       }
-                  )
-            );
-
-            return tmp.ToList();
+                  ).ToList();
         }
 
         private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,

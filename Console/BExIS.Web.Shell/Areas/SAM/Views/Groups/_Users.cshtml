@@ -4,7 +4,7 @@
 @model long
 
 @(Html.Telerik().Grid<UserMembershipGridRowModel>()
-      .Name("Grid_Users")
+      .Name("grid_users")
       .Columns(columns =>
       {
           columns.Bound(g => g.IsUserInGroup)
@@ -18,7 +18,7 @@
                 <input type='checkbox' name='selectedUsers' value='@item.Id' />
             }
             </text>)
-              .ClientTemplate("<input type='checkbox' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='checkbox' name='selectedUsers' data-userid='<#= Id #>' data-groupid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
               .Title("Member")
               .Width(64)
               .Filterable(false)
@@ -30,11 +30,10 @@
       })
       .ClientEvents(events =>
       {
-          events.OnDataBound("onDataBound");
+          events.OnDataBound("grid_users_onDataBound");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
           .Select("Users_Select", "Groups", new { GroupId = Model }))
       .Filterable()
       .Pageable(pageable =>
@@ -44,23 +43,3 @@
           pageable.Position(GridPagerPosition.Bottom);
       })
           .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
-
-<script>
-    function Grid_Groups_OnDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-
-        $("input[name='selectedUsers']:checkbox")
-            .click(function () {
-                if ($(this).is(':checked')) {
-                    $.post('@Url.Action("AddUserToGroup", "Groups")', { UserId: $(this).attr('value'), GroupId: Model }, function (e) {
-                        $("#Grid_Users .t-refresh").trigger('click');
-                    });
-                } else {
-                    $.post('@Url.Action("RemoveUserFromGroup", "Groups")', { UserId: $(this).attr('value'), GroupId: Model }, function (e) {
-                        $("#Grid_Users .t-refresh").trigger('click');
-                    });
-                }
-            });
-    }
-</script>

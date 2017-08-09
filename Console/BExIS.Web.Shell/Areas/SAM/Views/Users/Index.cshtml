@@ -1,13 +1,14 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc
 @using Telerik.Web.Mvc.UI
+
 <style>
     .t-window-content {
         height: auto !important;
         width: auto !important;
     }
 
-    #gridMemberships {
+    #grid_groups {
         width: 80vw !important;
     }
 </style>
@@ -53,7 +54,13 @@
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })
-      .Sortable())
+      .Sortable(sortable => sortable
+          .OrderBy(orderby => orderby
+              .Add(m => m.UserName)
+              .Ascending()
+          )
+      )
+)
 
 @section Scripts
 {
@@ -195,6 +202,24 @@
                     if (result) {
                         $.post('@Url.Action("Delete", "Users")', { Id: id }, function (e) {
                             $("#Grid_Users .t-refresh").trigger('click');
+                        });
+                    }
+                });
+        }
+
+        function grid_groups_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+
+            $("input[name='selectedGroups']:checkbox")
+                .click(function () {
+                    if ($(this).is(':checked')) {
+                        $.post('@Url.Action("AddUserToGroup", "Users")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function () {
+                            $("#grid_users .t-refresh").trigger('click');
+                        });
+                    } else {
+                        $.post('@Url.Action("RemoveUserFromGroup", "Users")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function () {
+                            $("#grid_users .t-refresh").trigger('click');
                         });
                     }
                 });

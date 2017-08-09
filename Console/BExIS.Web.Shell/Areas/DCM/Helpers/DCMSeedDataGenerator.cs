@@ -192,6 +192,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
                 ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName);
 
+            //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
+            //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
             #endregion
         }
 

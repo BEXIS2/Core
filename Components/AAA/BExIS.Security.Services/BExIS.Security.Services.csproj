@@ -92,7 +92,6 @@
     <Compile Include="Authentication\SignInManager.cs" />
     <Compile Include="Authorization\EntityPermissionManager.cs" />
     <Compile Include="Authorization\FeaturePermissionManager.cs" />
-    <Compile Include="Authorization\PermissionManager.cs" />
     <Compile Include="Objects\DatasetStore.cs" />
     <Compile Include="Objects\EntityManager.cs" />
     <Compile Include="Objects\FeatureManager.cs" />

@@ -26,6 +26,30 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
+        public bool Exists(string groupName, bool isSystemGroup = false)
+        {
+            return GroupRepository.Get(g => g.Name.ToUpperInvariant() == groupName.ToUpperInvariant() && g.IsSystemGroup == isSystemGroup).Count == 1;
+        }
+
+        public Group Create(string groupName, string description, bool isSystemGroup = false, bool isValid = true)
+        {
+            var group = new Group()
+            {
+                Name = groupName,
+                Description = description,
+                IsSystemGroup = isSystemGroup,
+                IsValid = isValid
+            };
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetRepository<Group>();
+                groupRepository.Put(group);
+                uow.Commit();
+            }
+
+            return group;
+        }
+
         public void Delete(Group group)
         {
             using (var uow = this.GetUnitOfWork())

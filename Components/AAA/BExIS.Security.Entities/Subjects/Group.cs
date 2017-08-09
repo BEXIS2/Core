@@ -2,12 +2,6 @@
 
 namespace BExIS.Security.Entities.Subjects
 {
-    public enum GroupType
-    {
-        Private = 0,
-        Public = 1
-    }
-
     public class Group : Subject
     {
         public Group()
@@ -16,8 +10,8 @@ namespace BExIS.Security.Entities.Subjects
         }
 
         public virtual string Description { get; set; }
-        public virtual GroupType GroupType { get; set; }
         public virtual bool IsValid { get; set; }
+        public virtual bool IsSystemGroup { get; set; }
         public virtual ICollection<User> Users { get; set; }
     }
 }

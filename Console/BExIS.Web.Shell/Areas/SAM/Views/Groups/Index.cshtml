@@ -12,6 +12,17 @@
     </p>
 }
 
+<style>
+    .t-window-content {
+        height: auto !important;
+        width: auto !important;
+    }
+
+    #grid_users {
+        width: 80vw !important;
+    }
+</style>
+
 <button id="button_createGroup" type="button" class="bx-button function">Create Group</button>
 @(Html.Telerik().Grid<GroupGridRowModel>()
       .Name("grid_groups")
@@ -56,6 +67,24 @@
     <script src="@Url.Content("~/Scripts/2013.2.611/telerik.window.min.js")" type="text/javascript"></script>
 
     <script type="text/javascript">
+        
+        function grid_users_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+
+            $("input[name='selectedUsers']:checkbox")
+                .click(function () {
+                    if ($(this).is(':checked')) {
+                        $.post('@Url.Action("AddUserToGroup", "Groups")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function (e) {
+                            $("#grid_users .t-refresh").trigger('click');
+                        });
+                    } else {
+                        $.post('@Url.Action("RemoveUserFromGroup", "Groups")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function (e) {
+                            $("#grid_users .t-refresh").trigger('click');
+                        });
+                    }
+                });
+        }
 
         $('#button_createGroup')
             .click(function () {
@@ -84,6 +113,10 @@
                         windowElement.attr('id', 'window_createGroup');
                         var window = $(windowElement).data('tWindow');
                         window.center().open();
+
+                        $('#button_createGroup_cancel').click(function () {
+                            $('#window_createGroup').data('tWindow').close();
+                        });
 
                         resetAllTelerikIconTitles();
                     }
@@ -124,7 +157,7 @@
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update Group (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_updateGroup' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -134,14 +167,18 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#Window_Update").data('tWindow').destroy();
-                                    $("#Grid_Groups .t-refresh").trigger('click');
+                                    $("#window_updateGroup").data('tWindow').destroy();
+                                    $("#grid_groups .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'windowUpdate');
+                            windowElement.attr('id', 'window_updateGroup');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
+
+                            $('#button_updateGroup_cancel').click(function () {
+                                $('#window_updateGroup').data('tWindow').close();
+                            });
 
                             resetAllTelerikIconTitles();
                         }
@@ -153,12 +190,12 @@
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Users", "Groups")',
-                        data: { UserId: $(this).attr("value") },
+                        data: { GroupId: $(this).attr("value") },
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
                                 title: "Update User (Id: " + $(this).attr("value") + ")",
-                                html: "<div id='Content_Users' class='bx-window'>" + htmlData + "</div>",
+                                html: "<div id='content_users' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
                                 modal: true,
@@ -168,12 +205,12 @@
                                 draggable: true,
                                 scrollable: false,
                                 onClose: function () {
-                                    $("#Window_Users").data('tWindow').destroy();
-                                    $("#Grid_Groups .t-refresh").trigger('click');
+                                    $("#window_users").data('tWindow').destroy();
+                                    $("#grid_groups .t-refresh").trigger('click');
                                 }
                             });
 
-                            windowElement.attr('id', 'Window_Groups');
+                            windowElement.attr('id', 'window_users');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 

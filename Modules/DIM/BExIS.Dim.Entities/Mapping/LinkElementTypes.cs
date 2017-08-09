@@ -2,10 +2,12 @@
 {
     public enum Key
     {
-        Title = 1,
-        Description = 2,
-        OwnerName = 3,
-        ProjectTitle
+        Author,
+        Description,
+        License,
+        ProjectTitle,
+        Title
+
     }
 
     public enum LinkElementComplexity

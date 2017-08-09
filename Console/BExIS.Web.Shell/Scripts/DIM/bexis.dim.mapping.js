@@ -52,6 +52,8 @@ function leSimpleSelectorClick(e) {
     var name = $(info).find("#Name").text();
     var xpath = $(info).find("#XPath").text();
 
+    //console.log("xpath" + xpath);
+
     var le =
     {
         "Id": id,
@@ -135,6 +137,7 @@ function updateSaveOptionOnNewContainer() {
         $("#newMapContainer .mapping-settings").show();
         //$(deleteBt).hide();
 
+        //alert("updateSaveOptionOnNewContainer");
         initJSPLUMB("mapping_container_0");
     } else {
         //$(deleteBt).show();
@@ -211,6 +214,7 @@ function createElement(info, element) {
     var name = $(info).find("#Name").text();
     var complexity = $(info).find("#Complexity").text();
     var mask = $(info).find("#Mask").text();
+    var xpath = $(info).find("#XPath").text();
 
 
     var obj =
@@ -222,7 +226,8 @@ function createElement(info, element) {
         "Position": position,
         "Complexity": complexity,
         "Parent": element,
-        "Mask": mask
+        "Mask": mask,
+        "XPath":xpath
     }
 
     console.log("LINK ELEMENT");
@@ -273,22 +278,22 @@ function createSimpleMapping(conn, sourceParent, targetParent) {
 
     //get rull based on conn
     var rule = findRuleFromConn(conn);
-    console.log("RULE");
-    console.log(rule);
+    //console.log("RULE");
+    //console.log(rule);
 
     var ruleId = $(rule).attr("id");
-    console.log(ruleId);
+    //console.log(ruleId);
 
 
     regexPattern = $("#" + ruleId).find("#RegExPattern").val();
-    console.log(regexPattern);
+    //console.log(regexPattern);
     var transformationRuleObj = createTransformationRule(trId, regexPattern);
 
     mask = $("#" + ruleId).find("#Mask").val();
     targetObj.Mask = mask;
 
 
-    console.log(transformationRuleObj);
+    //console.log(transformationRuleObj);
 
     //var parent = $(source).parents(".mapping-container")[0];
 
@@ -597,9 +602,11 @@ function reloadAllConnections() {
 function initJSPLUMB(parentid) {
 
     jsPlumb.ready(function() {
-        //console.log("init jsplumb");
+        console.log("init jsplumb");
+        console.log("---------------------");
 
         var instance = window.instance = getInstance(parentid);
+        console.log("instance :");
         console.log(instance);
 
         var init = function(connection) {
@@ -656,6 +663,9 @@ function initJSPLUMB(parentid) {
             // get the list of ".le-mapping-simple-selector-source" elements.            
             var simpleSources = jsPlumb.getSelector("#" + parentid + " .le-mapping-simple-selector-source");
 
+            console.log("simpleSources :");
+            console.log(simpleSources);
+
             instance.makeSource(simpleSources,
             {
                 anchor: "Right",
@@ -667,6 +677,10 @@ function initJSPLUMB(parentid) {
             //set targets
             // get the list of ".le-mapping-simple-selector-source" elements.            
             var simpleTargets = jsPlumb.getSelector("#" + parentid + " .le-mapping-simple-selector-target");
+
+            console.log("simpleTargets :");
+            console.log(simpleTargets);
+
             instance.makeTarget(simpleTargets,
             {
                 anchor: "Left",
@@ -688,7 +702,10 @@ function initJSPLUMB(parentid) {
         });
 
         //jsPlumb.fire("jsPlumbDemoLoaded", instance);
+        console.log("---------------------");
     });
+
+   
 };
 
 function changeViewOfTransformationRule(conn) {
@@ -699,9 +716,18 @@ function changeViewOfTransformationRule(conn) {
 }
 
 function findRuleFromConn(conn) {
+
     var sourceContainer = $("#" + conn.sourceId)[0];
     var source = $(sourceContainer).find(".le-mapping-simple-element")[0];
     var connSoureId = $(source).attr("id");
+
+    //alert("test");
+
+    console.log("*******");
+    console.log(sourceContainer);
+    console.log(source);
+    console.log(connSoureId);
+
 
     var targetContainer = $("#" + conn.targetId)[0];
     var target = $(targetContainer).find(".le-mapping-simple-element")[0];

@@ -9,7 +9,6 @@ namespace BExIS.Security.Services.Utilities
             // BUG: the original method is not working anymore due to the changes inside entities and services.
             // TODO: reimplement the method for the authorization check.
 
-
             // validate the call using the extensibility information (modules, tasks, actions, etc)
             // Call security authorization api utilizing the IoC, Singleton lifetime
             //throw an exception based on the result

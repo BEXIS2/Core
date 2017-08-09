@@ -33,7 +33,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "The Name field is required.",
+                    Message = "The name field is required.",
                     CssId = cssId
                 };
             }
@@ -51,7 +51,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                             return new MessageModel()
                             {
                                 hasMessage = true,
-                                Message = "A Data Structure with same Name already exists.",
+                                Message = "A data structure with same name already exists.",
                                 CssId = cssId
                             };
                         }
@@ -78,7 +78,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     return new MessageModel()
                     {
                         hasMessage = false,
-                        Message = "Are you sure you want to delete the Datastructure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                        Message = "Are you sure you want to delete the data structure " + dataStructure.Name + " (" + dataStructure.Id + ").",
                         CssId = dataStructure.Id.ToString()
                     };
                 }
@@ -89,7 +89,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't delete the Datastructure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                            Message = "Can't delete the data structure " + dataStructure.Name + " (" + dataStructure.Id + ").",
                             CssId = dataStructure.Id.ToString()
                         };
                     }
@@ -98,7 +98,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Datastructure " + Id,
+                            Message = "Something is wrong with data structure " + Id,
                             CssId = "0"
                         };
                     }
@@ -109,7 +109,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "Something is wrong with Datastructure " + Id,
+                    Message = "Something is wrong with data structure " + Id,
                     CssId = "0"
                 };
             }
@@ -133,7 +133,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't save Datastructure " + dataStructure.Name + " (" + Id + "), it's uesed by a Dataset.",
+                            Message = "Can't save data structure " + dataStructure.Name + " (" + Id + "), it's uesed by a Dataset.",
                             CssId = "inUse"
                         };
                     }
@@ -142,7 +142,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Datastructure " + Id,
+                            Message = "Something is wrong with data structure " + Id,
                             CssId = "0"
                         };
                     }
@@ -163,7 +163,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     return new MessageModel()
                     {
                         hasMessage = true,
-                        Message = "Can't store Variable for the Datastructure " + Id + ", it's uesed by a Dataset.",
+                        Message = "Can't store variable for the data structure " + Id + ", it's uesed by a dataset.",
                         CssId = "0"
                     };
                 }
@@ -187,7 +187,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     return new MessageModel()
                     {
                         hasMessage = false,
-                        Message = "Are you sure you want to delete the Variable Temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
+                        Message = "Are you sure you want to delete the variable temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
                         CssId = dataAttribute.Id.ToString()
                     };
                 }
@@ -198,7 +198,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't delete the Variable Temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
+                            Message = "Can't delete the variable temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
                             CssId = dataAttribute.Id.ToString()
                         };
                     }
@@ -207,7 +207,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Variable Temlate " + Id,
+                            Message = "Something is wrong with variable temlate " + Id,
                             CssId = "0"
                         };
                     }
@@ -218,7 +218,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "Something is wrong with Variable Temlate " + Id,
+                    Message = "Something is wrong with variable temlate " + Id,
                     CssId = "0"
                 };
             }
@@ -231,7 +231,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "The Name field is required.",
+                    Message = "The name field is required.",
                     CssId = cssId
                 };
             }
@@ -248,7 +248,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                             return new MessageModel()
                             {
                                 hasMessage = true,
-                                Message = "A Variable Template with same Name already exists.",
+                                Message = "A variable template with same name already exists.",
                                 CssId = cssId
                             };
                         }
@@ -276,7 +276,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't save Variable Template " + dataAttribute.Name + " (" + Id + "), it's uesed by a Data Structure.",
+                            Message = "Can't save variable template " + dataAttribute.Name + " (" + Id + "), it's uesed by a data structure.",
                             CssId = "inUse"
                         };
                     }
@@ -285,7 +285,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Variable Template " + Id,
+                            Message = "Something is wrong with variable template " + Id,
                             CssId = "0"
                         };
                     }
@@ -306,7 +306,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     return new MessageModel()
                     {
                         hasMessage = true,
-                        Message = "Can't save Variable Template " + Id + ", it's uesed by a Data Structure.",
+                        Message = "Can't save variable template " + Id + ", it's uesed by a data structure.",
                         CssId = "0"
                     };
                 }
