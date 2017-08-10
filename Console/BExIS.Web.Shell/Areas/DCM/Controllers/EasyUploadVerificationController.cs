@@ -89,8 +89,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 else
                 {
+                    Boolean hasDatatype = false; //Make sure only units that have at least one datatype are shown
+
                     foreach (DataType dummyDataType in unit.AssociatedDataTypes)
                     {
+                        if (!hasDatatype)
+                            hasDatatype = true;
+
                         DataTypeInfo dataTypeInfo = new DataTypeInfo();
 
                         DataType fullDataType = dataTypeManager.Repo.Get(dummyDataType.Id);
@@ -100,9 +105,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         unitInfo.DataTypeInfos.Add(dataTypeInfo);
                     }
-                    model.AvailableUnits.Add(unitInfo);
+                    if (hasDatatype)
+                        model.AvailableUnits.Add(unitInfo);
                 }
             }
+
+            //Sort the units by name
+            model.AvailableUnits.Sort(delegate (UnitInfo u1, UnitInfo u2)
+            {
+                return String.Compare(u1.Name, u2.Name, StringComparison.InvariantCultureIgnoreCase);
+            });
 
             if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS))
             {
@@ -137,7 +149,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             for (int i = 0; i < model.HeaderFields.Length; i++)
             {
-                UnitInfo currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                //Default unit should be "none" if it exists, otherwise just take the first unit
+                UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+                if (currentUnitInfo != null)
+                {
+                    currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+                }
+                else
+                {
+                    currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                }
+                
                 DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
                 currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
                 ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
@@ -760,7 +782,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         double DummyValue = 0;
                         //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
                         //Should be removed as soon as this is fixed
-                        Boolean skipDataTypeCheck = false;
+                        /*Boolean skipDataTypeCheck = false;
                         if (datatypeName == "Double")
                         {
                             if (!Double.TryParse(vv, out DummyValue))
@@ -778,10 +800,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
                             }
-                        }
+                        }*/
 
-                        if (!skipDataTypeCheck)
-                        {
+                        //if (!skipDataTypeCheck)
+                        //{
                             if (Double.TryParse(vv, out DummyValue))
                             {
                                 if (vv.Contains("."))
@@ -803,7 +825,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
                             }
-                        }
+                        //}
                     }
                 }
             }
