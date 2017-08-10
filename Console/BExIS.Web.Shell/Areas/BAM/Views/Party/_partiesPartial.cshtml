@@ -8,21 +8,23 @@
             .Columns(columns =>
             {
             columns.Bound(c => c.Id);
-           
-                columns.Bound(c => c.StartDate);
-                columns.Bound(c => c.EndDate );
-                columns.Bound(c => c.Name);
-                columns.Bound(c => c.PartyTypeTitle).Title("Type");
-                columns.Template(
-                    @<text>
-                        <div>
-                            @Html.ActionLink(" ", "View", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-show", @style = "color:white;", title = "View Party \"" + item.Name + "\"" })
-                            @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-edit", @style= "color:white;", title = "Edit Party \"" + item.Name + "\"" })
-                            @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-trash ", @style = "color:white;", title = "Delete Party \"" + item.Name + "\"" })
-                        </div>
-                    </text>
-                        ); columns.Template(
-                            @<text>
-                                @(item.IsTemp ? Html.Raw("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' />") : Html.Raw(""))
-                            </text>).Title("Actions required!");
+
+            columns.Bound(c => c.StartDate);
+            columns.Bound(c => c.EndDate);
+            columns.Bound(c => c.Name);
+            columns.Bound(c => c.PartyTypeTitle).Title("Type");
+            columns.Template(
+                @<text>
+                    <div>
+                        @Html.ActionLink(" ", "View", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-show", @style = "color:white;", title = "View Party \"" + item.Name + "\"" })
+                        @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-edit", @style = "color:white;", title = "Edit Party \"" + item.Name + "\"" })
+                        @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-trash ", @style = "color:white;", title = "Delete Party \"" + item.Name + "\"" })
+                    </div>
+                </text>
+                        ).ClientTemplate("<div><a title=\"View Party\" style=\"color: white; \" href=\"/BAM/Party/View/<#= Id #>\" class=\"bx bx-grid-function bx-show\"> </a><a title=\"Edit Party\" style=\"color:white;\" href=\"/BAM/Party/CreateEdit/<#= Id #>\" class=\"bx bx-grid-function bx-edit\"> </a><a title=\"Delete Party\" style=\"color:white;\" href=\"/BAM/Party/DeleteConfirm/<#= Id #>\" class=\"bx bx-grid-function bx-trash \"> </a></div>");
+            columns.Template(
+                @<text>
+                    @(item.IsTemp ? Html.Raw("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' />") : Html.Raw(""))
+                </text>).ClientTemplate("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' <#= IsTemp==false ? \"style='display:none;'\" :\"''\" #>  />")
+                     .Title("Actions required!");
             }))

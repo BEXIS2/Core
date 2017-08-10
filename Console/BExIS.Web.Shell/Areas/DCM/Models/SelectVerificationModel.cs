@@ -3,6 +3,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
 using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Web.Shell.Areas.DCM.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {

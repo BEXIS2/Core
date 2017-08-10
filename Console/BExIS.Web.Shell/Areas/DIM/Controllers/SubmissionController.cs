@@ -410,7 +410,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "datastructure", ".txt");
                             string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
 
-                            string json = OutputDataStructureManager.GetDataStructureAsJson(datasetId);
+                            string json = OutputDataStructureManager.GetVariableListAsJson(datasetId);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
 

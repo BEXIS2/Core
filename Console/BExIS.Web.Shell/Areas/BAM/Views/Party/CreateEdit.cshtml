@@ -111,7 +111,7 @@
 
     <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
         <button type="submit" id="submitBtn" class="bx-button action" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
-        @Html.ActionLink("Cancel", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
+        @Html.ActionLink("Back to party manager", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
     </div>
 }
 
@@ -133,6 +133,16 @@
             $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
             return false;
         }
+        else if ('@createMode'=='True' && !validationError)
+        {
+            if(partyTabStrip.getSelectedTabIndex()==0)
+            {
+                var customAttrTab=$(".t-item", partyTabStrip.element)[1];
+                partyTabStrip.select(customAttrTab);
+                $("#submitBtn").html("Save");
+                return false;
+            }
+        }
         else
         {
             var $form = $("#frmParty");
@@ -147,16 +157,7 @@
                     return false;
                 }
             });
-            if ('@createMode'=='True' && !validationError)
-            {
-                if(partyTabStrip.getSelectedTabIndex()==0)
-                {
-                    var customAttrTab=$(".t-item", partyTabStrip.element)[1];
-                    partyTabStrip.select(customAttrTab);
-                    $("#submitBtn").html("Save");
-                    return false;
-                }
-            }
+         
             return true;
         }
     }

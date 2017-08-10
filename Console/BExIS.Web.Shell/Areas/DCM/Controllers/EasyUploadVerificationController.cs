@@ -20,6 +20,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Dcm.UI.Helpers;
 using System.Globalization;
 using BExIS.Utils.Models;
+using BExIS.Web.Shell.Areas.DCM.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
