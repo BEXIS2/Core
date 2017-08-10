@@ -133,6 +133,16 @@
             $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
             return false;
         }
+        else if ('@createMode'=='True' && !validationError)
+        {
+            if(partyTabStrip.getSelectedTabIndex()==0)
+            {
+                var customAttrTab=$(".t-item", partyTabStrip.element)[1];
+                partyTabStrip.select(customAttrTab);
+                $("#submitBtn").html("Save");
+                return false;
+            }
+        }
         else
         {
             var $form = $("#frmParty");
@@ -147,16 +157,7 @@
                     return false;
                 }
             });
-            if ('@createMode'=='True' && !validationError)
-            {
-                if(partyTabStrip.getSelectedTabIndex()==0)
-                {
-                    var customAttrTab=$(".t-item", partyTabStrip.element)[1];
-                    partyTabStrip.select(customAttrTab);
-                    $("#submitBtn").html("Save");
-                    return false;
-                }
-            }
+         
             return true;
         }
     }
