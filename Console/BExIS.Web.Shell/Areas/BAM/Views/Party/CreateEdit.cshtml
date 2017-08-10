@@ -111,7 +111,7 @@
 
     <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
         <button type="submit" id="submitBtn" class="bx-button action" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
-        @Html.ActionLink("Cancel", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
+        @Html.ActionLink("Back to party manager", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
     </div>
 }
 
