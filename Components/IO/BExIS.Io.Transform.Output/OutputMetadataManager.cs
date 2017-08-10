@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Utils.Cfg;
-using System.IO;
-using System.Net;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
+using BExIS.Xml.Helpers.Mapping;
+using System;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -51,7 +47,7 @@ namespace BExIS.IO.Transform.Output
 
                 return ex.Message;
             }
-           
+
         }
 
         public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
@@ -75,10 +71,10 @@ namespace BExIS.IO.Transform.Output
                 // store in content descriptor
                 if (storing)
                 {
-                    if(String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
+                    if (String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
                         storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
                     else
-                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_"+ mappingName, ".xml");
+                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_" + mappingName, ".xml");
 
                 }
 
@@ -105,7 +101,7 @@ namespace BExIS.IO.Transform.Output
                 string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
                     metadataStructure.Name);
 
-                if(!String.IsNullOrEmpty(path) && Directory.Exists(path))
+                if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
                     return path;
             }
             catch (Exception ex)
@@ -136,6 +132,79 @@ namespace BExIS.IO.Transform.Output
             }
 
             return String.Empty;
+        }
+
+        /// <summary>
+        /// Returns the full path for a xmlmetadata xml is exist
+        /// </summary>
+        /// <param name="datasetVersionId"></param>
+        /// <returns></returns>
+        public static string GetMetadataPath(long datasetVersionId)
+        {
+            string path = "";
+
+            DatasetManager datasetManager = new DatasetManager();
+            ContentDescriptor contentDescriptor = datasetManager.GetDatasetLatestVersion(datasetVersionId).
+                ContentDescriptors.ToList().FirstOrDefault(c => c.Name.Equals("metadata"));
+
+            if (contentDescriptor != null)
+            {
+                path = Path.Combine(AppConfiguration.DataPath, contentDescriptor.URI);
+
+                if (FileHelper.FileExist(path))
+                    return path;
+            }
+
+            return "";
+        }
+
+        public static string CreateConvertedMetadata(long datasetId, TransmissionType type)
+        {
+            XmlDocument newXml;
+            try
+            {
+
+
+                DatasetManager datasetManager = new DatasetManager();
+                MetadataStructureManager metadataMetadataStructureManager = new MetadataStructureManager();
+
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                MetadataStructure metadataStructure = metadataMetadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
+
+                string mappingName = metadataStructure.Name;
+
+                string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+                string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
+
+                XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
+                xmlMapperManager.Load(pathMappingFile, "exporttest");
+
+                newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
+
+                string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+
+                // store in content descriptor
+                string filename = "metadata";
+                if (String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
+                {
+                    storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, filename, ".xml");
+                }
+                else
+                {
+                    filename = "metadata_" + mappingName;
+                    storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, filename,
+                        ".xml");
+                }
+
+                return OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, filename, ".xml");
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return "";
         }
 
         private static void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)

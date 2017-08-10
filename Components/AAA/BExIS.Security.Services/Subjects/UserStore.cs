@@ -33,6 +33,7 @@ namespace BExIS.Security.Services.Subjects
             user.Logins.Add(new Login()
             {
                 ProviderKey = login.ProviderKey,
+
                 LoginProvider = login.LoginProvider
             });
 

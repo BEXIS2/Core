@@ -27,14 +27,13 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public Feature Create(string name, string description, Feature parent = null, bool isPublic = false)
+        public Feature Create(string name, string description, Feature parent = null)
         {
             var feature = new Feature()
             {
                 Name = name,
                 Description = description,
-                Parent = parent,
-                IsPublic = isPublic
+                Parent = parent
             };
 
             using (var uow = this.GetUnitOfWork())
