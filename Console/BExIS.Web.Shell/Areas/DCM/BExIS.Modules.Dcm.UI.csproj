@@ -159,7 +159,6 @@
     <Compile Include="Controllers\EasyUploadSelectAreasController.cs" />
     <Compile Include="Controllers\EasyUploadSheetDataStructureController.cs" />
     <Compile Include="Controllers\EasyUploadSheetSelectMetaDataController.cs" />
-    <Compile Include="Controllers\EasyUploadSuggestion.cs" />
     <Compile Include="Controllers\EasyUploadSummaryController.cs" />
     <Compile Include="Controllers\EasyUploadVerificationController.cs" />
     <Compile Include="Controllers\FormController.cs" />
@@ -453,6 +452,7 @@
     </Content>
     <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
+    <Content Include="Scripts\Form.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -517,7 +517,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
