@@ -1,4 +1,5 @@
 ﻿using BExIS.Ext.Services;
+using BExIS.Web.Shell.Helpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -85,8 +86,8 @@ namespace BExIS.Web.Shell
 
         private void initModules()
         {
-           ModuleManager.InitModules(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml"), GlobalConfiguration.Configuration); // this should be called before RegisterAllAreas
-          //AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); 
+            ModuleManager.InitModules(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml"), GlobalConfiguration.Configuration); // this should be called before RegisterAllAreas
+                                                                                                                                        //AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); 
         }
 
         private void initPersistence()
@@ -103,6 +104,7 @@ namespace BExIS.Web.Shell
             // Installation means, the modules' Install method is called, which usually generates the seed data
             if (AppConfiguration.CreateDatabase)
             {
+                SeedDataGenerator.Init();
                 installModuleOnFreshDatabase();
             }
             // if there are pending modules, their schema (if exists) must be applied.

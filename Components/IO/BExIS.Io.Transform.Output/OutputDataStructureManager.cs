@@ -99,6 +99,145 @@ namespace BExIS.IO.Transform.Output
             }
         }
     }
+
+    public class VariableElement
+    {
+        public long Id { get; set; }
+        public string Label { get; set; }
+        public string Description { get; set; }
+        public bool isOptional { get; set; }
+        public UnitElement unit { get; set; }
+        public DataTypeElement dataType { get; set; }
+
+        public VariableElement(Variable variable)
+        {
+
+            Id = variable.Id;
+            Label = variable.Label;
+            Description = variable.Description;
+            isOptional = variable.IsValueOptional;
+            unit = new UnitElement(variable.Unit.Id);
+            dataType = new DataTypeElement(variable.DataAttribute.DataType.Id);
+        }
+
+    }
+
+    public class UnitElement
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DimensionElement Dimension { get; set; }
+        public string MeasurementSystem { get; set; }
+
+        public UnitElement(long unitId)
+        {
+            UnitManager um = new UnitManager();
+            Unit unit = um.Repo.Get(unitId);
+            var dim = um.DimensionRepo.Get(unit.Dimension.Id);
+
+            Id = unit.Id;
+            Name = unit.Name;
+            Description = unit.Description;
+            Dimension = new DimensionElement(dim.Name, dim.Description, dim.Specification);
+            MeasurementSystem = unit.MeasurementSystem.ToString();
+        }
+
+    }
+
+    public class DimensionElement
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Specification { get; set; }
+
+        public DimensionElement(string name, string description, string specification)
+        {
+            Name = name;
+            Description = description;
+            Specification = specification;
+        }
+
+    }
+
+    public class DataTypeElement
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string SystemType { get; set; }
+
+        public DataTypeElement(long dataTypeId)
+        {
+            DataTypeManager dtm = new DataTypeManager();
+            Dlm.Entities.DataStructure.DataType dataType = dtm.Repo.Get(dataTypeId);
+            Id = dataType.Id;
+            Name = dataType.Name;
+            Description = dataType.Description;
+            SystemType = dataType.SystemType;
+
+        }
+    }
+
+    public class DataStructureDataList
+    {
+
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool inUse { get; set; }
+        public bool Structured { get; set; }
+        public List<VariableElement> Variables { get; set; }
+
+        public DataStructureDataList()
+        {
+            this.Id = 0;
+            this.Title = null;
+            this.Description = null;
+            this.inUse = false;
+            this.Structured = false;
+            this.Variables = new List<VariableElement>();
+        }
+
+        public DataStructureDataList(long datasetId) : this()
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            var dataset = datasetManager.DatasetRepo.Get(datasetId);
+            if (dataset != null && dataset.DataStructure.Id != 0)
+            {
+                DataStructureManager dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(dataset.DataStructure.Id);
+                if (dataStructure != null)
+                {
+                    this.Id = dataStructure.Id;
+                    this.Title = dataStructure.Name;
+                    this.Description = dataStructure.Description;
+
+                    if (dataStructure.Datasets.Count > 0)
+                        this.inUse = true;
+                    else
+                        this.inUse = false;
+
+                    this.Structured = false;
+                    this.Variables = new List<VariableElement>();
+
+                    if (dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id) != null)
+                    {
+                        StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
+                        this.Structured = true;
+                        foreach (Variable vs in structuredDataStructure.Variables)
+                        {
+                            vs.Materialize();
+                            this.Variables.Add(new VariableElement(vs));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
     public class OutputDataStructureManager
     {
         /// <summary>
@@ -113,6 +252,12 @@ namespace BExIS.IO.Transform.Output
         {
             return JsonConvert.SerializeObject(new DataStructureDataTable(datasetId));
         }
+
+        public static string GetVariableListAsJson(long datasetId)
+        {
+            return JsonConvert.SerializeObject(new DataStructureDataList(datasetId));
+        }
+
         public static string GenerateDataStructure(long datasetId)
         {
             string path = "";

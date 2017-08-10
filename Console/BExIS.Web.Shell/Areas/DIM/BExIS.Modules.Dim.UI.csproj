@@ -596,6 +596,9 @@
     <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\DIM.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
+    <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
+    <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
