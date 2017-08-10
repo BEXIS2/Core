@@ -2,7 +2,6 @@
 using BExIS.Security.Services.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security.DataProtection;
 using System;
 
 namespace BExIS.Security.Services.Subjects
@@ -38,12 +37,11 @@ namespace BExIS.Security.Services.Subjects
             EmailService = new EmailService();
 
             var dataProtectionProvider = Auth.DataProtectionProvider;
-            if (dataProtectionProvider != null)
-            {
-                IDataProtector dataProtector = dataProtectionProvider.Create("ASP.NET Identity");
 
-                UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
-            }
+            if (dataProtectionProvider == null) return;
+
+            var dataProtector = dataProtectionProvider.Create("ASP.NET Identity");
+            UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
         }
     }
 }
