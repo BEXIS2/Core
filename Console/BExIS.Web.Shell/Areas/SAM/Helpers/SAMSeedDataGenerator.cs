@@ -1,8 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Modules.Sam.UI.Helpers
 {
@@ -25,14 +22,8 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
             //#region Security
 
-            //// Entities
-            var entityManager = new EntityManager();
-            entityManager.Create(new Entity() { EntityType = typeof(Dataset), EntityStoreType = typeof(DatasetStore), Securable = true, UseMetadata = true });
 
             //// Groups
-            var groupManager = new GroupManager();
-            groupManager.Create(new Group() { Name = "everyone", Description = "everyone group", IsValid = true, GroupType = GroupType.Public });
-            groupManager.Create(new Group() { Name = "Admin", Description = "Admin" });
 
             //// Features
 

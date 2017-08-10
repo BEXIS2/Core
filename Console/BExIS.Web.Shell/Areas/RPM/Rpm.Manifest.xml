@@ -18,6 +18,13 @@
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
             extends="./menubarRoot/Planing"/>
+    
+    <Export tag="lunchbar" id="helpRpm" order="1"
+        title="Data Planning" description="Data Planning Help Manual" icon=""
+        controller="Help" action="index"
+        extends="./lunchbarRoot/help"
+            />
+    
     <Export tag="settings" id="ManageVariableTemplates" order="1"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
             controller="DataAttribute" action="AttributeManager" argument=""

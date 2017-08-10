@@ -23,7 +23,6 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         public string Description { get; set; }
         public string GroupName { get; set; }
-        public GroupType GroupType { get; set; }
         public bool HasFeaturePermission { get; set; }
         public long Id { get; set; }
 
@@ -32,7 +31,6 @@ namespace BExIS.Modules.Sam.UI.Models
             return new GroupFeaturePermissionGridRowModel()
             {
                 Description = group.Description,
-                GroupType = group.GroupType,
                 GroupName = group.Name,
                 Id = group.Id,
             };
@@ -43,7 +41,6 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         public string Description { get; set; }
         public string GroupName { get; set; }
-        public GroupType GroupType { get; set; }
         public long Id { get; set; }
 
         public static GroupGridRowModel Convert(Group group)
@@ -52,7 +49,6 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Description = group.Description,
                 GroupName = group.Name,
-                GroupType = group.GroupType,
                 Id = group.Id
             };
         }
@@ -61,7 +57,6 @@ namespace BExIS.Modules.Sam.UI.Models
     public class GroupMembershipGridRowModel
     {
         public string Description { get; set; }
-        public GroupType GroupType { get; set; }
         public long Id { get; set; }
         public bool IsUserInGroup { get; set; }
         public string Name { get; set; }
@@ -72,7 +67,6 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Description = group.Description,
                 Name = group.Name,
-                GroupType = group.GroupType,
                 Id = group.Id,
                 IsUserInGroup = group.Users.Any(u => u.Id == userId)
             };
@@ -96,8 +90,7 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Id = group.Id,
                 Name = group.Name,
-                Description = group.Description,
-                GroupType = (int)group.GroupType
+                Description = group.Description
             };
         }
     }

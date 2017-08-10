@@ -36,19 +36,6 @@
         return $('#treeView_features').data('tTreeView');
     }
 
-    function treeView_features_onChecked(e) {
-        if (e.checked) {
-            $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")', { FeatureId: getTreeView().getItemValue(e.item) }, function () {
-                getTreeView().dataSource.read();
-            });
-        } else {
-            $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")', { FeatureId: getTreeView().getItemValue(e.item) }, function () {
-                getTreeView().dataSource.read();
-            });
-        }
-
-    }
-
     function treeView_features_onSelect(e) {
         var featureId = getTreeView().getItemValue(e.item);
 
