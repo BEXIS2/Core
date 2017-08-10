@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Xml.Helpers;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
 /// <summary>
@@ -23,7 +23,7 @@ namespace BExIS.IO.Transform.Output
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class AsciiWriter:DataWriter
+    public class AsciiWriter : DataWriter
     {
         /// <summary>
         ///
@@ -58,7 +58,7 @@ namespace BExIS.IO.Transform.Output
 
         public static string CreateFile(string filepath)
         {
-            string dataPath = Path.Combine(AppConfiguration.DataPath,filepath);
+            string dataPath = Path.Combine(AppConfiguration.DataPath, filepath);
 
             try
             {
@@ -157,7 +157,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuples(DatasetManager datasetManager,List<long> dataTuplesIds, string filePath, long dataStructureId)
+        public List<Error> AddDataTuples(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId)
         {
             if (File.Exists(filePath))
             {
@@ -216,9 +216,9 @@ namespace BExIS.IO.Transform.Output
         {
             //DatatupleManager
             DatasetManager datasetManager = new DatasetManager();
-            
+
             // I do not know where this function is called, but there is a chance that the id is referring to a tuple in a previous version, in that case, the tuple is not in the data tuples anymore. Javad
-            DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(id)).FirstOrDefault();
+            DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(id)).FirstOrDefault();
             dataTuple.Materialize();
 
             #region ToDo David check the code inside
@@ -292,7 +292,7 @@ namespace BExIS.IO.Transform.Output
 
                     VariableValue vv = dataTuple.VariableValues.Where(v => v.Variable.Id.Equals(vi.id)).FirstOrDefault();
 
-                    if (vv !=null && vv.Value != null)
+                    if (vv != null && vv.Value != null)
                     {
                         string format = GetStringFormat(dataType);
                         if (!string.IsNullOrEmpty(format))
@@ -307,16 +307,16 @@ namespace BExIS.IO.Transform.Output
                     builder.Append(AsciiHelper.GetSeperator(Delimeter));
                 // Implement special handling for values that contain comma or quote
                 // Enclose in quotes and double up any double quotes
-                if (value.IndexOfAny(new char[] {'"', ','}) != -1)
+                if (value.IndexOfAny(new char[] { '"', ',' }) != -1)
                     builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
                 else
                     builder.Append(value);
                 first = false;
             }
-  
+
             return builder.ToString();
         }
-        
+
         /// <summary>
         /// Convert Datastructure to a String line
         /// </summary>
@@ -339,7 +339,7 @@ namespace BExIS.IO.Transform.Output
                     variables = GetSubsetOfVariables(ds.Variables.ToList(), VisibleColumns);
                 }
 
-                variables = SortVariablesOnDatastructure(variables, ds);
+                variables = variables.OrderBy(v => v.OrderNo).ToList();
 
                 foreach (Variable v in variables)
                 {
@@ -382,8 +382,8 @@ namespace BExIS.IO.Transform.Output
             foreach (XElement element in elements)
             {
                 long id = Convert.ToInt64(element.Value);
-                Variable var =variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
-                if(var !=null)
+                Variable var = variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
+                if (var != null)
                     sortedVariables.Add(var);
             }
 
