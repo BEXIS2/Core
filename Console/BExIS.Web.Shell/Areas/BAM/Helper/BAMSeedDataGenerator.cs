@@ -145,7 +145,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                 });
                             }
                         }
-                        if (!customAttrs.Any(c => c.IsMain))
+                        if (!customAttrs.Any(c => c.IsMain) && !partyType.CustomAttributes.Any(c => c.IsMain))
                             throw new Exception("There is no main field. Each party type needs at least one main field.");
                         foreach (var customAttr in customAttrs)
                             partyTypeManager.CreatePartyCustomAttribute(customAttr);
