@@ -9,7 +9,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IUserTwoFactorStore<User, long>, IQueryableUserStore<User, long>
+    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IQueryableUserStore<User, long>
     {
         public UserStore()
         {
@@ -30,6 +30,7 @@ namespace BExIS.Security.Services.Subjects
             user.Logins.Add(new Login()
             {
                 ProviderKey = login.ProviderKey,
+
                 LoginProvider = login.LoginProvider
             });
 
@@ -263,12 +264,6 @@ namespace BExIS.Security.Services.Subjects
         public Task SetSecurityStampAsync(User user, string stamp)
         {
             user.SecurityStamp = stamp;
-            return Task.FromResult(0);
-        }
-
-        public Task SetTwoFactorEnabledAsync(User user, bool enabled)
-        {
-            user.IsTwoFactorEnabled = enabled;
             return Task.FromResult(0);
         }
 

@@ -23,9 +23,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -521,11 +523,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
             //Reindex search
-            /*if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+            if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
             {
 
                 this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
-            }*/
+            }
 
             TaskManager.AddToBus(EasyUploadTaskManager.DATASET_ID, ds.Id);
 
