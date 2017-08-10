@@ -203,7 +203,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             EntityManager entityManager = new EntityManager();
 
-            return entityManager.Entities.Where(e => e.UseMetadata).Select(e =>
+            return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
                       new EntityModel()
                       {
                           Name = e.Name,

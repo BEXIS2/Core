@@ -159,7 +159,6 @@
     <Compile Include="Controllers\EasyUploadSelectAreasController.cs" />
     <Compile Include="Controllers\EasyUploadSheetDataStructureController.cs" />
     <Compile Include="Controllers\EasyUploadSheetSelectMetaDataController.cs" />
-    <Compile Include="Controllers\EasyUploadSuggestion.cs" />
     <Compile Include="Controllers\EasyUploadSummaryController.cs" />
     <Compile Include="Controllers\EasyUploadVerificationController.cs" />
     <Compile Include="Controllers\FormController.cs" />
