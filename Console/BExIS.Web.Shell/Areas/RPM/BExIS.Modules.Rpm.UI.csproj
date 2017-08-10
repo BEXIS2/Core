@@ -159,6 +159,24 @@
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\Images\Help\Help_img1.jpeg" />
+    <Content Include="Content\Images\Help\Help_img10.png" />
+    <Content Include="Content\Images\Help\Help_img11.jpeg" />
+    <Content Include="Content\Images\Help\Help_img12.png" />
+    <Content Include="Content\Images\Help\Help_img13.png" />
+    <Content Include="Content\Images\Help\Help_img14.png" />
+    <Content Include="Content\Images\Help\Help_img15.jpeg" />
+    <Content Include="Content\Images\Help\Help_img16.png" />
+    <Content Include="Content\Images\Help\Help_img17.png" />
+    <Content Include="Content\Images\Help\Help_img18.png" />
+    <Content Include="Content\Images\Help\Help_img2.jpeg" />
+    <Content Include="Content\Images\Help\Help_img3.jpeg" />
+    <Content Include="Content\Images\Help\Help_img4.jpeg" />
+    <Content Include="Content\Images\Help\Help_img5.jpeg" />
+    <Content Include="Content\Images\Help\Help_img6.png" />
+    <Content Include="Content\Images\Help\Help_img7.jpeg" />
+    <Content Include="Content\Images\Help\Help_img8.png" />
+    <Content Include="Content\Images\Help\Help_img9.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
