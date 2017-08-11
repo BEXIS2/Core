@@ -52,7 +52,7 @@ namespace BExIS.Web.Shell.Controllers
 
             // Benutzer mit diesem externen Anmeldeanbieter anmelden, wenn der Benutzer bereits eine Anmeldung besitzt
             var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
-            var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await signInManager.ExternalSignInAsync(loginInfo, false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -61,10 +61,6 @@ namespace BExIS.Web.Shell.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
 
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-
-                case SignInStatus.Failure:
                 default:
                     // Benutzer auffordern, ein Konto zu erstellen, wenn er kein Konto besitzt
                     ViewBag.ReturnUrl = returnUrl;
@@ -102,7 +98,7 @@ namespace BExIS.Web.Shell.Controllers
                     if (result.Succeeded)
                     {
                         var signInManager = new SignInManager(userManager, AuthenticationManager);
-                        await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await signInManager.SignInAsync(user, false, false);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -187,9 +183,21 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
 
-            // Anmeldefehler werden bezüglich einer Kontosperre nicht gezählt.
-            // Wenn Sie aktivieren möchten, dass Kennwortfehler eine Sperre auslösen, ändern Sie in "shouldLockout: true".
-            var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
+            // Require the user to have a confirmed email before they can log on.
+            var userManager = new UserManager(new UserStore());
+            var user = await userManager.FindByNameAsync(model.UserName);
+            if (user != null)
+            {
+                if (!await userManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    ViewBag.errorMessage = "You must have a confirmed email to log in.";
+                    return View("Error");
+                }
+            }
+
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var signInManager = new SignInManager(userManager, AuthenticationManager);
             var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
@@ -199,12 +207,8 @@ namespace BExIS.Web.Shell.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
 
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-
-                case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Ungültiger Anmeldeversuch.");
+                    ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
         }
@@ -241,21 +245,21 @@ namespace BExIS.Web.Shell.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    var signInManager = new SignInManager(userManager, AuthenticationManager);
-                    await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    //var signInManager = new SignInManager(userManager, AuthenticationManager);
+                    //await signInManager.SignInAsync(user, false, false);
 
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Konto bestätigen", "Bitte bestätigen Sie Ihr Konto. Klicken Sie dazu <a href=\"" + callbackUrl + "\">hier</a>");
+                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
+                    await userManager.SendEmailAsync(user.Id, "Confirm your account", $"Please confirm your account by clicking this link <a href=\"{callbackUrl}\">hier</a>");
 
                     return RedirectToAction("Index", "Home");
                 }
+
                 AddErrors(result);
             }
 
-            // Wurde dieser Punkt erreicht, ist ein Fehler aufgetreten; Formular erneut anzeigen.
             return View(model);
         }
 
