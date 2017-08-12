@@ -93,7 +93,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var featureManager = new FeatureManager();
             var feature = featureManager.FindById(featureId);
-            feature.IsPublic = false;
             featureManager.Update(feature);
         }
 

@@ -25,39 +25,15 @@ namespace BExIS.Security.Services.Authorization
         public IReadOnlyRepository<Operation> OperationRepository { get; }
         public IReadOnlyRepository<Subject> SubjectRepository { get; }
 
-        /// <summary>
-        /// This method creates a feature permission with no subject.
-        /// </summary>
-        /// <param name="featureId"></param>
-        /// <param name="permissionType"></param>
-        public void Create(long featureId, PermissionType permissionType)
-        {
-            if (Exists(null, featureId, permissionType)) return;
-
-            var featurePermission = new FeaturePermission()
-            {
-                Subject = null,
-                Feature = FeatureRepository.Get(featureId),
-                PermissionType = permissionType
-            };
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                featurePermissionRepository.Put(featurePermission);
-                uow.Commit();
-            }
-        }
-
-        public void Create(long subjectId, long featureId, PermissionType permissionType)
+        public void Create(long? subjectId, long featureId, PermissionType permissionType)
         {
             if (Exists(subjectId, featureId, permissionType)) return;
 
-            var featurePermission = new FeaturePermission()
+            var featurePermission = new FeaturePermission
             {
-                Subject = SubjectRepository.Get(subjectId),
                 Feature = FeatureRepository.Get(featureId),
-                PermissionType = permissionType
+                PermissionType = permissionType,
+                Subject = subjectId == null ? null : SubjectRepository.Get(subjectId).FirstOrDefault()
             };
 
             using (var uow = this.GetUnitOfWork())
