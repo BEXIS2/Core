@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Manifest moduleId="Shell" displayName="BEXIS" version="2.10.0" builtin="true">
+<Manifest moduleId="Shell" displayName="BEXIS" version="2.11.0" builtin="true">
   <Description>
     Research Data Management Platform
   </Description>
