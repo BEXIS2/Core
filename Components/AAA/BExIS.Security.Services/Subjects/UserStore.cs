@@ -9,7 +9,10 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IUserTwoFactorStore<User, long>, IQueryableUserStore<User, long>
+    /// <summary>
+    ///
+    /// </summary>
+    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IQueryableUserStore<User, long>
     {
         public UserStore()
         {
@@ -30,6 +33,7 @@ namespace BExIS.Security.Services.Subjects
             user.Logins.Add(new Login()
             {
                 ProviderKey = login.ProviderKey,
+
                 LoginProvider = login.LoginProvider
             });
 
@@ -150,7 +154,7 @@ namespace BExIS.Security.Services.Subjects
 
             if (user.LockoutEndDate.HasValue)
             {
-                DateTime? lockoutEndDate = user.LockoutEndDate;
+                var lockoutEndDate = user.LockoutEndDate;
                 dateTimeOffset = new DateTimeOffset(DateTime.SpecifyKind(lockoutEndDate.Value, DateTimeKind.Utc));
             }
             else
@@ -173,11 +177,6 @@ namespace BExIS.Security.Services.Subjects
         public Task<string> GetSecurityStampAsync(User user)
         {
             return Task.FromResult(user.SecurityStamp);
-        }
-
-        public Task<bool> GetTwoFactorEnabledAsync(User user)
-        {
-            return Task.FromResult(user.IsTwoFactorEnabled);
         }
 
         public Task<bool> HasPasswordAsync(User user)
@@ -263,12 +262,6 @@ namespace BExIS.Security.Services.Subjects
         public Task SetSecurityStampAsync(User user, string stamp)
         {
             user.SecurityStamp = stamp;
-            return Task.FromResult(0);
-        }
-
-        public Task SetTwoFactorEnabledAsync(User user, bool enabled)
-        {
-            user.IsTwoFactorEnabled = enabled;
             return Task.FromResult(0);
         }
 
