@@ -10,6 +10,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         public string JsonTableData { get; set; }
         public List<string> DataArea { get; set; }
         public string HeaderArea { get; set; }
+        public bool isJsonMaxLengthExceeded { get; set; }
 
         public List<Error> ErrorList { get; set; }
 
