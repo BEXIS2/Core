@@ -37,7 +37,7 @@ namespace BExIS.Security.Services.Authorization
                 // Workaround:
                 // FirstOrDefault may is not the proper method to call. But this is necessary because of possible empty call to "Get()"
                 // because subjectId can be null.
-                Subject = subjectId == null ? null : SubjectRepository.Get(subjectId).FirstOrDefault()
+                Subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault()
             };
 
             using (var uow = this.GetUnitOfWork())

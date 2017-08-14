@@ -51,6 +51,7 @@
 
 @(Html.Telerik().TreeView()
       .Name("treeView_features")
+      .ShowCheckBox(true)
       .BindTo(Model, mappings =>
       {
           mappings.For<FeatureTreeViewModel>(binding => binding
