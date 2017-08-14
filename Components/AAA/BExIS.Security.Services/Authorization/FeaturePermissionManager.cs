@@ -33,6 +33,10 @@ namespace BExIS.Security.Services.Authorization
             {
                 Feature = FeatureRepository.Get(featureId),
                 PermissionType = permissionType,
+                // Sven
+                // Workaround:
+                // FirstOrDefault may is not the proper method to call. But this is necessary because of possible empty call to "Get()"
+                // because subjectId can be null.
                 Subject = subjectId == null ? null : SubjectRepository.Get(subjectId).FirstOrDefault()
             };
 
