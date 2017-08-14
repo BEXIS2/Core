@@ -254,7 +254,9 @@ namespace BExIS.Web.Shell.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
                     await userManager.SendEmailAsync(user.Id, "Confirm your account", $"Please confirm your account by clicking this link <a href=\"{callbackUrl}\">hier</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+
+                    return View("Info");
                 }
 
                 AddErrors(result);
