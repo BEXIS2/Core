@@ -59,12 +59,14 @@
               {
                   item.Text = feature.FeatureName;
                   item.Value = feature.Id.ToString();
+                  item.Checked = feature.IsPublic;
                   item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
               })
               .Children(feature => feature.Children));
       })
       .ClientEvents(events => events
-          .OnSelect("treeView_features_onSelect")
+        .OnChecked("treeView_features_onChecked")
+        .OnSelect("treeView_features_onSelect")
       )
 
       .ExpandAll(true)

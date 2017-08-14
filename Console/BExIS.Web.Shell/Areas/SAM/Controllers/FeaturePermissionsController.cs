@@ -25,6 +25,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             if (!featurePermissionManager.Exists(null, featureId))
             {
+                featurePermissionManager.Create(null, featureId, PermissionType.Grant);
             }
         }
 
@@ -91,9 +92,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="featureId"></param>
         public void RemoveFeatureFromPublic(long featureId)
         {
-            var featureManager = new FeatureManager();
-            var feature = featureManager.FindById(featureId);
-            featureManager.Update(feature);
+            var featurePermissionManager = new FeaturePermissionManager();
+
+            if (featurePermissionManager.Exists(null, featureId))
+            {
+                featurePermissionManager.Delete(null, featureId);
+            }
         }
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Delete(long subjectId, long featureId)
+        public void Delete(long? subjectId, long featureId)
         {
             var featurePermission = Find(subjectId, featureId);
 
