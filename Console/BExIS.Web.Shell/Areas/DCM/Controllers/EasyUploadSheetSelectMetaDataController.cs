@@ -87,6 +87,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.ErrorList.Add(new Error(ErrorType.Other, "No Metadata schema is selected."));
                 }
 
+                //If the user typed in a title, the title must not be empty
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE)){
+                    string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                    if (String.IsNullOrWhiteSpace(tmp))
+                    {
+                        TaskManager.Current().SetValid(false);
+                        model.ErrorList.Add(new Error(ErrorType.Other, "The title must not be empty."));
+                    }
+                }
+
                 if (TaskManager.Current().valid == true) //Jump to next step of the upload
                 {
                     TaskManager.AddExecutedStep(TaskManager.Current());

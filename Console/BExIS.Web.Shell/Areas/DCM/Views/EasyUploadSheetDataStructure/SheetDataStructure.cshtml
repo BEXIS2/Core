@@ -13,6 +13,14 @@
 
 <script>
     $(document).ready(function () {
+        //Destroy the handsontable from the next step (happens when clicking the "prev" button) because it's causing performance problems
+        if (typeof hotActive != 'undefined') {
+            if (hotActive) {
+                hot.destroy();
+                hotActive = false;
+            }
+        }
+
         var selectedValue = "@(preselect)";
 
         if (selectedValue.length > 0) {

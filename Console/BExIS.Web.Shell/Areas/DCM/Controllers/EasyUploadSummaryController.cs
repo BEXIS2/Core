@@ -57,6 +57,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
             {
                 model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
+
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                {
+                    string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                    if (!String.IsNullOrWhiteSpace(tmp))
+                    {
+                        model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                    }
+                }
             }
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
@@ -232,7 +241,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
             {
-                title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                if (!String.IsNullOrWhiteSpace(tmp))
+                {
+                    title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                }
             }
 
             StructuredDataStructure sds = dsm.CreateStructuredDataStructure(title, title + " " + timestamp, "", "", DataStructureCategory.Generic);
