@@ -21,10 +21,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="featureId"></param>
         public void AddFeatureToPublic(long featureId)
         {
-            var featureManager = new FeatureManager();
-            var feature = featureManager.FindById(featureId);
-            //feature.IsPublic = true;
-            featureManager.Update(feature);
+            var featurePermissionManager = new FeaturePermissionManager();
+
+            if (!featurePermissionManager.Exists(null, featureId))
+            {
+                featurePermissionManager.Create(null, featureId, PermissionType.Grant);
+            }
         }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="subjectId"></param>
         /// <param name="featureId"></param>
         /// <param name="permissionType"></param>
-        public void CreateOrUpdateFeaturePermission(long subjectId, long featureId, int permissionType)
+        public void CreateOrUpdateFeaturePermission(long? subjectId, long featureId, int permissionType)
         {
             var featurePermissionManager = new FeaturePermissionManager();
             var featurePermission = featurePermissionManager.Find(subjectId, featureId);
@@ -90,10 +92,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="featureId"></param>
         public void RemoveFeatureFromPublic(long featureId)
         {
-            var featureManager = new FeatureManager();
-            var feature = featureManager.FindById(featureId);
-            //feature.IsPublic = false;
-            featureManager.Update(feature);
+            var featurePermissionManager = new FeaturePermissionManager();
+
+            if (featurePermissionManager.Exists(null, featureId))
+            {
+                featurePermissionManager.Delete(null, featureId);
+            }
         }
 
         /// <summary>

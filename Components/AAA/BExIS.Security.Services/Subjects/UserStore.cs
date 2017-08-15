@@ -9,7 +9,10 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IQueryableUserStore<User, long>
+    /// <summary>
+    ///
+    /// </summary>
+    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IQueryableUserStore<User, long>, IUserTwoFactorStore<User, long>
     {
         public UserStore()
         {
@@ -151,7 +154,7 @@ namespace BExIS.Security.Services.Subjects
 
             if (user.LockoutEndDate.HasValue)
             {
-                DateTime? lockoutEndDate = user.LockoutEndDate;
+                var lockoutEndDate = user.LockoutEndDate;
                 dateTimeOffset = new DateTimeOffset(DateTime.SpecifyKind(lockoutEndDate.Value, DateTimeKind.Utc));
             }
             else
@@ -178,7 +181,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<bool> GetTwoFactorEnabledAsync(User user)
         {
-            return Task.FromResult(user.IsTwoFactorEnabled);
+            return Task.FromResult(false);
         }
 
         public Task<bool> HasPasswordAsync(User user)
@@ -265,6 +268,11 @@ namespace BExIS.Security.Services.Subjects
         {
             user.SecurityStamp = stamp;
             return Task.FromResult(0);
+        }
+
+        public Task SetTwoFactorEnabledAsync(User user, bool enabled)
+        {
+            throw new NotImplementedException();
         }
 
         public void Update(User user)

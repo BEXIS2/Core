@@ -135,22 +135,21 @@ namespace BExIS.Web.Shell.Controllers
             if (ModelState.IsValid)
             {
                 var userManager = new UserManager(new UserStore());
-                var user = await userManager.FindByNameAsync(model.Email);
+
+                var user = await userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await userManager.IsEmailConfirmedAsync(user.Id)))
                 {
-                    // Nicht anzeigen, dass der Benutzer nicht vorhanden ist oder nicht bestätigt wurde.
+                    // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
-                // E-Mail-Nachricht mit diesem Link senden
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                // await UserManager.SendEmailAsync(user.Id, "Kennwort zurücksetzen", "Bitte setzen Sie Ihr Kennwort zurück. Klicken Sie dazu <a href=\"" + callbackUrl + "\">hier</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
+                await userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
-            // Wurde dieser Punkt erreicht, ist ein Fehler aufgetreten; Formular erneut anzeigen.
+            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
@@ -198,7 +197,7 @@ namespace BExIS.Web.Shell.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var signInManager = new SignInManager(userManager, AuthenticationManager);
-            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -251,10 +250,11 @@ namespace BExIS.Web.Shell.Controllers
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
-                    await userManager.SendEmailAsync(user.Id, "Confirm your account", $"Please confirm your account by clicking this link <a href=\"{callbackUrl}\">hier</a>");
+                    await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+
+                    return View("Info");
                 }
 
                 AddErrors(result);
@@ -283,17 +283,21 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
             var userManager = new UserManager(new UserStore());
-            var user = await userManager.FindByNameAsync(model.Email);
+            var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Nicht anzeigen, dass der Benutzer nicht vorhanden ist.
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var result = await userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
+                user.IsEmailConfirmed = true;
+                await userManager.UpdateAsync(user);
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
@@ -306,18 +310,23 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
+        private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
+        {
+            var userManager = new UserManager(new UserStore());
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId, code }, Request.Url.Scheme);
+            await userManager.SendEmailAsync(userId, subject, $"Please confirm your account by clicking <a href=\"{callbackUrl}\">here</a>");
+
+            return callbackUrl;
+        }
+
         #region Hilfsprogramme
 
         // Wird für XSRF-Schutz beim Hinzufügen externer Anmeldungen verwendet
         private const string XsrfKey = "XsrfId";
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         private void AddErrors(IdentityResult result)
         {

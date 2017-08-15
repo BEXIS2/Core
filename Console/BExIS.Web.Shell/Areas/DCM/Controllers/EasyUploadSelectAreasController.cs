@@ -49,19 +49,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 SheetFormat CurrentSheetFormat = 0;
                 Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
-
+                
+                model.isJsonMaxLengthExceeded = false;
                 JsonTableGenerator EUEReader = new JsonTableGenerator();
                 EUEReader.Open(fis);
-                jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
+                try
+                {
+                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
+                } catch(Exception e)
+                {
+                    //TODO find a better approach to this problem
+                    model.isJsonMaxLengthExceeded = true;
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Your dataset is too big to process. Sorry for the inconvenience."));
+                }
 
                 if (!String.IsNullOrEmpty(jsonTable))
                 {
+                    if (model.isJsonMaxLengthExceeded)
+                        jsonTable = "[]";
                     TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+
                 }
 
                 TaskManager.AddToBus(EasyUploadTaskManager.WORKSHEET_URI, EUEReader.getWorksheetUri());
-
+                
                 model.JsonTableData = jsonTable;
+                
             }
             catch (Exception ex)
             {

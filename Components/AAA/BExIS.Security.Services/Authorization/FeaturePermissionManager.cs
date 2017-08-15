@@ -25,8 +25,21 @@ namespace BExIS.Security.Services.Authorization
         public IReadOnlyRepository<Operation> OperationRepository { get; }
         public IReadOnlyRepository<Subject> SubjectRepository { get; }
 
-        public void Create(FeaturePermission featurePermission)
+        public void Create(long? subjectId, long featureId, PermissionType permissionType)
         {
+            if (Exists(subjectId, featureId, permissionType)) return;
+
+            var featurePermission = new FeaturePermission
+            {
+                Feature = FeatureRepository.Get(featureId),
+                PermissionType = permissionType,
+                // Sven
+                // Workaround:
+                // FirstOrDefault may is not the proper method to call. But this is necessary because of possible empty call to "Get()"
+                // because subjectId can be null.
+                Subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault()
+            };
+
             using (var uow = this.GetUnitOfWork())
             {
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
@@ -35,12 +48,12 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Create(long subjectId, long featureId, PermissionType permissionType = PermissionType.Grant)
+        public void Create(Subject subject, Feature feature, PermissionType permissionType)
         {
             var featurePermission = new FeaturePermission()
             {
-                Subject = SubjectRepository.Get(subjectId),
-                Feature = FeatureRepository.Get(featureId),
+                Subject = subject,
+                Feature = feature,
                 PermissionType = permissionType
             };
 
@@ -62,7 +75,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Delete(long subjectId, long featureId)
+        public void Delete(long? subjectId, long featureId)
         {
             var featurePermission = Find(subjectId, featureId);
 
@@ -76,13 +89,29 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public bool Exists(long subjectId, long featureId, PermissionType permissionType)
+        public bool Exists(Subject subject, Feature feature, PermissionType permissionType)
         {
+            if (feature == null)
+                return false;
+
+            if (subject == null)
+                return FeaturePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+
+            return FeaturePermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+        }
+
+        public bool Exists(long? subjectId, long featureId, PermissionType permissionType)
+        {
+            if (subjectId == null)
+                return FeaturePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
             return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
         }
 
-        public bool Exists(long subjectId, long featureId)
+        public bool Exists(long? subjectId, long featureId)
         {
+            if (subjectId == null)
+                return FeaturePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId).Count == 1;
+
             return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count == 1;
         }
 
@@ -91,11 +120,9 @@ namespace BExIS.Security.Services.Authorization
             return FeaturePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any();
         }
 
-        public FeaturePermission Find(long subjectId, long featureId)
+        public FeaturePermission Find(long? subjectId, long featureId)
         {
-            return
-                FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId)
-                    .FirstOrDefault();
+            return subjectId == null ? FeaturePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault() : FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
         }
 
         public FeaturePermission Find(Subject subject, Feature feature)
@@ -133,6 +160,9 @@ namespace BExIS.Security.Services.Authorization
             {
                 while (feature != null)
                 {
+                    if (Exists(null, feature.Id, PermissionType.Grant))
+                        return true;
+
                     featurePermission = Find(subject.Id, feature.Id);
 
                     if (featurePermission != null)
@@ -153,6 +183,9 @@ namespace BExIS.Security.Services.Authorization
 
                 while (feature != null)
                 {
+                    if (Exists(null, feature.Id, PermissionType.Grant))
+                        return true;
+
                     featurePermission = Find(subjectId, featureId);
 
                     if (featurePermission != null)
