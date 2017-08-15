@@ -1,13 +1,13 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
+﻿using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using System;
 
 namespace BExIS.Ext.Services
 {
     public static class AuthorizationDelegationImplementor
     {
-        public static void CheckAuthorization(string areaName, string controllerName, string actionName, string username, bool isAuthenticated)
+        public static async void CheckAuthorization(string areaName, string controllerName, string actionName, string username, bool isAuthenticated)
         {
             // validate the call using the extensibility information (modules, tasks, actions, etc)
             // Call security authorization api utilizing the IoC, Singleton lifetime
@@ -18,17 +18,22 @@ namespace BExIS.Ext.Services
             var operationManager = new OperationManager();
 
             var operation = operationManager.Find(areaName, controllerName, "*");
-
-            if (operation != null)
+            if (operation == null)
             {
-                var featurePermissionManager = new FeaturePermissionManager();
-
-                if (!featurePermissionManager.HasAccess<User>(username, areaName, controllerName, actionName))
-                {
-                    throw new UnauthorizedAccessException();
-                }
+                throw new UnauthorizedAccessException();
             }
-            else
+
+            var feature = operation?.Workflow.Feature;
+            if (feature == null)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            var userManager = new UserManager(new UserStore());
+            var user = await userManager.FindByNameAsync(username);
+
+            var featurePermissionManager = new FeaturePermissionManager();
+            if (!featurePermissionManager.HasAccess(user, feature))
             {
                 throw new UnauthorizedAccessException();
             }
