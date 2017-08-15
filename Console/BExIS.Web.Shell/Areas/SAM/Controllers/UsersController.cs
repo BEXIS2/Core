@@ -37,21 +37,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var result = await userManager.CreateAsync(user);
             if (result.Succeeded)
             {
-                await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
-                ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+                var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "", userId = user.Id, code }, Request.Url.Scheme);
+                await userManager.SendEmailAsync(user.Id, "Set your password!", "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
             }
 
             return Json(new { success = true });
-        }
-
-        private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
-        {
-            var userManager = new UserManager(new UserStore());
-            var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", userId, code }, Request.Url.Scheme);
-            await userManager.SendEmailAsync(userId, subject, $"Please confirm your account by clicking <a href=\"{callbackUrl}\">here</a>");
-
-            return callbackUrl;
         }
 
         [HttpPost]
