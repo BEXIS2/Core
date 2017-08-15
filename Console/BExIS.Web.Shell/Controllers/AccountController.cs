@@ -16,7 +16,7 @@ namespace BExIS.Web.Shell.Controllers
     {
         //
         // GET: /Account/ConfirmEmail
-        [AllowAnonymous]
+
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
             if (code == null)
@@ -31,7 +31,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ExternalLogin
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
@@ -41,7 +40,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
-        [AllowAnonymous]
+
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
@@ -72,7 +71,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
@@ -111,7 +109,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ExternalLoginFailure
-        [AllowAnonymous]
+
         public ActionResult ExternalLoginFailure()
         {
             return View();
@@ -119,7 +117,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ForgotPassword
-        [AllowAnonymous]
+
         public ActionResult ForgotPassword()
         {
             return View();
@@ -128,7 +126,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -155,7 +152,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ForgotPasswordConfirmation
-        [AllowAnonymous]
+
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
@@ -163,7 +160,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/Login
-        [AllowAnonymous]
+
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -173,7 +170,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/Login
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -224,7 +220,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/Register
-        [AllowAnonymous]
+
         public ActionResult Register()
         {
             return View();
@@ -233,7 +229,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
@@ -265,7 +260,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ResetPassword
-        [AllowAnonymous]
+
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
@@ -274,7 +269,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ResetPassword
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
@@ -304,7 +298,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ResetPasswordConfirmation
-        [AllowAnonymous]
+
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
