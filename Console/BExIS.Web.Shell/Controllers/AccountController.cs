@@ -289,11 +289,15 @@ namespace BExIS.Web.Shell.Controllers
                 // Nicht anzeigen, dass der Benutzer nicht vorhanden ist.
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var result = await userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
+                user.IsEmailConfirmed = true;
+                await userManager.UpdateAsync(user);
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
