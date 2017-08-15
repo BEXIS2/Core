@@ -17,16 +17,13 @@
         <table>
             <tr>
                 <td>
+                    
+                </td>
+                <td>
                     Source
                 </td>
                 <td>
-                    Example
-                </td>
-                <td>
                     RegEx
-                </td>
-                <td>
-                    Result
                 </td>
                 <td>
                     Mask from Target (@Model.Target.Name)
@@ -34,23 +31,38 @@
             </tr>
             <tr>
                 <td>
-                    @Model.Source.Name
+                    Rule:
+                </td>
+                <td >
+                    <span id="sourceName">@Model.Source.Name</span>
+                </td>
+
+                <td>
+                    @Html.TextBox("RegExPattern", @Model.TransformationRule.RegEx)
+                </td>
+                
+                <td>
+                    @Html.TextBox("Mask", @Model.Target.Mask)
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    Example:
                 </td>
                 <td>
                     @Html.TextArea("Example")
                 </td>
                 <td>
-                    @Html.TextArea("RegExPattern", @Model.TransformationRule.RegEx)
+                    <div id="resultRegEx" class="col-md-5" style="width: 100%">
+
+                    </div>
                 </td>
                 <td>
                     <div id="result" class="col-md-5">
 
                     </div>
                 </td>
-                <td>
-                    @Html.TextArea("Mask", @Model.Target.Mask)
-                </td>
-
             </tr>
         </table>
        
@@ -59,65 +71,115 @@
     <script type="text/javascript">
 
         $("#" + '@id' + " #RegExPattern")
-            .change(function() {
+            .change(function () {
 
-                var tmpString = $("#" + '@id' + " #Example").val();
-                var exp = new RegExp($(this).val(),"g");
-                //alert($(this).val());
-                //alert(exp);
-                var result = tmpString.match(exp);
+                changeIt();
 
-                //alert(result);
+            });
 
-                console.log("input: " + tmpString);
-                console.log("regex: " + exp);
-                console.log("result: " + result);
-                console.log(result);
-                //console.log(result[1]);
+        $("#" + '@id' + " #Mask")
+            .change(function () {
 
-                if (result != null) {
+                changeIt();
 
-                    console.log("-----");
-                    console.log(result);
-
-                    var resultString = "";
-
-                    for (var i = 0; i < result.length; i++) {
-                        resultString = resultString + "\n" + result[i];
-                    }
-
-                    $("#" + '@id' + " #result").html(resultString);
-                }
-        });
+            });
 
         $("#" + '@id' + " #Example")
             .change(function() {
 
-                 var tmpString = $("#" + '@id' + " #Example").val();
-                var exp = new RegExp($(this).val(),"g");
+                changeIt();
+            });
 
-                var result = tmpString.match(exp);
+        function changeIt() {
 
-                console.log("input: " + tmpString);
-                console.log("regex: " + exp);
-                console.log("result: " + result);
-                console.log(result);
-                //console.log(result[1]);
+            updateRegexExample();
+            updateMaskExample();
 
-                if (result != null) {
+        }
+
+        function updateRegexExample() {
+
+            var tmpString = $("#" + '@id' + " #Example").val();
+            var regExValue = $("#" + '@id' + " #RegExPattern").val();
+            var exp = new RegExp(regExValue, "g");
+
+            var sourceName = $("#" + '@id' + " #sourceName").text();
+
+            //alert($(this).val());
+            //alert(exp);
+            var result = tmpString.match(exp);
+
+            //alert(result);
+
+            console.log("input: " + tmpString);
+            console.log("regex: " + exp);
+            console.log("result: " + result);
+            console.log(result);
+            console.log("sourceName" + sourceName);
+            //console.log(result[1]);
+
+            if (result != null) {
+                if (regExValue.length == 0) {
+                    $("#" + '@id' + " #resultRegEx").html(tmpString);
+                } else {
 
                     console.log("-----");
                     console.log(result);
 
-                    var resultString = "";
+                    var resultString = "<table>";
 
                     for (var i = 0; i < result.length; i++) {
-                        resultString = resultString+"\n"+result[i];
-                    }
 
-                    $("#" + '@id' + " #result").html(resultString);
+                        var maskName = sourceName + "[" + i + "]";
+                        resultString += '<tr><td>' + result[i] + "  -> " + maskName + '</td></tr>';
+                    }
+                    resultString += "</table>";
+
+                    $("#" + '@id' + " #resultRegEx").html(resultString);
                 }
-            });
+
+            } else {
+
+                $("#" + '@id' + " #resultRegEx").html("");
+
+            }
+        }
+
+        function updateMaskExample() {
+
+            var tmpString = $("#" + '@id' + " #Example").val();
+            var regExValue = $("#" + '@id' + " #RegExPattern").val();
+            var mask = $("#" + '@id' + " #Mask").val();
+            var sourceName = $("#" + '@id' + " #sourceName").text();
+
+            var exp = new RegExp(regExValue, "g");
+            var result = tmpString.match(exp);
+
+            console.log("input: " + tmpString);
+            console.log("regex: " + exp);
+            console.log("result: " + result);
+            console.log("mask: " + mask);
+            console.log("sourceName" + sourceName);
+
+            console.log(result);
+
+            if (result != null) {
+                console.log("replace pls: -------------------");
+                for (var i = 0; i < result.length; i++) {
+                    var r = result[i];
+                    var place = sourceName + "[" + i + "]";
+                    mask = mask.replace(place, r);
+
+                    console.log(r);
+                    console.log(place);
+                    console.log(mask);
+                }
+
+                $("#" + '@id' + " #result").html(mask);
+            }
+        }
+
+
     </script>
 </div>
 
