@@ -53,6 +53,24 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public void Create(long? subjectId, long entityId, long key, short rights)
+        {
+            var entityPermission = new EntityPermission()
+            {
+                Subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault(),
+                Entity = EntityRepository.Get(entityId),
+                Key = key,
+                Rights = rights
+            };
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Put(entityPermission);
+                uow.Commit();
+            }
+        }
+
         public EntityPermission Create<T>(string subjectName, string entityName, Type entityType, long key, List<RightType> rights) where T : Subject
         {
             if (string.IsNullOrEmpty(subjectName))
