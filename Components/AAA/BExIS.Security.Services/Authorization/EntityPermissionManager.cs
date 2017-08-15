@@ -164,23 +164,24 @@ namespace BExIS.Security.Services.Authorization
                     .ToList();
         }
 
-        public List<long> GetKeys(long subjectId, long entityId, RightType rightType)
+        public List<long> GetKeys(long? subjectId, long entityId, RightType rightType)
         {
-            var subject = SubjectRepository.Get(subjectId);
-            if (subject == null)
-                return new List<long>();
-
-            var entity = EntityRepository.Get(entityId);
-            if (entity == null)
-                return new List<long>();
-
-            return EntityPermissionRepository.Query(e =>
-                e.Subject.Id == subject.Id &&
-                e.Entity.Id == entity.Id &&
-                e.Rights.ToRightTypes().Contains(rightType)
-                )
+            if (subjectId == null)
+                return EntityPermissionRepository.Query(e =>
+                    e.Subject == null &&
+                    e.Entity.Id == entityId &&
+                    e.Rights.ToRightTypes().Contains(rightType)
+                    )
                 .Select(e => e.Key)
                 .ToList();
+
+            return EntityPermissionRepository.Query(e =>
+                e.Subject.Id == subjectId &&
+                e.Entity.Id == entityId &&
+                e.Rights.ToRightTypes().Contains(rightType)
+                )
+            .Select(e => e.Key)
+            .ToList();
         }
 
         public int GetRights(Subject subject, Entity entity, long key)
