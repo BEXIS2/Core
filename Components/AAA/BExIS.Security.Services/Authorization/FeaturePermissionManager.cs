@@ -154,6 +154,11 @@ namespace BExIS.Security.Services.Authorization
             var feature = FeatureRepository.Get(featureId);
             var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
 
+            return HasAccess(subject, feature);
+        }
+
+        public bool HasAccess(Subject subject, Feature feature)
+        {
             // Anonymous
             if (subject == null)
             {
@@ -204,9 +209,7 @@ namespace BExIS.Security.Services.Authorization
 
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
-            var operation =
-                OperationRepository.Query(x => x.Module == module && x.Controller == controller && x.Action == action)
-                    .FirstOrDefault();
+            var operation = OperationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
 
             var feature = operation?.Workflow.Feature;
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
