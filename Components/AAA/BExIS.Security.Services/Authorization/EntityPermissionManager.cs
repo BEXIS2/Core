@@ -187,13 +187,14 @@ namespace BExIS.Security.Services.Authorization
         public int GetRights(Subject subject, Entity entity, long key)
         {
             if (subject == null)
-                return 0;
+            {
+                return EntityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
+            }
 
             if (entity == null)
                 return 0;
 
-            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault();
-            return entityPermission?.Rights ?? 0;
+            return EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
         }
 
         public List<RightType> GetRights<T>(string subjectName, string entityName, Type entityType, long key) where T : Subject
@@ -218,9 +219,9 @@ namespace BExIS.Security.Services.Authorization
             return GetRights(subject, entity, key).ToRightTypes();
         }
 
-        public List<RightType> GetRights(long subjectId, long entityId, long key)
+        public List<RightType> GetRights(long? subjectId, long entityId, long key)
         {
-            var subject = SubjectRepository.Get(subjectId);
+            var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
             var entity = EntityRepository.Get(entityId);
             return GetRights(subject, entity, key).ToRightTypes();
         }
@@ -234,9 +235,9 @@ namespace BExIS.Security.Services.Authorization
             return (int)rightType < binary.Length && binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
         }
 
-        public bool HasRight(long subjectId, long entityId, long key, RightType rightType)
+        public bool HasRight(long? subjectId, long entityId, long key, RightType rightType)
         {
-            var subject = SubjectRepository.Get(subjectId);
+            var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
             var entity = EntityRepository.Get(entityId);
 
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);
