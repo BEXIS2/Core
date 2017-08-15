@@ -160,6 +160,9 @@ namespace BExIS.Security.Services.Authorization
             {
                 while (feature != null)
                 {
+                    if (Exists(null, feature.Id, PermissionType.Grant))
+                        return true;
+
                     featurePermission = Find(subject.Id, feature.Id);
 
                     if (featurePermission != null)
@@ -180,6 +183,9 @@ namespace BExIS.Security.Services.Authorization
 
                 while (feature != null)
                 {
+                    if (Exists(null, feature.Id, PermissionType.Grant))
+                        return true;
+
                     featurePermission = Find(subjectId, featureId);
 
                     if (featurePermission != null)
