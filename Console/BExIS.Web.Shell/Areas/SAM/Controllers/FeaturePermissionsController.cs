@@ -23,7 +23,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var featureManager = new FeatureManager();
             var feature = featureManager.FindById(featureId);
-            feature.IsPublic = true;
+            //feature.IsPublic = true;
             featureManager.Update(feature);
         }
 
@@ -92,7 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var featureManager = new FeatureManager();
             var feature = featureManager.FindById(featureId);
-            feature.IsPublic = false;
+            //feature.IsPublic = false;
             featureManager.Update(feature);
         }
 

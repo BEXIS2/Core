@@ -207,6 +207,30 @@
 
 </div>
 
+<h3>Dropdown 20000 Elements</h3>
+
+@{
+
+
+    SelectListItem aItem;
+    List<SelectListItem> listDD = new List<SelectListItem>();
+
+    for (int i = 0; i < 60000; i++)
+    {
+        aItem = new SelectListItem();
+        aItem.Value = i.ToString();
+        listDD.Add(aItem);
+    }
+
+}
+
+@Html.DropDownList("testDropdown",new SelectList(listDD), "Select");
+
+
+
+
+
+
 <h3>REGEX TEST</h3>
 
 <div id="regex">
