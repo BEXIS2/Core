@@ -40,7 +40,7 @@
 
     if (Model.Data.Columns.Count > 4)
     {
-        width = Model.Data.Columns.Count * 200;
+        width = Model.Data.Columns.Count*200;
     }
 
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
@@ -48,8 +48,14 @@
     pagerStyles |= GridPagerStyles.Numeric;
 
 
-    string parameters = JsonConvert.SerializeObject(@Model.Parameters);
+    string parameters = "test";
+    if (Model.Parameters != null)
+    {
+        parameters = JsonConvert.SerializeObject(@Model.Parameters);
+    }
 }
+
+
 <div>
     @if (String.IsNullOrEmpty(Model.IDKey))
     {
@@ -123,17 +129,19 @@
         }
         else
         {
-            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM", parameters=@parameters},
-            new AjaxOptions
-            {
-                HttpMethod = "POST",
-                InsertionMode = InsertionMode.Replace,
-                UpdateTargetId = targetId,
-                OnSuccess= "OnSucess()"
-            },
-            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
-            });
-
+ 
+            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new {parameters = @parameters},
+                new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = targetId,
+                    OnSuccess = "OnSucess()"
+                },
+                new
+                {
+                    @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
+                });
         }
 
         <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
@@ -159,11 +167,10 @@
         var dataid = $(e.row).find("td")[idIndex].innerHTML;
 
 
-        var submitEntitySelection = $('#' + submitId).attr("href");
+        var submitEntitySelection = link;
         console.log("-->" + submitEntitySelection);
 
-        console.log('@parameters');
-        submitEntitySelection += "&id=" + dataid;
+        submitEntitySelection += "/"+dataid;
 
         console.log(submitEntitySelection);
 
