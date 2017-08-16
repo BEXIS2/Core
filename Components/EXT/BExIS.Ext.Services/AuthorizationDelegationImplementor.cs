@@ -1,5 +1,7 @@
 ﻿using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using System;
+using BExIS.Security.Services.Authorization;
 
 namespace BExIS.Ext.Services
 {
@@ -21,18 +23,18 @@ namespace BExIS.Ext.Services
                 throw new UnauthorizedAccessException();
             }
 
-            //var feature = operation?.Workflow.Feature;
+            var feature = operation.Feature;
 
-            //if (feature == null) return;
+            if (feature == null) return;
 
-            //var userManager = new UserManager(new UserStore());
-            //var user = await userManager.FindByNameAsync(username);
+            var userManager = new UserManager(new UserStore());
+            var user = await userManager.FindByNameAsync(username);
 
-            //var featurePermissionManager = new FeaturePermissionManager();
-            //if (!featurePermissionManager.HasAccess(user, feature))
-            //{
-            //    throw new UnauthorizedAccessException();
-            //}
+            var featurePermissionManager = new FeaturePermissionManager();
+            if (!featurePermissionManager.HasAccess(user, feature))
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
     }
 }

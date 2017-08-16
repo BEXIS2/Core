@@ -11,7 +11,6 @@ using System.Web.Mvc;
 
 namespace BExIS.Web.Shell.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         //
@@ -160,7 +159,6 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/Login
-        [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -170,7 +168,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/Login
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
