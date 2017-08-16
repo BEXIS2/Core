@@ -211,7 +211,7 @@ namespace BExIS.Security.Services.Authorization
         {
             var operation = OperationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
 
-            var feature = operation?.Workflow.Feature;
+            var feature = operation?.Feature;
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
             if (feature != null && subject != null)
                 return HasAccess(subject.Id, feature.Id);
