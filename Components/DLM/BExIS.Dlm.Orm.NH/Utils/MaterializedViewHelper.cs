@@ -36,7 +36,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber * pageSize, pageSize));
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
@@ -111,7 +111,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 .AppendLine(string.Format("{0},", "t.datasetversionref AS VersionId"))
                 ;
             int counter = 0;
-            foreach (var columnDefinition in columnDefinitionList.OrderBy(p=>p.Item3)) // item3 is the variable order in its data structure
+            foreach (var columnDefinition in columnDefinitionList.OrderBy(p => p.Item3)) // item3 is the variable order in its data structure
             {
                 counter++;
                 string columnStr = buildViewField(columnDefinition.Item1, columnDefinition.Item2, columnDefinition.Item3, columnDefinition.Item4);
@@ -162,7 +162,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         }
 
         public bool ExistsForDataset(long datasetId)
-        {            
+        {
             StringBuilder mvBuilder = new StringBuilder();
             // the functions should obtain a reference to the DB dialect and based on that 1) load the templates from the native objects folder and 2) decide to use lowercase,uppercase, or natural case for object names.
             mvBuilder.AppendLine(string.Format("SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class c WHERE  c.relname = '{0}' AND c.relkind = 'm');", this.BuildName(datasetId).ToLower()));
@@ -234,10 +234,19 @@ namespace BExIS.Dlm.Orm.NH.Utils
         private string buildViewField(string variableName, string dataType, int order, long Id)
         {
             // string template = @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}";
-            string template = @"cast(unnest(cast(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
+            // string template =   @"cast(unnest(cast(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
+            // string template = @"unnest(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)::character varying[]){1} AS {2}";
+            
+            string fieldType = dbDataType(dataType);
+            fieldType = !string.IsNullOrEmpty(fieldType) ? " AS " + fieldType : "";
 
-            string def = string.Format(template, Id, dbDataType(dataType), this.BuildColumnName(Id).ToLower());// variableName.Replace(" ", "_"));
-            return def;
+            string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
+            string accessPath = string.Format(accessPathTemplate, Id);
+
+            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL ELSE cast(unnest({accessPath}::character varying[]) {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
+            //string fieldDef = string.Format(fieldTemplate, accessPath, fieldType, this.BuildColumnName(Id).ToLower());
+            // guard the column mapping for NULL protection
+            return fieldDef;
         }
 
         private static Dictionary<string, string> typeTable = new Dictionary<string, string>
@@ -249,11 +258,13 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "time", "time" },
                 { "decimal", "numeric" },
                 { "double", "float8" },
-                { "int", "int4" },
-                { "int32", "int4" },
-                { "integer", "int4" },
-                { "text", "text" },
-                { "string", "character varying(255)" }
+                { "int", "integer" },
+                { "integer", "integer" },
+                { "int32", "integer" },
+                { "long", "bigint" },
+                { "int64", "bigint" },
+                { "text", "" }, // not needed -> character varying[]
+                { "string", "character varying(255)" } 
             };
 
         /// <summary>
