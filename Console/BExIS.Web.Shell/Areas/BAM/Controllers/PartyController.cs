@@ -18,6 +18,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.Title = "Party manager";
             return View(new PartyRelationshipTypeManager().GetRootPartyTypesAndChildren());
         }
 
@@ -47,6 +48,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             ViewBag.RelationTabAsDefault = false;
+            ViewBag.Title = "Create party";
             return View("CreateEdit", model);
         }
 
@@ -100,6 +102,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             model.PartyType = party.PartyType;
             model.StartDate = party.StartDate;           
             ViewBag.RelationTabAsDefault = relationTabAsDefault;
+            ViewBag.Title = "Edit party";
             return View("CreateEdit", model);
         }
 
@@ -178,7 +181,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             model.Id = party.Id;
             model.PartyType = party.PartyType;
             model.StartDate = party.StartDate; ;
-
+            ViewBag.Title = "View party";
             return View(model);
         }
 
@@ -210,8 +213,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult Delete(Party party)
         {
             PartyManager partyManager = new PartyManager();
-            //  party = partyManager.Repo.Reload(party);
             partyManager.Delete(party);
+            ViewBag.Title = "Delete party";
             return RedirectToAction("Index");
         }
 

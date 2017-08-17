@@ -33,6 +33,24 @@
         }
     }
 }
+@section Information
+{
+    @if (createMode)
+    {
+        <text>
+            A new party here can be created. Changing the tabs additional attributes and relationshpis could be added.
+        </text>
+    }
+    else {
+        <text>
+            An existed party here can be edited together with its additional attributes and relationshpis.
+        </text>
+    }
+    <p>
+        <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
 @using (Html.BeginForm("CreateEdit", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
 {
     @Html.HiddenFor(m => m.Id)
@@ -42,12 +60,12 @@
         .Items(tabs =>
         {
         tabs.Add()
-                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? Model.PartyType.Title: "Party").Content(@<text>
+                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? Model.PartyType.Title : "Party").Content(@<text>
                 <table class="bx-table-form" id="tblParty">
                     <tr>
                         <td><b title="Required" style="color: red">*</b></td>
                         <td style="width:300px;">
-                            @Html.LabelFor(m => m.PartyType)
+                            <label for="PartyType">Party Type</label>
                         </td>
                         <td>
                             @if (!createMode)
@@ -60,7 +78,7 @@
                                 @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
                                 @Html.ValidationMessageFor(m => m.PartyType.Id, "Select party type")
                                 <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
-                                    <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
+                                <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
                             }
 
                         </td>
@@ -68,7 +86,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            @Html.LabelFor(m => m.StartDate)
+                            <label for="StartDate">Start Date</label>
                         </td>
                         <td>
                             @(Html.Telerik().DatePickerFor(m => m.StartDate)
@@ -80,7 +98,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            @Html.LabelFor(m => m.EndDate)
+                            <label for="EndDate">End Date</label>
                         </td>
                         <td>
                             @(Html.Telerik().DatePickerFor(m => m.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
@@ -90,7 +108,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            @Html.LabelFor(m => m.Description)
+                            <label for="Description">Description</label>
                         </td>
                         <td>
                             @Html.TextBoxFor(m => m.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
@@ -128,7 +146,7 @@
             return false;
         }
         var validationError=false;
-        if(!$("#PartyType_Id").val())  
+        if(!$("#PartyType_Id").val())
         {
             $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
             return false;
@@ -157,8 +175,10 @@
                     return false;
                 }
             });
-         
-            return true;
+            if(checkUniqeness &&  checkUniqeness())
+                return true;
+            else
+                return false;
         }
     }
 
@@ -183,7 +203,7 @@
         }
         else {
             $("[data-valmsg-for='PartyType.Id']").addClass("field-validation-valid").removeClass("field-validation-error");
-      
+
             partyTabStrip.enable($(".t-item", partyTabStrip.element)[1]);
             $('#imgPartyCustomeAttrLoading').show();
             $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Id, function (response, status, xhr) {
@@ -247,6 +267,8 @@
     });
     function onLoad(){
         partyTabStrip = $("#ShowDataTabStrip").data("t-TabStrip");
+        if(window.location.href.includes("PartyRelationshipsGrid"))
+            partyTabStrip.select($(".t-item", partyTabStrip.element)[2]);
         if ('@createMode'=='False')
             OnChangePartyType({value:@Model.PartyType.Id });
         validateRelationships();
@@ -256,6 +278,7 @@
             $("#submitBtn").css("background-color","#f5f5f5");
             $("#submitBtn").attr("title","Every change in relationships will save immediately. No need to save!");
         }
+
 
     }
 
