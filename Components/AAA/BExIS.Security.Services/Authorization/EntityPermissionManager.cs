@@ -90,7 +90,7 @@ namespace BExIS.Security.Services.Authorization
             if (entity == null)
                 return null;
 
-            if (Exists(subject, entity))
+            if (Exists(subject, entity, key))
                 return null;
 
             var entityPermission = new EntityPermission()
@@ -111,22 +111,22 @@ namespace BExIS.Security.Services.Authorization
             return entityPermission;
         }
 
-        public bool Exists(Subject subject, Entity entity)
+        public bool Exists(Subject subject, Entity entity, long key)
         {
             if (entity == null)
                 return false;
 
             if (subject == null)
-                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id).Count == 1;
+                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
 
-            return EntityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id).Count == 1;
+            return EntityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
         }
 
-        public bool Exists(long? subjectId, long entityId)
+        public bool Exists(long? subjectId, long entityId, long key)
         {
             if (subjectId == null)
-                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId).Count == 1;
-            return EntityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId).Count == 1;
+                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1;
+            return EntityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
         }
 
         public void Delete(EntityPermission entityPermission)
