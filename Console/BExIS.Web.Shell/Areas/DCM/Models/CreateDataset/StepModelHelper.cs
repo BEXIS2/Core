@@ -1,11 +1,11 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Modules.Dcm.UI.Models.Metadata;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Modules.Dcm.UI.Models.Metadata;
-using BExIS.Xml.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 {
@@ -25,7 +25,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
         private AbstractMetadataStepModel _model;
 
-        public AbstractMetadataStepModel Model {
+        public AbstractMetadataStepModel Model
+        {
             get { return _model; }
             set
             {
@@ -73,11 +74,11 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
         public string GetXPathFromSimpleAttribute(long id, long number)
         {
-            if(Model != null && Model.MetadataAttributeModels != null && Model.MetadataAttributeModels.Any())
+            if (Model != null && Model.MetadataAttributeModels != null && Model.MetadataAttributeModels.Any())
             {
-                MetadataAttributeModel temp =  Model.MetadataAttributeModels.Where(a => a.Id.Equals(id)).First();
+                MetadataAttributeModel temp = Model.MetadataAttributeModels.Where(a => a.Id.Equals(id)).First();
 
-                return XPath + "//" + temp.Source.Label + "[1]//" + temp.GetMetadataAttribute().Self.Name+"["+number+"]";
+                return XPath + "//" + temp.Source.Label + "[1]//" + temp.GetMetadataAttribute().Self.Name + "[" + number + "]";
             }
 
             return "";
@@ -103,7 +104,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         {
             string displayName = "";
 
-            char tmp= ' ';
+            char tmp = ' ';
 
             foreach (char letter in Usage.Label)
             {
@@ -130,9 +131,16 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             return displayName;
         }
 
+        /// <summary>
+        /// When a Component is required and not in a choice object
+        /// then it will actived automaticlly
+        /// </summary>
+        /// <returns></returns>
         private bool SetActiveByPreload()
         {
-            if (Model != null && Model.MinCardinality > 0) Activated = true;
+            if (Model != null &&
+                Model.MinCardinality > 0
+                && !IsChoice(Model.Source)) Activated = true;
 
             return Activated;
         }
@@ -143,7 +151,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
                 return Activated;
 
             if (Parent.Activated)
-                 return Parent.IsParentActive();
+                return Parent.IsParentActive();
 
             return false;
 

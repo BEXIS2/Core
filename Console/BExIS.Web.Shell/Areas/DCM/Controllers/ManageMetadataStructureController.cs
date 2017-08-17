@@ -194,7 +194,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         private List<SearchMetadataNode> GetAllXPath(long metadatastructureId)
         {
-            XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+            //XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
             return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 

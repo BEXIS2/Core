@@ -11,12 +11,11 @@ using System.Web.Mvc;
 
 namespace BExIS.Web.Shell.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         //
         // GET: /Account/ConfirmEmail
-        [AllowAnonymous]
+
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
             if (code == null)
@@ -31,7 +30,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ExternalLogin
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
@@ -41,7 +39,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
-        [AllowAnonymous]
+
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
@@ -52,7 +50,7 @@ namespace BExIS.Web.Shell.Controllers
 
             // Benutzer mit diesem externen Anmeldeanbieter anmelden, wenn der Benutzer bereits eine Anmeldung besitzt
             var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
-            var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await signInManager.ExternalSignInAsync(loginInfo, false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -61,10 +59,6 @@ namespace BExIS.Web.Shell.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
 
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-
-                case SignInStatus.Failure:
                 default:
                     // Benutzer auffordern, ein Konto zu erstellen, wenn er kein Konto besitzt
                     ViewBag.ReturnUrl = returnUrl;
@@ -76,7 +70,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
@@ -102,7 +95,7 @@ namespace BExIS.Web.Shell.Controllers
                     if (result.Succeeded)
                     {
                         var signInManager = new SignInManager(userManager, AuthenticationManager);
-                        await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await signInManager.SignInAsync(user, false, false);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -115,7 +108,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ExternalLoginFailure
-        [AllowAnonymous]
+
         public ActionResult ExternalLoginFailure()
         {
             return View();
@@ -123,7 +116,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/ForgotPassword
-        [AllowAnonymous]
+
         public ActionResult ForgotPassword()
         {
             return View();
@@ -132,35 +125,33 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var userManager = new UserManager(new UserStore());
-                var user = await userManager.FindByNameAsync(model.Email);
+
+                var user = await userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await userManager.IsEmailConfirmedAsync(user.Id)))
                 {
-                    // Nicht anzeigen, dass der Benutzer nicht vorhanden ist oder nicht bestätigt wurde.
+                    // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
-                // E-Mail-Nachricht mit diesem Link senden
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                // await UserManager.SendEmailAsync(user.Id, "Kennwort zurücksetzen", "Bitte setzen Sie Ihr Kennwort zurück. Klicken Sie dazu <a href=\"" + callbackUrl + "\">hier</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
+                await userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
-            // Wurde dieser Punkt erreicht, ist ein Fehler aufgetreten; Formular erneut anzeigen.
+            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
         //
         // GET: /Account/ForgotPasswordConfirmation
-        [AllowAnonymous]
+
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
@@ -168,7 +159,6 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/Login
-        [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -178,7 +168,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/Login
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -187,10 +176,22 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
 
-            // Anmeldefehler werden bezüglich einer Kontosperre nicht gezählt.
-            // Wenn Sie aktivieren möchten, dass Kennwortfehler eine Sperre auslösen, ändern Sie in "shouldLockout: true".
-            var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
-            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            // Require the user to have a confirmed email before they can log on.
+            var userManager = new UserManager(new UserStore());
+            var user = await userManager.FindByNameAsync(model.UserName);
+            if (user != null)
+            {
+                if (!await userManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    ViewBag.errorMessage = "You must have a confirmed email to log in.";
+                    return View("Error");
+                }
+            }
+
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var signInManager = new SignInManager(userManager, AuthenticationManager);
+            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -199,12 +200,8 @@ namespace BExIS.Web.Shell.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
 
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-
-                case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Ungültiger Anmeldeversuch.");
+                    ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
         }
@@ -221,7 +218,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/Register
-        [AllowAnonymous]
+
         public ActionResult Register()
         {
             return View();
@@ -230,7 +227,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
@@ -241,27 +237,28 @@ namespace BExIS.Web.Shell.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    var signInManager = new SignInManager(userManager, AuthenticationManager);
-                    await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    //var signInManager = new SignInManager(userManager, AuthenticationManager);
+                    //await signInManager.SignInAsync(user, false, false);
 
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Konto bestätigen", "Bitte bestätigen Sie Ihr Konto. Klicken Sie dazu <a href=\"" + callbackUrl + "\">hier</a>");
+                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+
+                    return View("Info");
                 }
+
                 AddErrors(result);
             }
 
-            // Wurde dieser Punkt erreicht, ist ein Fehler aufgetreten; Formular erneut anzeigen.
             return View(model);
         }
 
         //
         // GET: /Account/ResetPassword
-        [AllowAnonymous]
+
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
@@ -270,7 +267,6 @@ namespace BExIS.Web.Shell.Controllers
         //
         // POST: /Account/ResetPassword
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
@@ -279,27 +275,42 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
             var userManager = new UserManager(new UserStore());
-            var user = await userManager.FindByNameAsync(model.Email);
+            var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Nicht anzeigen, dass der Benutzer nicht vorhanden ist.
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var result = await userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
+                user.IsEmailConfirmed = true;
+                await userManager.UpdateAsync(user);
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
 
         //
         // GET: /Account/ResetPasswordConfirmation
-        [AllowAnonymous]
+
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
+        {
+            var userManager = new UserManager(new UserStore());
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId, code }, Request.Url.Scheme);
+            await userManager.SendEmailAsync(userId, subject, $"Please confirm your account by clicking <a href=\"{callbackUrl}\">here</a>");
+
+            return callbackUrl;
         }
 
         #region Hilfsprogramme
@@ -307,13 +318,7 @@ namespace BExIS.Web.Shell.Controllers
         // Wird für XSRF-Schutz beim Hinzufügen externer Anmeldungen verwendet
         private const string XsrfKey = "XsrfId";
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         private void AddErrors(IdentityResult result)
         {

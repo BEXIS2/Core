@@ -6,8 +6,10 @@ using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Xml;
 using System.Xml.Schema;
 using Vaiona.Utils.Cfg;
@@ -549,22 +551,24 @@ namespace BExIS.Xml.Helpers.Mapping
 
 
             int count = 0;
-            foreach (XmlSchemaObject obj in Schema.Items)
-            {
-                if (obj is XmlSchemaElement)
-                {
-                    count++;
-                    if (count > 1)
-                    {
-                        throw new Exception("Root node is not able to declare");
-                    }
-                }
-            }
+            //foreach (XmlSchemaObject obj in Schema.Items)
+            //{
+            //    if (obj is XmlSchemaElement)
+            //    {
+            //        count++;
+            //        if (count > 1)
+            //        {
+            //            throw new Exception("Root node is not able to declare");
+            //        }
+            //    }
+            //}
 
             foreach (XmlSchemaObject obj in Schema.Items)
             {
                 if (obj is XmlSchemaElement)
                     root = (XmlSchemaElement)obj;
+                //HACK find first xsd element
+                break;
             }
 
 
@@ -909,9 +913,13 @@ namespace BExIS.Xml.Helpers.Mapping
             // create and map
             if (metadataCompountAttr == null)
             {
+                //try to stop a infinit loop
+
+                parents.Add(element.Name);
                 if (ct.Name != null)
                 {
                     metadataCompountAttr = createMetadataCompoundAttribute(ct);
+
                 }
                 else
                 {
@@ -920,7 +928,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
-                parents.Add(element.Name);
+                #region childrens
 
                 foreach (XmlSchemaElement child in childrens)
                 {
@@ -936,32 +944,40 @@ namespace BExIS.Xml.Helpers.Mapping
                     //complex element
                     else
                     {
-
-                        XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
-
-                        if (ct.Name == null || complexTypeOfChild.Name == null)
+                        //break if infinity loop
+                        if (parents.Contains(child.Name))
                         {
-                            //--> create compountAttribute
-                            MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
-                                currentInternalXPath, currentExternalXPath);
-                            // add compound to compount
-                            metadataCompountAttr =
-                                addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
-                                    metadataCompountAttr, compoundAttributeChild, child);
+                            Debug.WriteLine("save for infinit loop");
                         }
                         else
                         {
-                            if (ct.Name != null && complexTypeOfChild.Name != null)
+                            XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
+                            if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
-                                if (!ct.Name.Equals(complexTypeOfChild.Name))
+                                //--> create compountAttribute
+                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                    currentInternalXPath, currentExternalXPath);
+
+                                // add compound to compount
+                                metadataCompountAttr =
+                                    addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
+                                        metadataCompountAttr, compoundAttributeChild, child);
+                            }
+                            else
+                            {
+                                if (ct.Name != null && complexTypeOfChild.Name != null)
                                 {
-                                    //--> create compountAttribute
-                                    MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
-                                        currentInternalXPath, currentExternalXPath);
-                                    // add compound to compount
-                                    metadataCompountAttr =
-                                        addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
-                                            metadataCompountAttr, compoundAttributeChild, child);
+                                    if (!ct.Name.Equals(complexTypeOfChild.Name))
+                                    {
+                                        //--> create compountAttribute
+                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                            currentInternalXPath, currentExternalXPath);
+                                        // add compound to compount
+                                        metadataCompountAttr =
+                                            addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
+                                                metadataCompountAttr, compoundAttributeChild, child);
+                                    }
                                 }
                             }
                         }
@@ -969,7 +985,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 }
 
-                if (metadataAttributeManager.MetadataCompoundAttributeRepo.Get().Where(m => m.Name.Equals(metadataCompountAttr.Name)).Count() > 0)
+                #endregion childrens
+
+                if (
+                    metadataAttributeManager.MetadataCompoundAttributeRepo.Get()
+                        .Where(m => m.Name.Equals(metadataCompountAttr.Name))
+                        .Count() > 0)
                 {
                     metadataAttributeManager.Update(metadataCompountAttr);
 
@@ -979,15 +1000,20 @@ namespace BExIS.Xml.Helpers.Mapping
                     metadataCompountAttr = metadataAttributeManager.Create(metadataCompountAttr);
                     createdCompoundsDic.Add(metadataCompountAttr.Id, metadataCompountAttr.Name);
                 }
+
             }
             //only map
             else
             {
+                //try to stop a infinit loop
+
                 // if its there need to map
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
 
                 parents.Add(element.Name);
+
+                #region children
 
                 foreach (XmlSchemaElement child in childrens)
                 {
@@ -996,28 +1022,47 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (XmlSchemaUtility.IsSimpleType(child))
                     {
                         //add existing Simple elements to mappingFile
-                        addMetadataAttributeToMappingFile(metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                        addMetadataAttributeToMappingFile(metadataCompountAttr, child, currentInternalXPath,
+                            currentExternalXPath);
                     }
                     else
                     {
 
-                        XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
-
-                        if (ct.Name == null || complexTypeOfChild.Name == null)
+                        //break if infinity loop
+                        if (parents.Contains(child.Name))
                         {
-                            MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
+                            //MetadataCompoundAttribute compoundAttributeChild =
+                            //    getExistingMetadataCompoundAttribute(child.Name);
+                            Debug.WriteLine("save for infinit loop");
+
                         }
                         else
                         {
-                            if (ct.Name != null && complexTypeOfChild.Name != null)
+                            XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
+                            if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
-                                if (!ct.Name.Equals(complexTypeOfChild.Name))
+
+                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                    currentInternalXPath, currentExternalXPath);
+                            }
+                            else
+                            {
+                                if (ct.Name != null && complexTypeOfChild.Name != null)
                                 {
-                                    MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
+                                    if (!ct.Name.Equals(complexTypeOfChild.Name))
+                                    {
+                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                            currentInternalXPath, currentExternalXPath);
+                                    }
                                 }
                             }
                         }
                     }
+
+
+
+                    #endregion
 
                 }
 

@@ -28,12 +28,31 @@
 <div id="content_subjects"></div>
 
 <script>
-    $("#treeView_features li div").click(function (e) {
-        $(e.target).find(".t-in").trigger("click");
-    });
+    $("#treeView_features li div")
+        .click(function(e) {
+            $(e.target).find(".t-in").trigger("click");
+        });
 
     function getTreeView() {
         return $('#treeView_features').data('tTreeView');
+    }
+
+    function treeView_features_onChecked(e) {
+        if (e.checked) {
+            $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")',
+                { FeatureId: getTreeView().getItemValue(e.item) },
+                function() {
+                    getTreeView().dataSource.read();
+                });
+        } else {
+            $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")',
+                { FeatureId: getTreeView().getItemValue(e.item) },
+                function() {
+                    getTreeView().dataSource.read();
+                });
+        }
+
+        $("#grid_subjects .t-refresh").trigger('click');
     }
 
     function treeView_features_onSelect(e) {

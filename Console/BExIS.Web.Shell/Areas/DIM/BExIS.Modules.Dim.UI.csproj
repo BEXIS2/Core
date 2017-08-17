@@ -550,6 +550,7 @@
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\DIM\bexis-dim.css" />
     <Content Include="Content\Images\help\help_img1.png" />
     <Content Include="Content\Images\help\help_img2.png" />
     <Content Include="Content\Images\help\help_img3.png" />

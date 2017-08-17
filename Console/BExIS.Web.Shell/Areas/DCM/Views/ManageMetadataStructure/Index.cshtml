@@ -17,17 +17,17 @@
       .DataKeys(keys => { keys.Add(m => m.Id);
       })
       .Editable(editing => editing.Mode(GridEditMode.PopUp))
-      .DataBinding(dataBinding => dataBinding
-          .Ajax()
-      )
+      //.DataBinding(dataBinding => dataBinding
+      //    .Ajax()
+      //)
       .ColumnContextMenu()
       .Columns(columns =>
       {
-          columns.Bound(c => c.Id).ReadOnly().Width(55);
-          columns.Bound(c => c.Name);
-          columns.Bound(c => c.Entity.Name).Width(110);
-          columns.Bound(c => c.Entity.ClassPath).Hidden(true);
-          columns.Template(@<text>
+      columns.Bound(c => c.Id).ReadOnly().Width(55);
+      columns.Bound(c => c.Name);
+      columns.Bound(c => c.Entity.Name).Width(110);
+      columns.Bound(c => c.Entity.ClassPath).Hidden(true);
+      columns.Template(@<text>
                                @{
                                 <table class="tableWithoutBorder t-grid">
                                     <tr><td><b>Title</b> :</td><td>@item.TitleNode</td></tr>
@@ -52,12 +52,12 @@
 
                                  @if (Html.IsAccessibale("DIM", "Mapping", "Index"))
                                  {
-                                     @Html.ActionLink(" ", "Index", "Mapping", new {area = "DIM", sourceId = @item.Id}, new {@class = "bx bx-grid-function fa-arrow-right " + className, title = "Mapping to system", disabled})
+                                     @Html.ActionLink(" ", "Index", "Mapping", new {area = "DIM", sourceId = @item.Id}, new {@class = "bx bx-grid-function fa-arrow-right ", title = "Mapping to system"})
                                  }
 
                                 @if (Html.IsAccessibale("DIM", "Mapping", "Mapping"))
                                 {
-                                    @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType= LinkElementType.System, targetType = LinkElementType.MetadataStructure }, new { @class = "bx bx-grid-function fa-arrow-left " + className, title = "Mapping from system", disabled })
+                                    @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType= LinkElementType.System, targetType = LinkElementType.MetadataStructure }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
                                 }
 
 

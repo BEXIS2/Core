@@ -452,6 +452,10 @@
     </Content>
     <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
+    <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
+    <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
+    <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
+    <Content Include="Scripts\Form.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -516,7 +520,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>

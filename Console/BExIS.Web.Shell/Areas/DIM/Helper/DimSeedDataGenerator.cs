@@ -1,14 +1,8 @@
 ﻿
 using BExIS.Dim.Services;
-using BExIS.Dlm.Services.Party;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using System;
-using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
@@ -39,37 +33,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
             Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
             if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
 
-
-            //worklfows -> create dataset ->
-            WorkflowManager workflowManager = new WorkflowManager();
-
-            var operation = new Operation();
-            Workflow workflow = new Workflow();
             OperationManager operationManager = new OperationManager();
 
 
             #region Help Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Data Dissemination Help") && w.Feature.Id.Equals(DataDissemination.Id));
-            if (workflow == null) workflow = workflowManager.Create("Data Dissemination Help", "", DataDissemination);
-
-            operationManager.Create("DIM", "Help", "*", null, workflow);
+            operationManager.Create("DIM", "Help", "*", DataDissemination);
 
             #endregion
 
             #region Admin Workflow
 
-            workflow =
-               workflowManager.WorkflowRepository
-                   .Get()
-                   .FirstOrDefault(w => w.Name.Equals("Data Dissemination Management") && w.Feature.Id.Equals(DataDissemination.Id));
-
-            if (workflow == null) workflow = workflowManager.Create("Data Dissemination Management", "", DataDissemination);
-
-            operationManager.Create("Dim", "Admin", "*", null, workflow);
+            operationManager.Create("Dim", "Admin", "*", DataDissemination);
 
 
             #endregion
