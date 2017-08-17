@@ -82,10 +82,21 @@ namespace BExIS.Security.Services.Authorization
             if (entityType == null)
                 return null;
 
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            if (subject == null)
+                return null;
+
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+            if (entity == null)
+                return null;
+
+            if (Exists(subject, entity))
+                return null;
+
             var entityPermission = new EntityPermission()
             {
-                Subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault(),
-                Entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault(),
+                Subject = subject,
+                Entity = entity,
                 Key = key,
                 Rights = rights.ToInt()
             };
@@ -98,6 +109,24 @@ namespace BExIS.Security.Services.Authorization
             }
 
             return entityPermission;
+        }
+
+        public bool Exists(Subject subject, Entity entity)
+        {
+            if (entity == null)
+                return false;
+
+            if (subject == null)
+                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id).Count == 1;
+
+            return EntityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id).Count == 1;
+        }
+
+        public bool Exists(long? subjectId, long entityId)
+        {
+            if (subjectId == null)
+                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId).Count == 1;
+            return EntityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId).Count == 1;
         }
 
         public void Delete(EntityPermission entityPermission)
