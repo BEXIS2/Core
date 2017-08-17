@@ -115,8 +115,8 @@
             var input = $(".t-dropdown .t-input").text();
 
             //alert(input);
-            prepareData(id, input);
- 
+            sendDataToDataRepo(id, input);
+
         }
 
     function prepareData(id,input) {
@@ -127,7 +127,7 @@
                     //alert("prepare data copmplete");
                     $("#publishContentContainer").replaceWith(response);
 
-                    sendDataToDataRepo(id, input);
+                    //sendDataToDataRepo(id, input);
 
                 });
     }
@@ -211,6 +211,7 @@
             <tr>
                 <th style="width: 60px;">Version</th>
                 <th>Broker</th>
+                <th>DataRepo</th>
                 <th>Creation Date</th>
                 <th>Status</th>
                 <th style="width: 30px;"></th>
@@ -221,18 +222,22 @@
                 {
                     <tr>
                         <td>@publication.DatasetVersionId</td>
-                        <td>@publication.Broker</td>
+                        <td>@publication.Broker.Name</td>
+                        <td>@publication.DataRepo</td>
                         <td>@publication.CreationDate.ToLocalTime()</td>
                         <td>@publication.Status</td>
 
                         <td>
-                            @if (Model.DownloadRights)
+                            @foreach (var datarepo in publication.Broker.DataRepos)
                             {
-                                @Html.ActionLink(" ", "DownloadZip", "Submission", new {datarepo = publication.Broker, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download"})
-                            }
-                            else
-                            {
-                                <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                                if (Model.DownloadRights)
+                                 {
+                                     @Html.ActionLink(" ", "DownloadZip", "Submission", new {broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download for "+datarepo})
+                                 }
+                                 else
+                                 {
+                                     <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                                 }
                             }
                         </td>
                     </tr>
