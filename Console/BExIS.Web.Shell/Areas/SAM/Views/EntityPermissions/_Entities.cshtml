@@ -4,7 +4,7 @@
 @model IEnumerable<EntityTreeViewItemModel>
 
 @(Html.Telerik().TreeView()
-        .Name("treeViewEntities")
+        .Name("treeView_entities")
         .BindTo(Model, mappings =>
         {
             mappings.For<EntityTreeViewItemModel>(binding => binding
@@ -18,7 +18,7 @@
                 .Children(feature => feature.Children));
         })
         .ClientEvents(events => events
-            .OnSelect("OnSelect")
+            .OnSelect("treeView_entities_onSelect")
         )
 
         .ExpandAll(true)
@@ -26,15 +26,15 @@
 
 <script type="text/javascript">
 
-    $("#treeViewEntities li div").click(function (e) {
+    $("#treeView_entities li div").click(function (e) {
         $(e.target).find(".t-in").trigger("click");
     });
 
     function GetTreeView() {
-        return $('#treeViewEntities').data('tTreeView');
+        return $('#treeView_entities').data('tTreeView');
     }
 
-    function OnSelect(e) {
+    function treeView_entities_onSelect(e) {
         var entityId = GetTreeView().getItemValue(e.item);
         var prevSelectedDiv = $(".bx-selected");
         if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");

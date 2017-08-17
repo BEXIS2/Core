@@ -6,13 +6,12 @@
     </description>
     <more text="More" title="go to help" path="" />
   </Information>
-  <Information name="LogOn">
+  <Information name="Login">
     <description>
-      <p>Welcome to the BExIS 2.9.0</p>
-      <p>If you have any problems installing or using it please do not hesitate contacting us at: bexis-support@uni-jena.de</p>
-      <p>This is a community driven open source project so we are looking forward to any feedback or inquiry about new features.</p>
+      <p>Through this interface you can login into the system.</p>
+      <p>If you have not a username, you need to register into the system first.</p>
     </description>
-    <more text="More" title="go to help" path="" />
+    <more text="More" title="go to help" path="/sam/help/index#_Login" />
   </Information>
   <Information name="MyAccount">
     <description>

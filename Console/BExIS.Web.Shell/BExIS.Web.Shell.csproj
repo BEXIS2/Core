@@ -844,6 +844,7 @@
     <Content Include="Views\Account\_SetPassword.cshtml" />
     <Content Include="Views\Account\_RemoveAccount.cshtml" />
     <Content Include="Views\Shared\Info.cshtml" />
+    <Content Include="Views\Shared\NotAuthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

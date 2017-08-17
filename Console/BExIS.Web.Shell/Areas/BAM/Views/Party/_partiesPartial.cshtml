@@ -4,16 +4,19 @@
         .Ajax().OperationMode(GridOperationMode.Client))
             .Pageable(paging => paging.Enabled(true).PageSize(10).Position(GridPagerPosition.Both).PageTo(1))
             .Sortable()
-            .Filterable()
+            .Filterable().ClientEvents(events =>
+            {
+                events.OnDataBound("onDataBound");
+            })
             .Columns(columns =>
             {
-            columns.Bound(c => c.Id);
+                columns.Bound(c => c.Id);
 
-            columns.Bound(c => c.StartDate);
-            columns.Bound(c => c.EndDate);
-            columns.Bound(c => c.Name);
-            columns.Bound(c => c.PartyTypeTitle).Title("Type");
-            columns.Template(
+                columns.Bound(c => c.StartDate);
+                columns.Bound(c => c.EndDate);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.PartyTypeTitle).Title("Type");
+                columns.Template(
                 @<text>
                     <div>
                         @Html.ActionLink(" ", "View", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-show", @style = "color:white;", title = "View Party \"" + item.Name + "\"" })
@@ -28,3 +31,4 @@
                 </text>).ClientTemplate("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' <#= IsTemp==false ? \"style='display:none;'\" :\"''\" #>  />")
                      .Title("Actions required!");
             }))
+

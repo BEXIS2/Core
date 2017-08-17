@@ -16,15 +16,14 @@ namespace BExIS.Security.Services.Objects
         public IReadOnlyRepository<Operation> OperationRepository { get; }
         public IQueryable<Operation> Operations => OperationRepository.Query();
 
-        public Operation Create(string module, string controller, string action, Operation parent = null, Workflow workflow = null)
+        public Operation Create(string module, string controller, string action, Feature feature = null)
         {
             var operation = new Operation()
             {
                 Module = module,
                 Controller = controller,
                 Action = action,
-                Workflow = workflow,
-                Parent = parent
+                Feature = feature
             };
 
             using (var uow = this.GetUnitOfWork())
@@ -35,6 +34,25 @@ namespace BExIS.Security.Services.Objects
             }
 
             return operation;
+        }
+
+        public bool Exists(string module, string controller, string action)
+        {
+            if (string.IsNullOrEmpty(module))
+                return false;
+
+            if (string.IsNullOrEmpty(controller))
+                return false;
+
+            if (string.IsNullOrEmpty(action))
+                return false;
+
+            return OperationRepository.Query(o => o.Module.ToUpperInvariant() == module.ToUpperInvariant() && o.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && o.Action.ToUpperInvariant() == action.ToUpperInvariant()).Count() == 1;
+        }
+
+        public Operation FindById(long operationId)
+        {
+            return OperationRepository.Get(operationId);
         }
 
         public Operation Find(string module, string controller, string action)

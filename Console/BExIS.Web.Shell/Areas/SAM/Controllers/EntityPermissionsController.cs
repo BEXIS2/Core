@@ -1,6 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Objects;
+﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
@@ -31,25 +29,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult EntityPermissions_Select(long entityId, GridCommand command)
+        [GridAction]
+        public ActionResult EntityPermissions_Select(long entityId)
         {
             var entityPermissionManager = new EntityPermissionManager();
-
-            // Source + Transformation - Data
-            var entityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == entityId);
-
-            // Filtering
-            var total = entityPermissions.Count();
-
-            // Sorting
-            var sorted = (IQueryable<EntityPermissionGridRowModel>)entityPermissions.Sort(command.SortDescriptors);
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<EntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
+            var entityPermissions = entityPermissionManager.EntityPermissions.Where(p => p.Entity.Id == entityId).Select(p => EntityPermissionGridRowModel.Convert(p)).ToList();
+            return View(new GridModel<EntityPermissionGridRowModel> { Data = entityPermissions });
         }
 
         public ActionResult Index()
@@ -59,9 +44,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var entities = new List<EntityTreeViewItemModel>();
 
             var entityManager = new EntityManager();
-
-            entityManager.Create(new Entity() { EntityType = typeof(Dataset) });
-
             var roots = entityManager.FindRoots();
             roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
 

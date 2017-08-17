@@ -38,53 +38,39 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
 
             //worklfows -> create dataset ->
-            WorkflowManager workflowManager = new WorkflowManager();
+            //WorkflowManager workflowManager = new WorkflowManager();
 
-            var operation = new Operation();
-            Workflow workflow = new Workflow();
+            //var operation = new Operation();
+            //Workflow workflow = new Workflow();
             OperationManager operationManager = new OperationManager();
 
-            List<Workflow> workflows = workflowManager.WorkflowRepository.Get().ToList();
+            //List<Workflow> workflows = workflowManager.WorkflowRepository.Get().ToList();
 
             #region Help Workflow
 
-            workflow =
-                workflows.FirstOrDefault(w =>
-                w.Name.Equals("Search Help") &&
-                w.Feature != null &&
-                w.Feature.Id.Equals(DataDiscovery.Id));
+            //workflow =
+            //    workflows.FirstOrDefault(w =>
+            //    w.Name.Equals("Search Help") &&
+            //    w.Feature != null &&
+            //    w.Feature.Id.Equals(DataDiscovery.Id));
 
-            if (workflow == null) workflow = workflowManager.Create("Search Help", "", DataDiscovery);
+            //if (workflow == null) workflow = workflowManager.Create("Search Help", "", DataDiscovery);
 
-            operationManager.Create("DDM", "Help", "*", null, workflow);
+            //operationManager.Create("DDM", "Help", "*", null, workflow);
+            operationManager.Create("DDM", "Help", "*", DataDiscovery);
 
             #endregion
 
             #region Search Workflow
 
-            workflow = workflows.FirstOrDefault(w =>
-                w.Name.Equals("Search") &&
-                w.Feature != null &&
-                w.Feature.Id.Equals(SearchFeature.Id));
-
-
-            if (workflow == null) workflow = workflowManager.Create("Search", "", SearchFeature);
-
-            operationManager.Create("DDM", "Home", "*", null, workflow);
-            operationManager.Create("DDM", "Data", "*", null, workflow);
+            operationManager.Create("DDM", "Home", "*", SearchFeature);
+            operationManager.Create("DDM", "Data", "*", SearchFeature);
 
             #endregion
 
             #region Search Admin Workflow
 
-            workflow = workflows.FirstOrDefault(w =>
-                w.Name.Equals("Search Managment") &&
-                w.Feature != null &&
-                w.Feature.Id.Equals(SearchManagementFeature.Id));
-
-            if (workflow == null) workflow = workflowManager.Create("Search", "", SearchManagementFeature);
-
-            operationManager.Create("DDM", "Admin", "*", null, workflow);
+            operationManager.Create("DDM", "Admin", "*", SearchManagementFeature);
 
             #endregion
 
