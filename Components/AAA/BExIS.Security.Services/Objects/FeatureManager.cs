@@ -19,6 +19,12 @@ namespace BExIS.Security.Services.Objects
 
         public void Create(Feature feature)
         {
+            if (feature == null)
+                return;
+
+            if (Exists(feature.Name, feature.Parent))
+                return;
+
             using (var uow = this.GetUnitOfWork())
             {
                 var featureRepository = uow.GetRepository<Feature>();
@@ -27,8 +33,22 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        public bool Exists(string name, Feature parent)
+        {
+            if (parent == null)
+                return FeatureRepository.Query(f => f.Name.ToUpperInvariant() == name.ToUpperInvariant() && f.Parent == null).Count() == 1;
+
+            return FeatureRepository.Query(f => f.Name.ToUpperInvariant() == name.ToUpperInvariant() && f.Parent.Id == parent.Id).Count() == 1;
+        }
+
         public Feature Create(string name, string description, Feature parent = null)
         {
+            if (string.IsNullOrEmpty(name))
+                return null;
+
+            if (Exists(name, parent))
+                return null;
+
             var feature = new Feature()
             {
                 Name = name,

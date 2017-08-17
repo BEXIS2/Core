@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Services.Subjects;
+﻿using BExIS.Security.Services.Objects;
 
 namespace BExIS.Web.Shell.Helpers
 {
@@ -6,14 +6,10 @@ namespace BExIS.Web.Shell.Helpers
     {
         public static void Init()
         {
-            var groupManager = new GroupManager();
+            var operationManager = new OperationManager();
 
-            // System Groups
-            if (!groupManager.Exists("everyone", true))
-                groupManager.Create("everyone", "This group represents all registered users.", true);
-
-            if (!groupManager.Exists("anonymous", true))
-                groupManager.Create("anonymous", "This group represents all users (incl. both, registered and non-registered users).", true);
+            operationManager.Create("Shell", "Account", "*");
+            operationManager.Create("Shell", "Home", "*");
         }
     }
 }

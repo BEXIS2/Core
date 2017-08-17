@@ -53,6 +53,24 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public void Create(long? subjectId, long entityId, long key, short rights)
+        {
+            var entityPermission = new EntityPermission()
+            {
+                Subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault(),
+                Entity = EntityRepository.Get(entityId),
+                Key = key,
+                Rights = rights
+            };
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Put(entityPermission);
+                uow.Commit();
+            }
+        }
+
         public EntityPermission Create<T>(string subjectName, string entityName, Type entityType, long key, List<RightType> rights) where T : Subject
         {
             if (string.IsNullOrEmpty(subjectName))
@@ -64,10 +82,21 @@ namespace BExIS.Security.Services.Authorization
             if (entityType == null)
                 return null;
 
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            if (subject == null)
+                return null;
+
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+            if (entity == null)
+                return null;
+
+            if (Exists(subject, entity, key))
+                return null;
+
             var entityPermission = new EntityPermission()
             {
-                Subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault(),
-                Entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault(),
+                Subject = subject,
+                Entity = entity,
                 Key = key,
                 Rights = rights.ToInt()
             };
@@ -80,6 +109,24 @@ namespace BExIS.Security.Services.Authorization
             }
 
             return entityPermission;
+        }
+
+        public bool Exists(Subject subject, Entity entity, long key)
+        {
+            if (entity == null)
+                return false;
+
+            if (subject == null)
+                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+
+            return EntityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+        }
+
+        public bool Exists(long? subjectId, long entityId, long key)
+        {
+            if (subjectId == null)
+                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1;
+            return EntityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
         }
 
         public void Delete(EntityPermission entityPermission)
@@ -146,35 +193,37 @@ namespace BExIS.Security.Services.Authorization
                     .ToList();
         }
 
-        public List<long> GetKeys(long subjectId, long entityId, RightType rightType)
+        public List<long> GetKeys(long? subjectId, long entityId, RightType rightType)
         {
-            var subject = SubjectRepository.Get(subjectId);
-            if (subject == null)
-                return new List<long>();
-
-            var entity = EntityRepository.Get(entityId);
-            if (entity == null)
-                return new List<long>();
-
-            return EntityPermissionRepository.Query(e =>
-                e.Subject.Id == subject.Id &&
-                e.Entity.Id == entity.Id &&
-                e.Rights.ToRightTypes().Contains(rightType)
-                )
+            if (subjectId == null)
+                return EntityPermissionRepository.Query(e =>
+                    e.Subject == null &&
+                    e.Entity.Id == entityId &&
+                    e.Rights.ToRightTypes().Contains(rightType)
+                    )
                 .Select(e => e.Key)
                 .ToList();
+
+            return EntityPermissionRepository.Query(e =>
+                e.Subject.Id == subjectId &&
+                e.Entity.Id == entityId &&
+                e.Rights.ToRightTypes().Contains(rightType)
+                )
+            .Select(e => e.Key)
+            .ToList();
         }
 
         public int GetRights(Subject subject, Entity entity, long key)
         {
             if (subject == null)
-                return 0;
+            {
+                return EntityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
+            }
 
             if (entity == null)
                 return 0;
 
-            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault();
-            return entityPermission?.Rights ?? 0;
+            return EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
         }
 
         public List<RightType> GetRights<T>(string subjectName, string entityName, Type entityType, long key) where T : Subject
@@ -199,9 +248,9 @@ namespace BExIS.Security.Services.Authorization
             return GetRights(subject, entity, key).ToRightTypes();
         }
 
-        public List<RightType> GetRights(long subjectId, long entityId, long key)
+        public List<RightType> GetRights(long? subjectId, long entityId, long key)
         {
-            var subject = SubjectRepository.Get(subjectId);
+            var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
             var entity = EntityRepository.Get(entityId);
             return GetRights(subject, entity, key).ToRightTypes();
         }
@@ -215,9 +264,9 @@ namespace BExIS.Security.Services.Authorization
             return (int)rightType < binary.Length && binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
         }
 
-        public bool HasRight(long subjectId, long entityId, long key, RightType rightType)
+        public bool HasRight(long? subjectId, long entityId, long key, RightType rightType)
         {
-            var subject = SubjectRepository.Get(subjectId);
+            var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
             var entity = EntityRepository.Get(entityId);
 
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);

@@ -97,7 +97,6 @@
     <Compile Include="Objects\FeatureManager.cs" />
     <Compile Include="Objects\IEntityStore.cs" />
     <Compile Include="Objects\OperationManager.cs" />
-    <Compile Include="Objects\WorkflowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
     <Compile Include="Requests\RequestManager.cs" />

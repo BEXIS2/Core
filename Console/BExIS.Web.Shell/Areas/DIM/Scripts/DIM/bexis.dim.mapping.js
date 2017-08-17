@@ -4,35 +4,39 @@ var connectionParent = {};
 
 
 $(window)
-    .resize(function() {
+    .resize(function () {
+
         setTimeout(function() {
                 reloadAllConnections();
             },
             100);
 
+        
+
     });
 
 function iconClick(e) {
-    console.log("CLICK");
+    alert("CLICK");
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".le-container");
     //console.log(container);
+    $(container).find(".mapping-container-transformation-rule-content").slideToggle();
+    $(container).addClass("selected-mapping-element");
+    setTimeout(reloadAllConnections, 500);
 
-    $(container).find(".le-container-content").slideToggle();
-
-
-    reloadAllConnections();
 };
 
 function iconTransformtionRuleClick(e) {
     //console.log(e);
+
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".mapping-container-transformation-rule")[0];
     //console.log(container);
 
     $(container).find(".mapping-container-transformation-rule-content").slideToggle();
+    $(container).toggleClass("selected-mapping-element");
 
-    reloadAllConnections();
+    setTimeout(reloadAllConnections, 500);
 };
 
 function leSimpleSelectorClick(e) {
@@ -623,7 +627,7 @@ function initJSPLUMB(parentid) {
         //console.log(instance);
 
         var init = function(connection) {
-            connection.getOverlay("label").setLabel("Select");
+            connection.getOverlay("label").setLabel("open");
         };
 
         instance.registerConnectionType("basic",
@@ -736,8 +740,21 @@ function initJSPLUMB(parentid) {
 function changeViewOfTransformationRule(conn) {
 
     var rule = findRuleFromConn(conn);
-    //console.log($(rule));
+
     $(rule).find(".toogle-icon").trigger("click");
+
+    setTimeout(function () {
+        var ruleContent = $(rule).find(".mapping-container-transformation-rule-content")[0];
+
+        if (conn.getOverlay("label").getLabel() === "open") {
+            conn.getOverlay("label").setLabel("close");
+        } else {
+            conn.getOverlay("label").setLabel("open");
+
+        }
+    },100); 
+   
+
 }
 
 function findRuleFromConn(conn) {

@@ -5,6 +5,7 @@
 
 @using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createUser", OnSuccess = "createUser_onSuccess" }))
 {
+    @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
     <table class="bx-table-form">

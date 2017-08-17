@@ -60,7 +60,6 @@
     <Content Include="Mappings\Default\Objects\Entity.hbm.xml" />
     <Content Include="Mappings\Default\Objects\Feature.hbm.xml" />
     <Content Include="Mappings\Default\Objects\Operation.hbm.xml" />
-    <Content Include="Mappings\Default\Objects\Workflow.hbm.xml" />
     <Content Include="Mappings\Default\Requests\Decision.hbm.xml" />
     <Content Include="Mappings\Default\Requests\Request.hbm.xml" />
     <Content Include="Mappings\Default\Subjects\Group.hbm.xml" />
