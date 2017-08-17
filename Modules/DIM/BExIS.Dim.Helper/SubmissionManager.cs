@@ -69,6 +69,11 @@ namespace BExIS.Dim.Helpers
             return datasetid + "_" + datasetVersionid + "_Dataset.zip";
         }
 
+        public string GetFileNameForDataRepo(long datasetid, long datasetVersionid, string datarepo, string ext)
+        {
+            return datasetid + "_" + datasetVersionid + "_Dataset_" + datarepo + "." + ext;
+        }
+
         public bool Exist(long datasetid, long datasetVersionid, string dataRepositoryName)
         {
             // check directory

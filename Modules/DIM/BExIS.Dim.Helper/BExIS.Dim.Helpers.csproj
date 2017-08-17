@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\Libraries\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -54,6 +57,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Vaiona.Utils">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
@@ -61,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicWebService.cs" />
+    <Compile Include="Export\PangaeaDataRepoConverter.cs" />
+    <Compile Include="Export\GenericDataRepoConverter.cs" />
+    <Compile Include="Export\IDataRepoConverter.cs" />
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mapping\MappingUtils.cs" />
@@ -76,6 +86,10 @@
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
       <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+      <Project>{455EC826-9A92-40FF-BD3B-388C288955CE}</Project>
+      <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
