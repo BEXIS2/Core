@@ -51,10 +51,10 @@ namespace BExIS.Modules.Bam.UI.Helpers
             foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
             {
                 if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
-                    messages += (String.Format("<li>{0} more relationship type of '{1}'.</li>", requiredPartyRelationType.MinCardinality- partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count(), requiredPartyRelationType.DisplayName));
+                    messages += (String.Format("<li>{0} more relationship type of '{1}'.</li>", requiredPartyRelationType.MinCardinality - partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count(), requiredPartyRelationType.DisplayName));
             }
             if (!string.IsNullOrEmpty(messages))
-                messages = "These relationship types are required : <ul>" + messages+"</ul>";
+                messages = "These relationship types are required : <ul>" + messages + "</ul>";
             return messages;
         }
     }
@@ -82,8 +82,14 @@ namespace BExIS.Modules.Bam.UI.Helpers
             if (partyTypesNodeList.Count > 0)
                 foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
                 {
-                    var title = partyTypeNode.Attributes["Name"].Value;
-                    var displayName = partyTypeNode.Attributes["DisplayName"] == null ? "" : partyTypeNode.Attributes["DisplayName"].Value;
+                    //Convert xmAttributeCollection to list to skipt the case sensitive and null problems
+                    var attributes = new List<XmlAttribute>();
+                    foreach (XmlAttribute att in partyTypeNode.Attributes)
+                    {
+                        attributes.Add(att);
+                    }
+                    var title = GetAttributeValue(attributes, "Name", true);
+                    var displayName = GetAttributeValue(attributes, "DisplayName", false);
                     var partyType = partyTypeManager.Repo.Get(item => item.Title == title).FirstOrDefault();
                     //If there is not such a party type
                     if (partyType == null)
@@ -94,22 +100,23 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         var customAttrs = new List<PartyCustomAttribute>();
                         foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                         {
-                            var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
-                            var description = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
-                            var validValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
-                            var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
-                            var isUnique = customAttrNode.Attributes["isUnique"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isUnique"].Value);
-                            var isMain = customAttrNode.Attributes["isMain"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isMain"].Value);
+                            var customAttrNodeAttributes = new List<XmlAttribute>();
+                            foreach (XmlAttribute att in customAttrNode.Attributes)
+                            {
+                                customAttrNodeAttributes.Add(att);
+                            }
+                            PartyCustomAttribute partyCustomAttr = ParsePartyCustomAttribute(customAttrNodeAttributes);
+
                             customAttrs.Add(new PartyCustomAttribute()
                             {
-                                DataType = customAttrType,
-                                Description = description,
-                                IsMain = isMain,
-                                IsUnique = isUnique,
-                                IsValueOptional = isValueOptional,
-                                Name = customAttrNode.Attributes["Name"].Value,
+                                DataType = partyCustomAttr.DataType,
+                                Description = partyCustomAttr.Description,
+                                IsMain = partyCustomAttr.IsMain,
+                                IsUnique = partyCustomAttr.IsUnique,
+                                IsValueOptional = partyCustomAttr.IsValueOptional,
+                                Name = partyCustomAttr.Name,
                                 PartyType = partyType,
-                                ValidValues = validValues
+                                ValidValues = partyCustomAttr.ValidValues
                             });
                         }
                         if (!customAttrs.Any(c => c.IsMain))
@@ -122,26 +129,33 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         var customAttrs = new List<PartyCustomAttribute>();
                         foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                         {
-                            var customAttrName = customAttrNode.Attributes["Name"].Value;
+                            var attributesList = new List<XmlAttribute>();
+                            foreach (XmlAttribute att in customAttrNode.Attributes)
+                            {
+                                attributesList.Add(att);
+                            }
+                          
+                            var customAttrName =GetAttributeValue(attributesList,"Name", true);
                             //create new custom attribute if there is not such a name
                             if (!partyType.CustomAttributes.Any(item => item.Name == customAttrName))
                             {
-                                var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
-                                var customAttrDescription = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
-                                var customAttrValidValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
-                                var customAttrIsValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
-                                var customAttrIsUnique = customAttrNode.Attributes["IsUnique"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["IsUnique"].Value);
-                                var customAttrIsMain = customAttrNode.Attributes["isMain"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isMain"].Value);
+                                var customAttrNodeAttributes = new List<XmlAttribute>();
+                                foreach (XmlAttribute att in customAttrNode.Attributes)
+                                {
+                                    customAttrNodeAttributes.Add(att);
+                                }
+
+                                PartyCustomAttribute partyCustomAttr = ParsePartyCustomAttribute(customAttrNodeAttributes);
                                 customAttrs.Add(new PartyCustomAttribute()
                                 {
-                                    DataType = customAttrType,
-                                    Description = customAttrDescription,
-                                    IsMain = customAttrIsMain,
-                                    IsUnique = customAttrIsUnique,
-                                    IsValueOptional = customAttrIsValueOptional,
+                                    DataType = partyCustomAttr.DataType,
+                                    Description = partyCustomAttr.Description,
+                                    IsMain = partyCustomAttr.IsMain,
+                                    IsUnique = partyCustomAttr.IsUnique,
+                                    IsValueOptional = partyCustomAttr.IsValueOptional,
                                     Name = customAttrName,
                                     PartyType = partyType,
-                                    ValidValues = customAttrValidValues
+                                    ValidValues = partyCustomAttr.ValidValues
                                 });
                             }
                         }
@@ -157,30 +171,40 @@ namespace BExIS.Modules.Bam.UI.Helpers
 
                 foreach (XmlNode partyRelationshipTypesNode in partyRelationshipTypesNodeList[0].ChildNodes)
                 {
+                    var customAttrNodeAttributes = new List<XmlAttribute>();
+                    foreach (XmlAttribute att in partyRelationshipTypesNode.Attributes)
+                    {
+                        customAttrNodeAttributes.Add(att);
+                    }
                     var partyRelationshipTypeManager = new PartyRelationshipTypeManager();
-                    var title = partyRelationshipTypesNode.Attributes["Name"].Value;
-                    var displayName = partyRelationshipTypesNode.Attributes["DisplayName"] == null ? "" : partyRelationshipTypesNode.Attributes["DisplayName"].Value;
-                    var description = partyRelationshipTypesNode.Attributes["Description"] == null ? "" : partyRelationshipTypesNode.Attributes["Description"].Value;
-                    var indicatesHierarchy = partyRelationshipTypesNode.Attributes["IndicatesHierarchy"] == null ? false : Convert.ToBoolean(partyRelationshipTypesNode.Attributes["IndicatesHierarchy"].Value);
-                    var maxCardinality = partyRelationshipTypesNode.Attributes["MaxCardinality"] == null ? -1 : int.Parse(partyRelationshipTypesNode.Attributes["MaxCardinality"].Value);
-                    var minCardinality = partyRelationshipTypesNode.Attributes["MinCardinality"] == null ? 0 : int.Parse(partyRelationshipTypesNode.Attributes["MinCardinality"].Value);
+                    var title = GetAttributeValue(customAttrNodeAttributes, "Name", true);
+                    var displayName = GetAttributeValue(customAttrNodeAttributes, "DisplayName", false);
+                    var description = GetAttributeValue(customAttrNodeAttributes, "Description", false);
+                    var indicatesHierarchy = GetAttributeValue(customAttrNodeAttributes, "IndicatesHierarchy", true);// false;
+                    var maxCardinality = GetAttributeValue(customAttrNodeAttributes, "MaxCardinality", true); // -1 
+                    var minCardinality = GetAttributeValue(customAttrNodeAttributes, "MinCardinality", true); // 0 
 
                     //Import party type pairs
                     var partyTypePairs = new List<PartyTypePair>();
                     foreach (XmlNode partyTypesPairNode in partyRelationshipTypesNode.ChildNodes[0].ChildNodes)
                     {
-                        var allowedSourceTitle = partyTypesPairNode.Attributes["AllowedSource"].Value.ToLower();
-                        var allowedTargetTitle = partyTypesPairNode.Attributes["AllowedTarget"].Value.ToLower();
-                        var allowedSource = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedSourceTitle).FirstOrDefault();
+                        var partyTypesPairNodeAttributes = new List<XmlAttribute>();
+                        foreach (XmlAttribute att in partyTypesPairNode.Attributes)
+                        {
+                            partyTypesPairNodeAttributes.Add(att);
+                        }
+                        var allowedSourceTitle = GetAttributeValue(partyTypesPairNodeAttributes, "AllowedSource", true);
+                        var allowedTargetTitle = GetAttributeValue(partyTypesPairNodeAttributes, "AllowedTarget", true);
+                        var allowedSource = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedSourceTitle.ToLower()).FirstOrDefault();
                         if (allowedSource == null)
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedSourceTitle + " is not a party type!!");
-                        var allowedTarget = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedTargetTitle).FirstOrDefault();
+                        var allowedTarget = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedTargetTitle.ToLower()).FirstOrDefault();
                         if (allowedTarget == null)
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedTargetTitle + " is not a party type!!");
 
-                        var typePairTitle = partyTypesPairNode.Attributes["Title"].Value;
-                        var typePairDescription = partyTypesPairNode.Attributes["Description"] == null ? "" : partyTypesPairNode.Attributes["Description"].Value;
-                        var typePairDefault = partyTypesPairNode.Attributes["Default"] == null ? false : Convert.ToBoolean(partyTypesPairNode.Attributes["Default"].Value);
+                        var typePairTitle = GetAttributeValue(partyTypesPairNodeAttributes, "Title", true);
+                        var typePairDescription = GetAttributeValue(partyTypesPairNodeAttributes, "Description", false);
+                        var typePairDefault = GetAttributeValue(partyTypesPairNodeAttributes, "Default", true);
 
                         partyTypePairs.Add(new PartyTypePair()
                         {
@@ -188,7 +212,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             AllowedTarget = allowedTarget,
                             Description = typePairDescription,
                             Title = typePairTitle,
-                            PartyRelationShipTypeDefault = typePairDefault
+                            PartyRelationShipTypeDefault = typePairDefault == null ? true : Convert.ToBoolean(typePairDefault)
 
                         });
                     }
@@ -198,11 +222,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     //It is mandatory to create at least one party type pair when we are creating a party type relation
                     //
                     if (partyRelationshipType == null)
-                        partyRelationshipType = partyRelationshipTypeManager.Create(title, displayName, description, indicatesHierarchy, maxCardinality, minCardinality, partyTypePairs.First().PartyRelationShipTypeDefault, partyTypePairs.First().AllowedSource, partyTypePairs.First().AllowedTarget,
+                        partyRelationshipType = partyRelationshipTypeManager.Create(title, displayName, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality), partyTypePairs.First().PartyRelationShipTypeDefault, partyTypePairs.First().AllowedSource, partyTypePairs.First().AllowedTarget,
         partyTypePairs.First().Title, partyTypePairs.First().Description);
                     else
                     {
-                        partyRelationshipType = partyRelationshipTypeManager.Update(partyRelationshipType.Id, title, description, indicatesHierarchy, maxCardinality, minCardinality);
+                        partyRelationshipType = partyRelationshipTypeManager.Update(partyRelationshipType.Id, title, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality));
                         UpdateOrCreatePartyTypePair(partyTypePairs.First(), partyRelationshipType, partyRelationshipTypeManager);
                     }
                     //If there are more than one partyTypepair exist
@@ -212,6 +236,43 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 }
 
         }
+
+        private static PartyCustomAttribute ParsePartyCustomAttribute(List<XmlAttribute> attributes)
+        {
+            var customAttrType = GetAttributeValue(attributes, "type", false);
+            var description = GetAttributeValue(attributes, "description", false);
+            var validValues = GetAttributeValue(attributes, "validValues", false);
+            var isValueOptional = GetAttributeValue(attributes, "isValueOptional", true);
+            var isUnique = GetAttributeValue(attributes, "isUnique", true);
+            var isMain = GetAttributeValue(attributes, "isMain", true);
+            return new PartyCustomAttribute()
+            {
+                DataType = customAttrType,
+                Description = description,
+                IsMain = isMain == null ? false : Convert.ToBoolean(isMain),
+                IsUnique = isUnique == null ? false : Convert.ToBoolean(isUnique),
+                IsValueOptional = isValueOptional == null ? true : Convert.ToBoolean(isValueOptional),
+                Name = GetAttributeValue(attributes, "Name", true),
+                ValidValues = validValues
+            };
+        }
+
+        private static string GetAttributeValue(IEnumerable<XmlAttribute> attributes, string name, bool returnNull)
+        {
+            var attr = attributes
+                 .FirstOrDefault(xa =>
+                     string.Equals(xa.Name,
+                                   name,
+                                   StringComparison.InvariantCultureIgnoreCase));
+            if (attr != null)
+                return attr.Value;
+            else if (returnNull && attr == null)
+                return null;
+            else
+                return "";
+
+        }
+
         /// <summary>
         /// 
         /// </summary>

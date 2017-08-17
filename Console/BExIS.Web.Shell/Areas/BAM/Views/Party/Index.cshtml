@@ -1,4 +1,11 @@
 ﻿@model Dictionary<String, List<String>>
+@section Information
+{
+    With this interface you are able to manage parties. New party can be added with the "Create" button. Existing parties can be edited and removed through the "Edit" and "Delete" button. Furthermore, their details can be viewed through the "View" button.
+    <p>
+        <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
 <div class="bx-rpm-buttons">
     @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button function" })
 </div>
@@ -11,7 +18,7 @@
         </li>
         @foreach (var rootPartyType in Model)
         {
-            var partyTypes=string.Join(",", rootPartyType.Value);
+            var partyTypes = string.Join(",", rootPartyType.Value);
             <li partyTypes="@partyTypes" class="t-item t-state-default">
                 <a class="t-link">
                     <span>@rootPartyType.Key</span>
@@ -33,8 +40,7 @@
         loadParties($(this).attr("partyTypes"));
     });
 
-    function loadParties(partyTypes)
-    {
+    function loadParties(partyTypes) {
         if (!partyTypes)
             partyTypes = '';
         $('#imgPartiesLoading').show();
@@ -46,9 +52,12 @@
             }
             $('#imgPartiesLoading').hide();
             $('[data-toggle="tooltip"]').tooltip();
-            resetAllTelerikIconTitles();
+            onDataBound();
         });
     }
-
+    function onDataBound() {
+        resetAllTelerikIconTitles();
+        addTooltips();
+    }
     loadParties('');
 </script>
