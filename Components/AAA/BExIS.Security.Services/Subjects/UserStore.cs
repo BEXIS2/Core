@@ -49,6 +49,9 @@ namespace BExIS.Security.Services.Subjects
 
         public void Create(User user)
         {
+            if (string.IsNullOrEmpty(user.Name))
+                return;
+
             using (var uow = this.GetUnitOfWork())
             {
                 var userRepository = uow.GetRepository<User>();
@@ -59,6 +62,9 @@ namespace BExIS.Security.Services.Subjects
 
         public Task CreateAsync(User user)
         {
+            if (string.IsNullOrEmpty(user.Name))
+                return Task.FromResult(0);
+
             using (var uow = this.GetUnitOfWork())
             {
                 var userRepository = uow.GetRepository<User>();
