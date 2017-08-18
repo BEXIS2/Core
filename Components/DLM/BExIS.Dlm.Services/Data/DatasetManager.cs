@@ -28,12 +28,13 @@ namespace BExIS.Dlm.Services.Data
     ///         <item><description>There is an automatic and transparent authorization based result set trimming in place, that may reduce the matching entities based on the current user access rights.</description></item>
     ///     </list>
     /// </remarks>
-    public class DatasetManager
+    public class DatasetManager: IDisposable
     {
         public int PreferedBatchSize { get; set; }
+        private IUnitOfWork uow;
         public DatasetManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
+            uow = this.GetIsolatedUnitOfWork();
             this.PreferedBatchSize = uow.PersistenceManager.PreferredPushSize;
             this.DatasetRepo = uow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
@@ -45,10 +46,15 @@ namespace BExIS.Dlm.Services.Data
             this.AmendmentRepo = uow.GetReadOnlyRepository<Amendment>();
         }
 
+        public void Dispose()
+        {
+            uow.Dispose();
+        }
+
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
-
+        
         /// <summary>
         /// Provides read-only querying and access to datasets
         /// </summary>
@@ -89,6 +95,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         public IReadOnlyRepository<Amendment> AmendmentRepo { get; private set; }
 
+        
         #endregion
 
         #region Dataset

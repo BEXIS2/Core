@@ -35,10 +35,10 @@
     title="Manage Entity Permissions" description="Manage Entity Permissions" icon=""
     controller="entitypermissions" action="index" argument="Entity Permissions"
     extends="./settingsRoot" />
-  <Export tag="settings" id="modules" order="5"
+  <!--<Export tag="settings" id="modules" order="5"
     title="Manage Modules" description="Manage Modules" icon=""
     controller="modules" action="index" argument="Modules"
-    extends="./settingsRoot" />
+    extends="./settingsRoot" />-->
   <Export tag="settings" id="datasets" order="6"
     title="Manage Datasets" description="Manage Datasets" icon=""
     controller="datasets" action="index" argument="Datasets"

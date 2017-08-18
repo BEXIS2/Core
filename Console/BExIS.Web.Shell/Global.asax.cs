@@ -13,6 +13,7 @@ using Vaiona.Logging;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
+using Vaiona.PersistenceProviders.NH;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Data;
@@ -230,7 +231,7 @@ namespace BExIS.Web.Shell
         /// </summary>
         protected virtual void Application_EndRequest()
         {
-            //var entityContext = HttpContext.Current.Items["NHibernateCurrentSessionFactory"] as IDictionary<ISessionFactory, Lazy<ISession>>;
+            //var entityContext = HttpContext.Current.Items[NHibernateCurrentSessionProvider.CURRENT_SESSION_CONTEXT_KEY];
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
         }
