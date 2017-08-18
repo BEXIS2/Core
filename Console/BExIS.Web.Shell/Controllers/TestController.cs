@@ -6,27 +6,50 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Controllers
 {
-    public class TestController : Controller
+    public class TestController : BaseController
     {
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            getDatasetVersionIdsThatHaveSOmeTuples(1);
+            //testNHibernateSession();
+            //getDatasetVersionIdsThatHaveSOmeTuples(1);
             //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
             return View("Index");
+        }
+
+        private void testNHibernateSession()
+
+        {
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            this.Disposables.Add(entityPermissionManager);
+            var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
+            for (int i = 0; i < 5000; i++)
+            {
+                var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 3, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                //var entityPermissions = entityPermissionManager.QueryEntityPermissions().Where(m => m.Entity.Id == ep.Id);
+
+            }
+            entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+            var y = x.ToList(); // it should work, while its repo is created from an isolated UoW.
         }
 
         private void getDatasetVersionIdsThatHaveSOmeTuples(long datasetId)
