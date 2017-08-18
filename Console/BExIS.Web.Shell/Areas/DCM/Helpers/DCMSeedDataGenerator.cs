@@ -111,76 +111,42 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
             if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management");
 
-
-
-            //worklfows -> create dataset ->
-            WorkflowManager workflowManager = new WorkflowManager();
-
-            var operation = new Operation();
-            Workflow workflow = new Workflow();
             OperationManager operationManager = new OperationManager();
 
             #region Help Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Data Collection Help") && w.Feature.Id.Equals(DataCollectionFeature.Id));
-            if (workflow == null) workflow = workflowManager.Create("Data Collection Help", "", DataCollectionFeature);
-
-            operationManager.Create("DCM", "Help", "*", null, workflow);
+            operationManager.Create("DCM", "Help", "*", DataCollectionFeature);
 
             #endregion 
 
             #region Create Dataset Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Create Dataset") && w.Feature.Id.Equals(DatasetCreationFeature.Id));
-            if (workflow == null) workflow = workflowManager.Create("Create Dataset", "", DatasetCreationFeature);
-
-            operationManager.Create("DCM", "CreateDataset", "*", null, workflow);
-            operationManager.Create("DCM", "Form", "*", null, workflow);
+            operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
+            operationManager.Create("DCM", "Form", "*", DatasetCreationFeature);
 
             #endregion
 
             #region Update Dataset Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Upload Dataset") && w.Feature.Id.Equals(DatasetUploadFeature.Id));
-            if (workflow == null) workflow = workflowManager.Create("Upload Dataset", "", DatasetUploadFeature);
-
-            operationManager.Create("DCM", "Push", "*", null, workflow);
-            operationManager.Create("DCM", "Submit", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitDefinePrimaryKey", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitGetFileInformation", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitSelectAFile", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitSpecifyDataset", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitSummary", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitValidation", "*", null, workflow);
+            operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "Submit", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "SubmitDefinePrimaryKey", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "SubmitGetFileInformation", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "SubmitSelectAFile", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "SubmitSpecifyDataset", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "SubmitSummary", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "SubmitValidation", "*", DatasetUploadFeature);
 
             #endregion
 
             #region Metadata Managment Workflow
 
-            workflow =
-                workflowManager.WorkflowRepository
-                    .Get()
-                    .FirstOrDefault(w => w.Name.Equals("Metadata Managment") && w.Feature.Id.Equals(MetadataManagementFeature.Id));
-            if (workflow == null) workflow = workflowManager.Create("Metadata Managment", "", MetadataManagementFeature);
-
-            operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", null, workflow);
-            operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", null, workflow);
-            operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", null, workflow);
-            operationManager.Create("DCM", "ImportMetadataStructureSummary", "*", null, workflow);
-            operationManager.Create("DCM", "ManageMetadataStructure", "*", null, workflow);
-            operationManager.Create("DCM", "SubmitSpecifyDataset", "*", null, workflow);
-
-
-            MetadataManagementFeature.Workflows.Add(workflow);
+            operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
+            operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", MetadataManagementFeature);
+            operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", MetadataManagementFeature);
+            operationManager.Create("DCM", "ImportMetadataStructureSummary", "*", MetadataManagementFeature);
+            operationManager.Create("DCM", "ManageMetadataStructure", "*", MetadataManagementFeature);
+            operationManager.Create("DCM", "SubmitSpecifyDataset", "*", MetadataManagementFeature);
 
             #endregion
 

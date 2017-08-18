@@ -149,26 +149,23 @@ namespace BExIS.Security.Services.Authorization
             return 2;
         }
 
-        public bool HasAccess(long subjectId, long featureId)
+        public bool HasAccess(long? subjectId, long featureId)
         {
             var feature = FeatureRepository.Get(featureId);
-            var subject = SubjectRepository.Get(subjectId);
+            var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
 
-            FeaturePermission featurePermission;
+            return HasAccess(subject, feature);
+        }
 
-            if (subject is Group)
+        public bool HasAccess(Subject subject, Feature feature)
+        {
+            // Anonymous
+            if (subject == null)
             {
                 while (feature != null)
                 {
                     if (Exists(null, feature.Id, PermissionType.Grant))
                         return true;
-
-                    featurePermission = Find(subject.Id, feature.Id);
-
-                    if (featurePermission != null)
-                    {
-                        return featurePermission.PermissionType == PermissionType.Grant;
-                    }
 
                     feature = feature.Parent;
                 }
@@ -176,22 +173,22 @@ namespace BExIS.Security.Services.Authorization
                 return false;
             }
 
-            if (subject is User)
+            // Non-Anonymous
+            while (feature != null)
             {
-                var user = subject as User;
-                var groupIds = user.Groups.Select(g => g.Id).ToList();
+                if (Exists(null, feature.Id, PermissionType.Grant))
+                    return true;
 
-                while (feature != null)
+                if (Exists(subject.Id, feature.Id, PermissionType.Deny))
+                    return false;
+
+                if (Exists(subject.Id, feature.Id, PermissionType.Grant))
+                    return true;
+
+                if (subject is User)
                 {
-                    if (Exists(null, feature.Id, PermissionType.Grant))
-                        return true;
-
-                    featurePermission = Find(subjectId, featureId);
-
-                    if (featurePermission != null)
-                    {
-                        return featurePermission.PermissionType == PermissionType.Grant;
-                    }
+                    var user = subject as User;
+                    var groupIds = user.Groups.Select(g => g.Id).ToList();
 
                     if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
                     {
@@ -202,11 +199,9 @@ namespace BExIS.Security.Services.Authorization
                     {
                         return true;
                     }
-
-                    feature = feature.Parent;
                 }
 
-                return false;
+                feature = feature.Parent;
             }
 
             return false;
@@ -214,11 +209,9 @@ namespace BExIS.Security.Services.Authorization
 
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
-            var operation =
-                OperationRepository.Query(x => x.Module == module && x.Controller == controller && x.Action == action)
-                    .FirstOrDefault();
+            var operation = OperationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
 
-            var feature = operation?.Workflow.Feature;
+            var feature = operation?.Feature;
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
             if (feature != null && subject != null)
                 return HasAccess(subject.Id, feature.Id);

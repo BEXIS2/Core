@@ -30,7 +30,7 @@ namespace BExIS.Web.Shell
         {
             filters.Add(new PersistenceContextProviderFilterAttribute());
 #if !DEBUG
-            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+            filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
 #endif
             filters.Add(new HandleErrorAttribute());
         }

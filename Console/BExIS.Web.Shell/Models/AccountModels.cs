@@ -28,7 +28,7 @@ namespace BExIS.Web.Shell.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "UserName")]
+        [Display(Name = "User Name")]
         public string UserName { get; set; }
 
         [Required]
@@ -36,7 +36,7 @@ namespace BExIS.Web.Shell.Models
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Remember me")]
         public bool RememberMe { get; set; }
     }
 
@@ -62,7 +62,7 @@ namespace BExIS.Web.Shell.Models
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "UserName")]
+        [Display(Name = "User Name")]
         public string UserName { get; set; }
 
         [DataType(DataType.Password)]

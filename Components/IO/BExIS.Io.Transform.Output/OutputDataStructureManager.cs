@@ -258,6 +258,11 @@ namespace BExIS.IO.Transform.Output
             return JsonConvert.SerializeObject(new DataStructureDataList(datasetId));
         }
 
+        public static DataStructureDataList GetVariableList(long datasetId)
+        {
+            return new DataStructureDataList(datasetId);
+        }
+
         public static string GenerateDataStructure(long datasetId)
         {
             string path = "";

@@ -17,11 +17,10 @@ namespace BExIS.IO.Transform.Output
     {
         #region export prepare files
 
-        public string GenerateAsciiFile(long id, string title, string mimeType)
+        public string GenerateAsciiFile(long id, string title, string mimeType, TextSeperator textSeperator = TextSeperator.semicolon)
         {
             string contentDescriptorTitle = "";
             string ext = "";
-            TextSeperator textSeperator = TextSeperator.semicolon;
 
             switch (mimeType)
             {
@@ -44,6 +43,90 @@ namespace BExIS.IO.Transform.Output
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+            long datasetVersionId = datasetVersion.Id;
+            AsciiWriter writer = new AsciiWriter(textSeperator);
+
+            string path = "";
+
+
+
+            //ascii allready exist
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
+            {
+                #region FileStream exist
+
+                ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals(contentDescriptorTitle)).FirstOrDefault();
+                path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
+
+                if (FileHelper.FileExist(path))
+                {
+                    return path;
+                }
+                else
+                {
+                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
+                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "Data", ext, writer);
+
+                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
+
+                    writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
+
+                    return path;
+                }
+
+                #endregion
+
+            }
+            // not exist needs to generated
+            else
+            {
+                #region FileStream not exist
+
+                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
+                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
+
+                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
+
+                writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
+
+                return path;
+
+                #endregion
+            }
+        }
+
+        public string GenerateAsciiFile(long id, long versionId, string title, string mimeType)
+        {
+            string contentDescriptorTitle = "";
+            string ext = "";
+
+            TextSeperator textSeperator = TextSeperator.semicolon;
+
+            switch (mimeType)
+            {
+                case "text/csv":
+                    {
+                        contentDescriptorTitle = "generatedCSV";
+                        ext = ".csv";
+                        textSeperator = TextSeperator.semicolon;
+                        break;
+                    }
+                default:
+                    {
+                        contentDescriptorTitle = "generatedTXT";
+                        ext = ".txt";
+                        textSeperator = TextSeperator.tab;
+                        break;
+                    }
+            }
+
+
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);
             long datasetVersionId = datasetVersion.Id;
             AsciiWriter writer = new AsciiWriter(textSeperator);
 

@@ -117,7 +117,10 @@ namespace BExIS.Utils.WebHelpers
             StringBuilder sb = new StringBuilder();
             var settingsRoot = ModuleManager.ExportTree.GetElement("settingsRoot");
 
-            foreach (var child in settingsRoot.Elements())
+            var children = settingsRoot.Elements()
+                .OrderBy(x => x.Attribute("area").Value).ThenBy(x => x.Attribute("order").Value);
+
+            foreach (var child in children)
             {
                 sb.Append($"<li><a href='");
                 if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))

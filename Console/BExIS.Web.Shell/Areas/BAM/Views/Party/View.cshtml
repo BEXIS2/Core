@@ -1,4 +1,13 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
+@section Information
+{
+    This is the details of a party; its main fields, attributes and relationships. Also it is possible to view the detial of each relationship on relationshipgrid.
+   <p>
+        <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+
+}
+
 
 @using (Html.BeginForm("Edit", "Party", new { area = "BAM" }, FormMethod.Post))
 {

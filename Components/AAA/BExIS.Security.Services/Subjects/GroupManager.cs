@@ -50,6 +50,12 @@ namespace BExIS.Security.Services.Subjects
         /// <returns>The group that got persisted.</returns>
         public Group Create(string groupName, string description, bool isSystemGroup = false, bool isValid = true)
         {
+            if (string.IsNullOrEmpty(groupName))
+                return null;
+
+            if (Exists(groupName, isSystemGroup))
+                return null;
+
             var group = new Group()
             {
                 Name = groupName,
