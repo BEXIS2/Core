@@ -73,37 +73,45 @@
         $("#" + '@id' + " #RegExPattern")
             .change(function () {
 
-                changeIt();
+                var parent = $(this).parents(".mapping-container-transformation-rule")[0];
+                var parentid = $(parent).attr("id");
+                changeIt(parentid);
 
             });
 
         $("#" + '@id' + " #Mask")
             .change(function () {
 
-                changeIt();
+                var parent = $(this).parents(".mapping-container-transformation-rule")[0];
+                var parentid = $(parent).attr("id");
+                changeIt(parentid);
 
             });
 
         $("#" + '@id' + " #Example")
             .change(function() {
 
-                changeIt();
+                var parent = $(this).parents(".mapping-container-transformation-rule")[0];
+                var parentid = $(parent).attr("id");
+                changeIt(parentid);
+
             });
 
-        function changeIt() {
+        function changeIt(transformationId) {
 
-            updateRegexExample();
-            updateMaskExample();
+            //alert("change");
+            updateRegexExample(transformationId);
+            updateMaskExample(transformationId);
 
         }
 
-        function updateRegexExample() {
+        function updateRegexExample(transformationId) {
 
-            var tmpString = $("#" + '@id' + " #Example").val();
-            var regExValue = $("#" + '@id' + " #RegExPattern").val();
+            var tmpString = $("#" + transformationId + " #Example").val();
+            var regExValue = $("#" + transformationId + " #RegExPattern").val();
             var exp = new RegExp(regExValue, "g");
 
-            var sourceName = $("#" + '@id' + " #sourceName").text();
+            var sourceName = $("#" + transformationId + " #sourceName").text();
 
             //alert($(this).val());
             //alert(exp);
@@ -120,7 +128,7 @@
 
             if (result != null) {
                 if (regExValue.length == 0) {
-                    $("#" + '@id' + " #resultRegEx").html(tmpString);
+                    $("#" + transformationId + " #resultRegEx").html(tmpString);
                 } else {
 
                     console.log("-----");
@@ -135,22 +143,22 @@
                     }
                     resultString += "</table>";
 
-                    $("#" + '@id' + " #resultRegEx").html(resultString);
+                    $("#" + transformationId + " #resultRegEx").html(resultString);
                 }
 
             } else {
 
-                $("#" + '@id' + " #resultRegEx").html("");
+                $("#" + transformationId + " #resultRegEx").html("");
 
             }
         }
 
-        function updateMaskExample() {
+        function updateMaskExample(transformationId) {
 
-            var tmpString = $("#" + '@id' + " #Example").val();
-            var regExValue = $("#" + '@id' + " #RegExPattern").val();
-            var mask = $("#" + '@id' + " #Mask").val();
-            var sourceName = $("#" + '@id' + " #sourceName").text();
+            var tmpString = $("#" + transformationId + " #Example").val();
+            var regExValue = $("#" + transformationId + " #RegExPattern").val();
+            var mask = $("#" + transformationId + " #Mask").val();
+            var sourceName = $("#" + transformationId + " #sourceName").text();
 
             var exp = new RegExp(regExValue, "g");
             var result = tmpString.match(exp);
@@ -160,6 +168,7 @@
             console.log("result: " + result);
             console.log("mask: " + mask);
             console.log("sourceName" + sourceName);
+            console.log(transformationId);
 
             console.log(result);
 
@@ -175,7 +184,7 @@
                     console.log(mask);
                 }
 
-                $("#" + '@id' + " #result").html(mask);
+                $("#" + transformationId + " #result").html(mask);
             }
         }
 

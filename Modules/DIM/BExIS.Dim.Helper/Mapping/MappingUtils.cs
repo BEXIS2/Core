@@ -80,44 +80,55 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 // all mappings belong to the same parent
                 long parentTypeId = mappings.FirstOrDefault().Source.Parent.ElementId;
-
+                long sourceId = mappings.FirstOrDefault().Source.ElementId;
                 // all Masks are the same
                 string mask = mappings.FirstOrDefault().Target.Mask;
+                PartyType partyType = null;
+                List<Party> parties = null;
 
-                PartyType partyType = partyTypeManager.Repo.Get(parentTypeId);
-                List<Party> parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
-
-                foreach (var p in parties)
+                //Simple Mapping, selecting directly the simple attr
+                // the parent is 0 -> the system 
+                if (parentTypeId == 0)
                 {
-                    mask = mappings.FirstOrDefault().Target.Mask;
-
-                    foreach (var mapping in mappings)
-                    {
-                        long attributeId = mapping.Source.ElementId;
-
-
-                        PartyCustomAttributeValue attrValue =
-                            partyManager.RepoCustomAttrValues.Get()
-                                .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
-                                .FirstOrDefault();
-
-
-
-
-                        List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
-                        string placeHolderName = attrValue.CustomAttribute.Name;
-
-
-                        mask = setOrReplace(mask, regExResultList, placeHolderName);
-
-
-                    }
-
-                    if (mask.ToLower().Contains(value.ToLower()))
-                        tmp.Add(mask);
+                    partyType = partyTypeManager.Repo.Query().FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
+                    parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+                }
+                else
+                {
+                    partyType = partyTypeManager.Repo.Get(parentTypeId);
+                    parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
                 }
 
+                if (parties != null)
+                    foreach (var p in parties)
+                    {
+                        mask = mappings.FirstOrDefault().Target.Mask;
 
+                        foreach (var mapping in mappings)
+                        {
+                            long attributeId = mapping.Source.ElementId;
+
+
+                            PartyCustomAttributeValue attrValue =
+                                partyManager.RepoCustomAttrValues.Get()
+                                    .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
+                                    .FirstOrDefault();
+
+
+
+
+                            List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
+                            string placeHolderName = attrValue.CustomAttribute.Name;
+
+
+                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+
+
+                        }
+
+                        if (mask.ToLower().Contains(value.ToLower()))
+                            tmp.Add(mask);
+                    }
             }
 
             return tmp;
