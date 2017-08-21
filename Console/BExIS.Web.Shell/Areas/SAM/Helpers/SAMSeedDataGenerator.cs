@@ -1,4 +1,6 @@
-﻿using BExIS.Security.Services.Objects;
+﻿using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Helpers
@@ -41,6 +43,9 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
             var entityPermissionFeature = featureManager.Create("Entity Permissions", "", administrationFeature);
             var entityPermissionOperation = operationManager.Create("SAM", "EntityPermissions", "*", entityPermissionFeature);
+
+            var featurePermissionManager = new FeaturePermissionManager();
+            featurePermissionManager.Create(null, featurePermissionFeature, PermissionType.Grant);
         }
     }
 }
