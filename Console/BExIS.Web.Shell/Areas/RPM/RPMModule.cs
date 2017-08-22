@@ -57,7 +57,7 @@ namespace BExIS.Modules.Rpm.UI
                     operationManager.Create("RPM", "DataStructureEdit", "*", datastructureFeature);
 
                 if (!operationManager.Exists("RPM", "Structures", "*"))
-                    operationManager.Create("RPM", "Structures", " * ", datastructureFeature);
+                    operationManager.Create("RPM", "Structures", "*", datastructureFeature);
 
                 Feature atributeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Variable Template Management") &&
@@ -68,7 +68,7 @@ namespace BExIS.Modules.Rpm.UI
                     atributeFeature = featureManager.Create("Variable Template Management", "Variable Template Management", dataPlanning); ;
 
                 if (!operationManager.Exists("RPM", "DataAttribute", "*"))
-                    operationManager.Create("RPM", "DataAttribute", " * ", atributeFeature);
+                    operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
 
                 Feature unitFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Unit Management") &&
@@ -79,7 +79,7 @@ namespace BExIS.Modules.Rpm.UI
                     unitFeature = featureManager.Create("Unit Management", "Unit Management", dataPlanning);
 
                 if (!operationManager.Exists("RPM", "Unit", "*"))
-                    operationManager.Create("RPM", "Unit", " * ", unitFeature);
+                    operationManager.Create("RPM", "Unit", "*", unitFeature);
 
                 Feature dataTypeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Data Type Management") &&
@@ -90,7 +90,7 @@ namespace BExIS.Modules.Rpm.UI
                     dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);
 
                 if (!operationManager.Exists("RPM", "Home", "*"))
-                    operationManager.Create("RPM", "Home", " * ", dataTypeFeature);
+                    operationManager.Create("RPM", "Home", "*", dataTypeFeature);
             }
             catch (Exception e)
             {

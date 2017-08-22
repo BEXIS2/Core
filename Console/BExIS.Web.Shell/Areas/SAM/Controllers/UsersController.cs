@@ -32,7 +32,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             if (!ModelState.IsValid) return PartialView("_Create", model);
 
-            var user = new User { UserName = model.UserName, Email = model.Email, IsAdministrator = model.IsAdministrator };
+            var user = new User { UserName = model.UserName, Email = model.Email };
             var userManager = new UserManager(new UserStore());
             var result = await userManager.CreateAsync(user);
             if (result.Succeeded)
@@ -99,7 +99,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (user == null) return PartialView("_Update", model);
 
             user.Email = model.Email;
-            user.IsAdministrator = model.IsAdministrator;
 
             userStore.Update(user);
             return Json(new { success = true });

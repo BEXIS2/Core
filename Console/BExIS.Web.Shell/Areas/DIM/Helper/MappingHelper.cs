@@ -672,11 +672,14 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
             MappingManager mappingManager = new MappingManager();
 
-
             if (ExistLinkElement(leModel))
             {
                 return mappingManager.LinkElementRepo.Get()
-                    .FirstOrDefault(le => le.ElementId.Equals(leModel.ElementId) && le.Type.Equals(leModel.Type));
+                    .FirstOrDefault(le =>
+                    le.ElementId.Equals(leModel.ElementId) &&
+                    le.Type.Equals(leModel.Type) &&
+                    le.Complexity.Equals(leModel.Complexity)
+                    );
             }
             else
             {
@@ -760,8 +763,13 @@ namespace BExIS.Modules.Dim.UI.Helper
 
 
             //Create simple mappings
+            //all mappings with the same  source or target should
+
+            List<LinkElement> createdLinkELementModels = new List<LinkElement>();
+
             foreach (var sm in newListOfSimpleMappings)
             {
+
                 LinkElement simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId);
                 LinkElement simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId);
 
@@ -788,7 +796,6 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             return false;
         }
-
 
         public static bool DeleteMapping(long id, bool recursive = true)
         {
@@ -833,7 +840,9 @@ namespace BExIS.Modules.Dim.UI.Helper
             MappingManager mappingManager = new MappingManager();
 
             if (mappingManager.LinkElementRepo.Get()
-                .Any(le => le.ElementId.Equals(leModel.ElementId) && le.Type.Equals(leModel.Type)))
+                .Any(le => le.ElementId.Equals(leModel.ElementId) &&
+                le.Type.Equals(leModel.Type) &&
+                le.Complexity.Equals(leModel.Complexity)))
             {
                 return true;
             }
