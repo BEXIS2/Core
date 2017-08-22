@@ -13,7 +13,7 @@
     <!--add proper menu items-->
 
     <Export tag="settings" id="createDataset" order="1"
-            title="Party Manager" description="" icon=""
+            title="Manage Parties" description="" icon=""
             controller="Party" action="index"
             extends="./settingsRoot" />
 
@@ -21,7 +21,7 @@
 
     <Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
             title="Load From Party User Registeration Form" description="Load FromParty User Registeration Form" icon=""
-            controller="Party" action="UserRegisteration"
+            controller="PartyService" action="UserRegisteration"
             extends="" />
 	<!-- Settings Example-->
     <!--<Export tag="settings" id="manageMetadata" order="1"
