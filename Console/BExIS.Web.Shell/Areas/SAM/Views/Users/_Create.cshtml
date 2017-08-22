@@ -27,19 +27,10 @@
                 @Html.ValidationMessageFor(m => m.Email)
             </td>
         </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.IsAdministrator)
-            </td>
-            <td>
-                @Html.CheckBoxFor(m => m.IsAdministrator)
-                @Html.ValidationMessageFor(m => m.IsAdministrator)
-            </td>
-        </tr>
     </table>
 
     <div class="bx-footer right">
         <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" class="bx-button action">Cancel</button>
+        <button style="margin-left: 1px" type="button" id="button_createUser_cancel" class="bx-button action">Cancel</button>
     </div>
 }

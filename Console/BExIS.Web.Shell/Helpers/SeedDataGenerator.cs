@@ -6,8 +6,12 @@ namespace BExIS.Web.Shell.Helpers
     {
         public static void Init()
         {
-            var operationManager = new OperationManager();
+            // Features
+            var featureManager = new FeatureManager();
+            featureManager.Create("BExIS", "This is the root!");
 
+            // Operations
+            var operationManager = new OperationManager();
             operationManager.Create("Shell", "Account", "*");
             operationManager.Create("Shell", "Home", "*");
         }
