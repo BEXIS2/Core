@@ -11,18 +11,18 @@ namespace BExIS.Security.Services.Authorization
 {
     public class EntityPermissionManager : IDisposable
     {
-        private IUnitOfWork uow = null;
+        private IUnitOfWork guow = null;
         public EntityPermissionManager()
         {
-            uow = this.GetIsolatedUnitOfWork();
-            EntityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+            guow = this.GetIsolatedUnitOfWork();
+            EntityPermissionRepository = guow.GetReadOnlyRepository<EntityPermission>();
             //EntityRepository = uow.GetReadOnlyRepository<Entity>();
             //SubjectRepository = uow.GetReadOnlyRepository<Subject>();
         }
 
         public void Dispose()
         {
-            uow.Dispose();
+            guow.Dispose();
         }
 
         public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }

@@ -22,12 +22,12 @@ using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Controllers
 {
-    public class TestController : BaseController
+    public class TestController : BaseController //, IDisposable
     {
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            //testNHibernateSession();
+            testNHibernateSession();
             //getDatasetVersionIdsThatHaveSOmeTuples(1);
             //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
