@@ -2,27 +2,64 @@
 {
     @Html.Partial("_Entities")
 }
-<div id="permissions">
-    
-
-
+<div class="row">
+    <div id="instances" class="col-md-6"></div>
+    <div id="subjects" class="col-md-6"></div>
 </div>
 
-@section Scripts
-{
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        function editEntityPermission(id) {
+    $("#treeView_entities li div").click(function (e) {
+        $(e.target).find(".t-in").trigger("click");
+    });
 
-        }
+    function GetTreeView() {
+        return $('#treeView_entities').data('tTreeView');
+    }
 
-        function deleteEntityPermission(id) {
+    function treeView_entities_onSelect(e) {
+        var entityId = GetTreeView().getItemValue(e.item);
+        var prevSelectedDiv = $(".bx-selected");
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
 
-        }
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
 
-        function onDataBound() {
-            addTooltips();
-            resetAllTelerikIconTitles();
-        }
-    </script>
-}
+        $('#instances').empty();
+
+        $.get('@Url.Action("Instances", "EntityPermissions")',
+            { EntityId: entityId },
+            function(contentData) {
+
+                $('#instances').html(contentData);
+
+                truncateTitle();
+            });
+    }
+
+    function grid_instances_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("input[name='selectedInstances']:checkbox")
+            .click(function() {
+                if ($(this).is(':checked')) {
+                    $.post('@Url.Action("AddInstanceToPublic", "EntityPermissions")',
+                        { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
+                        function() {
+                            $("#grid_groups .t-refresh").trigger('click');
+                        });
+                } else {
+                    $.post('@Url.Action("RemoveInstanceFromPublic", "EntityPermissions")',
+                        { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
+                        function() {
+                            $("#grid_groups .t-refresh").trigger('click');
+                        });
+                }
+            });
+    }
+
+    function grid_instances_onRowSelect() {
+        
+    }
+</script>

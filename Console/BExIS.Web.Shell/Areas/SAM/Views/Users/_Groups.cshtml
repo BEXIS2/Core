@@ -32,4 +32,4 @@
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })
-      .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
+      .Sortable(sortable => sortable.OrderBy(order => order.Add(i => i.Id).Descending())))

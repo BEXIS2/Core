@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
-using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
@@ -29,12 +28,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
-        [GridAction]
-        public ActionResult EntityPermissions_Select(long entityId)
+        public ActionResult Instances(long entityId)
         {
+            return PartialView("_Instances", entityId);
+        }
+
+        [GridAction]
+        public ActionResult Instances_Select(long entityId)
+        {
+            var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
-            var entityPermissions = entityPermissionManager.EntityPermissions.Where(p => p.Entity.Id == entityId).Select(p => EntityPermissionGridRowModel.Convert(p)).ToList();
-            return View(new GridModel<EntityPermissionGridRowModel> { Data = entityPermissions });
+            var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+
+            var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+
+            return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
         }
 
         public ActionResult Index()

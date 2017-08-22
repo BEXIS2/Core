@@ -223,7 +223,6 @@
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
-    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Entities.cshtml" />
     <Content Include="Views\Requests\Index.cshtml" />
     <Content Include="Views\Requests\_Requests.cshtml" />
