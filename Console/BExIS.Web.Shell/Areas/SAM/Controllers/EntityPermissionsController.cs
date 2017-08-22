@@ -28,6 +28,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult Subjects(long key)
+        {
+            return PartialView("_Subjects", key);
+        }
+
         public ActionResult Instances(long entityId)
         {
             return PartialView("_Instances", entityId);
