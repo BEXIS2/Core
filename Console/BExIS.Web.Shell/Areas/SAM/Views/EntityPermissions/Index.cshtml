@@ -3,8 +3,8 @@
     @Html.Partial("_Entities")
 }
 <div class="row">
-    <div id="instances" class="col-md-6"></div>
-    <div id="subjects" class="col-md-6"></div>
+    <div id="content_instances" class="col-md-6"></div>
+    <div id="content_subjects" class="col-md-6"></div>
 </div>
 
 <script type="text/javascript">
@@ -13,25 +13,25 @@
         $(e.target).find(".t-in").trigger("click");
     });
 
-    function GetTreeView() {
+    function getTreeView() {
         return $('#treeView_entities').data('tTreeView');
     }
 
     function treeView_entities_onSelect(e) {
-        var entityId = GetTreeView().getItemValue(e.item);
+        var entityId = getTreeView().getItemValue(e.item);
         var prevSelectedDiv = $(".bx-selected");
         if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
 
         var selectedDiv = $(e.item).find("div")[0];
         $(selectedDiv).addClass("bx-selected");
 
-        $('#instances').empty();
+        $('#content_instances').empty();
 
         $.get('@Url.Action("Instances", "EntityPermissions")',
             { EntityId: entityId },
             function(contentData) {
 
-                $('#instances').html(contentData);
+                $('#content_instances').html(contentData);
 
                 truncateTitle();
             });
@@ -59,7 +59,10 @@
             });
     }
 
-    function grid_instances_onRowSelect() {
-        
+    function grid_instances_onRowSelect(e) {
+        $.get('@Url.Action("Subjects", "EntityPermissions")', { InstanceId: $('#grid_instances').data('tGrid').dataItem(e.row)['Id'], EntityId: $("#treeview_entities .t-state-selected").siblings('input').attr('value') }, function (data) {
+            $('#content_subjects').empty();
+            $('#content_subjects').html(data);
+        });
     }
 </script>

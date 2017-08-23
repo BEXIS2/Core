@@ -28,9 +28,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
-        public ActionResult Subjects(long key)
+        public ActionResult Subjects(long entityId, long key)
         {
             return PartialView("_Subjects", key);
+        }
+
+        [GridAction]
+        public ActionResult Subjects_Select(long entityId, long key)
+        {
+            return View(new GridModel<EntityPermissionGridRowModel> { Data = null });
         }
 
         public ActionResult Instances(long entityId)
