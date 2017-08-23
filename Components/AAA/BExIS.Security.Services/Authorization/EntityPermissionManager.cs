@@ -20,9 +20,28 @@ namespace BExIS.Security.Services.Authorization
             //SubjectRepository = uow.GetReadOnlyRepository<Subject>();
         }
 
+        private bool isDisposed = false;
+        ~EntityPermissionManager()
+        {
+            Dispose(true);
+        }
+
         public void Dispose()
         {
-            guow.Dispose();
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
