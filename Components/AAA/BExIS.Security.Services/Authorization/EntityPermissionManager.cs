@@ -270,7 +270,7 @@ namespace BExIS.Security.Services.Authorization
                 }
                 if (entity == null)
                     return 0;
-                return EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
+                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
             }
         }
 
