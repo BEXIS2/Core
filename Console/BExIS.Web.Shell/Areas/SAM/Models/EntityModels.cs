@@ -51,6 +51,12 @@ namespace BExIS.Modules.Sam.UI.Models
     {
     }
 
+    public class EntityInstanceModel
+    {
+        public long EntityId { get; set; }
+        public long InstanceId { get; set; }
+    }
+
     public class EntityInstanceGridRowModel
     {
         public bool IsPublic { get; set; }

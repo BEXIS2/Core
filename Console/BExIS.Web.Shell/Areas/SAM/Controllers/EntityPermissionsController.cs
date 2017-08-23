@@ -1,6 +1,7 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +14,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntityPermissionsController : Controller
     {
-        public ActionResult Create(long entityId)
+        public ActionResult Subjects(long entityId, long instanceId)
         {
-            var entityManager = new EntityManager();
-            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-
-            var entities = entityStore.GetEntities();
-
-            return View();
-        }
-
-        public ActionResult Create(CreateEntityPermissionModel model)
-        {
-            return View();
-        }
-
-        public ActionResult Subjects(long entityId, long key)
-        {
-            return PartialView("_Subjects", key);
+            return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
         }
 
         [GridAction]
-        public ActionResult Subjects_Select(long entityId, long key)
+        public ActionResult Subjects_Select(long entityId, long instanceId)
         {
-            return View(new GridModel<EntityPermissionGridRowModel> { Data = null });
+            var subjectManager = new SubjectManager();
+            var entityPermissionManager = new EntityPermissionManager();
+
+            var subjects = subjectManager.Subjects.Select(s => EntityPermissionGridRowModel.Convert(s, entityPermissionManager.GetRights(s.Id, entityId, instanceId))).ToList();
+
+
+            return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });
         }
 
         public ActionResult Instances(long entityId)
