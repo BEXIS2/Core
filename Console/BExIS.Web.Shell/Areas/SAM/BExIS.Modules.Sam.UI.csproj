@@ -55,6 +55,10 @@
       <HintPath>..\..\..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -139,11 +143,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
@@ -224,7 +223,6 @@
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
-    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Entities.cshtml" />
     <Content Include="Views\Requests\Index.cshtml" />
     <Content Include="Views\Requests\_Requests.cshtml" />

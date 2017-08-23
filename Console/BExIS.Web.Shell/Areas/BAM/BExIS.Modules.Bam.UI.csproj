@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\PartyController.cs" />
+    <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helper\BAMSeedDataGenerator.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
@@ -206,6 +207,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\PartyService\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +215,14 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>

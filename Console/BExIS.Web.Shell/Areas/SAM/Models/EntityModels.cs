@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -48,5 +49,28 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class UpdateEntityModel
     {
+    }
+
+    public class EntityInstanceModel
+    {
+        public long EntityId { get; set; }
+        public long InstanceId { get; set; }
+    }
+
+    public class EntityInstanceGridRowModel
+    {
+        public bool IsPublic { get; set; }
+        public long Id { get; set; }
+        public string Title { get; set; }
+
+        public static EntityInstanceGridRowModel Convert(EntityStoreItem item, bool isPublic)
+        {
+            return new EntityInstanceGridRowModel()
+            {
+                Id = item.Id,
+                Title = item.Title,
+                IsPublic = isPublic
+            };
+        }
     }
 }
