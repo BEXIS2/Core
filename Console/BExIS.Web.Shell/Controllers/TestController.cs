@@ -24,10 +24,16 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class TestController : BaseController
     {
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            // should be called automatically
+        }
+
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            //testNHibernateSession();
+            testNHibernateSession();
             //getDatasetVersionIdsThatHaveSOmeTuples(1);
             //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
@@ -38,9 +44,9 @@ namespace BExIS.Web.Shell.Controllers
 
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            //this.Disposables.Add(entityPermissionManager);
+            this.Disposables.Add(entityPermissionManager);
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 50; i++)
             {
                 var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
@@ -1098,6 +1104,7 @@ namespace BExIS.Web.Shell.Controllers
             //Person expected = (Person)transformer.ImportFrom<Person>(doc2);
             //expected.Materialize();
         }
+
     }
 
 }
