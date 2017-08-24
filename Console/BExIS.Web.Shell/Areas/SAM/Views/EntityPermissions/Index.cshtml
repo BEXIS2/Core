@@ -41,26 +41,34 @@
         addTooltips();
         resetAllTelerikIconTitles();
 
-        $("input[name='selectedInstances']:checkbox")
-            .click(function() {
-                if ($(this).is(':checked')) {
-                    $.post('@Url.Action("AddInstanceToPublic", "EntityPermissions")',
-                        { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
-                        function() {
-                            $("#grid_groups .t-refresh").trigger('click');
-                        });
-                } else {
-                    $.post('@Url.Action("RemoveInstanceFromPublic", "EntityPermissions")',
-                        { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
-                        function() {
-                            $("#grid_groups .t-refresh").trigger('click');
-                        });
-                }
-            });
+        $("#grid_instances")
+            .on("change",
+                "input[name='selectedInstances']:checkbox",
+                function(e) {
+                    alert("dskf");
+                    if ($(this).is(':checked')) {
+                        $.post('@Url.Action("AddInstanceToPublic", "EntityPermissions")',
+                            { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
+                            function() {
+                                $("#grid_groups .t-refresh").trigger('click');
+                            });
+                    } else {
+                        $.post('@Url.Action("RemoveInstanceFromPublic", "EntityPermissions")',
+                            { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
+                            function() {
+                                $("#grid_groups .t-refresh").trigger('click');
+                            });
+                    }
+                });
+    }
+
+    function grid_subjects_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
     }
 
     function grid_instances_onRowSelect(e) {
-        $.get('@Url.Action("Subjects", "EntityPermissions")', { InstanceId: $('#grid_instances').data('tGrid').dataItem(e.row)['Id'], EntityId: $("#treeview_entities .t-state-selected").siblings('input').attr('value') }, function (data) {
+        $.get('@Url.Action("Subjects", "EntityPermissions")', { EntityId: $("input[name='selectedInstances']:checkbox", e.row).data('entityid'), InstanceId: $("input[name='selectedInstances']:checkbox", e.row).data('instanceid') }, function (data) {
             $('#content_subjects').empty();
             $('#content_subjects').html(data);
         });

@@ -1,4 +1,6 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.Extensions;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Sam.UI.Models
@@ -17,16 +19,16 @@ namespace BExIS.Modules.Sam.UI.Models
         public long SubjectId { get; set; }
         public string SubjectName { get; set; }
         public string SubjectType { get; set; }
-        public List<int> Rights { get; set; }
+        public bool[] Rights { get; set; }
 
-
-        public static EntityPermissionGridRowModel Convert(Subject subject)
+        public static EntityPermissionGridRowModel Convert(Subject subject, List<RightType> rights)
         {
             return new EntityPermissionGridRowModel()
             {
                 SubjectId = subject.Id,
                 SubjectName = subject.Name,
                 SubjectType = subject is User ? "User" : "Group",
+                Rights = rights.ToBoolArray()
             };
         }
     }

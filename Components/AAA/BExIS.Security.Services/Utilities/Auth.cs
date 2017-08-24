@@ -48,9 +48,9 @@ namespace BExIS.Security.Services.Utilities
             //{
             //    Endpoints = new OrcidAuthenticationEndpoints
             //    {
-            //        //   ApiEndpoint = "https://pub.sandbox.orcid.org/v1.2/0000-0003-0514-2115/orcid-profile",
+            //        ApiEndpoint = "https://pub.sandbox.orcid.org/v1.2/0000-0003-0514-2115/orcid-profile",
             //        TokenEndpoint = "https://sandbox.orcid.org/oauth/token",
-            //        AuthorizationEndpoint = "https://sandbox.orcid.org/oauth/authorize?client_id="
+            //        AuthorizationEndpoint = h"https://sandbox.orcid.org/oauth/authorize?client_idttps://sandbox.orcid.org/oauth/authorize?client_id="
             //                        + clientId + "&response_type=code&scope="
             //                        + "/read-limited" + "&redirect_uri="
             //                        + "http://localhost:55247/Acces"

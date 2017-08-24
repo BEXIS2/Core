@@ -20,7 +20,8 @@ namespace BExIS.Security.Entities.Authorization
         Read = 0,
         Write = 1,
         Delete = 2,
-        Grant = 3
+        Download = 3,
+        Grant = 4
     }
 
     /// <summary>
