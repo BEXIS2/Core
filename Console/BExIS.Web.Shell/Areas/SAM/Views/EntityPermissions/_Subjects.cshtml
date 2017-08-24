@@ -20,7 +20,9 @@
         {
             <button type="button" class="bx bx-grid-function bx-edit"></button>
         }
-    </text>).ClientTemplate("hallo")
+    </text>).ClientTemplate(
+        "@Html.RenderPartial('Test')"
+    )
     .Width(110);
       })
       .DataBinding(dataBinding => dataBinding
