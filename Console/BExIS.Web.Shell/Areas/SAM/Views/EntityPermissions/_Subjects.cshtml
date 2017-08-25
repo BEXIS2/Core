@@ -12,21 +12,20 @@
       })
       .Columns(columns =>
       {
-      columns.Bound(m => m.SubjectId);
-      columns.Bound(m => m.SubjectName);
-      columns.Bound(m => m.SubjectType);
-      columns.Template(@<text>
-        @foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-        {
-            <button type="button" class="bx bx-grid-function bx-edit"></button>
-        }
-    </text>).ClientTemplate(
-        "@Html.RenderPartial('Test')"
-    )
-    .Width(110);
+          columns.Bound(m => m.SubjectId);
+          columns.Bound(m => m.SubjectName);
+          columns.Bound(m => m.SubjectType);
+          columns.Template(@<text>
+                               @foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+                               {
+                                   <button type="button" class="bx bx-grid-function bx-edit">Save</button>
+                               }
+                            </text>)
+              .Width(110);
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
+          .OperationMode(GridOperationMode.Server)
           .Select("Subjects_Select", "EntityPermissions", new { Model.EntityId, Model.InstanceId })
       )
       .Filterable()
@@ -45,5 +44,4 @@
       .ClientEvents(events =>
       {
           events.OnDataBound("grid_subjects_onDataBound");
-      })
-)
+      }))
