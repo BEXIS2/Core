@@ -28,21 +28,27 @@ namespace BExIS.Modules.Sam.UI.Helpers
             var operationManager = new OperationManager();
             var featureManager = new FeatureManager();
 
+            // find root
             var root = featureManager.FindRoots().FirstOrDefault();
 
-            var administrationFeature = featureManager.Create("Administration", "node for all administrative features", root);
+            // administration node
+            var administrationFeature = featureManager.FindByName("Administration") ?? featureManager.Create("Administration", "node for all administrative features", root);
 
-            var userFeature = featureManager.Create("Users", "", administrationFeature);
-            var userOperation = operationManager.Create("SAM", "Users", "*", userFeature);
+            // users node
+            var userFeature = featureManager.FindByName("Users") ?? featureManager.Create("Users", "", administrationFeature);
+            var userOperation = operationManager.Find("SAM", "Users", "*") ?? operationManager.Create("SAM", "Users", "*", userFeature);
 
-            var groupFeature = featureManager.Create("Groups", "", administrationFeature);
-            var groupOperation = operationManager.Create("SAM", "Groups", "*", groupFeature);
+            // groups node
+            var groupFeature = featureManager.FindByName("Groups") ?? featureManager.Create("Groups", "", administrationFeature);
+            var groupOperation = operationManager.Find("SAM", "Groups", "*") ?? operationManager.Create("SAM", "Groups", "*", userFeature);
 
-            var featurePermissionFeature = featureManager.Create("Feature Permissions", "", administrationFeature);
-            var featurePermissionOperation = operationManager.Create("SAM", "FeaturePermissions", "*", featurePermissionFeature);
+            // feature permissions
+            var featurePermissionFeature = featureManager.FindByName("Feature Permissions") ?? featureManager.Create("Feature Permissions", "", administrationFeature);
+            var featurePermissionOperation = operationManager.Find("SAM", "FeaturePermissions", "*") ?? operationManager.Create("SAM", "FeaturePermissions", "*", userFeature);
 
-            var entityPermissionFeature = featureManager.Create("Entity Permissions", "", administrationFeature);
-            var entityPermissionOperation = operationManager.Create("SAM", "EntityPermissions", "*", entityPermissionFeature);
+            // Entity Permissions
+            var entityPermissionFeature = featureManager.FindByName("Entity Permissions") ?? featureManager.Create("Entity Permissions", "", administrationFeature);
+            var entityPermissionOperation = operationManager.Find("SAM", "EntityPermissions", "*") ?? operationManager.Create("SAM", "EntityPermissions", "*", userFeature);
 
             var featurePermissionManager = new FeaturePermissionManager();
             featurePermissionManager.Create(null, featurePermissionFeature, PermissionType.Grant);
