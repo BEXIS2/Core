@@ -103,13 +103,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             if (DataCollectionFeature == null) DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
 
             Feature DatasetCreationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Creation"));
-            if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Cration");
+            if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Cration", DataCollectionFeature);
 
             Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
-            if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload");
+            if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
 
             Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
-            if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management");
+            if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
 
             OperationManager operationManager = new OperationManager();
 

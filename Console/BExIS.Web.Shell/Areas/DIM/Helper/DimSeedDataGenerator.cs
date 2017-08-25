@@ -46,6 +46,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             operationManager.Create("Dim", "Admin", "*", DataDissemination);
 
+            operationManager.Create("Dim", "Submission", "*", Submission);
+            operationManager.Create("Dim", "Mapping", "*", Mapping);
+
 
             #endregion
 
