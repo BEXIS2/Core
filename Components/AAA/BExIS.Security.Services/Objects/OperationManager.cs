@@ -18,6 +18,9 @@ namespace BExIS.Security.Services.Objects
 
         public Operation Create(string module, string controller, string action, Feature feature = null)
         {
+            if (Exists(module, controller, action))
+                return null;
+
             var operation = new Operation()
             {
                 Module = module,
