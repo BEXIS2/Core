@@ -15,6 +15,7 @@ using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml.Spreadsheet;
 using BExIS.Utils.Models;
+using Newtonsoft.Json;
 
 namespace BExIS.Utils.Helpers
 {
@@ -193,8 +194,7 @@ namespace BExIS.Utils.Helpers
                 tableArray[i] = rowArray[i].ToArray();
             }
 
-            var serializer = new JavaScriptSerializer();
-            return serializer.Serialize(tableArray);
+            return JsonConvert.SerializeObject(tableArray);
         }
 
         //Solution from https://stackoverflow.com/a/3981249

@@ -18,6 +18,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,9 +83,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
                 string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-                int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
+                int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
 
                 if (model.FileFormat.ToLower() == "topdown")
                 {
@@ -99,13 +99,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
                 List<string> selectedDataAreaJsonArray = (List<String>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                 List<int[]> areaDataValuesList = new List<int[]>();
                 model.NumberOfData = 0;
                 foreach (string jsonArray in selectedDataAreaJsonArray)
                 {
-                    areaDataValuesList.Add(serializer.Deserialize<int[]>(jsonArray));
+                    areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(jsonArray));
                 }
                 foreach (int[] areaDataValues in areaDataValuesList)
                 {
@@ -158,9 +157,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
                 {
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
                     string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-                    int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
+                    int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
 
                     if (model.FileFormat.ToLower() == "topdown")
                     {
@@ -175,12 +173,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
                 {
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
                     List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                     List<int[]> areaDataValuesList = new List<int[]>();
                     foreach (string area in selectedDataAreaJsonArray)
                     {
-                        areaDataValuesList.Add(serializer.Deserialize<int[]>(area));
+                        areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
                     }
 
                     foreach (int[] areaDataValues in areaDataValuesList)
@@ -471,13 +468,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
             List<int[]> areaDataValuesList = new List<int[]>();
             foreach (string area in selectedDataAreaJsonArray)
             {
-                areaDataValuesList.Add(serializer.Deserialize<int[]>(area));
+                areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
             }
-            int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
+            int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
 
             Orientation orientation = 0;
 
@@ -582,8 +578,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<Error> ValidateRows(string JsonArray)
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-            var serializer = new JavaScriptSerializer();
-            string[][] DeserializedJsonArray = serializer.Deserialize<string[][]>(JsonArray);
+
+            string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
 
             List<Error> ErrorList = new List<Error>();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
@@ -595,7 +591,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<int[]> IntDataAreaList = new List<int[]>();
             foreach (string area in DataArea)
             {
-                IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
+                IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
             }
 
             foreach (int[] IntDataArea in IntDataAreaList)
