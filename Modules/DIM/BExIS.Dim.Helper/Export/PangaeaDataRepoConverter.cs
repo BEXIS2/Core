@@ -37,7 +37,6 @@ namespace BExIS.Dim.Helpers.Export
              * 
              * 
              * if data only unstructred, then only metadata
-             * 
              */
 
             string primaryDataFilePath = "";
@@ -222,8 +221,6 @@ namespace BExIS.Dim.Helpers.Export
             LoginID = 0;
         }
     }
-
-
 
     public class ReferenceID
     {

@@ -242,8 +242,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return PartialView("MappingLinkElement", linkElementModel);
         }
 
-        public ActionResult SaveMapping(ComplexMappingModel model)
+        public ActionResult SaveMapping(ComplexMappingModel model, bool newMapping = false)
         {
+            newMapping = false;
+
             MappingManager mappingManager = new MappingManager();
             //save link element if not exits
             //source 
@@ -266,13 +268,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
             LinkElement target;
 
             //create source
-            source = MappingHelper.CreateIfNotExistLinkElement(model.Source, sourceParent.Id);
+            source = newMapping ? MappingHelper.CreateLinkElement(model.Source, sourceParent.Id) : MappingHelper.CreateIfNotExistLinkElement(model.Source, sourceParent.Id);
 
             model.Source.Id = source.Id;
             model.Source = MappingHelper.LoadChildren(model.Source);
 
             //create target
-            target = MappingHelper.CreateIfNotExistLinkElement(model.Target, targetParent.Id);
+            target = newMapping ? MappingHelper.CreateLinkElement(model.Target, targetParent.Id) : MappingHelper.CreateIfNotExistLinkElement(model.Target, targetParent.Id);
 
             model.Target.Id = target.Id;
             model.Target = MappingHelper.LoadChildren(model.Target);
@@ -285,7 +287,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             #region create or update simple mapping
 
-            MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings);
+            MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, newMapping);
 
 
             #endregion

@@ -407,6 +407,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             return tmp;
 
                         }
+                    case "pensoft":
+                        {
+                            PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
+                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/xml");
+                            return tmp;
+
+                        }
                     default:
                         {
                             GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
@@ -613,6 +620,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         #endregion
                     }
 
+                    if (datarepo.ToLower().Contains("pensoft"))
+                    {
+                        Broker broker =
+                            publicationManager.BrokerRepo.Get()
+                                .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                                .FirstOrDefault();
+                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
+                            "no status available");
+                    }
 
                     if (datarepo.ToLower().Equals("generic"))
                     {

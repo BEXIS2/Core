@@ -15,14 +15,23 @@ $(window)
 
     });
 
+/**
+ * Source or Target side
+ * has simple and complex LinkElement lists
+ * this action is called when 
+ * the arrow next to teh name is clicked
+ * toggle between hide and show
+ * @param {} e 
+ * @returns {} 
+ */
 function iconClick(e) {
-    alert("CLICK");
+    console.log("CLICK");
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".le-container");
-    //console.log(container);
-    $(container).find(".mapping-container-transformation-rule-content").slideToggle();
+    console.log(container);
+    $(container).find(".le-container-content").slideToggle();
     $(container).addClass("selected-mapping-element");
-    setTimeout(reloadAllConnections, 500);
+    setTimeout(reloadAllConnections, 100);
 
 };
 
@@ -234,8 +243,8 @@ function createElement(info, element) {
         "XPath":xpath
     }
 
-    console.log("LINK ELEMENT");
-    console.log(obj);
+    //console.log("LINK ELEMENT");
+    //console.log(obj);
 
 
     return obj;
@@ -258,11 +267,11 @@ function createTransformationRule(id, regexPattern) {
 
 function createSimpleMapping(conn, sourceParent, targetParent) {
 
-    console.log("create simple mappings");
-    console.log(conn);
-    console.log(conn.id);
-    console.log(conn.sourceId);
-    console.log(conn.targetId);
+    //console.log("create simple mappings");
+    //console.log(conn);
+    //console.log(conn.id);
+    //console.log(conn.sourceId);
+    //console.log(conn.targetId);
 
 
     var source = $("#" + conn.sourceId);
@@ -282,8 +291,8 @@ function createSimpleMapping(conn, sourceParent, targetParent) {
  
     //get rull based on conn
     var rule = findRuleFromConn(conn);
-    console.log("RULE");
-    console.log(rule);
+    //console.log("RULE");
+    //console.log(rule);
 
     var ruleId = $(rule).attr("id");
     //console.log(ruleId);
@@ -313,6 +322,8 @@ function createSimpleMapping(conn, sourceParent, targetParent) {
 
 function saveMapping(e, create) {
 
+    console.log("mapping");
+    console.log("************************************");
     //console.log(e);
     var parent = $(e).parents(".mapping-container")[0];
     //console.log(parent);
@@ -340,18 +351,29 @@ function saveMapping(e, create) {
     var simpleMappings = [];
     var parentMapping;
     // get mappingContainer Connection
-    for (var i = 0; i < connections.length; i++) {
-        if (connections[i].id === parent.id) {
-            parentMapping = connections[i];
+
+    for (var j = 0; j < connections.length; j++) {
+        console.log(connections[j].id + "===" + parent.id);
+
+        if (connections[j].id == parent.id) {
+            console.log("-- >get connection");
+            parentMapping = connections[j];
+            break;
         }
 
     }
 
     if (parentMapping != null) {
 
+        console.log("save mapping ");
+        console.log(parentMapping.connections.length);
+        
+        
+
         for (var i = 0; i < parentMapping.connections.length; i++) {
 
             console.log("create MAPPING");
+            console.log(parent);
             console.log(parentMapping.connections[i]);
             console.log(source);
             console.log(target);
@@ -365,12 +387,26 @@ function saveMapping(e, create) {
         }
     }
 
-    var sendData =
+    var newMapping = false;
+
+    if ($(parent).attr("id") === "mapping_container_0") {
+            newMapping = true;
+    }
+
+    var model =
     {
         "Source": source,
         "Target": target,
         "SimpleMappings": simpleMappings
     }
+
+    var sendData =
+    {
+        model,
+        newMapping
+    }
+
+    
     //console.log(sendData);
 
     $.ajax({
@@ -393,8 +429,10 @@ function saveMapping(e, create) {
 
 
                     //remove connection?
-                    console.log("remove connections from 0 container")
-                    removeParentFromConnections($(parent).attr("id"));
+                    //console.log("remove connections from 0 container");
+                    if (newMapping) {
+                        removeParentFromConnections($(parent).attr("id"));
+                    }
 
                     //console.log("RESET ALL CONNECTIONS");
                     reloadAllConnections();
@@ -414,13 +452,13 @@ function saveMapping(e, create) {
 function deleteMapping(e) {
 
     var parent = $(e).parents(".mapping-container")[0];
-    console.log(parent);
+    //console.log(parent);
 
     var idArray = $(parent).attr("id").split("_");
-    console.log(idArray);
+    //console.log(idArray);
 
     var id = idArray[idArray.length - 1];
-    console.log(id);
+    //console.log(id);
 
     $.post('/DIM/Mapping/DeleteMapping',
         { id: id },
@@ -504,6 +542,7 @@ function updateConnections(conn, remove, parentId, jsPlumbInstance) {
         updateParentConnection(conn, parentId, jsPlumbInstance);
 
     } else {
+
         removeParentConnection(conn, parentId);
     }
 
@@ -514,8 +553,8 @@ function updateConnections(conn, remove, parentId, jsPlumbInstance) {
         updateSaveOptions(parentId, false);
     }
 
-    console.log(connections);
-    console.log(connections.length);
+    //console.log(connections);
+    //console.log(connections.length);
 }
 
 function removeParentFromConnections(parentId) {
@@ -743,16 +782,16 @@ function changeViewOfTransformationRule(conn) {
 
     $(rule).find(".toogle-icon").trigger("click");
 
-    setTimeout(function () {
-        var ruleContent = $(rule).find(".mapping-container-transformation-rule-content")[0];
+    //setTimeout(function () {
+    //    var ruleContent = $(rule).find(".mapping-container-transformation-rule-content")[0];
 
-        if (conn.getOverlay("label").getLabel() === "open") {
-            conn.getOverlay("label").setLabel("close");
-        } else {
-            conn.getOverlay("label").setLabel("open");
+    //    if (conn.getOverlay("label").getLabel() === "open") {
+    //        conn.getOverlay("label").setLabel("close");
+    //    } else {
+    //        conn.getOverlay("label").setLabel("open");
 
-        }
-    },100); 
+    //    }
+    //},100); 
    
 
 }
@@ -815,9 +854,9 @@ function addConnections(jsPlumbInstance, parentid) {
 
     var parent = $("#" + parentid);
     var simpleMappings = parent.find(".mapping-container-simple-hidden-mapping");
-    //console.log("add connections *********************");
+    console.log("add connections *********************");
 
-    //console.log(simpleMappings);
+    console.log(simpleMappings);
 
     for (var i = 0; i < simpleMappings.length; i++) {
 

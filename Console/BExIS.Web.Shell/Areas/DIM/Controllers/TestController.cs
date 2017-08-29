@@ -37,7 +37,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             long partyCustomtAttr = 1;
             LinkElementType type = LinkElementType.PartyCustomType;
 
-            long datasetId = 7;
+            long datasetId = 1;
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);

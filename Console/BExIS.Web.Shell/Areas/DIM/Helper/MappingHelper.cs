@@ -600,7 +600,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 Position = position,
                 Type = le.Type,
                 Complexity = le.Complexity,
-                Mask = le.Mask
+                Mask = le.Mask,
 
             };
 
@@ -679,6 +679,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                     le.ElementId.Equals(leModel.ElementId) &&
                     le.Type.Equals(leModel.Type) &&
                     le.Complexity.Equals(leModel.Complexity)
+                    //le.Parent.Id.Equals(parentId)
                     );
             }
             else
@@ -724,7 +725,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region delete
 
-        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings)
+        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, bool newParentMapping)
         {
 
             MappingManager mappingManager = new MappingManager();
@@ -765,13 +766,34 @@ namespace BExIS.Modules.Dim.UI.Helper
             //Create simple mappings
             //all mappings with the same  source or target should
 
-            List<LinkElement> createdLinkELementModels = new List<LinkElement>();
+            List<LinkElementModel> createdLinkELementModels = new List<LinkElementModel>();
 
             foreach (var sm in newListOfSimpleMappings)
             {
 
-                LinkElement simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId);
-                LinkElement simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId);
+                LinkElement simpleMappingSource = null;
+                LinkElement simpleMappingTarget = null;
+
+                //if its not a new parent mapping or its in the list, please select existing
+                //if (!newParentMapping || ExistLinkElementModel(sm.Source, createdLinkELementModels))
+
+                simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId);
+                //else
+                //{
+                //    simpleMappingSource = MappingHelper.CreateLinkElement(sm.Source, sourceId);
+                //    createdLinkELementModels.Add(sm.Source);
+                //}
+
+                //if its not a new parent mapping or its in the list, please select existing
+                ////if (ExistLinkElementModel(sm.Target, createdLinkELementModels))
+
+                simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId);
+                //else
+                //{
+                //    simpleMappingTarget = MappingHelper.CreateLinkElement(sm.Target, targetId);
+                //    createdLinkELementModels.Add(sm.Target);
+                //}
+
 
                 if (sm.Target.Mask != null)
                     simpleMappingTarget = mappingManager.UpdateLinkElement(simpleMappingTarget.Id, sm.Target.Mask);
@@ -834,6 +856,19 @@ namespace BExIS.Modules.Dim.UI.Helper
         #endregion
 
         #region helper
+
+        public static bool ExistLinkElementModel(LinkElementModel leModel, List<LinkElementModel> leModels)
+        {
+
+            if (leModels.Any(le => le.ElementId.Equals(leModel.ElementId) &&
+                le.Type.Equals(leModel.Type) &&
+                le.Complexity.Equals(leModel.Complexity)))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public static bool ExistLinkElement(LinkElementModel leModel)
         {
