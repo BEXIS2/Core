@@ -139,6 +139,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             #endregion
 
+            #region Easy Upload
+
+            operationManager.Create("DCM", "EasyUpload", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSelectAFile", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSelectAreas", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSheetDataStructure", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSheetSelectMetaData", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSummary", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadVerification", "*", DatasetUploadFeature);
+
+            #endregion
+
             #region Metadata Managment Workflow
 
             operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
