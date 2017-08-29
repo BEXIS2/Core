@@ -110,7 +110,6 @@
     <Compile Include="Subjects\UserManager.cs" />
     <Compile Include="Subjects\UserStore.cs" />
     <Compile Include="Utilities\Auth.cs" />
-    <Compile Include="Utilities\AuthorizationDelegationImplementor.cs" />
     <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
