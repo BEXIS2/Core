@@ -21,6 +21,7 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using System.Globalization;
 using BExIS.Utils.Models;
 using BExIS.Web.Shell.Areas.DCM.Helpers;
+using Newtonsoft.Json;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -570,9 +571,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<String> GetExcelHeaderFields(ExcelWorksheet excelWorksheet, SheetFormat sheetFormat, string selectedAreaJsonArray)
         {
             List<String> headerValues = new List<string>();
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            int[] areaValues = serializer.Deserialize<int[]>(selectedAreaJsonArray);
+            
+            int[] areaValues = JsonConvert.DeserializeObject<int[]>(selectedAreaJsonArray);
 
             if (areaValues.Length != 4)
             {
@@ -733,8 +733,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<Tuple<int, Error>> ValidateRows(string JsonArray)
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-            var serializer = new JavaScriptSerializer();
-            string[][] DeserializedJsonArray = serializer.Deserialize<string[][]>(JsonArray);
+
+            string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
 
             List<Tuple<int, Error>> ErrorList = new List< Tuple<int, Error> >();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
@@ -746,7 +746,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<int[]> IntDataAreaList = new List<int[]>();
             foreach(string area in DataArea)
             {
-                IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
+                IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
             }
 
             foreach(int[] IntDataArea in IntDataAreaList)
