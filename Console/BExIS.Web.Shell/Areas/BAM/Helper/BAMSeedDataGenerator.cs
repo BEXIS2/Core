@@ -1,5 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,8 +65,34 @@ namespace BExIS.Modules.Bam.UI.Helpers
     {
         public static void GenerateSeedData()
         {
+            createSecuritySeedData();
             ImportPartyTypes();
         }
+        private static void createSecuritySeedData()
+        {
+            // Javad:
+            // 1) all the create operations should check for existence of the record
+            // 2) failure on creating any record should rollback the whole seed data generation. It is one transaction.
+            // 3) failues should throw an exception with enough information to pin point the root cause
+            // 4) only seed data related to the functions of this modules should be genereated here.
+            // BUG: seed data creation is not working because of the changes that were done in the entities and services.
+            // TODO: reimplement the seed data creation method.
+
+            //#region Security
+
+            //// Tasks
+            var operationManager = new OperationManager();
+            var featureManager = new FeatureManager();
+
+            var root = featureManager.FindRoots().FirstOrDefault();
+
+            var bamFeature = featureManager.Create("Business administration module (BAM)", "", root);
+
+            var partyFeature = featureManager.Create("Party", "", bamFeature);
+            var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
+            var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
+        }
+
         /// <summary>
         /// Update rules:
         /// Comparison for update is by the title of elements: title of elements are not editable

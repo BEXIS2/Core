@@ -8,7 +8,7 @@
 
     }
     else
-    { addRelationship = (bool)ViewBag.RelationTabAsDefault; }
+    { addRelationship = (bool)(ViewBag.RelationTabAsDefault!=null? ViewBag.RelationTabAsDefault: false); }
     bool hasErrors = false;
     string errorMessage = "";
     string errorClass = "";
@@ -111,7 +111,7 @@
                             <label for="Description">Description</label>
                         </td>
                         <td>
-                            @Html.TextBoxFor(m => m.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Description, new {  @class = "t-input bx-input " })
                             @Html.ValidationMessageFor(m => m.Description)
                             <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Description" />
                         </td>
@@ -175,10 +175,10 @@
                     return false;
                 }
             });
-            if(checkUniqeness &&  checkUniqeness())
-                return true;
-            else
-                return false;
+            //if(checkUniqeness &&  checkUniqeness())
+            //    return true;
+            //else
+            //    return false;
         }
     }
 

@@ -81,11 +81,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(features.AsEnumerable());
         }
 
-        public bool IsFeaturePublic(long featureId)
-        {
-            return true;
-        }
-
         /// <summary>
         ///
         /// </summary>

@@ -466,28 +466,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
         private static List<Variable> SortVariablesOnDatastructure(List<Variable> variables, DataStructure datastructure)
         {
-            List<Variable> sortedVariables = new List<Variable>();
-
-            XmlDocument extraXml = datastructure.Extra as XmlDocument;
-
-            if (datastructure.Extra != null && (datastructure.Extra as XmlDocument).GetElementsByTagName("order").Count != 0)
-            {
-                XmlNode orderNode = extraXml.GetElementsByTagName("order")[0];
-                XmlDocument order = new XmlDocument();
-                order.LoadXml(orderNode.OuterXml);
-
-                IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(order));
-
-                foreach (XElement element in elements)
-                {
-                    long id = Convert.ToInt64(element.Value);
-                    Variable var = variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
-                    if (var != null)
-                        sortedVariables.Add(var);
-                }
-                return sortedVariables;
-            }
-            return variables;
+            return variables.OrderBy(v => v.OrderNo).ToList();
         }
 
     }

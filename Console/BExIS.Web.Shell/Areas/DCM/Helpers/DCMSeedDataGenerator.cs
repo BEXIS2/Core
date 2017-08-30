@@ -106,10 +106,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation");
 
             Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
-            if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload");
+            if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
 
             Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
-            if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management");
+            if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
 
             OperationManager operationManager = new OperationManager();
 
@@ -136,6 +136,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             operationManager.Create("DCM", "SubmitSpecifyDataset", "*", DatasetUploadFeature);
             operationManager.Create("DCM", "SubmitSummary", "*", DatasetUploadFeature);
             operationManager.Create("DCM", "SubmitValidation", "*", DatasetUploadFeature);
+
+            #endregion
+
+            #region Easy Upload
+
+            operationManager.Create("DCM", "EasyUpload", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSelectAFile", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSelectAreas", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSheetDataStructure", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSheetSelectMetaData", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSummary", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadVerification", "*", DatasetUploadFeature);
 
             #endregion
 

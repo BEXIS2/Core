@@ -144,7 +144,7 @@ namespace BExIS.IO.Transform.Output
             string path = "";
 
             DatasetManager datasetManager = new DatasetManager();
-            ContentDescriptor contentDescriptor = datasetManager.GetDatasetLatestVersion(datasetVersionId).
+            ContentDescriptor contentDescriptor = datasetManager.GetDatasetVersion(datasetVersionId).
                 ContentDescriptors.ToList().FirstOrDefault(c => c.Name.Equals("metadata"));
 
             if (contentDescriptor != null)
