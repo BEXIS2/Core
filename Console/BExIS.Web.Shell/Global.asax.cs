@@ -1,5 +1,4 @@
 ﻿using BExIS.Ext.Services;
-using BExIS.Web.Shell.Attributes;
 using BExIS.Web.Shell.Helpers;
 using System;
 using System.IO;
@@ -28,10 +27,10 @@ namespace BExIS.Web.Shell
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
-            //#if !DEBUG
+#if !DEBUG
             filters.Add(new BExISAuthorizeAttribute());
             //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
-            //#endif
+#endif
             filters.Add(new HandleErrorAttribute());
         }
 
