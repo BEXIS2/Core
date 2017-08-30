@@ -77,7 +77,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                     LinkElementType.MetadataStructure,
                     metadataStructure.Name, "Metadata",
                     rootModelType,
-                    LinkElementComplexity.Complex, "",
+                    LinkElementComplexity.Complex,
                     metadataStructure.Description);
 
 
@@ -170,14 +170,13 @@ namespace BExIS.Modules.Dim.UI.Helper
             if (linkElement != null)
             {
                 linkElementId = linkElement.Id;
-                mask = linkElement.Mask;
             }
 
 
             LinkElementModel LEModel = new LinkElementModel(
                 linkElementId,
                 usage.Id,
-                type, usage.Label, xPath, rootModel.Position, complexity, mask, usage.Description);
+                type, usage.Label, xPath, rootModel.Position, complexity, usage.Description);
             rootModel.LinkElements.Add(LEModel);
 
             LEModel.Parent = parent;
@@ -197,7 +196,6 @@ namespace BExIS.Modules.Dim.UI.Helper
                 if (linkElement != null)
                 {
                     linkElementId = linkElement.Id;
-                    mask = linkElement.Mask;
                 }
 
                 LEModel = new LinkElementModel(
@@ -205,10 +203,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                     typeId,
                     LinkElementType.ComplexMetadataAttribute,
                     typeName,
-                    "",
+                    xPath,
                     rootModel.Position,
                     complexity,
-                    mask,
                     typeDescription);
 
                 LEModel.Parent = parent;
@@ -285,12 +282,12 @@ namespace BExIS.Modules.Dim.UI.Helper
             foreach (Key value in Key.GetValues(typeof(Key)))
             {
                 long linkElementId = GetId((int)value, LinkElementType.Key);
-                string mask = GetMask((int)value, LinkElementType.Key);
+                //string mask = GetMask((int)value, LinkElementType.Key);
 
                 LinkElementModel LEModel = new LinkElementModel(
                         linkElementId,
                         (int)value,
-                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, mask, "");
+                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
 
                 LEModel.Parent = LEParent;
 
@@ -312,12 +309,11 @@ namespace BExIS.Modules.Dim.UI.Helper
             MappingManager mappingManager = new MappingManager();
 
             long linkElementId = GetId(partyType.Id, LinkElementType.PartyType);
-            string mask = GetMask(partyType.Id, LinkElementType.PartyType);
 
             LinkElementModel LEModel = new LinkElementModel(
                         linkElementId,
                         partyType.Id,
-                        LinkElementType.PartyType, partyType.Title, "", rootModel.Position, LinkElementComplexity.Complex, mask, partyType.Description);
+                        LinkElementType.PartyType, partyType.Title, "", rootModel.Position, LinkElementComplexity.Complex, partyType.Description);
 
             LEModel.Parent = parent;
 
@@ -334,12 +330,11 @@ namespace BExIS.Modules.Dim.UI.Helper
             foreach (var partyCustomType in partyType.CustomAttributes)
             {
                 long linkElementId = GetId(partyCustomType.Id, LinkElementType.PartyCustomType);
-                string mask = GetMask(partyCustomType.Id, LinkElementType.PartyCustomType);
 
                 LinkElementModel LEModel = new LinkElementModel(
                             linkElementId,
                             partyCustomType.Id,
-                            LinkElementType.PartyCustomType, partyCustomType.Name, partyType.Title + "/" + partyCustomType.Name, rootModel.Position, LinkElementComplexity.Simple, mask, partyCustomType.Description);
+                            LinkElementType.PartyCustomType, partyCustomType.Name, partyType.Title + "/" + partyCustomType.Name, rootModel.Position, LinkElementComplexity.Simple, partyCustomType.Description);
                 LEModel.Parent = parent;
 
                 tmp.Add(LEModel);
@@ -354,58 +349,33 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region loadMapping
 
-        public static List<ComplexMappingModel> LoadMappings(
-            long sourceElementId, LinkElementType sourceType,
-            List<long> sourceLinkElements,
-            long targetElementId, LinkElementType targetType,
-            List<long> targetLinkElements)
+        public static List<ComplexMappingModel> LoadMappings(Mapping rootMapping)
         {
 
             List<ComplexMappingModel> tmp = new List<ComplexMappingModel>();
             MappingManager mappingManager = new MappingManager();
 
-            List<LinkElement> existingSourceLinkElements =
-                mappingManager.LinkElementRepo.Get().Where(le => sourceLinkElements.Contains(le.Id)).ToList();
-            List<LinkElement> existingTargetLinkElements =
-                mappingManager.LinkElementRepo.Get().Where(le => targetLinkElements.Contains(le.Id)).ToList();
-
-            List<Mapping> mappings = mappingManager.MappingRepo.Get().Where(
-                m => sourceLinkElements.Contains(m.Source.Id) &&
-                     targetLinkElements.Contains(m.Target.Id)
-                     && m.Level.Equals(1)).ToList();
+            //get all complex mappings
+            List<Mapping> mappings = mappingManager.GetChildMapping(rootMapping.Id, 1).ToList();
 
             foreach (var mapping in mappings)
             {
-                LinkElement source = existingSourceLinkElements.FirstOrDefault(le => le.Id.Equals(mapping.Source.Id));
-                LinkElement target = existingTargetLinkElements.FirstOrDefault(le => le.Id.Equals(mapping.Target.Id));
 
-                ComplexMappingModel model = CreateComplexMappingModel(mapping, source, target);
+                ComplexMappingModel model = CreateComplexMappingModel(mapping);
 
-                if (source != null && target != null)
+
+                //get all complex mappings
+                List<Mapping> childMappings = mappingManager.GetChildMapping(mapping.Id, 2).ToList();
+
+
+                foreach (var cm in childMappings)
                 {
-                    //load childrens ids
-                    List<long> sourceChildrenIds = GetChildrenIds(source);
-
-                    List<long> targetChildrenIds = GetChildrenIds(target);
-
-                    List<Mapping> childMappings = mappingManager.MappingRepo.Get().Where(
-                        m => sourceChildrenIds.Contains(m.Source.Id) &&
-                             targetChildrenIds.Contains(m.Target.Id) && m.Level.Equals(2)).ToList();
-
-                    foreach (var cm in childMappings)
-                    {
-                        //ToDO Add transformation rule
-                        model.SimpleMappings.Add(CreateSimpleMappingModel(cm, cm.Source, cm.Target));
-                    }
+                    //ToDO Add transformation rule
+                    model.SimpleMappings.Add(CreateSimpleMappingModel(cm, cm.Source, cm.Target));
                 }
-
 
                 tmp.Add(model);
             }
-
-
-
-
             return tmp;
         }
 
@@ -479,7 +449,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                     new LinkElementModel(
                         0,
                         attr.Id,
-                        LinkElementType.PartyCustomType, attr.Name, "", model.Position, LinkElementComplexity.Simple, "", attr.Description)
+                        LinkElementType.PartyCustomType, attr.Name, "", model.Position, LinkElementComplexity.Simple, attr.Description)
                     );
             }
 
@@ -511,7 +481,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                         new LinkElementModel(
                             0,
                             attr.Id,
-                            type, attr.Label, "", model.Position, complexity, "", attr.Description)
+                            type, attr.Label, "", model.Position, complexity, attr.Description)
                         );
             }
 
@@ -541,17 +511,22 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region create
 
-        public static ComplexMappingModel CreateComplexMappingModel(Mapping mapping, LinkElement source, LinkElement target)
+        public static ComplexMappingModel CreateComplexMappingModel(Mapping mapping)
         {
-            LinkElementModel sourceModel = CreateLinkElementModel(source, LinkElementPostion.Source);
-            LinkElementModel targetModel = CreateLinkElementModel(target, LinkElementPostion.Target);
+            LinkElementModel sourceModel = CreateLinkElementModel(mapping.Source, LinkElementPostion.Source);
+            LinkElementModel targetModel = CreateLinkElementModel(mapping.Target, LinkElementPostion.Target);
 
             sourceModel = LoadChildren(sourceModel);
             targetModel = LoadChildren(targetModel);
 
+            long parentId = 0;
+            if (mapping.Parent != null)
+                parentId = mapping.Parent.Id;
+
             return new ComplexMappingModel()
             {
                 Id = mapping.Id,
+                ParentId = parentId,
                 Source = sourceModel,
                 Target = targetModel
 
@@ -571,11 +546,17 @@ namespace BExIS.Modules.Dim.UI.Helper
                 transformationRuleModel = new TransformationRuleModel();
                 transformationRuleModel.Id = mapping.TransformationRule.Id;
                 transformationRuleModel.RegEx = mapping.TransformationRule.RegEx;
+                transformationRuleModel.Mask = mapping.TransformationRule.Mask;
             }
             else
             {
                 transformationRuleModel = new TransformationRuleModel();
             }
+
+            long parentId = 0;
+            if (mapping.Parent != null)
+                parentId = mapping.Parent.Id;
+
 
             //ToDo Load Rules
             return new SimpleMappingModel()
@@ -583,7 +564,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                 Id = mapping.Id,
                 Source = sourceModel,
                 Target = targetModel,
-                TransformationRule = transformationRuleModel
+                TransformationRule = transformationRuleModel,
+                ParentId = parentId
+
             };
         }
 
@@ -600,8 +583,6 @@ namespace BExIS.Modules.Dim.UI.Helper
                 Position = position,
                 Type = le.Type,
                 Complexity = le.Complexity,
-                Mask = le.Mask,
-
             };
 
         }
@@ -630,8 +611,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                         model.Type,
                         model.Complexity,
                         model.Name,
-                        model.XPath,
-                        model.Mask
+                        model.XPath
                         );
         }
 
@@ -645,9 +625,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                         model.Complexity,
                         model.Name,
                         model.XPath,
-                        model.Mask,
-                        false,
-                        parentId
+                        false
                         );
         }
 
@@ -689,28 +667,47 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         }
 
-        public static Mapping CreateIfNotExistMapping(LinkElement source, LinkElement target, long level, TransformationRule rule)
+        public static Mapping CreateIfNotExistMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent)
         {
             MappingManager mappingManager = new MappingManager();
 
-            Mapping mapping = mappingManager.MappingRepo.Get().FirstOrDefault(
-                m => m.Source.Id.Equals(source.Id) &&
-                     m.Target.Id.Equals(target.Id) &&
-                     m.Level.Equals(level));
+            Mapping mapping = null;
+
+            if (parent != null)
+            {
+                mapping = mappingManager.MappingRepo.Get().FirstOrDefault(
+                    m => m.Parent != null && m.Parent.Id.Equals(parent.Id)
+                         && m.Source.Id.Equals(source.Id)
+                         && m.Source.Type.Equals(source.Type)
+                         && m.Target.Id.Equals(target.Id)
+                         && m.Target.Type.Equals(target.Type)
+                         && m.Level.Equals(level));
+            }
+            else
+            {
+                mapping = mappingManager.MappingRepo.Get().FirstOrDefault(
+                    m => m.Parent == null
+                         && m.Source.Id.Equals(source.Id)
+                         && m.Source.Type.Equals(source.Type)
+                         && m.Target.Id.Equals(target.Id)
+                         && m.Target.Type.Equals(target.Type)
+                         && m.Level.Equals(level));
+            }
+
             if (mapping == null)
             {
                 if (rule != null && rule.Id == 0 && rule.RegEx != null)
                 {
-                    rule = mappingManager.CreateTransformationRule(rule.RegEx);
+                    rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask);
                 }
 
-                mapping = mappingManager.CreateMapping(source, target, level, rule);
+                mapping = mappingManager.CreateMapping(source, target, level, rule, parent);
             }
             else
             {
                 if (rule != null)
                 {
-                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx);
+                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask);
 
                     mapping.TransformationRule = rule;
                     mappingManager.UpdateMapping(mapping);
@@ -725,16 +722,13 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region delete
 
-        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, bool newParentMapping)
+        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, Mapping parent)
         {
 
             MappingManager mappingManager = new MappingManager();
 
             List<Mapping> mappingsInDatabase = mappingManager.MappingRepo.Get()
-                    .Where(m => m.Source.Parent != null &&
-                    m.Source.Parent.Id.Equals(sourceId) &&
-                    m.Target.Parent != null &&
-                    m.Target.Parent.Id.Equals(targetId)).ToList();
+                    .Where(m => m.Parent != null && m.Parent.Id.Equals(parent.Id)).ToList();
 
             List<long> deleteMappings = new List<long>();
 
@@ -775,38 +769,27 @@ namespace BExIS.Modules.Dim.UI.Helper
                 LinkElement simpleMappingTarget = null;
 
                 //if its not a new parent mapping or its in the list, please select existing
-                //if (!newParentMapping || ExistLinkElementModel(sm.Source, createdLinkELementModels))
-
                 simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId);
-                //else
-                //{
-                //    simpleMappingSource = MappingHelper.CreateLinkElement(sm.Source, sourceId);
-                //    createdLinkELementModels.Add(sm.Source);
-                //}
+
 
                 //if its not a new parent mapping or its in the list, please select existing
                 ////if (ExistLinkElementModel(sm.Target, createdLinkELementModels))
 
                 simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId);
-                //else
-                //{
-                //    simpleMappingTarget = MappingHelper.CreateLinkElement(sm.Target, targetId);
-                //    createdLinkELementModels.Add(sm.Target);
-                //}
 
 
-                if (sm.Target.Mask != null)
-                    simpleMappingTarget = mappingManager.UpdateLinkElement(simpleMappingTarget.Id, sm.Target.Mask);
+                //if (sm.TransformationRule. != null)
+                //    simpleMappingTarget = mappingManager.UpdateLinkElement(simpleMappingTarget.Id);
 
 
-                TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx);
+                TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx, sm.TransformationRule.Mask);
 
 
-                Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null);
+                Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null, parent);
 
                 if (transformationRule != null)
                 {
-                    transformationRule = mappingManager.UpdateTransformationRule(transformationRule.Id, transformationRule.RegEx);
+                    transformationRule = mappingManager.UpdateTransformationRule(transformationRule.Id, transformationRule.RegEx, transformationRule.Mask);
 
                     simplemapping.TransformationRule = transformationRule;
                     mappingManager.UpdateMapping(simplemapping);
@@ -827,19 +810,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             if (recursive)
             {
-                List<long> sourceChildIds =
-                    mappingManager.LinkElementRepo.Get()
-                        .Where(le => le.Parent != null && le.Parent.Id.Equals(mapping.Source.Id))
-                        .Select(le => le.Id).ToList();
-
-                List<long> targetChildIds =
-                    mappingManager.LinkElementRepo.Get()
-                        .Where(le => le.Parent != null && le.Parent.Id.Equals(mapping.Target.Id))
-                        .Select(le => le.Id).ToList();
-
-                List<Mapping> childMappings = mappingManager.MappingRepo.Get()
-                    .Where(m => sourceChildIds.Contains(m.Source.Id)
-                                && targetChildIds.Contains(m.Target.Id)).ToList();
+                IEnumerable<Mapping> childMappings = mappingManager.GetChildMapping(id);
 
                 foreach (var cm in childMappings)
                 {
@@ -914,48 +885,48 @@ namespace BExIS.Modules.Dim.UI.Helper
             return linkElementId;
         }
 
-        public static string GetMask(long elementId, LinkElementType type)
-        {
-            MappingManager mappingManager = new MappingManager();
+        //public static string GetMask(long elementId, LinkElementType type)
+        //{
+        //    MappingManager mappingManager = new MappingManager();
 
-            string mask = "";
+        //    string mask = "";
 
-            LinkElement linkElement =
-                mappingManager.LinkElementRepo.Get()
-                    .FirstOrDefault(le => le.ElementId.Equals(elementId) && le.Type.Equals(type));
+        //    LinkElement linkElement =
+        //        mappingManager.LinkElementRepo.Get()
+        //            .FirstOrDefault(le => le.ElementId.Equals(elementId) && le.Type.Equals(type));
 
-            if (linkElement != null)
-            {
-                mask = linkElement.Mask;
-            }
+        //    if (linkElement != null)
+        //    {
+        //        mask = linkElement.Mask;
+        //    }
 
-            return mask;
-        }
+        //    return mask;
+        //}
 
-        /// <summary>
-        /// if parent is complex send back al children ids
-        /// else send back the parent id
-        /// </summary>
-        /// <returns></returns>
-        public static List<long> GetChildrenIds(LinkElement parent)
-        {
+        ///// <summary>
+        ///// if parent is complex send back al children ids
+        ///// else send back the parent id
+        ///// </summary>
+        ///// <returns></returns>
+        //public static List<long> GetChildrenIds(LinkElement parent)
+        //{
 
-            List<long> childrenIds = new List<long>();
+        //    List<long> childrenIds = new List<long>();
 
-            if (parent.Complexity.Equals(LinkElementComplexity.Simple))
-                childrenIds.Add(parent.Id);
+        //    if (parent.Complexity.Equals(LinkElementComplexity.Simple))
+        //        childrenIds.Add(parent.Id);
 
-            else
-            {
-                MappingManager mappingManager = new MappingManager();
-                childrenIds = mappingManager.LinkElementRepo.Get()
-                           .Where(le => le.Parent != null && le.Parent.Id.Equals(parent.Id))
-                           .Select(le => le.Id)
-                           .ToList();
-            }
+        //    else
+        //    {
+        //        MappingManager mappingManager = new MappingManager();
+        //        childrenIds = mappingManager.LinkElementRepo.Get()
+        //                   .Where(le => le.Parent != null && le.Parent.Id.Equals(parent.Id))
+        //                   .Select(le => le.Id)
+        //                   .ToList();
+        //    }
 
-            return childrenIds;
-        }
+        //    return childrenIds;
+        //}
     }
     #endregion
 

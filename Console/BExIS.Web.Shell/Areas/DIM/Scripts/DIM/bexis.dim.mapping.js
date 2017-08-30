@@ -2,7 +2,6 @@
 var connections = [];
 var connectionParent = {};
 
-
 $(window)
     .resize(function () {
 
@@ -12,6 +11,20 @@ $(window)
             100);
 
         
+
+    });
+
+$(document)
+    .ready(function() {
+
+        //create all connections in ui
+        $(".mapping-container")
+            .each(function() {
+                var id = $(this).attr("id");
+
+                initJSPLUMB(id);
+
+            });
 
     });
 
@@ -226,7 +239,6 @@ function createElement(info, element) {
     var position = $(info).find("#Position").text();
     var name = $(info).find("#Name").text();
     var complexity = $(info).find("#Complexity").text();
-    var mask = $(info).find("#Mask").text();
     var xpath = $(info).find("#XPath").text();
 
 
@@ -239,7 +251,6 @@ function createElement(info, element) {
         "Position": position,
         "Complexity": complexity,
         "Parent": element,
-        "Mask": mask,
         "XPath":xpath
     }
 
@@ -250,7 +261,7 @@ function createElement(info, element) {
     return obj;
 }
 
-function createTransformationRule(id, regexPattern) {
+function createTransformationRule(id, regexPattern, mask) {
 
     /**
      * public long Id { get; set; }
@@ -259,13 +270,14 @@ function createTransformationRule(id, regexPattern) {
     var obj =
     {
         "Id": id,
-        "RegEx": regexPattern
+        "RegEx": regexPattern,
+        "Mask": mask
     }
 
     return obj;
 }
 
-function createSimpleMapping(conn, sourceParent, targetParent) {
+function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) {
 
     //console.log("create simple mappings");
     //console.log(conn);
@@ -283,6 +295,8 @@ function createSimpleMapping(conn, sourceParent, targetParent) {
     var sourceObj = createElement(sourceInfo, sourceParent);
     var targetObj = createElement(targetInfo, targetParent);
 
+    var mappingId = 0;
+
     // get Mask
 
     var trId = 0;
@@ -297,14 +311,15 @@ function createSimpleMapping(conn, sourceParent, targetParent) {
     var ruleId = $(rule).attr("id");
     //console.log(ruleId);
 
-
+    if (ruleId != null) {
+        trId = ruleId.split("_")[0];
+    }
+   
     regexPattern = $("#" + ruleId).find("#RegExPattern").val();
-    //console.log(regexPattern);
-    var transformationRuleObj = createTransformationRule(trId, regexPattern);
-
     mask = $("#" + ruleId).find("#Mask").val();
-    targetObj.Mask = mask;
 
+    //console.log(regexPattern);
+    var transformationRuleObj = createTransformationRule(trId, regexPattern, mask);
 
     //console.log(transformationRuleObj);
 
@@ -312,6 +327,8 @@ function createSimpleMapping(conn, sourceParent, targetParent) {
     
     var obj =
     {
+        "Id": mappingId,
+        "ParentId" :parentMappingId,
         "Source": sourceObj,
         "Target": targetObj,
         "TransformationRule": transformationRuleObj
@@ -326,6 +343,9 @@ function saveMapping(e, create) {
     console.log("************************************");
     //console.log(e);
     var parent = $(e).parents(".mapping-container")[0];
+
+    var mappingId = $(parent).attr("id").split("_")[2];
+    var parentMappingId = $(parent).attr("parent");
     //console.log(parent);
 
     //get Root source
@@ -381,7 +401,8 @@ function saveMapping(e, create) {
             var sm = createSimpleMapping(
                 parentMapping.connections[i],
                 source,
-                target
+                target,
+                mappingId
             );
             simpleMappings.push(sm);
         }
@@ -395,6 +416,8 @@ function saveMapping(e, create) {
 
     var model =
     {
+        "Id": mappingId,
+        "ParentId": parentMappingId,
         "Source": source,
         "Target": target,
         "SimpleMappings": simpleMappings
@@ -402,8 +425,7 @@ function saveMapping(e, create) {
 
     var sendData =
     {
-        model,
-        newMapping
+        model
     }
 
     
@@ -417,7 +439,10 @@ function saveMapping(e, create) {
         data: JSON.stringify(sendData),
         success: function(data) {
 
+            //console.log(data);
+
             $(parent).remove();
+
             $('#dim-mapping-middle').append(data);
 
             //create empty
@@ -430,9 +455,9 @@ function saveMapping(e, create) {
 
                     //remove connection?
                     //console.log("remove connections from 0 container");
-                    if (newMapping) {
-                        removeParentFromConnections($(parent).attr("id"));
-                    }
+                    var pid = $(parent).attr("id");
+                    removeParentFromConnections(pid);
+                    initJSPLUMB(pid);
 
                     //console.log("RESET ALL CONNECTIONS");
                     reloadAllConnections();
@@ -772,8 +797,6 @@ function initJSPLUMB(parentid) {
         //jsPlumb.fire("jsPlumbDemoLoaded", instance);
         console.log("---------------------");
     });
-
-   
 };
 
 function changeViewOfTransformationRule(conn) {
