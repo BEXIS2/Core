@@ -17,10 +17,24 @@ namespace BExIS.IO.Transform.Output
     {
         #region export prepare files
 
-        public string GenerateAsciiFile(long id, string title, string mimeType, TextSeperator textSeperator = TextSeperator.semicolon)
+        public string GenerateAsciiFile(long id, string title, string mimeType)
         {
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+            long datasetVersionId = datasetVersion.Id;
+
+            return GenerateAsciiFile(id, datasetVersionId, title, mimeType);
+        }
+
+        public string GenerateAsciiFile(long id, long versionId, string title, string mimeType)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);
+
             string contentDescriptorTitle = "";
             string ext = "";
+
+            TextSeperator textSeperator = TextSeperator.semicolon;
 
             switch (mimeType)
             {
@@ -40,15 +54,9 @@ namespace BExIS.IO.Transform.Output
                     }
             }
 
-
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-            long datasetVersionId = datasetVersion.Id;
             AsciiWriter writer = new AsciiWriter(textSeperator);
 
             string path = "";
-
-
 
             //ascii allready exist
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
@@ -99,88 +107,37 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        public string GenerateAsciiFile(long id, long versionId, string title, string mimeType)
+        public string GenerateAsciiFile(string ns, DataTable table, string title, string mimeType, long dataStructureId)
         {
-            string contentDescriptorTitle = "";
             string ext = "";
-
             TextSeperator textSeperator = TextSeperator.semicolon;
 
             switch (mimeType)
             {
                 case "text/csv":
                     {
-                        contentDescriptorTitle = "generatedCSV";
                         ext = ".csv";
                         textSeperator = TextSeperator.semicolon;
                         break;
                     }
                 default:
                     {
-                        contentDescriptorTitle = "generatedTXT";
                         ext = ".txt";
                         textSeperator = TextSeperator.tab;
                         break;
                     }
             }
 
-
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);
-            long datasetVersionId = datasetVersion.Id;
             AsciiWriter writer = new AsciiWriter(textSeperator);
 
-            string path = "";
+            // write to file
+            // if there is already a file, replace it
+            string path = generateDownloadFile(ns, dataStructureId, title, ext, writer);
 
+            writer.AddDataTuples(table, path, dataStructureId);
 
+            return path;
 
-            //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
-            {
-                #region FileStream exist
-
-                ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals(contentDescriptorTitle)).FirstOrDefault();
-                path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
-
-                if (FileHelper.FileExist(path))
-                {
-                    return path;
-                }
-                else
-                {
-                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-
-                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "Data", ext, writer);
-
-                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
-
-                    writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
-
-                    return path;
-                }
-
-                #endregion
-
-            }
-            // not exist needs to generated
-            else
-            {
-                #region FileStream not exist
-
-                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-
-                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
-
-                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
-
-                writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
-
-                return path;
-
-                #endregion
-            }
         }
 
         public string GenerateAsciiFile(long id, string title, string mimeType, string[] visibleColumns)
@@ -205,6 +162,22 @@ namespace BExIS.IO.Transform.Output
                 writer.VisibleColumns = visibleColumns;
 
             writer.AddDataTuples(datasetManager, datatuples, path, datastuctureId);
+
+            return path;
+        }
+
+        /// <summary>
+        /// create an Excel file from the given Datatable
+        /// </summary>
+        /// <param name="ns"></param>
+        /// <param name="table"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public string GenerateExcelFile(string ns, DataTable table, string title, long dsId)
+        {
+            ExcelWriter writer = new ExcelWriter();
+            string path = generateDownloadFile(ns, dsId, title, ".xlsm", writer);
+            writer.AddDataTuplesToFile(table, path, dsId);
 
             return path;
         }
@@ -297,6 +270,38 @@ namespace BExIS.IO.Transform.Output
             return "";
         }
 
+
+        /// <summary>
+        /// create a new file of given extension
+        /// ns will be used to seperate from other files created of individual datasets
+        /// </summary>
+        /// <param name="ns">namespace</param>
+        /// <param name="title"></param>
+        /// <param name="ext"></param>
+        /// <param name="writer"></param>
+        /// <returns></returns>
+        private string generateDownloadFile(string ns, long datastructureId, string title, string ext, DataWriter writer)
+        {
+            switch (ext)
+            {
+                // text based files
+                case ".csv":
+                case ".txt":
+                    AsciiWriter asciiwriter = (AsciiWriter)writer;
+                    return asciiwriter.CreateFile(ns, title, ext);
+
+                // excel files
+                case ".xlsx":
+                case ".xlsm":
+                    ExcelWriter excelwriter = (ExcelWriter)writer;
+                    return excelwriter.CreateFile(ns, datastructureId, title, ext);
+
+                // no valid extension given
+                default:
+                    return "";
+            }
+        }
+
         private void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string ext)
         {
 
@@ -375,18 +380,18 @@ namespace BExIS.IO.Transform.Output
             if (tupleIds != null && tupleIds.Count > 0 && sds != null)
             {
                 buildTheHeader(sds, useLabelsAsColumnNames, dt);
-                buildTheBody(datasetManager, tupleIds, dt, sds, useLabelsAsColumnNames);
+                buildTheBody(datasetManager, tupleIds, dt, sds);
             }
 
             return dt;
         }
 
-        private static void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds, bool useLabelsAsColumnNames)
+        private static void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds)
         {
             DataTupleIterator tupleIterator = new DataTupleIterator(tupleIds, datasetManager);
             foreach (var tuple in tupleIterator)
             {
-                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, useLabelsAsColumnNames));
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, true));
             }
         }
 
