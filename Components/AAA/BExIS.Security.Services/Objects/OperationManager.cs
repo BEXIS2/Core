@@ -64,5 +64,15 @@ namespace BExIS.Security.Services.Objects
                 OperationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant())
                     .FirstOrDefault();
         }
+
+        public void Update(Operation operation)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var operationRepository = uow.GetRepository<Operation>();
+                operationRepository.Put(operation);
+                uow.Commit();
+            }
+        }
     }
 }
