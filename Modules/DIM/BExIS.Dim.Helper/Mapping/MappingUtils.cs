@@ -1,6 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Xml.Helpers;
 using System.Collections.Generic;
@@ -15,6 +14,17 @@ namespace BExIS.Dim.Helpers.Mapping
 
         #region GET FROM SYSTEM
 
+
+        /// <summary>
+        /// e.g.
+        /// targetElementId : 3
+        /// targetType : nested usage
+        /// value search
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetType"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType, string value = "")
         {
             long destinationElementRootId = 0;
@@ -23,6 +33,7 @@ namespace BExIS.Dim.Helpers.Mapping
             MappingManager _mappingManager = new MappingManager();
 
             List<string> tmp = new List<string>();
+
 
             //getAll mappings
             var mappings = _mappingManager.GetMappings().Where(m =>
@@ -36,7 +47,7 @@ namespace BExIS.Dim.Helpers.Mapping
             //get All mappings for the destination
             foreach (var mapping in mappings)
             {
-                LinkElement root = getIdOfRoot(mapping.Source);
+                LinkElement root = getRootMapping(mapping).Target;
                 if (root != null && root.ElementId.Equals(destinationElementRootId) &&
                      root.Type.Equals(destinationType))
                     mappingsForDestiantion.Add(mapping);
@@ -76,60 +87,67 @@ namespace BExIS.Dim.Helpers.Mapping
 
             List<string> tmp = new List<string>();
 
-            if (mappings.Any())
-            {
-                // all mappings belong to the same parent
-                long parentTypeId = mappings.FirstOrDefault().Source.Parent.ElementId;
-                long sourceId = mappings.FirstOrDefault().Source.ElementId;
-                // all Masks are the same
-                string mask = mappings.FirstOrDefault().Target.Mask;
-                PartyType partyType = null;
-                List<Party> parties = null;
+            //ToDo REFCATOR MAPPING
 
-                //Simple Mapping, selecting directly the simple attr
-                // the parent is 0 -> the system 
-                if (parentTypeId == 0)
-                {
-                    partyType = partyTypeManager.Repo.Query().FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
-                    parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
-                }
-                else
-                {
-                    partyType = partyTypeManager.Repo.Get(parentTypeId);
-                    parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
-                }
-
-                if (parties != null)
-                    foreach (var p in parties)
-                    {
-                        mask = mappings.FirstOrDefault().Target.Mask;
-
-                        foreach (var mapping in mappings)
-                        {
-                            long attributeId = mapping.Source.ElementId;
+            //if (mappings.Any())
+            //{
 
 
-                            PartyCustomAttributeValue attrValue =
-                                partyManager.RepoCustomAttrValues.Get()
-                                    .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
-                                    .FirstOrDefault();
+            //    // all mappings belong to the same parent
+            //    long parentTypeId = mappings.FirstOrDefault().Source.Parent.ElementId;
+            //    long sourceId = mappings.FirstOrDefault().Source.ElementId;
 
 
 
+            //    // all Masks are the same
+            //    string mask = mappings.FirstOrDefault().TransformationRule.Mask;
+            //    PartyType partyType = null;
+            //    List<Party> parties = null;
 
-                            List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
-                            string placeHolderName = attrValue.CustomAttribute.Name;
+            //    //Simple Mapping, selecting directly the simple attr
+            //    // the parent is 0 -> the system 
+            //    if (parentTypeId == 0)
+            //    {
+            //        partyType = partyTypeManager.Repo.Query().FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
+            //        parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+            //    }
+            //    else
+            //    {
+            //        partyType = partyTypeManager.Repo.Get(parentTypeId);
+            //        parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+            //    }
+
+            //    if (parties != null)
+            //        foreach (var p in parties)
+            //        {
+            //            mask = mappings.FirstOrDefault().TransformationRule.Mask;
+
+            //            foreach (var mapping in mappings)
+            //            {
+            //                long attributeId = mapping.Source.ElementId;
 
 
-                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+            //                PartyCustomAttributeValue attrValue =
+            //                    partyManager.RepoCustomAttrValues.Get()
+            //                        .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
+            //                        .FirstOrDefault();
 
 
-                        }
 
-                        if (mask.ToLower().Contains(value.ToLower()))
-                            tmp.Add(mask);
-                    }
-            }
+
+            //                List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
+            //                string placeHolderName = attrValue.CustomAttribute.Name;
+
+
+            //                mask = setOrReplace(mask, regExResultList, placeHolderName);
+
+
+            //            }
+
+            //            if (mask.ToLower().Contains(value.ToLower()))
+            //                tmp.Add(mask);
+            //        }
+            //}
 
             return tmp;
         }
@@ -169,7 +187,8 @@ namespace BExIS.Dim.Helpers.Mapping
             //get All mappings for the destination
             foreach (var mapping in mappings)
             {
-                LinkElement root = getIdOfRoot(mapping.Source);
+                //ToDo REFACTOR MAPPING
+                LinkElement root = getRootMapping(mapping).Source;
                 if (root != null && root.ElementId.Equals(destinationElementRootId) &&
                      root.Type.Equals(destinationType) && mapping.Level == 2)
                     mappingsForDestiantion.Add(mapping);
@@ -210,11 +229,11 @@ namespace BExIS.Dim.Helpers.Mapping
 
         #region Helpers
 
-        private static LinkElement getIdOfRoot(LinkElement element)
+        private static Entities.Mapping.Mapping getRootMapping(Entities.Mapping.Mapping mapping)
         {
-            if (element.Parent == null) return element;
+            if (mapping.Parent == null) return mapping;
 
-            return getIdOfRoot(element.Parent);
+            return getRootMapping(mapping);
         }
 
 

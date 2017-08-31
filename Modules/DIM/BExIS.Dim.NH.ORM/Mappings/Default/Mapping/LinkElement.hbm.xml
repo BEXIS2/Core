@@ -43,16 +43,8 @@
       <column name="Complexity" />
     </property>
 
-    <property name="Mask" type="string">
-      <column name="Mask" />
-    </property>
-
    
     <!-- Associations -->
-
-    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Parent" column="ParentRef">
-    </many-to-one>
-
     <!--<set name="Children" cascade="all-delete-orphan" inverse="true">
       <key column="ParentRef" not-null="false" foreign-key="FK_LinkElement_Parent"/>
       <one-to-many class="LinkElement"/>

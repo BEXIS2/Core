@@ -139,8 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         private bool SetActiveByPreload()
         {
             if (Model != null &&
-                Model.MinCardinality > 0
-                && !IsChoice(Model.Source)) Activated = true;
+                Model.MinCardinality > 0) Activated = true;
 
             return Activated;
         }

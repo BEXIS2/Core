@@ -43,22 +43,21 @@ namespace BExIS.Dim.Services
             return LinkElementRepo.Get().FirstOrDefault(le => le.Type.Equals(type));
         }
 
-        public LinkElement GetLinkElement(LinkElementType type, long parentid)
-        {
-            return LinkElementRepo.Get().FirstOrDefault(le => le.Type.Equals(type) && le.Parent.Id.Equals(parentid));
-        }
+        //public LinkElement GetLinkElement(LinkElementType type, long parentid)
+        //{
+        //    return LinkElementRepo.Get().FirstOrDefault(le => le.Type.Equals(type) && le.Parent.Id.Equals(parentid));
+        //}
 
         public LinkElement GetLinkElement(long elementid, LinkElementType type)
         {
             return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
-        public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath, string mask,
-            bool isSequence = false, long parentId = -1)
+        public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath, bool isSequence = false)
         {
             Contract.Requires(elementId >= 0);
 
-            LinkElement parent = this.GetLinkElement(parentId);
+            //LinkElement parent = this.GetLinkElement(parentId);
 
             LinkElement linkElement;
 
@@ -69,9 +68,8 @@ namespace BExIS.Dim.Services
                 Name = name,
                 XPath = xpath,
                 IsSequence = isSequence,
-                Parent = parent,
+                //Parent = parent,
                 Complexity = complexity,
-                Mask = mask
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -101,14 +99,12 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        public LinkElement UpdateLinkElement(long id, string mask)
+        public LinkElement UpdateLinkElement(long id)
         {
             var linkElement = this.LinkElementRepo.Get(id);
 
             if (linkElement != null)
             {
-                linkElement.Mask = mask;
-
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
@@ -129,12 +125,50 @@ namespace BExIS.Dim.Services
             return MappingRepo.Get();
         }
 
+        public Mapping GetMapping(LinkElement source, LinkElement target)
+        {
+            return MappingRepo.Get().FirstOrDefault(m => m.Source.Id.Equals(source.Id) &&
+                    m.Source.Type.Equals(source.Type) &&
+                    m.Target.Id.Equals(target.Id) &&
+                    m.Target.Type.Equals(target.Type));
+        }
+
+        public IEnumerable<Mapping> GetChildMapping(LinkElement source, LinkElement target)
+        {
+            long parentMappingId = GetMapping(source, target).Id;
+
+            return MappingRepo.Query().Where(m => m.Parent != null && m.Parent.Id.Equals(parentMappingId));
+        }
+
+        public IEnumerable<Mapping> GetChildMapping(LinkElement source, LinkElement target, long level)
+        {
+            long parentMappingId = GetMapping(source, target).Id;
+
+            return MappingRepo.Query().Where(m => m.Parent != null &&
+            m.Parent.Id.Equals(parentMappingId) &&
+            m.Level.Equals(level));
+        }
+
+        public IEnumerable<Mapping> GetChildMapping(long id)
+        {
+            return MappingRepo.Get().Where(m => m.Parent != null &&
+            m.Parent.Id.Equals(id));
+        }
+
+        public IEnumerable<Mapping> GetChildMapping(long id, long level)
+        {
+            return MappingRepo.Get().Where(m => m.Parent != null &&
+            m.Parent.Id.Equals(id) &&
+            m.Level.Equals(level));
+        }
+
         public Mapping GetMappings(long id)
         {
             return MappingRepo.Get().FirstOrDefault(m => m.Id.Equals(id));
         }
 
         public Mapping CreateMapping(
+
             long source_elementId,
             LinkElementType source_type,
             LinkElementComplexity source_complexity,
@@ -146,10 +180,10 @@ namespace BExIS.Dim.Services
             string target_name,
             string target_xpath,
             bool source_isSequence = false,
-            long source_parentId = -1,
             bool target_isSequence = false,
-            long target_parentId = -1,
-            TransformationRule rule = null
+            TransformationRule rule = null,
+            long parentMappingId = 0
+
             )
         {
             LinkElement source = CreateLinkElement(
@@ -158,9 +192,7 @@ namespace BExIS.Dim.Services
                 source_complexity,
                 source_name,
                 source_xpath,
-                "",
-                source_isSequence,
-                source_parentId
+                source_isSequence
                 );
 
             LinkElement target = CreateLinkElement(
@@ -168,9 +200,8 @@ namespace BExIS.Dim.Services
                 target_type,
                 target_complexity,
                 target_name,
-                target_xpath, "",
-                target_isSequence,
-                target_parentId
+                target_xpath,
+                target_isSequence
                 );
 
             Mapping mapping = new Mapping();
@@ -178,6 +209,12 @@ namespace BExIS.Dim.Services
             mapping.Source = source;
             mapping.Target = target;
             mapping.TransformationRule = rule;
+
+            if (parentMappingId > 0)
+            {
+                mapping.Parent = MappingRepo.Get(parentMappingId);
+            }
+
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -190,7 +227,7 @@ namespace BExIS.Dim.Services
 
         }
 
-        public Mapping CreateMapping(LinkElement source, LinkElement target, long level, TransformationRule rule)
+        public Mapping CreateMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent)
         {
             Mapping mapping = new Mapping();
 
@@ -198,6 +235,7 @@ namespace BExIS.Dim.Services
             mapping.Target = target;
             mapping.TransformationRule = rule;
             mapping.Level = level;
+            mapping.Parent = parent;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -264,11 +302,12 @@ namespace BExIS.Dim.Services
 
         #region Transformation Rule
 
-        public TransformationRule CreateTransformationRule(string regex)
+        public TransformationRule CreateTransformationRule(string regex, string mask)
         {
             var transformationRule = new TransformationRule()
             {
                 RegEx = regex,
+                Mask = mask
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -281,14 +320,17 @@ namespace BExIS.Dim.Services
             return (transformationRule);
         }
 
-        public TransformationRule UpdateTransformationRule(long id, string regex)
+        public TransformationRule UpdateTransformationRule(long id, string regex, string mask)
         {
             var transformationRule = this.TransformationRuleRepo.Get(id);
 
             if (transformationRule == null)
-                transformationRule = CreateTransformationRule(regex);
+                transformationRule = CreateTransformationRule(regex, mask);
             else
+            {
                 transformationRule.RegEx = regex;
+                transformationRule.Mask = mask;
+            }
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

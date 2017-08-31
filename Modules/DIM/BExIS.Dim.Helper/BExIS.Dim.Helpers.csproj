@@ -71,6 +71,7 @@
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
     <Compile Include="Export\GenericDataRepoConverter.cs" />
     <Compile Include="Export\IDataRepoConverter.cs" />
+    <Compile Include="Export\PensoftDataRepoConverter.cs" />
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mapping\MappingUtils.cs" />
