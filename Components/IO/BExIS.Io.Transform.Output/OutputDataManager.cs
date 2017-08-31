@@ -380,18 +380,18 @@ namespace BExIS.IO.Transform.Output
             if (tupleIds != null && tupleIds.Count > 0 && sds != null)
             {
                 buildTheHeader(sds, useLabelsAsColumnNames, dt);
-                buildTheBody(datasetManager, tupleIds, dt, sds);
+                buildTheBody(datasetManager, tupleIds, dt, sds, useLabelsAsColumnNames);
             }
 
             return dt;
         }
 
-        private static void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds)
+        private static void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds, bool useLabelsAsColumnNames)
         {
             DataTupleIterator tupleIterator = new DataTupleIterator(tupleIds, datasetManager);
             foreach (var tuple in tupleIterator)
             {
-                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, true));
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, useLabelsAsColumnNames));
             }
         }
 
