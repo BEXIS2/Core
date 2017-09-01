@@ -38,10 +38,10 @@ $(document)
  * @returns {} 
  */
 function iconClick(e) {
-    console.log("CLICK");
+    //console.log("CLICK");
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".le-container");
-    console.log(container);
+    //console.log(container);
     $(container).find(".le-container-content").slideToggle();
     $(container).addClass("selected-mapping-element");
     setTimeout(reloadAllConnections, 100);
@@ -49,11 +49,11 @@ function iconClick(e) {
 };
 
 function iconTransformtionRuleClick(e) {
-    //console.log(e);
+    ////console.log(e);
 
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".mapping-container-transformation-rule")[0];
-    //console.log(container);
+    ////console.log(container);
 
     $(container).find(".mapping-container-transformation-rule-content").slideToggle();
     $(container).toggleClass("selected-mapping-element");
@@ -63,12 +63,12 @@ function iconTransformtionRuleClick(e) {
 
 function leSimpleSelectorClick(e) {
 
-    //console.log(e);
+    ////console.log(e);
     var parent = $(e).parents(".le-simple")[0];
-    //console.log(parent);
+    ////console.log(parent);
     var info = $(parent).find(".le-simple-info")[0];
-    //console.log(info);
-    //console.log($(info).find("#Id"));
+    ////console.log(info);
+    ////console.log($(info).find("#Id"));
 
     var id = $(info).find("#Id").text();
     var type = $(info).find("#Type").text();
@@ -78,7 +78,7 @@ function leSimpleSelectorClick(e) {
     var name = $(info).find("#Name").text();
     var xpath = $(info).find("#XPath").text();
 
-    //console.log("xpath" + xpath);
+    ////console.log("xpath" + xpath);
 
     var le =
     {
@@ -91,7 +91,7 @@ function leSimpleSelectorClick(e) {
         "XPath": xpath
     }
 
-    //console.log(le);
+    ////console.log(le);
 
     $.ajax({
         type: "POST",
@@ -101,7 +101,7 @@ function leSimpleSelectorClick(e) {
         data: JSON.stringify(le),
         success: function(data) {
 
-            //console.log("type : "+type);
+            ////console.log("type : "+type);
             if (position.toLowerCase() === "source") {
                 $("#emptySourceContainer").replaceWith(data);
 
@@ -130,7 +130,7 @@ function disableAddicons(key) {
     $("." + key)
         .find(".le-simple-selector")
         .each(function() {
-            //console.log(this);
+            ////console.log(this);
             $(this).addClass("bx-disabled");
             $(this).removeClass("function");
 
@@ -146,7 +146,7 @@ function enableAddicons(key) {
     $("." + key)
         .find(".le-simple-selector")
         .each(function() {
-            //console.log(this);
+            ////console.log(this);
             $(this).removeClass("bx-disabled");
             $(this).addClass("function");
 
@@ -173,7 +173,7 @@ function updateSaveOptionOnNewContainer() {
 function deleteComplexMappingElement(e) {
 
     var parent = $(e).parents(".mapping_container_child")[0];
-    //console.log(parent);
+    ////console.log(parent);
 
     if ($(parent).hasClass("mapping_container_source")) {
 
@@ -254,8 +254,8 @@ function createElement(info, element) {
         "XPath":xpath
     }
 
-    //console.log("LINK ELEMENT");
-    //console.log(obj);
+    ////console.log("LINK ELEMENT");
+    ////console.log(obj);
 
 
     return obj;
@@ -279,11 +279,11 @@ function createTransformationRule(id, regexPattern, mask) {
 
 function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) {
 
-    //console.log("create simple mappings");
-    //console.log(conn);
-    //console.log(conn.id);
-    //console.log(conn.sourceId);
-    //console.log(conn.targetId);
+    ////console.log("create simple mappings");
+    ////console.log(conn);
+    ////console.log(conn.id);
+    ////console.log(conn.sourceId);
+    ////console.log(conn.targetId);
 
 
     var source = $("#" + conn.sourceId);
@@ -305,11 +305,11 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
  
     //get rull based on conn
     var rule = findRuleFromConn(conn);
-    //console.log("RULE");
-    //console.log(rule);
+    ////console.log("RULE");
+    ////console.log(rule);
 
     var ruleId = $(rule).attr("id");
-    //console.log(ruleId);
+    ////console.log(ruleId);
 
     if (ruleId != null) {
         trId = ruleId.split("_")[0];
@@ -318,10 +318,10 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
     regexPattern = $("#" + ruleId).find("#RegExPattern").val();
     mask = $("#" + ruleId).find("#Mask").val();
 
-    //console.log(regexPattern);
+    ////console.log(regexPattern);
     var transformationRuleObj = createTransformationRule(trId, regexPattern, mask);
 
-    //console.log(transformationRuleObj);
+    ////console.log(transformationRuleObj);
 
     //var parent = $(source).parents(".mapping-container")[0];
     
@@ -339,14 +339,14 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
 
 function saveMapping(e, create) {
 
-    console.log("mapping");
-    console.log("************************************");
-    //console.log(e);
+    //console.log("mapping");
+    //console.log("************************************");
+    ////console.log(e);
     var parent = $(e).parents(".mapping-container")[0];
 
     var mappingId = $(parent).attr("id").split("_")[2];
     var parentMappingId = $(parent).attr("parent");
-    //console.log(parent);
+    ////console.log(parent);
 
     //get Root source
     var rootInfo = $("#le-root-source").find(".le-root-info")[0];
@@ -373,10 +373,10 @@ function saveMapping(e, create) {
     // get mappingContainer Connection
 
     for (var j = 0; j < connections.length; j++) {
-        console.log(connections[j].id + "===" + parent.id);
+        //console.log(connections[j].id + "===" + parent.id);
 
         if (connections[j].id == parent.id) {
-            console.log("-- >get connection");
+            //console.log("-- >get connection");
             parentMapping = connections[j];
             break;
         }
@@ -385,18 +385,18 @@ function saveMapping(e, create) {
 
     if (parentMapping != null) {
 
-        //console.log("save mapping ");
-        //console.log(parentMapping.connections.length);
+        ////console.log("save mapping ");
+        ////console.log(parentMapping.connections.length);
         
         
 
         for (var i = 0; i < parentMapping.connections.length; i++) {
 
-            //console.log("create MAPPING");
-            //console.log(parent);
-            //console.log(parentMapping.connections[i]);
-            //console.log(source);
-            //console.log(target);
+            ////console.log("create MAPPING");
+            ////console.log(parent);
+            ////console.log(parentMapping.connections[i]);
+            ////console.log(source);
+            ////console.log(target);
 
             var sm = createSimpleMapping(
                 parentMapping.connections[i],
@@ -429,7 +429,7 @@ function saveMapping(e, create) {
     }
 
     
-    //console.log(sendData);
+    ////console.log(sendData);
 
     $.ajax({
         type: "POST",
@@ -439,7 +439,7 @@ function saveMapping(e, create) {
         data: JSON.stringify(sendData),
         success: function(data) {
 
-            console.log("DATA");
+            //console.log("DATA");
 
             $(parent).remove();
 
@@ -447,9 +447,6 @@ function saveMapping(e, create) {
            
             
             var pid = $(parent).attr("id");
-
-            
-            
 
             //create empty
             $.get("/DIM/Mapping/LoadEmptyMapping",
@@ -460,16 +457,17 @@ function saveMapping(e, create) {
                     // find the new id
                     if (newMapping) {
                         var allContainer = $('#dim-mapping-middle').find(".mapping-container");
-                        console.log("AllContainer");
-                        console.log(allContainer);
+                        //console.log("AllContainer");
+                        //console.log(allContainer);
                         var newContainer = allContainer[0];
                         pid = $(newContainer).attr("Id");
                         //alert(pid);
+                       
                     }
 
                     removeParentFromConnections(pid);
                     initJSPLUMB(pid);
-                    console.log(pid);
+                    //console.log(pid);
                     //alert(pid);
 
 
@@ -477,11 +475,12 @@ function saveMapping(e, create) {
                     $('#dim-mapping-middle').prepend("<div id='newMapContainer'></div>");
                     $('#dim-mapping-middle #newMapContainer').append(response);
 
+                    removeParentFromConnections("mapping_container_0");
                     
                 //remove connection?
-                    //console.log("remove connections from 0 container");
+                    ////console.log("remove connections from 0 container");
 
-                    //console.log("RESET ALL CONNECTIONS");
+                    ////console.log("RESET ALL CONNECTIONS");
                     reloadAllConnections();
                 });
 
@@ -499,13 +498,13 @@ function saveMapping(e, create) {
 function deleteMapping(e) {
 
     var parent = $(e).parents(".mapping-container")[0];
-    //console.log(parent);
+    ////console.log(parent);
 
     var idArray = $(parent).attr("id").split("_");
-    //console.log(idArray);
+    ////console.log(idArray);
 
     var id = idArray[idArray.length - 1];
-    //console.log(id);
+    ////console.log(id);
 
     $.post('/DIM/Mapping/DeleteMapping',
         { id: id },
@@ -514,9 +513,9 @@ function deleteMapping(e) {
             if (response === true) {
                 $(parent).remove();
 
-                //console.log("RESET ALL CONNECTIONS");
-                //console.log("CONNECTIONS BEFORE DELETE MAPPINGS from GLOBAL Connections");
-                //console.log(connections);
+                ////console.log("RESET ALL CONNECTIONS");
+                ////console.log("CONNECTIONS BEFORE DELETE MAPPINGS from GLOBAL Connections");
+                ////console.log(connections);
                 removeParentFromConnections($(parent).attr("id"));
                 reloadAllConnections();
 
@@ -572,9 +571,9 @@ function removeParentConnection(conn, parentId) {
             }
 
             if (idx != -1) {
-                console.log("remove");
+                //console.log("remove");
                 existParent.connections.splice(idx, 1);
-                console.log(existParent.connections);
+                //console.log(existParent.connections);
                 break;
             }
         }
@@ -600,18 +599,18 @@ function updateConnections(conn, remove, parentId, jsPlumbInstance) {
         updateSaveOptions(parentId, false);
     }
 
-    //console.log(connections);
-    //console.log(connections.length);
+    ////console.log(connections);
+    ////console.log(connections.length);
 }
 
 function removeParentFromConnections(parentId) {
 
 
-    console.log("INSIDE DELETE ");
-    console.log("parentid: " + parentId);
+    //console.log("INSIDE DELETE ");
+    //console.log("parentid: " + parentId);
 
-    //console.log("------------------------------");
-    //console.log(connections);
+    ////console.log("------------------------------");
+    ////console.log(connections);
     var deleteIndex = -1;
 
     for (var i = 0; i < connections.length; i++) {
@@ -620,7 +619,7 @@ function removeParentFromConnections(parentId) {
             deleteIndex = i;
         }
     }
-    console.log(deleteIndex);
+    //console.log(deleteIndex);
     if (deleteIndex > -1) {
 
         connections.splice(deleteIndex, 1);
@@ -702,15 +701,15 @@ function reloadAllConnections() {
 function initJSPLUMB(parentid) {
 
     jsPlumb.ready(function() {
-        console.log("init jsplumb");
-        console.log("---------------------");
-        console.log("parent id :");
-        console.log(parentid);
+        //console.log("init jsplumb");
+        //console.log("---------------------");
+        //console.log("parent id :");
+        //console.log(parentid);
 
 
         var instance = window.instance = getInstance(parentid);
-        //console.log("instance :");
-        //console.log(instance);
+        ////console.log("instance :");
+        ////console.log(instance);
 
         var init = function(connection) {
             connection.getOverlay("label").setLabel("open");
@@ -729,24 +728,24 @@ function initJSPLUMB(parentid) {
             // bind to connection/connectionDetached events, and update the list of connections on screen.
             instance.bind("connection",
                 function(info, originalEvent) {
-                    //console.log("connection");
+                    ////console.log("connection");
 
-                    //console.log(info);
-                    //console.log(instance);
+                    ////console.log(info);
+                    ////console.log(instance);
 
                     updateConnections(info.connection, false, parentid, instance);
                 });
 
             instance.bind("connectionDetached",
                 function(info, originalEvent) {
-                    //console.log("connectionDetached");
+                    ////console.log("connectionDetached");
 
                     updateConnections(info.connection, true, parentid, instance);
                 });
 
             instance.bind("connectionMoved",
                 function(info, originalEvent) {
-                    //console.log("connectionMoved");
+                    ////console.log("connectionMoved");
                     //  only remove here, because a 'connection' event is also fired.
                     // in a future release of jsplumb this extra connection event will not
                     // be fired.
@@ -770,8 +769,8 @@ function initJSPLUMB(parentid) {
 
             if (simpleSources.length > 0) {
 
-                console.log("simpleSources :");
-                console.log(simpleSources);
+                //console.log("simpleSources :");
+                //console.log(simpleSources);
 
                 instance.makeSource(simpleSources,
                 {
@@ -791,8 +790,8 @@ function initJSPLUMB(parentid) {
           
 
             if (simpleTargets.length > 0) {
-                console.log("simpleTargets :");
-                console.log(simpleTargets);
+                //console.log("simpleTargets :");
+                //console.log(simpleTargets);
 
                 instance.makeTarget(simpleTargets,
                 {
@@ -817,7 +816,7 @@ function initJSPLUMB(parentid) {
         });
 
         //jsPlumb.fire("jsPlumbDemoLoaded", instance);
-        console.log("---------------------");
+        //console.log("---------------------");
     });
 };
 
@@ -849,23 +848,23 @@ function findRuleFromConn(conn) {
 
     //alert("test");
 
-    console.log("*FIND RULES FROM CONNECTIONS**");
-    console.log(conn);
-    console.log(sourceContainer);
-    console.log(source);
-    console.log(connSoureId);
+    //console.log("*FIND RULES FROM CONNECTIONS**");
+    //console.log(conn);
+    //console.log(sourceContainer);
+    //console.log(source);
+    //console.log(connSoureId);
 
 
     var targetContainer = $("#" + conn.targetId)[0];
     var target = $(targetContainer).find(".le-mapping-simple-element")[0];
     var connTargetId = $(target).attr("id");
 
-    //console.log(conn);
+    ////console.log(conn);
     connSoureId = connSoureId.replace("_MappingSimpleLinkElement", "");
     connTargetId = connTargetId.replace("_MappingSimpleLinkElement", "");
 
-    //console.log("FIND RULE");
-    //console.log(conn);
+    ////console.log("FIND RULE");
+    ////console.log(conn);
 
     //mapping_container_transformation
     var mapcontainer = $(sourceContainer).parents(".mapping-container")[0];
@@ -878,13 +877,13 @@ function findRuleFromConn(conn) {
         var ruleSourceId = $(this).attr("sourceId").replace("_TransformationRuleItem", "");
         var ruleTargetId = $(this).attr("targetId").replace("_TransformationRuleItem", "");
 
-        //console.log(connSoureId);
-        //console.log(connTargetId);
-        //console.log(ruleSourceId);
-        //console.log(ruleTargetId);
+        ////console.log(connSoureId);
+        ////console.log(connTargetId);
+        ////console.log(ruleSourceId);
+        ////console.log(ruleTargetId);
         if (ruleSourceId === connSoureId && ruleTargetId === connTargetId) {
-            //console.log("match");
-            //console.log(this);
+            ////console.log("match");
+            ////console.log(this);
 
             x = this;
         }
@@ -899,15 +898,15 @@ function addConnections(jsPlumbInstance, parentid) {
 
     var parent = $("#" + parentid);
     var simpleMappings = parent.find(".mapping-container-simple-hidden-mapping");
-    console.log("add connections *********************");
+    //console.log("add connections *********************");
 
-    console.log(simpleMappings);
+    //console.log(simpleMappings);
 
     for (var i = 0; i < simpleMappings.length; i++) {
 
-        //console.log(sm);
-        //console.log($(sm).attr("sourceId"));
-        //console.log($(sm).attr("targetId"));
+        ////console.log(sm);
+        ////console.log($(sm).attr("sourceId"));
+        ////console.log($(sm).attr("targetId"));
 
         var sm = simpleMappings[i];
 
@@ -936,8 +935,8 @@ function connectionsChanged(parentId) {
     var newConn = countAllNewConnections(parentId);
     var deletedConn = countAllDeletedConnections(parentId);
 
-    //console.log(newConn);
-    //console.log(deletedConn);
+    ////console.log(newConn);
+    ////console.log(deletedConn);
 
     if (newConn === 0 && deletedConn === 0) {
         return false;
@@ -948,8 +947,8 @@ function connectionsChanged(parentId) {
 
 function countAllNewConnections(parentId) {
 
-    //console.log("+++++++++++++++++++++++++++++++++++");
-    //console.log("countAllNewConnections");
+    ////console.log("+++++++++++++++++++++++++++++++++++");
+    ////console.log("countAllNewConnections");
 
     var allNewConnections = [];
     var allConnections = [];
@@ -958,13 +957,13 @@ function countAllNewConnections(parentId) {
         var existParent = connections[i];
         if (existParent.id === parentId) {
             allConnections = existParent.connections;
-            //console.log(allConnections);
+            ////console.log(allConnections);
         }
     }
 
     var parent = $("#" + parentId);
     var startConnectionsList = $(parent).find(".mapping-container-simple-hidden-mapping");
-    //console.log(startConnectionsList);
+    ////console.log(startConnectionsList);
 
     for (var l = 0; l < allConnections.length; l++) {
         var newConn = allConnections[l];
@@ -973,7 +972,7 @@ function countAllNewConnections(parentId) {
         for (var j = 0; j < startConnectionsList.length; j++) {
             var startConn = startConnectionsList[j];
 
-            //console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+            ////console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 
             var sourceContainer = $("#" + newConn.sourceId)[0];
             var source = $(sourceContainer).find(".le-mapping-simple-element")[0];
@@ -986,10 +985,10 @@ function countAllNewConnections(parentId) {
             var startConnSoureId = $(startConn).attr("sourceId");
             var startConnTargetId = $(startConn).attr("targetId");
 
-            //console.log(newConnSoureId);
-            //console.log(newConnTargetId);
-            //console.log("sT" + startConnSoureId);
-            //console.log("sT" + startConnTargetId);
+            ////console.log(newConnSoureId);
+            ////console.log(newConnTargetId);
+            ////console.log("sT" + startConnSoureId);
+            ////console.log("sT" + startConnTargetId);
 
             if (newConnSoureId === startConnSoureId && newConnTargetId === startConnTargetId) {
                 isIn = true;
@@ -1000,7 +999,7 @@ function countAllNewConnections(parentId) {
             allNewConnections.push(newConn);
         }
 
-        //console.log(allNewConnections);
+        ////console.log(allNewConnections);
     }
 
     return allNewConnections.length;
@@ -1008,8 +1007,8 @@ function countAllNewConnections(parentId) {
 
 function countAllDeletedConnections(parentId) {
 
-    //console.log("+++++++++++++++++++++++++++++++++++");
-    //console.log("countAllDeletedConnections");
+    ////console.log("+++++++++++++++++++++++++++++++++++");
+    ////console.log("countAllDeletedConnections");
 
     var allDeletedConnections = [];
     var allConnections = [];
@@ -1018,13 +1017,13 @@ function countAllDeletedConnections(parentId) {
         var existParent = connections[i];
         if (existParent.id === parentId) {
             allConnections = existParent.connections;
-            //console.log(allConnections);
+            ////console.log(allConnections);
         }
     }
 
     var parent = $("#" + parentId);
     var startConnectionsList = $(parent).find(".mapping-container-simple-hidden-mapping");
-    //console.log(startConnectionsList);
+    ////console.log(startConnectionsList);
 
 
     for (var j = 0; j < startConnectionsList.length; j++) {
@@ -1050,31 +1049,31 @@ function countAllDeletedConnections(parentId) {
             var source = $(sourceContainer).find(".le-mapping-simple-element")[0];
             var newConnSoureId = $(source).attr("id");
 
-            //console.log("--------1------");
+            ////console.log("--------1------");
 
-            //console.log(newConnSoureId);
-            //console.log(newConnTargetId);
-            //console.log("---------------");
-            //console.log(startConnSoureId);
-            //console.log(startConnTargetId);
+            ////console.log(newConnSoureId);
+            ////console.log(newConnTargetId);
+            ////console.log("---------------");
+            ////console.log(startConnSoureId);
+            ////console.log(startConnTargetId);
 
             if (newConnSoureId === startConnSoureId && newConnTargetId === startConnTargetId) {
                 isIn = true;
             }
         }
 
-        //console.log("round finished");
-        //console.log(isIn);
+        ////console.log("round finished");
+        ////console.log(isIn);
 
         if (!isIn) {
-            //console.log(newConn);
+            ////console.log(newConn);
             if (newConn != null) {
                 allDeletedConnections.push(newConn);
             }
         }
 
-        //console.log("after add to delete list");
-        //console.log(allDeletedConnections);
+        ////console.log("after add to delete list");
+        ////console.log(allDeletedConnections);
     }
 
 
@@ -1093,3 +1092,14 @@ function updateSaveOptions(parentId, activate) {
         $(saveBt).addClass("bx-disabled");
     }
 }
+
+
+$(".mapping-container").dblclick(function () {
+    $($(this).find(".mapping-container-expand")).toggle();
+    $($(this).find(".mapping-container-collapse")).toggle();
+
+    $($(this).find(".jtk-overlay")).toggle();
+
+
+    reloadAllConnections();
+})

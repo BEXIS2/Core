@@ -19,13 +19,15 @@
         <div id="XPath">@Model.XPath</div>
     </div>
 
-    <div class="le-mapping-container-header row">
-        <div class="le-mapping-container-header-label col-md-8">
+    <div class="le-mapping-container-header">
+        <div class="le-mapping-container-header-label" style="float: left">
             @Model.Name
         </div>
-        <div class="col-md-offset-2 col-md-1">
-            <span class="bx bx-delete small right" onclick="deleteComplexMappingElement(this)"></span>
-        </div>
+      
+        <button class="bx bx-trash bx-grid-function"
+                onclick="deleteComplexMappingElement(this)" style="position: absolute; right: 15px; top: 0;">
+                </button>
+ 
     </div>
 
     <div class="mapping-container-childrens">

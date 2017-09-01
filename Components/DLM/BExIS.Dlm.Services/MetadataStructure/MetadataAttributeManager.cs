@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Persistence.Api;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
@@ -19,6 +19,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
             this.MetadataAttributeRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
             this.MetadataSimpleAttributeRepo = uow.GetReadOnlyRepository<MetadataSimpleAttribute>();
             this.MetadataCompoundAttributeRepo = uow.GetReadOnlyRepository<MetadataCompoundAttribute>();
+
+            // [david] added repo - needed to get a MetadataNestedAttributeUsage by id
+            this.MetadataNestedAttributeUsageRepo = uow.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+            // [david] added repo - needed to get a MetadataAttributeUsage by id
+            this.MetadataAttributeUsageRepo = uow.GetReadOnlyRepository<MetadataAttributeUsage>();
         }
 
         #region Data Readers
@@ -27,6 +33,8 @@ namespace BExIS.Dlm.Services.MetadataStructure
         public IReadOnlyRepository<MetadataAttribute> MetadataAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataSimpleAttribute> MetadataSimpleAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataCompoundAttribute> MetadataCompoundAttributeRepo { get; private set; }
+        public IReadOnlyRepository<MetadataNestedAttributeUsage> MetadataNestedAttributeUsageRepo { get; private set; }
+        public IReadOnlyRepository<MetadataAttributeUsage> MetadataAttributeUsageRepo { get; private set; }
 
         #endregion
 
@@ -51,7 +59,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 repo.Put(entity);
                 uow.Commit();
             }
-            return (entity);            
+            return (entity);
         }
 
         /// <summary>
@@ -74,9 +82,9 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <param name="constraints"></param>
         /// <returns></returns>
         public MetadataSimpleAttribute Create(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string scope, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
-            DataType dataType, Unit unit, Methodology methodology, 
+            DataType dataType, Unit unit, Methodology methodology,
             //Classifier classifier, 
-            ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints            
+            ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints
             )
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(shortName));
@@ -151,13 +159,13 @@ namespace BExIS.Dlm.Services.MetadataStructure
             // check whether this attribute is used in any compound and if yes, those compounds have enough members after the deletion!
             var q = from compound in MetadataCompoundAttributeRepo.Query()
                     from usage in compound.MetadataNestedAttributeUsages
-                    // whether the compound is linked to entity and whether deleting entity causes the compound to have less than two members
+                        // whether the compound is linked to entity and whether deleting entity causes the compound to have less than two members
                     where usage.Member == entity && compound.MetadataNestedAttributeUsages.Count() <= 2
                     select compound;
             int cnt = 0;
             if ((cnt = q.Count()) > 0)
             {
-                if(cnt ==1 )
+                if (cnt == 1)
                     throw new Exception(string.Format("Deletion failed! Attribute {0} is used in {1} compound attribute that has less than 3 members. Compound attributes should have at least 2 members, invariantly.", entity.Id, cnt));
                 else
                     throw new Exception(string.Format("Deletion failed! Attribute {0} is used in {1} compound attributes that have less than 3 members. Compound attributes should have at least 2 members, invariantly.", entity.Id, cnt));
@@ -192,7 +200,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
             var q = from compound in MetadataCompoundAttributeRepo.Query()
                     from usage in compound.MetadataNestedAttributeUsages
-                    // whether the compound is linked to entity and whether deleting entity causes the compound to have less than two members
+                        // whether the compound is linked to entity and whether deleting entity causes the compound to have less than two members
                     where entities.Contains(usage.Member) && compound.MetadataNestedAttributeUsages.Count() <= 2
                     select compound;
             int cnt = 0;
@@ -229,11 +237,11 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
-    
+
         #region Associations
 
         public void AddConstraint(DomainConstraint constraint, DataContainer container)
@@ -305,7 +313,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         {
             throw new NotImplementedException();
         }
-        
+
         #endregion
 
     }

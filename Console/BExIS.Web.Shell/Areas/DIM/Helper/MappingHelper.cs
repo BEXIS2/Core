@@ -177,9 +177,10 @@ namespace BExIS.Modules.Dim.UI.Helper
                 linkElementId,
                 usage.Id,
                 type, usage.Label, xPath, rootModel.Position, complexity, usage.Description);
+            LEModel.Parent = parent;
             rootModel.LinkElements.Add(LEModel);
 
-            LEModel.Parent = parent;
+
 
             //add type
             if (addTypeAsLinkElement)
@@ -430,7 +431,26 @@ namespace BExIS.Modules.Dim.UI.Helper
                     }
                 case LinkElementType.MetadataNestedAttributeUsage:
                     {
+                        //ToDo load childrens from nestedUsage
                         model.Children = getChildrenFromMetadataNestedUsage(model);
+                        break;
+                    }
+                case LinkElementType.MetadataPackage:
+                    {
+                        //ToDo load childrens from packageUsage
+                        model.Children = getChildrenFromMetadataPackage(model);
+                        break;
+                    }
+                case LinkElementType.MetadataPackageUsage:
+                    {
+                        //ToDo load childrens from packageUsage
+                        model.Children = getChildrenFromMetadataPackageUsage(model);
+                        break;
+                    }
+                case LinkElementType.MetadataAttributeUsage:
+                    {
+                        //ToDo load childrens from packageUsage
+                        model.Children = getChildrenFromMetadataAttributeUsage(model);
                         break;
                     }
             }
@@ -458,8 +478,15 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         private static List<LinkElementModel> getChildrenFromComplexMetadataAttribute(LinkElementModel model)
         {
+            return getChildrenFromComplexMetadataAttribute(model.ElementId, model.Position);
+        }
+
+        private static List<LinkElementModel> getChildrenFromComplexMetadataAttribute(long metadataCompountAttributeId, LinkElementPostion position)
+        {
+            List<LinkElementModel> tmp = new List<LinkElementModel>();
+
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-            MetadataCompoundAttribute mca = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(model.ElementId);
+            MetadataCompoundAttribute mca = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(metadataCompountAttributeId);
 
             foreach (var attr in mca.MetadataNestedAttributeUsages)
             {
@@ -477,36 +504,108 @@ namespace BExIS.Modules.Dim.UI.Helper
                 type = LinkElementType.MetadataNestedAttributeUsage;
 
 
-                model.Children.Add(
+                tmp.Add(
                         new LinkElementModel(
                             0,
                             attr.Id,
-                            type, attr.Label, "", model.Position, complexity, attr.Description)
+                            type, attr.Label, "", position, complexity, attr.Description)
                         );
             }
 
-            return model.Children;
+            return tmp;
+        }
+
+        private static List<LinkElementModel> getChildrenFromMetadataAttributeUsage(LinkElementModel model)
+        {
+            MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
+            MetadataAttributeUsage metadataAttributeUsage = metadataAttributeManager.MetadataAttributeUsageRepo.Get(model.ElementId);
+
+            LinkElementComplexity complexity = LinkElementComplexity.None;
+            LinkElementType type = LinkElementType.ComplexMetadataAttribute;
+
+            complexity = metadataAttributeUsage.MetadataAttribute.Self is MetadataSimpleAttribute
+                ? LinkElementComplexity.Simple
+                : LinkElementComplexity.Complex;
+
+            if (complexity == LinkElementComplexity.Complex)
+            {
+                return getChildrenFromComplexMetadataAttribute(metadataAttributeUsage.MetadataAttribute.Id, model.Position);
+            }
+
+            return new List<LinkElementModel>();
+
         }
 
         private static List<LinkElementModel> getChildrenFromMetadataNestedUsage(LinkElementModel model)
         {
-            //MetadataStructureManager msm = new MetadataStructureManager();
-            //Metadata
+            MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
+            MetadataNestedAttributeUsage metadataNestedAttributeUsage =
+                metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(model.ElementId);
 
-            //MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-            //MetadataCompoundAttribute mca = metadataAttributeManager .M.Get(model.ElementId);
 
-            //foreach (var attr in mca.MetadataNestedAttributeUsages)
-            //{
-            //    model.Children.Add(
-            //        new LinkElementModel(
-            //            0,
-            //            attr.Id,
-            //            LinkElementType.PartyCustomType, attr.Label, "", model.Position, attr.Description)
-            //        );
-            //}
+            LinkElementComplexity complexity = LinkElementComplexity.None;
+            LinkElementType type = LinkElementType.ComplexMetadataAttribute;
 
-            return model.Children;
+            complexity = metadataNestedAttributeUsage.Member.Self is MetadataSimpleAttribute
+                ? LinkElementComplexity.Simple
+                : LinkElementComplexity.Complex;
+
+            if (complexity == LinkElementComplexity.Complex)
+            {
+                return getChildrenFromComplexMetadataAttribute(metadataNestedAttributeUsage.Member.Id, model.Position);
+            }
+
+            return new List<LinkElementModel>();
+        }
+
+
+        private static List<LinkElementModel> getChildrenFromMetadataPackage(LinkElementModel model)
+        {
+            return getChildrenFromMetadataPackage(model.ElementId, model.Position);
+        }
+
+        private static List<LinkElementModel> getChildrenFromMetadataPackageUsage(LinkElementModel model)
+        {
+
+            MetadataStructureManager msm = new MetadataStructureManager();
+            MetadataPackageUsage metadataPackageUsage = msm.PackageUsageRepo.Get(model.ElementId);
+
+            return getChildrenFromMetadataPackage(metadataPackageUsage.MetadataPackage.Id, model.Position);
+        }
+
+        private static List<LinkElementModel> getChildrenFromMetadataPackage(long metadataPackageId, LinkElementPostion pos)
+        {
+            MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
+
+            MetadataPackage metadataPackage = metadataPackageManager.MetadataPackageRepo.Get(metadataPackageId);
+
+            List<LinkElementModel> tmp = new List<LinkElementModel>();
+            foreach (var attr in metadataPackage.MetadataAttributeUsages)
+            {
+                LinkElementComplexity complexity = LinkElementComplexity.None;
+                LinkElementType type = LinkElementType.ComplexMetadataAttribute;
+
+                complexity = attr.MetadataAttribute.Self is MetadataSimpleAttribute
+                    ? LinkElementComplexity.Simple
+                    : LinkElementComplexity.Complex;
+
+                //type = attr.Member.Self is MetadataSimpleAttribute
+                //    ? LinkElementType.SimpleMetadataAttribute
+                //    : LinkElementType.ComplexMetadataAttribute;
+
+                type = LinkElementType.MetadataNestedAttributeUsage;
+
+
+                tmp.Add(
+                        new LinkElementModel(
+                            0,
+                            attr.Id,
+                            type, attr.Label, "", pos, complexity, attr.Description)
+                        );
+
+            }
+
+            return tmp;
         }
 
         #region create
