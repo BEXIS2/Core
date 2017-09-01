@@ -1,8 +1,10 @@
-﻿using BExIS.Dim.Entities;
+﻿using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Services;
 using BExIS.IO;
 using BExIS.Xml.Helpers;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Vaiona.Utils.Cfg;
 
@@ -12,13 +14,15 @@ namespace BExIS.Dim.Helpers
     {
         private const string sourceFile = "submissionConfig.xml";
         private XmlDocument requirementXmlDocument = null;
+        private PublicationManager publicationManager;
 
-        public List<DataRepository> DataRepositories;
+        public List<Broker> Brokers;
 
         public SubmissionManager()
         {
             requirementXmlDocument = new XmlDocument();
-            DataRepositories = new List<DataRepository>();
+            Brokers = new List<Broker>();
+            publicationManager = new PublicationManager();
         }
 
         public void Load()
@@ -30,26 +34,74 @@ namespace BExIS.Dim.Helpers
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.Load(filepath);
                 requirementXmlDocument = xmlDoc;
-                XmlNodeList dataRepositoryNodes = requirementXmlDocument.GetElementsByTagName("datarepository");
+                XmlNodeList brokerNodes = requirementXmlDocument.GetElementsByTagName("broker");
 
-                foreach (XmlNode child in dataRepositoryNodes)
+                foreach (XmlNode child in brokerNodes)
                 {
-                    DataRepositories.Add(createDataRepository(child));
+                    Brokers.Add(createBroker(child));
                 }
             }
         }
 
-        private DataRepository createDataRepository(XmlNode node)
+        private Broker createBroker(XmlNode node)
         {
-            DataRepository tmp = new DataRepository();
-            tmp.Name = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
-            tmp.ReqiuredMetadataStandard = XmlUtility.GetXmlNodeByName(node, "metadatastandard").InnerText;
-            tmp.PrimaryDataFormat = XmlUtility.GetXmlNodeByName(node, "primarydataformat").InnerText;
-            tmp.Server = XmlUtility.GetXmlNodeByName(node, "server").InnerText;
-            tmp.User = XmlUtility.GetXmlNodeByName(node, "user").InnerText;
-            tmp.Password = XmlUtility.GetXmlNodeByName(node, "password").InnerText;
+            Broker tmp = new Broker();
+
+
+            //create broker in DB
+
+            if (publicationManager.BrokerRepo.Query().Any(b => b.Name.Equals(tmp.Name)))
+            {
+                tmp = publicationManager.BrokerRepo.Query().Where(b => b.Name.Equals(tmp.Name)).FirstOrDefault();
+            }
+            else
+            {
+                tmp.Name = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
+                tmp.MetadataFormat = XmlUtility.GetXmlNodeByName(node, "metadatastandard").InnerText;
+                tmp.PrimaryDataFormat = XmlUtility.GetXmlNodeByName(node, "primarydataformat").InnerText;
+                tmp.Server = XmlUtility.GetXmlNodeByName(node, "server").InnerText;
+                tmp.UserName = XmlUtility.GetXmlNodeByName(node, "user").InnerText;
+                tmp.Password = XmlUtility.GetXmlNodeByName(node, "password").InnerText;
+                tmp = publicationManager.CreateBroker(tmp);
+            }
+
+
+
+            XmlNode dataRepos = XmlUtility.GetXmlNodeByName(node, "dataRepos");
+
+            foreach (var dataRepo in dataRepos.ChildNodes)
+            {
+
+                Repository repo = null;
+
+                if (publicationManager.RepositoryRepo.Query().Any(b => b.Name.Equals(tmp.Name)))
+                {
+                    repo = publicationManager.RepositoryRepo.Get().Where(b => b.Name.Equals(tmp.Name)).FirstOrDefault();
+                }
+                else
+                {
+                    repo = createRepository(dataRepo as XmlNode);
+                }
+
+                if (repo != null) publicationManager.CreateRepository(repo.Name, repo.Url, tmp);
+            }
+
 
             return tmp;
+        }
+
+        private Repository createRepository(XmlNode node)
+        {
+            if (node != null)
+            {
+                Repository tmp = new Repository();
+                tmp.Name = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
+                tmp.Url = XmlUtility.GetXmlNodeByName(node, "url").InnerText;
+
+                return tmp;
+            }
+
+            return null;
         }
 
         #region helper function

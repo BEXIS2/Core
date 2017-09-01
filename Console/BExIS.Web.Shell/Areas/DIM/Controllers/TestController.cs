@@ -25,10 +25,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
 
-            ////get all
-            //var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
-            //// get all where value = david
-            //x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage,"David");
+            //get all
+            var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
+            // get all where value = david
+            x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage, "David");
 
 
             // get value from metadata over the system
@@ -37,7 +37,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             long partyCustomtAttr = 1;
             LinkElementType type = LinkElementType.PartyCustomType;
 
-            long datasetId = 7;
+            long datasetId = 1;
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);

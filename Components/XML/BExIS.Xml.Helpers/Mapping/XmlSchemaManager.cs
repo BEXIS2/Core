@@ -60,6 +60,8 @@ namespace BExIS.Xml.Helpers.Mapping
         private string userName = "";
         private string location = "";
 
+        public XmlNamespaceManager XmlNamespaceManager;
+
 
         public XmlSchemaManager()
         {
@@ -119,6 +121,9 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlReader xsd_file = XmlReader.Create(path, settings2);
             Schema = XmlSchema.Read(xsd_file, verifyErrors);
 
+
+
+
             countedSchemas = Schema.Includes.Count + 1;
 
             XmlSchema selectedSchema;
@@ -137,8 +142,14 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
+
+
             foreach (XmlSchema currentSchema in schemaSet.Schemas())
             {
+
+                //add all additional schemas 
+                additionalFiles.Add(Path.GetFileName(currentSchema.SourceUri.ToString()));
+
                 selectedSchema = currentSchema;
                 Elements.AddRange(GetAllElements(selectedSchema));
                 ComplexTypes.AddRange(GetAllComplexTypes(selectedSchema));
@@ -526,7 +537,7 @@ namespace BExIS.Xml.Helpers.Mapping
             mappingFileExternalToInternal.Header.AddToDestination("Metadata");
             mappingFileExternalToInternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
 
-            // id and name of metadatastructure fehlt
+            //ToDo id and name of metadatastructure fehlt
 
             #endregion
 
@@ -1129,6 +1140,21 @@ namespace BExIS.Xml.Helpers.Mapping
                 else
                     max = int.MaxValue;
 
+                //ToDo Choice in XSD required Element
+
+                /*
+                 * In some xsds elements in a choice are required.
+                 * but the choice itself say at least one element should be selected
+                 * and this means all childrens need to be optional
+                 * and one must be selected
+                 * 
+                 */
+
+                if (XmlSchemaUtility.IsChoiceType(element))
+                {
+                    min = 0;
+                }
+
                 metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max);
             }
         }
@@ -1140,33 +1166,51 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 //get max
                 int max = Int32.MaxValue;
+                int min = Convert.ToInt32(element.MinOccurs);
                 if (element.MaxOccurs < Int32.MaxValue)
                 {
                     max = Convert.ToInt32(element.MaxOccurs);
+                }
+
+
+
+
+
+                #region choice
+                //ToDo Choice in XSD required Element
+
+                /*
+                 * In some xsds elements in a choice are required.
+                 * but the choice itself say at least one element should be selected
+                 * and this means all childrens need to be optional
+                 * and one must be selected
+                 *                  * 
+                 */
+
+                //if element is a choise
+                XmlDocument extra = new XmlDocument();
+                //check if element is a choice
+                if (XmlSchemaUtility.IsChoiceType(element))
+                {
+                    min = 0;
+                    extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
                 }
 
                 MetadataNestedAttributeUsage usage = new MetadataNestedAttributeUsage()
                 {
                     Label = element.Name,
                     Description = GetDescription(element.Annotation),
-                    MinCardinality = Convert.ToInt32(element.MinOccurs),
+                    MinCardinality = min,
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
 
                 };
 
-                #region choice
-                //if element is a choise
-                XmlDocument extra = new XmlDocument();
-                //check if element is a choice
-                if (XmlSchemaUtility.IsChoiceType(element))
-                {
-                    extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
-                }
-
                 if (extra.DocumentElement != null) usage.Extra = extra;
                 #endregion
+
+
 
                 parent.MetadataNestedAttributeUsages.Add(usage);
 
@@ -1216,8 +1260,19 @@ namespace BExIS.Xml.Helpers.Mapping
                 //if element is a choise
                 XmlDocument extra = new XmlDocument();
                 //check if element is a choice
+                //ToDo Choice in XSD required Element
+
+                /*
+                 * In some xsds elements in a choice are required.
+                 * but the choice itself say at least one element should be selected
+                 * and this means all childrens need to be optional
+                 * and one must be selected
+                 *                  * 
+                 */
+
                 if (XmlSchemaUtility.IsChoiceType(element))
                 {
+                    min = 0;
                     extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
                 }
                 #endregion

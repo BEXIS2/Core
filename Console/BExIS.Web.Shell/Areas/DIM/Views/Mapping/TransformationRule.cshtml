@@ -42,7 +42,7 @@
                 </td>
                 
                 <td>
-                    @Html.TextBox("Mask", @Model.Target.Mask)
+                    @Html.TextBox("Mask", @Model.TransformationRule.Mask)
                 </td>
 
             </tr>
@@ -99,7 +99,7 @@
 
         function changeIt(transformationId) {
 
-            //alert("change");
+            console.log("------>change");
             updateRegexExample(transformationId);
             updateMaskExample(transformationId);
 
@@ -115,7 +115,7 @@
 
             //alert($(this).val());
             //alert(exp);
-            var result = tmpString.match(exp);
+            var result = tmpString .match(exp);
 
             //alert(result);
 
@@ -127,14 +127,23 @@
             //console.log(result[1]);
 
             if (result != null) {
+
+                var resultString = "<table>";
+
                 if (regExValue.length == 0) {
-                    $("#" + transformationId + " #resultRegEx").html(tmpString);
+
+                    var maskName = sourceName + "[0]";
+
+                    resultString += '<tr><td>' + tmpString + "  -> " + maskName + '</td></tr>';
+
+                    $("#" + transformationId + " #resultRegEx").html(resultString);
+
                 } else {
 
                     console.log("-----");
                     console.log(result);
 
-                    var resultString = "<table>";
+                    
 
                     for (var i = 0; i < result.length; i++) {
 
@@ -174,18 +183,34 @@
 
             if (result != null) {
                 console.log("replace pls: -------------------");
-                for (var i = 0; i < result.length; i++) {
-                    var r = result[i];
-                    var place = sourceName + "[" + i + "]";
+
+                if (regExValue === '') {
+
+                    var r = tmpString;
+
+                    var place = sourceName + "[0]";
                     mask = mask.replace(place, r);
 
-                    console.log(r);
-                    console.log(place);
-                    console.log(mask);
+
+                } else {
+                    
+                
+                    for (var i = 0; i < result.length; i++) {
+                        var r = result[i];
+                        var place = sourceName + "[" + i + "]";
+                        mask = mask.replace(place, r);
+
+                        console.log(r);
+                        console.log(place);
+                        console.log(mask);
+                    }
+
                 }
 
                 $("#" + transformationId + " #result").html(mask);
+
             }
+            
         }
 
 

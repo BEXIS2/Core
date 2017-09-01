@@ -6,11 +6,6 @@
     }
 </style>
 
-@section LeftPane
-{
-    @Html.Partial("_Features", Model)
-}
-
 @section Information
 {
     Here you are able to manage how users (or groups) have access to individual system features or entire modules.
@@ -23,6 +18,11 @@
     <p>
         <a href="/SAM/Help/Index/#_Toc451422051" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
+}
+
+@section LeftPane
+{
+    @Html.Partial("_Features", Model)
 }
 
 <div id="content_subjects"></div>
@@ -40,16 +40,10 @@
     function treeView_features_onChecked(e) {
         if (e.checked) {
             $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")',
-                { FeatureId: getTreeView().getItemValue(e.item) },
-                function() {
-                    getTreeView().dataSource.read();
-                });
+                { FeatureId: getTreeView().getItemValue(e.item) });
         } else {
             $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")',
-                { FeatureId: getTreeView().getItemValue(e.item) },
-                function() {
-                    getTreeView().dataSource.read();
-                });
+                { FeatureId: getTreeView().getItemValue(e.item) });
         }
 
         $("#grid_subjects .t-refresh").trigger('click');

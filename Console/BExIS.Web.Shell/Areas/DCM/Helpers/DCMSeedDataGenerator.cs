@@ -103,13 +103,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             if (DataCollectionFeature == null) DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
 
             Feature DatasetCreationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Creation"));
-            if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Cration");
+            if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation");
 
             Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
-            if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload");
+            if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
 
             Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
-            if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management");
+            if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
 
             OperationManager operationManager = new OperationManager();
 
@@ -139,6 +139,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             #endregion
 
+            #region Easy Upload
+
+            operationManager.Create("DCM", "EasyUpload", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSelectAFile", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSelectAreas", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSheetDataStructure", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSheetSelectMetaData", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadSummary", "*", DatasetUploadFeature);
+            operationManager.Create("DCM", "EasyUploadVerification", "*", DatasetUploadFeature);
+
+            #endregion
+
             #region Metadata Managment Workflow
 
             operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
@@ -156,8 +168,27 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
             if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
-                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName);
+            {
+                string titleXPath =
+                    "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                string descriptionXpath =
+                    "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
+
+                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName,
+                    titleXPath, descriptionXpath);
+
+            }
+
+            if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
+            {
+
+                string titleXPath = "Metadata/Basic/BasicType/title/titleType";
+                string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
+
+                ImportSchema("GBIF", "eml.xsd", entity.Name, entity.Name, entity.EntityType.FullName, titleXPath,
+                    descriptionXpath);
+            }
             //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
             //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
             #endregion
@@ -166,7 +197,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         #region METADATA
 
-        private static void ImportSchema(string name, string filename, string root, string entity, string entityFullName)
+        private static void ImportSchema(string name, string filename, string root, string entity, string entityFullName, string titlePath, string descriptionPath)
         {
             long metadataStructureid = 0;
             string schemaName = name;
@@ -199,15 +230,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             try
             {
                 //set parameters
-                string titleXPath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                string descriptionXpath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
                 string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
                 string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 
                 StoreParametersToMetadataStruture(
                     metadataStructureid,
-                    titleXPath,
-                    descriptionXpath,
+                    titlePath,
+                    descriptionPath,
                     entity,
                     entityFullName,
                     mappingFileImport,

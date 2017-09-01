@@ -27,25 +27,44 @@ namespace BExIS.Dlm.Services.Data
     public class DatasetManager : IDisposable
     {
         public int PreferedBatchSize { get; set; }
-        private IUnitOfWork uow = null;
+        private IUnitOfWork guow = null;
         public DatasetManager()
         {
             //uow = this.GetIsolatedUnitOfWork(); // Javad commented this line. bring it back with the new Data Access Pattern
-            uow = this.GetUnitOfWork();
-            this.PreferedBatchSize = uow.PersistenceManager.PreferredPushSize;
-            this.DatasetRepo = uow.GetReadOnlyRepository<Dataset>();
-            this.DatasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
-            this.DataTupleRepo = uow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
-            this.DataTupleVerionRepo = uow.GetReadOnlyRepository<DataTupleVersion>();
-            this.ExtendedPropertyValueRepo = uow.GetReadOnlyRepository<ExtendedPropertyValue>();
-            this.VariableValueRepo = uow.GetReadOnlyRepository<VariableValue>();
-            this.ParameterValueRepo = uow.GetReadOnlyRepository<ParameterValue>();
-            this.AmendmentRepo = uow.GetReadOnlyRepository<Amendment>();
+            guow = this.GetUnitOfWork();
+            this.PreferedBatchSize = guow.PersistenceManager.PreferredPushSize;
+            this.DatasetRepo = guow.GetReadOnlyRepository<Dataset>();
+            this.DatasetVersionRepo = guow.GetReadOnlyRepository<DatasetVersion>();
+            this.DataTupleRepo = guow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
+            this.DataTupleVerionRepo = guow.GetReadOnlyRepository<DataTupleVersion>();
+            this.ExtendedPropertyValueRepo = guow.GetReadOnlyRepository<ExtendedPropertyValue>();
+            this.VariableValueRepo = guow.GetReadOnlyRepository<VariableValue>();
+            this.ParameterValueRepo = guow.GetReadOnlyRepository<ParameterValue>();
+            this.AmendmentRepo = guow.GetReadOnlyRepository<Amendment>();
+        }
+
+        private bool isDisposed = false;
+        ~DatasetManager()
+        {
+            Dispose(true);
         }
 
         public void Dispose()
         {
-            uow.Dispose();
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        //guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers

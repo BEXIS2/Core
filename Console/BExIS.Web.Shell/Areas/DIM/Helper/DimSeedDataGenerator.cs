@@ -1,4 +1,5 @@
 ﻿
+using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
@@ -46,6 +47,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             operationManager.Create("Dim", "Admin", "*", DataDissemination);
 
+            operationManager.Create("Dim", "Submission", "*", Submission);
+            operationManager.Create("Dim", "Mapping", "*", Mapping);
+
 
             #endregion
 
@@ -79,6 +83,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
             //Submission.Workflows.Add(workflow);
 
             #endregion
+
+            #endregion
+
+            #region EXPORT
+
+
+            SubmissionManager submissionManager = new SubmissionManager();
+            submissionManager.Load();
 
             #endregion
 

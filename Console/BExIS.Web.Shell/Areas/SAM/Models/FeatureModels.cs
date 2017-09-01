@@ -54,7 +54,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 FeatureName = feature.Name,
                 Description = feature.Description,
                 Children = feature.Children.Select(Convert).ToList(),
-                IsPublic = feature.Permissions.Select(p => p.Subject == null).Count() == 1
+                IsPublic = feature.Permissions.Any(p => p.Subject == null)
             };
         }
     }
