@@ -150,6 +150,7 @@
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helper\BAMSeedDataGenerator.cs" />
+    <Compile Include="Helper\Settings.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
     <Compile Include="Models\PartyModel.cs" />
@@ -197,8 +198,8 @@
     <Content Include="Views\Party\_partiesPartial.cshtml" />
     <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />
     <Content Include="Views\Party\_relationshipEditViewPartial.cshtml" />
-    <Content Include="Views\Party\_userRegisterationPartial.cshtml" />
     <Content Include="Views\Party\_addPartyRelationshipPartial.cshtml" />
+    <Content Include="Views\PartyService\_userRegisterationPartial.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -207,7 +208,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\PartyService\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
