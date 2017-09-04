@@ -1,123 +1,143 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public sealed class UserManager : IUserManager
+    public class UserManager : IUserManager, IDisposable
     {
-        private IdentityManager IdentityManager { get; }
+        private readonly IdentityManager _identityManager;
         public UserManager()
         {
-            IdentityManager = new IdentityManager();
+            _identityManager = new IdentityManager();
         }
 
-        public IQueryable<User> Users => IdentityManager.Users;
+        private bool _isDisposed;
+        ~UserManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+            if (!disposing) return;
+            _identityManager?.Dispose();
+            _isDisposed = true;
+        }
+
+        public IQueryable<User> Users => _identityManager.Users;
 
         public Task<IdentityResult> CreateAsync(User user)
         {
-            return IdentityManager.CreateAsync(user);
+            return _identityManager.CreateAsync(user);
         }
 
         public Task<IdentityResult> CreateAsync(User user, string password)
         {
-            return IdentityManager.CreateAsync(user, password);
+            return _identityManager.CreateAsync(user, password);
         }
 
         public Task<IdentityResult> SetEmailAsync(long userId, string email)
         {
-            return IdentityManager.SetEmailAsync(userId, email);
+            return _identityManager.SetEmailAsync(userId, email);
         }
 
         public Task<IdentityResult> AddToGroupAsync(long userId, string groupName)
         {
-            return IdentityManager.AddToRoleAsync(userId, groupName);
+            return _identityManager.AddToRoleAsync(userId, groupName);
         }
 
         public Task<IdentityResult> AddToGroupsAsync(long userId, string[] groupNames)
         {
-            return IdentityManager.AddToRolesAsync(userId, groupNames);
+            return _identityManager.AddToRolesAsync(userId, groupNames);
         }
 
         public Task<IdentityResult> RemoveFromGroupAsync(long userId, string groupName)
         {
-            return IdentityManager.RemoveFromRoleAsync(userId, groupName);
+            return _identityManager.RemoveFromRoleAsync(userId, groupName);
         }
 
         public Task<IdentityResult> RemoveFromGroupAsync(long userId, string[] groupNames)
         {
-            return IdentityManager.RemoveFromRolesAsync(userId, groupNames);
+            return _identityManager.RemoveFromRolesAsync(userId, groupNames);
         }
 
         public Task<IdentityResult> DeleteAsync(User user)
         {
-            return IdentityManager.DeleteAsync(user);
+            return _identityManager.DeleteAsync(user);
         }
 
         public Task<IdentityResult> AddLoginAsync(long userId, UserLoginInfo login)
         {
-            return IdentityManager.AddLoginAsync(userId, login);
+            return _identityManager.AddLoginAsync(userId, login);
         }
 
         public Task<IdentityResult> RemoveLoginAsync(long userId, UserLoginInfo login)
         {
-            return IdentityManager.RemoveLoginAsync(userId, login);
+            return _identityManager.RemoveLoginAsync(userId, login);
         }
 
         public Task<User> FindByNameAsync(string userName)
         {
-            return IdentityManager.FindByNameAsync(userName);
+            return _identityManager.FindByNameAsync(userName);
         }
 
         public Task<User> FindByIdAsync(long userId)
         {
-            return IdentityManager.FindByIdAsync(userId);
+            return _identityManager.FindByIdAsync(userId);
         }
 
         public Task<IdentityResult> ConfirmEmailAsync(long userId, string token)
         {
-            return IdentityManager.ConfirmEmailAsync(userId, token);
+            return _identityManager.ConfirmEmailAsync(userId, token);
         }
 
         public Task<bool> IsEmailConfirmedAsync(long userId)
         {
-            return IdentityManager.IsEmailConfirmedAsync(userId);
+            return _identityManager.IsEmailConfirmedAsync(userId);
         }
 
         public Task<User> FindByEmailAsync(string email)
         {
-            return IdentityManager.FindByEmailAsync(email);
+            return _identityManager.FindByEmailAsync(email);
         }
 
         public Task<string> GeneratePasswordResetTokenAsync(long userId)
         {
-            return IdentityManager.GeneratePasswordResetTokenAsync(userId);
+            return _identityManager.GeneratePasswordResetTokenAsync(userId);
         }
 
         public Task SendEmailAsync(long userId, string subject, string body)
         {
-            return IdentityManager.SendEmailAsync(userId, subject, body);
+            return _identityManager.SendEmailAsync(userId, subject, body);
         }
 
         public Task<IdentityResult> ResetPasswordAsync(long userId, string token, string newPassword)
         {
-            return IdentityManager.ResetPasswordAsync(userId, token, newPassword);
+            return _identityManager.ResetPasswordAsync(userId, token, newPassword);
         }
 
         public Task<string> GenerateEmailConfirmationTokenAsync(long userId)
         {
-            return IdentityManager.GenerateEmailConfirmationTokenAsync(userId);
+            return _identityManager.GenerateEmailConfirmationTokenAsync(userId);
         }
 
         public Task<IdentityResult> UpdateAsync(User user)
         {
-            return IdentityManager.UpdateAsync(user);
+            return _identityManager.UpdateAsync(user);
         }
 
         public Task<IdentityResult> ChangePasswordAsync(long userId, string currentPassword, string newPassword)
         {
-            return IdentityManager.ChangePasswordAsync(userId, currentPassword, newPassword);
+            return _identityManager.ChangePasswordAsync(userId, currentPassword, newPassword);
         }
     }
 }

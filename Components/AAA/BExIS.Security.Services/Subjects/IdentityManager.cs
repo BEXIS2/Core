@@ -43,5 +43,12 @@ namespace BExIS.Security.Services.Subjects
             var dataProtector = dataProtectionProvider.Create("ASP.NET Identity");
             UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            Store.Dispose();
+        }
     }
+
 }

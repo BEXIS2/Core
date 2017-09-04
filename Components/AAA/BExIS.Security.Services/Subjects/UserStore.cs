@@ -9,16 +9,15 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>
+    internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>
     {
-        private readonly IUnitOfWork _guow;
         public UserStore()
         {
-            _guow = this.GetIsolatedUnitOfWork();
+            var uow = this.GetUnitOfWork();
 
-            GroupRepository = _guow.GetReadOnlyRepository<Group>();
-            LoginRepository = _guow.GetReadOnlyRepository<Login>();
-            UserRepository = _guow.GetReadOnlyRepository<User>();
+            GroupRepository = uow.GetReadOnlyRepository<Group>();
+            LoginRepository = uow.GetReadOnlyRepository<Login>();
+            UserRepository = uow.GetReadOnlyRepository<User>();
         }
 
         private IReadOnlyRepository<Group> GroupRepository { get; }
@@ -161,7 +160,7 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         public void Dispose()
         {
-            _guow?.Dispose();
+            // DO NOTHING!
         }
 
         #endregion
@@ -396,6 +395,30 @@ namespace BExIS.Security.Services.Subjects
 
         #endregion
 
+        #region IUserTwoFactorStore
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<bool> GetTwoFactorEnabledAsync(User user)
+        {
+            return Task.FromResult(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="enabled"></param>
+        /// <returns></returns>
+        public Task SetTwoFactorEnabledAsync(User user, bool enabled)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         //public Task AddLoginAsync(User user, UserLoginInfo login)
         //{
