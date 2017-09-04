@@ -21,6 +21,7 @@ using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -493,7 +494,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
             }
 
-            int batchSize = 5;
+            int batchSize = 1000;
+            int batchnr = 1;
             foreach (int[] areaDataValues in areaDataValuesList)
             {
                 //First batch starts at the start of the current data area
@@ -538,6 +540,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     //Close the Stream so the next ExcelReader can open it again
                     Stream.Close();
+
+                    //Debug information
+                    int lines = (areaDataValues[2] + 1) - (areaDataValues[0] + 1);
+                    int batches = lines / batchSize;
+                    batchnr++;
 
                     //Next batch starts after the current one
                     currentBatchStartRow = currentBatchEndRow + 1;
