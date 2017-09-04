@@ -48,7 +48,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Create(Subject subject, Feature feature, PermissionType permissionType)
+        public void Create(Subject subject, Feature feature, PermissionType permissionType = PermissionType.Grant)
         {
             var featurePermission = new FeaturePermission()
             {
