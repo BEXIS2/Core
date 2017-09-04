@@ -44,8 +44,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult publishData(long datasetId, long datasetVersionId = -1)
         {
             PublicationManager publicationManager = new PublicationManager();
-            SubmissionManager publishingManager = new SubmissionManager();
-            publishingManager.Load();
 
             ShowPublishDataModel model = new ShowPublishDataModel();
 
@@ -107,8 +105,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
             PublicationManager publicationManager = new PublicationManager();
-            SubmissionManager publishingManager = new SubmissionManager();
-            publishingManager.Load();
 
             ShowPublishDataModel model = new ShowPublishDataModel();
 

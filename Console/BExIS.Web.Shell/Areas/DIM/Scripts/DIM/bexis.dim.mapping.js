@@ -385,18 +385,18 @@ function saveMapping(e, create) {
 
     if (parentMapping != null) {
 
-        console.log("save mapping ");
-        console.log(parentMapping.connections.length);
+        //console.log("save mapping ");
+        //console.log(parentMapping.connections.length);
         
         
 
         for (var i = 0; i < parentMapping.connections.length; i++) {
 
-            console.log("create MAPPING");
-            console.log(parent);
-            console.log(parentMapping.connections[i]);
-            console.log(source);
-            console.log(target);
+            //console.log("create MAPPING");
+            //console.log(parent);
+            //console.log(parentMapping.connections[i]);
+            //console.log(source);
+            //console.log(target);
 
             var sm = createSimpleMapping(
                 parentMapping.connections[i],
@@ -439,25 +439,47 @@ function saveMapping(e, create) {
         data: JSON.stringify(sendData),
         success: function(data) {
 
-            //console.log(data);
+            console.log("DATA");
 
             $(parent).remove();
 
-            $('#dim-mapping-middle').append(data);
+            $('#dim-mapping-middle').prepend(data);
+           
+            
+            var pid = $(parent).attr("id");
+
+            
+            
 
             //create empty
             $.get("/DIM/Mapping/LoadEmptyMapping",
-                function(response) {
+                function (response) {
+
+                    //if new mapping parent container id = 0
+                    //but the new created container needs to update
+                    // find the new id
+                    if (newMapping) {
+                        var allContainer = $('#dim-mapping-middle').find(".mapping-container");
+                        console.log("AllContainer");
+                        console.log(allContainer);
+                        var newContainer = allContainer[0];
+                        pid = $(newContainer).attr("Id");
+                        //alert(pid);
+                    }
+
+                    removeParentFromConnections(pid);
+                    initJSPLUMB(pid);
+                    console.log(pid);
+                    //alert(pid);
+
+
                     $('#dim-mapping-middle #newMapContainer').remove();
                     $('#dim-mapping-middle').prepend("<div id='newMapContainer'></div>");
                     $('#dim-mapping-middle #newMapContainer').append(response);
 
-
-                    //remove connection?
+                    
+                //remove connection?
                     //console.log("remove connections from 0 container");
-                    var pid = $(parent).attr("id");
-                    removeParentFromConnections(pid);
-                    initJSPLUMB(pid);
 
                     //console.log("RESET ALL CONNECTIONS");
                     reloadAllConnections();
