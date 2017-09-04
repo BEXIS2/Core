@@ -125,6 +125,11 @@ namespace BExIS.Dim.Services
             return MappingRepo.Get();
         }
 
+        public Mapping GetMapping(long id)
+        {
+            return MappingRepo.Get().FirstOrDefault(m => m.Id.Equals(id));
+        }
+
         public Mapping GetMapping(LinkElement source, LinkElement target)
         {
             return MappingRepo.Get().FirstOrDefault(m => m.Source.Id.Equals(source.Id) &&

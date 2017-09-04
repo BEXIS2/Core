@@ -190,6 +190,30 @@ namespace BExIS.Dim.Services
         }
 
         /// <summary>
+        /// Creates an Broker and persists it in the database.
+        /// </summary>
+        /// <param name="name">The name of the data structure</param>
+        /// <param name="url">A free text describing the purpose, usage, and/or the domain of the data structure usage.</param>
+        /// <param name="broker"></param>
+        ///
+        public Broker CreateBroker(Broker broker)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(broker.Name));
+            Contract.Requires(!string.IsNullOrWhiteSpace(broker.Server));
+            Contract.Requires(!string.IsNullOrWhiteSpace(broker.UserName));
+            Contract.Requires(!string.IsNullOrWhiteSpace(broker.Password));
+
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Broker> repo = uow.GetRepository<Broker>();
+                repo.Put(broker);
+                uow.Commit();
+            }
+            return (broker);
+        }
+
+        /// <summary>
         /// In cases that the broker's attributes are changed, this method persists the changes.
         /// </summary>
         /// <param name="broker">A broker instance containing the changes</param>

@@ -52,41 +52,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             return View("CreateEdit", model);
         }
 
-        /// <summary>
-        /// Create party
-        /// </summary>
-        /// <param name="party"></param>
-        /// <param name="partyCustomAttributeValues"></param>
-        /// <param name="partyRelationships"></param>
-        /// <param name="callBackUrl">if there is, after creating the party, it will redirect to this</param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult Create(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships, string callBackUrl)
-        {
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyManager partyManager = new PartyManager();
-            var partyRelationshipManager = new PartyRelationshipTypeManager();
-            var partyType = partyTypeManager.Repo.Get(party.PartyType.Id);
-            var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
-            //Create party
-            party = partyManager.Create(partyType, party.Alias, party.Description, party.StartDate, party.EndDate, partyStatusType);
-            //Add customAttriuteValue to party
-            var customAttributeValues = ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues);
-            partyManager.AddPartyCustomAttriuteValues(party, customAttributeValues);
-            if (partyRelationships != null)
-                foreach (var partyRelationship in partyRelationships)
-                {
-                    var secondParty = partyManager.Repo.Get(partyRelationship.SecondParty.Id);
-                    var partyRelationshipType = partyRelationshipManager.Repo.Get(partyRelationship.PartyRelationshipType.Id);
-                    partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
-                }
-
-            if (!string.IsNullOrEmpty(callBackUrl))
-                //TODO: Sven impementing the callback 
-                return RedirectToAction(callBackUrl + "&PID=" + party.Id);
-            else
-                return RedirectToAction("Index");
-        }
+       
 
         public ActionResult CreateEdit(int id, bool relationTabAsDefault = false)
         {
@@ -148,9 +114,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                     //Create party
                     party = partyManager.Create(partyType, "", partyModel.Description, partyModel.StartDate, partyModel.EndDate, partyStatusType, requiredPartyRelationTypes.Any());
-                    //Add customAttriuteValue to party
-                    newAddPartyCustomAttrValues = ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues);
-                    //if relationship rules are satisfied, it is not temp
+                     //if relationship rules are satisfied, it is not temp
                     if (string.IsNullOrWhiteSpace(Helpers.Helper.ValidateRelationships(requiredPartyRelationTypes, party.Id)))
                         party.IsTemp = false;
                     else
@@ -160,7 +124,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
                 try
                 {
-                    partyManager.AddPartyCustomAttriuteValues(party, newAddPartyCustomAttrValues);
+                    partyManager.AddPartyCustomAttriuteValues(party, partyCustomAttributeValues);
                 }
                 catch (Exception ex)
                 {
@@ -248,27 +212,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         }
 
-        /// <summary>
-        /// Conver a simple string,string dictionary to PartyCustomAttribute, string
-        /// </summary>
-        /// <param name="partyCustomAttributes"></param>
-        /// <returns></returns>
-        private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<string, string> partyCustomAttributes)
-        {
-            var result = new Dictionary<PartyCustomAttribute, string>();
-            var partyTypeManager = new PartyTypeManager();
-            foreach (var partyCustomAttribute in partyCustomAttributes)
-            {
-                //result.Add(new PartyCustomAttribute() { Id = int.Parse(partyCustomAttribute.Key) }, partyCustomAttribute.Value);
-                var customAttribiute = partyTypeManager.RepoPartyCustomAttribute.Get(int.Parse(partyCustomAttribute.Key));
-                if (customAttribiute == null || customAttribiute.Id == 0)
-                    throw new Exception("Error in custom attribute values.");
-                result.Add(customAttribiute, partyCustomAttribute.Value);
-            }
-            return result;
-        }
-
-        /// <summary>
+              /// <summary>
         /// 
         /// </summary>
         /// <param name="partyRelationshipsDic">should be filled like PartyRelationship[FiledName_@secondPartyId]=Value in view </param>
@@ -328,6 +272,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <returns></returns>
         public ActionResult LoadPartyCustomAttr(int id)
         {
+
             long partyId = 0;
             var partyIdStr = HttpContext.Request.Params["partyId"];
             if (long.TryParse(partyIdStr, out partyId) && partyId != 0)

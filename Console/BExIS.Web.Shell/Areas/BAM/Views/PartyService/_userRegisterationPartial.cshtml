@@ -1,31 +1,33 @@
-﻿@model IEnumerable<BExIS.Modules.Bam.UI.Models.PartyTypeAccountModel>
+﻿@model BExIS.Modules.Bam.UI.Models.PartyTypeAccountModel
 @{
     ViewBag.Title = "Registeration";
 }
 <h2>Registeration</h2>
-    <script type="text/javascript">
-        var PartyRelations = { items: []}
-    </script>
-    @using (Html.BeginForm("Create", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
-    {
+<script type="text/javascript">
+    var PartyRelations = { items: []}
+</script>
+@using (Html.BeginForm("Create", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
+{
 
-        <table>
-            <tr>
-                <td style="width:40px;"><b title="Required" style="color: red;">*</b></td>
-                <td style="width:300px;">
-                    <label>
-                        Account type:
-                    </label>
-                </td>
-                <td>
+    <table>
+        <tr>
+            <td style="width:40px;"><b title="Required" style="color: red;">*</b></td>
+            <td style="width:300px;">
+                <label>
+                    Account type:
+                </label>
+            </td>
+            <td>
+                @if (Model.Party == null)
+                {
                     <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()">
-                        @foreach (var partyTypeModel in Model)
-                        {
+                        @foreach (var partyTypeModel in Model.PartyRelationshipsTypes)
+                    {
                             <script type="text/javascript">
 
                                 var partyTypePairs=[];
                             </script>
-                            foreach (var PartyTypePair in partyTypeModel.PartyRelationshipTypes)
+                            foreach (var PartyTypePair in partyTypeModel.Value)
                             {
 
                                 <script type="text/javascript">
@@ -35,23 +37,34 @@
                             <script type="text/javascript">
                                 //Add partyTypePairs to a list to make a option list later
                                 if(partyTypePairs.length)
-                                    PartyRelations.items.push({ PartyTypeId: @partyTypeModel.PartyType.Id,"partyTypePairs":partyTypePairs});
+                                    PartyRelations.items.push({ PartyTypeId: @partyTypeModel.Key.Id,"partyTypePairs":partyTypePairs});
                             </script>
-                            <option value="@partyTypeModel.PartyType.Id">@partyTypeModel.PartyType.Title</option>
+                            <option value="@partyTypeModel.Key.Id">@partyTypeModel.Key.Title</option>
                         }
                     </select>
                     <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
-                </td>
-            </tr>
-        </table>
-        <div id="divPartyCustomAttr"></div>
-        <div id="divPartyRelationships"></div>
-        <button type="button" id="submitRegisteration" name="submit" value="saveDataset" onclick="submitForm()" class="t-button" style="border:0px;">Submit</button>
+                }
+                else
+                {
+                    <span>@Model.Party.PartyType.Title</span>
+                }
 
-    }
+            </td>
+        </tr>
+    </table>
+    <div id="divPartyCustomAttr"></div>
+        <div id="divPartyRelationships"></div>
+        <div class="form-group">
+            <div class="">
+                <button type="button" id="submitRegisteration" name="submit" value="saveDataset" onclick="submitForm()" class="t-button function" style="border:0px;">Save</button>
+    </div>
+        </div>
+       
+}
 <script>
     var $loadingImg=$('#imgPartyCustomeAttrLoading');
     var $registerationBtn=$('#submitRegisteration');
+
     function submitForm()
     {
         var d = new Date();
@@ -84,7 +97,7 @@
                     Scope:''});
             }
         });
-        $.post("/BAM/Party/Create",
+        $.post("/BAM/PartyService/CreateUserParty",
                {  party:
                     {
                         StartDate:  new Date().toJSON(),EndDate:endDate,PartyType:{Id:parseInt($("#ddl_PartyType").val())}
@@ -112,6 +125,7 @@
             $registerationBtn.show();
         }
     }
+
     function changePartyType() {
         partyTypeId = $("#ddl_PartyType").val();
         showLoading(true);
@@ -160,5 +174,25 @@
             $form.validate($form.data("unobtrusiveValidation").options);
         });
     });
-    changePartyType(@Model.First().PartyType.Id);
+   
 </script>
+@if (Model.Party == null)
+{
+    <script>
+        changePartyType(@Model.PartyRelationshipsTypes.First().Key.Id);
+    </script>
+}
+else
+{
+    <script>
+        showLoading(true);
+        //Retrieving custome attribute types
+        $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + @Model.Party.PartyType.Id+'?partyId='+@Model.Party.Id, function (response, status, xhr) {
+            if (status == "error") {
+                $('#divPartyCustomAttr').html("")
+                alert(response);
+            }
+            showLoading(false);
+        });
+    </script>
+}
