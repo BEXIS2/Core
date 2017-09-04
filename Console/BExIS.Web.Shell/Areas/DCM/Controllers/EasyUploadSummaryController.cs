@@ -449,8 +449,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             int counter = 0;
 
-            EasyUploadExcelReader reader = new EasyUploadExcelReader();
-
             dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
             if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
             {
@@ -461,9 +459,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             counter++;
             TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
-
-            // open file
-            Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
+            
             //rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), oldSds, (int)id, packageSize).ToArray();
 
             List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
@@ -497,34 +493,57 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
             }
 
+            int batchSize = 5;
             foreach (int[] areaDataValues in areaDataValuesList)
             {
-                EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
-                fri.DataStartRow = areaDataValues[0] + 1;
-                fri.DataStartColumn = areaDataValues[1] + 1;
-                fri.DataEndRow = areaDataValues[2] + 1;
-                fri.DataEndColumn = areaDataValues[3] + 1;
+                //First batch starts at the start of the current data area
+                int currentBatchStartRow = areaDataValues[0] + 1;
+                while (currentBatchStartRow <= areaDataValues[2] + 1) //While the end of the current data area has not yet been reached
+                {
+                    //Create a new reader each time because the reader saves ALL tuples it read and therefore the batch processing wouldn't work
+                    EasyUploadExcelReader reader = new EasyUploadExcelReader();
+                    // open file
+                    Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
+                    
+                    //End row is start row plus batch size
+                    int currentBatchEndRow = currentBatchStartRow + batchSize;
 
-                fri.VariablesStartRow = areaHeaderValues[0] + 1;
-                fri.VariablesStartColumn = areaHeaderValues[1] + 1;
-                fri.VariablesEndRow = areaHeaderValues[2] + 1;
-                fri.VariablesEndColumn = areaHeaderValues[3] + 1;
+                    //Set the indices for the reader
+                    EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
+                    fri.DataStartRow = currentBatchStartRow;
+                    //End row is either at the end of the batch or the end of the marked area
+                    fri.DataEndRow = (currentBatchEndRow > areaDataValues[2] + 1) ? areaDataValues[2] + 1 : currentBatchEndRow;
+                    //Column indices as marked in a previous step
+                    fri.DataStartColumn = areaDataValues[1] + 1;
+                    fri.DataEndColumn = areaDataValues[3] + 1;
 
-                fri.Offset = areaDataValues[1];
-                fri.Orientation = orientation;
+                    //Header area as marked in a previous step
+                    fri.VariablesStartRow = areaHeaderValues[0] + 1;
+                    fri.VariablesStartColumn = areaHeaderValues[1] + 1;
+                    fri.VariablesEndRow = areaHeaderValues[2] + 1;
+                    fri.VariablesEndColumn = areaHeaderValues[3] + 1;
 
-                reader.setSubmittedVariableIdentifiers(identifiers);
+                    fri.Offset = areaDataValues[1];
+                    fri.Orientation = orientation;
 
-                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, worksheetUri);
+                    //Set variable identifiers because they might differ from the variable names in the file
+                    reader.setSubmittedVariableIdentifiers(identifiers);
 
+                    //Read the rows and convert them to DataTuples
+                    rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, worksheetUri);
+
+                    //After reading the rows, add them to the dataset
+                    if (rows != null)
+                        dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+
+                    //Close the Stream so the next ExcelReader can open it again
+                    Stream.Close();
+
+                    //Next batch starts after the current one
+                    currentBatchStartRow = currentBatchEndRow + 1;
+                }
+                
             }
-
-            //After reading all the rows, add them to the dataset
-            if (rows != null)
-                dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
-
-            Stream.Close();
-
 
             #endregion
 
