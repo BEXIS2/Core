@@ -48,7 +48,7 @@ namespace BExIS.Web.Shell.Attributes
 
             if (feature == null) return;
 
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var result = userManager.FindByNameAsync(userName);
 
             var featurePermissionManager = new FeaturePermissionManager();

@@ -22,7 +22,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 return View("Error");
             }
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var result = await userManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
@@ -49,7 +49,7 @@ namespace BExIS.Web.Shell.Controllers
             }
 
             // Benutzer mit diesem externen Anmeldeanbieter anmelden, wenn der Benutzer bereits eine Anmeldung besitzt
-            var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
+            var signInManager = new SignInManager(AuthenticationManager);
             var result = await signInManager.ExternalSignInAsync(loginInfo, false);
             switch (result)
             {
@@ -87,14 +87,14 @@ namespace BExIS.Web.Shell.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new User { UserName = model.Email, Email = model.Email };
-                var userManager = new UserManager(new UserStore());
+                var userManager = new UserManager();
                 var result = await userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await userManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
-                        var signInManager = new SignInManager(userManager, AuthenticationManager);
+                        var signInManager = new SignInManager(AuthenticationManager);
                         await signInManager.SignInAsync(user, false, false);
                         return RedirectToLocal(returnUrl);
                     }
@@ -130,7 +130,7 @@ namespace BExIS.Web.Shell.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userManager = new UserManager(new UserStore());
+                var userManager = new UserManager();
 
                 var user = await userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await userManager.IsEmailConfirmedAsync(user.Id)))
@@ -177,7 +177,7 @@ namespace BExIS.Web.Shell.Controllers
             }
 
             // Require the user to have a confirmed email before they can log on.
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var user = await userManager.FindByNameAsync(model.UserName);
             if (user != null)
             {
@@ -190,7 +190,7 @@ namespace BExIS.Web.Shell.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var signInManager = new SignInManager(userManager, AuthenticationManager);
+            var signInManager = new SignInManager(AuthenticationManager);
             var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
             switch (result)
             {
@@ -233,7 +233,7 @@ namespace BExIS.Web.Shell.Controllers
             if (ModelState.IsValid)
             {
                 var user = new User { UserName = model.UserName, Email = model.Email };
-                var userManager = new UserManager(new UserStore());
+                var userManager = new UserManager();
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -274,7 +274,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 return View(model);
             }
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
@@ -304,7 +304,7 @@ namespace BExIS.Web.Shell.Controllers
 
         private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
         {
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
                new { userId, code }, Request.Url.Scheme);

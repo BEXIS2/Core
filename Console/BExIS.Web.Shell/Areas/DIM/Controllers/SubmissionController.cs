@@ -15,7 +15,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -479,9 +478,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             GFBIOException gfbioException = null;
                             //get user from system
                             string username = HttpContext.User.Identity.Name;
-                            UserManager userManager = new UserManager(new UserStore());
+                            UserManager userManager = new UserManager();
 
-                            User user = userManager.FindByName(username);
+                            // EXPERIMENT: See if the method call waits for the result or not!
+                            var user = userManager.FindByNameAsync(username).Result;
 
                             //check if user exist and api user has access
                             string jsonresult = await gfbioWebserviceManager.GetUserByEmail(user.Email);
