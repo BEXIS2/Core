@@ -176,6 +176,8 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
 
+            HttpContext.Items.Add("Test", 1);
+
             // Require the user to have a confirmed email before they can log on.
             var userManager = new UserManager();
             var user = await userManager.FindByNameAsync(model.UserName);

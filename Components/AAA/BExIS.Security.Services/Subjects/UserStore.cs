@@ -9,21 +9,23 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>
+    internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>, IUserSecurityStampStore<User, long>
     {
+        private readonly IUnitOfWork _guow = null;
+
         public UserStore()
         {
-            var uow = this.GetUnitOfWork();
+            _guow = this.GetIsolatedUnitOfWork();
 
-            GroupRepository = uow.GetReadOnlyRepository<Group>();
-            LoginRepository = uow.GetReadOnlyRepository<Login>();
-            UserRepository = uow.GetReadOnlyRepository<User>();
+            // GroupRepository = _guow.GetReadOnlyRepository<Group>();
+            // LoginRepository = _guow.GetReadOnlyRepository<Login>();
+            //UserRepository = _guow.GetReadOnlyRepository<User>();
         }
 
-        private IReadOnlyRepository<Group> GroupRepository { get; }
-        private IReadOnlyRepository<Login> LoginRepository { get; }
-        private IReadOnlyRepository<User> UserRepository { get; }
-        public IQueryable<User> Users => UserRepository.Query();
+        // private IReadOnlyRepository<Group> GroupRepository { get; }
+        // private IReadOnlyRepository<Login> LoginRepository { get; }
+        //private IReadOnlyRepository<User> UserRepository { get; }
+        //public IQueryable<User> Users => UserRepository.Query();
 
         #region IUserEmailStore
 
@@ -78,7 +80,11 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<User> FindByEmailAsync(string email)
         {
-            return Task.FromResult(UserRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
+            }
         }
 
         /// <summary>
@@ -142,7 +148,11 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<User> FindByIdAsync(long userId)
         {
-            return Task.FromResult(UserRepository.Get(userId));
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                return Task.FromResult(userRepository.Get(userId));
+            }
         }
 
         /// <summary>
@@ -152,7 +162,11 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<User> FindByNameAsync(string userName)
         {
-            return Task.FromResult(UserRepository.Query().FirstOrDefault(u => u.Name.ToUpperInvariant() == userName.ToUpperInvariant()));
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Name.ToUpperInvariant() == userName.ToUpperInvariant()));
+            }
         }
 
         /// <summary>
@@ -160,7 +174,7 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         public void Dispose()
         {
-            // DO NOTHING!
+            _guow.Dispose();
         }
 
         #endregion
@@ -220,7 +234,13 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<User> FindAsync(UserLoginInfo login)
         {
-            return Task.FromResult(LoginRepository.Query(m => m.LoginProvider == login.LoginProvider && m.ProviderKey == login.ProviderKey).Select(m => m.User).FirstOrDefault());
+            using (var uow = this.GetUnitOfWork())
+            {
+                var loginRepository = uow.GetRepository<Login>();
+                var user = loginRepository.Query(m => m.LoginProvider == login.LoginProvider && m.ProviderKey == login.ProviderKey).Select(m => m.User).FirstOrDefault();
+
+                return Task.FromResult(user);
+            }
         }
 
         #endregion
@@ -356,8 +376,21 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task AddToRoleAsync(User user, string roleName)
         {
-            user.Groups.Add(GroupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault());
-            return UpdateAsync(user);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetRepository<Group>();
+                var userRepository = uow.GetRepository<User>();
+                var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
+
+                if (group == null) return Task.FromResult(0);
+
+                user.Groups.Add(group);
+
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
+            }
         }
 
         /// <summary>
@@ -368,8 +401,22 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task RemoveFromRoleAsync(User user, string roleName)
         {
-            user.Groups.Remove(GroupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault());
-            return UpdateAsync(user);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetRepository<Group>();
+                var userRepository = uow.GetRepository<User>();
+                var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
+
+                if (group == null) return Task.FromResult(0);
+
+                user.Groups.Remove(group);
+
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
+            }
+
         }
 
         /// <summary>
@@ -379,7 +426,11 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<IList<string>> GetRolesAsync(User user)
         {
-            return Task.FromResult((IList<string>)user.Groups.Select(m => m.Name).ToList());
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetRepository<Group>();
+                return Task.FromResult((IList<string>)groupRepository.Query(g => g.Users.Any(u => u.Id == user.Id)).Select(m => m.Name).ToList());
+            }
         }
 
         /// <summary>
@@ -416,6 +467,21 @@ namespace BExIS.Security.Services.Subjects
         public Task SetTwoFactorEnabledAsync(User user, bool enabled)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IUserSecurityStampStore
+
+        public Task SetSecurityStampAsync(User user, string stamp)
+        {
+            user.SecurityStamp = stamp;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetSecurityStampAsync(User user)
+        {
+            return Task.FromResult(user.SecurityStamp);
         }
 
         #endregion

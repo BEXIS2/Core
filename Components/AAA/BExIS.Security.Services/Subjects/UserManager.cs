@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -138,6 +139,11 @@ namespace BExIS.Security.Services.Subjects
         public Task<IdentityResult> ChangePasswordAsync(long userId, string currentPassword, string newPassword)
         {
             return _identityManager.ChangePasswordAsync(userId, currentPassword, newPassword);
+        }
+
+        public Task<IList<string>> GetGroupsAsync(long userId)
+        {
+            return _identityManager.GetRolesAsync(userId);
         }
     }
 }
