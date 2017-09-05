@@ -299,7 +299,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult ReloadMetadataEditor(bool locked = false, bool show = false)
+        public ActionResult ReloadMetadataEditor(
+            bool locked = false,
+            bool show = false,
+            bool created = false,
+            long entityId = -1,
+            bool fromEditMode = false
+            )
         {
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = show;
@@ -336,8 +342,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             bool hasAuthorizationRights = false;
             bool hasAuthenticationRigths = false;
 
-            long entityId = -1;
-
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
                 entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
@@ -363,6 +367,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
 
+            Model.Created = created;
+            Model.FromEditMode = fromEditMode;
+            Model.DatasetId = entityId;
             return PartialView("MetadataEditor", Model);
         }
 
@@ -436,9 +443,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View("MetadataEditor", Model);
         }
 
-        public ActionResult SwitchVisibilityOfOptionalElements(bool show)
+        public ActionResult SwitchVisibilityOfOptionalElements(bool show, bool created, long entityId, bool fromEditMode)
         {
-            return RedirectToAction("ReloadMetadataEditor", new { locked = true, show = !show });
+            return RedirectToAction("ReloadMetadataEditor", new
+            {
+                locked = true,
+                show = !show,
+                created,
+                entityId,
+                fromEditMode
+            });
         }
 
         private Dictionary<string, ActionInfo> getAddtionalActions()

@@ -453,11 +453,20 @@ function OnSuccess() {
     function switchVisibilityOfOptionalElements(e) {
 
         var show = '@showOptional';
+        var created = '@Model.Created';
+        var entityId = '@Model.DatasetId';
+        var fromEditMode = '@Model.FromEditMode';
 
-        //alert("switch");
+        //if(Model.Created && Model.DatasetId != -1 && !Model.FromEditMode)
+
 
         $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form","DCM")',
-            { show: show },
+            {
+                show: show,
+                created: created,
+                entityId: entityId,
+                fromEditMode: fromEditMode
+            },
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
