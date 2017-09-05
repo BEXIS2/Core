@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Authentication;
+﻿using BExIS.Dlm.Entities.Party;
+using BExIS.Security.Entities.Authentication;
 using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
@@ -11,22 +12,6 @@ namespace BExIS.Security.Services.Subjects
 {
     internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>, IUserSecurityStampStore<User, long>
     {
-        private readonly IUnitOfWork _guow = null;
-
-        public UserStore()
-        {
-            _guow = this.GetIsolatedUnitOfWork();
-
-            // GroupRepository = _guow.GetReadOnlyRepository<Group>();
-            // LoginRepository = _guow.GetReadOnlyRepository<Login>();
-            //UserRepository = _guow.GetReadOnlyRepository<User>();
-        }
-
-        // private IReadOnlyRepository<Group> GroupRepository { get; }
-        // private IReadOnlyRepository<Login> LoginRepository { get; }
-        //private IReadOnlyRepository<User> UserRepository { get; }
-        //public IQueryable<User> Users => UserRepository.Query();
-
         #region IUserEmailStore
 
         /// <summary>
@@ -174,7 +159,7 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         public void Dispose()
         {
-            _guow.Dispose();
+            // DO NOTHING!
         }
 
         #endregion
@@ -482,6 +467,38 @@ namespace BExIS.Security.Services.Subjects
         public Task<string> GetSecurityStampAsync(User user)
         {
             return Task.FromResult(user.SecurityStamp);
+        }
+
+        #endregion
+
+        #region Parties
+
+        public Task SetPartyAsync(User user, long partyId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var partyRepository = uow.GetRepository<Party>();
+                var userRepository = uow.GetRepository<User>();
+                var party = partyRepository.Query(p => p.Id == partyId).FirstOrDefault();
+
+                if (party == null) return Task.FromResult(0);
+
+                user.Party = party;
+
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
+            }
+        }
+
+        public Task<Party> GetPartyAsync(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                return Task.FromResult(userRepository.Get(user.Id)?.Party);
+            }
         }
 
         #endregion
