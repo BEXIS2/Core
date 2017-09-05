@@ -190,14 +190,7 @@
                             }
                             else
                             {
-                                @*<div class="bx-input bx-metadataFormTextInput" style="vertical-align: middle" >
-                                    @if (Model.Value != null)
-                                    {
-                                        @Model.Value.ToString()
-                                    }
-                                </div>*@
                                 @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
-
                             }
                         }
 
@@ -285,7 +278,7 @@
 
                             if (string.IsNullOrEmpty(format))
                             {
-                                format = "yyy-MM-dd";
+                                format = "yyyy-MM-dd";
                             }
 
                             @(Html.Telerik().DatePicker()
