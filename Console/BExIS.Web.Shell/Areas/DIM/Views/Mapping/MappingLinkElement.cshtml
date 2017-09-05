@@ -35,7 +35,7 @@
         @if(Model.Complexity == LinkElementComplexity.Complex)
         {
         
-            foreach (var child in Model.Children)
+            foreach (var child in Model.Children.Where(x=>x.Complexity.Equals(LinkElementComplexity.Simple)))
             {
                 if (child.Complexity.Equals(LinkElementComplexity.Simple))
                 {
@@ -52,6 +52,16 @@
                     </div>
                 }
             }
+
+            /*ToDo complex types are not visible because of no good solution at this point.*/
+            @*foreach (var child in Model.Children.Where(x => x.Complexity.Equals(LinkElementComplexity.Complex)))
+            {
+                <div class="le-complex" title="@child.Description">
+                    <div class="le-complex-header">
+                        @child.Name
+                    </div>
+                </div>
+            }*@
         }
         else
         {

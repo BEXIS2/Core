@@ -115,9 +115,10 @@ function leSimpleSelectorClick(e) {
                 disableAddicons("Target");
             }
 
+            updateSaveOptionOnNewContainer();
             reloadAllConnections();
 
-            updateSaveOptionOnNewContainer();
+            
         },
         error: function(data) { alert("error") }
 
@@ -158,12 +159,12 @@ function enableAddicons(key) {
 
 
 function updateSaveOptionOnNewContainer() {
-
+    alert("updateSaveOptionOnNewContainer");
     if ($("#emptySourceContainer").length === 0 && $("#emptyTargetContainer").length === 0) {
         $("#newMapContainer .mapping-settings").show();
         //$(deleteBt).hide();
 
-        //alert("updateSaveOptionOnNewContainer");
+        alert("updateSaveOptionOnNewContainer INSIDE");
         initJSPLUMB("mapping_container_0");
     } else {
         //$(deleteBt).show();
@@ -1095,11 +1096,18 @@ function updateSaveOptions(parentId, activate) {
 
 
 $(".mapping-container").dblclick(function () {
-    $($(this).find(".mapping-container-expand")).toggle();
-    $($(this).find(".mapping-container-collapse")).toggle();
 
-    $($(this).find(".jtk-overlay")).toggle();
+    var parent = $(this);
+    var parentid = $(parent).attr("id");
+
+    if (parentid != "mapping_container_0") {
+        $($(parent).find(".mapping-container-expand")).toggle();
+        $($(parent).find(".mapping-container-collapse")).toggle();
+
+        $($(parent).find(".jtk-overlay")).toggle();
 
 
-    reloadAllConnections();
+        reloadAllConnections();
+    }
+    
 })
