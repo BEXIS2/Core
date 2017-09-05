@@ -54,13 +54,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             if (dm.IsDatasetCheckedIn(id))
             {
-                dsv = dm.GetDatasetLatestVersion(id);
+                long versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
+                dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
-                MetadataStructureManager msm = new MetadataStructureManager();
-                dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                //metadataStructureId = dm.DatasetVersionRepo.Get(id).Dataset.MetadataStructure.Id; 
 
-                title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-                metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+                //MetadataStructureManager msm = new MetadataStructureManager();
+                //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
                 dataStructureId = dsv.Dataset.DataStructure.Id;
                 researchPlanId = dsv.Dataset.ResearchPlan.Id;
                 metadata = dsv.Metadata;
@@ -197,6 +199,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             if (dm.IsDatasetCheckedIn(datasetID))
             {
+                //long versionId = dm.GetDatasetLatestVersionId(datasetID); // check for zero value
+                //DatasetVersion dsv = dm.DatasetVersionRepo.Get(versionId);
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
                 DataStructureManager dsm = new DataStructureManager();
 

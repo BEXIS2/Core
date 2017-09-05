@@ -46,7 +46,7 @@ namespace BExIS.Web.Shell.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             this.Disposables.Add(entityPermissionManager);
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 5000; i++)
             {
                 var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());

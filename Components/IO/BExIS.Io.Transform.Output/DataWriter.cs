@@ -384,7 +384,7 @@ namespace BExIS.IO.Transform.Output
                 DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
 
                 // get MetadataStructure 
-                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                //MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
                 XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
 

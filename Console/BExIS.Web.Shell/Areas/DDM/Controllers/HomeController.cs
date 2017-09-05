@@ -806,10 +806,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (datasetManager.IsDatasetCheckedIn(datasetId))
                     {
+                        //long versionId = datasetManager.GetDatasetLatestVersionId (datasetId); // check for zero value
+                        //DatasetVersion dsv = datasetManager.DatasetVersionRepo.Get(versionId);
+
                         DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                        MetadataStructureManager msm = new MetadataStructureManager();
-                        dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                        //MetadataStructureManager msm = new MetadataStructureManager();
+                        //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                         string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
                         string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
