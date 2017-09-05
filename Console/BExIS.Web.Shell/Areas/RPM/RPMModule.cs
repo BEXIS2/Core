@@ -59,6 +59,9 @@ namespace BExIS.Modules.Rpm.UI
                 if (!operationManager.Exists("RPM", "Structures", "*"))
                     operationManager.Create("RPM", "Structures", "*", datastructureFeature);
 
+                if (!operationManager.Exists("RPM", "DataStructureIO", "*"))
+                    operationManager.Create("RPM", "DataStructureIO", "*", datastructureFeature);
+
                 Feature atributeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Variable Template Management") &&
                     f.Parent != null &&

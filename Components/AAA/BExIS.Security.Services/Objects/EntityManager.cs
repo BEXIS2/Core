@@ -62,6 +62,11 @@ namespace BExIS.Security.Services.Objects
             return EntityRepository.Get(entityId);
         }
 
+        public Entity FindByName(string entityName)
+        {
+            return EntityRepository.Query(m => m.Name.ToLowerInvariant() == entityName.ToLowerInvariant()).FirstOrDefault();
+        }
+
         public List<Entity> FindRoots()
         {
             return EntityRepository.Query(e => e.Parent == null).ToList();

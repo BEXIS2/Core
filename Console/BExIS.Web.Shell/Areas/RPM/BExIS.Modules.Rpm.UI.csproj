@@ -159,24 +159,17 @@
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\Images\Help\Help_img1.jpeg" />
-    <Content Include="Content\Images\Help\Help_img10.png" />
-    <Content Include="Content\Images\Help\Help_img11.jpeg" />
-    <Content Include="Content\Images\Help\Help_img12.png" />
-    <Content Include="Content\Images\Help\Help_img13.png" />
-    <Content Include="Content\Images\Help\Help_img14.png" />
-    <Content Include="Content\Images\Help\Help_img15.jpeg" />
-    <Content Include="Content\Images\Help\Help_img16.png" />
-    <Content Include="Content\Images\Help\Help_img17.png" />
-    <Content Include="Content\Images\Help\Help_img18.png" />
-    <Content Include="Content\Images\Help\Help_img2.jpeg" />
-    <Content Include="Content\Images\Help\Help_img3.jpeg" />
-    <Content Include="Content\Images\Help\Help_img4.jpeg" />
-    <Content Include="Content\Images\Help\Help_img5.jpeg" />
+    <Content Include="Content\Images\Help\add_variables.png" />
+    <Content Include="Content\Images\Help\copy_data_structure.png" />
+    <Content Include="Content\Images\Help\create_data_structure.png" />
+    <Content Include="Content\Images\Help\create_data_type.png" />
+    <Content Include="Content\Images\Help\create_unit.png" />
+    <Content Include="Content\Images\Help\create_variable.png" />
+    <Content Include="Content\Images\Help\delete_button.png" />
+    <Content Include="Content\Images\Help\edit_button.png" />
     <Content Include="Content\Images\Help\Help_img6.png" />
-    <Content Include="Content\Images\Help\Help_img7.jpeg" />
-    <Content Include="Content\Images\Help\Help_img8.png" />
-    <Content Include="Content\Images\Help\Help_img9.png" />
+    <Content Include="Content\Images\Help\main_menu.png" />
+    <Content Include="Content\Images\Help\manage_data_type.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
@@ -222,6 +215,7 @@
     <Content Include="Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <None Include="Properties\PublishProfiles\BPP211_Rpm.pubxml" />
+    <None Include="Properties\PublishProfiles\RPM21105.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

@@ -176,37 +176,52 @@
         //Hide the results of previous validation attempts
         $(button).closest('tr').find('i').prop('title', "");
 
+        //Show a spinner - making sure the button is not resized by setting min-width and -height
+        var oldHtml = $(button).html();
+        var curWidth = $(button).outerWidth();
+        var curHeight = $(button).outerHeight();
+        console.log(curWidth);
+        $(button).css({
+            "min-width": curWidth.toString() + "px",
+            "min-height": curHeight.toString() + "px"
+        });
+        $(button).html('<i class="fa fa-spinner fa-spin fa-fw"></i><span class="sr-only">Loading...</span>');
+
         $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
-                if (response.errors.length > 0) {
-                    for (var i = 0; i < response.errors.length; i++) {
-                        var error = response.errors[i];
-                        //var VariableName = error.VariableName;
-                        //var TitleCell = $('td[varName="' + VariableName + '"] > i');
-                        var TitleCell = $('td[index="' + error.Item1 + '"] > i');
+            //Restore old button content
+            $(button).html(oldHtml);
 
-                        if (TitleCell.is(":visible")) {
-                            var currentTitle = TitleCell.attr("title");
-                            var currentErrorCount = currentTitle.split("\n").length;
+            //See if there are errors, display them or display a check mark
+            if (response.errors.length > 0) {
+                for (var i = 0; i < response.errors.length; i++) {
+                    var error = response.errors[i];
+                    //var VariableName = error.VariableName;
+                    //var TitleCell = $('td[varName="' + VariableName + '"] > i');
+                    var TitleCell = $('td[index="' + error.Item1 + '"] > i');
 
-                            if (currentErrorCount < 50) {
-                                TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
-                            }
-                            if (currentErrorCount == 50) {
-                                TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
-                                TitleCell.attr("title", currentTitle + "\nand more...");
-                            }
-                        } else {
-                            TitleCell.show();
-                            TitleCell.attr("title", "\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
+                    if (TitleCell.is(":visible")) {
+                        var currentTitle = TitleCell.attr("title");
+                        var currentErrorCount = currentTitle.split("\n").length;
+
+                        if (currentErrorCount < 50) {
+                            TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                         }
+                        if (currentErrorCount == 50) {
+                            TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
+                            TitleCell.attr("title", currentTitle + "\nand more...");
+                        }
+                    } else {
+                        TitleCell.show();
+                        TitleCell.attr("title", "\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                     }
-                } else {
-                    $('td > i').each(function () {
-                        $(this).removeClass("fa-exclamation-triangle");
-                        $(this).addClass("fa-check");
-                    });
                 }
-            });
+            } else {
+                $('td > i').each(function () {
+                    $(this).removeClass("fa-exclamation-triangle");
+                    $(this).addClass("fa-check");
+                });
+            }
+        });
     }
 
     $(document).ready(function () {

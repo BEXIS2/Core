@@ -13,10 +13,8 @@ using Vaiona.Logging;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
-using Vaiona.PersistenceProviders.NH;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell
@@ -30,7 +28,8 @@ namespace BExIS.Web.Shell
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
 #if !DEBUG
-            filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+            filters.Add(new BExISAuthorizeAttribute());
+            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
 #endif
             filters.Add(new HandleErrorAttribute());
         }

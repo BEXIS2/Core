@@ -4,6 +4,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Utils.Helpers;
 using BExIS.Utils.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,22 +54,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.isJsonMaxLengthExceeded = false;
                 JsonTableGenerator EUEReader = new JsonTableGenerator();
                 EUEReader.Open(fis);
-                try
-                {
-                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
-                } catch(Exception e)
-                {
-                    //TODO find a better approach to this problem
-                    model.isJsonMaxLengthExceeded = true;
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Your dataset is too big to process. Sorry for the inconvenience."));
-                }
+                
+                jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
 
                 if (!String.IsNullOrEmpty(jsonTable))
                 {
-                    if (model.isJsonMaxLengthExceeded)
-                        jsonTable = "[]";
                     TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
-
                 }
 
                 TaskManager.AddToBus(EasyUploadTaskManager.WORKSHEET_URI, EUEReader.getWorksheetUri());
@@ -213,12 +204,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 if (dataArea != "")
                 {
-                    var serializer = new JavaScriptSerializer();
-                    int[] newArea = serializer.Deserialize<int[]>(dataArea);
+                    int[] newArea = JsonConvert.DeserializeObject<int[]>(dataArea);
                     Boolean contains = false;
                     foreach (string area in model.DataArea)
                     {
-                        int[] oldArea = serializer.Deserialize<int[]>(area);
+                        int[] oldArea = JsonConvert.DeserializeObject<int[]>(area);
                         //If one of the already selected areas contains the new one, don't add the new one to the selection (prevents duplicate selection)
                         if (oldArea[0] <= newArea[0] && oldArea[2] >= newArea[2] &&
                             oldArea[1] <= newArea[1] && oldArea[3] >= newArea[3])
@@ -231,7 +221,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //If the new area contains one (or several) of the already selected areas, remove the old ones
                         for (int i = model.DataArea.Count - 1; i >= 0; i--)
                         {
-                            int[] oldArea = serializer.Deserialize<int[]>(model.DataArea[i]);
+                            int[] oldArea = JsonConvert.DeserializeObject<int[]>(model.DataArea[i]);
 
                             if (newArea[0] <= oldArea[0] && newArea[2] >= oldArea[2] &&
                                 newArea[1] <= oldArea[1] && newArea[3] >= oldArea[3])

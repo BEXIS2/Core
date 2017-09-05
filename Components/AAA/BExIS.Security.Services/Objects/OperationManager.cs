@@ -18,6 +18,9 @@ namespace BExIS.Security.Services.Objects
 
         public Operation Create(string module, string controller, string action, Feature feature = null)
         {
+            if (Exists(module, controller, action))
+                return null;
+
             var operation = new Operation()
             {
                 Module = module,
@@ -58,8 +61,18 @@ namespace BExIS.Security.Services.Objects
         public Operation Find(string module, string controller, string action)
         {
             return
-                OperationRepository.Query(x => x.Module == module && x.Controller == controller && x.Action == action)
+                OperationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant())
                     .FirstOrDefault();
+        }
+
+        public void Update(Operation operation)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var operationRepository = uow.GetRepository<Operation>();
+                operationRepository.Put(operation);
+                uow.Commit();
+            }
         }
     }
 }

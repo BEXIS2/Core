@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Xml;
 using System.Xml.Schema;
 using Vaiona.Utils.Cfg;
@@ -221,14 +222,14 @@ namespace BExIS.Xml.Helpers.Mapping
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
-            //if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
-            //{
-            //    newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
-            //}
-            //else
-            //{
-            //    newMetadata.AppendChild(newMetadata.CreateElement("root"));
-            //}
+            if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            }
+            else
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement("root"));
+            }
 
 
 
@@ -284,6 +285,18 @@ namespace BExIS.Xml.Helpers.Mapping
             //add declaration
             XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             newMetadata.AppendChild(declaration);
+
+            // Add Schema
+            newMetadata.Schemas = xmlSchemaManager.SchemaSet;
+
+            //create namespaces
+
+            this.xmlSchemaManager.XmlNamespaceManager = new XmlNamespaceManager(newMetadata.NameTable);
+            foreach (var ns in xmlSchemaManager.Schema.Namespaces.ToArray())
+            {
+                this.xmlSchemaManager.XmlNamespaceManager.AddNamespace(ns.Name, ns.Namespace);
+            }
+
             //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
@@ -307,9 +320,37 @@ namespace BExIS.Xml.Helpers.Mapping
 
 
             XmlNode root = newMetadata.DocumentElement;
-            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
-            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
-            root.Attributes.Append(rootAttr);
+            //root.Prefix = "";
+            XmlAttribute rootAttr = null;
+
+            //create NameSpaces
+            foreach (var nsp in xmlSchemaManager.Schema.Namespaces.ToArray())
+            {
+
+                string attrName = "xmlns";
+
+                if (!string.IsNullOrEmpty(nsp.Name)) attrName += ":" + nsp.Name;
+
+                if (root.Attributes[attrName] == null)
+                {
+                    rootAttr = newMetadata.CreateAttribute(attrName);
+                    rootAttr.Value = nsp.Namespace;
+                    root.Attributes.Append(rootAttr);
+
+                    //root.
+
+                    //Add Prefix to root
+                    if (nsp.Namespace.Equals(xmlSchemaManager.Schema.TargetNamespace))
+                    {
+                        if (!string.IsNullOrEmpty(nsp.Name))
+                            root.Prefix = nsp.Name;
+                        //root.NamespaceURI = xmlSchemaManager.Schema.TargetNamespace;
+                    }
+                }
+
+            }
+
+
 
             //add root attributes
             foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
@@ -397,8 +438,11 @@ namespace BExIS.Xml.Helpers.Mapping
                             destinationXPath = mapInternPathToExternPathWithIndex(sourceXPath, destinationXMppingFilePath);
 
                         // create xmlnode in document
+
+
+
                         XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
-                            destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
+                            destinationXPath, xmlSchemaManager.Elements, xmlSchemaManager.XmlNamespaceManager); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
                         destinationNode.InnerText = sourceNode.InnerText;
 
                         //if (type == element), get content

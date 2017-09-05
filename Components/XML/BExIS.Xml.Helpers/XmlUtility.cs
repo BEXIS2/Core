@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.XPath;
 
 namespace BExIS.Xml.Helpers
@@ -197,6 +199,110 @@ namespace BExIS.Xml.Helpers
             // rejoin the remainder of the array as an xpath expression and recurse
             string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
             return GenerateNodeFromXPath(doc, node, rest);
+        }
+
+        /// <summary>
+        /// Generate all xml elements from a xpath if  there are not exsiting
+        /// with the xsd elements list you can get the prefix and the 
+        /// namespace the a xml node when you need to create it
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="parent"></param>
+        /// <param name="xpath"></param>
+        /// <param name="Elements"></param>
+        /// <returns></returns>
+        public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath, List<XmlSchemaElement> XsdElements, XmlNamespaceManager nsManager)
+        {
+
+            Debug.WriteLine("-------------------------------");
+            Debug.WriteLine(xpath);
+
+            // grab the next node name in the xpath; or return parent if empty
+            string[] partsOfXPath = xpath.Trim('/').Split('/');
+
+            if (partsOfXPath.Length == 0)
+                return parent;
+
+            string nextNodeInXPath = partsOfXPath[0];
+            if (string.IsNullOrEmpty(nextNodeInXPath))
+                return parent;
+
+
+            // get or create the node from the name
+
+            int index = 1;
+            string nodeName = nextNodeInXPath;
+            if (nextNodeInXPath.Contains("["))
+            {
+                string[] tmp = nextNodeInXPath.Split('[');
+                nodeName = tmp[0];
+                index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
+
+            }
+
+            XmlSchemaElement xsdelement = XsdElements.FirstOrDefault(x => x.Name.Equals(nodeName));
+
+
+            string name = nodeName;
+            string prefix = "";
+            string nameSpace = "";
+            XmlNodeList nodes = null;
+
+            // if xml element is defined by a xsd element 
+            if (xsdelement != null && nsManager != null)
+            {
+                nameSpace = xsdelement.QualifiedName.Namespace;
+                prefix = nsManager.LookupPrefix(nameSpace);
+                name = xsdelement.QualifiedName.Name;
+
+                Debug.WriteLine(nameSpace);
+                Debug.WriteLine(prefix);
+                Debug.WriteLine(name);
+
+
+
+                string searchName = String.IsNullOrEmpty(prefix) ? name : prefix + ":" + name;
+
+                Debug.WriteLine(searchName);
+
+                if (!String.IsNullOrEmpty(nameSpace) && !String.IsNullOrEmpty(prefix))
+                    nodes = parent.SelectNodes(searchName, nsManager);
+                else
+                    nodes = parent.SelectNodes(nodeName);
+            }
+            else
+            {
+                nodes = parent.SelectNodes(nodeName);
+            }
+
+
+
+            XmlNode node = nodes?[index - 1];
+
+            if (node == null)
+            {
+                if (nextNodeInXPath.StartsWith("@"))
+                {
+                    XmlAttribute anode = doc.CreateAttribute(nextNodeInXPath.Substring(1));
+                    node = parent.Attributes.Append(anode);
+                }
+                else
+                {
+                    //if xsdelement exist and namespace and prefix if exist
+                    if (xsdelement != null && !String.IsNullOrEmpty(nameSpace) && !string.IsNullOrEmpty(prefix))
+                    {
+                        node = parent.AppendChild(doc.CreateElement(prefix, name, nameSpace));
+                    }
+                    else
+                        node = parent.AppendChild(doc.CreateElement(nodeName));
+
+                }
+            }
+
+            // rejoin the remainder of the array as an xpath expression and recurse
+            string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
+            return GenerateNodeFromXPath(doc, node, rest, XsdElements, nsManager);
+
         }
 
         /// <summary>

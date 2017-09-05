@@ -150,6 +150,7 @@
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helper\BAMSeedDataGenerator.cs" />
+    <Compile Include="Helper\Settings.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
     <Compile Include="Models\PartyModel.cs" />
@@ -170,6 +171,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\BAM-Pub.pubxml" />
     <None Include="Properties\PublishProfiles\BAM.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM21105.pubxml" />
     <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
     <None Include="Properties\PublishProfiles\BPP211_bam.pubxml" />
     <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
@@ -197,8 +199,8 @@
     <Content Include="Views\Party\_partiesPartial.cshtml" />
     <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />
     <Content Include="Views\Party\_relationshipEditViewPartial.cshtml" />
-    <Content Include="Views\Party\_userRegisterationPartial.cshtml" />
     <Content Include="Views\Party\_addPartyRelationshipPartial.cshtml" />
+    <Content Include="Views\PartyService\_userRegisterationPartial.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -207,7 +209,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\PartyService\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>

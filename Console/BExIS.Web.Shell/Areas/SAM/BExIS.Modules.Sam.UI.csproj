@@ -175,17 +175,17 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\Help\Help_img1.png" />
+    <Content Include="Content\Images\Help\create_group.png" />
+    <Content Include="Content\Images\Help\create_user.png" />
+    <Content Include="Content\Images\Help\edit_group.png" />
+    <Content Include="Content\Images\Help\edit_user.png" />
+    <Content Include="Content\Images\Help\features.png" />
+    <Content Include="Content\Images\Help\groups.png" />
     <Content Include="Content\Images\Help\Help_img10.png" />
     <Content Include="Content\Images\Help\Help_img11.png" />
-    <Content Include="Content\Images\Help\Help_img2.png" />
-    <Content Include="Content\Images\Help\Help_img3.png" />
-    <Content Include="Content\Images\Help\Help_img4.png" />
-    <Content Include="Content\Images\Help\Help_img5.png" />
-    <Content Include="Content\Images\Help\Help_img6.png" />
-    <Content Include="Content\Images\Help\Help_img7.png" />
-    <Content Include="Content\Images\Help\Help_img8.png" />
-    <Content Include="Content\Images\Help\Help_img9.png" />
+    <Content Include="Content\Images\Help\login.png" />
+    <Content Include="Content\Images\Help\register.png" />
+    <Content Include="Content\Images\Help\users.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Sam.Manifest.xml">
       <SubType>Designer</SubType>
@@ -197,6 +197,7 @@
     <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
     <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\SAM.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
