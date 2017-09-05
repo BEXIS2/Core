@@ -66,6 +66,7 @@ namespace BExIS.Utils.Helpers
                         // create a new cell
                         Cell c = new Cell();
 
+                        int expectedIndex = 0; //To check whether we skipped cells because they were empty
                         for (int i = 0; i < row.ChildElements.Count(); i++)
                         {
                             // get current cell at i
@@ -80,14 +81,15 @@ namespace BExIS.Utils.Helpers
 
                                 // Gets the column index of the cell with data
                                 int cellColumnIndex = (int)GetColumnIndexFromName(GetColumnName(c.CellReference));
-                                if (i < cellColumnIndex)
+                                if (expectedIndex < cellColumnIndex)
                                 {
+                                    //We skipped one or more cells so add some blank data
                                     do
                                     {
                                         rowAsStringList.Add(""); //Insert blank data
-                                        i++;
+                                        expectedIndex++;
                                     }
-                                    while (i < cellColumnIndex);
+                                    while (expectedIndex < cellColumnIndex);
                                 }
 
                                 //We now have the correct index and can grab the value of the cell
@@ -166,7 +168,8 @@ namespace BExIS.Utils.Helpers
                                 }
                             }//end if cell null
 
-                        }//for
+                            expectedIndex++;
+                        }//for children of row
 
                         maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
                         table.Add(rowAsStringList);

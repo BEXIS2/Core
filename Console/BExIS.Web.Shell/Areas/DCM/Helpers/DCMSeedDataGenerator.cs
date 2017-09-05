@@ -168,8 +168,27 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
             if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
-                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName);
+            {
+                string titleXPath =
+                    "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                string descriptionXpath =
+                    "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
+
+                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName,
+                    titleXPath, descriptionXpath);
+
+            }
+
+            if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
+            {
+
+                string titleXPath = "Metadata/Basic/BasicType/title/titleType";
+                string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
+
+                ImportSchema("GBIF", "eml.xsd", entity.Name, entity.Name, entity.EntityType.FullName, titleXPath,
+                    descriptionXpath);
+            }
             //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
             //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
             #endregion
@@ -178,7 +197,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         #region METADATA
 
-        private static void ImportSchema(string name, string filename, string root, string entity, string entityFullName)
+        private static void ImportSchema(string name, string filename, string root, string entity, string entityFullName, string titlePath, string descriptionPath)
         {
             long metadataStructureid = 0;
             string schemaName = name;
@@ -211,15 +230,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             try
             {
                 //set parameters
-                string titleXPath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                string descriptionXpath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
                 string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
                 string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 
                 StoreParametersToMetadataStruture(
                     metadataStructureid,
-                    titleXPath,
-                    descriptionXpath,
+                    titlePath,
+                    descriptionPath,
                     entity,
                     entityFullName,
                     mappingFileImport,
