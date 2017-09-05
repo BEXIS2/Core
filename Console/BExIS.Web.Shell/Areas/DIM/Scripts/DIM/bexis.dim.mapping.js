@@ -159,12 +159,12 @@ function enableAddicons(key) {
 
 
 function updateSaveOptionOnNewContainer() {
-    alert("updateSaveOptionOnNewContainer");
+    //alert("updateSaveOptionOnNewContainer");
     if ($("#emptySourceContainer").length === 0 && $("#emptyTargetContainer").length === 0) {
         $("#newMapContainer .mapping-settings").show();
         //$(deleteBt).hide();
 
-        alert("updateSaveOptionOnNewContainer INSIDE");
+        //alert("updateSaveOptionOnNewContainer INSIDE");
         initJSPLUMB("mapping_container_0");
     } else {
         //$(deleteBt).show();
@@ -1105,7 +1105,6 @@ $(".mapping-container").dblclick(function () {
         $($(parent).find(".mapping-container-collapse")).toggle();
 
         $($(parent).find(".jtk-overlay")).toggle();
-
 
         reloadAllConnections();
     }
