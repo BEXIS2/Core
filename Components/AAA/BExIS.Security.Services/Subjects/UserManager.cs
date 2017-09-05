@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Dlm.Entities.Party;
+using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,14 @@ namespace BExIS.Security.Services.Subjects
     public class UserManager : IUserManager, IDisposable
     {
         private readonly IdentityManager _identityManager;
+
         public UserManager()
         {
             _identityManager = new IdentityManager();
         }
 
         private bool _isDisposed;
+
         ~UserManager()
         {
             Dispose(true);
@@ -144,6 +147,16 @@ namespace BExIS.Security.Services.Subjects
         public Task<IList<string>> GetGroupsAsync(long userId)
         {
             return _identityManager.GetRolesAsync(userId);
+        }
+
+        public Task SetPartyAsync(User user, long partyId)
+        {
+            return _identityManager.SetPartyAsync(user, partyId);
+        }
+
+        public Task<Party> GetPartyAsync(User user)
+        {
+            return _identityManager.GetPartyAsync(user);
         }
     }
 }
