@@ -13,7 +13,7 @@
       <key column="UserRef" />
       <one-to-many class="BExIS.Security.Entities.Authentication.Login, BExIS.Security.Entities" />
     </set>
-    <one-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" column="PartyRef" unique="true"/>
+    <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" column="PartyRef" unique="true"/>
     <property name="Password" type="string" />
     <property name="PhoneNumber" type="String" />
     <property name="IsPhoneNumberConfirmed" type="yes_no" />
