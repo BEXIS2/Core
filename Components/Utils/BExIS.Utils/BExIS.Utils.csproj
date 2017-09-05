@@ -119,6 +119,7 @@
     <Compile Include="Models\SheetArea.cs" />
     <Compile Include="Models\SheetFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebHelpers\HtmlDisplayWithLinksFor.cs" />
     <Compile Include="WebHelpers\HtmlNavigationExtensions.cs" />
     <Compile Include="WebHelpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="WebHelpers\HtmlTenantExtensions.cs" />
