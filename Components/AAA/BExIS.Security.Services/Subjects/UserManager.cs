@@ -12,32 +12,49 @@ namespace BExIS.Security.Services.Subjects
     {
         private readonly IdentityManager _identityManager;
 
+        private bool _isDisposed;
+
         public UserManager()
         {
             _identityManager = new IdentityManager();
         }
-
-        private bool _isDisposed;
 
         ~UserManager()
         {
             Dispose(true);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_isDisposed) return;
-            if (!disposing) return;
-            _identityManager?.Dispose();
-            _isDisposed = true;
-        }
-
         public IQueryable<User> Users => _identityManager.Users;
+
+        public Task<IdentityResult> AddLoginAsync(long userId, UserLoginInfo login)
+        {
+            return _identityManager.AddLoginAsync(userId, login);
+        }
+
+        public Task<IdentityResult> AddToGroupAsync(long userId, string groupName)
+        {
+            return _identityManager.AddToRoleAsync(userId, groupName);
+        }
+
+        public Task<IdentityResult> AddToGroupAsync(User user, Group group)
+        {
+            return _identityManager.AddToRoleAsync(user.Id, group.Name);
+        }
+
+        public Task<IdentityResult> AddToGroupsAsync(long userId, string[] groupNames)
+        {
+            return _identityManager.AddToRolesAsync(userId, groupNames);
+        }
+
+        public Task<IdentityResult> ChangePasswordAsync(long userId, string currentPassword, string newPassword)
+        {
+            return _identityManager.ChangePasswordAsync(userId, currentPassword, newPassword);
+        }
+
+        public Task<IdentityResult> ConfirmEmailAsync(long userId, string token)
+        {
+            return _identityManager.ConfirmEmailAsync(userId, token);
+        }
 
         public Task<IdentityResult> CreateAsync(User user)
         {
@@ -49,19 +66,54 @@ namespace BExIS.Security.Services.Subjects
             return _identityManager.CreateAsync(user, password);
         }
 
-        public Task<IdentityResult> SetEmailAsync(long userId, string email)
+        public Task<IdentityResult> DeleteAsync(User user)
         {
-            return _identityManager.SetEmailAsync(userId, email);
+            return _identityManager.DeleteAsync(user);
         }
 
-        public Task<IdentityResult> AddToGroupAsync(long userId, string groupName)
+        public void Dispose()
         {
-            return _identityManager.AddToRoleAsync(userId, groupName);
+            Dispose(true);
         }
 
-        public Task<IdentityResult> AddToGroupsAsync(long userId, string[] groupNames)
+        public Task<User> FindByEmailAsync(string email)
         {
-            return _identityManager.AddToRolesAsync(userId, groupNames);
+            return _identityManager.FindByEmailAsync(email);
+        }
+
+        public Task<User> FindByIdAsync(long userId)
+        {
+            return _identityManager.FindByIdAsync(userId);
+        }
+
+        public Task<User> FindByNameAsync(string userName)
+        {
+            return _identityManager.FindByNameAsync(userName);
+        }
+
+        public Task<string> GenerateEmailConfirmationTokenAsync(long userId)
+        {
+            return _identityManager.GenerateEmailConfirmationTokenAsync(userId);
+        }
+
+        public Task<string> GeneratePasswordResetTokenAsync(long userId)
+        {
+            return _identityManager.GeneratePasswordResetTokenAsync(userId);
+        }
+
+        public Task<IList<string>> GetGroupsAsync(long userId)
+        {
+            return _identityManager.GetRolesAsync(userId);
+        }
+
+        public Task<Party> GetPartyAsync(User user)
+        {
+            return _identityManager.GetPartyAsync(user);
+        }
+
+        public Task<bool> IsEmailConfirmedAsync(long userId)
+        {
+            return _identityManager.IsEmailConfirmedAsync(userId);
         }
 
         public Task<IdentityResult> RemoveFromGroupAsync(long userId, string groupName)
@@ -74,54 +126,9 @@ namespace BExIS.Security.Services.Subjects
             return _identityManager.RemoveFromRolesAsync(userId, groupNames);
         }
 
-        public Task<IdentityResult> DeleteAsync(User user)
-        {
-            return _identityManager.DeleteAsync(user);
-        }
-
-        public Task<IdentityResult> AddLoginAsync(long userId, UserLoginInfo login)
-        {
-            return _identityManager.AddLoginAsync(userId, login);
-        }
-
         public Task<IdentityResult> RemoveLoginAsync(long userId, UserLoginInfo login)
         {
             return _identityManager.RemoveLoginAsync(userId, login);
-        }
-
-        public Task<User> FindByNameAsync(string userName)
-        {
-            return _identityManager.FindByNameAsync(userName);
-        }
-
-        public Task<User> FindByIdAsync(long userId)
-        {
-            return _identityManager.FindByIdAsync(userId);
-        }
-
-        public Task<IdentityResult> ConfirmEmailAsync(long userId, string token)
-        {
-            return _identityManager.ConfirmEmailAsync(userId, token);
-        }
-
-        public Task<bool> IsEmailConfirmedAsync(long userId)
-        {
-            return _identityManager.IsEmailConfirmedAsync(userId);
-        }
-
-        public Task<User> FindByEmailAsync(string email)
-        {
-            return _identityManager.FindByEmailAsync(email);
-        }
-
-        public Task<string> GeneratePasswordResetTokenAsync(long userId)
-        {
-            return _identityManager.GeneratePasswordResetTokenAsync(userId);
-        }
-
-        public Task SendEmailAsync(long userId, string subject, string body)
-        {
-            return _identityManager.SendEmailAsync(userId, subject, body);
         }
 
         public Task<IdentityResult> ResetPasswordAsync(long userId, string token, string newPassword)
@@ -129,24 +136,14 @@ namespace BExIS.Security.Services.Subjects
             return _identityManager.ResetPasswordAsync(userId, token, newPassword);
         }
 
-        public Task<string> GenerateEmailConfirmationTokenAsync(long userId)
+        public Task SendEmailAsync(long userId, string subject, string body)
         {
-            return _identityManager.GenerateEmailConfirmationTokenAsync(userId);
+            return _identityManager.SendEmailAsync(userId, subject, body);
         }
 
-        public Task<IdentityResult> UpdateAsync(User user)
+        public Task<IdentityResult> SetEmailAsync(long userId, string email)
         {
-            return _identityManager.UpdateAsync(user);
-        }
-
-        public Task<IdentityResult> ChangePasswordAsync(long userId, string currentPassword, string newPassword)
-        {
-            return _identityManager.ChangePasswordAsync(userId, currentPassword, newPassword);
-        }
-
-        public Task<IList<string>> GetGroupsAsync(long userId)
-        {
-            return _identityManager.GetRolesAsync(userId);
+            return _identityManager.SetEmailAsync(userId, email);
         }
 
         public Task SetPartyAsync(User user, long partyId)
@@ -154,9 +151,17 @@ namespace BExIS.Security.Services.Subjects
             return _identityManager.SetPartyAsync(user, partyId);
         }
 
-        public Task<Party> GetPartyAsync(User user)
+        public Task<IdentityResult> UpdateAsync(User user)
         {
-            return _identityManager.GetPartyAsync(user);
+            return _identityManager.UpdateAsync(user);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+            if (!disposing) return;
+            _identityManager?.Dispose();
+            _isDisposed = true;
         }
     }
 }
