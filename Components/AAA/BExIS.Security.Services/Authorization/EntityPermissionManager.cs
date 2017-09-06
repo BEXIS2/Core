@@ -12,40 +12,21 @@ namespace BExIS.Security.Services.Authorization
     public class EntityPermissionManager : IDisposable
     {
         private IUnitOfWork guow = null;
+        private bool isDisposed = false;
+
         public EntityPermissionManager()
         {
             guow = this.GetIsolatedUnitOfWork();
-            EntityPermissionRepository = guow.GetReadOnlyRepository<EntityPermission>();
-            //EntityRepository = uow.GetReadOnlyRepository<Entity>();
-            //SubjectRepository = uow.GetReadOnlyRepository<Subject>();
+            //EntityPermissionRepository = guow.GetReadOnlyRepository<EntityPermission>();
         }
 
-        private bool isDisposed = false;
         ~EntityPermissionManager()
         {
             Dispose(true);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!isDisposed)
-            {
-                if (disposing)
-                {
-                    if (guow != null)
-                        guow.Dispose();
-                    isDisposed = true;
-                }
-            }
-        }
-
-        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
-        public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
+        //public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
+        //public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
 
         public void Create(EntityPermission entityPermission)
         {
@@ -106,7 +87,6 @@ namespace BExIS.Security.Services.Authorization
             if (entityType == null)
                 return null;
 
-
             EntityPermission entityPermission = null;
             using (var uow = this.GetUnitOfWork())
             {
@@ -140,24 +120,6 @@ namespace BExIS.Security.Services.Authorization
             return entityPermission;
         }
 
-        public bool Exists(Subject subject, Entity entity, long key)
-        {
-            if (entity == null)
-                return false;
-
-            if (subject == null)
-                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
-
-            return EntityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
-        }
-
-        public bool Exists(long? subjectId, long entityId, long key)
-        {
-            if (subjectId == null)
-                return EntityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1;
-            return EntityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
-        }
-
         public void Delete(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
@@ -186,6 +148,39 @@ namespace BExIS.Security.Services.Authorization
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Delete(entityPermissionRepository.Get(entityPermissionId));
                 uow.Commit();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public bool Exists(Subject subject, Entity entity, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+
+                if (entity == null)
+                    return false;
+
+                if (subject == null)
+                    return entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+
+                return entityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+            }
+        }
+
+        public bool Exists(long? subjectId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+
+                if (subjectId == null)
+                    return entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1;
+                return entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
             }
         }
 
@@ -255,7 +250,6 @@ namespace BExIS.Security.Services.Authorization
                 .Select(e => e.Key)
                 .ToList();
             }
-
         }
 
         public int GetRights(Subject subject, Entity entity, long key)
@@ -266,7 +260,7 @@ namespace BExIS.Security.Services.Authorization
 
                 if (subject == null)
                 {
-                    return EntityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
+                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
                 }
                 if (entity == null)
                     return 0;
@@ -351,6 +345,19 @@ namespace BExIS.Security.Services.Authorization
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
             }
         }
     }
