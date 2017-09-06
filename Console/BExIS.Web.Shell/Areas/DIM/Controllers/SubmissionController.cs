@@ -43,11 +43,28 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult publishData(long datasetId, long datasetVersionId = -1)
         {
-            PublicationManager publicationManager = new PublicationManager();
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
 
+            return View("_showPublishDataView", model);
+        }
+
+        public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
+        {
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
+
+            return PartialView("_showPublishDataView", model);
+        }
+
+        private ShowPublishDataModel getShowPublishDataModel(long datasetId, long datasetVersionId = -1)
+        {
+            PublicationManager publicationManager = new PublicationManager();
+            DatasetManager datasetManager = new DatasetManager();
             ShowPublishDataModel model = new ShowPublishDataModel();
 
-            List<Broker> Brokers = publicationManager.BrokerRepo.Get().ToList();
+
+            Dataset dataset = datasetManager.GetDataset(datasetId);
+
+            List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
             model.Brokers = Brokers.Select(b => b.Name).ToList();
             model.DatasetId = datasetId;
@@ -56,31 +73,38 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
             //Todo Download Rigths -> currently set read rigths for this case
-            model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Read);
-            model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Write);
+            model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
+                typeof(Dataset), datasetId, RightType.Read);
+            model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
+                typeof(Dataset), datasetId, RightType.Write);
 
 
             List<long> versions = new List<long>();
             if (datasetVersionId == -1)
             {
-                DatasetManager datasetManager = new DatasetManager();
-                datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId).Id;
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                datasetVersionId = datasetVersion.Id;
                 versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
             }
 
             //todo check if datasetversion id is correct
-            List<Publication> publications = publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
+            List<Publication> publications =
+                publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
 
             foreach (var pub in publications)
             {
                 Broker broker = publicationManager.BrokerRepo.Get(pub.Broker.Id);
-                Repository repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
+                Repository repo = null;
+
+                if (pub.Repository != null)
+                {
+                    repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
+                }
+                string dataRepoName = repo == null ? "" : repo.Name;
 
 
                 List<string> repos =
-                    publicationManager.RepositoryRepo.Query().Where(p => p.Broker.Id.Equals(broker.Id)).Select(p => p.Name).ToList();
-
-                string dataRepoName = repo == null ? "" : repo.Name;
+                    GetRepos(dataset.MetadataStructure.Id, broker.Id, publicationManager).Select(r => r.Name).ToList();
 
                 model.Publications.Add(new PublicationModel()
                 {
@@ -93,76 +117,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     Status = pub.Status,
 
                 });
-
-                //update status
-
-
             }
 
-            return View("_showPublishDataView", model);
-        }
-
-        public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
-        {
-            PublicationManager publicationManager = new PublicationManager();
-
-            ShowPublishDataModel model = new ShowPublishDataModel();
-
-            List<Broker> Brokers = publicationManager.BrokerRepo.Get().ToList();
-
-            model.Brokers = Brokers.Select(b => b.Name).ToList();
-            model.DatasetId = datasetId;
-
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-
-            //Todo Download Rigths -> currently set read rigths for this case
-            model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Read);
-            model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Write);
-
-
-            List<long> versions = new List<long>();
-            if (datasetVersionId == -1)
-            {
-                DatasetManager datasetManager = new DatasetManager();
-                datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId).Id;
-                versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
-            }
-
-            //todo check if datasetversion id is correct
-            List<Publication> publications = publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
-
-            foreach (var pub in publications)
-            {
-                Broker broker = publicationManager.BrokerRepo.Get(pub.Broker.Id);
-                Repository repo = null;
-
-                if (pub.Repository != null &&
-                    pub.Repository.Id != null &&
-                    pub.Repository.Id > 0)
-                {
-                    repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
-                }
-
-
-                List<string> repos =
-                    publicationManager.RepositoryRepo.Query().Where(p => p.Broker.Id.Equals(broker.Id)).Select(p => p.Name).ToList();
-
-                string dataRepoName = repo == null ? "" : repo.Name;
-
-                model.Publications.Add(new PublicationModel()
-                {
-                    Broker = new BrokerModel(broker.Name, repos),
-                    DataRepo = dataRepoName,
-                    DatasetVersionId = datasetVersionId,
-                    CreationDate = pub.Timestamp,
-                    ExternalLink = pub.ExternalLink,
-                    FilePath = pub.FilePath,
-                    Status = pub.Status
-                });
-            }
-
-            return PartialView("_showPublishDataView", model);
+            return model;
         }
 
         public ActionResult LoadDataRepoRequirementView(string datarepo, long datasetid)
@@ -490,7 +447,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 gfbioException = new JavaScriptSerializer().Deserialize<GFBIOException>(jsonresult);
 
                                 if (!String.IsNullOrEmpty(gfbioException.exception))
-                                    return Json(jsonresult);
+                                    return Json(gfbioException.message);
+
+                                return Json(jsonresult);
                             }
                             //user exist and api user has access to the api´s
                             else
@@ -509,9 +468,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 //grab project from metadata
                                 projectName = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.ProjectTitle), LinkElementType.Key, dataset.MetadataStructure.Id,
                                     XmlUtility.ToXDocument(metadata)).FirstOrDefault();
-
-
-
 
                                 //create or get project
                                 string projectJsonResult =
@@ -622,8 +578,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
+
+                        Repository repository =
+                            publicationManager.RepositoryRepo.Get()
+                                .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                                .FirstOrDefault();
+
                         string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
-                        publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
+                        publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
                             "no status available");
                     }
 
@@ -656,7 +618,66 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return Json(true);
         }
 
+        private List<Broker> GetBrokers(long metadataStrutcureId, PublicationManager publicationManager)
+        {
 
+            IEnumerable<Repository> repos = publicationManager.GetRepository();
+            List<Broker> Brokers = new List<Broker>();
+
+            foreach (var repo in repos)
+            {
+                // if repo is in table, means, that there is a restriction
+                // only when dataset has a specific metada structure, the repo should be available in th ui
+                if (publicationManager.MetadataStructureToRepositoryRepo.Get().Any(m => m.RepositoryId.Equals(repo.Id)))
+                {
+                    // exist in table
+                    //check if metadataStructureId is existing
+                    if (publicationManager.MetadataStructureToRepositoryRepo.Get().Any(m =>
+                        m.RepositoryId.Equals(repo.Id) && m.MetadataStructureId.Equals(metadataStrutcureId)))
+                    {
+                        //add broker
+                        Brokers.Add(repo.Broker);
+                    }
+                }
+                else
+                {
+                    //add broker
+                    Brokers.Add(repo.Broker);
+                }
+            }
+
+            return Brokers.Distinct().ToList();
+        }
+
+        private List<Repository> GetRepos(long metadataStrutcureId, long brokerId, PublicationManager publicationManager)
+        {
+            IEnumerable<Repository> repos = publicationManager.GetRepository().Where(r => r.Broker.Id.Equals(brokerId));
+            List<Repository> tmp = new List<Repository>();
+
+            foreach (var repo in repos)
+            {
+                // if repo is in table, means, that there is a restriction
+                // only when dataset has a specific metada structure, the repo should be available in th ui
+                if (publicationManager.MetadataStructureToRepositoryRepo.Get().Any(m => m.RepositoryId.Equals(repo.Id)))
+                {
+                    // exist in table
+                    // check if metadataStructureId is existing
+                    if (publicationManager.MetadataStructureToRepositoryRepo.Get().Any(m =>
+                        m.RepositoryId.Equals(repo.Id) && m.MetadataStructureId.Equals(metadataStrutcureId)))
+                    {
+                        //add repo
+                        tmp.Add(repo);
+                    }
+                }
+                else
+                {
+                    //add repo
+                    tmp.Add(repo);
+                }
+            }
+
+            return tmp.Distinct().ToList();
+        }
 
         #region webservices calls STATUS
 

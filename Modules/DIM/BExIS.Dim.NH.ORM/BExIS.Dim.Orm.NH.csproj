@@ -58,6 +58,9 @@
     <Content Include="Mappings\Default\Mapping\LinkElementTypes.hbm.xml" />
     <Content Include="Mappings\Default\Mapping\Mapping.hbm.xml" />
     <Content Include="Mappings\Default\Mapping\TransformationRule.hbm.xml" />
+    <Content Include="Mappings\Default\Publication\MetadataStructureToRepository.hbm.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Mappings\Default\Publication\Broker.hbm.xml">
       <SubType>Designer</SubType>
     </Content>

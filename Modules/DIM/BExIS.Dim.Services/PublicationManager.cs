@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services
@@ -15,6 +16,7 @@ namespace BExIS.Dim.Services
             this.PublicationRepo = uow.GetReadOnlyRepository<Publication>();
             this.BrokerRepo = uow.GetReadOnlyRepository<Broker>();
             this.RepositoryRepo = uow.GetReadOnlyRepository<Repository>();
+            this.MetadataStructureToRepositoryRepo = uow.GetReadOnlyRepository<MetadataStructureToRepository>();
         }
 
         #region Data Readers
@@ -33,6 +35,11 @@ namespace BExIS.Dim.Services
         /// Provides read-only querying and access to repositories
         /// </summary>
         public IReadOnlyRepository<Repository> RepositoryRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to repositories
+        /// </summary>
+        public IReadOnlyRepository<MetadataStructureToRepository> MetadataStructureToRepositoryRepo { get; private set; }
 
         #endregion
 
@@ -82,6 +89,36 @@ namespace BExIS.Dim.Services
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
             publication.Repository = null;
+            publication.Timestamp = DateTime.Now;
+            publication.Status = status;
+            publication.FilePath = filePath;
+            publication.ExternalLink = externalLink;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Publication> repo = uow.GetRepository<Publication>();
+                repo.Put(publication);
+                uow.Commit();
+            }
+            return (publication);
+        }
+
+        public Publication CreatePublication(DatasetVersion datasetVersion,
+            Broker broker,
+            Repository repository,
+            string name,
+            long researchObjectId,
+            string filePath = "",
+            string externalLink = "",
+            string status = "")
+        {
+            Contract.Ensures(Contract.Result<Publication>() != null && Contract.Result<Publication>().Id >= 0);
+
+            Publication publication = new Publication();
+            publication.ResearchObjectId = researchObjectId;
+            publication.Broker = broker;
+            publication.DatasetVersion = datasetVersion;
+            publication.Repository = repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
             publication.FilePath = filePath;
@@ -337,6 +374,66 @@ namespace BExIS.Dim.Services
                 uow.Commit();
             }
             return true;
+        }
+
+        #endregion
+
+        #region MetadataStructureToRepository
+
+        public MetadataStructureToRepository GetMetadataStructureToRepository(long metadataStrutcureId, long repositoryId)
+        {
+            Contract.Requires(metadataStrutcureId > 0);
+            Contract.Requires(repositoryId > 0);
+
+            MetadataStructureToRepository b = MetadataStructureToRepositoryRepo.Get().FirstOrDefault(m => m.MetadataStructureId.Equals(metadataStrutcureId) &&
+            m.RepositoryId.Equals(repositoryId));
+
+            return (b);
+        }
+
+        public IEnumerable<MetadataStructureToRepository> GetAllMetadataStructureToRepository(long metadataStrutcureId)
+        {
+            Contract.Requires(metadataStrutcureId > 0);
+
+            return MetadataStructureToRepositoryRepo.Get().Where(m => m.MetadataStructureId.Equals(metadataStrutcureId));
+        }
+
+        public MetadataStructureToRepository CreateMetadataStructureToRepository(long metadataStrutcureId, long repositoryId)
+        {
+            Contract.Requires(metadataStrutcureId > 0);
+            Contract.Requires(repositoryId > 0);
+
+
+            MetadataStructureToRepository e = new MetadataStructureToRepository()
+            {
+                MetadataStructureId = metadataStrutcureId,
+                RepositoryId = repositoryId
+            };
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MetadataStructureToRepository> repo = uow.GetRepository<MetadataStructureToRepository>();
+                repo.Put(e);
+                uow.Commit();
+            }
+            return (e);
+        }
+
+        public bool DeleteMetadataStructureToRepository(MetadataStructureToRepository metadataStructureToRepository)
+        {
+            Contract.Requires(metadataStructureToRepository != null);
+            Contract.Requires(metadataStructureToRepository.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MetadataStructureToRepository> repo = uow.GetRepository<MetadataStructureToRepository>();
+
+                var latest = repo.Reload(metadataStructureToRepository);
+                repo.Delete(latest);
+
+                uow.Commit();
+            }
+            return (true);
         }
 
         #endregion
