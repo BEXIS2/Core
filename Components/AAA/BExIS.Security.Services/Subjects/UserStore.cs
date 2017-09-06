@@ -10,70 +10,24 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>, IUserSecurityStampStore<User, long>
+    internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>, IUserSecurityStampStore<User, long>, IQueryableUserStore<User, long>
     {
+        private readonly IUnitOfWork _guow;
+
+        public UserStore()
+        {
+            _guow = this.GetIsolatedUnitOfWork();
+            UserRepository = _guow.GetReadOnlyRepository<User>();
+        }
+
+        public IQueryable<User> Users => UserRepository.Query();
+
+        private IReadOnlyRepository<User> UserRepository { get; }
+
         #region IUserEmailStore
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public Task SetEmailAsync(User user, string email)
-        {
-            user.Email = email;
-            return Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<string> GetEmailAsync(User user)
-        {
-            return Task.FromResult(user.Email);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<bool> GetEmailConfirmedAsync(User user)
-        {
-            return Task.FromResult(user.IsEmailConfirmed);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="confirmed"></param>
-        /// <returns></returns>
-        public Task SetEmailConfirmedAsync(User user, bool confirmed)
-        {
-            user.IsEmailConfirmed = confirmed;
-            return Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public Task<User> FindByEmailAsync(string email)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
-            }
-        }
-
-        /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -93,24 +47,7 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task UpdateAsync(User user)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Put(user);
-                uow.Commit();
-            }
-
-            return Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -127,7 +64,29 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        public void Dispose()
+        {
+            _guow.Dispose();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public Task<User> FindByEmailAsync(string email)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
+            }
+        }
+
+        /// <summary>
+        ///
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
@@ -141,7 +100,7 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
@@ -155,19 +114,72 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public void Dispose()
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<string> GetEmailAsync(User user)
         {
-            // DO NOTHING!
+            return Task.FromResult(user.Email);
         }
 
-        #endregion
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<bool> GetEmailConfirmedAsync(User user)
+        {
+            return Task.FromResult(user.IsEmailConfirmed);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public Task SetEmailAsync(User user, string email)
+        {
+            user.Email = email;
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="confirmed"></param>
+        /// <returns></returns>
+        public Task SetEmailConfirmedAsync(User user, bool confirmed)
+        {
+            user.IsEmailConfirmed = confirmed;
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task UpdateAsync(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                userRepository.Put(user);
+                uow.Commit();
+            }
+
+            return Task.FromResult(0);
+        }
+
+        #endregion IUserEmailStore
 
         #region IUserLoginStore
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="login"></param>
@@ -185,7 +197,33 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        public Task<User> FindAsync(UserLoginInfo login)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var loginRepository = uow.GetRepository<Login>();
+                var user = loginRepository.Query(m => m.LoginProvider == login.LoginProvider && m.ProviderKey == login.ProviderKey).Select(m => m.User).FirstOrDefault();
+
+                return Task.FromResult(user);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
+        {
+            return Task.FromResult<IList<UserLoginInfo>>((user.Logins).Select(login => new UserLoginInfo(login.LoginProvider, login.ProviderKey)).ToList());
+        }
+
+        /// <summary>
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="login"></param>
@@ -202,41 +240,9 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(0);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
-        {
-            return Task.FromResult<IList<UserLoginInfo>>((user.Logins).Select(login => new UserLoginInfo(login.LoginProvider, login.ProviderKey)).ToList());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="login"></param>
-        /// <returns></returns>
-        public Task<User> FindAsync(UserLoginInfo login)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var loginRepository = uow.GetRepository<Login>();
-                var user = loginRepository.Query(m => m.LoginProvider == login.LoginProvider && m.ProviderKey == login.ProviderKey).Select(m => m.User).FirstOrDefault();
-
-                return Task.FromResult(user);
-            }
-        }
-
-        #endregion
+        #endregion IUserLoginStore
 
         #region IUserPasswordStore
-
-        public Task SetPasswordHashAsync(User user, string passwordHash)
-        {
-            user.Password = passwordHash;
-            return Task.FromResult(0);
-        }
 
         public Task<string> GetPasswordHashAsync(User user)
         {
@@ -248,12 +254,38 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(user.Password != null);
         }
 
-        #endregion
+        public Task SetPasswordHashAsync(User user, string passwordHash)
+        {
+            user.Password = passwordHash;
+            return Task.FromResult(0);
+        }
+
+        #endregion IUserPasswordStore
 
         #region IUserLockoutStore
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<int> GetAccessFailedCountAsync(User user)
+        {
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<bool> GetLockoutEnabledAsync(User user)
+        {
+            return Task.FromResult(user.LockoutEnabled);
+        }
+
+        /// <summary>
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -274,7 +306,41 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<int> IncrementAccessFailedCountAsync(User user)
+        {
+            user.AccessFailedCount = user.AccessFailedCount + 1;
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task ResetAccessFailedCountAsync(User user)
+        {
+            user.AccessFailedCount = 0;
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="enabled"></param>
+        /// <returns></returns>
+        public Task SetLockoutEnabledAsync(User user, bool enabled)
+        {
+            user.LockoutEnabled = enabled;
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="lockoutEnd"></param>
@@ -295,66 +361,12 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(0);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<int> IncrementAccessFailedCountAsync(User user)
-        {
-            user.AccessFailedCount = user.AccessFailedCount + 1;
-            return Task.FromResult(user.AccessFailedCount);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task ResetAccessFailedCountAsync(User user)
-        {
-            user.AccessFailedCount = 0;
-            return Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<int> GetAccessFailedCountAsync(User user)
-        {
-            return Task.FromResult(user.AccessFailedCount);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<bool> GetLockoutEnabledAsync(User user)
-        {
-            return Task.FromResult(user.LockoutEnabled);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="enabled"></param>
-        /// <returns></returns>
-        public Task SetLockoutEnabledAsync(User user, bool enabled)
-        {
-            user.LockoutEnabled = enabled;
-            return Task.FromResult(0);
-        }
-
-        #endregion
+        #endregion IUserLockoutStore
 
         #region IUserRoleStore
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="roleName"></param>
@@ -379,7 +391,32 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task<IList<string>> GetRolesAsync(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetRepository<Group>();
+                return Task.FromResult((IList<string>)groupRepository.Query(g => g.Users.Any(u => u.Id == user.Id)).Select(m => m.Name).ToList());
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        public Task<bool> IsInRoleAsync(User user, string roleName)
+        {
+            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
+        }
+
+        /// <summary>
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="roleName"></param>
@@ -401,40 +438,14 @@ namespace BExIS.Security.Services.Subjects
 
                 return Task.FromResult(0);
             }
-
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<IList<string>> GetRolesAsync(User user)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                return Task.FromResult((IList<string>)groupRepository.Query(g => g.Users.Any(u => u.Id == user.Id)).Select(m => m.Name).ToList());
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        public Task<bool> IsInRoleAsync(User user, string roleName)
-        {
-            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
-        }
-
-        #endregion
+        #endregion IUserRoleStore
 
         #region IUserTwoFactorStore
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -444,7 +455,7 @@ namespace BExIS.Security.Services.Subjects
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="enabled"></param>
@@ -454,9 +465,14 @@ namespace BExIS.Security.Services.Subjects
             throw new NotImplementedException();
         }
 
-        #endregion
+        #endregion IUserTwoFactorStore
 
         #region IUserSecurityStampStore
+
+        public Task<string> GetSecurityStampAsync(User user)
+        {
+            return Task.FromResult(user.SecurityStamp);
+        }
 
         public Task SetSecurityStampAsync(User user, string stamp)
         {
@@ -464,14 +480,18 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(0);
         }
 
-        public Task<string> GetSecurityStampAsync(User user)
-        {
-            return Task.FromResult(user.SecurityStamp);
-        }
-
-        #endregion
+        #endregion IUserSecurityStampStore
 
         #region Parties
+
+        public Task<Party> GetPartyAsync(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                return Task.FromResult(userRepository.Get(user.Id)?.Party);
+            }
+        }
 
         public Task SetPartyAsync(User user, long partyId)
         {
@@ -492,16 +512,7 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public Task<Party> GetPartyAsync(User user)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Get(user.Id)?.Party);
-            }
-        }
-
-        #endregion
+        #endregion Parties
 
         //public Task AddLoginAsync(User user, UserLoginInfo login)
         //{
