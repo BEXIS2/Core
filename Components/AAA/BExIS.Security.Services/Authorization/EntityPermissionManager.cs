@@ -11,13 +11,13 @@ namespace BExIS.Security.Services.Authorization
 {
     public class EntityPermissionManager : IDisposable
     {
-        private IUnitOfWork guow = null;
-        private bool isDisposed = false;
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
 
         public EntityPermissionManager()
         {
-            guow = this.GetIsolatedUnitOfWork();
-            //EntityPermissionRepository = guow.GetReadOnlyRepository<EntityPermission>();
+            _guow = this.GetIsolatedUnitOfWork();
+            EntityPermissionRepository = _guow.GetReadOnlyRepository<EntityPermission>();
         }
 
         ~EntityPermissionManager()
@@ -25,8 +25,8 @@ namespace BExIS.Security.Services.Authorization
             Dispose(true);
         }
 
-        //public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
-        //public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
+        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
+        public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
 
         public void Create(EntityPermission entityPermission)
         {
@@ -56,12 +56,16 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public void Create(Subject subject, Entity entity, long key, List<RightType> rightTypes)
+        {
+        }
+
         public void Create(long? subjectId, long entityId, long key, short rights)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                IReadOnlyRepository<Entity> entityRepository = uow.GetReadOnlyRepository<Entity>();
-                IReadOnlyRepository<Subject> subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
                 var entityPermission = new EntityPermission()
                 {
                     Subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault(),
@@ -90,8 +94,8 @@ namespace BExIS.Security.Services.Authorization
             EntityPermission entityPermission = null;
             using (var uow = this.GetUnitOfWork())
             {
-                IReadOnlyRepository<Entity> entityRepository = uow.GetReadOnlyRepository<Entity>();
-                IReadOnlyRepository<Subject> subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
 
                 var subject = subjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
                 if (subject == null)
@@ -350,13 +354,13 @@ namespace BExIS.Security.Services.Authorization
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!isDisposed)
+            if (!_isDisposed)
             {
                 if (disposing)
                 {
-                    if (guow != null)
-                        guow.Dispose();
-                    isDisposed = true;
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
                 }
             }
         }

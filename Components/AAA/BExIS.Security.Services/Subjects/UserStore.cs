@@ -13,11 +13,17 @@ namespace BExIS.Security.Services.Subjects
     internal class UserStore : IUserEmailStore<User, long>, IUserLoginStore<User, long>, IUserPasswordStore<User, long>, IUserLockoutStore<User, long>, IUserRoleStore<User, long>, IUserTwoFactorStore<User, long>, IUserSecurityStampStore<User, long>, IQueryableUserStore<User, long>
     {
         private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
 
         public UserStore()
         {
             _guow = this.GetIsolatedUnitOfWork();
             UserRepository = _guow.GetReadOnlyRepository<User>();
+        }
+
+        ~UserStore()
+        {
+            Dispose(true);
         }
 
         public IQueryable<User> Users => UserRepository.Query();
@@ -68,7 +74,7 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         public void Dispose()
         {
-            _guow.Dispose();
+            Dispose(true);
         }
 
         /// <summary>
@@ -172,6 +178,19 @@ namespace BExIS.Security.Services.Subjects
             }
 
             return Task.FromResult(0);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
         }
 
         #endregion IUserEmailStore
