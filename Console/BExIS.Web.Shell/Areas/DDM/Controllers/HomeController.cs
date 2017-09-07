@@ -1,10 +1,10 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using System;
@@ -790,6 +790,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager();
+            EntityManager entityManager = new EntityManager();
+
+            var entity = entityManager.FindByName("Dataset");
+            var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
             List<long> gridCommands = datasetManager.GetDatasetLatestIds();
             gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
@@ -797,9 +802,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             foreach (long datasetId in gridCommands)
             {
                 //get permissions
-                List<RightType> rights = entityPermissionManager.GetRights<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), datasetId);
+                int rights = entityPermissionManager.GetRights(user, entity, datasetId);
 
-                if (rights.Count > 0)
+                if (rights > 0)
                 {
                     DataRow dataRow = model.NewRow();
                     Object[] rowArray = new Object[8];
@@ -828,47 +833,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[2] = "Dataset is just in processing.";
                     }
 
-                    if (rights.Contains(RightType.Read))
-                    {
-                        rowArray[3] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[3] = "✘";
-                    }
-                    if (rights.Contains(RightType.Write))
-                    {
-                        rowArray[4] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[4] = "✘";
-                    }
-                    if (rights.Contains(RightType.Delete))
-                    {
-                        rowArray[5] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[5] = "✘";
-                    }
-                    if (rights.Contains(RightType.Read))
-                    {
-                        //ToDo RigthType Download not exist -> set RigthType Read
-                        rowArray[6] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[6] = "✘";
-                    }
-                    if (rights.Contains(RightType.Grant))
-                    {
-                        rowArray[7] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[7] = "✘";
-                    }
+                    rowArray[3] = (rights & (int)RightType.Read) > 0 ? "✔" : "✘";
+                    rowArray[4] = (rights & (int)RightType.Write) > 0 ? "✔" : "✘";
+                    rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
+                    rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
+                    rowArray[7] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
 
                     dataRow = model.NewRow();
                     dataRow.ItemArray = rowArray;
