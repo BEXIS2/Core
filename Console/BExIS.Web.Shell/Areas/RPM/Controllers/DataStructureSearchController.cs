@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Logging;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class DataStructureSearchController : Controller
+    public class DataStructureSearchController : BaseController
     {
         public ActionResult Index()
         {
@@ -104,6 +105,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 else
                 {
                     DataStructureManager dataStructureManager = new DataStructureManager();
+                    this.Disposables.Add(dataStructureManager);
+
                     DataStructure dataStructure;
                     if (isStructured)
                     {
@@ -176,6 +179,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             Name = Server.UrlDecode(Name);
             Description = Server.UrlDecode(Description);
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
 
             if (!isStructured)
             {

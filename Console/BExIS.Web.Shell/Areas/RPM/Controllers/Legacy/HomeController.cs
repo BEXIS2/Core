@@ -17,10 +17,11 @@ using BExIS.IO.DataType.DisplayPattern;
 using Vaiona.Web.Extensions;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.IO.Transform.Output;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         //
         // GET: /Planing/Home/
@@ -98,7 +99,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category,string order, string[] varName, long[] optional, long[] varId, string[] varDesc, long[] varUnit)
         {
-            DataStructureManager DSM = new DataStructureManager();
+            DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
+
             DSDM.dataStructure.Name = cutSpaces(DSDM.dataStructure.Name);
             DSDM.dataStructure.Description = cutSpaces(DSDM.dataStructure.Description);
             DSDM.structured = (bool)Session["Structured"];
@@ -132,15 +135,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (DSDM.structured)
                         {
                             ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                            StructuredDataStructure DS = DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
-                            DSM.UpdateStructuredDataStructure(DS);
+                            StructuredDataStructure DS = dsm.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
+                            dsm.UpdateStructuredDataStructure(DS);
                             provider.CreateTemplate(DS.Id);
                             DSDM.GetDataStructureByID(DS.Id);
                             DSDM.dataStructureTree = DSDM.getDataStructureTree();
                         }
                         else
                         { 
-                            DSDM.dataStructure = DSM.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);
+                            DSDM.dataStructure = dsm.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);
                             DSDM.GetDataStructureByID(DSDM.dataStructure.Id);
                             DSDM.dataStructureTree = DSDM.getDataStructureTree();
                         }
@@ -231,19 +234,19 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         if (Request.Params["create"] == "save")
                         {
-                            DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                            DS = dsm.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
                             provider.deleteTemplate(DS.Id);
                             DS.Name = DSDM.dataStructure.Name;
                             DS.Description = DSDM.dataStructure.Description;
                             if(order != null && order.Length > 0)
                                 saveOrder(order, DSDM.dataStructure.Id);
-                            DS = DSM.UpdateStructuredDataStructure(DS);
+                            DS = dsm.UpdateStructuredDataStructure(DS);
                         }
                         else if (Request.Params["create"] == "saveAs")
                         {
-                            StructuredDataStructure DsOld = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
-                            DS = DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
-                            List<Variable> variables = DSDM.getOrderedVariables(DSM.StructuredDataStructureRepo.Get(DsOld.Id));
+                            StructuredDataStructure DsOld = dsm.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                            DS = dsm.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
+                            List<Variable> variables = DSDM.getOrderedVariables(dsm.StructuredDataStructureRepo.Get(DsOld.Id));
                             XmlDocument doc = (XmlDocument)DS.Extra;
                             if (doc == null)
                             {
@@ -296,12 +299,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                                             errorMsg.Add("Can't rename Variable " + v.Label + ", invalid name");
                                                         else
                                                             errorMsg.Add("Can't rename Variable " + v.Label + ", name already exist");
-                                                        temp = DSM.AddVariableUsage(DS, v.DataAttribute, opt, v.Label, null, null, v.Description, v.Unit);
+                                                        temp = dsm.AddVariableUsage(DS, v.DataAttribute, opt, v.Label, null, null, v.Description, v.Unit);
                                                     }
                                                     else
                                                     {   
                                                         UnitManager unitManager = new UnitManager();
-                                                        temp = DSM.AddVariableUsage(DS, v.DataAttribute, opt, cutSpaces(varName[i]), null, null, varDesc[i], unitManager.Repo.Get(varUnit[i]));
+                                                        this.Disposables.Add(unitManager);
+
+                                                        temp = dsm.AddVariableUsage(DS, v.DataAttribute, opt, cutSpaces(varName[i]), null, null, varDesc[i], unitManager.Repo.Get(varUnit[i]));
                                                     }
                                                     variable.InnerText = temp.Id.ToString();
                                                     xorder.AppendChild(variable);
@@ -312,7 +317,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                         else
                                         {
                                             XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                                            temp = DSM.AddVariableUsage(DS, v.DataAttribute, v.IsValueOptional, v.Label, null, null, v.Description);
+                                            temp = dsm.AddVariableUsage(DS, v.DataAttribute, v.IsValueOptional, v.Label, null, null, v.Description);
                                             variable.InnerText = temp.Id.ToString();
                                             xorder.AppendChild(variable);
                                         }
@@ -320,10 +325,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                     doc.FirstChild.AppendChild(xorder);
                                     DS.Extra = doc;
                                 }                                
-                            DS = DSM.UpdateStructuredDataStructure(DS);
+                            DS = dsm.UpdateStructuredDataStructure(DS);
                         }
                         DSDM.GetDataStructureByID(DS.Id, DSDM.structured);
-                        provider.CreateTemplate(DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id));
+                        provider.CreateTemplate(dsm.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id));
                         DSDM.dataStructureTree = DSDM.getDataStructureTree();
                     }
                     else
@@ -331,14 +336,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         UnStructuredDataStructure DS = new UnStructuredDataStructure();
                         if (Request.Params["create"] == "save")
                         {
-                            DS = DSM.UnStructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                            DS = dsm.UnStructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
                             DS.Name = DSDM.dataStructure.Name;
                             DS.Description = DSDM.dataStructure.Description;
-                            DS = DSM.UpdateUnStructuredDataStructure(DS);
+                            DS = dsm.UpdateUnStructuredDataStructure(DS);
                         }
                         else if (Request.Params["create"] == "saveAs")
                         {
-                            DS = DSM.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);                    
+                            DS = dsm.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);                    
                         }
                         DSDM.GetDataStructureByID(DS.Id, DSDM.structured);
                         DSDM.dataStructureTree = DSDM.getDataStructureTree();
@@ -353,6 +358,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         private bool openSaveAsWindow(DataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
             List<DataStructure> dataStructureList = new List<DataStructure>();
             
             List<StructuredDataStructure> StrTemp = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
@@ -384,6 +391,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         private string dataStructureValidation(DataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
             List<DataStructure> dataStructureList = new List<DataStructure>();
 
                 List<StructuredDataStructure> StrTemp = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
@@ -443,6 +452,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (structured)
                 {
                     DataStructureManager dataStructureManager = new DataStructureManager();
+                    this.Disposables.Add(dataStructureManager);
+
                     StructuredDataStructure dataStructure = new StructuredDataStructure();
                     dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
 
@@ -479,6 +490,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 else
                 {
                     DataStructureManager dataStructureManager = new DataStructureManager();
+                    this.Disposables.Add(dataStructureManager);
+
                     UnStructuredDataStructure dataStructure = new UnStructuredDataStructure();
                     dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(id);
                     
@@ -486,8 +499,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         if (dataStructure.Datasets.Count == 0)
                         {
-                            DataStructureManager DSM = new DataStructureManager();
-                            DSM.DeleteUnStructuredDataStructure(dataStructure);
+                            dataStructureManager.DeleteUnStructuredDataStructure(dataStructure);
                             return RedirectToAction("DataStructureDesigner");
                         }
                         else
@@ -513,6 +525,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult showVariables(long id)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             
             if (id != 0)
@@ -543,6 +556,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             long[][] selected = (long[][])Session["selected"];
 
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             //StructuredDataStructure dataStructure = DSDM.GetDataStructureByID(id);
 
@@ -619,13 +633,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             if (dataStructureId != 0)
             {
-                DataStructureManager DSM = new DataStructureManager();
-                StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
+                DataStructureManager dsm = new DataStructureManager();
+                this.Disposables.Add(dsm);
+                StructuredDataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(dataStructureId);
                 DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
                 if (!(dataStructure.Datasets.Count > 0))
                 {
-                    Variable variable = DSM.VariableRepo.Get(id);
+                    Variable variable = dsm.VariableRepo.Get(id);
 
                     if (variable != null)
                     {
@@ -644,7 +659,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             }
                         }
 
-                        DSM.RemoveVariableUsage(variable);
+                        dsm.RemoveVariableUsage(variable);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         provider.CreateTemplate(dataStructure);
                     }
@@ -681,9 +696,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public string saveVariable(string name, long id,string description, long dataStructureId, bool optional, long unitId)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            UnitManager unitmanger = new UnitManager();
+            UnitManager unitManger = new UnitManager();
+            this.Disposables.Add(unitManger);
+
             string errorMsg = null;
 
             name = cutSpaces(name);
@@ -710,7 +728,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                     var.Label = name;
                                     var.IsValueOptional = optional;
                                     var.Description = description;
-                                    var.Unit = unitmanger.Repo.Get(unitId);
+                                    var.Unit = unitManger.Repo.Get(unitId);
                                     dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
 
                                     ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
@@ -721,7 +739,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 var.Label = name;
                                 var.IsValueOptional = optional;
                                 var.Description = description;
-                                var.Unit = unitmanger.Repo.Get(unitId);
+                                var.Unit = unitManger.Repo.Get(unitId);
                                 dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
 
                                 ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
@@ -752,6 +770,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public void saveOrder(List<long> order, long dataStructureId)
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
             StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
             XmlDocument doc = (XmlDocument)ds.Extra;
             XmlNodeList xorder = doc.GetElementsByTagName("order");
@@ -770,6 +789,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult shiftVariableLeft(long id, long dataStructureId)
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
             StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
             XmlDocument doc = (XmlDocument)ds.Extra;
             XmlNodeList order = doc.GetElementsByTagName("order");
@@ -808,6 +828,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult shiftVariableRight(long id, long dataStructureId)
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
             StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
             XmlDocument doc = (XmlDocument)ds.Extra;
             XmlNodeList order = doc.GetElementsByTagName("order");
@@ -867,6 +888,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (id != 0)
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
+                this.Disposables.Add(dataStructureManager);
                 StructuredDataStructure dataStructure = new StructuredDataStructure();
                 dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
 
@@ -906,12 +928,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private List<Unit> GetUnitRepo()
         {
-            UnitManager UM = new UnitManager();
-            List<Unit> repo = UM.Repo.Get().Where(u => u.DataContainers.Count != null && u.AssociatedDataTypes.Count != null).ToList();
+            UnitManager um = new UnitManager();
+            this.Disposables.Add(um);
+
+            // Javad: changed null comparison to ZERO comaprison. It may need the equal part too. >=
+            List<Unit> repo = um.Repo.Get().Where(u => u.DataContainers.Count >0 && u.AssociatedDataTypes.Count >0).ToList();
             
             foreach(Unit u in repo)
             {
-                UM.Repo.LoadIfNot(u.AssociatedDataTypes);
+                um.Repo.LoadIfNot(u.AssociatedDataTypes);
             }
             return(repo);
         }
@@ -923,6 +948,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         private IReadOnlyRepository<Classifier> GetClassRepo()
         {
             ClassifierManager CM = new ClassifierManager();
+            this.Disposables.Add(CM);
             return (CM.Repo);
         }
 
@@ -1037,6 +1063,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Session["Window"] = false;
 
             DataTypeManager dataTypeManager = new DataTypeManager();
+            this.Disposables.Add(dataTypeManager);
+
             List<DataType> datatypeList = dataTypeManager.Repo.Get().Where(d=> d.DataContainers.Count != null).ToList();
 
             return View(datatypeList);
@@ -1045,6 +1073,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult editDataType(DataTypeModel Model, long id,string systemType,string pattern, string parent)
         {
             DataTypeManager dataTypeManager = new DataTypeManager();
+            this.Disposables.Add(dataTypeManager);
+
             IList<DataType> DataTypeList = dataTypeManager.Repo.Get();
             TypeCode typecode = new TypeCode();
             DataTypeDisplayPattern dateTimePettern = null;
@@ -1113,7 +1143,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         DataType dataType = DataTypeList.Where(p => p.Id.Equals(id)).ToList().First();
                         if (!(dataType.DataContainers.Count() > 0))
                         {
-                            DataTypeManager DTM = new DataTypeManager();
+                            DataTypeManager dtm = new DataTypeManager();
+                            this.Disposables.Add(dtm);
                             dataType.Name = Model.dataType.Name;
                             dataType.Description = Model.dataType.Description;
                             dataType.SystemType = typecode.ToString();
@@ -1153,7 +1184,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 tempdataType.Extra = xmlDoc;
                             }
 
-                            DTM.Update(dataType);
+                            dtm.Update(dataType);
                         }
                     }
                     else
@@ -1203,13 +1234,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 //if (result == DialogResult.Yes)
                 //{
                 DataTypeManager dataTypeManager = new DataTypeManager();
+                this.Disposables.Add(dataTypeManager);
                 DataType dataType = dataTypeManager.Repo.Get(id);
                 if (dataType != null)
                 {
                     if (dataType.DataContainers.Count == 0)
                     {
-                        DataTypeManager DTM = new DataTypeManager();
-                        DTM.Delete(dataType);
+                        DataTypeManager dtm = new DataTypeManager();
+                        this.Disposables.Add(dtm);
+                        dtm.Delete(dataType);
                     }
                 
                 }
@@ -1222,6 +1255,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult showDatasets(long id, bool structured)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             if (id != 0)
             {

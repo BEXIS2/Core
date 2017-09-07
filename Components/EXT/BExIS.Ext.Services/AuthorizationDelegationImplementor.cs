@@ -27,7 +27,7 @@ namespace BExIS.Ext.Services
 
             if (feature == null) return;
 
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var result = userManager.FindByNameAsync(username);
 
             var featurePermissionManager = new FeaturePermissionManager();

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
 
 namespace BExIS.Security.Entities.Subjects
 {
-    public class Group : Subject
+    public class Group : Subject, IRole<long>
     {
         public Group()
         {

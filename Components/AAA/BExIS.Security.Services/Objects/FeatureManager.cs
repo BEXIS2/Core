@@ -14,7 +14,7 @@ namespace BExIS.Security.Services.Objects
             FeatureRepository = uow.GetReadOnlyRepository<Feature>();
         }
 
-        public IQueryable<Feature> Entities => FeatureRepository.Query();
+        public IQueryable<Feature> Features => FeatureRepository.Query();
         public IReadOnlyRepository<Feature> FeatureRepository { get; }
 
         public void Create(Feature feature)

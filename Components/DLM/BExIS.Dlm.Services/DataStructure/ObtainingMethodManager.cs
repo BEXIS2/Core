@@ -5,19 +5,13 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class ObtainingMethodManager
+    public class ObtainingMethodManager
     {
         public ObtainingMethodManager() 
         {
-            //// define aggregate paths
-            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
-            this.Repo = this.GetUnitOfWork().GetReadOnlyRepository<ObtainingMethod>();
         }
 
         #region Data Readers
-
-        // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<ObtainingMethod> Repo { get; private set; }
 
         #endregion
 

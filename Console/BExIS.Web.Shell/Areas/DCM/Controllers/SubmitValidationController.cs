@@ -10,10 +10,11 @@ using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Input;
 using BExIS.Dcm.UploadWizard;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitValidationController : Controller
+    public class SubmitValidationController : BaseController
     {
         private TaskManager TaskManager;
         private FileStream Stream;
@@ -106,6 +107,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     long id = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
                     DataStructureManager dsm = new DataStructureManager();
+                    this.Disposables.Add(dsm);
+
                     long iddsd = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
                     StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                     dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);

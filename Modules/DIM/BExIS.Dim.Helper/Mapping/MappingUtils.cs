@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -30,22 +31,22 @@ namespace BExIS.Dim.Helpers.Mapping
         public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType,
             string value = "")
         {
-            List<string> tmp = new List<string>();
-            try
+
+            //get all mapppings where target is mapped
+            // LinkElementType.PartyCustomType is set because of the function name
+            // all mapped attributes are LinkElementType.PartyCustomType in this case
+            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
             {
-                MappingManager _mappingManager = new MappingManager();
-
-
-
-                //get all mapppings where target is mapped
-                // LinkElementType.PartyCustomType is set because of the function name
-                // all mapped attributes are LinkElementType.PartyCustomType in this case
-
-                var mappings = _mappingManager.GetMappings().Where(m =>
-                    m.Target.ElementId.Equals(targetElementId) &&
-                    m.Target.Type.Equals(targetType) &&
-                    m.Source.Type.Equals(LinkElementType.PartyCustomType)
-                    );
+                List<string> tmp = new List<string>();
+                var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                    .Where(m =>
+                        m.Target.ElementId.Equals(targetElementId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                    ).ToList();
+                tmp = getAllValuesFromSystem(mappings, value);
+                return tmp;
+            }
 
                 /*
              *e.g. 
@@ -61,16 +62,6 @@ namespace BExIS.Dim.Helpers.Mapping
              */
 
 
-                tmp = getAllValuesFromSystem(mappings, value);
-
-
-
-                return tmp;
-            }
-            catch (Exception exception)
-            {
-                return tmp;
-            }
         }
 
         /// <summary>

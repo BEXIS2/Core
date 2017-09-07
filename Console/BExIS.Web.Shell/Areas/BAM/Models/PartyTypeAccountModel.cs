@@ -8,7 +8,7 @@ namespace BExIS.Modules.Bam.UI.Models
 {
     public class PartyTypeAccountModel
     {
-        public PartyType PartyType { get; set; }
-        public Dictionary<string,PartyTypePair> PartyRelationshipTypes { get; set; }
+        public Dictionary<PartyType, Dictionary<string, PartyTypePair>> PartyRelationshipsTypes = new Dictionary<PartyType, Dictionary<string, PartyTypePair>>();
+        public Party Party { get; set; }
     }
 }

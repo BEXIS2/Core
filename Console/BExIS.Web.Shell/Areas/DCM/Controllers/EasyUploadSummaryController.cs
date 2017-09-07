@@ -21,6 +21,7 @@ using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -28,11 +29,13 @@ using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class EasyUploadSummaryController : Controller
+    public class EasyUploadSummaryController : BaseController
     {
         private EasyUploadTaskManager TaskManager;
         private FileStream Stream;
@@ -72,8 +75,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
             {
                 MetadataStructureManager msm = new MetadataStructureManager();
+                this.Disposables.Add(msm);
                 long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                 model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
+                msm.Dispose();
             }
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))
@@ -146,6 +151,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                 {
                     MetadataStructureManager msm = new MetadataStructureManager();
+                    this.Disposables.Add(msm);
                     long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                     model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
                 }
@@ -210,337 +216,378 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //For original solution, look into Aquadiva Code
         public List<Error> FinishUpload(EasyUploadTaskManager taskManager)
         {
-
-            List<Error> temp = new List<Error>();
-
-            // initialize all necessary manager
             DataStructureManager dsm = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
-            MetadataStructureManager msm = new MetadataStructureManager();
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            UnitManager um = new UnitManager();
-            DataTypeManager dtm = new DataTypeManager();
             DataContainerManager dam = new DataContainerManager();
+            //SubjectManager sm = new SubjectManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-            DataTuple[] rows = null;
-
-            //First, try to validate - if there are errors, return immediately
-            string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
-            List<Error> ValidationErrors = ValidateRows(JsonArray);
-            if (ValidationErrors.Count != 0)
+            try
             {
-                temp.AddRange(ValidationErrors);
-                return temp;
-            }
-
-            string timestamp = DateTime.Now.ToString("r");
-            string title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
-
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
-            {
-                string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
-                if (!String.IsNullOrWhiteSpace(tmp))
+                using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
                 {
-                    title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
-                }
-            }
 
-            StructuredDataStructure sds = dsm.CreateStructuredDataStructure(title, title + " " + timestamp, "", "", DataStructureCategory.Generic);
+                    List<Error> temp = new List<Error>();
 
-            TaskManager.AddToBus(EasyUploadTaskManager.DATASTRUCTURE_ID, sds.Id);
-            TaskManager.AddToBus(EasyUploadTaskManager.DATASTRUCTURE_TITLE, title + " " + timestamp);
+                    // initialize all necessary manager
 
-            if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DATASET_TITLE))
-            {
-                TaskManager.AddToBus(EasyUploadTaskManager.DATASET_TITLE, title);
-                TaskManager.AddToBus(EasyUploadTaskManager.TITLE, title);
-            }
+                    DataTuple[] rows = null;
 
-            // FIXIT
-            MetadataStructure metadataStructure = null;
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
-            {
-                long metadataStructureId = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
-                metadataStructure = msm.Repo.Get(m => m.Id == metadataStructureId).FirstOrDefault();
-            }
-            else
-            {
-                //Default option but shouldn't happen because previous steps can't be finished without selecting the metadata-structure
-                metadataStructure = msm.Repo.Get(m => m.Name.ToLower().Contains("eml")).FirstOrDefault();
-            }
-            ResearchPlan rp = rpm.Repo.Get().FirstOrDefault();
-            TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_ID, rp.Id);
-            TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_TITLE, rp.Title);
+                    //First, try to validate - if there are errors, return immediately
+                    string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+                    List<Error> ValidationErrors = ValidateRows(JsonArray);
+                    if (ValidationErrors.Count != 0)
+                    {
+                        temp.AddRange(ValidationErrors);
+                        return temp;
+                    }
 
-            //I don't see why this line is needed
-            DatasetVersion workingCopy = new DatasetVersion();
+                    string timestamp = DateTime.Now.ToString("r");
+                    string title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
 
-            #region Progress Information
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                    {
+                        string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                        if (!String.IsNullOrWhiteSpace(tmp))
+                        {
+                            title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                        }
+                    }
 
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.CURRENTPACKAGESIZE))
-            {
-                TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = 0;
-            }
-            else
-            {
-                TaskManager.Bus.Add(EasyUploadTaskManager.CURRENTPACKAGESIZE, 0);
-            }
+                    StructuredDataStructure sds = dsm.CreateStructuredDataStructure(title, title + " " + timestamp, "", "", DataStructureCategory.Generic);
 
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.CURRENTPACKAGE))
-            {
-                TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = 0;
-            }
-            else
-            {
-                TaskManager.Bus.Add(EasyUploadTaskManager.CURRENTPACKAGE, 0);
-            }
+                    TaskManager.AddToBus(EasyUploadTaskManager.DATASTRUCTURE_ID, sds.Id);
+                    TaskManager.AddToBus(EasyUploadTaskManager.DATASTRUCTURE_TITLE, title + " " + timestamp);
 
-            #endregion
+                    if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DATASET_TITLE))
+                    {
+                        TaskManager.AddToBus(EasyUploadTaskManager.DATASET_TITLE, title);
+                        TaskManager.AddToBus(EasyUploadTaskManager.TITLE, title);
+                    }
 
-            #region DataStructure
-            Dataset ds = null;
-            XmlDocument xmldoc = new XmlDocument();
-            XmlElement extraElement = xmldoc.CreateElement("extra");
-            XmlElement orderElement = xmldoc.CreateElement("order");
+                    // FIXIT
+                    MetadataStructure metadataStructure = null;
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
+                    {
+                        long metadataStructureId = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
+                        metadataStructure = unitOfWork.GetReadOnlyRepository<MetadataStructure>()
+                            .Get(m => m.Id == metadataStructureId).FirstOrDefault();
+                    }
+                    else
+                    {
+                        //Default option but shouldn't happen because previous steps can't be finished without selecting the metadata-structure
+                        metadataStructure = unitOfWork.GetReadOnlyRepository<MetadataStructure>()
+                            .Get(m => m.Name.ToLower().Contains("eml")).FirstOrDefault();
+                    }
+                    ResearchPlan rp = unitOfWork.GetReadOnlyRepository<ResearchPlan>().Get().FirstOrDefault();
+                    TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_ID, rp.Id);
+                    TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_TITLE, rp.Title);
 
-            List<DataAttribute> allDataAttributes = dam.DataAttributeRepo.Get().ToList();
+                    //I don't see why this line is needed
+                    DatasetVersion workingCopy = new DatasetVersion();
 
-            List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
-            //Sorting necessary to prevent problems when inserting the tuples
-            MappedHeaders.Sort((head1, head2) => head1.Item1.CompareTo(head2.Item1));
-            List<VariableIdentifier> identifiers = new List<VariableIdentifier>();
-            foreach (Tuple<int, string, UnitInfo> Entry in MappedHeaders)
-            {
-                int i = MappedHeaders.IndexOf(Entry);
+                    #region Progress Information
 
-                DataType dataType = dtm.Repo.Get(Entry.Item3.SelectedDataTypeId);
-                Unit CurrentSelectedUnit = um.Repo.Get(Entry.Item3.UnitId);
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.CURRENTPACKAGESIZE))
+                    {
+                        TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = 0;
+                    }
+                    else
+                    {
+                        TaskManager.Bus.Add(EasyUploadTaskManager.CURRENTPACKAGESIZE, 0);
+                    }
 
-                DataAttribute CurrentDataAttribute = new DataAttribute();
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.CURRENTPACKAGE))
+                    {
+                        TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = 0;
+                    }
+                    else
+                    {
+                        TaskManager.Bus.Add(EasyUploadTaskManager.CURRENTPACKAGE, 0);
+                    }
 
-                //If possible, map the chosen variable name, unit and datatype to an existing DataAttribute (Exact match)
-                DataAttribute existingDataAttribute = allDataAttributes.Where(da => da.Name.ToLower().Equals(TrimAndLimitString(Entry.Item2).ToLower()) &&
-                                                                                    da.DataType.Id == dataType.Id &&
-                                                                                    da.Unit.Id == CurrentSelectedUnit.Id).FirstOrDefault();
-                if (existingDataAttribute != null)
-                {
-                    CurrentDataAttribute = existingDataAttribute;
-                }
-                else
-                {
-                    //No matching DataAttribute => Create a new one
-                    CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(Entry.Item2), Entry.Item2, "", false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
-                }
-                //ToDo EASY Upload Failes here
-                Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, Entry.Item2, "", "", "");
-                VariableIdentifier vi = new VariableIdentifier();
-                vi.name = newVariable.Label;
-                vi.id = newVariable.Id;
-                identifiers.Add(vi);
+                    #endregion
 
-                XmlElement newVariableXml = xmldoc.CreateElement("variable");
-                newVariableXml.InnerText = Convert.ToString(newVariable.Id);
-
-                orderElement.AppendChild(newVariableXml);
-
-            }
-
-            extraElement.AppendChild(orderElement);
-            xmldoc.AppendChild(extraElement);
-
-            sds.Extra = xmldoc;
-            sds.Name = "generated import structure " + timestamp;
-            sds.Description = "automatically generated structured data structure by user " + GetUsernameOrDefault() + " for file " + title + " on " + timestamp;
-
-            #endregion
-
-            ds = dm.CreateEmptyDataset(sds, rp, metadataStructure);
-
-            //Don't think these lines are necessary
-            /*ExcelTemplateProvider etp = new ExcelTemplateProvider();
-            etp.CreateTemplate(sds);*/
-
-            long datasetId = ds.Id;
-            long sdsId = sds.Id;
+                    #region DataStructure
+                    XmlDocument xmldoc = new XmlDocument();
+                    XmlElement extraElement = xmldoc.CreateElement("extra");
+                    XmlElement orderElement = xmldoc.CreateElement("order");
 
 
-            if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
-            {
-                DatasetVersion dsv = dm.GetDatasetWorkingCopy(datasetId);
-                long METADATASTRUCTURE_ID = metadataStructure.Id;
-                XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                XDocument metadataX = xmlMetadatWriter.CreateMetadataXml(METADATASTRUCTURE_ID);
-                XmlDocument metadataXml = XmlMetadataWriter.ToXmlDocument(metadataX);
-                dsv.Metadata = metadataXml;
+                    List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+                    //Sorting necessary to prevent problems when inserting the tuples
+                    MappedHeaders.Sort((head1, head2) => head1.Item1.CompareTo(head2.Item1));
+                    List<VariableIdentifier> identifiers = new List<VariableIdentifier>();
 
-                dsv.Metadata = XmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
-                dm.EditDatasetVersion(dsv, null, null, null);
-            }
+                    var dataTypeRepo = unitOfWork.GetReadOnlyRepository<DataType>();
+                    var unitRepo = unitOfWork.GetReadOnlyRepository<Unit>();
+                    var dataAttributeRepo = unitOfWork.GetReadOnlyRepository<DataAttribute>();
+
+                    List<DataAttribute> allDataAttributes = dataAttributeRepo.Get().ToList();
+
+                    foreach (Tuple<int, string, UnitInfo> Entry in MappedHeaders)
+                    {
+                        int i = MappedHeaders.IndexOf(Entry);
+
+                        DataType dataType = dataTypeRepo.Get(Entry.Item3.SelectedDataTypeId);
+                        Unit CurrentSelectedUnit = unitRepo.Get(Entry.Item3.UnitId);
+
+                        DataAttribute CurrentDataAttribute = new DataAttribute();
+                        //If possible, map the chosen variable name, unit and datatype to an existing DataAttribute (Exact match)
+                        DataAttribute existingDataAttribute = allDataAttributes.Where(da => da.Name.ToLower().Equals(TrimAndLimitString(Entry.Item2).ToLower()) &&
+                                                                                            da.DataType.Id == dataType.Id &&
+                                                                                            da.Unit.Id == CurrentSelectedUnit.Id).FirstOrDefault();
+                        if (existingDataAttribute != null)
+                        {
+                            CurrentDataAttribute = existingDataAttribute;
+                        }
+                        else
+                        {
+                            //No matching DataAttribute => Create a new one
+                            CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(Entry.Item2), Entry.Item2, "", false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
+                        }
+                        //ToDo EASY Upload Failes here
+                        Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, Entry.Item2, "", "", "");
+                        VariableIdentifier vi = new VariableIdentifier();
+                        vi.name = newVariable.Label;
+                        vi.id = newVariable.Id;
+                        identifiers.Add(vi);
+
+                        XmlElement newVariableXml = xmldoc.CreateElement("variable");
+                        newVariableXml.InnerText = Convert.ToString(newVariable.Id);
+
+                        orderElement.AppendChild(newVariableXml);
+                    }
+                    extraElement.AppendChild(orderElement);
+                    xmldoc.AppendChild(extraElement);
+
+                    sds.Extra = xmldoc;
+                    sds.Name = "generated import structure " + timestamp;
+                    sds.Description = "automatically generated structured data structure by user " + GetUsernameOrDefault() + " for file " + title + " on " + timestamp;
+
+                    #endregion
+
+                    Dataset ds = null;
+                    ds = dm.CreateEmptyDataset(sds, rp, metadataStructure);
+
+                    //Don't think these lines are necessary
+                    /*ExcelTemplateProvider etp = new ExcelTemplateProvider();
+                    etp.CreateTemplate(sds);*/
+
+                    long datasetId = ds.Id;
+                    long sdsId = sds.Id;
 
 
-            #region security
-            // add security
-            if (GetUsernameOrDefault() != "DEFAULT")
-            {
-                //PermissionManager pm = new PermissionManager();
-                SubjectManager sm = new SubjectManager();
+                    if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
+                    {
+                        DatasetVersion dsv = dm.GetDatasetWorkingCopy(datasetId);
+                        long METADATASTRUCTURE_ID = metadataStructure.Id;
+                        XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                        XDocument metadataX = xmlMetadatWriter.CreateMetadataXml(METADATASTRUCTURE_ID);
+                        XmlDocument metadataXml = XmlMetadataWriter.ToXmlDocument(metadataX);
+                        dsv.Metadata = metadataXml;
 
-                //User user = sm.GetUserByName(GetUsernameOrDefault());
-
-                //Rights-Management
-                /*
-                 * TODO: Use the BExIS Party API for that
-                 * 
-                 * */
-                /*
-                UserPiManager upm = new UserPiManager();
-                List<long> piList = (new UserSelectListModel(GetUsernameOrDefault())).UserList.Select(x => x.Id).ToList();
-                */
+                        dsv.Metadata = XmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
+                        dm.EditDatasetVersion(dsv, null, null, null);
+                    }
 
 
-                foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                {
-                    //The user gets full permissions
+                    #region security
                     // add security
                     if (GetUsernameOrDefault() != "DEFAULT")
                     {
-                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                        //PermissionManager pm = new PermissionManager();
+
+                        //User user = sm.GetUserByName(GetUsernameOrDefault());
+
+                        //Rights-Management
+                        /*
+                         * TODO: Use the BExIS Party API for that
+                         * 
+                         * */
+                        /*
+                        UserPiManager upm = new UserPiManager();
+                        List<long> piList = (new UserSelectListModel(GetUsernameOrDefault())).UserList.Select(x => x.Id).ToList();
+                        */
+
+
+                        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+                        {
+                            //The user gets full permissions
+                            // add security
+                            if (GetUsernameOrDefault() != "DEFAULT")
+                            {
+                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                            }
+
+                            // adding the rights for the pis
+                            /*foreach (long piId in piList)
+                            {
+                                //Each pi gets full permissions
+                                pm.CreateDataPermission(piId, 1, ds.Id, rightType);
+
+                                // get all pi members
+                                List<UserPi> currentMembers = upm.GetAllPiMember(piId).ToList();
+
+                                foreach (UserPi currentMapping in currentMembers)
+                                {
+                                    switch (rightType)
+                                    {
+                                        //Each member of each of the pis gets view-rights
+                                        case RightType.View:
+                                            pm.CreateDataPermission(currentMapping.UserId, 1, ds.Id, rightType);
+                                            break;
+                                        //Each member of each of the pis gets download-rights
+                                        case RightType.Download:
+                                            pm.CreateDataPermission(currentMapping.UserId, 1, ds.Id, rightType);
+                                            break;
+                                        default:
+                                            //No other permissions - is this call necessary?
+                                            pm.CreateDataPermission(currentMapping.UserId, 0, ds.Id, rightType);
+                                            break;
+                                    }
+                                }
+                            }*/
+                        }
+                    }
+                    #endregion security
+
+
+                    #region excel reader
+
+                    int packageSize = 10000;
+                    //HACK ?
+                    TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
+
+                    int counter = 0;
+
+                    dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
+                    if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
+                    {
+                        throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
                     }
 
-                    // adding the rights for the pis
-                    /*foreach (long piId in piList)
+                    workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+                    counter++;
+                    TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
+
+                    //rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), oldSds, (int)id, packageSize).ToArray();
+
+                    List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                    string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
+                    List<int[]> areaDataValuesList = new List<int[]>();
+                    foreach (string area in selectedDataAreaJsonArray)
                     {
-                        //Each pi gets full permissions
-                        pm.CreateDataPermission(piId, 1, ds.Id, rightType);
+                        areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
+                    }
+                    int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
 
-                        // get all pi members
-                        List<UserPi> currentMembers = upm.GetAllPiMember(piId).ToList();
+                    Orientation orientation = 0;
 
-                        foreach (UserPi currentMapping in currentMembers)
+                    switch (TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString())
+                    {
+                        case "LeftRight":
+                            orientation = Orientation.rowwise;
+                            break;
+                        case "Matrix":
+                            //orientation = Orientation.matrix;
+                            break;
+                        default:
+                            orientation = Orientation.columnwise;
+                            break;
+                    }
+
+                    Uri worksheetUri = null;
+                    //Get the Uri to identify the correct worksheet
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.WORKSHEET_URI))
+                    {
+                        worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
+                    }
+
+                    int batchSize = 1000;
+                    int batchnr = 1;
+                    foreach (int[] areaDataValues in areaDataValuesList)
+                    {
+                        //First batch starts at the start of the current data area
+                        int currentBatchStartRow = areaDataValues[0] + 1;
+                        while (currentBatchStartRow <= areaDataValues[2] + 1) //While the end of the current data area has not yet been reached
                         {
-                            switch (rightType)
-                            {
-                                //Each member of each of the pis gets view-rights
-                                case RightType.View:
-                                    pm.CreateDataPermission(currentMapping.UserId, 1, ds.Id, rightType);
-                                    break;
-                                //Each member of each of the pis gets download-rights
-                                case RightType.Download:
-                                    pm.CreateDataPermission(currentMapping.UserId, 1, ds.Id, rightType);
-                                    break;
-                                default:
-                                    //No other permissions - is this call necessary?
-                                    pm.CreateDataPermission(currentMapping.UserId, 0, ds.Id, rightType);
-                                    break;
-                            }
+                            //Create a new reader each time because the reader saves ALL tuples it read and therefore the batch processing wouldn't work
+                            EasyUploadExcelReader reader = new EasyUploadExcelReader();
+                            // open file
+                            Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
+
+                            //End row is start row plus batch size
+                            int currentBatchEndRow = currentBatchStartRow + batchSize;
+
+                            //Set the indices for the reader
+                            EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
+                            fri.DataStartRow = currentBatchStartRow;
+                            //End row is either at the end of the batch or the end of the marked area
+                            fri.DataEndRow = (currentBatchEndRow > areaDataValues[2] + 1) ? areaDataValues[2] + 1 : currentBatchEndRow;
+                            //Column indices as marked in a previous step
+                            fri.DataStartColumn = areaDataValues[1] + 1;
+                            fri.DataEndColumn = areaDataValues[3] + 1;
+
+                            //Header area as marked in a previous step
+                            fri.VariablesStartRow = areaHeaderValues[0] + 1;
+                            fri.VariablesStartColumn = areaHeaderValues[1] + 1;
+                            fri.VariablesEndRow = areaHeaderValues[2] + 1;
+                            fri.VariablesEndColumn = areaHeaderValues[3] + 1;
+
+                            fri.Offset = areaDataValues[1];
+                            fri.Orientation = orientation;
+
+                            //Set variable identifiers because they might differ from the variable names in the file
+                            reader.setSubmittedVariableIdentifiers(identifiers);
+
+                            //Read the rows and convert them to DataTuples
+                            rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, worksheetUri);
+
+                            //After reading the rows, add them to the dataset
+                            if (rows != null)
+                                dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+
+                            //Close the Stream so the next ExcelReader can open it again
+                            Stream.Close();
+
+                            //Debug information
+                            int lines = (areaDataValues[2] + 1) - (areaDataValues[0] + 1);
+                            int batches = lines / batchSize;
+                            batchnr++;
+
+                            //Next batch starts after the current one
+                            currentBatchStartRow = currentBatchEndRow + 1;
                         }
-                    }*/
+
+                    }
+
+                    #endregion
+
+
+                    dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
+
+                    //Reindex search
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    {
+
+                        this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
+                    }
+
+                    TaskManager.AddToBus(EasyUploadTaskManager.DATASET_ID, ds.Id);
+
+                    return temp;
                 }
             }
-            #endregion security
-
-
-            #region excel reader
-
-            int packageSize = 10000;
-            //HACK ?
-            TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
-
-            int counter = 0;
-
-            EasyUploadExcelReader reader = new EasyUploadExcelReader();
-
-            dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
-            if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
+            finally
             {
-                throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
+                dsm.Dispose();
+                dm.Dispose();
+                dam.Dispose();
+                //sm.Dispose();
+                entityPermissionManager.Dispose();
             }
-
-            workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-
-            counter++;
-            TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
-
-            // open file
-            Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
-            //rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), oldSds, (int)id, packageSize).ToArray();
-
-            List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
-            string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-            List<int[]> areaDataValuesList = new List<int[]>();
-            foreach (string area in selectedDataAreaJsonArray)
-            {
-                areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
-            }
-            int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
-
-            Orientation orientation = 0;
-
-            switch (TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString())
-            {
-                case "LeftRight":
-                    orientation = Orientation.rowwise;
-                    break;
-                case "Matrix":
-                    //orientation = Orientation.matrix;
-                    break;
-                default:
-                    orientation = Orientation.columnwise;
-                    break;
-            }
-
-            Uri worksheetUri = null;
-            //Get the Uri to identify the correct worksheet
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.WORKSHEET_URI))
-            {
-                worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
-            }
-
-            foreach (int[] areaDataValues in areaDataValuesList)
-            {
-                EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
-                fri.DataStartRow = areaDataValues[0] + 1;
-                fri.DataStartColumn = areaDataValues[1] + 1;
-                fri.DataEndRow = areaDataValues[2] + 1;
-                fri.DataEndColumn = areaDataValues[3] + 1;
-
-                fri.VariablesStartRow = areaHeaderValues[0] + 1;
-                fri.VariablesStartColumn = areaHeaderValues[1] + 1;
-                fri.VariablesEndRow = areaHeaderValues[2] + 1;
-                fri.VariablesEndColumn = areaHeaderValues[3] + 1;
-
-                fri.Offset = areaDataValues[1];
-                fri.Orientation = orientation;
-
-                reader.setSubmittedVariableIdentifiers(identifiers);
-
-                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, worksheetUri);
-
-            }
-
-            //After reading all the rows, add them to the dataset
-            if (rows != null)
-                dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
-
-            Stream.Close();
-
-
-            #endregion
-
-
-            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
-
-            //Reindex search
-            if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
-            {
-
-                this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
-            }
-
-            TaskManager.AddToBus(EasyUploadTaskManager.DATASET_ID, ds.Id);
-
-            return temp;
         }
 
         #region private methods
@@ -585,6 +632,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
+            this.Disposables.Add(dtm);
 
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];

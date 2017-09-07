@@ -7,10 +7,11 @@ using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class EasyUploadSheetSelectMetaDataController : Controller
+    public class EasyUploadSheetSelectMetaDataController : BaseController
     {
         private EasyUploadTaskManager TaskManager;
 
@@ -32,6 +33,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //Load available metadata structures
             MetadataStructureManager msm = new MetadataStructureManager();
+            this.Disposables.Add(msm);
             foreach (MetadataStructure metadataStructure in msm.Repo.Get())
             {
                 model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
@@ -109,6 +111,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     TaskManager.Current().SetStatus(StepStatus.error);
                     MetadataStructureManager msm = new MetadataStructureManager();
+                    this.Disposables.Add(msm);
                     foreach (MetadataStructure metadataStructure in msm.Repo.Get())
                     {
                         model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
@@ -145,6 +148,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 //Load available metadata structures and store them in the model
                 MetadataStructureManager msm = new MetadataStructureManager();
+                this.Disposables.Add(msm);
                 foreach (MetadataStructure metadataStructure in msm.Repo.Get())
                 {
                     model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));

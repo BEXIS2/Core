@@ -27,12 +27,13 @@ using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class CreateDatasetController : Controller
+    public class CreateDatasetController : BaseController
     {
         private CreateTaskmanager TaskManager;
 
@@ -452,6 +453,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
                     DataStructureManager dsm = new DataStructureManager();
+                    this.Disposables.Add(dsm);
 
                     DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
                     //if datastructure is not a structured one
@@ -684,7 +686,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //get all datasetsid where the current userer has access to
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager(new UserStore());
+            UserManager userManager = new UserManager();
 
             List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
                 typeof(Dataset), RightType.Write);
@@ -707,6 +709,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<ListViewItemWithType> LoadDataStructureViewList()
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
+
             List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
 
             foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
@@ -750,8 +754,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private DataStructureType GetDataStructureType(long id)
         {
-            DataStructureManager dataStructuremanager = new DataStructureManager();
-            DataStructure dataStructure = dataStructuremanager.AllTypesDataStructureRepo.Get(id);
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
+            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(id);
 
             if (dataStructure is StructuredDataStructure)
             {
