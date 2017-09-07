@@ -30,7 +30,7 @@ namespace BExIS.Dlm.Services.Data
         private IUnitOfWork guow = null;
         public DatasetManager()
         {
-            guow = this.GetIsolatedUnitOfWork(); // Javad commented this line. bring it back with the new Data Access Pattern
+            guow = this.GetIsolatedUnitOfWork();
             this.PreferedBatchSize = guow.PersistenceManager.PreferredPushSize;
             this.DatasetRepo = guow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = guow.GetReadOnlyRepository<DatasetVersion>();
@@ -60,7 +60,7 @@ namespace BExIS.Dlm.Services.Data
                 if (disposing)
                 {
                     if (guow != null)
-                        //guow.Dispose();
+                        guow.Dispose();
                     isDisposed = true;
                 }
             }

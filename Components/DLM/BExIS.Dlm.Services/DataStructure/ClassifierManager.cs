@@ -2,22 +2,46 @@
 using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
+using System;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class ClassifierManager
+    public class ClassifierManager : IDisposable
     {
 
-        public ClassifierManager() //: base(false, true, true)
+        private IUnitOfWork guow = null;
+        public ClassifierManager()
         {
-            this.Repo = this.GetUnitOfWork().GetReadOnlyRepository<Classifier>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.Repo = guow.GetReadOnlyRepository<Classifier>();
+        }
+
+        private bool isDisposed = false;
+        ~ClassifierManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers
-
-        // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<Classifier> Repo { get; private set; }
-
         #endregion
 
         #region Classifier

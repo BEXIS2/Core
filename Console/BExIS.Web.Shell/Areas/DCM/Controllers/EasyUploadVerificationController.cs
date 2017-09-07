@@ -22,10 +22,12 @@ using System.Globalization;
 using BExIS.Utils.Models;
 using BExIS.Web.Shell.Areas.DCM.Helpers;
 using Newtonsoft.Json;
+using Vaiona.Web.Mvc;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class EasyUploadVerificationController : Controller
+    public class EasyUploadVerificationController : BaseController
     {
         private EasyUploadTaskManager TaskManager;
 
@@ -35,185 +37,202 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public ActionResult Verification(int index)
         {
+
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-            //set current stepinfo based on index
-            if (TaskManager != null)
+            List<Dlm.Entities.DataStructure.Unit> tempUnitList = new List<Dlm.Entities.DataStructure.Unit>();
+            List<DataType> allDataypes = new List<DataType>();
+            List<DataAttribute> allDataAttributes = new List<DataAttribute>();
+
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                TaskManager.SetCurrent(index);
 
-                // remove if existing
-                TaskManager.RemoveExecutedStep(TaskManager.Current());
-            }
-
-            SelectVerificationModel model = new SelectVerificationModel();
-
-            //Grab all necessary managers and lists
-            UnitManager unitManager = new UnitManager();
-            DataTypeManager dataTypeManager = new DataTypeManager();
-            List<Dlm.Entities.DataStructure.Unit> tempUnitList = unitManager.Repo.Get().ToList();
-            List<DataType> allDataypes = dataTypeManager.Repo.Get().ToList();
-
-            DataStructureManager dsm = new DataStructureManager();
-            DataContainerManager dam = new DataContainerManager();
-            List<DataAttribute> allDataAttributes = dam.DataAttributeRepo.Get().ToList();
-
-            //Important for jumping back to this step
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS))
-            {
-                model.AssignedHeaderUnits = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
-            }
-
-
-
-            // get all DataTypes for each Units
-            foreach (Dlm.Entities.DataStructure.Unit unit in tempUnitList)
-            {
-                UnitInfo unitInfo = new UnitInfo();
-
-                unitInfo.UnitId = unit.Id;
-                unitInfo.Description = unit.Description;
-                unitInfo.Name = unit.Name;
-                unitInfo.Abbreviation = unit.Abbreviation;
-
-                if (unit.Name.ToLower() == "none")
+                //set current stepinfo based on index
+                if (TaskManager != null)
                 {
-                    foreach (DataType fullDataType in allDataypes)
-                    {
-                        DataTypeInfo dataTypeInfo = new DataTypeInfo();
-                        dataTypeInfo.DataTypeId = fullDataType.Id;
-                        dataTypeInfo.Description = fullDataType.Description;
-                        dataTypeInfo.Name = fullDataType.Name;
+                    TaskManager.SetCurrent(index);
 
-                        unitInfo.DataTypeInfos.Add(dataTypeInfo);
-                    }
-                    model.AvailableUnits.Add(unitInfo);
+                    // remove if existing
+                    TaskManager.RemoveExecutedStep(TaskManager.Current());
                 }
-                else
+
+                SelectVerificationModel model = new SelectVerificationModel();
+
+                //Grab all necessary managers and lists
+                //UnitManager unitManager = new UnitManager();
+                //this.Disposables.Add(unitManager);
+
+                //DataTypeManager dataTypeManager = new DataTypeManager();
+                //this.Disposables.Add(dataTypeManager);
+
+                tempUnitList = unitOfWork.GetReadOnlyRepository<Dlm.Entities.DataStructure.Unit>().Get().ToList();
+                allDataypes = unitOfWork.GetReadOnlyRepository<DataType>().Get().ToList();
+                allDataAttributes = unitOfWork.GetReadOnlyRepository<DataAttribute>().Get().ToList();
+
+
+
+                //DataStructureManager dsm = new DataStructureManager();
+                //this.Disposables.Add(dsm);
+
+                //DataContainerManager dam = new DataContainerManager();
+                //this.Disposables.Add(dam);
+
+
+                //Important for jumping back to this step
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS))
                 {
-                    Boolean hasDatatype = false; //Make sure only units that have at least one datatype are shown
+                    model.AssignedHeaderUnits = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+                }
 
-                    foreach (DataType dummyDataType in unit.AssociatedDataTypes)
+                // get all DataTypes for each Units
+                foreach (Dlm.Entities.DataStructure.Unit unit in tempUnitList)
+                {
+                    UnitInfo unitInfo = new UnitInfo();
+
+                    unitInfo.UnitId = unit.Id;
+                    unitInfo.Description = unit.Description;
+                    unitInfo.Name = unit.Name;
+                    unitInfo.Abbreviation = unit.Abbreviation;
+
+                    if (unit.Name.ToLower() == "none")
                     {
-                        if (!hasDatatype)
-                            hasDatatype = true;
+                        foreach (DataType fullDataType in allDataypes)
+                        {
+                            DataTypeInfo dataTypeInfo = new DataTypeInfo();
+                            dataTypeInfo.DataTypeId = fullDataType.Id;
+                            dataTypeInfo.Description = fullDataType.Description;
+                            dataTypeInfo.Name = fullDataType.Name;
 
-                        DataTypeInfo dataTypeInfo = new DataTypeInfo();
-
-                        DataType fullDataType = dataTypeManager.Repo.Get(dummyDataType.Id);
-                        dataTypeInfo.DataTypeId = fullDataType.Id;
-                        dataTypeInfo.Description = fullDataType.Description;
-                        dataTypeInfo.Name = fullDataType.Name;
-
-                        unitInfo.DataTypeInfos.Add(dataTypeInfo);
-                    }
-                    if (hasDatatype)
+                            unitInfo.DataTypeInfos.Add(dataTypeInfo);
+                        }
                         model.AvailableUnits.Add(unitInfo);
+                    }
+                    else
+                    {
+                        Boolean hasDatatype = false; //Make sure only units that have at least one datatype are shown
+
+                        foreach (DataType dummyDataType in unit.AssociatedDataTypes)
+                        {
+                            if (!hasDatatype)
+                                hasDatatype = true;
+
+                            DataTypeInfo dataTypeInfo = new DataTypeInfo();
+
+                            DataType fullDataType = allDataypes.Where(p => p.Id == dummyDataType.Id).FirstOrDefault();
+                            dataTypeInfo.DataTypeId = fullDataType.Id;
+                            dataTypeInfo.Description = fullDataType.Description;
+                            dataTypeInfo.Name = fullDataType.Name;
+
+                            unitInfo.DataTypeInfos.Add(dataTypeInfo);
+                        }
+                        if (hasDatatype)
+                            model.AvailableUnits.Add(unitInfo);
+                    }
                 }
-            }
 
-            //Sort the units by name
-            model.AvailableUnits.Sort(delegate (UnitInfo u1, UnitInfo u2)
-            {
-                return String.Compare(u1.Name, u2.Name, StringComparison.InvariantCultureIgnoreCase);
-            });
-
-            if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS))
-            {
-                TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS, model.AvailableUnits);
-            }
-        
-            string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
-            string selectedHeaderAreaJson = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-
-            FileStream fis = null;
-            fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            ExcelPackage ep = new ExcelPackage(fis);
-            fis.Close();
-
-            ExcelWorkbook excelWorkbook = ep.Workbook;
-            ExcelWorksheet firstWorksheet = excelWorkbook.Worksheets[1];
-
-            string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
-
-            SheetFormat sheetFormat = 0;
-            Enum.TryParse<SheetFormat>(sheetFormatString, true, out sheetFormat);
-
-            model.HeaderFields = GetExcelHeaderFields(firstWorksheet, sheetFormat, selectedHeaderAreaJson).ToArray();
-
-            if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS))
-            {
-                TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS, model.HeaderFields);
-            }
-
-
-            model.Suggestions = new Dictionary<int, List<EasyUploadSuggestion>>();
-
-            for (int i = 0; i < model.HeaderFields.Length; i++)
-            {
-                //Default unit should be "none" if it exists, otherwise just take the first unit
-                UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
-                if (currentUnitInfo != null)
+                //Sort the units by name
+                model.AvailableUnits.Sort(delegate (UnitInfo u1, UnitInfo u2)
                 {
-                    currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
-                }
-                else
+                    return String.Compare(u1.Name, u2.Name, StringComparison.InvariantCultureIgnoreCase);
+                });
+
+                if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS))
                 {
-                    currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                    TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS, model.AvailableUnits);
                 }
-                
-                DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
-                currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
-                ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
-                if (model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault() == null)
+                string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
+                string selectedHeaderAreaJson = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
+
+                FileStream fis = null;
+                fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                ExcelPackage ep = new ExcelPackage(fis);
+                fis.Close();
+
+                ExcelWorkbook excelWorkbook = ep.Workbook;
+                ExcelWorksheet firstWorksheet = excelWorkbook.Worksheets[1];
+
+                string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
+
+                SheetFormat sheetFormat = 0;
+                Enum.TryParse<SheetFormat>(sheetFormatString, true, out sheetFormat);
+
+                model.HeaderFields = GetExcelHeaderFields(firstWorksheet, sheetFormat, selectedHeaderAreaJson).ToArray();
+
+                if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS))
                 {
-                    model.AssignedHeaderUnits.Add(new Tuple<int, string, UnitInfo>(i, model.HeaderFields[i], currentUnitInfo));
+                    TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS, model.HeaderFields);
                 }
 
-                #region suggestions
-                //Add a variable to the suggestions if the names are similar
-                model.Suggestions.Add(i, new List<EasyUploadSuggestion>());
 
-                //Calculate similarity metric
-                //Accept suggestion if the similarity is greater than some threshold
-                double threshold = 0.5;
-                IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold);
-                
-                //Order the suggestions according to the similarity
-                List<DataAttribute> ordered = suggestions.ToList<DataAttribute>();
-                ordered.Sort((x, y) => (similarity(y.Name, model.HeaderFields[i])).CompareTo(similarity(x.Name, model.HeaderFields[i])));
+                model.Suggestions = new Dictionary<int, List<EasyUploadSuggestion>>();
 
-                //Add the ordered suggestions to the model
-                foreach (DataAttribute att in ordered)
+                for (int i = 0; i < model.HeaderFields.Length; i++)
                 {
-                    model.Suggestions[i].Add(new EasyUploadSuggestion(att.Name, att.Unit.Id, att.DataType.Id, att.Unit.Name, att.DataType.Name, true));
+                    //Default unit should be "none" if it exists, otherwise just take the first unit
+                    UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+                    if (currentUnitInfo != null)
+                    {
+                        currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+                    }
+                    else
+                    {
+                        currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+                    }
+
+                    DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
+                    currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
+                    ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
+
+                    if (model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault() == null)
+                    {
+                        model.AssignedHeaderUnits.Add(new Tuple<int, string, UnitInfo>(i, model.HeaderFields[i], currentUnitInfo));
+                    }
+
+                    #region suggestions
+                    //Add a variable to the suggestions if the names are similar
+                    model.Suggestions.Add(i, new List<EasyUploadSuggestion>());
+
+                    //Calculate similarity metric
+                    //Accept suggestion if the similarity is greater than some threshold
+                    double threshold = 0.5;
+                    IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold);
+
+                    //Order the suggestions according to the similarity
+                    List<DataAttribute> ordered = suggestions.ToList<DataAttribute>();
+                    ordered.Sort((x, y) => (similarity(y.Name, model.HeaderFields[i])).CompareTo(similarity(x.Name, model.HeaderFields[i])));
+
+                    //Add the ordered suggestions to the model
+                    foreach (DataAttribute att in ordered)
+                    {
+                        model.Suggestions[i].Add(new EasyUploadSuggestion(att.Name, att.Unit.Id, att.DataType.Id, att.Unit.Name, att.DataType.Name, true));
+                    }
+
+                    //Use the following to order suggestions alphabetically instead of ordering according to the metric
+                    //model.Suggestions[i] = model.Suggestions[i].Distinct().OrderBy(s => s.attributeName).ToList<EasyUploadSuggestion>();
+
+                    //Each Name-Unit-Datatype-Tuple should be unique
+                    model.Suggestions[i] = model.Suggestions[i].Distinct().ToList<EasyUploadSuggestion>();
+                    #endregion
                 }
 
-                //Use the following to order suggestions alphabetically instead of ordering according to the metric
-                //model.Suggestions[i] = model.Suggestions[i].Distinct().OrderBy(s => s.attributeName).ToList<EasyUploadSuggestion>();
 
-                //Each Name-Unit-Datatype-Tuple should be unique
-                model.Suggestions[i] = model.Suggestions[i].Distinct().ToList<EasyUploadSuggestion>();
-                #endregion
+                TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS, model.Suggestions);
+
+                TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
+
+                // when jumping back to this step
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
+                {
+                    if (!String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA])))
+                    {
+                    }
+                }
+
+                model.StepInfo = TaskManager.Current();
+
+                return PartialView(model);
             }
-
-
-            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS, model.Suggestions);
-
-            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);            
-
-            // when jumping back to this step
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
-            {
-                if (!String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA])))
-                {
-                }
-            }
-
-            model.StepInfo = TaskManager.Current();
-
-            return PartialView(model);
         }
 
         [HttpPost]
@@ -740,7 +759,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
-
+            this.Disposables.Add(dtm);
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();

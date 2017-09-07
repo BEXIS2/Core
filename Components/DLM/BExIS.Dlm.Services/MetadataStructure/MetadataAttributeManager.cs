@@ -9,16 +9,41 @@ using System.Linq;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
-    public sealed class MetadataAttributeManager
+    public class MetadataAttributeManager: IDisposable
     {
         ConstraintHelper helper = new ConstraintHelper();
 
+        private IUnitOfWork guow = null;
         public MetadataAttributeManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.MetadataAttributeRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
-            this.MetadataSimpleAttributeRepo = uow.GetReadOnlyRepository<MetadataSimpleAttribute>();
-            this.MetadataCompoundAttributeRepo = uow.GetReadOnlyRepository<MetadataCompoundAttribute>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.MetadataAttributeRepo = guow.GetReadOnlyRepository<MetadataAttribute>();
+            this.MetadataSimpleAttributeRepo = guow.GetReadOnlyRepository<MetadataSimpleAttribute>();
+            this.MetadataCompoundAttributeRepo = guow.GetReadOnlyRepository<MetadataCompoundAttribute>();
+        }
+
+        private bool isDisposed = false;
+        ~MetadataAttributeManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers

@@ -19,11 +19,12 @@ using System.Web.Routing;
 using System.Xml;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitController : Controller
+    public class SubmitController : BaseController
     {
         //
         // GET: /Collect/Home/
@@ -196,7 +197,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 RightType.Write).ToList();
 
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
             DatasetManager dm = new DatasetManager();
+            this.Disposables.Add(dm);
 
             Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
             dmtemp = dm.GetDatasetLatestMetadataVersions();
@@ -252,6 +256,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<ListViewItem> LoadDataStructureViewList(DataStructureType dataStructureType)
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
+
             List<ListViewItem> temp = new List<ListViewItem>();
 
             foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
