@@ -5,6 +5,7 @@ using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
@@ -166,54 +168,234 @@ namespace BExIS.Modules.Dim.UI.Helpers
             MappingManager mappingManager = new MappingManager();
             XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            #region ABCD BASIC
-            if (metadataStructureManager.Repo.Query().Any(m => m.Name.ToLower().Equals("basic abcd")))
+            //#region ABCD BASIC
+            if (metadataStructureManager.Repo.Get().Any(m => m.Name.ToLower().Equals("basic abcd")))
             {
                 MetadataStructure metadataStructure =
-                    metadataStructureManager.Repo.Query().FirstOrDefault(m => m.Name.ToLower().Equals("basic abcd"));
+                    metadataStructureManager.Repo.Get().FirstOrDefault(m => m.Name.ToLower().Equals("basic abcd"));
 
                 XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
 
                 //create root mapping
-                LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.Complex);
+                LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
 
                 //create system mapping
-                LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.Complex);
+                LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
 
                 #region mapping ABCD BASIC to System Keys
 
 
-                Mapping root = mappingManager.CreateMapping(abcdRoot, system, 0, null, null);
+                Mapping rootTo = mappingManager.CreateMapping(abcdRoot, system, 0, null, null);
+                Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
 
-                //get all title (title/titleType)
-                IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("Title", metadataRef);
+                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
 
-                LinkElement title = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(Key.Title), Key.Title.ToString(), LinkElementType.Key, LinkElementComplexity.Simple);
+                createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager);
 
-                foreach (XElement xElement in elements)
-                {
-                    string sId = xElement.Attribute("id").Value;
-                    string name = xElement.Attribute("name").Value;
-                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name, LinkElementType.MetadataNestedAttributeUsage, LinkElementComplexity.Simple);
+                createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager);
 
-                    Mapping tmpMapping = mappingManager.CreateMapping(tmp, title, 1, null, root);
-                    mappingManager.CreateMapping(tmp, title, 2, null, tmpMapping);
-
-                }
+                createToKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager);
 
 
                 #endregion
             }
 
-            #endregion
+
+
+            //#endregion
 
 
             #region mapping GBIF to System Keys
 
+            if (metadataStructureManager.Repo.Get().Any(m => m.Name.ToLower().Equals("gbif")))
+            {
+                MetadataStructure metadataStructure =
+                    metadataStructureManager.Repo.Get().FirstOrDefault(m => m.Name.ToLower().Equals("gbif"));
+
+                XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
+
+
+                //create root mapping
+                LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
+
+                //create system mapping
+                LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
+
+                #region mapping GBIF to System Keys
+
+
+                Mapping rootTo = mappingManager.CreateMapping(gbifRoot, system, 0, null, null);
+                Mapping rootFrom = mappingManager.CreateMapping(system, gbifRoot, 0, null, null);
+
+                createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+
+                createToKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+
+
+
+                createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
+
+                createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
+
+
+                createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
+                createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+
+                #endregion
+            }
 
             #endregion
         }
+
+        /// <summary>
+        /// Map a node from xml to system key
+        /// </summary>
+        /// <param name="simpleNodeName">name or xpath</param>
+        /// <param name="simpleType"></param>
+        /// <param name="complexNodeName">name or xpath</param>
+        /// <param name="complexType"></param>
+        /// <param name="key"></param>
+        /// <param name="root"></param>
+        /// <param name="metadataRef"></param>
+        /// <param name="mappingManager"></param>
+        private static void createToKeyMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            Key key,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager, TransformationRule transformationRule = null)
+        {
+
+            if (transformationRule == null) transformationRule = new TransformationRule();
+
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
+                    key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple);
+
+            if (simpleNodeName.Equals(complexNodeName))
+            {
+
+                List<XElement> elements = getXElements(simpleNodeName, metadataRef);
+
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, le, 1, new TransformationRule(), root);
+                    MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, tmpMapping);
+                }
+            }
+            else
+            {
+                IEnumerable<XElement> complexElements = getXElements(complexNodeName, metadataRef);
+
+                foreach (var complex in complexElements)
+                {
+                    string sIdComplex = complex.Attribute("id").Value;
+                    string nameComplex = complex.Attribute("name").Value;
+                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                        complexType, LinkElementComplexity.Complex);
+
+                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root);
+
+
+                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                    foreach (XElement xElement in simpleElements)
+                    {
+                        string sId = xElement.Attribute("id").Value;
+                        string name = xElement.Attribute("name").Value;
+                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                            simpleType, LinkElementComplexity.Simple);
+
+                        MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping);
+                    }
+                }
+
+
+            }
+        }
+
+        /// <summary>
+        /// Map a system key to xml node
+        /// </summary>
+        /// <param name="simpleNodeName"></param>
+        /// <param name="simpleType"></param>
+        /// <param name="complexNodeName"></param>
+        /// <param name="complexType"></param>
+        /// <param name="key"></param>
+        /// <param name="root"></param>
+        /// <param name="metadataRef"></param>
+        /// <param name="mappingManager"></param>
+        private static void createFromKeyMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            Key key,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager)
+        {
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
+                    key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple);
+
+            if (simpleNodeName.Equals(complexNodeName))
+            {
+                IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName(simpleNodeName, metadataRef);
+
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root);
+                    MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping);
+                }
+            }
+            else
+            {
+                IEnumerable<XElement> complexElements = XmlUtility.GetXElementByNodeName(complexNodeName, metadataRef);
+
+                foreach (var complex in complexElements)
+                {
+                    string sIdComplex = complex.Attribute("id").Value;
+                    string nameComplex = complex.Attribute("name").Value;
+                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                        complexType, LinkElementComplexity.Complex);
+
+                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root);
+
+
+                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                    foreach (XElement xElement in simpleElements)
+                    {
+                        string sId = xElement.Attribute("id").Value;
+                        string name = xElement.Attribute("name").Value;
+                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                            simpleType, LinkElementComplexity.Simple);
+
+                        MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping);
+                    }
+                }
+
+
+            }
+        }
+
 
         private static LinkElement createLinkELementIfNotExist(
             MappingManager mappingManager,
@@ -236,6 +418,20 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
 
             return element;
+        }
+
+        private static List<XElement> getXElements(string nodename, XDocument metadataRef)
+        {
+            if (!nodename.Contains("/"))
+            {
+                return XmlUtility.GetXElementByNodeName(nodename, metadataRef).ToList();
+            }
+            else
+            {
+                List<XElement> tmp = new List<XElement>();
+                tmp.Add(metadataRef.XPathSelectElement(nodename));
+                return tmp;
+            }
         }
 
         private static void ImportPartyTypes()
