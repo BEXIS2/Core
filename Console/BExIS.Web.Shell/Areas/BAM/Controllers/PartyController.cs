@@ -124,7 +124,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
                 try
                 {
-                    partyManager.AddPartyCustomAttriuteValues(party, partyCustomAttributeValues);
+
+                    partyManager.AddPartyCustomAttriuteValues(party, partyCustomAttributeValues.ToDictionary(cc=>long.Parse(cc.Key), cc=>cc.Value));
                 }
                 catch (Exception ex)
                 {
