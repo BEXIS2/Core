@@ -65,6 +65,11 @@
     function grid_subjects_onDataBound() {
         addTooltips();
         resetAllTelerikIconTitles();
+
+        $(".fa-eye")
+    .click(function () {
+        alert("TEST UND SO!");
+    });
     }
 
     function grid_instances_onRowSelect(e) {
@@ -73,4 +78,6 @@
             $('#content_subjects').html(data);
         });
     }
+
+
 </script>

@@ -40,13 +40,15 @@
     function treeView_features_onChecked(e) {
         if (e.checked) {
             $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")',
-                { FeatureId: getTreeView().getItemValue(e.item) });
+                { FeatureId: getTreeView().getItemValue(e.item) }, function() {
+                    $("#grid_subjects .t-refresh").trigger('click');
+                });
         } else {
             $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")',
-                { FeatureId: getTreeView().getItemValue(e.item) });
+                { FeatureId: getTreeView().getItemValue(e.item)}, function() {
+                    $("#grid_subjects .t-refresh").trigger('click');
+                });          
         }
-
-        $("#grid_subjects .t-refresh").trigger('click');
     }
 
     function treeView_features_onSelect(e) {
