@@ -13,12 +13,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
     public class UsersController : Controller
     {
         [HttpPost]
-        public void AddUserToGroup(long userId, long groupId)
+        public void AddUserToGroup(long userId, string groupName)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
-
-            userStore.AddToGroupAsync(user, groupId);
+            var userManager = new UserManager();
+            userManager.AddToGroupAsync(userId, groupName);
         }
 
         public ActionResult Create()
@@ -33,7 +31,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (!ModelState.IsValid) return PartialView("_Create", model);
 
             var user = new User { UserName = model.UserName, Email = model.Email };
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var result = await userManager.CreateAsync(user);
             if (result.Succeeded)
             {
@@ -48,8 +46,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void Delete(long userId)
         {
-            var userStore = new UserStore();
-            userStore.Delete(userId);
+            var userManager = new UserManager();
+            var user = userManager.FindByIdAsync(userId).Result;
+            userManager.DeleteAsync(user);
         }
 
         public ActionResult Groups(long userId)
@@ -72,19 +71,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public void RemoveUserFromGroup(long userId, long groupId)
+        public void RemoveUserFromGroup(long userId, string groupName)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
-
-            userStore.RemoveFromGroupAsync(user, groupId);
+            var userManager = new UserManager();
+            userManager.RemoveFromGroupAsync(userId, groupName);
         }
 
         public ActionResult Update(long userId)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
-
+            var userManager = new UserManager();
+            var user = userManager.FindByIdAsync(userId).Result;
             return PartialView("_Update", UpdateUserModel.Convert(user));
         }
 
@@ -93,21 +89,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             if (!ModelState.IsValid) return PartialView("_Update", model);
 
-            var userStore = new UserStore();
-            var user = userStore.FindById(model.Id);
+            var userManager = new UserManager();
+            var user = userManager.FindByIdAsync(model.Id).Result;
 
             if (user == null) return PartialView("_Update", model);
 
             user.Email = model.Email;
 
-            userStore.Update(user);
+            userManager.UpdateAsync(user);
             return Json(new { success = true });
         }
 
         [GridAction]
         public ActionResult Users_Select()
         {
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
 
             return View(new GridModel<UserGridRowModel> { Data = users });

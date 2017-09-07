@@ -682,7 +682,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //get all datasetsid where the current userer has access to
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager(new UserStore());
+            UserManager userManager = new UserManager();
 
             List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
                 typeof(Dataset), RightType.Write);

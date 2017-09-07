@@ -418,9 +418,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\help\Help_img1.png" />
-    <Content Include="Content\Images\help\Help_img10.png" />
-    <Content Include="Content\Images\help\Help_img11.jpeg" />
+    <Content Include="Content\Images\help\create_dataset.png" />
+    <Content Include="Content\Images\help\down.png" />
     <Content Include="Content\Images\help\Help_img12.jpeg" />
     <Content Include="Content\Images\help\Help_img13.jpeg" />
     <Content Include="Content\Images\help\Help_img14.jpeg" />
@@ -430,23 +429,23 @@
     <Content Include="Content\Images\help\Help_img18.png" />
     <Content Include="Content\Images\help\Help_img19.jpeg" />
     <Content Include="Content\Images\help\Help_img2.jpeg" />
-    <Content Include="Content\Images\help\Help_img20.jpeg" />
-    <Content Include="Content\Images\help\Help_img21.jpeg" />
     <Content Include="Content\Images\help\Help_img22.png" />
     <Content Include="Content\Images\help\Help_img23.png" />
     <Content Include="Content\Images\help\Help_img24.png" />
-    <Content Include="Content\Images\help\Help_img25.jpeg" />
-    <Content Include="Content\Images\help\Help_img26.jpeg" />
     <Content Include="Content\Images\help\Help_img27.png" />
-    <Content Include="Content\Images\help\Help_img28.jpeg" />
-    <Content Include="Content\Images\help\Help_img29.jpeg" />
     <Content Include="Content\Images\help\Help_img3.png" />
-    <Content Include="Content\Images\help\Help_img4.png" />
-    <Content Include="Content\Images\help\Help_img5.png" />
-    <Content Include="Content\Images\help\Help_img6.png" />
-    <Content Include="Content\Images\help\Help_img7.png" />
-    <Content Include="Content\Images\help\Help_img8.png" />
-    <Content Include="Content\Images\help\Help_img9.png" />
+    <Content Include="Content\Images\help\mines.png" />
+    <Content Include="Content\Images\help\plus.png" />
+    <Content Include="Content\Images\help\push_big_file.png" />
+    <Content Include="Content\Images\help\read_xsd.png" />
+    <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\select_file.png" />
+    <Content Include="Content\Images\help\select_xsd.png" />
+    <Content Include="Content\Images\help\set_xsd_parameters.png" />
+    <Content Include="Content\Images\help\summary_xsd.png" />
+    <Content Include="Content\Images\help\up.png" />
+    <Content Include="Content\Images\help\upload_data.png" />
+    <Content Include="Content\Images\help\up_down.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>

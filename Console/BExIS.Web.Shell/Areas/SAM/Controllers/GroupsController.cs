@@ -15,14 +15,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         ///
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="groupId"></param>
+        /// <param name="groupName"></param>
         [HttpPost]
-        public void AddUserToGroup(long userId, long groupId)
+        public void AddUserToGroup(long userId, string groupName)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
+            var userManager = new UserManager();
+            var user = userManager.FindByIdAsync(userId).Result;
 
-            userStore.AddToGroupAsync(user, groupId);
+            userManager.AddToGroupAsync(user.Id, groupName);
         }
 
         /// <summary>
@@ -76,14 +76,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// ToDo: Documentation
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="groupId"></param>
+        /// <param name="groupName"></param>
         [HttpPost]
-        public void RemoveUserFromGroup(long userId, long groupId)
+        public void RemoveUserFromGroup(long userId, string groupName)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
+            var userManager = new UserManager();
+            var user = userManager.FindByIdAsync(userId).Result;
 
-            userStore.RemoveFromGroupAsync(user, groupId);
+            userManager.RemoveFromGroupAsync(user.Id, groupName);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Users_Select(long groupId = 0)
         {
-            var userManager = new UserManager(new UserStore());
+            var userManager = new UserManager();
             var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, groupId)).ToList();
 
             return View(new GridModel<UserMembershipGridRowModel> { Data = userMemberships });

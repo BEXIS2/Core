@@ -1,47 +1,167 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Utilities;
+﻿using BExIS.Dlm.Entities.Party;
+using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public sealed class UserManager : UserManager<User, long>
+    public class UserManager : IUserManager, IDisposable
     {
-        public UserManager(IUserStore<User, long> store) : base(store)
+        private readonly IdentityManager _identityManager;
+
+        private bool _isDisposed;
+
+        public UserManager()
         {
-            // Configure validation logic for usernames
-            UserValidator = new UserValidator<User, long>(this)
-            {
-                AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = true
-            };
+            _identityManager = new IdentityManager();
+        }
 
-            // Configure validation logic for passwords
-            PasswordValidator = new PasswordValidator
-            {
-                RequiredLength = 6,
-                RequireNonLetterOrDigit = false,
-                RequireDigit = false,
-                RequireLowercase = false,
-                RequireUppercase = false,
-            };
+        ~UserManager()
+        {
+            Dispose(true);
+        }
 
-            // Configure user lockout defaults
-            UserLockoutEnabledByDefault = true;
-            DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            MaxFailedAccessAttemptsBeforeLockout = 5;
+        public IQueryable<User> Users => _identityManager.Users;
 
-            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
-            // You can write your own provider and plug it in here.
-            EmailService = new EmailService();
+        public Task<IdentityResult> AddLoginAsync(long userId, UserLoginInfo login)
+        {
+            return _identityManager.AddLoginAsync(userId, login);
+        }
 
-            var dataProtectionProvider = Auth.DataProtectionProvider;
+        public Task<IdentityResult> AddToGroupAsync(long userId, string groupName)
+        {
+            return _identityManager.AddToRoleAsync(userId, groupName);
+        }
 
-            if (dataProtectionProvider == null) return;
+        public Task<IdentityResult> AddToGroupAsync(User user, Group group)
+        {
+            return _identityManager.AddToRoleAsync(user.Id, group.Name);
+        }
 
-            var dataProtector = dataProtectionProvider.Create("ASP.NET Identity");
-            UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
+        public Task<IdentityResult> AddToGroupsAsync(long userId, string[] groupNames)
+        {
+            return _identityManager.AddToRolesAsync(userId, groupNames);
+        }
+
+        public Task<IdentityResult> ChangePasswordAsync(long userId, string currentPassword, string newPassword)
+        {
+            return _identityManager.ChangePasswordAsync(userId, currentPassword, newPassword);
+        }
+
+        public Task<IdentityResult> ConfirmEmailAsync(long userId, string token)
+        {
+            return _identityManager.ConfirmEmailAsync(userId, token);
+        }
+
+        public Task<IdentityResult> CreateAsync(User user)
+        {
+            return _identityManager.CreateAsync(user);
+        }
+
+        public Task<IdentityResult> CreateAsync(User user, string password)
+        {
+            return _identityManager.CreateAsync(user, password);
+        }
+
+        public Task<IdentityResult> DeleteAsync(User user)
+        {
+            return _identityManager.DeleteAsync(user);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public Task<User> FindByEmailAsync(string email)
+        {
+            return _identityManager.FindByEmailAsync(email);
+        }
+
+        public Task<User> FindByIdAsync(long userId)
+        {
+            return _identityManager.FindByIdAsync(userId);
+        }
+
+        public Task<User> FindByNameAsync(string userName)
+        {
+            return _identityManager.FindByNameAsync(userName);
+        }
+
+        public Task<string> GenerateEmailConfirmationTokenAsync(long userId)
+        {
+            return _identityManager.GenerateEmailConfirmationTokenAsync(userId);
+        }
+
+        public Task<string> GeneratePasswordResetTokenAsync(long userId)
+        {
+            return _identityManager.GeneratePasswordResetTokenAsync(userId);
+        }
+
+        public Task<IList<string>> GetGroupsAsync(long userId)
+        {
+            return _identityManager.GetRolesAsync(userId);
+        }
+
+        public Task<Party> GetPartyAsync(User user)
+        {
+            return _identityManager.GetPartyAsync(user);
+        }
+
+        public Task<bool> IsEmailConfirmedAsync(long userId)
+        {
+            return _identityManager.IsEmailConfirmedAsync(userId);
+        }
+
+        public Task<IdentityResult> RemoveFromGroupAsync(long userId, string groupName)
+        {
+            return _identityManager.RemoveFromRoleAsync(userId, groupName);
+        }
+
+        public Task<IdentityResult> RemoveFromGroupAsync(long userId, string[] groupNames)
+        {
+            return _identityManager.RemoveFromRolesAsync(userId, groupNames);
+        }
+
+        public Task<IdentityResult> RemoveLoginAsync(long userId, UserLoginInfo login)
+        {
+            return _identityManager.RemoveLoginAsync(userId, login);
+        }
+
+        public Task<IdentityResult> ResetPasswordAsync(long userId, string token, string newPassword)
+        {
+            return _identityManager.ResetPasswordAsync(userId, token, newPassword);
+        }
+
+        public Task SendEmailAsync(long userId, string subject, string body)
+        {
+            return _identityManager.SendEmailAsync(userId, subject, body);
+        }
+
+        public Task<IdentityResult> SetEmailAsync(long userId, string email)
+        {
+            return _identityManager.SetEmailAsync(userId, email);
+        }
+
+        public Task SetPartyAsync(User user, long partyId)
+        {
+            return _identityManager.SetPartyAsync(user, partyId);
+        }
+
+        public Task<IdentityResult> UpdateAsync(User user)
+        {
+            return _identityManager.UpdateAsync(user);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+            if (!disposing) return;
+            _identityManager?.Dispose();
+            _isDisposed = true;
         }
     }
 }

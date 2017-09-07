@@ -100,6 +100,22 @@ namespace BExIS.Dlm.Services.Party
         {
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
+            AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
+            return party;
+        }
+        /// <summary>
+        /// create a party with custom attribute values
+        /// </summary>
+        /// <param name="partyType">Party type</param>
+        /// <param name="description">Description</param>
+        /// <param name="startDate">Party start date</param>
+        /// <param name="endDate">Party end date</param>
+        /// <param name="partyCustomAttributeValues">Custom attribute values</param>
+        /// <returns>Party</returns>
+        public PartyX Create(PartyType partyType, string description, DateTime? startDate, DateTime? endDate, Dictionary<long, string> partyCustomAttributeValues)
+        {
+            var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
+            var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
             AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
             return party;
         }
@@ -414,7 +430,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return party.CustomAttributeValues;
         }
-        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<string, string> partyCustomAttributeValues)
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
         {
             return AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
         }
@@ -713,16 +729,34 @@ namespace BExIS.Dlm.Services.Party
         /// </summary>
         /// <param name="partyCustomAttributes"></param>
         /// <returns></returns>
-        private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<string, string> partyCustomAttributes)
+        private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<long, string> partyCustomAttributes)
         {
             var result = new Dictionary<PartyCustomAttribute, string>();
             var partyTypeManager = new PartyTypeManager();
             foreach (var partyCustomAttribute in partyCustomAttributes)
             {
-                //result.Add(new PartyCustomAttribute() { Id = int.Parse(partyCustomAttribute.Key) }, partyCustomAttribute.Value);
-                var customAttribiute = partyTypeManager.RepoPartyCustomAttribute.Get(int.Parse(partyCustomAttribute.Key));
-                if (customAttribiute == null || customAttribiute.Id == 0)
+                var customAttribiute = partyTypeManager.RepoPartyCustomAttribute.Get(partyCustomAttribute.Key);
+                if (customAttribiute != null && customAttribiute.Id != 0)
+                    result.Add(customAttribiute, partyCustomAttribute.Value);
+                else
                     throw new Exception("Error in custom attribute values.");
+            }
+            return result;
+        }
+        /// <summary>
+        /// Conver a simple string,string dictionary to PartyCustomAttribute, string
+        /// </summary>
+        /// <param name="partyCustomAttributes"></param>
+        /// <returns></returns>
+        private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<string, string> partyCustomAttributes, PartyType partyType)
+        {
+            var result = new Dictionary<PartyCustomAttribute, string>();
+            var partyTypeManager = new PartyTypeManager();
+            foreach (var partyCustomAttribute in partyCustomAttributes)
+            {
+                var customAttribiute = partyTypeManager.RepoPartyCustomAttribute.Get(cc=>cc.Name==partyCustomAttribute.Key && cc.PartyType==partyType).FirstOrDefault();
+                if (customAttribiute == null)
+                    BexisException.Throw(customAttribiute, "There is no custom attribute with name of " + partyCustomAttribute.Key+" for this party type!");
                 result.Add(customAttribiute, partyCustomAttribute.Value);
             }
             return result;
