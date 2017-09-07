@@ -1,28 +1,39 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using BExIS.Security.Entities.Authorization
+@using DocumentFormat.OpenXml.Wordprocessing
 @using Telerik.Web.Mvc.UI
 
 @model EntityInstanceModel
+    
+<style>
+    i {
+     cursor: pointer
+}
+</style>
 
 @(Html.Telerik().Grid<EntityPermissionGridRowModel>()
-      .Name("grid_subjects")
-      .DataKeys(keys =>
-      {
-          keys.Add(m => m.SubjectId);
-      })
-      .Columns(columns =>
-      {
-          columns.Bound(m => m.SubjectId);
-          columns.Bound(m => m.SubjectName);
-          columns.Bound(m => m.SubjectType);
-          columns.Template(@<text>
-                               @foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                               {
-                                   <button type="button" class="bx bx-grid-function bx-edit">Save</button>
-                               }
-                            </text>)
-              .Width(110);
-      })
+    .Name("grid_subjects")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(m => m.SubjectId);
+        columns.Bound(m => m.SubjectName);
+        columns.Bound(m => m.SubjectType);
+
+        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+        {
+            columns.Bound(m => m.Rights)
+                        .ClientTemplate("<input type='checkbox' name='nothing' <#= (Rights &" + (int)@rightType + ") > 0 ? checked='checked' : '' #> />")
+                               .Title(rightType.ToString())
+                               .Width(64)
+                               .Filterable(false)
+                               .Sortable(false)
+                               .HtmlAttributes(new { style = "text-align:center" });
+        }
+    })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
           .OperationMode(GridOperationMode.Server)

@@ -105,7 +105,6 @@
     <Compile Include="Builders\QueryBuilder.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\QueryableExtensions.cs" />
-    <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
