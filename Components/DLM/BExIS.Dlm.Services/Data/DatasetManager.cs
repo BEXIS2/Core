@@ -62,7 +62,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     if (guow != null)
                         //guow.Dispose();
-                    isDisposed = true;
+                        isDisposed = true;
                 }
             }
         }
@@ -1188,6 +1188,7 @@ namespace BExIS.Dlm.Services.Data
             var metadata = workingCopyDatasetVersion.Metadata;
             var xmlExtendedPropertyValues = workingCopyDatasetVersion.XmlExtendedPropertyValues;
             var contentDescriptors = workingCopyDatasetVersion.ContentDescriptors;
+            var stateInfo = workingCopyDatasetVersion.StateInfo;
 
             // do not move them to editDatasetVersion function
             this.DatasetRepo.Evict();
@@ -1204,6 +1205,8 @@ namespace BExIS.Dlm.Services.Data
                 workingCopyDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
             if (contentDescriptors != null)
                 workingCopyDatasetVersion.ContentDescriptors = contentDescriptors;
+            if (stateInfo != null)
+                workingCopyDatasetVersion.StateInfo = stateInfo;
 
             return editDatasetVersion(workingCopyDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
         }

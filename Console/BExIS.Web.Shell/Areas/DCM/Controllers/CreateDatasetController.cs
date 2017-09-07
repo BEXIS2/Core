@@ -410,10 +410,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public ActionResult Submit()
+        public ActionResult Submit(bool valid)
         {
             // create and submit Dataset
-            long datasetId = SubmitDataset();
+            long datasetId = SubmitDataset(valid);
 
             bool editMode = false;
 
@@ -432,7 +432,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset()
+        public long SubmitDataset(bool valid)
         {
             #region create dataset
 
@@ -489,6 +489,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                         workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
                     }
+
+                    //set status
+                    if (valid) workingCopy.StateInfo.State = "valid";
+                    else workingCopy.StateInfo.State = "not valid";
 
                     string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
                     if (string.IsNullOrEmpty(title)) title = "No Title available.";
