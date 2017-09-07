@@ -29,12 +29,13 @@ using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
-    public class DataController : Controller
+    public class DataController : BaseController
     {
 
         public ActionResult ShowData(long id)
@@ -54,13 +55,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             if (dm.IsDatasetCheckedIn(id))
             {
-                dsv = dm.GetDatasetLatestVersion(id);
+                long versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
+                dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
-                MetadataStructureManager msm = new MetadataStructureManager();
-                dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                //metadataStructureId = dm.DatasetVersionRepo.Get(id).Dataset.MetadataStructure.Id; 
 
-                title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-                metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+                //MetadataStructureManager msm = new MetadataStructureManager();
+                //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
                 dataStructureId = dsv.Dataset.DataStructure.Id;
                 researchPlanId = dsv.Dataset.ResearchPlan.Id;
                 metadata = dsv.Metadata;
@@ -197,16 +200,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             if (dm.IsDatasetCheckedIn(datasetID))
             {
+                //long versionId = dm.GetDatasetLatestVersionId(datasetID); // check for zero value
+                //DatasetVersion dsv = dm.DatasetVersionRepo.Get(versionId);
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
                 DataStructureManager dsm = new DataStructureManager();
-
+                this.Disposables.Add(dsm);
 
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
                 DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
                 //permission download
                 EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
+                this.Disposables.Add(entityPermissionManager);
 
                 // TODO: refactor Download Right not existing, so i set it to read
                 bool downloadAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name,
@@ -730,6 +735,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (ds != null)
                 {
                     DataStructureManager dsm = new DataStructureManager();
+                    this.Disposables.Add(dsm);
+
                     StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
                     dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
                     //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
@@ -754,6 +761,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 DatasetVersion ds = dm.GetDatasetLatestVersion(datasetID);
                 DataStructureManager dsm = new DataStructureManager();
+                this.Disposables.Add(dsm);
+
                 DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
 
 

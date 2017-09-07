@@ -10,16 +10,19 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Vaiona.Utils.Cfg;
 using System.Collections.Generic;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class DataStructureIOController : Controller
+    public class DataStructureIOController : BaseController
     {
         public FileResult downloadTemplate(long id)
         {
             if (id != 0)
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
+                this.Disposables.Add(dataStructureManager);
+
                 StructuredDataStructure dataStructure = new StructuredDataStructure();
                 dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
 

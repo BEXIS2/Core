@@ -83,7 +83,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var partyType = partyTypeManager.Repo.Get(party.PartyType.Id);
             var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
             //Create party
-            party = partyManager.Create(partyType, party.Description, party.StartDate, party.EndDate, partyCustomAttributeValues);
+            party = partyManager.Create(partyType, party.Description, party.StartDate, party.EndDate, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
 
             if (partyRelationships != null)
                 foreach (var partyRelationship in partyRelationships)
