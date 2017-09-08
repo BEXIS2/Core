@@ -11,10 +11,11 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using BExIS.Modules.Rpm.UI.Models;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class DataAttributeController : Controller
+    public class DataAttributeController : BaseController
     {
         //
         // GET: /RPM/DataType/
@@ -79,23 +80,27 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     if (nameNotExist)
                     {
-                        UnitManager UM = new UnitManager();
+                        UnitManager um = new UnitManager();
+                        this.Disposables.Add(um);
+
                         Unit unit = new Unit();
-                        DataTypeManager DTM = new DataTypeManager();
+                        DataTypeManager dtm = new DataTypeManager();
+                        this.Disposables.Add(dtm);
+
                         DataType dataType = new DataType();
                         DataContainerManager DAM = new DataContainerManager();
 
                         DataAttribute temp = new DataAttribute();
 
-                        if(UM.Repo.Get(tempUnitId)!= null)
-                            unit = UM.Repo.Get(tempUnitId);
+                        if(um.Repo.Get(tempUnitId)!= null)
+                            unit = um.Repo.Get(tempUnitId);
                         else
-                            unit = UM.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
+                            unit = um.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
 
-                        if (DTM.Repo.Get(tempDataTypeId) != null)
-                            dataType = DTM.Repo.Get(tempDataTypeId);
+                        if (dtm.Repo.Get(tempDataTypeId) != null)
+                            dataType = dtm.Repo.Get(tempDataTypeId);
                         else
-                            dataType = DTM.Repo.Get().ToList().FirstOrDefault();
+                            dataType = dtm.Repo.Get().ToList().FirstOrDefault();
 
                         temp = DAM.CreateDataAttribute(Model.ShortName, Model.Name, Model.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
 
@@ -139,19 +144,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dataAttribute.Name = cutSpaces(Model.Name);
                             dataAttribute.ShortName = Model.ShortName;
                             dataAttribute.Description = Model.Description;
-                            UnitManager UM = new UnitManager();
+                            UnitManager unitManager = new UnitManager();
+                            this.Disposables.Add(unitManager);
 
-                            if (UM.Repo.Get(tempUnitId) != null)
-                                dataAttribute.Unit = UM.Repo.Get(tempUnitId);
+                            if (unitManager.Repo.Get(tempUnitId) != null)
+                                dataAttribute.Unit = unitManager.Repo.Get(tempUnitId);
                             else
-                                dataAttribute.Unit = UM.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
+                                dataAttribute.Unit = unitManager.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
 
-                            DataTypeManager DTM = new DataTypeManager();
+                            DataTypeManager dtm = new DataTypeManager();
+                            this.Disposables.Add(dtm);
 
-                            if (DTM.Repo.Get(tempDataTypeId) != null)
-                                dataAttribute.DataType = DTM.Repo.Get(tempDataTypeId);
+                            if (dtm.Repo.Get(tempDataTypeId) != null)
+                                dataAttribute.DataType = dtm.Repo.Get(tempDataTypeId);
                             else
-                                dataAttribute.DataType = DTM.Repo.Get().ToList().FirstOrDefault();
+                                dataAttribute.DataType = dtm.Repo.Get().ToList().FirstOrDefault();
 
                             #region store constraint
 
@@ -230,11 +237,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             long tempId = Convert.ToInt64(Id);
             UnitManager unitManager = new UnitManager();
+            this.Disposables.Add(unitManager);
             Unit tempUnit = unitManager.Repo.Get(tempId);
             List<DataType> dataTypeList = new List<DataType>();
             if (tempUnit.Name.ToLower() == "none")
             {
                 DataTypeManager dataTypeManager = new DataTypeManager();
+                this.Disposables.Add(dataTypeManager);
                 dataTypeList = dataTypeManager.Repo.Get().ToList();
                 dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
             }

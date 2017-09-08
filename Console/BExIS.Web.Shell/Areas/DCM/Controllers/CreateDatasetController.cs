@@ -27,12 +27,13 @@ using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class CreateDatasetController : Controller
+    public class CreateDatasetController : BaseController
     {
         private CreateTaskmanager TaskManager;
 
@@ -410,10 +411,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public ActionResult Submit()
+        public ActionResult Submit(bool valid)
         {
             // create and submit Dataset
-            long datasetId = SubmitDataset();
+            long datasetId = SubmitDataset(valid);
 
             bool editMode = false;
 
@@ -432,7 +433,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset()
+        public long SubmitDataset(bool valid)
         {
             #region create dataset
 
@@ -452,6 +453,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
                     DataStructureManager dsm = new DataStructureManager();
+                    this.Disposables.Add(dsm);
 
                     DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
                     //if datastructure is not a structured one
@@ -489,6 +491,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                         workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
                     }
+
+                    //set status
+                    if (valid) workingCopy.StateInfo.State = "valid";
+                    else workingCopy.StateInfo.State = "not valid";
 
                     string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
                     if (string.IsNullOrEmpty(title)) title = "No Title available.";
@@ -703,6 +709,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<ListViewItemWithType> LoadDataStructureViewList()
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
+
             List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
 
             foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
@@ -746,8 +754,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private DataStructureType GetDataStructureType(long id)
         {
-            DataStructureManager dataStructuremanager = new DataStructureManager();
-            DataStructure dataStructure = dataStructuremanager.AllTypesDataStructureRepo.Get(id);
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
+            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(id);
 
             if (dataStructure is StructuredDataStructure)
             {

@@ -49,10 +49,11 @@ namespace BExIS.Dim.Helpers
 
 
             //create broker in DB
+            string brokerName = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
 
-            if (publicationManager.BrokerRepo.Query().Any(b => b.Name.Equals(tmp.Name)))
+            if (publicationManager.BrokerRepo.Query().Any(b => b.Name.Equals(brokerName)))
             {
-                tmp = publicationManager.BrokerRepo.Query().Where(b => b.Name.Equals(tmp.Name)).FirstOrDefault();
+                tmp = publicationManager.BrokerRepo.Query().Where(b => b.Name.Equals(brokerName)).FirstOrDefault();
             }
             else
             {
@@ -69,14 +70,15 @@ namespace BExIS.Dim.Helpers
 
             XmlNode dataRepos = XmlUtility.GetXmlNodeByName(node, "dataRepos");
 
-            foreach (var dataRepo in dataRepos.ChildNodes)
+            foreach (XmlNode dataRepo in dataRepos.ChildNodes)
             {
 
                 Repository repo = null;
+                string repoName = XmlUtility.GetXmlNodeByName(dataRepo, "name").InnerText;
 
-                if (publicationManager.RepositoryRepo.Query().Any(b => b.Name.Equals(tmp.Name)))
+                if (publicationManager.RepositoryRepo.Query().Any(b => b.Name.Equals(repoName)))
                 {
-                    repo = publicationManager.RepositoryRepo.Get().Where(b => b.Name.Equals(tmp.Name)).FirstOrDefault();
+                    repo = publicationManager.RepositoryRepo.Get().Where(b => b.Name.Equals(repoName)).FirstOrDefault();
                 }
                 else
                 {

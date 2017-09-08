@@ -12,15 +12,18 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Logging;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class DataStructureEditController : Controller
+    public class DataStructureEditController : BaseController
     {
         public ActionResult Index(long DataStructureId = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
-            if (DataStructureId != 0 && new DataStructureManager().StructuredDataStructureRepo.Get(DataStructureId) != null)
+            DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
+            if (DataStructureId != 0 && dsm.StructuredDataStructureRepo.Get(DataStructureId) != null)
                 return View(DataStructureId);
             else if(DataStructureId == 0)
                 return View(DataStructureId);
@@ -84,6 +87,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             else
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
+                this.Disposables.Add(dataStructureManager);
+
                 if (dataStructureManager.StructuredDataStructureRepo.Get(Id) != null)
                 {
                     StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
@@ -114,6 +119,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult storeVariables(long Id, storeVariableStruct[] variables)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
             MessageModel returnObject = new MessageModel();
             MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
@@ -151,7 +158,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     DataAttribute dataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
                     if (dataAttribute != null)
                     {
-                        variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), new UnitManager().Repo.Get(svs.UnitId));
+                        UnitManager um = new UnitManager();
+                        this.Disposables.Add(um);
+                        variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
                         svs.Id = variable.Id;
                     }
                     else
@@ -180,7 +189,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         variable.Label = svs.Lable.Trim();
                         variable.Description = svs.Description.Trim();
-                        variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
+                        UnitManager um = new UnitManager();
+                        this.Disposables.Add(um);
+
+                        variable.Unit = um.Repo.Get(svs.UnitId);
                         variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
                         variable.IsValueOptional = svs.isOptional;
                     }
@@ -278,11 +290,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 else
                 {
                     DataContainerManager dataAttributeManager = new DataContainerManager();
+                    this.Disposables.Add(dataAttributeManager);
                     DataAttribute dataAttribute;
                    
                     if (Id == 0)
                     {
-                        Unit unit = new UnitManager().Repo.Get(unitId);
+                        UnitManager um = new UnitManager();
+                        this.Disposables.Add(um);
+
+                        Unit unit = um.Repo.Get(unitId);
                         DataType dataType = new DataTypeManager().Repo.Get(dataTypeId);
                         dataAttribute = dataAttributeManager.CreateDataAttribute(Name, Name, Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
                         return new MessageModel()
@@ -312,7 +328,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult _getDataTypes(long unitId)
         {
             List<ItemStruct> DataTypes = new List<ItemStruct>();
-            Unit unit = new UnitManager().Repo.Get(unitId);
+            UnitManager um = new UnitManager();
+            this.Disposables.Add(um);
+
+            Unit unit = um.Repo.Get(unitId);
             if (unit.Name.ToLower() != "none")
             {
                 foreach (DataType dt in unit.AssociatedDataTypes)
@@ -327,7 +346,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             else
             {
-                foreach (DataType dt in new DataTypeManager().Repo.Get())
+                DataTypeManager dtm = new DataTypeManager();
+                this.Disposables.Add(dtm);
+                foreach (DataType dt in dtm.Repo.Get())
                 {
                     DataTypes.Add(new ItemStruct()
                     {

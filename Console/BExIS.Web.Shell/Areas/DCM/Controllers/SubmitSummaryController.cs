@@ -17,10 +17,11 @@ using System.Web;
 using System.Web.Mvc;
 using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitSummaryController : Controller
+    public class SubmitSummaryController : BaseController
     {
         private TaskManager TaskManager;
         private FileStream Stream;
@@ -173,6 +174,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 long id = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
                 DataStructureManager dsm = new DataStructureManager();
+                this.Disposables.Add(dsm);
+
                 long iddsd = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
 
 
@@ -471,6 +474,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 long id = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
                 DataStructureManager dsm = new DataStructureManager();
+                this.Disposables.Add(dsm);
+
                 long iddsd = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
 
                 ds = dm.GetDataset(id);

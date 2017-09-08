@@ -430,34 +430,53 @@ function OnSuccess() {
                 var errors = $('.bx-input-error');
 
                 if (errors.length == 0) {
-                    callSubmitAction();
+                    callSubmitAction(true);
                 } else {
                     if (
                         confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
-                        callSubmitAction();
+                        callSubmitAction(false);
                     }
                 }
             })
     }
 
-    function callSubmitAction() {
-        $
-            .get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
-                function(response) {
-                    $('#MetadataEditor').replaceWith(response);
-                    $('html, body').animate({ scrollTop: 0 }, 'slow');
-                    bindMinimap(true);
-                })
+    function callSubmitAction(valid) {
+
+        $.get('@Url.Action(
+                 @submit.ActionName,
+                 @submit.ControllerName,
+                 new RouteValueDictionary
+                 {
+                     {"area", @submit.AreaName},
+                     { "editMode", @Model.FromEditMode},
+                 })',
+            {
+                valid: valid
+            },
+            function(response) {
+                $('#MetadataEditor').replaceWith(response);
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+                bindMinimap(true);
+            });
     }
 
     function switchVisibilityOfOptionalElements(e) {
 
         var show = '@showOptional';
+        var created = '@Model.Created';
+        var entityId = '@Model.DatasetId';
+        var fromEditMode = '@Model.FromEditMode';
 
-        //alert("switch");
+        //if(Model.Created && Model.DatasetId != -1 && !Model.FromEditMode)
+
 
         $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form","DCM")',
-            { show: show },
+            {
+                show: show,
+                created: created,
+                entityId: entityId,
+                fromEditMode: fromEditMode
+            },
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);

@@ -4,22 +4,46 @@ using System.Linq;
 using BExIS.Dlm.Entities.Administration;
 using Vaiona.Persistence.Api;
 using DataStructureEntity = BExIS.Dlm.Entities.DataStructure.DataStructure;
+using System;
 
 namespace BExIS.Dlm.Services.Administration
 {
-    public sealed class ResearchPlanManager
+    public class ResearchPlanManager : IDisposable
     {
+        private IUnitOfWork guow = null;
         public ResearchPlanManager() //: base(false, true, true)
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<ResearchPlan>();
+            guow = this.GetIsolatedUnitOfWork(); // Javad commented this line. bring it back with the new Data Access Pattern
+            this.Repo = guow.GetReadOnlyRepository<ResearchPlan>();
+
+        }
+
+        private bool isDisposed = false;
+        ~ResearchPlanManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers
-
-        // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<ResearchPlan> Repo { get; private set; }
-
         #endregion
 
         #region ResearchPlan

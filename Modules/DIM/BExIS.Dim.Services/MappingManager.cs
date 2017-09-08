@@ -1,4 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -6,15 +7,39 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services
 {
-    public sealed class MappingManager
+    public class MappingManager: IDisposable
     {
+        private IUnitOfWork guow = null;
         public MappingManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.LinkElementRepo = uow.GetReadOnlyRepository<LinkElement>();
-            this.MappingRepo = uow.GetReadOnlyRepository<Mapping>();
-            this.TransformationRuleRepo = uow.GetReadOnlyRepository<TransformationRule>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.LinkElementRepo = guow.GetReadOnlyRepository<LinkElement>();
+            this.MappingRepo = guow.GetReadOnlyRepository<Mapping>();
+            this.TransformationRuleRepo = guow.GetReadOnlyRepository<TransformationRule>();
 
+        }
+        private bool isDisposed = false;
+        ~MappingManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers

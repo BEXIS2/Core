@@ -18,76 +18,53 @@ using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
-
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Controllers
 {
     public class TestController : BaseController
     {
-        public ActionResult About()
+        protected override void Dispose(bool disposing)
         {
-            return View();
+            base.Dispose(disposing);
+            // should be called automatically
         }
 
-        public void Add2UnitsAnd1Conversion()
+        [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
+        public ActionResult Index2()
         {
-            //UnitDataGen uGen = new UnitDataGen();
-            //ConversionMethod cmo = uGen.GenerateUnits1();
+            //testNHibernateSession();
+            //getDatasetVersionIdsThatHaveSOmeTuples(1);
+            //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
-            //IPersistenceManager pManager = IoCFactory.Container.Resolve<IPersistenceManager>() as IPersistenceManager;
-
-            //using (IUnitOfWork unit = pManager.CreateUnitOfWork(false, true, true, unit_BeforeCommit, unit_AfterCommit))
-            //{
-            //    IRepository<ConversionMethod> repo1 = unit.GetRepository<ConversionMethod>();
-            //    IRepository<Unit> repo2 = unit.GetRepository<Unit>();
-            //    repo1.Put(cmo);
-            //    //repo2.Put(cmo.Source);
-            //    //repo2.Put(cmo.Target);
-            //    unit.Commit();
-
-            //    //var received = repo1.Get(1);
-            //    //var received2 = repo1.Get(p => p.Id == 1 && p.Source.Id == 1);
-            //    //var u1 = repo2.Get(1);
-            //    ////repo1.Delete(received);
-
-            //    //u1.ConversionsIamTheSource.ForEach(p => repo1.Delete(p));
-            //    //u1.ConversionsIamTheSource.Clear();
-            //    //u1.ConversionsIamTheTarget.ForEach(p => repo1.Delete(p));
-            //    //u1.ConversionsIamTheTarget.Clear();
-            //    //repo2.Delete(u1);
-            //    //unit.Commit();
-
-            //    ////Assert.AreEqual(received.Id, cmo.Id);
-            //    ////Assert.AreEqual(received.Source.Id, cmo.Source.Id);
-            //    ////Assert.IsTrue(received.Source.ConversionsIamTheSource.Count() >= 1);
-            //    ////Assert.AreEqual(received.Source.ConversionsIamTheSource.First().Target.Id, cmo.Target.Id);
-            //}
-            ////pManager.Shutdown(); // do not do it in production code
+            return View("Index");
         }
 
-        public void DatasetExportTest2()
+        private void testNHibernateSession()
+
         {
-            //Dataset actual;
-            //DatasetGeneator dsGen = new DatasetGeneator();
-            //actual = dsGen.GenerateDatasetWithStructuredDatasetObjectTuples();
-            //actual.Dematerialize();
-            //actual.ExtendedPropertyValues.Clear();
-            //actual.Materialize();
-            //actual.Tuples.ForEach(p => p.Dematerialize());
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            this.Disposables.Add(entityPermissionManager);
+            var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
+            for (int i = 0; i < 5000; i++)
+            {
+                var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 3, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                //var entityPermissions = entityPermissionManager.QueryEntityPermissions().Where(m => m.Entity.Id == ep.Id);
 
-            //IObjectTransfromer transformer = new XmlObjectTransformer(); // TODO: Initialize to an appropriate value
+            }
+            entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+            var y = x.ToList(); // it should work, while its repo is created from an isolated UoW.
+        }
 
-            //string path = Path.Combine(AppConfiguration.GetComponentWorkspacePath("Dlm"), "Transformation", "Xml");
-            //XmlDocument doc = (XmlDocument)transformer.ExportTo<Dataset>(actual, "Dataset2");
-            //doc.Save(Path.Combine(path, "datset2.xml"));
-
-            //XmlDocument doc2 = new XmlDocument();
-            //doc2.Load(Path.Combine(path, "datset2.xml"));
-            //Dataset expected = (Dataset)transformer.ImportFrom<Dataset>(doc2);
-            //expected.Tuples.ForEach(p => p.VariableValues.Clear());
-            //expected.Tuples.ForEach(p => p.Amendments.Clear());
-            //expected.Tuples.ForEach(p => p.Materialize());
+        private void getDatasetVersionIdsThatHaveSOmeTuples(long datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IReadOnlyRepository<DatasetVersion> repo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var versionIds1 = repo.Query().Where(p => p.Dataset.Id == 1 && p.PriliminaryTuples.Count() >= 1).Select(p => p.Id).ToList();
+            }
         }
 
         //[RecordCall]
@@ -149,6 +126,7 @@ namespace BExIS.Web.Shell.Controllers
             //dic.Add("Scope_1", "all");
             //var prs = ConvertDictionaryToPartyRelationships(dic);
 
+
             //Add Party Type
 
             // PartyUniqenessTest();
@@ -160,7 +138,7 @@ namespace BExIS.Web.Shell.Controllers
             ////removeTestPartyCustomAttribute(cusAttr);
             //// removePartyStatusType(partyStatusType);
 
-            //////Create party
+            //////Create party 
             Dlm.Services.Party.PartyManager partyManager = new Dlm.Services.Party.PartyManager();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -205,154 +183,12 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
-        [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
-        public ActionResult Index2()
-        {
-            testNHibernateSession();
-            //getDatasetVersionIdsThatHaveSOmeTuples(1);
-            //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
-
-            return View("Index");
-        }
-
-        public void SimpleMatDematWithExport()
-        {
-            //Person actual = MatDematDataGenerator.GenerateAPerson();
-            //actual.Dematerialize();
-            //actual.Addresses = null;
-            //actual.Materialize();
-
-            //IObjectTransfromer transformer = new XmlObjectTransformer(); // TODO: Initialize to an appropriate value
-
-            //string path = string.Format("{0}{1}", AppConfiguration.WorkspacePath, @"transformation\xml\");
-            //XmlDocument doc = (XmlDocument)transformer.ExportTo<Dataset>(actual, "Person1"); // here S is inferred from the source parameter
-            //doc.Save(path + @"p1.xml");
-
-            //XmlDocument doc2 = new XmlDocument();
-            //doc2.Load(path + @"p1.xml");
-            //Person expected = (Person)transformer.ImportFrom<Person>(doc2);
-            //expected.Materialize();
-        }
-
-        public ActionResult XmlEdit()
-        {
-            string url = Url.Action("XmlEditResult", "Test", new { Area = string.Empty });
-            XsltViewModel model = new XsltViewModel()
-            {
-                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
-                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
-                Params = new Dictionary<string, object>()
-                {
-                    {"postBackUrl", url},
-                }
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult XmlEditResult()
-        {
-            // here the user has access to the Request.Form object, which contains all the attributes defined in the xsl FileStream and the associated values
-            // I'd prefer to have an xml doc like the original one with new values. It is possible to find relevant fields in the xml based on the Form.Key and update its value
-            // something like XmlDocument doc = createUpdatedDoc(originalfile, Request.Form);
-            string url = Url.Action("Index", "Home", new { Area = string.Empty });
-            XsltViewModel model = new XsltViewModel()
-            {
-                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
-                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
-                Params = new Dictionary<string, object>()
-                {
-                    {"postBackUrl", url},
-                }
-            };
-            //send the Request.Form object to the view too, so that it can overrides them to show the updated version
-            return View("XmlEdit", model);
-        }
-
-        public ActionResult XmlShow()
-        {
-            XsltViewModel model = new XsltViewModel()
-            {
-                XmlPath = Server.MapPath("~/App_Data/data.xml"),
-                XsltPath = Server.MapPath("~/App_Data/view.xsl")
-            };
-
-            return View(model);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            // should be called automatically
-        }
-
-        private void Add2UnitsAnd1ConversionUsingAPI()
-        {
-            UnitManager um = new UnitManager();
-            Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", null, MeasurementSystem.Metric);// null dimension should be replaced
-            Unit m = um.Create("Meter", "M", "This is the Meter", null, MeasurementSystem.Metric);// null dimension should be replaced
-            Unit cm = um.Create("Centimeter", "Cm", "This is the CentiMeter which is equal to 0.01 Meter", null, MeasurementSystem.Metric);
-            ConversionMethod cm1 = um.CreateConversionMethod("s*100", "Converts meter to centi meter", m, cm);
-            ConversionMethod cm2 = um.CreateConversionMethod("s*1000", "Converts kilometer to meter", km, m);
-            ConversionMethod cm3 = um.CreateConversionMethod("s/1000", "Converts meter to kilometer", m, km);
-            ConversionMethod cm4 = um.CreateConversionMethod("s/100", "Converts centimeter to meter", cm, m);
-
-            km.Description += "Updated";
-            cm1.Description += "Updated";
-            km.ConversionsIamTheSource.Clear(); //??
-            um.Update(km);
-            um.UpdateConversionMethod(cm1);
-
-            // Works fine: 24.07.12, Javad
-            //DataTypeManager dtManager = new DataTypeManager();
-            //DataType deci = dtManager.Create("Decimal", "A decimal data type", TypeCode.Int16);
-            //um.AddAssociatedDataType(m, deci);
-            //um.RemoveAssociatedDataType(m, deci);
-
-            um.DeleteConversionMethod(cm1);
-            um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
-
-            um.Delete(cm);
-            um.Delete(new List<Unit>() { km, m });
-        }
-
-        private void addConstraintsTo()
-        {
-            DataContainerManager dcManager = new DataContainerManager();
-            var attr = dcManager.DataAttributeRepo.Get(1);
-
-            var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
-            dcManager.AddConstraint(c1, attr);
-            var v1 = c1.IsSatisfied(14);
-
-            var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
-            dcManager.AddConstraint(c2, attr);
-            var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
-
-            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" },
-                                                              new DomainItem () {Key = "B", Value = "This is B" },
-                                                              new DomainItem () {Key = "C", Value = "This is C" },
-                                                              new DomainItem () {Key = "D", Value = "This is D" },
-                                                            };
-            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);
-            dcManager.AddConstraint(c3, attr);
-            var v3 = c3.IsSatisfied("A");
-            v3 = c3.IsSatisfied("E");
-            c3.Negated = true;
-            v3 = c3.IsSatisfied("A");
-
-            var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
-                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio, 1.25);
-            dcManager.AddConstraint(c4, attr);
-            var v4 = c4.IsSatisfied(14, 10);
-        }
-
         private List<PartyRelationship> ConvertDictionaryToPartyRelationships(Dictionary<string, string> partyRelationshipsDic)
         {
             var partyRelationships = new List<PartyRelationship>();
             foreach (var partyRelationshipDic in partyRelationshipsDic)
             {
+
                 var key = partyRelationshipDic.Key.Split('_');
                 if (key.Length != 2)
                     continue;
@@ -371,19 +207,15 @@ namespace BExIS.Web.Shell.Controllers
                         case "title":
                             partyRelationship.Title = partyRelationshipDic.Value;
                             break;
-
                         case "description":
                             partyRelationship.Description = partyRelationshipDic.Value;
                             break;
-
                         case "startdate":
                             partyRelationship.StartDate = Convert.ToDateTime(partyRelationshipDic.Value);
                             break;
-
                         case "enddate":
                             partyRelationship.EndDate = Convert.ToDateTime(partyRelationshipDic.Value);
                             break;
-
                         case "scope":
                             partyRelationship.Scope = partyRelationshipDic.Value;
                             break;
@@ -392,352 +224,14 @@ namespace BExIS.Web.Shell.Controllers
             return partyRelationships;
         }
 
-        /// <summary>
-        /// create a new dataset, check it out to create the first version, add a tuple to it.
-        /// </summary>
-        /// <returns></returns>
-        private Int64 createDatasetVersion()
-        {
-            DataStructureManager dsManager = new DataStructureManager();
-            ResearchPlanManager rpManager = new ResearchPlanManager();
-            DatasetManager dm = new DatasetManager();
-
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
-
-            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
-
-            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
-            {
-                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-
-                //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-                //changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                DataTuple dt = dm.DataTupleRepo.Get(1); // its sample data
-                List<DataTuple> tuples = new List<DataTuple>();
-                for (int i = 0; i < 10000; i++)
-                {
-                    DataTuple newDt = new DataTuple();
-                    newDt.XmlAmendments = dt.XmlAmendments;
-                    newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                    newDt.Materialize();
-                    newDt.OrderNo = i;
-                    //newDt.TupleAction = TupleAction.Created;//not required
-                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-                    tuples.Add(newDt);
-                }
-                dm.EditDatasetVersion(workingCopy, tuples, null, null);
-                dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
-                dm.DatasetVersionRepo.Evict();
-                dm.DataTupleRepo.Evict();
-                dm.DatasetRepo.Evict();
-                workingCopy.PriliminaryTuples.Clear();
-                workingCopy = null;
-            }
-            var dsId = ds.Id;
-            ds = null;
-            return (dsId);
-        }
-
-        private void createMetadataAttribute()
-        {
-            //UnitManager um = new UnitManager();
-            //Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", "Length", MeasurementSystem.Metric);
-            DataTypeManager dtManager = new DataTypeManager();
-            DataType dt1 = dtManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
-            if (dt1 == null)
-            {
-                dt1 = dtManager.Create("String", "A test String", System.TypeCode.String);
-            }
-
-            MetadataAttributeManager maManager = new MetadataAttributeManager();
-
-            // for unique name checks USE maManager.MetadataAttributeRepo that is searching both simple and compound attribute names
-            var msa1 = maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Simple 1")).FirstOrDefault();
-            if (msa1 == null)
-            {
-                msa1 = new MetadataSimpleAttribute()
-                {
-                    ShortName = "Simple 1",
-                    DataType = dt1,
-                };
-                maManager.Create((MetadataSimpleAttribute)msa1);
-            }
-            var msa2 = maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Simple 2")).FirstOrDefault();
-            if (msa2 == null)
-            {
-                msa2 = new MetadataSimpleAttribute()
-                {
-                    ShortName = "Simple 2",
-                    DataType = dt1,
-                };
-                maManager.Create((MetadataSimpleAttribute)msa2);
-            }
-
-            MetadataCompoundAttribute mca1 = (MetadataCompoundAttribute)maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Compound 1")).FirstOrDefault();
-            if (mca1 == null)
-            {
-                mca1 = new MetadataCompoundAttribute()
-                {
-                    ShortName = "Compound 1",
-                    DataType = dt1,
-                };
-                MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
-                {
-                    Label = "First member",
-                    Description = "I am a link between Compound 1 and Simple 1",
-                    MinCardinality = 0,
-                    MaxCardinality = 2,
-                    Master = mca1,
-                    Member = msa1,
-                };
-                mca1.MetadataNestedAttributeUsages.Add(u1);
-
-                MetadataNestedAttributeUsage u2 = new MetadataNestedAttributeUsage()
-                {
-                    Label = "Second member",
-                    Description = "I am a link between Compound 1 and Simple 2",
-                    MinCardinality = 0,
-                    MaxCardinality = 2,
-                    Master = mca1,
-                    Member = msa2,
-                };
-                mca1.MetadataNestedAttributeUsages.Add(u2);
-
-                maManager.Create(mca1);
-            }
-
-            maManager.Delete(msa1);
-        }
-
-        private void deleteDataset(long dsId)
-        {
-            DatasetManager dm = new DatasetManager();
-            dm.DeleteDataset(dsId, "Javad", false);
-        }
-
-        private void deleteTupleFromDatasetVersion(long datasetId)
-        {
-            //DatasetManager dm = new DatasetManager();
-            //Dataset ds = dm.DatasetRepo.Get(datasetId);
-            ////if (!dm.IsDatasetCheckedIn(ds.Id))
-            ////    return;
-            //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
-            //{
-            //    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-
-            //    DataTuple deleting = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-
-            //    dm.EditDatasetVersion(workingCopy, null, null, new List<DataTuple>() { deleting });
-            //    dm.CheckInDataset(ds.Id, "editedVersion version", "Javad");
-            //}
-        }
-
-        private void editDatasetVersion(Int64 datasetId)
-        {
-            //DatasetManager dm = new DatasetManager();
-            //Dataset ds = dm.DatasetRepo.Get(datasetId);
-            ////if (!dm.IsDatasetCheckedIn(ds.Id))
-            ////    return;
-            //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
-            //{
-            //    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-
-            //    AbstractTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-            //    changed.VariableValues.First().Value = (new Random()).Next().ToString();
-
-            //    //DataTuple dt = dm.DataTupleRepo.Get(40);
-            //    //DataTuple newDt = new DataTuple();
-            //    //newDt.XmlAmendments = dt.XmlAmendments;
-            //    //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-            //    //newDt.Materialize();
-            //    //newDt.OrderNo = 1;
-            //    //newDt.TupleAction = TupleAction.Created;//not required
-            //    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-            //    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-
-            //    dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
-            //    dm.CheckInDataset(ds.Id, "editedVersion version", "Javad");
-            //}
-        }
-
-        private void getAllDatasetVersions()
-        {
-            DatasetManager dm = new DatasetManager();
-            List<Int64> ids = dm.DatasetRepo.Query().Select(p => p.Id).ToList();
-            var b = dm.GetDatasetLatestVersions();
-            var a = dm.GetDatasetLatestVersions(ids);
-            var c = dm.GetDatasetLatestMetadataVersions();
-        }
-
-        private void getDataset()
-        {
-            //DatasetManager dm = new DatasetManager();
-            //Dataset ds = dm.GetDataset(3);
-            //if (ds != null)
-            //{
-            //    //var a = ds.Tuples.First().VariableValues.First().Variable.Name;
-            //    StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
-            //    DatasetVersion dsv = dm.GetDatasetLatestVersion(ds.Id);
-            //    var tuples = dm.GetDatasetVersionEffectiveTuples(dsv);
-            //}
-        }
-
-        private void getDatasetVersionIdsThatHaveSOmeTuples(long datasetId)
-        {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IReadOnlyRepository<DatasetVersion> repo = uow.GetReadOnlyRepository<DatasetVersion>();
-                var versionIds1 = repo.Query().Where(p => p.Dataset.Id == 1 && p.PriliminaryTuples.Count() >= 1).Select(p => p.Id).ToList();
-            }
-        }
-
-        private void getDataStructures()
-        {
-            var dsm = new DataStructureManager();
-            var all = dsm.AllTypesDataStructureRepo.Get();
-            var uns = all.Where(p => p.Name.Contains("uns")).FirstOrDefault();
-        }
-
-        private void getEffectiveTuples(Int64 versionId)
-        {
-            DatasetManager dm = new DatasetManager();
-            DatasetVersion workingCopy = dm.GetDatasetVersion(versionId);
-            var changed = dm.GetDatasetVersionEffectiveTuples(workingCopy);
-        }
-
-        private void purgeAll()
-        {
-            DatasetManager dm = new DatasetManager();
-            foreach (var item in dm.DatasetRepo.Query().Select(p => p.Id).ToList())
-            {
-                dm.PurgeDataset(item);
-            }
-        }
-
-        private void purgeDataset(long dsId)
-        {
-            DatasetManager dm = new DatasetManager();
-            dm.PurgeDataset(dsId);
-        }
-
-        private void saveDatset()
-        {
-            //try
-            //{
-            //    DatasetManager dm = new DatasetManager();
-            //    DatasetGeneator dsGen = new DatasetGeneator();
-            //    Dataset sent = dsGen.GenerateDatasetWithStructuredDatasetObjectTuples();
-            //    DataStructureManager dsm = new DataStructureManager();
-            //    sent.DataStructure = dsm.SdsRepo.Get(1);
-            //    // push object to xml to make them ready for perso=istence
-            //    sent.Dematerialize();
-
-            //    dm.CreateDataset(sent);//sent.Title, sent.Description, sent.Metadata, sent.Tuples, sent.ExtendedPropertyValues, sent.ContentDescriptors, sent.DataStructure);
-            //}
-            //catch (Exception ex) { }
-        }
-
-        //        dsm.CreateStructuredDataStructure(
-        //    }
-        private void testExtendedProperty()
-        {
-            DatasetManager dm = new DatasetManager();
-            DataContainerManager dcManager = new DataContainerManager();
-
-            Dataset ds = dm.GetDataset(24L);
-            StructuredDataStructure sds = (ds.DataStructure.Self as StructuredDataStructure);
-            ExtendedProperty exp = null;
-            try { exp = dcManager.ExtendedPropertyRepo.Get(1); }
-            catch { }
-            //if(exp == null)
-            //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().DataAttribute, null); // issue with session management
-
-            //ds.ExtendedPropertyValues = new List<ExtendedPropertyValue>()
-            //{
-            //    new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="Jena Experiment"},
-            //    new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="MPI"},
-            //};
-            ds.Dematerialize();
-            //dm.UpdateDataset(ds);
-        }
-
-        private void testMetadataStructure()
-        {
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataAttributeManager mdaManager = new MetadataAttributeManager();
-
-            MetadataStructure root = mdsManager.Repo.Get(p => p.Name == "Root").FirstOrDefault();
-            if (root == null) root = mdsManager.Create("Root", "This is the root metadata structure", "", "", null);
-
-            MetadataStructure s1 = mdsManager.Repo.Get(p => p.Name == "S1").FirstOrDefault();
-            if (s1 == null) s1 = mdsManager.Create("S1", "This is S1 metadata structure", "", "", root);
-
-            MetadataStructure s11 = mdsManager.Repo.Get(p => p.Name == "S1.1").FirstOrDefault();
-            if (s11 == null) s11 = mdsManager.Create("S1.1", "This is S1.1 metadata structure", "", "", s1);
-
-            MetadataStructure s2 = mdsManager.Repo.Get(p => p.Name == "S2").FirstOrDefault();
-            if (s2 == null) s2 = mdsManager.Create("S2", "This is S2 metadata structure", "", "", root);
-
-            MetadataPackage p1 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P1").FirstOrDefault();
-            if (p1 == null) p1 = mdpManager.Create("P1", "Sample Package 1", true);
-
-            MetadataPackage p2 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P2").FirstOrDefault();
-            if (p2 == null) p2 = mdpManager.Create("P2", "Sample Package 2", true);
-
-            MetadataPackage p3 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P3").FirstOrDefault();
-            if (p3 == null) p3 = mdpManager.Create("P3", "Sample Package 3", true);
-
-            MetadataPackage p4 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P4").FirstOrDefault();
-            if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
-
-            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p1).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", "", 0, 1);
-
-            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", "", 1, 1);
-
-            if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p3).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", "", 0, 10);
-
-            if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p4).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", "", 2, 5);
-
-            var usages = mdsManager.GetEffectivePackages(3);
-        }
-
-        private void testNHibernateSession()
-
-        {
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            this.Disposables.Add(entityPermissionManager);
-
-            // Sven - Bug: EntityPermissions is not existing in EntityPermissionManager anymore, because of new UnitOfWork approach.
-            //var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
-            for (int i = 0; i < 50; i++)
-            {
-                var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-                //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-                //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 3, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-                //var entityPermissions = entityPermissionManager.QueryEntityPermissions().Where(m => m.Entity.Id == ep.Id);
-            }
-            entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-            // Sven - Bug: This is related to line 718.
-            //var y = x.ToList(); // it should work, while its repo is created from an isolated UoW.
-        }
-
         #region PartyManager
-
         #region party_test
-
         /*
 	- party type
 		- create
 			- with empty string
 			- without status type
-		- Delete
+		- Delete 
 			- With some parties
 			- have a statusType which its partystatusTpye has party: errors
 			- have a statusType which its partystatusTpye doesn't have party: statusType and partystatusTpye should be deleted
@@ -748,9 +242,9 @@ namespace BExIS.Web.Shell.Controllers
 			- add null party
 			- add party without date => max date and min date
 			- add party without
-        delete:
-			- delete party immidiately
-			- delete party after have
+        delete: 
+			- delete party immidiately 
+			- delete party after have 
 				- custom attribute value
 				- party relation ship
 				- party status
@@ -766,7 +260,6 @@ namespace BExIS.Web.Shell.Controllers
 	- partyCustomAttributeValue
 		- check uniqeness
         */
-
         protected void PartyUniqenessTest()
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
@@ -836,6 +329,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 pcavs_list = pm.AddPartyCustomAttriuteValues(party4, pcavs).ToList();
                 System.Diagnostics.Debug.WriteLine("success multiple uniqeness add test doesnt have any error . add the same pcv .");
+
             }
             catch
             {
@@ -847,6 +341,7 @@ namespace BExIS.Web.Shell.Controllers
                 thisCustomAtrval.Value = "mas";
                 pm.UpdatePartyCustomAttriuteValues(pcavs_list);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
+
             }
             catch (Exception ex)
             {
@@ -860,6 +355,7 @@ namespace BExIS.Web.Shell.Controllers
                 pcavs[pca2] = "mas";
                 pm.AddPartyCustomAttriuteValues(party4, pcavs);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
+
             }
             catch
             {
@@ -893,21 +389,20 @@ namespace BExIS.Web.Shell.Controllers
             {
                 System.Diagnostics.Debug.WriteLine("failed party custom attribute update. Error!!");
             }
-        }
 
+        }
         /*
         */
-
-        #endregion party_test
+        #endregion
 
         #region party
-
         private Dlm.Entities.Party.Party addTestParty(PartyType partyType, PartyStatusType st)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
 
             var party = pm.Create(partyType, "", "party created for test", null, null, st);
             return party;
+
         }
 
         private void deleteTestParty(Dlm.Entities.Party.Party party)
@@ -929,11 +424,9 @@ namespace BExIS.Web.Shell.Controllers
             party.Description = "updated..";
             pm.Update(party);
         }
-
-        #endregion party
+        #endregion
 
         #region partyStatus
-
         private Dlm.Entities.Party.PartyStatus addTestPartyStatus(Dlm.Entities.Party.Party party)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
@@ -943,26 +436,24 @@ namespace BExIS.Web.Shell.Controllers
             return pm.AddPartyStatus(party, st, "test");
         }
 
-        #endregion partyStatus
+        #endregion
 
         #region PartyRelationship
-
         private Dlm.Entities.Party.PartyRelationship addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty, PartyRelationshipType prt)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             return pm.AddPartyRelationship(firstParty, secondParty, prt, "test Rel", "test relationship", DateTime.Now);
-        }
 
+        }
         private bool removePartyRelationship(Dlm.Entities.Party.PartyRelationship partyRelationship)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             return pm.RemovePartyRelationship(partyRelationship);
         }
+        #endregion
 
-        #endregion PartyRelationship
 
         #region PartyCustomAttributeValue
-
         private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
@@ -978,13 +469,11 @@ namespace BExIS.Web.Shell.Controllers
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
         }
+        #endregion
 
-        #endregion PartyCustomAttributeValue
-
-        #endregion PartyManager
+        #endregion
 
         #region Party Type Manager
-
         #region partyType
 
         private Dlm.Entities.Party.PartyType addPartyType()
@@ -993,38 +482,33 @@ namespace BExIS.Web.Shell.Controllers
             return ptm.Repo.Get(2);
             // return ptm.Create("partyTypeTest", "just for test", null);
         }
-
         private void removePartyType(PartyType partyType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
             ptm.Delete(partyType);
         }
-
-        #endregion partyType
+        #endregion
 
         #region addStatusType
-
         private Dlm.Entities.Party.PartyStatusType addPartyStatusType(PartyType partyType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
             return ptm.AddStatusType(partyType, "just created", "this is for test data", 0);
         }
-
         private void removePartyStatusType(PartyStatusType partyStatusType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
             ptm.RemoveStatusType(partyStatusType);
         }
-
-        #endregion addStatusType
+        #endregion
 
         #region PartyCustomAttribute
-
         private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
             return ptm.CreatePartyCustomAttribute(partyType, "string", "Namen", "Name for test", "", true, true);
         }
+
 
         private bool removeTestPartyCustomAttribute(Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
         {
@@ -1032,14 +516,13 @@ namespace BExIS.Web.Shell.Controllers
             return pm.DeletePartyCustomAttribute(partyCustomAttr);
         }
 
-        #endregion PartyCustomAttribute
 
-        #endregion Party Type Manager
+
+        #endregion
+        #endregion
 
         #region Party RelationshipType Manager
-
         #region PartyRelationshipType
-
         private PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
@@ -1051,17 +534,14 @@ namespace BExIS.Web.Shell.Controllers
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
             return pmr.Delete(partyRelationshipType);
         }
-
         private bool removeTestPartyRelationshipType(List<PartyRelationshipType> partyRelationshipType)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
             return pmr.Delete(partyRelationshipType);
         }
+        #endregion
 
-        #endregion PartyRelationshipType
-
-        #region PartyTypePair
-
+        #region  PartyTypePair
         private Dlm.Entities.Party.PartyTypePair addTestPartyTypePair(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
@@ -1073,16 +553,21 @@ namespace BExIS.Web.Shell.Controllers
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
             return pmr.RemovePartyTypePair(partyTypePair);
         }
-
         private bool removeTestPartyTypePair(List<PartyTypePair> partyTypePairs)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
             return pmr.RemovePartyTypePair(partyTypePairs);
         }
+        #endregion
 
-        #endregion PartyTypePair
+        #endregion
 
-        #endregion Party RelationshipType Manager
+        private void getDataStructures()
+        {
+            var dsm = new DataStructureManager();
+            var all = dsm.AllTypesDataStructureRepo.Get();
+            var uns = all.Where(p => p.Name.Contains("uns")).FirstOrDefault();
+        }
 
         private void testSecuirty()
         {
@@ -1090,6 +575,215 @@ namespace BExIS.Web.Shell.Controllers
             //var user = pManager.UsersRepo.Get(3); // Roman
             //var the = pManager.UsersRepo.Refresh(user.Id);
             //var the2 = pManager.UsersRepo.Reload(user);
+        }
+
+        private void testMetadataStructure()
+        {
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MetadataPackageManager mdpManager = new MetadataPackageManager();
+            MetadataAttributeManager mdaManager = new MetadataAttributeManager();
+
+            MetadataStructure root = mdsManager.Repo.Get(p => p.Name == "Root").FirstOrDefault();
+            if (root == null) root = mdsManager.Create("Root", "This is the root metadata structure", "", "", null);
+
+            MetadataStructure s1 = mdsManager.Repo.Get(p => p.Name == "S1").FirstOrDefault();
+            if (s1 == null) s1 = mdsManager.Create("S1", "This is S1 metadata structure", "", "", root);
+
+            MetadataStructure s11 = mdsManager.Repo.Get(p => p.Name == "S1.1").FirstOrDefault();
+            if (s11 == null) s11 = mdsManager.Create("S1.1", "This is S1.1 metadata structure", "", "", s1);
+
+            MetadataStructure s2 = mdsManager.Repo.Get(p => p.Name == "S2").FirstOrDefault();
+            if (s2 == null) s2 = mdsManager.Create("S2", "This is S2 metadata structure", "", "", root);
+
+            MetadataPackage p1 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P1").FirstOrDefault();
+            if (p1 == null) p1 = mdpManager.Create("P1", "Sample Package 1", true);
+
+            MetadataPackage p2 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P2").FirstOrDefault();
+            if (p2 == null) p2 = mdpManager.Create("P2", "Sample Package 2", true);
+
+            MetadataPackage p3 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P3").FirstOrDefault();
+            if (p3 == null) p3 = mdpManager.Create("P3", "Sample Package 3", true);
+
+            MetadataPackage p4 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P4").FirstOrDefault();
+            if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
+
+            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p1).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", "", 0, 1);
+
+            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", "", 1, 1);
+
+            if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p3).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", "", 0, 10);
+
+            if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p4).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", "", 2, 5);
+
+            var usages = mdsManager.GetEffectivePackages(3);
+        }
+
+        private void addConstraintsTo()
+        {
+            DataContainerManager dcManager = new DataContainerManager();
+            var attr = dcManager.DataAttributeRepo.Get(1);
+
+            var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
+            dcManager.AddConstraint(c1, attr);
+            var v1 = c1.IsSatisfied(14);
+
+            var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
+            dcManager.AddConstraint(c2, attr);
+            var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
+
+            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" },
+                                                              new DomainItem () {Key = "B", Value = "This is B" },
+                                                              new DomainItem () {Key = "C", Value = "This is C" },
+                                                              new DomainItem () {Key = "D", Value = "This is D" },
+                                                            };
+            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);
+            dcManager.AddConstraint(c3, attr);
+            var v3 = c3.IsSatisfied("A");
+            v3 = c3.IsSatisfied("E");
+            c3.Negated = true;
+            v3 = c3.IsSatisfied("A");
+
+            var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
+                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio, 1.25);
+            dcManager.AddConstraint(c4, attr);
+            var v4 = c4.IsSatisfied(14, 10);
+
+        }
+
+        private void purgeAll()
+        {
+            DatasetManager dm = new DatasetManager();
+            foreach (var item in dm.DatasetRepo.Query().Select(p => p.Id).ToList())
+            {
+                dm.PurgeDataset(item);
+            }
+
+        }
+
+        private void purgeDataset(long dsId)
+        {
+            DatasetManager dm = new DatasetManager();
+            dm.PurgeDataset(dsId);
+        }
+
+        private void getAllDatasetVersions()
+        {
+            DatasetManager dm = new DatasetManager();
+            List<Int64> ids = dm.DatasetRepo.Query().Select(p => p.Id).ToList();
+            var b = dm.GetDatasetLatestVersions();
+            var a = dm.GetDatasetLatestVersions(ids);
+            var c = dm.GetDatasetLatestMetadataVersions();
+        }
+
+        private void deleteDataset(long dsId)
+        {
+            DatasetManager dm = new DatasetManager();
+            dm.DeleteDataset(dsId, "Javad", false);
+        }
+
+        private void getEffectiveTuples(Int64 versionId)
+        {
+            DatasetManager dm = new DatasetManager();
+            DatasetVersion workingCopy = dm.GetDatasetVersion(versionId);
+            var changed = dm.GetDatasetVersionEffectiveTuples(workingCopy);
+
+        }
+
+        private void editDatasetVersion(Int64 datasetId)
+        {
+            //DatasetManager dm = new DatasetManager();
+            //Dataset ds = dm.DatasetRepo.Get(datasetId);
+            ////if (!dm.IsDatasetCheckedIn(ds.Id))
+            ////    return;
+            //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            //{
+            //    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+            //    AbstractTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+            //    changed.VariableValues.First().Value = (new Random()).Next().ToString();
+
+            //    //DataTuple dt = dm.DataTupleRepo.Get(40);
+            //    //DataTuple newDt = new DataTuple();
+            //    //newDt.XmlAmendments = dt.XmlAmendments;
+            //    //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+            //    //newDt.Materialize();
+            //    //newDt.OrderNo = 1;
+            //    //newDt.TupleAction = TupleAction.Created;//not required
+            //    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+            //    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+
+            //    dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
+            //    dm.CheckInDataset(ds.Id, "editedVersion version", "Javad");
+            //}
+        }
+
+        private void deleteTupleFromDatasetVersion(long datasetId)
+        {
+            //DatasetManager dm = new DatasetManager();
+            //Dataset ds = dm.DatasetRepo.Get(datasetId);
+            ////if (!dm.IsDatasetCheckedIn(ds.Id))
+            ////    return;
+            //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            //{
+            //    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+            //    DataTuple deleting = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+
+            //    dm.EditDatasetVersion(workingCopy, null, null, new List<DataTuple>() { deleting });
+            //    dm.CheckInDataset(ds.Id, "editedVersion version", "Javad");
+            //}
+        }
+
+        /// <summary>
+        /// create a new dataset, check it out to create the first version, add a tuple to it.
+        /// </summary>
+        /// <returns></returns>
+        private Int64 createDatasetVersion()
+        {
+            DataStructureManager dsManager = new DataStructureManager();
+            ResearchPlanManager rpManager = new ResearchPlanManager();
+            DatasetManager dm = new DatasetManager();
+
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
+
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
+
+            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            {
+                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+                //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+                //changed.VariableValues.First().Value = (new Random()).Next().ToString();
+                DataTuple dt = dm.DataTupleRepo.Get(1); // its sample data
+                List<DataTuple> tuples = new List<DataTuple>();
+                for (int i = 0; i < 10000; i++)
+                {
+                    DataTuple newDt = new DataTuple();
+                    newDt.XmlAmendments = dt.XmlAmendments;
+                    newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+                    newDt.Materialize();
+                    newDt.OrderNo = i;
+                    //newDt.TupleAction = TupleAction.Created;//not required
+                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+                    tuples.Add(newDt);
+                }
+                dm.EditDatasetVersion(workingCopy, tuples, null, null);
+                dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
+                dm.DatasetVersionRepo.Evict();
+                dm.DataTupleRepo.Evict();
+                dm.DatasetRepo.Evict();
+                workingCopy.PriliminaryTuples.Clear();
+                workingCopy = null;
+            }
+            var dsId = ds.Id;
+            ds = null;
+            return (dsId);
         }
 
         //    private void createADataStructure()
@@ -1105,18 +799,312 @@ namespace BExIS.Web.Shell.Controllers
         //        pps = pps.Distinct().ToList();
         //        foreach (var item in pps)
         //{
-        //     dcm.CreateParameter(item.Name,
+        //     dcm.CreateParameter(item.Name, 
         //}
 
-        private void unit_AfterCommit(object sender, EventArgs e)
+
+        //        DataStructureManager dsm = new DataStructureManager();
+
+        //        dsm.CreateStructuredDataStructure(
+        //    }
+        private void testExtendedProperty()
+        {
+            DatasetManager dm = new DatasetManager();
+            DataContainerManager dcManager = new DataContainerManager();
+
+            Dataset ds = dm.GetDataset(24L);
+            StructuredDataStructure sds = (ds.DataStructure.Self as StructuredDataStructure);
+            ExtendedProperty exp = null;
+            try { exp = dcManager.ExtendedPropertyRepo.Get(1); }
+            catch { }
+            //if(exp == null)
+            //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().DataAttribute, null); // issue with session management
+
+
+            //ds.ExtendedPropertyValues = new List<ExtendedPropertyValue>()
+            //{
+            //    new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="Jena Experiment"},
+            //    new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="MPI"},
+            //};
+            ds.Dematerialize();
+            //dm.UpdateDataset(ds);
+        }
+
+        private void getDataset()
+        {
+            //DatasetManager dm = new DatasetManager();
+            //Dataset ds = dm.GetDataset(3);
+            //if (ds != null)
+            //{
+            //    //var a = ds.Tuples.First().VariableValues.First().Variable.Name;
+            //    StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
+            //    DatasetVersion dsv = dm.GetDatasetLatestVersion(ds.Id);
+            //    var tuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+            //}
+        }
+
+        private void saveDatset()
+        {
+            //try
+            //{
+            //    DatasetManager dm = new DatasetManager();
+            //    DatasetGeneator dsGen = new DatasetGeneator();
+            //    Dataset sent = dsGen.GenerateDatasetWithStructuredDatasetObjectTuples();
+            //    DataStructureManager dsm = new DataStructureManager();
+            //    sent.DataStructure = dsm.SdsRepo.Get(1);
+            //    // push object to xml to make them ready for perso=istence
+            //    sent.Dematerialize();
+
+            //    dm.CreateDataset(sent);//sent.Title, sent.Description, sent.Metadata, sent.Tuples, sent.ExtendedPropertyValues, sent.ContentDescriptors, sent.DataStructure);
+            //}
+            //catch (Exception ex) { }
+        }
+
+        private void createMetadataAttribute()
+        {
+            //UnitManager um = new UnitManager();
+            //Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", "Length", MeasurementSystem.Metric);
+            DataTypeManager dtManager = new DataTypeManager();
+            DataType dt1 = dtManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
+            if (dt1 == null)
+            {
+                dt1 = dtManager.Create("String", "A test String", System.TypeCode.String);
+            }
+
+            MetadataAttributeManager maManager = new MetadataAttributeManager();
+
+            // for unique name checks USE maManager.MetadataAttributeRepo that is searching both simple and compound attribute names
+            var msa1 = maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Simple 1")).FirstOrDefault();
+            if (msa1 == null)
+            {
+                msa1 = new MetadataSimpleAttribute()
+                {
+                    ShortName = "Simple 1",
+                    DataType = dt1,
+                };
+                maManager.Create((MetadataSimpleAttribute)msa1);
+            }
+            var msa2 = maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Simple 2")).FirstOrDefault();
+            if (msa2 == null)
+            {
+                msa2 = new MetadataSimpleAttribute()
+                {
+                    ShortName = "Simple 2",
+                    DataType = dt1,
+                };
+                maManager.Create((MetadataSimpleAttribute)msa2);
+            }
+
+            MetadataCompoundAttribute mca1 = (MetadataCompoundAttribute)maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Compound 1")).FirstOrDefault();
+            if (mca1 == null)
+            {
+                mca1 = new MetadataCompoundAttribute()
+                {
+                    ShortName = "Compound 1",
+                    DataType = dt1,
+
+                };
+                MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
+                {
+                    Label = "First member",
+                    Description = "I am a link between Compound 1 and Simple 1",
+                    MinCardinality = 0,
+                    MaxCardinality = 2,
+                    Master = mca1,
+                    Member = msa1,
+                };
+                mca1.MetadataNestedAttributeUsages.Add(u1);
+
+                MetadataNestedAttributeUsage u2 = new MetadataNestedAttributeUsage()
+                {
+                    Label = "Second member",
+                    Description = "I am a link between Compound 1 and Simple 2",
+                    MinCardinality = 0,
+                    MaxCardinality = 2,
+                    Master = mca1,
+                    Member = msa2,
+                };
+                mca1.MetadataNestedAttributeUsages.Add(u2);
+
+                maManager.Create(mca1);
+            }
+
+            maManager.Delete(msa1);
+        }
+
+        private void Add2UnitsAnd1ConversionUsingAPI()
+        {
+            UnitManager um = new UnitManager();
+            Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", null, MeasurementSystem.Metric);// null dimension should be replaced
+            Unit m = um.Create("Meter", "M", "This is the Meter", null, MeasurementSystem.Metric);// null dimension should be replaced
+            Unit cm = um.Create("Centimeter", "Cm", "This is the CentiMeter which is equal to 0.01 Meter", null, MeasurementSystem.Metric);
+            ConversionMethod cm1 = um.CreateConversionMethod("s*100", "Converts meter to centi meter", m, cm);
+            ConversionMethod cm2 = um.CreateConversionMethod("s*1000", "Converts kilometer to meter", km, m);
+            ConversionMethod cm3 = um.CreateConversionMethod("s/1000", "Converts meter to kilometer", m, km);
+            ConversionMethod cm4 = um.CreateConversionMethod("s/100", "Converts centimeter to meter", cm, m);
+
+            km.Description += "Updated";
+            cm1.Description += "Updated";
+            km.ConversionsIamTheSource.Clear(); //??
+            um.Update(km);
+            um.UpdateConversionMethod(cm1);
+
+            // Works fine: 24.07.12, Javad
+            //DataTypeManager dtManager = new DataTypeManager();
+            //DataType deci = dtManager.Create("Decimal", "A decimal data type", TypeCode.Int16);
+            //um.AddAssociatedDataType(m, deci);
+            //um.RemoveAssociatedDataType(m, deci);
+
+            um.DeleteConversionMethod(cm1);
+            um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
+
+            um.Delete(cm);
+            um.Delete(new List<Unit>() { km, m });
+        }
+
+        public ActionResult About()
+        {
+            return View();
+        }
+
+        public ActionResult XmlShow()
+        {
+            XsltViewModel model = new XsltViewModel()
+            {
+                XmlPath = Server.MapPath("~/App_Data/data.xml"),
+                XsltPath = Server.MapPath("~/App_Data/view.xsl")
+            };
+
+            return View(model);
+        }
+
+        public ActionResult XmlEdit()
+        {
+            string url = Url.Action("XmlEditResult", "Test", new { Area = string.Empty });
+            XsltViewModel model = new XsltViewModel()
+            {
+                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
+                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
+                Params = new Dictionary<string, object>()
+                {
+                    {"postBackUrl", url},
+                }
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult XmlEditResult()
+        {
+            // here the user has access to the Request.Form object, which contains all the attributes defined in the xsl FileStream and the associated values
+            // I'd prefer to have an xml doc like the original one with new values. It is possible to find relevant fields in the xml based on the Form.Key and update its value
+            // something like XmlDocument doc = createUpdatedDoc(originalfile, Request.Form);
+            string url = Url.Action("Index", "Home", new { Area = string.Empty });
+            XsltViewModel model = new XsltViewModel()
+            {
+                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
+                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
+                Params = new Dictionary<string, object>()
+                {
+                    {"postBackUrl", url},
+                }
+            };
+            //send the Request.Form object to the view too, so that it can overrides them to show the updated version
+            return View("XmlEdit", model);
+        }
+
+        public void Add2UnitsAnd1Conversion()
+        {
+            //UnitDataGen uGen = new UnitDataGen();
+            //ConversionMethod cmo = uGen.GenerateUnits1();
+
+            //IPersistenceManager pManager = IoCFactory.Container.Resolve<IPersistenceManager>() as IPersistenceManager;
+
+            //using (IUnitOfWork unit = pManager.CreateUnitOfWork(false, true, true, unit_BeforeCommit, unit_AfterCommit))
+            //{
+            //    IRepository<ConversionMethod> repo1 = unit.GetRepository<ConversionMethod>();
+            //    IRepository<Unit> repo2 = unit.GetRepository<Unit>();
+            //    repo1.Put(cmo);
+            //    //repo2.Put(cmo.Source);                
+            //    //repo2.Put(cmo.Target);
+            //    unit.Commit();
+
+            //    //var received = repo1.Get(1);
+            //    //var received2 = repo1.Get(p => p.Id == 1 && p.Source.Id == 1);
+            //    //var u1 = repo2.Get(1);
+            //    ////repo1.Delete(received);
+
+            //    //u1.ConversionsIamTheSource.ForEach(p => repo1.Delete(p));
+            //    //u1.ConversionsIamTheSource.Clear();
+            //    //u1.ConversionsIamTheTarget.ForEach(p => repo1.Delete(p));
+            //    //u1.ConversionsIamTheTarget.Clear();
+            //    //repo2.Delete(u1);
+            //    //unit.Commit();
+
+            //    ////Assert.AreEqual(received.Id, cmo.Id);
+            //    ////Assert.AreEqual(received.Source.Id, cmo.Source.Id);
+            //    ////Assert.IsTrue(received.Source.ConversionsIamTheSource.Count() >= 1);
+            //    ////Assert.AreEqual(received.Source.ConversionsIamTheSource.First().Target.Id, cmo.Target.Id);
+            //}
+            ////pManager.Shutdown(); // do not do it in production code
+        }
+
+        void unit_BeforeCommit(object sender, EventArgs e)
         {
             //throw new NotImplementedException();
         }
 
-        //        DataStructureManager dsm = new DataStructureManager();
-        private void unit_BeforeCommit(object sender, EventArgs e)
+        void unit_AfterCommit(object sender, EventArgs e)
         {
             //throw new NotImplementedException();
         }
+
+        public void DatasetExportTest2()
+        {
+            //Dataset actual;
+            //DatasetGeneator dsGen = new DatasetGeneator();
+            //actual = dsGen.GenerateDatasetWithStructuredDatasetObjectTuples();
+            //actual.Dematerialize();
+            //actual.ExtendedPropertyValues.Clear();
+            //actual.Materialize();
+            //actual.Tuples.ForEach(p => p.Dematerialize());
+
+            //IObjectTransfromer transformer = new XmlObjectTransformer(); // TODO: Initialize to an appropriate value
+
+            //string path = Path.Combine(AppConfiguration.GetComponentWorkspacePath("Dlm"), "Transformation", "Xml");
+            //XmlDocument doc = (XmlDocument)transformer.ExportTo<Dataset>(actual, "Dataset2");
+            //doc.Save(Path.Combine(path, "datset2.xml"));
+
+            //XmlDocument doc2 = new XmlDocument();
+            //doc2.Load(Path.Combine(path, "datset2.xml"));
+            //Dataset expected = (Dataset)transformer.ImportFrom<Dataset>(doc2);
+            //expected.Tuples.ForEach(p => p.VariableValues.Clear());
+            //expected.Tuples.ForEach(p => p.Amendments.Clear());
+            //expected.Tuples.ForEach(p => p.Materialize());
+
+        }
+
+        public void SimpleMatDematWithExport()
+        {
+            //Person actual = MatDematDataGenerator.GenerateAPerson();
+            //actual.Dematerialize();
+            //actual.Addresses = null;
+            //actual.Materialize();
+
+
+            //IObjectTransfromer transformer = new XmlObjectTransformer(); // TODO: Initialize to an appropriate value
+
+            //string path = string.Format("{0}{1}", AppConfiguration.WorkspacePath, @"transformation\xml\");
+            //XmlDocument doc = (XmlDocument)transformer.ExportTo<Dataset>(actual, "Person1"); // here S is inferred from the source parameter
+            //doc.Save(path + @"p1.xml");
+
+            //XmlDocument doc2 = new XmlDocument();
+            //doc2.Load(path + @"p1.xml");
+            //Person expected = (Person)transformer.ImportFrom<Person>(doc2);
+            //expected.Materialize();
+        }
+
     }
+
 }

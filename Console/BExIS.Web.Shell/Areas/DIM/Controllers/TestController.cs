@@ -23,8 +23,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult Index()
         {
 
-
-
             //get all
             var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
             // get all where value = david

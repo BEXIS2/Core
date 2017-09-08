@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitDefinePrimaryKeyController : Controller
+    public class SubmitDefinePrimaryKeyController : BaseController
     {
         private TaskManager TaskManager;
         //
@@ -231,6 +232,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<ListViewItem> LoadVariableLableList()
         {
             DataStructureManager datastructureManager = new DataStructureManager();
+            this.Disposables.Add(datastructureManager);
+
             StructuredDataStructure structuredDatastructure = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"]));
 
             return (from var in structuredDatastructure.Variables
