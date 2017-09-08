@@ -1985,7 +1985,7 @@ namespace BExIS.Dlm.Services.Data
             {
                 DatasetVersion dsVersion = dataset.Versions
                                                   .OrderByDescending(t => t.Timestamp)
-                                                  .First(p => p.Status == DatasetVersionStatus.CheckedIn); // indeed the versions collection is ordered and there should be no need for ordering, but is just to prevent any side effects
+                                                  .FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn); // indeed the versions collection is ordered and there should be no need for ordering, but is just to prevent any side effects
                 return (dsVersion);
             }
             return null;
@@ -2117,6 +2117,9 @@ namespace BExIS.Dlm.Services.Data
 
         private void createMaterializedView(long datasetId)
         {
+            if (existsMaterializedView(datasetId))
+                dropMaterializedView(datasetId);
+            List<Tuple<string, string, int, long>> columnDefinitionList = new List<Tuple<string, string, int, long>>();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
@@ -2126,24 +2129,27 @@ namespace BExIS.Dlm.Services.Data
                     StructuredDataStructure sds = (StructuredDataStructure)ds.DataStructure.Self;
                     if (sds.Variables != null && sds.Variables.Count() > 0)
                     {
-                        List<Tuple<string, string, int, long>> columnDefinitionList = new List<Tuple<string, string, int, long>>();
                         columnDefinitionList = (from c in sds.Variables
                                                 select new Tuple<string, string, int, long>(c.Label, c.DataAttribute.DataType.SystemType, c.OrderNo, c.Id))
                                                .ToList()
                                                ;
-                        try
-                        {
-                            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-                            mvHelper.Create(datasetId, columnDefinitionList);
-                        }
-                        catch (Exception ex)
-                        {
-                            // could not create and/or install the materialized view
-                        }
-
                     }
+                    if (columnDefinitionList.Count() <= 0)
+                        return;
                 }
             }
+
+            try
+            {
+                MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+                mvHelper.Create(datasetId, columnDefinitionList);
+            }
+            catch (Exception ex)
+            {
+                // could not create and/or install the materialized view
+                // the logic will try to build the MV on the next data set version commit operation.
+            }
+
         }
 
         private void refreshMaterializedView(long datasetId)
