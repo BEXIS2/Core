@@ -110,7 +110,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             #region MAPPING
 
-            createMappings();
+            //createMappings();
 
             #endregion
 
