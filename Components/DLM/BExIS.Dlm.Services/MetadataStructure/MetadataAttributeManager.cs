@@ -9,7 +9,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
-    public class MetadataAttributeManager: IDisposable
+    public class MetadataAttributeManager : IDisposable
     {
         ConstraintHelper helper = new ConstraintHelper();
 
@@ -20,6 +20,10 @@ namespace BExIS.Dlm.Services.MetadataStructure
             this.MetadataAttributeRepo = guow.GetReadOnlyRepository<MetadataAttribute>();
             this.MetadataSimpleAttributeRepo = guow.GetReadOnlyRepository<MetadataSimpleAttribute>();
             this.MetadataCompoundAttributeRepo = guow.GetReadOnlyRepository<MetadataCompoundAttribute>();
+
+            //[DS] add this Repos to get usages by id
+            this.MetadataNestedAttributeUsageRepo = guow.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+            this.MetadataAttributeUsageRepo = guow.GetReadOnlyRepository<MetadataAttributeUsage>();
         }
 
         private bool isDisposed = false;

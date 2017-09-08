@@ -10,6 +10,7 @@ using BExIS.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Helper
 {
@@ -100,7 +101,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
 
 
-            MappingManager mappingManager = new MappingManager();
+            //MappingManager mappingManager = new MappingManager();
 
 
             string usageName = usage.Label;
@@ -163,8 +164,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             long linkElementId = 0;
             string mask = "";
 
-            LinkElement linkElement =
-                mappingManager.LinkElementRepo.Get()
+            LinkElement linkElement = type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
                     .FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));
 
             if (linkElement != null)
@@ -188,7 +188,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 linkElementId = 0;
 
                 linkElement =
-                    mappingManager.LinkElementRepo.Get()
+                    type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
                         .FirstOrDefault(
                             le =>
                                 le.ElementId.Equals(typeId) &&
