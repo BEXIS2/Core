@@ -142,27 +142,40 @@
 
                // alert("end send data to repo ");
                // alert(response);
-
+                var hasSuccessed = false;
                 if(response !== "true")
                 {
-                    var obj = jQuery.parseJSON(response);
+                    //alert(response);
+                    //var obj = jQuery.parseJSON(response);
                     var message = $("#requirementsContainer").text();
 
                     var htmltext = "<p>" + message + "</p><p><br/>" + response + "</p>";
+
+                    alert(response);
 
                     $("#requirementsContainer").html(htmltext);
                     $("#requirementsContainer").css("color", "#f24c24");
 
                     $("#preloader").removePreloader();
-                }
 
+                } else {
+                    hasSuccessed = true;
+                }
+               
                 //reload site
                 $.post('@Url.Action("getPublishDataPartialView", "Submission", new RouteValueDictionary {{"area", "dim"}})',
                     { datasetid: id },
                     function(site) {
+
+                        //alert("test");
                         $("#publishContentContainer").replaceWith(site);
                         $("#requirementsContainer").html(htmltext);
-                        $("#requirementsContainer").css("color", "#f24c24");
+
+                        if (hasSuccessed) {
+                            $("#requirementsContainer").css("color", "#000000");
+                        } else {
+                            $("#requirementsContainer").css("color", "#f24c24");
+                        }
 
                         $("#preloader").removePreloader();
                     });

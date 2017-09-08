@@ -33,7 +33,7 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            testNHibernateSession();
+            //testNHibernateSession();
             //getDatasetVersionIdsThatHaveSOmeTuples(1);
             //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 

@@ -402,10 +402,25 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>
         /// <param name="name"></param>
         /// <returns></returns>
+        public static IEnumerable<XElement> GetAllChildren(XElement element)
+        {
+            return element.Descendants();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static IEnumerable<XElement> GetXElementByNodeName(string nodeName, XDocument xDoc)
         {
             return xDoc.Root.Descendants(nodeName);
         }
+
+
 
 
         /// <summary>
