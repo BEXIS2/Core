@@ -1,6 +1,7 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
@@ -134,9 +135,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Users_Select(long groupId = 0)
         {
             var userManager = new UserManager();
-            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, groupId)).ToList();
+            var users = new List<UserMembershipGridRowModel>();
 
-            return View(new GridModel<UserMembershipGridRowModel> { Data = userMemberships });
+            foreach (var user in userManager.Users)
+            {
+                users.Add(UserMembershipGridRowModel.Convert(user, groupId));
+            }
+
+            return View(new GridModel<UserMembershipGridRowModel> { Data = users });
         }
 
         /// <summary>
