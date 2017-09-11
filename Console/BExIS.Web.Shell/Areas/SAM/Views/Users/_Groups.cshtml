@@ -8,7 +8,7 @@
       .Columns(columns =>
       {
           columns.Bound(g => g.IsUserInGroup)
-              .ClientTemplate("<input type='checkbox' name='selectedGroups' data-groupid='<#= Id #>' data-userid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='checkbox' name='selectedGroups' data-groupname='<#= Name #>' data-userid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
               .Title("Member")
               .Width(64)
               .Filterable(false)

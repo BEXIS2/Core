@@ -126,20 +126,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        public ActionResult Users(long groupId)
+        public ActionResult Users(string groupName)
         {
-            return PartialView("_Users", groupId);
+            return PartialView("_Users", groupName);
         }
 
         [GridAction]
-        public ActionResult Users_Select(long groupId = 0)
+        public ActionResult Users_Select(string groupName = "")
         {
             var userManager = new UserManager();
             var users = new List<UserMembershipGridRowModel>();
 
             foreach (var user in userManager.Users)
             {
-                users.Add(UserMembershipGridRowModel.Convert(user, groupId));
+                users.Add(UserMembershipGridRowModel.Convert(user, groupName));
             }
 
             return View(new GridModel<UserMembershipGridRowModel> { Data = users });
