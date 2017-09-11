@@ -26,7 +26,7 @@
         foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
         {
             columns.Bound(m => m.Rights)
-                        .ClientTemplate("<input type='checkbox' name='nothing' <#= (Rights &" + (int)@rightType + ") > 0 ? checked='checked' : '' #> />")
+                        .ClientTemplate("<input type='checkbox' name='selected" + rightType +"' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> />")
                                .Title(rightType.ToString())
                                .Width(64)
                                .Filterable(false)
