@@ -1,9 +1,10 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
@@ -41,18 +42,26 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Create(CreateGroupModel model)
+        public async Task<ActionResult> Create(CreateGroupModel model)
         {
             if (!ModelState.IsValid) return PartialView("_Create", model);
 
             var groupManager = new GroupManager();
-            var group = groupManager.CreateAsync(new Group()
+            var group = new Group()
             {
                 Name = model.Name,
                 Description = model.Description
-            }).Result;
+            };
 
-            return Json(new { success = true });
+            var result = await groupManager.CreateAsync(group);
+            if (result.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+
+            AddErrors(result);
+
+            return PartialView("_Create", model);
         }
 
         [GridAction]
@@ -145,34 +154,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(new GridModel<UserMembershipGridRowModel> { Data = users });
         }
 
-        /// <summary>
-        /// ToDo: Documentation
-        /// </summary>
-        /// <param name="groupName"></param>
-        /// <param name="groupId"></param>
-        /// <returns></returns>
-        public JsonResult ValidateGroupName(string groupName, long groupId = 0)
+        #region Hilfsprogramme
+
+        private void AddErrors(IdentityResult result)
         {
-            var groupManager = new GroupManager();
-            var group = groupManager.FindByNameAsync(groupName).Result;
-
-            if (group == null)
+            foreach (var error in result.Errors)
             {
-                return Json(true, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                if (group.Id == groupId)
-                {
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    var error = string.Format(CultureInfo.InvariantCulture, "The group name already exists.");
-
-                    return Json(error, JsonRequestBehavior.AllowGet);
-                }
+                ModelState.AddModelError("", error);
             }
         }
+
+        #endregion
     }
 }
