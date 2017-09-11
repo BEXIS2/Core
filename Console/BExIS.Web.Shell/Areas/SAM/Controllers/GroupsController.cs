@@ -46,11 +46,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (!ModelState.IsValid) return PartialView("_Create", model);
 
             var groupManager = new GroupManager();
-            groupManager.Create(new Group()
+            var group = groupManager.CreateAsync(new Group()
             {
                 Name = model.Name,
                 Description = model.Description
-            });
+            }).Result;
 
             return Json(new { success = true });
         }
@@ -95,7 +95,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Update(long groupId)
         {
             var groupManager = new GroupManager();
-            var group = groupManager.FindById(groupId);
+            var group = groupManager.FindByIdAsync(groupId).Result;
             return View("_Update", UpdateGroupModel.Convert(group));
         }
 
@@ -110,14 +110,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (!ModelState.IsValid) return PartialView("_Update", model);
 
             var groupManager = new GroupManager();
-            var group = groupManager.FindById(model.Id);
+            var group = groupManager.FindByIdAsync(model.Id).Result;
 
             if (group == null) return PartialView("_Update", model);
 
             group.Name = model.Name;
             group.Description = model.Description;
 
-            groupManager.Update(group);
+            groupManager.UpdateAsync(group);
             return Json(new { success = true });
         }
 
@@ -154,7 +154,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public JsonResult ValidateGroupName(string groupName, long groupId = 0)
         {
             var groupManager = new GroupManager();
-            var group = groupManager.FindByName(groupName);
+            var group = groupManager.FindByNameAsync(groupName).Result;
 
             if (group == null)
             {
