@@ -6,7 +6,10 @@ namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateUserModel
     {
+        [Required]
         public string Email { get; set; }
+
+        [Required]
         public string UserName { get; set; }
     }
 

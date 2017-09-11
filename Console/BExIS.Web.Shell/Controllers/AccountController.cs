@@ -232,28 +232,28 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(model);
+
+            var userManager = new UserManager();
+            var user = new User { UserName = model.UserName, Email = model.Email };
+
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
             {
-                var user = new User { UserName = model.UserName, Email = model.Email };
-                var userManager = new UserManager();
-                var result = await userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    //var signInManager = new SignInManager(userManager, AuthenticationManager);
-                    //await signInManager.SignInAsync(user, false, false);
+                //var signInManager = new SignInManager(userManager, AuthenticationManager);
+                //await signInManager.SignInAsync(user, false, false);
 
-                    // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
-                    // E-Mail-Nachricht mit diesem Link senden
-                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
+                // E-Mail-Nachricht mit diesem Link senden
+                var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+                ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
 
-                    return View("Info");
-                }
-
-                AddErrors(result);
+                return View("Info");
             }
+
+            AddErrors(result);
 
             return View(model);
         }
