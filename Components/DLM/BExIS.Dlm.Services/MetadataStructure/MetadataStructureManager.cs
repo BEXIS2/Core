@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -7,7 +8,6 @@ using System.Xml;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {

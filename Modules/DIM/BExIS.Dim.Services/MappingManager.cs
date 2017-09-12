@@ -1,13 +1,14 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services
 {
-    public class MappingManager: IDisposable
+    public class MappingManager : IDisposable
     {
         private IUnitOfWork guow = null;
         public MappingManager()
@@ -102,6 +103,7 @@ namespace BExIS.Dim.Services
                 IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
                 repo.Put(linkElement);
                 uow.Commit();
+
             }
 
             return (linkElement);
@@ -267,9 +269,17 @@ namespace BExIS.Dim.Services
             mapping.Level = level;
             mapping.Parent = parent;
 
+            Debug.WriteLine("------------------------------------");
+            if (source != null) Debug.WriteLine(source.Id); else Debug.WriteLine("null");
+            if (target != null) Debug.WriteLine(target.Id); else Debug.WriteLine("null");
+            if (rule != null) Debug.WriteLine(rule.Id); else Debug.WriteLine("null");
+            if (parent != null) Debug.WriteLine(parent.Id); else Debug.WriteLine("null");
+
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Mapping> repo = uow.GetRepository<Mapping>();
+                if (repo != null) Debug.WriteLine("repo not null"); else Debug.WriteLine("null");
                 repo.Put(mapping);
                 uow.Commit();
             }
