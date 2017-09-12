@@ -1,14 +1,11 @@
 ﻿
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Entities.Publication;
-using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -28,83 +25,83 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 #region SECURITY
 
-                //workflows = größere sachen, vielen operation
-                //operations = einzelne actions
+                ////workflows = größere sachen, vielen operation
+                ////operations = einzelne actions
 
-                //1.controller -> 1.Operation
-
-
-                FeatureManager featureManager = new FeatureManager();
-
-                Feature DataDissemination =
-                    featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Dissemination"));
-                if (DataDissemination == null)
-                    DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
-
-                Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
-                if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping", DataDissemination);
-
-                Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
-                if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
-
-                OperationManager operationManager = new OperationManager();
+                ////1.controller -> 1.Operation
 
 
-                #region Help Workflow
+                //FeatureManager featureManager = new FeatureManager();
 
-                operationManager.Create("DIM", "Help", "*", DataDissemination);
+                //Feature DataDissemination =
+                //    featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Dissemination"));
+                //if (DataDissemination == null)
+                //    DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
 
-                #endregion
+                //Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
+                //if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping", DataDissemination);
 
-                #region Admin Workflow
+                //Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
+                //if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
 
-                operationManager.Create("Dim", "Admin", "*", DataDissemination);
-
-                operationManager.Create("Dim", "Submission", "*", Submission);
-                operationManager.Create("Dim", "Mapping", "*", Mapping);
-
-
-                #endregion
-
-                #region Mapping Workflow
-
-                //ToDo add security after Refactoring DIM mapping workflow
+                //OperationManager operationManager = new OperationManager();
 
 
-                //workflow = new Workflow();
-                //workflow.Name = "Mapping";
-                //workflowManager.Create(workflow);
+                //#region Help Workflow
 
-                //operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
-                //workflow.Operations.Add(operation);
+                //operationManager.Create("DIM", "Help", "*", DataDissemination);
 
-                //Mapping.Workflows.Add(workflow);
+                //#endregion
 
-                #endregion
+                //#region Admin Workflow
 
-                #region Submission Workflow
+                //operationManager.Create("Dim", "Admin", "*", DataDissemination);
 
-                //ToDo add security after Refactoring DIM Submission workflow
+                //operationManager.Create("Dim", "Submission", "*", Submission);
+                //operationManager.Create("Dim", "Mapping", "*", Mapping);
 
-                //workflow = new Workflow();
-                //workflow.Name = "Submission";
-                //workflowManager.Create(workflow);
 
-                //operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
-                //workflow.Operations.Add(operation);
+                //#endregion
 
-                //Submission.Workflows.Add(workflow);
+                //#region Mapping Workflow
 
-                #endregion
+                ////ToDo add security after Refactoring DIM mapping workflow
+
+
+                ////workflow = new Workflow();
+                ////workflow.Name = "Mapping";
+                ////workflowManager.Create(workflow);
+
+                ////operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
+                ////workflow.Operations.Add(operation);
+
+                ////Mapping.Workflows.Add(workflow);
+
+                //#endregion
+
+                //#region Submission Workflow
+
+                ////ToDo add security after Refactoring DIM Submission workflow
+
+                ////workflow = new Workflow();
+                ////workflow.Name = "Submission";
+                ////workflowManager.Create(workflow);
+
+                ////operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
+                ////workflow.Operations.Add(operation);
+
+                ////Submission.Workflows.Add(workflow);
+
+                //#endregion
 
                 #endregion
 
                 #region EXPORT
 
-                SubmissionManager submissionManager = new SubmissionManager();
-                submissionManager.Load();
+                //SubmissionManager submissionManager = new SubmissionManager();
+                //submissionManager.Load();
 
-                createMetadataStructureRepoMaps();
+                //createMetadataStructureRepoMaps();
 
 
                 #endregion
@@ -215,16 +212,16 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
                 Debug.WriteLine("Title");
                 createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("Details");
                 createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("FullName");
                 createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("Text");
                 createToKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager);
 
                 #endregion
             }
@@ -257,22 +254,22 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Mapping rootFrom = mappingManager.CreateMapping(system, gbifRoot, 0, null, null);
 
                 createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootFrom, metadataRef, mappingManager);
 
                 createToKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
 
 
 
-                //createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                //createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
+                createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
 
-                //createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                //createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
+                createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
 
 
                 createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
-                //createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
 
                 #endregion
             }
@@ -375,6 +372,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
                     key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple);
+
 
             if (simpleNodeName.Equals(complexNodeName))
             {
