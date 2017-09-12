@@ -37,7 +37,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Create(Subject subject, Entity entity, long key, short rights)
+        public void Create(Subject subject, Entity entity, long key, int rights)
         {
             var entityPermission = new EntityPermission()
             {
@@ -59,7 +59,7 @@ namespace BExIS.Security.Services.Authorization
         {
         }
 
-        public void Create(long? subjectId, long entityId, long key, short rights)
+        public void Create(long? subjectId, long entityId, long key, int rights)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -180,10 +180,16 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1 : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
+            }
+        }
 
-                if (subjectId == null)
-                    return entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1;
-                return entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
+        public EntityPermission Find(long? subjectId, long entityId, long instanceId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault() : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault();
             }
         }
 

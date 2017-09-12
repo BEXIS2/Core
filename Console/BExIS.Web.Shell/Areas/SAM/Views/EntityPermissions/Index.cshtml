@@ -29,7 +29,7 @@
 
         $.get('@Url.Action("Instances", "EntityPermissions")',
             { EntityId: entityId },
-            function(contentData) {
+            function (contentData) {
 
                 $('#content_instances').html(contentData);
 
@@ -44,18 +44,17 @@
         $("#grid_instances")
             .on("change",
                 "input[name='selectedInstances']:checkbox",
-                function(e) {
-                    alert("dskf");
+                function (e) {
                     if ($(this).is(':checked')) {
                         $.post('@Url.Action("AddInstanceToPublic", "EntityPermissions")',
-                            { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
-                            function() {
+                            { EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid') },
+                            function () {
                                 $("#grid_groups .t-refresh").trigger('click');
                             });
                     } else {
                         $.post('@Url.Action("RemoveInstanceFromPublic", "EntityPermissions")',
-                            { UserId: $(this).data('entityid'), GroupId: $(this).data('instanceid') },
-                            function() {
+                            { EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid') },
+                            function () {
                                 $("#grid_groups .t-refresh").trigger('click');
                             });
                     }
@@ -66,10 +65,21 @@
         addTooltips();
         resetAllTelerikIconTitles();
 
-        $(".fa-eye")
-    .click(function () {
-        alert("TEST UND SO!");
-    });
+        $("#grid_subjects tbody input:checkbox").click(function () {
+            if ($(this).is(':checked')) {
+                $.post('@Url.Action("AddRightToEntityPermission", "EntityPermissions")',
+                    { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                    function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+            } else {
+                $.post('@Url.Action("RemoveRightFromEntityPermission", "EntityPermissions")',
+                    { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                    function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+            }
+        });
     }
 
     function grid_instances_onRowSelect(e) {
@@ -78,6 +88,4 @@
             $('#content_subjects').html(data);
         });
     }
-
-
 </script>
