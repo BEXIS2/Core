@@ -178,7 +178,6 @@ namespace BExIS.IO.Transform.Input
         public DataTuple ReadRow(List<string> row, int indexOfRow)
         {
             DataTuple dt = new DataTuple();
-            DataStructureManager dsm = new DataStructureManager();
             string value = "";
 
             // convert row to List<VariableValue>
