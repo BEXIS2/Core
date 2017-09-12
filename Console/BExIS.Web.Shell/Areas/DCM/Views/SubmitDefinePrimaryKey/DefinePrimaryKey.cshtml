@@ -125,7 +125,7 @@
         });
 
         //alert(selected);
-        $('#preloader').show();
+        $('.uploadWizardStep').preloader(16, "Check if the data of the selected primary key/s are unique.");
 
         $.ajax({
             type: 'POST',
@@ -136,7 +136,6 @@
             success: function (result) {
     
                 $("#Step4").html(result);
-                $('#preloader').hide();
             }
         });
 

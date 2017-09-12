@@ -16,10 +16,10 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="Value" type="String" >
-      <column name="Value"  />
+    <property name="Value" type="StringClob" >
+      <column name="Value" sql-type="text"/>
     </property>
-
+    
     <many-to-one name="CustomAttribute" class="BExIS.Dlm.Entities.Party.PartyCustomAttribute" not-null="true" column="CustomAttributeRef"/>
 
     <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" cascade="all" column="PartyRef" />

@@ -20,8 +20,8 @@
       <column name="Title"  />
     </property>
 
-    <property name="Description" type="String" >
-      <column name="Description"  />
+    <property name="Description" type="StringClob" >
+      <column name="Description" sql-type="text"/>
     </property>
 
     <property name="DisplayName" type="String" >

@@ -9,6 +9,7 @@ namespace BExIS.Modules.Dim.UI.Models
         public long DatasetId;
         public bool EditRights;
         public bool DownloadRights;
+        public bool MetadataIsValid;
 
         public List<PublicationModel> Publications;
 
@@ -19,6 +20,7 @@ namespace BExIS.Modules.Dim.UI.Models
             DatasetId = 0;
             EditRights = false;
             DownloadRights = false;
+            MetadataIsValid = false;
         }
 
     }
