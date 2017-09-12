@@ -38,7 +38,7 @@
         </text>)
               .ClientTemplate(
                   "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= Id #>\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= GroupName #>\"></button>" +
                   "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
               .Width(110);
       })
@@ -74,11 +74,11 @@
             $("input[name='selectedUsers']:checkbox")
                 .click(function () {
                     if ($(this).is(':checked')) {
-                        $.post('@Url.Action("AddUserToGroup", "Groups")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function (e) {
+                        $.post('@Url.Action("AddUserToGroup", "Groups")', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (e) {
                             $("#grid_users .t-refresh").trigger('click');
                         });
                     } else {
-                        $.post('@Url.Action("RemoveUserFromGroup", "Groups")', { UserId: $(this).data('userid'), GroupId: $(this).data('groupid') }, function (e) {
+                        $.post('@Url.Action("RemoveUserFromGroup", "Groups")', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (e) {
                             $("#grid_users .t-refresh").trigger('click');
                         });
                     }
@@ -189,7 +189,7 @@
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Users", "Groups")',
-                        data: { GroupId: $(this).attr("value") },
+                        data: { GroupName: $(this).attr("value") },
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({

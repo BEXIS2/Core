@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public class IdentityManager : UserManager<User, long>
+    public class IdentityUserManager : UserManager<User, long>
     {
-        public IdentityManager() : base(new UserStore())
+        public IdentityUserManager() : base(new UserStore())
         {
             // Configure validation logic for usernames
             UserValidator = new UserValidator<User, long>(this)

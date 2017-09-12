@@ -1,8 +1,10 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using System.Globalization;
+using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
@@ -40,18 +42,26 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Create(CreateGroupModel model)
+        public async Task<ActionResult> Create(CreateGroupModel model)
         {
             if (!ModelState.IsValid) return PartialView("_Create", model);
 
             var groupManager = new GroupManager();
-            groupManager.Create(new Group()
+            var group = new Group()
             {
                 Name = model.Name,
                 Description = model.Description
-            });
+            };
 
-            return Json(new { success = true });
+            var result = await groupManager.CreateAsync(group);
+            if (result.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+
+            AddErrors(result);
+
+            return PartialView("_Create", model);
         }
 
         [GridAction]
@@ -94,7 +104,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Update(long groupId)
         {
             var groupManager = new GroupManager();
-            var group = groupManager.FindById(groupId);
+            var group = groupManager.FindByIdAsync(groupId).Result;
             return View("_Update", UpdateGroupModel.Convert(group));
         }
 
@@ -109,14 +119,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (!ModelState.IsValid) return PartialView("_Update", model);
 
             var groupManager = new GroupManager();
-            var group = groupManager.FindById(model.Id);
+            var group = groupManager.FindByIdAsync(model.Id).Result;
 
             if (group == null) return PartialView("_Update", model);
 
             group.Name = model.Name;
             group.Description = model.Description;
 
-            groupManager.Update(group);
+            groupManager.UpdateAsync(group);
             return Json(new { success = true });
         }
 
@@ -125,48 +135,35 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        public ActionResult Users(long groupId)
+        public ActionResult Users(string groupName)
         {
-            return PartialView("_Users", groupId);
+            return PartialView("_Users", groupName);
         }
 
         [GridAction]
-        public ActionResult Users_Select(long groupId = 0)
+        public ActionResult Users_Select(string groupName = "")
         {
             var userManager = new UserManager();
-            var userMemberships = userManager.Users.Select(u => UserMembershipGridRowModel.Convert(u, groupId)).ToList();
+            var users = new List<UserMembershipGridRowModel>();
 
-            return View(new GridModel<UserMembershipGridRowModel> { Data = userMemberships });
+            foreach (var user in userManager.Users)
+            {
+                users.Add(UserMembershipGridRowModel.Convert(user, groupName));
+            }
+
+            return View(new GridModel<UserMembershipGridRowModel> { Data = users });
         }
 
-        /// <summary>
-        /// ToDo: Documentation
-        /// </summary>
-        /// <param name="groupName"></param>
-        /// <param name="groupId"></param>
-        /// <returns></returns>
-        public JsonResult ValidateGroupName(string groupName, long groupId = 0)
+        #region Hilfsprogramme
+
+        private void AddErrors(IdentityResult result)
         {
-            var groupManager = new GroupManager();
-            var group = groupManager.FindByName(groupName);
-
-            if (group == null)
+            foreach (var error in result.Errors)
             {
-                return Json(true, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                if (group.Id == groupId)
-                {
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    var error = string.Format(CultureInfo.InvariantCulture, "The group name already exists.");
-
-                    return Json(error, JsonRequestBehavior.AllowGet);
-                }
+                ModelState.AddModelError("", error);
             }
         }
+
+        #endregion
     }
 }

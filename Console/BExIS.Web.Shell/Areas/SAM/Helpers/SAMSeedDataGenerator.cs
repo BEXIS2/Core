@@ -51,7 +51,9 @@ namespace BExIS.Modules.Sam.UI.Helpers
             var entityPermissionOperation = operationManager.Find("SAM", "EntityPermissions", "*") ?? operationManager.Create("SAM", "EntityPermissions", "*", entityPermissionFeature);
 
             var featurePermissionManager = new FeaturePermissionManager();
-            featurePermissionManager.Create(null, featurePermissionFeature, PermissionType.Grant);
+
+            if (!featurePermissionManager.Exists(null, featurePermissionFeature, PermissionType.Grant))
+                featurePermissionManager.Create(null, featurePermissionFeature);
         }
     }
 }
