@@ -34,10 +34,6 @@ namespace BExIS.Xml.Helpers
     /// <remarks></remarks>        
     public class XmlMetadataWriter : XmlWriter
     {
-        MetadataStructureManager metadataStructureManager;
-        MetadataStructure metadataStructure;
-        MetadataPackageManager metadataPackageManager;
-        MetadataAttributeManager metadataAttributeManager;
         /// <summary>
         /// 
         /// </summary>
@@ -46,10 +42,6 @@ namespace BExIS.Xml.Helpers
         /// <param name="mode"></param>
         public XmlMetadataWriter(XmlNodeMode mode)
         {
-            metadataStructureManager = new MetadataStructureManager();
-            metadataPackageManager = new MetadataPackageManager();
-            metadataAttributeManager = new MetadataAttributeManager();
-
             _mode = mode;
         }
 
@@ -62,6 +54,9 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
         {
+            MetadataStructureManager metadataStructureManager;
+            MetadataStructure metadataStructure;
+            metadataStructureManager = new MetadataStructureManager();
             metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
             List<MetadataPackageUsage> packages = metadataStructureManager.GetEffectivePackages(metadataStructureId).ToList();
 
