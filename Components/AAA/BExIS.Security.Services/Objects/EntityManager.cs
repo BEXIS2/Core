@@ -6,7 +6,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public class EntityManager
+    public class EntityManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
@@ -72,17 +72,29 @@ namespace BExIS.Security.Services.Objects
 
         public Entity FindById(long entityId)
         {
-            return EntityRepository.Get(entityId);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                return entityRepository.Get(entityId);
+            }
         }
 
         public Entity FindByName(string entityName)
         {
-            return EntityRepository.Query(m => m.Name.ToLowerInvariant() == entityName.ToLowerInvariant()).FirstOrDefault();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                return entityRepository.Query(m => m.Name.ToLowerInvariant() == entityName.ToLowerInvariant()).FirstOrDefault();
+            }
         }
 
         public List<Entity> FindRoots()
         {
-            return EntityRepository.Query(e => e.Parent == null).ToList();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                return entityRepository.Query(e => e.Parent == null).ToList();
+            }
         }
 
         public void Update(Entity entity)
