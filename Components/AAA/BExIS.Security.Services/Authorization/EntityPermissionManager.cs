@@ -206,17 +206,17 @@ namespace BExIS.Security.Services.Authorization
 
         public List<long> GetKeys<T>(string subjectName, string entityName, Type entityType, RightType rightType) where T : Subject
         {
-            if (string.IsNullOrEmpty(subjectName))
-                return new List<long>();
-
-            if (string.IsNullOrEmpty(entityName))
-                return new List<long>();
-
-            if (entityType == null)
-                return new List<long>();
-
             using (var uow = this.GetUnitOfWork())
             {
+                if (string.IsNullOrEmpty(subjectName))
+                    return new List<long>();
+
+                if (string.IsNullOrEmpty(entityName))
+                    return new List<long>();
+
+                if (entityType == null)
+                    return new List<long>();
+
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();

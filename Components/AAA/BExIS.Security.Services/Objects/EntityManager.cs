@@ -38,21 +38,21 @@ namespace BExIS.Security.Services.Objects
 
         public Entity Create(Type entityType, Type entityStoreType, Entity parent = null)
         {
-            var entity = new Entity()
-            {
-                EntityType = entityType,
-                EntityStoreType = entityStoreType,
-                Parent = parent
-            };
-
             using (var uow = this.GetUnitOfWork())
             {
+                var entity = new Entity()
+                {
+                    EntityType = entityType,
+                    EntityStoreType = entityStoreType,
+                    Parent = parent
+                };
+
                 var entityRepository = uow.GetRepository<Entity>();
                 entityRepository.Put(entity);
                 uow.Commit();
-            }
 
-            return entity;
+                return entity;
+            }
         }
 
         public void Delete(Entity entity)
@@ -107,7 +107,7 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (!_isDisposed)
             {
