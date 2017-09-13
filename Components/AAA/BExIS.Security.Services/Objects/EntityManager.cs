@@ -8,14 +8,22 @@ namespace BExIS.Security.Services.Objects
 {
     public class EntityManager
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public EntityManager()
         {
-            var uow = this.GetUnitOfWork();
+            _guow = this.GetIsolatedUnitOfWork();
+            EntityRepository = _guow.GetReadOnlyRepository<Entity>();
+        }
 
-            EntityRepository = uow.GetReadOnlyRepository<Entity>();
+        ~EntityManager()
+        {
+            Dispose(true);
         }
 
         public IQueryable<Entity> Entities => EntityRepository.Query();
+
         public IReadOnlyRepository<Entity> EntityRepository { get; }
 
         public void Create(Entity entity)
@@ -57,6 +65,11 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
         public Entity FindById(long entityId)
         {
             return EntityRepository.Get(entityId);
@@ -79,6 +92,19 @@ namespace BExIS.Security.Services.Objects
                 var entityRepository = uow.GetRepository<Entity>();
                 entityRepository.Put(entity);
                 uow.Commit();
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
             }
         }
     }
