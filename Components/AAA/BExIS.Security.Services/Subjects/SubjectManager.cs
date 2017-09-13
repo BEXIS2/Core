@@ -8,6 +8,8 @@ namespace BExIS.Security.Services.Subjects
     public class SubjectManager : IDisposable
     {
         private IUnitOfWork guow = null;
+        private bool isDisposed = false;
+
         public SubjectManager()
         {
             var guow = this.GetIsolatedUnitOfWork();
@@ -15,14 +17,13 @@ namespace BExIS.Security.Services.Subjects
             SubjectRepository = guow.GetReadOnlyRepository<Subject>();
         }
 
-        public IReadOnlyRepository<Subject> SubjectRepository { get; }
-        public IQueryable<Subject> Subjects => SubjectRepository.Query();
-
-        private bool isDisposed = false;
         ~SubjectManager()
         {
             Dispose(true);
         }
+
+        public IReadOnlyRepository<Subject> SubjectRepository { get; }
+        public IQueryable<Subject> Subjects => SubjectRepository.Query();
 
         public void Dispose()
         {
@@ -41,6 +42,5 @@ namespace BExIS.Security.Services.Subjects
                 }
             }
         }
-
     }
 }

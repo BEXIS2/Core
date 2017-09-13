@@ -46,10 +46,12 @@ namespace BExIS.Security.Services.Subjects
             UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
         }
 
-        protected override void Dispose(bool disposing)
+        public async Task<Party> GetPartyAsync(User user)
         {
-            base.Dispose(disposing);
-            Store.Dispose();
+            var store = Store as UserStore;
+            if (store == null) throw new ArgumentNullException($"store");
+
+            return await store.GetPartyAsync(user);
         }
 
         public async Task SetPartyAsync(User user, long partyId)
@@ -60,13 +62,10 @@ namespace BExIS.Security.Services.Subjects
             await store.SetPartyAsync(user, partyId);
         }
 
-        public async Task<Party> GetPartyAsync(User user)
+        protected override void Dispose(bool disposing)
         {
-            var store = Store as UserStore;
-            if (store == null) throw new ArgumentNullException($"store");
-
-            return await store.GetPartyAsync(user);
+            base.Dispose(disposing);
+            Store.Dispose();
         }
     }
-
 }

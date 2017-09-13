@@ -9,7 +9,6 @@ namespace BExIS.Security.Services.Subjects
         {
             RoleValidator = new RoleValidator<Group, long>(this)
             {
-
             };
         }
     }

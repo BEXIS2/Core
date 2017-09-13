@@ -22,9 +22,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public void AddUserToGroup(long userId, string groupName)
         {
             var userManager = new UserManager();
-            var user = userManager.FindByIdAsync(userId).Result;
 
-            userManager.AddToGroupAsync(user.Id, groupName);
+            try
+            {
+                var user = userManager.FindByIdAsync(userId).Result;
+                userManager.AddToGroupAsync(user.Id, groupName);
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -44,33 +51,49 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreateGroupModel model)
         {
-            if (!ModelState.IsValid) return PartialView("_Create", model);
-
             var groupManager = new GroupManager();
-            var group = new Group()
-            {
-                Name = model.Name,
-                Description = model.Description
-            };
 
-            var result = await groupManager.CreateAsync(group);
-            if (result.Succeeded)
+            try
             {
-                return Json(new { success = true });
+                if (!ModelState.IsValid) return PartialView("_Create", model);
+
+                var group = new Group()
+                {
+                    Name = model.Name,
+                    Description = model.Description
+                };
+
+                var result = await groupManager.CreateAsync(group);
+                if (result.Succeeded)
+                {
+                    return Json(new { success = true });
+                }
+
+                AddErrors(result);
+
+                return PartialView("_Create", model);
             }
-
-            AddErrors(result);
-
-            return PartialView("_Create", model);
+            finally
+            {
+                groupManager.Dispose();
+            }
         }
 
         [GridAction]
         public ActionResult Groups_Select()
         {
             var groupManager = new GroupManager();
-            var groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
 
-            return View(new GridModel<GroupGridRowModel> { Data = groups });
+            try
+            {
+                var groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
+
+                return View(new GridModel<GroupGridRowModel> { Data = groups });
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -91,9 +114,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public void RemoveUserFromGroup(long userId, string groupName)
         {
             var userManager = new UserManager();
-            var user = userManager.FindByIdAsync(userId).Result;
 
-            userManager.RemoveFromGroupAsync(user.Id, groupName);
+            try
+            {
+                var user = userManager.FindByIdAsync(userId).Result;
+                userManager.RemoveFromGroupAsync(user.Id, groupName);
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -104,8 +134,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Update(long groupId)
         {
             var groupManager = new GroupManager();
-            var group = groupManager.FindByIdAsync(groupId).Result;
-            return View("_Update", UpdateGroupModel.Convert(group));
+
+            try
+            {
+                var group = groupManager.FindByIdAsync(groupId).Result;
+                return View("_Update", UpdateGroupModel.Convert(group));
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -116,18 +154,26 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Update(UpdateGroupModel model)
         {
-            if (!ModelState.IsValid) return PartialView("_Update", model);
-
             var groupManager = new GroupManager();
-            var group = groupManager.FindByIdAsync(model.Id).Result;
 
-            if (group == null) return PartialView("_Update", model);
+            try
+            {
+                if (!ModelState.IsValid) return PartialView("_Update", model);
 
-            group.Name = model.Name;
-            group.Description = model.Description;
+                var group = groupManager.FindByIdAsync(model.Id).Result;
 
-            groupManager.UpdateAsync(group);
-            return Json(new { success = true });
+                if (group == null) return PartialView("_Update", model);
+
+                group.Name = model.Name;
+                group.Description = model.Description;
+
+                groupManager.UpdateAsync(group);
+                return Json(new { success = true });
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -144,14 +190,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Users_Select(string groupName = "")
         {
             var userManager = new UserManager();
-            var users = new List<UserMembershipGridRowModel>();
 
-            foreach (var user in userManager.Users)
+            try
             {
-                users.Add(UserMembershipGridRowModel.Convert(user, groupName));
-            }
+                var users = new List<UserMembershipGridRowModel>();
 
-            return View(new GridModel<UserMembershipGridRowModel> { Data = users });
+                foreach (var user in userManager.Users)
+                {
+                    users.Add(UserMembershipGridRowModel.Convert(user, groupName));
+                }
+
+                return View(new GridModel<UserMembershipGridRowModel> { Data = users });
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
         }
 
         #region Hilfsprogramme
@@ -164,6 +218,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        #endregion
+        #endregion Hilfsprogramme
     }
 }
