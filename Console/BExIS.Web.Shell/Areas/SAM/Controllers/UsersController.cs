@@ -1,6 +1,7 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -54,9 +55,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     await
                         userManager.SendEmailAsync(user.Id, "Set your password!",
                             "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return Json(new { success = true });
                 }
 
-                return Json(new { success = true });
+                AddErrors(result);
+
+                return PartialView("_Create", model);
             }
             finally
             {
@@ -180,6 +185,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 userManager.Dispose();
+            }
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
             }
         }
     }

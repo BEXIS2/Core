@@ -79,6 +79,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
+        [HttpPost]
+        public void Delete(long groupId)
+        {
+            var groupManager = new GroupManager();
+
+            try
+            {
+                var group = groupManager.FindByIdAsync(groupId).Result;
+                groupManager.DeleteAsync(group);
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
+        }
+
         [GridAction]
         public ActionResult Groups_Select()
         {
@@ -138,7 +154,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 var group = groupManager.FindByIdAsync(groupId).Result;
-                return View("_Update", UpdateGroupModel.Convert(group));
+                return PartialView("_Update", UpdateGroupModel.Convert(group));
             }
             finally
             {
