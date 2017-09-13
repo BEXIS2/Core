@@ -8,6 +8,8 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
+    // Sven
+    // UoW -> Done
     public class EntityPermissionManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
@@ -39,16 +41,16 @@ namespace BExIS.Security.Services.Authorization
 
         public void Create(Subject subject, Entity entity, long key, int rights)
         {
-            var entityPermission = new EntityPermission()
-            {
-                Subject = subject,
-                Entity = entity,
-                Key = key,
-                Rights = rights
-            };
-
             using (var uow = this.GetUnitOfWork())
             {
+                var entityPermission = new EntityPermission()
+                {
+                    Subject = subject,
+                    Entity = entity,
+                    Key = key,
+                    Rights = rights
+                };
+
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
@@ -328,7 +330,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (!_isDisposed)
             {
