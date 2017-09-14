@@ -8,6 +8,7 @@ using Microsoft.Owin.Security;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -24,7 +25,12 @@ namespace BExIS.Web.Shell.Controllers
             }
             var userManager = new UserManager();
             var result = await userManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+
+            if (!result.Succeeded) return View("Error");
+
+            // [2017/09/14] [Sven] [BUG]
+            // Add check for party entity inside web.config, that is defined to be linked to a user!
+            return this.IsAccessibale("bam", "PartyService", "UserRegisteration") ? this.Run("bam", "PartyService", "UserRegisteration") : RedirectToAction("Index", "Home");
         }
 
         //
@@ -232,28 +238,28 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(model);
+
+            var userManager = new UserManager();
+            var user = new User { UserName = model.UserName, Email = model.Email };
+
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
             {
-                var user = new User { UserName = model.UserName, Email = model.Email };
-                var userManager = new UserManager();
-                var result = await userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    //var signInManager = new SignInManager(userManager, AuthenticationManager);
-                    //await signInManager.SignInAsync(user, false, false);
+                //var signInManager = new SignInManager(userManager, AuthenticationManager);
+                //await signInManager.SignInAsync(user, false, false);
 
-                    // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
-                    // E-Mail-Nachricht mit diesem Link senden
-                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
+                // E-Mail-Nachricht mit diesem Link senden
+                var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+                ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
 
-                    return View("Info");
-                }
-
-                AddErrors(result);
+                return View("Info");
             }
+
+            AddErrors(result);
 
             return View(model);
         }

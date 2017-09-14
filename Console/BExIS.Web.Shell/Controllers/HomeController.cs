@@ -10,6 +10,7 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
+
             ViewBag.Title = PresentationModel.GetViewTitleForTenant(Request.IsAuthenticated ? "Dashboard" : "Home", this.Session.GetTenant());
 
             return View();

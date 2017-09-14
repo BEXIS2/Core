@@ -1,6 +1,5 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -9,11 +8,12 @@ using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class FeaturePermissionsController : Controller
+    public class FeaturePermissionsController : BaseController
     {
         /// <summary>
         ///
@@ -23,9 +23,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var featurePermissionManager = new FeaturePermissionManager();
 
-            if (!featurePermissionManager.Exists(null, featureId))
+            try
             {
-                featurePermissionManager.Create(null, featureId, PermissionType.Grant);
+                if (!featurePermissionManager.Exists(null, featureId))
+                {
+                    featurePermissionManager.Create(null, featureId, PermissionType.Grant);
+                }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
             }
         }
 
@@ -38,16 +45,24 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public void CreateOrUpdateFeaturePermission(long? subjectId, long featureId, int permissionType)
         {
             var featurePermissionManager = new FeaturePermissionManager();
-            var featurePermission = featurePermissionManager.Find(subjectId, featureId);
 
-            if (featurePermission != null)
+            try
             {
-                featurePermission.PermissionType = (PermissionType)permissionType;
-                featurePermissionManager.Update(featurePermission);
+                var featurePermission = featurePermissionManager.Find(subjectId, featureId);
+
+                if (featurePermission != null)
+                {
+                    featurePermission.PermissionType = (PermissionType)permissionType;
+                    featurePermissionManager.Update(featurePermission);
+                }
+                else
+                {
+                    featurePermissionManager.Create(subjectId, featureId, (PermissionType)permissionType);
+                }
             }
-            else
+            finally
             {
-                featurePermissionManager.Create(subjectId, featureId, (PermissionType)permissionType);
+                featurePermissionManager.Dispose();
             }
         }
 
@@ -60,7 +75,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public void DeleteFeaturePermission(long subjectId, long featureId)
         {
             var featurePermissionManager = new FeaturePermissionManager();
-            featurePermissionManager.Delete(subjectId, featureId);
+
+            try
+            {
+                featurePermissionManager.Delete(subjectId, featureId);
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -69,16 +92,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
-
             var featureManager = new FeatureManager();
 
-            var features = new List<FeatureTreeViewModel>();
+            try
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
 
-            var roots = featureManager.FindRoots();
-            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f)));
+                var features = new List<FeatureTreeViewModel>();
 
-            return View(features.AsEnumerable());
+                var roots = featureManager.FindRoots();
+                roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f)));
+
+                return View(features.AsEnumerable());
+            }
+            finally
+            {
+                featureManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -89,9 +119,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var featurePermissionManager = new FeaturePermissionManager();
 
-            if (featurePermissionManager.Exists(null, featureId))
+            try
             {
-                featurePermissionManager.Delete(null, featureId);
+                if (featurePermissionManager.Exists(null, featureId))
+                {
+                    featurePermissionManager.Delete(null, featureId);
+                }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose(); ;
             }
         }
 
@@ -108,24 +145,40 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Subjects_Select(long featureId)
         {
-            var featureManager = new FeatureManager();
+            FeaturePermissionManager featurePermissionManager = null;
+            SubjectManager subjectManager = null;
+            FeatureManager featureManager = null;
 
-            // DATA
-            Feature feature = featureManager.FindById(featureId);
-
-            var featurePermissions = new List<FeaturePermissionGridRowModel>();
-
-            if (feature != null)
+            try
             {
-                var featurePermissionManager = new FeaturePermissionManager();
-                var subjectManager = new SubjectManager();
+                featurePermissionManager = new FeaturePermissionManager();
+                subjectManager = new SubjectManager();
+                featureManager = new FeatureManager();
 
-                var data = subjectManager.Subjects;
+                var feature = featureManager.FindById(featureId);
 
-                data.ToList().ForEach(s => featurePermissions.Add(FeaturePermissionGridRowModel.Convert(s, feature, featurePermissionManager.GetPermissionType(s.Id, feature.Id), featurePermissionManager.HasAccess(s.Id, feature.Id))));
+                var featurePermissions = new List<FeaturePermissionGridRowModel>();
+
+                if (feature == null)
+                    return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
+                var subjects = subjectManager.Subjects.ToList();
+
+                foreach (var subject in subjects)
+                {
+                    var rightType = featurePermissionManager.GetPermissionType(subject.Id, feature.Id);
+                    var hasAccess = featurePermissionManager.HasAccess(subject.Id, feature.Id);
+
+                    featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
+                }
+
+                return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
             }
-
-            return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
+            finally
+            {
+                featureManager?.Dispose();
+                featurePermissionManager?.Dispose();
+                subjectManager?.Dispose();
+            }
         }
     }
 }

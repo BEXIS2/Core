@@ -8,6 +8,8 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
+    // Sven
+    // UoW -> Done
     public class EntityPermissionManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
@@ -37,18 +39,18 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Create(Subject subject, Entity entity, long key, short rights)
+        public void Create(Subject subject, Entity entity, long key, int rights)
         {
-            var entityPermission = new EntityPermission()
-            {
-                Subject = subject,
-                Entity = entity,
-                Key = key,
-                Rights = rights
-            };
-
             using (var uow = this.GetUnitOfWork())
             {
+                var entityPermission = new EntityPermission()
+                {
+                    Subject = subject,
+                    Entity = entity,
+                    Key = key,
+                    Rights = rights
+                };
+
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
@@ -59,7 +61,7 @@ namespace BExIS.Security.Services.Authorization
         {
         }
 
-        public void Create(long? subjectId, long entityId, long key, short rights)
+        public void Create(long? subjectId, long entityId, long key, int rights)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -180,10 +182,16 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1 : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
+            }
+        }
 
-                if (subjectId == null)
-                    return entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1;
-                return entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
+        public EntityPermission Find(long? subjectId, long entityId, long instanceId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault() : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault();
             }
         }
 
@@ -198,17 +206,17 @@ namespace BExIS.Security.Services.Authorization
 
         public List<long> GetKeys<T>(string subjectName, string entityName, Type entityType, RightType rightType) where T : Subject
         {
-            if (string.IsNullOrEmpty(subjectName))
-                return new List<long>();
-
-            if (string.IsNullOrEmpty(entityName))
-                return new List<long>();
-
-            if (entityType == null)
-                return new List<long>();
-
             using (var uow = this.GetUnitOfWork())
             {
+                if (string.IsNullOrEmpty(subjectName))
+                    return new List<long>();
+
+                if (string.IsNullOrEmpty(entityName))
+                    return new List<long>();
+
+                if (entityType == null)
+                    return new List<long>();
+
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
@@ -263,11 +271,11 @@ namespace BExIS.Security.Services.Authorization
 
                 if (subject == null)
                 {
-                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
+                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
                 }
                 if (entity == null)
                     return 0;
-                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault()?.Rights ?? 0;
+                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
             }
         }
 
@@ -322,7 +330,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (!_isDisposed)
             {

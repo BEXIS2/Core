@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
@@ -16,7 +17,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     /// <summary>
     /// Manages all funactions an authorized user can do with datasets and their versions
     /// </summary>
-    public class DatasetsController : Controller
+    public class DatasetsController : BaseController
     {
         public ActionResult Checkin(int id)
         {

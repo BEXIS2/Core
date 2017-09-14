@@ -13,41 +13,46 @@
     <Dependency moduleId="dcm" version="*.*.*" />
   </Dependencies>
   <Exports>
-<!--
+    <!--
     <Export tag="settings" id="usrList" order="1"
             title="Manage Users" description="List Only users without groups" icon=""
             controller="subjets" action="index" argument="user"
             extends="./settingsRoot" />
 -->
-  <Export tag="settings" id="users" order="1"
-    title="Manage Users" description="Manage Users" icon=""
-    controller="users" action="index" argument="Users"
-    extends="./settingsRoot" />
-  <Export tag="settings" id="groups" order="2"
-    title="Manage Groups" description="Manage Groups" icon=""
-    controller="groups" action="index" argument="Groups"
-    extends="./settingsRoot" />
-  <Export tag="settings" id="features" order="3"
-    title="Manage Features Permissions" description="Manage Feature Permissions" icon=""
-    controller="FeaturePermissions" action="index" argument="Feature Permissions"
-    extends="./settingsRoot" />
-  <Export tag="settings" id="permissions" order="4"
-    title="Manage Entity Permissions" description="Manage Entity Permissions" icon=""
-    controller="entitypermissions" action="index" argument="Entity Permissions"
-    extends="./settingsRoot" />
-  <!--<Export tag="settings" id="modules" order="5"
+    <Export tag="settings" id="users" order="1"
+      title="Manage Users" description="Manage Users" icon=""
+      controller="users" action="index" argument="Users"
+      extends="./settingsRoot" />
+    <Export tag="settings" id="groups" order="2"
+      title="Manage Groups" description="Manage Groups" icon=""
+      controller="groups" action="index" argument="Groups"
+      extends="./settingsRoot" />
+    <Export tag="settings" id="features" order="3"
+      title="Manage Features Permissions" description="Manage Feature Permissions" icon=""
+      controller="FeaturePermissions" action="index" argument="Feature Permissions"
+      extends="./settingsRoot" />
+    <Export tag="settings" id="permissions" order="4"
+      title="Manage Entity Permissions" description="Manage Entity Permissions" icon=""
+      controller="entitypermissions" action="index" argument="Entity Permissions"
+      extends="./settingsRoot" />
+    <!--<Export tag="settings" id="modules" order="5"
     title="Manage Modules" description="Manage Modules" icon=""
     controller="modules" action="index" argument="Modules"
     extends="./settingsRoot" />-->
-  <Export tag="settings" id="datasets" order="6"
-    title="Manage Datasets" description="Manage Datasets" icon=""
-    controller="datasets" action="index" argument="Datasets"
-    extends="./settingsRoot" />
+    <Export tag="settings" id="datasets" order="6"
+      title="Manage Datasets" description="Manage Datasets" icon=""
+      controller="datasets" action="index" argument="Datasets"
+      extends="./settingsRoot" />
 
     <Export tag="lunchbar" id="helpSam" order="1"
             title="Administration" description="Administration Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
+
+    <Export tag="internalApi" id="entityPermissions_subjects"
+        title="Entity Permissions - Subjects" description="Entity Permissions - Subjects" icon=""
+        controller="EntityPermissions" action="Subjects"
+        extends="" />
 
     <Export tag="api" id="tntList"
             title="List Tenants" description="List tenants and their status" icon=""
