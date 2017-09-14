@@ -8,6 +8,7 @@ using Microsoft.Owin.Security;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -24,7 +25,12 @@ namespace BExIS.Web.Shell.Controllers
             }
             var userManager = new UserManager();
             var result = await userManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+
+            if (!result.Succeeded) return View("Error");
+
+            // [2017/09/14] [Sven] [BUG]
+            // Add check for party entity inside web.config, that is defined to be linked to a user!
+            return this.IsAccessibale("bam", "PartyService", "UserRegisteration") ? this.Run("bam", "PartyService", "UserRegisteration") : RedirectToAction("Index", "Home");
         }
 
         //

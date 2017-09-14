@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         [HttpPost]
         public void AddUserToGroup(long userId, string groupName)

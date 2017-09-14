@@ -7,14 +7,14 @@ namespace BExIS.Security.Services.Subjects
 {
     public class SubjectManager : IDisposable
     {
-        private IUnitOfWork guow = null;
+        private readonly IUnitOfWork _guow = null;
         private bool isDisposed = false;
 
         public SubjectManager()
         {
-            var guow = this.GetIsolatedUnitOfWork();
+            _guow = this.GetIsolatedUnitOfWork();
 
-            SubjectRepository = guow.GetReadOnlyRepository<Subject>();
+            SubjectRepository = _guow.GetReadOnlyRepository<Subject>();
         }
 
         ~SubjectManager()
@@ -36,8 +36,8 @@ namespace BExIS.Security.Services.Subjects
             {
                 if (disposing)
                 {
-                    if (guow != null)
-                        guow.Dispose();
+                    if (_guow != null)
+                        _guow.Dispose();
                     isDisposed = true;
                 }
             }

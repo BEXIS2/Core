@@ -8,11 +8,12 @@ using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class FeaturePermissionsController : Controller
+    public class FeaturePermissionsController : BaseController
     {
         /// <summary>
         ///
@@ -144,34 +145,39 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Subjects_Select(long featureId)
         {
-            var featureManager = new FeatureManager();
-            var featurePermissionManager = new FeaturePermissionManager();
-            var subjectManager = new SubjectManager();
+            FeaturePermissionManager featurePermissionManager = null;
+            SubjectManager subjectManager = null;
+            FeatureManager featureManager = null;
 
             try
             {
+                featurePermissionManager = new FeaturePermissionManager();
+                subjectManager = new SubjectManager();
+                featureManager = new FeatureManager();
+
                 var feature = featureManager.FindById(featureId);
 
                 var featurePermissions = new List<FeaturePermissionGridRowModel>();
 
                 if (feature == null)
                     return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
-                var data = subjectManager.Subjects;
+                var subjects = subjectManager.Subjects.ToList();
 
-                data.ToList()
-                    .ForEach(
-                        s =>
-                            featurePermissions.Add(FeaturePermissionGridRowModel.Convert(s, feature,
-                                featurePermissionManager.GetPermissionType(s.Id, feature.Id),
-                                featurePermissionManager.HasAccess(s.Id, feature.Id))));
+                foreach (var subject in subjects)
+                {
+                    var rightType = featurePermissionManager.GetPermissionType(subject.Id, feature.Id);
+                    var hasAccess = featurePermissionManager.HasAccess(subject.Id, feature.Id);
+
+                    featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
+                }
 
                 return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
             }
             finally
             {
-                featureManager.Dispose();
-                featurePermissionManager.Dispose();
-                subjectManager.Dispose();
+                featureManager?.Dispose();
+                featurePermissionManager?.Dispose();
+                subjectManager?.Dispose();
             }
         }
     }

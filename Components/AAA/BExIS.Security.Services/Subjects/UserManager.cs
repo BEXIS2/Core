@@ -1,5 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -106,11 +105,6 @@ namespace BExIS.Security.Services.Subjects
             return _identityUserManager.GetRolesAsync(userId);
         }
 
-        public Task<Party> GetPartyAsync(User user)
-        {
-            return _identityUserManager.GetPartyAsync(user);
-        }
-
         public Task<bool> IsEmailConfirmedAsync(long userId)
         {
             return _identityUserManager.IsEmailConfirmedAsync(userId);
@@ -144,11 +138,6 @@ namespace BExIS.Security.Services.Subjects
         public Task<IdentityResult> SetEmailAsync(long userId, string email)
         {
             return _identityUserManager.SetEmailAsync(userId, email);
-        }
-
-        public Task SetPartyAsync(User user, long partyId)
-        {
-            return _identityUserManager.SetPartyAsync(user, partyId);
         }
 
         public Task<IdentityResult> UpdateAsync(User user)

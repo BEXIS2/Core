@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class GroupsController : Controller
+    public class GroupsController : BaseController
     {
         /// <summary>
         ///
