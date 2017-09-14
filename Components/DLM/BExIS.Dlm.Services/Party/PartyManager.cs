@@ -252,14 +252,14 @@ namespace BExIS.Dlm.Services.Party
                 partyRelationshipType = repoRelType.Reload(partyRelationshipType);
                 var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
                                         && (item.FirstParty != null && item.FirstParty.Id == firstParty.Id)
-                                         && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count();
+                                         && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Where(item=>item.EndDate>startDate).Count();
                 //Check maximun cardinality
                 if (partyRelationshipType.MaxCardinality != -1 && partyRelationshipType.MaxCardinality <= cnt)
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
-                var alowedSource = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedSource == firstParty.PartyType || item.AllowedSource == secondParty.PartyType);
-                var alowedTarget = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedTarget == firstParty.PartyType || item.AllowedTarget == secondParty.PartyType);
+                var alowedSource = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedSource.Id == firstParty.PartyType.Id || item.AllowedSource.Id == secondParty.PartyType.Id);
+                var alowedTarget = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedTarget.Id == firstParty.PartyType.Id || item.AllowedTarget.Id == secondParty.PartyType.Id);
                 if (alowedSource == null || alowedTarget == null)
                     BexisException.Throw(entity, "There is not relevant 'PartyTypePair' for these types of parties.", BexisException.ExceptionType.Add);
                 partyRelationshipType.PartyRelationships.Add(entity);
