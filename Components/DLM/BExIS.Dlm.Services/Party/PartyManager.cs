@@ -607,39 +607,39 @@ namespace BExIS.Dlm.Services.Party
         }
         #endregion
 
-        //#region Account
-        //public void AddPartyUser(PartyX party, long userId)
-        //{
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        var partyUser = new PartyUser();
-        //        partyUser.UserId = userId;
-        //        partyUser.PartyId = party.Id;
-        //        partyUser.Party = party;
-        //        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-        //        repo.Put(partyUser);
-        //        uow.Commit();
-        //    }
-        //}
+        #region Account
+        public void AddPartyUser(PartyX party, long userId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var partyUser = new PartyUser();
+                partyUser.UserId = userId;
+                partyUser.PartyId = party.Id;
+                partyUser.Party = party;
+                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+                repo.Put(partyUser);
+                uow.Commit();
+            }
+        }
 
-        ////public PartyX GetPartyByUser(int userId)
-        ////{
-        ////    using (IUnitOfWork uow = this.GetUnitOfWork())
-        ////    {
-        ////        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-        ////        return repo.Get(c => c.UserId == userId).Select(c=>c.Party).FirstOrDefault();
-        ////    }
-        ////}
+        public PartyX GetPartyByUser(int userId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+                return repo.Get(c => c.UserId == userId).Select(c => c.Party).FirstOrDefault();
+            }
+        }
 
-        //public long GetUserIdByParty(int partyId)
-        //{
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-        //        return repo.Get(c => c.PartyId == partyId).Select(c => c.UserId).FirstOrDefault();
-        //    }
-        //}
-        //#endregion 
+        public long GetUserIdByParty(int partyId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+                return repo.Get(c => c.PartyId == partyId).Select(c => c.UserId).FirstOrDefault();
+            }
+        }
+        #endregion 
 
         /// <summary>
         /// make a hash from isUniqe custom attributes and check it with all of the other parties hash 

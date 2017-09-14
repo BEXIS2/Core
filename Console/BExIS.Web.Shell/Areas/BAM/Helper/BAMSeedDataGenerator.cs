@@ -144,7 +144,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                 IsValueOptional = partyCustomAttr.IsValueOptional,
                                 Name = partyCustomAttr.Name,
                                 PartyType = partyType,
-                                ValidValues = partyCustomAttr.ValidValues
+                                ValidValues = partyCustomAttr.ValidValues,
+                                DisplayName=partyCustomAttr.DisplayName
                             });
                         }
                         if (!customAttrs.Any(c => c.IsMain))
@@ -183,7 +184,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                     IsValueOptional = partyCustomAttr.IsValueOptional,
                                     Name = customAttrName,
                                     PartyType = partyType,
-                                    ValidValues = partyCustomAttr.ValidValues
+                                    ValidValues = partyCustomAttr.ValidValues,
+                                    DisplayName=partyCustomAttr.DisplayName
                                 });
                             }
                         }
@@ -273,6 +275,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
             var isValueOptional = GetAttributeValue(attributes, "isValueOptional", true);
             var isUnique = GetAttributeValue(attributes, "isUnique", true);
             var isMain = GetAttributeValue(attributes, "isMain", true);
+            var displayName = GetAttributeValue(attributes, "DisplayName", false);
+
             return new PartyCustomAttribute()
             {
                 DataType = customAttrType,
@@ -281,7 +285,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 IsUnique = isUnique == null ? false : Convert.ToBoolean(isUnique),
                 IsValueOptional = isValueOptional == null ? true : Convert.ToBoolean(isValueOptional),
                 Name = GetAttributeValue(attributes, "Name", true),
-                ValidValues = validValues
+                ValidValues = validValues,
+                DisplayName=displayName
             };
         }
 

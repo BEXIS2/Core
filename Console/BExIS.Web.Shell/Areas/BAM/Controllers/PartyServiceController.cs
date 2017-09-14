@@ -17,9 +17,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
         {
             return View();
         }
-        public ActionResult UserRegisteration(int id=0)
+        public ActionResult UserRegisteration()
         {
-
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                RedirectToAction("Index", "Home");
             //Select all the parties which are defined in web.config
             //Defined AccountPartyTypes vallue in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2
             var accountPartyTypes = new List<string>();
@@ -27,6 +28,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var pm = new PartyManager();
             var ptm = new PartyTypeManager();
             var prm = new PartyRelationshipTypeManager();
+            var um = new Security.Services.Subjects.UserManager();
             var allowedAccountPartyTypes = GetPartyTypesForAccount();
             if (allowedAccountPartyTypes == null)
                 throw new Exception("Allowed party types for registeration in setting.xml are not exist!");
@@ -39,15 +41,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var allowedPartyTypePairs = new Dictionary<string, PartyTypePair>();
                 if (allowedAccountPartyType.Value != null)
                 {
-
                     var partyRelationshipsType = prm.Repo.Get(item => allowedAccountPartyType.Value.Contains(item.Title));
-
-                    foreach (var partyRelationshipType in partyRelationshipsType)
+                                        foreach (var partyRelationshipType in partyRelationshipsType)
                     {
                         //filter AssociatedPairs to allowed pairs
                         partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.AllowedSource.Id && item.AllowedTarget.Parties.Any()).ToList();
-
-                        //try to find first type pair witch has PartyRelationShipTypeDefault otherwise the first one 
+                                                //try to find first type pair witch has PartyRelationShipTypeDefault otherwise the first one 
                         var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
                         if (defaultPartyTypePair == null)
                             defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
@@ -57,9 +56,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
                 partyTypeAccountModel.PartyRelationshipsTypes.Add(partyType,allowedPartyTypePairs);
             }
-            //Bind party if there is id
-            if(id!=0)
-                partyTypeAccountModel.Party=pm.Repo.Get(id);
+            //Bind party if there is already a user associated to this party
+            var user = um.FindByNameAsync(HttpContext.User.Identity.Name);
+         //   var party=pm.GetPartyByUser(um.FindByNameAsync
+            //    partyTypeAccountModel.Party=pm.Repo.Get(id);
             
           //  ViewBag.CallBackUrl = callbackUrl;
             return View("_userRegisterationPartial", partyTypeAccountModel);
