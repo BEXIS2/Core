@@ -768,13 +768,16 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         public static Mapping CreateIfNotExistMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent)
         {
+            object tmp = new object();
+            IEnumerable<Mapping> mappings = tmp.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get();
+
             MappingManager mappingManager = new MappingManager();
 
             Mapping mapping = null;
 
             if (parent != null)
             {
-                mapping = mappingManager.MappingRepo.Get().FirstOrDefault(
+                mapping = mappings.FirstOrDefault(
                     m => m.Parent != null && m.Parent.Id.Equals(parent.Id)
                          && m.Source.Id.Equals(source.Id)
                          && m.Source.Type.Equals(source.Type)
@@ -784,7 +787,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             }
             else
             {
-                mapping = mappingManager.MappingRepo.Get().FirstOrDefault(
+                mapping = mappings.FirstOrDefault(
                     m => m.Parent == null
                          && m.Source.Id.Equals(source.Id)
                          && m.Source.Type.Equals(source.Type)
