@@ -18,7 +18,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
         public static int CountRelations(long sourcePartyId, PartyRelationshipType partyRelationshipType)
         {
             PartyManager partyManager = new PartyManager();
-            var cnt = partyManager.RepoPartyRelationships.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
+            var cnt = partyManager.PartyRelationshipRepository.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
                                       && (item.FirstParty != null && (item.FirstParty.Id == sourcePartyId) || (item.SecondParty.Id == sourcePartyId))
                                        && (item.EndDate >= DateTime.Now)).Count();
             return cnt;
@@ -32,7 +32,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
         public static String ValidateRelationships(IEnumerable<PartyRelationshipType> requiredPartyRelationTypes, long partyId)
         {
             var partyManager = new PartyManager();
-            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == partyId);
+            var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == partyId);
             String messages = "";
             foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
             {
@@ -46,9 +46,9 @@ namespace BExIS.Modules.Bam.UI.Helpers
         public static String ValidateRelationships(long partyId)
         {
             var partyManager = new PartyManager();
-            var party = partyManager.Repo.Get(partyId);
+            var party = partyManager.PartyRepository.Get(partyId);
             var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(party.PartyType.Id).Where(cc => cc.MinCardinality > 0);
-            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == party.Id);
+            var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == party.Id);
             String messages = "";
             foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
             {
@@ -118,7 +118,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     }
                     var title = GetAttributeValue(attributes, "Name", true);
                     var displayName = GetAttributeValue(attributes, "DisplayName", false);
-                    var partyType = partyTypeManager.Repo.Get(item => item.Title == title).FirstOrDefault();
+                    var partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Title == title).FirstOrDefault();
                     //If there is not such a party type
                     if (partyType == null)
                     {
@@ -225,10 +225,10 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         }
                         var allowedSourceTitle = GetAttributeValue(partyTypesPairNodeAttributes, "AllowedSource", true);
                         var allowedTargetTitle = GetAttributeValue(partyTypesPairNodeAttributes, "AllowedTarget", true);
-                        var allowedSource = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedSourceTitle.ToLower()).FirstOrDefault();
+                        var allowedSource = partyTypeManager.PartyTypeRepository.Get(item => item.Title.ToLower() == allowedSourceTitle.ToLower()).FirstOrDefault();
                         if (allowedSource == null)
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedSourceTitle + " is not a party type!!");
-                        var allowedTarget = partyTypeManager.Repo.Get(item => item.Title.ToLower() == allowedTargetTitle.ToLower()).FirstOrDefault();
+                        var allowedTarget = partyTypeManager.PartyTypeRepository.Get(item => item.Title.ToLower() == allowedTargetTitle.ToLower()).FirstOrDefault();
                         if (allowedTarget == null)
                             throw new Exception("Error in importing party relationship types ! \r\n " + allowedTargetTitle + " is not a party type!!");
 
@@ -247,7 +247,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         });
                     }
 
-                    var partyRelationshipType = partyRelationshipTypeManager.Repo.Get(item => item.Title == title).FirstOrDefault();
+                    var partyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(item => item.Title == title).FirstOrDefault();
                     //If there is not such a party relationship type 
                     //It is mandatory to create at least one party type pair when we are creating a party type relation
                     //
@@ -314,7 +314,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
         /// <param name="partyRelationshipTypeManager"></param>
         private static void UpdateOrCreatePartyTypePair(PartyTypePair partyTypePair, PartyRelationshipType partyRelationshipType, PartyRelationshipTypeManager partyRelationshipTypeManager)
         {
-            var entity = partyRelationshipTypeManager.RepoPartyTypePair.Get(item => item.Title == partyTypePair.Title && item.PartyRelationshipType.Id == partyRelationshipType.Id).FirstOrDefault();
+            var entity = partyRelationshipTypeManager.PartyTypePairRepository.Get(item => item.Title == partyTypePair.Title && item.PartyRelationshipType.Id == partyRelationshipType.Id).FirstOrDefault();
             if (entity != null)
                 partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType);
             else
