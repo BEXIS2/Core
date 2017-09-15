@@ -9,11 +9,12 @@ using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class EntityPermissionsController : Controller
+    public class EntityPermissionsController : BaseController
     {
         public void AddInstanceToPublic(long entityId, long instanceId)
         {
@@ -61,15 +62,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Permissions", Session.GetTenant());
-
-            var entities = new List<EntityTreeViewItemModel>();
-
             var entityManager = new EntityManager();
-            var roots = entityManager.FindRoots();
-            roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
 
-            return View(entities.AsEnumerable());
+            try
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Permissions", Session.GetTenant());
+
+                var entities = new List<EntityTreeViewItemModel>();
+
+                var roots = entityManager.FindRoots();
+                roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
+
+                return View(entities.AsEnumerable());
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
         }
 
         public ActionResult Instances(long entityId)
@@ -82,16 +91,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
-            var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
-            var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
-
-            return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
-        }
-
-        public ActionResult Permissions(long entityId)
-        {
-            return PartialView("_Permissions", entityId);
+            try
+            {
+                var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+                var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
+            }
+            finally
+            {
+                entityManager.Dispose();
+                entityPermissionManager.Dispose();
+            }
         }
 
         public void RemoveInstanceFromPublic(long entityId, long instanceId)
@@ -149,15 +160,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var subjectManager = new SubjectManager();
             var entityPermissionManager = new EntityPermissionManager();
 
-            var subjects = new List<EntityPermissionGridRowModel>();
-
-            foreach (var subject in subjectManager.Subjects)
+            try
             {
-                var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
-                subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights));
-            }
+                var subjects = new List<EntityPermissionGridRowModel>();
+                foreach (var subject in subjectManager.Subjects)
+                {
+                    var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
+                    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights));
+                }
 
-            return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });
+                return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });
+            }
+            finally
+            {
+                subjectManager.Dispose();
+                entityPermissionManager.Dispose();
+            }
         }
     }
 }

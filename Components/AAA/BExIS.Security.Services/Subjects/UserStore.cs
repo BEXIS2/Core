@@ -1,5 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Security.Entities.Authentication;
+﻿using BExIS.Security.Entities.Authentication;
 using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
@@ -500,38 +499,6 @@ namespace BExIS.Security.Services.Subjects
         }
 
         #endregion IUserSecurityStampStore
-
-        #region Parties
-
-        public Task<Party> GetPartyAsync(User user)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Get(user.Id)?.Party);
-            }
-        }
-
-        public Task SetPartyAsync(User user, long partyId)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var partyRepository = uow.GetRepository<Party>();
-                var userRepository = uow.GetRepository<User>();
-                var party = partyRepository.Query(p => p.Id == partyId).FirstOrDefault();
-
-                if (party == null) return Task.FromResult(0);
-
-                user.Party = party;
-
-                userRepository.Put(user);
-                uow.Commit();
-
-                return Task.FromResult(0);
-            }
-        }
-
-        #endregion Parties
 
         //public Task AddLoginAsync(User user, UserLoginInfo login)
         //{

@@ -24,19 +24,6 @@ namespace BExIS.Security.Services.Subjects
             Dispose(true);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_isDisposed) return;
-            if (!disposing) return;
-            _identityGroupManager?.Dispose();
-            _isDisposed = true;
-        }
-
         public IQueryable<Group> Groups => _identityGroupManager.Roles;
 
         public Task<IdentityResult> CreateAsync(Group group)
@@ -44,14 +31,14 @@ namespace BExIS.Security.Services.Subjects
             return _identityGroupManager.CreateAsync(group);
         }
 
-        public Task<IdentityResult> UpdateAsync(Group group)
-        {
-            return _identityGroupManager.UpdateAsync(group);
-        }
-
         public Task<IdentityResult> DeleteAsync(Group group)
         {
             return _identityGroupManager.DeleteAsync(group);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
 
         public Task<Group> FindByIdAsync(long groupId)
@@ -63,6 +50,20 @@ namespace BExIS.Security.Services.Subjects
         {
             return _identityGroupManager.FindByNameAsync(groupName);
         }
+
+        public Task<IdentityResult> UpdateAsync(Group group)
+        {
+            return _identityGroupManager.UpdateAsync(group);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+            if (!disposing) return;
+            _identityGroupManager?.Dispose();
+            _isDisposed = true;
+        }
+
         ///// <summary>
         ///// This pri
         ///// </summary>

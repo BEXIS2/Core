@@ -57,19 +57,6 @@ namespace BExIS.Security.Services.Subjects
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    if (_guow != null)
-                        _guow.Dispose();
-                    _isDisposed = true;
-                }
-            }
-        }
-
         public Task<Group> FindByIdAsync(long roleId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -98,6 +85,19 @@ namespace BExIS.Security.Services.Subjects
             }
 
             return Task.FromResult(0);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
         }
     }
 }
