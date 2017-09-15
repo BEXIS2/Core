@@ -17,7 +17,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
-    public class DimSeedDataGenerator: IDisposable
+    public class DimSeedDataGenerator : IDisposable
     {
         public void GenerateSeedData()
         {
@@ -207,7 +207,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Debug.WriteLine("root to abcd");
                 Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
                 Debug.WriteLine("Title");
-                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, 
+                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage,
                     "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
                 createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("Details");

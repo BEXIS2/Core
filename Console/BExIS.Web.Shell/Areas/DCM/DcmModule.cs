@@ -18,7 +18,8 @@ namespace BExIS.Modules.Dcm.UI
             try
             {
                 base.Install();
-                DcmSeedDataGenerator.GenerateSeedData();
+                DcmSeedDataGenerator dcmSeedDataGeenrator = new DcmSeedDataGenerator();
+                dcmSeedDataGeenrator.GenerateSeedData();
             }
             catch (Exception e)
             {
