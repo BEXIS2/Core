@@ -272,7 +272,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             //get all parties - complex
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            IEnumerable<PartyType> partyTypes = partyTypeManager.Repo.Get();
+            IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
 
             foreach (var pt in partyTypes)
             {
@@ -464,7 +464,7 @@ namespace BExIS.Modules.Dim.UI.Helper
         private static List<LinkElementModel> getChildrenFromPartyType(LinkElementModel model)
         {
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            IEnumerable<PartyCustomAttribute> ptAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(p => p.PartyType.Id.Equals(model.ElementId));
+            IEnumerable<PartyCustomAttribute> ptAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(p => p.PartyType.Id.Equals(model.ElementId));
 
             foreach (var attr in ptAttr)
             {

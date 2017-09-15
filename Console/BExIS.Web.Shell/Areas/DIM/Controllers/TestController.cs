@@ -87,7 +87,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
 
-            PartyType partyType = partyTypeManager.Repo.Get().Where(p => p.Title.Equals("Person")).FirstOrDefault();
+            PartyType partyType = partyTypeManager.PartyTypeRepository.Get().Where(p => p.Title.Equals("Person")).FirstOrDefault();
 
             if (partyType != null)
             {
@@ -96,37 +96,37 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 var p = partyManager.Create(partyType, "David Blaa", "desc", null, null, partyStatusType);
                 // add value
-                var pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
+                var pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "David");
 
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Schöne");
 
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "ds@test.de");
 
                 /***********************************/
                 p = partyManager.Create(partyType, "Sven Thiel", "desc", null, null, partyStatusType);
                 // add value
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Sven");
 
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Thiel");
 
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "st@test.de");
 
                 /***********************************/
                 p = partyManager.Create(partyType, "Martin Hohmuth", "desc", null, null, partyStatusType);
                 // add value
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Martin");
 
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "Hohmuth");
 
-                pAttr = partyTypeManager.RepoPartyCustomAttribute.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
+                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
                 partyManager.AddPartyCustomAttriuteValue(p, pAttr, "mh@test.de");
 
             }

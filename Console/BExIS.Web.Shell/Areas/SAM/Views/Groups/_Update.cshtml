@@ -10,6 +10,15 @@
     <table class="bx-table-form">
         <tr>
             <td>
+                @Html.LabelFor(m => m.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
+                @Html.HiddenFor(m => m.Id)
+            </td>
+        </tr>
+        <tr>
+            <td>
                 @Html.LabelFor(m => m.Name)
             </td>
             <td>

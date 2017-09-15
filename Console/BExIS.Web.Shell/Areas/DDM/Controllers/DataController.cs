@@ -11,7 +11,6 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
@@ -37,10 +36,42 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DataController : BaseController
     {
+        public ActionResult DatasetPermissions(long datasetId)
+        {
+            var entityManager = new EntityManager();
+
+            try
+            {
+                if (this.IsAccessibale("SAM", "EntityPermissions", "Subjects"))
+                {
+                    var result = this.Render("SAM", "EntityPermissions", "Subjects",
+                        new RouteValueDictionary() { { "EntityId", entityManager.FindByName("Dataset").Id }, { "InstanceId", datasetId } });
+
+                    return Content(result.ToHtmlString(), "text/html");
+                }
+                else
+                {
+                    return PartialView("Error");
+                }
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
+        }
+
+        public JsonResult IsDatasetCheckedIn(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            if (id != -1 && dm.IsDatasetCheckedIn(id))
+                return Json(true);
+            else
+                return Json(false);
+        }
 
         public ActionResult ShowData(long id)
         {
-
             DatasetManager dm = new DatasetManager();
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
@@ -69,14 +100,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 metadata = dsv.Metadata;
 
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
-
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
             }
-
-
 
             model = new ShowDataModel()
             {
@@ -95,16 +123,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(model);
         }
 
-        public JsonResult IsDatasetCheckedIn(long id)
-        {
-            DatasetManager dm = new DatasetManager();
-
-            if (id != -1 && dm.IsDatasetCheckedIn(id))
-                return Json(true);
-            else
-                return Json(false);
-        }
-
         #region metadata
 
         /// <summary>
@@ -116,7 +134,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
-
             var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
             result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
             result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
@@ -136,15 +153,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return Content(view.ToHtmlString(), "text/html");
         }
 
-
         private BaseModelElement GetModelFromElement(XElement element)
         {
-
             string name = element.Attribute("name").Value;
             string displayName = "";
             BExIS.Xml.Helpers.XmlNodeType type;
 
-            // get Type 
+            // get Type
             type = BExIS.Xml.Helpers.XmlMetadataWriter.GetXmlNodeType(element.Attribute("type").Value);
 
             // get DisplayName
@@ -152,8 +167,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 displayName = element.Parent.Attribute("name").Value;
             else
                 displayName = element.Attribute("name").Value;
-
-
 
             if (XmlUtility.HasChildren(element))
             {
@@ -169,11 +182,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
                 return model;
-
             }
             else
             {
-
                 return new SimpleAttributeModel()
                 {
                     Name = name,
@@ -184,9 +195,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        #endregion
+        #endregion metadata
 
         #region primary data
+
+        public ActionResult SetGridCommand(string filters, string orders, string columns)
+        {
+            Session["Columns"] = columns.Replace("ID", "").Split(',');
+
+            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+
+            return null;
+        }
 
         //[MeasurePerformance]
         public ActionResult ShowPrimaryData(long datasetID)
@@ -222,7 +242,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
-
                     //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
                     //
                     //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
@@ -248,9 +267,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
             }
 
-
             return PartialView(null);
-
         }
 
         #region server side
@@ -265,7 +282,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (dm.IsDatasetCheckedIn(datasetID))
             {
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-
 
                 // commented by Javad. Now the new API is called
                 //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
@@ -285,38 +301,75 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return View(model);
         }
-        #endregion
 
-        public ActionResult SetGridCommand(string filters, string orders, string columns)
-        {
-            Session["Columns"] = columns.Replace("ID", "").Split(',');
-
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
-
-            return null;
-        }
+        #endregion server side
 
         #region download
 
-        public ActionResult SetFullDatasetDownload(bool subset)
+        public ActionResult DownloadAsCsvData(long id)
         {
-            Session["DownloadFullDataset"] = subset;
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".csv";
 
-            return Content("changed");
+                try
+                {
+                    DatasetManager datasetManager = new DatasetManager();
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
+                        datasetVersion.Id);
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        String[] visibleColumns = null;
+
+                        if (Session["Columns"] != null)
+                            visibleColumns = (String[])Session["Columns"];
+
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv", visibleColumns);
+
+                        LoggerFactory.LogCustom(message);
+
+                        return File(path, "text/csv", title + ext);
+
+                        #endregion generate a subset of a dataset
+                    }
+                    else
+                    {
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+
+                        LoggerFactory.LogCustom(message);
+
+                        return File(path, "text/csv", title + ".csv");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return Content("User has no rights.");
+            }
         }
 
         public ActionResult DownloadAsExcelData(long id)
         {
             if (hasUserRights(id, RightType.Read))
             {
-
                 string ext = ".xlsm";
 
                 DatasetManager datasetManager = new DatasetManager();
 
                 try
                 {
-
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                     ExcelWriter writer = new ExcelWriter();
 
@@ -340,7 +393,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         return File(path, "application/xlsm", title + ext);
 
-                        #endregion
+                        #endregion generate a subset of a dataset
                     }
 
                     //filter not in use
@@ -355,7 +408,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 catch (Exception ex)
                 {
-
                     throw ex;
                 }
             }
@@ -363,78 +415,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 return Content("User has no rights.");
             }
-        }
-
-        public ActionResult DownloadAsCsvData(long id)
-        {
-            if (hasUserRights(id, RightType.Read))
-            {
-
-                string ext = ".csv";
-
-                try
-                {
-                    DatasetManager datasetManager = new DatasetManager();
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                    OutputDataManager ioOutputDataManager = new OutputDataManager();
-                    string title = getTitle(writer.GetTitle(id));
-                    string path = "";
-                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
-                        datasetVersion.Id);
-                    // if filter selected
-                    if (filterInUse())
-                    {
-                        #region generate a subset of a dataset
-
-
-                        String[] visibleColumns = null;
-
-                        if (Session["Columns"] != null)
-                            visibleColumns = (String[])Session["Columns"];
-
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv", visibleColumns);
-
-                        LoggerFactory.LogCustom(message);
-
-                        return File(path, "text/csv", title + ext);
-
-                        #endregion
-                    }
-                    else
-                    {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
-
-                        LoggerFactory.LogCustom(message);
-
-                        return File(path, "text/csv", title + ".csv");
-                    }
-
-                }
-                catch (Exception ex)
-                {
-
-                    throw ex;
-                }
-            }
-            else
-            {
-                return Content("User has no rights.");
-            }
-
         }
 
         public ActionResult DownloadAsTxtData(long id)
         {
             if (hasUserRights(id, RightType.Read))
             {
-
                 string ext = ".txt";
 
                 try
                 {
-
-
                     DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                     AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
@@ -450,7 +440,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-
                         String[] visibleColumns = null;
 
                         if (Session["Columns"] != null)
@@ -462,34 +451,60 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         return File(path, "text/csv", title + ext);
 
-                        #endregion
+                        #endregion generate a subset of a dataset
                     }
                     else
                     {
                         path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
 
-
                         LoggerFactory.LogCustom(message);
 
                         return File(path, "text/plain", title + ".txt");
                     }
-
                 }
                 catch (Exception ex)
                 {
-
                     throw ex;
                 }
-
             }
             else
             {
                 return Content("User has no rights.");
             }
+        }
 
+        public ActionResult SetFullDatasetDownload(bool subset)
+        {
+            Session["DownloadFullDataset"] = subset;
+
+            return Content("changed");
         }
 
         #region helper
+
+        public void SetCommand(string filters, string orders)
+        {
+            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+        }
+
+        private bool filterInUse()
+        {
+            if ((Session["Filter"] != null || Session["Columns"] != null) && !(bool)Session["DownloadFullDataset"])
+            {
+                GridCommand command = (GridCommand)Session["Filter"];
+                string[] columns = (string[])Session["Columns"];
+
+                if (columns != null)
+                {
+                    if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
         {
@@ -502,10 +517,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 List<AbstractTuple> dataTupleList = datatuples;
 
-
                 if (command.FilterDescriptors.Count > 0)
                 {
-
                     foreach (IFilterDescriptor filter in command.FilterDescriptors)
                     {
                         var test = filter;
@@ -527,7 +540,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             dataTupleList = list.ToList();
                         }
                         else
-                        // more than one filter is set 
+                        // more than one filter is set
                         if (filter.GetType() == typeof(CompositeFilterDescriptor))
                         {
                             CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
@@ -554,7 +567,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             }
 
                             //dataTupleList = temp;
-
                         }
                     }
                 }
@@ -563,7 +575,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     foreach (SortDescriptor sort in command.SortDescriptors)
                     {
-
                         string direction = sort.SortDirection.ToString();
 
                         // get id as long from filtername
@@ -590,14 +601,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             dataTupleList = list.ToList();
                         }
                     }
-
                 }
 
                 return dataTupleList;
             }
 
             return null;
-
         }
 
         private string getTitle(string title)
@@ -614,60 +623,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return title;
         }
 
-        private bool filterInUse()
-        {
-            if ((Session["Filter"] != null || Session["Columns"] != null) && !(bool)Session["DownloadFullDataset"])
-            {
-                GridCommand command = (GridCommand)Session["Filter"];
-                string[] columns = (string[])Session["Columns"];
+        #endregion helper
 
-                if (columns != null)
-                {
-                    if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public void SetCommand(string filters, string orders)
-        {
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
-        }
-
-        #endregion
-
-        #endregion
+        #endregion download
 
         #region download FileStream
-
-        public ActionResult DownloadFile(long id, string path, string mimeType)
-        {
-            if (hasUserRights(id, RightType.Read))
-            {
-
-                string title = path.Split('\\').Last();
-                string message = string.Format("file was downloaded");
-                LoggerFactory.LogCustom(message);
-
-                return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
-            }
-
-            return Content("User has no rights.");
-        }
 
         public ActionResult DownloadAllFiles(long id)
         {
             if (hasUserRights(id, RightType.Read))
             {
-
                 try
                 {
-
-
                     DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
@@ -679,7 +646,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
-
 
                     if (FileHelper.FileExist(zipPath))
                     {
@@ -705,22 +671,34 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             datasetVersion.Id);
                     LoggerFactory.LogCustom(message);
 
-
                     return File(zipPath, "application/zip", title + ".zip");
                 }
                 catch (Exception ex)
                 {
-
                     throw ex;
                 }
             }
 
             return Content("User has no rights.");
-
         }
 
-        #endregion
-        #endregion
+        public ActionResult DownloadFile(long id, string path, string mimeType)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string title = path.Split('\\').Last();
+                string message = string.Format("file was downloaded");
+                LoggerFactory.LogCustom(message);
+
+                return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
+            }
+
+            return Content("User has no rights.");
+        }
+
+        #endregion download FileStream
+
+        #endregion primary data
 
         #region datastructure
 
@@ -744,7 +722,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     return View(new GridModel(table));
                 }
-
             }
             else
             {
@@ -765,7 +742,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
 
-
                 long id = (long)datasetID;
 
                 Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
@@ -777,13 +753,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-
         }
 
-        #endregion
+        #endregion datastructure
 
         #region helper
 
@@ -830,72 +804,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return options;
         }
 
-        #endregion
-
-        #region Permissions
-
-        public ActionResult Subjects(long dataId)
-        {
-            ViewData["DataId"] = dataId;
-
-            return PartialView("_SubjectsPartial");
-        }
-
-        [GridAction]
-        public ActionResult Subjects_Select(long dataId)
-        {
-            EntityManager entityManager = new EntityManager();
-            //PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-
-            List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
-
-            // TODO: refactor ( SVEN )
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            //IQueryable<Subject> data = subjectManager.GetAllSubjects();
-            //data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
-
-
-            return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
-        }
-
-        // TODO: refactor ( SVEN )
-        //public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
-        //{
-        //    PermissionManager permissionManager = new PermissionManager();
-
-        //    return permissionManager.CreateDataPermission(subjectId, entityId, dataId, (RightType)rightType);
-        //}
-
-        //public bool DeleteDataPermission(long subjectId, long entityId, long dataId, int rightType)
-        //{
-        //    PermissionManager permissionManager = new PermissionManager();
-
-        //    permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
-
-        //    return true;
-        //}
-
-        #endregion
-
+        #endregion helper
 
         #region helper
 
-        private bool hasUserRights(long entityId, RightType rightType)
+        public string GetUsernameOrDefault()
         {
-            #region security permissions and authorisations check
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
 
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
-
-            #endregion security permissions and authorisations check
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
-
 
         private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
         {
-
             string name = "";
             string mimeType = "";
 
@@ -904,7 +830,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 name = "datastructure";
                 mimeType = "text/comma-separated-values";
             }
-
 
             // create the generated FileStream and determine its location
             string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
@@ -920,7 +845,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             DatasetManager dm = new DatasetManager();
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-            {   // remove the one contentdesciptor 
+            {   // remove the one contentdesciptor
                 foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                 {
                     if (cd.Name == name)
@@ -941,18 +866,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return dynamicPath;
         }
 
-        public string GetUsernameOrDefault()
+        private bool hasUserRights(long entityId, RightType rightType)
         {
-            var username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
+            #region security permissions and authorisations check
 
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
+
+            #endregion security permissions and authorisations check
         }
 
-        #endregion
+        #endregion helper
     }
 }

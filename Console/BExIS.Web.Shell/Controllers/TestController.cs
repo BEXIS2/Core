@@ -365,7 +365,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 party3.StartDate = DateTime.Now;
                 pm.Update(party3);
-                var partyUpdated = pm.Repo.Get(party3.Id);
+                var partyUpdated = pm.PartyRepository.Get(party3.Id);
                 if (partyUpdated.StartDate == party3.StartDate)
                     System.Diagnostics.Debug.WriteLine("success party update .");
                 else
@@ -379,7 +379,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 pca.DataType = "Integer";
                 ptm.UpdatePartyCustomAttribute(pca);
-                var pcaUpdated = ptm.RepoPartyCustomAttribute.Get(pca.Id);
+                var pcaUpdated = ptm.PartyCustomAttributeRepository.Get(pca.Id);
                 if (pcaUpdated.DataType == "Integer")
                     System.Diagnostics.Debug.WriteLine("success party custom attribute update .");
                 else
@@ -420,7 +420,7 @@ namespace BExIS.Web.Shell.Controllers
         private void updateTestParty(long id)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            var party = pm.Repo.Get(id);
+            var party = pm.PartyRepository.Get(id);
             party.Description = "updated..";
             pm.Update(party);
         }
@@ -479,7 +479,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyType addPartyType()
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
-            return ptm.Repo.Get(2);
+            return ptm.PartyTypeRepository.Get(2);
             // return ptm.Create("partyTypeTest", "just for test", null);
         }
         private void removePartyType(PartyType partyType)

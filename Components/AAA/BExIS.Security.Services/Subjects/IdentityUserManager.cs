@@ -1,10 +1,8 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
-using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Subjects
 {
@@ -51,22 +49,5 @@ namespace BExIS.Security.Services.Subjects
             base.Dispose(disposing);
             Store.Dispose();
         }
-
-        public async Task SetPartyAsync(User user, long partyId)
-        {
-            var store = Store as UserStore;
-            if (store == null) throw new ArgumentNullException($"store");
-
-            await store.SetPartyAsync(user, partyId);
-        }
-
-        public async Task<Party> GetPartyAsync(User user)
-        {
-            var store = Store as UserStore;
-            if (store == null) throw new ArgumentNullException($"store");
-
-            return await store.GetPartyAsync(user);
-        }
     }
-
 }

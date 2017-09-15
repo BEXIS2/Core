@@ -17,9 +17,9 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
-    public class DimSeedDataGenerator
+    public class DimSeedDataGenerator: IDisposable
     {
-        public static void GenerateSeedData()
+        public void GenerateSeedData()
         {
             try
             {
@@ -117,11 +117,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 throw ex;
             }
 
-
-
             //ImportPartyTypes();
-
-
         }
 
         private static void createMetadataStructureRepoMaps()
@@ -211,7 +207,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Debug.WriteLine("root to abcd");
                 Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
                 Debug.WriteLine("Title");
-                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, 
+                    "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
                 createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("Details");
                 createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
@@ -729,6 +726,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             //    }
 
+        }
+
+        public void Dispose()
+        {
+            // nothing to do for now...
         }
     }
 }
