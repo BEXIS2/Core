@@ -61,14 +61,14 @@ namespace BExIS.Xml.Helpers
             metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
             List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
 
-            // Create xml Document
-            // Create the xml document containe
-            XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
-            //XDeclaration dec = new XDeclaration("1.0", null, null);
-            //doc.Add(dec);// Create the root element
-            XElement root = new XElement("Metadata");
-            root.SetAttributeValue("id", metadataStructure.Id.ToString());
-            doc.Add(root);
+                    // Create xml Document
+                    // Create the xml document containe
+                    XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                                    //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                                    //doc.Add(dec);// Create the root element
+                    XElement root = new XElement("Metadata");
+                    root.SetAttributeValue("id", metadataStructure.Id.ToString());
+                    doc.Add(root);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

@@ -180,6 +180,7 @@
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
+    <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Models\CreateDatasetViewModel.cs" />

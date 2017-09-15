@@ -1436,7 +1436,7 @@ namespace BExIS.Xml.Helpers.Mapping
             DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
             if (dt1 == null)
             {
-                dt1 = dataTypeManager.Create("String", "A test String", System.TypeCode.String);
+                dt1 = dataTypeManager.Create("string", "A test String", System.TypeCode.String);
             }
 
             if (mca == null)

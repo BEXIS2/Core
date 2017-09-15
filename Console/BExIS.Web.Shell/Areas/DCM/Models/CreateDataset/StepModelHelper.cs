@@ -1,18 +1,19 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Modules.Dcm.UI.Models.Metadata;
+﻿using BExIS.Modules.Dcm.UI.Models.Metadata;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 {
     public class StepModelHelper
     {
         public int StepId { get; set; }
-        public BaseUsage Usage { get; set; }
+        //public BaseUsage Usage { get; set; }
+        public long UsageId { get; set; }
+        public Type UsageType { get; set; }
+        public string UsageName { get; set; }
         public int Number { get; set; }
         public int Level { get; set; }
 
@@ -38,7 +39,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public StepModelHelper()
         {
             StepId = 0;
-            Usage = new BaseUsage();
+            UsageId = 0;
             Number = 0;
             XPath = "";
             Childrens = new List<StepModelHelper>();
@@ -46,15 +47,17 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             Level = 0;
         }
 
-        public StepModelHelper(int stepId, int number, BaseUsage usage, string xpath, StepModelHelper parent)
+        public StepModelHelper(int stepId, int number, long usageId, string usageName, Type usageType, string xpath, StepModelHelper parent, XmlNode extra)
         {
             StepId = stepId;
-            Usage = usage;
+            UsageId = usageId;
+            UsageType = usageType;
+            UsageName = usageName;
             Number = number;
             XPath = xpath;
             Childrens = new List<StepModelHelper>();
             Parent = parent;
-            Choice = IsChoice(usage);
+            Choice = IsChoice(extra);
 
             if (parent != null)
                 Level = parent.Level + 1;
@@ -106,9 +109,9 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
             char tmp = ' ';
 
-            foreach (char letter in Usage.Label)
+            foreach (char letter in UsageName)
             {
-                if (Usage.Label.First() == letter)
+                if (UsageName.First() == letter)
                 {
                     tmp = letter;
                     displayName += letter;
@@ -156,18 +159,16 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
         }
 
-        private bool IsChoice(BaseUsage usage)
+        private bool IsChoice(XmlNode xmlNode)
         {
-            if (usage.Extra != null)
+            if (xmlNode != null)
             {
-                XmlDocument doc = usage.Extra as XmlDocument;
-                XElement element = XmlUtility.GetXElementByAttribute("type", "name", "choice", XmlUtility.ToXDocument(doc));
+                XmlNode element = XmlUtility.GetXmlNodeByAttribute(xmlNode, "type", "name", "choice");
                 if (element != null) return true;
             }
-
             return false;
-        }
 
+        }
 
     }
 }

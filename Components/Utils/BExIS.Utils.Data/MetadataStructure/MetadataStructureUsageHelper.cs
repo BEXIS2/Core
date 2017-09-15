@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BExIS.Dlm.Entities.Common;
+﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Utils.Data.MetadataStructure
 {
     public class MetadataStructureUsageHelper
     {
-        public static BaseUsage GetMetadataAttributeUsageById(long Id)
+        public BaseUsage GetMetadataAttributeUsageById(long Id)
         {
             BaseUsage usage = new BaseUsage();
 
@@ -24,281 +26,334 @@ namespace BExIS.Utils.Data.MetadataStructure
 
         }
 
-        public static BaseUsage GetMetadataCompoundAttributeUsageById(long Id)
+        //public static BaseUsage GetMetadataCompoundAttributeUsageById(long Id)
+        //{
+        //    BaseUsage usage = new BaseUsage();
+
+        //    MetadataAttributeManager mam = new MetadataAttributeManager();
+
+        //    var x = from c in mam.MetadataCompoundAttributeRepo.Get()
+        //            from u in c.Self.MetadataNestedAttributeUsages
+        //            where u.Id == Id //&& c.Id.Equals(parentId)
+        //            select u;
+
+        //    return x.FirstOrDefault();
+
+        //}
+
+        //public static BaseUsage GetSimpleUsageById(BaseUsage parent, long Id)
+        //{
+        //    BaseUsage usage = new BaseUsage();
+
+        //    if (parent is MetadataPackageUsage)
+        //    {
+        //        MetadataPackageManager mpm = new MetadataPackageManager();
+
+        //        var q = from p in mpm.MetadataPackageRepo.Get()
+        //                from u in p.MetadataAttributeUsages
+        //                where p.Id.Equals(parent.Id) && u.Id == Id && u.MetadataAttribute.Self is MetadataSimpleAttribute
+        //                select u;
+
+        //        if (q != null && q.ToList().Count > 0)
+        //        {
+        //            return q.FirstOrDefault();
+        //        }
+        //        else return null;
+        //    }
+
+        //    else
+        //    if (parent is MetadataNestedAttributeUsage)
+        //    {
+        //        MetadataAttributeManager mam = new MetadataAttributeManager();
+
+        //        MetadataNestedAttributeUsage pUsage = (MetadataNestedAttributeUsage)parent;
+
+        //        MetadataCompoundAttribute mca = mam.MetadataCompoundAttributeRepo.Get(pUsage.Member.Self.Id);
+
+        //        var x = from nestedUsage in mca.MetadataNestedAttributeUsages
+        //                where nestedUsage.Id == Id && nestedUsage.Member.Self is MetadataSimpleAttribute
+        //                select nestedUsage;
+
+        //        //var x = from c in mam.MetadataCompoundAttributeRepo.Get()
+        //        //        from u in c.Self.MetadataNestedAttributeUsages
+        //        //        where u.Id.Equals(parent.Id) && u.Member.Self.Id == Id && u.Member.Self is MetadataSimpleAttribute
+        //        //        select u;
+
+        //        return x.FirstOrDefault();
+        //    }
+        //    else if (parent is MetadataAttributeUsage)
+        //    {
+        //        MetadataAttributeUsage mau = (MetadataAttributeUsage)parent;
+        //        if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+        //        {
+        //            MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
+        //            return mca.MetadataNestedAttributeUsages.Where(m => m.Id.Equals(Id)).FirstOrDefault();
+        //        }
+
+        //    }
+
+        //    return null;
+        //}
+
+        ///// <summary>
+        ///// Search in the packageusages 
+        ///// </summary>
+        ///// <param name="Id"></param>
+        ///// <returns></returns>
+        //public static BaseUsage GetUsageById(long Id)
+        //{
+        //    BaseUsage usage = new BaseUsage();
+
+        //    MetadataStructureManager msm = new MetadataStructureManager();
+
+        //    var q = from p in msm.PackageUsageRepo.Get()
+        //            where p.Id == Id
+        //            select p;
+
+        //    if (q != null && q.ToList().Count > 0)
+        //    {
+        //        return q.FirstOrDefault();
+        //    }
+        //    else
+        //    {
+        //        MetadataAttributeManager mam = new MetadataAttributeManager();
+
+        //        var x = from c in mam.MetadataCompoundAttributeRepo.Get()
+        //                from u in c.Self.MetadataNestedAttributeUsages
+        //                where u.Id == Id
+        //                select u;
+
+        //        return x.FirstOrDefault();
+        //    }
+        //}
+
+        public List<BaseUsage> GetChildren(long usageId, Type type)
         {
-            BaseUsage usage = new BaseUsage();
-
-            MetadataAttributeManager mam = new MetadataAttributeManager();
-
-            var x = from c in mam.MetadataCompoundAttributeRepo.Get()
-                    from u in c.Self.MetadataNestedAttributeUsages
-                    where u.Id == Id //&& c.Id.Equals(parentId)
-                    select u;
-
-            return x.FirstOrDefault();
-
-        }
-
-        public static BaseUsage GetSimpleUsageById(BaseUsage parent, long Id)
-        {
-            BaseUsage usage = new BaseUsage();
-
-            if (parent is MetadataPackageUsage)
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                MetadataPackageManager mpm = new MetadataPackageManager();
 
-                var q = from p in mpm.MetadataPackageRepo.Get()
-                        from u in p.MetadataAttributeUsages
-                        where p.Id.Equals(parent.Id) && u.Id == Id && u.MetadataAttribute.Self is MetadataSimpleAttribute
-                        select u;
+                List<BaseUsage> temp = new List<BaseUsage>();
 
-                if (q != null && q.ToList().Count > 0)
+                if (type.Equals(typeof(MetadataPackageUsage)))
                 {
-                    return q.FirstOrDefault();
-                }
-                else return null;
-            }
+                    MetadataPackageUsage mpu = unitOfWork.GetReadOnlyRepository<MetadataPackageUsage>().Get(usageId);
+                    var mauRepo = unitOfWork.GetReadOnlyRepository<MetadataAttributeUsage>();
 
-            else
-            if (parent is MetadataNestedAttributeUsage)
-            {
-                MetadataAttributeManager mam = new MetadataAttributeManager();
-
-                MetadataNestedAttributeUsage pUsage = (MetadataNestedAttributeUsage)parent;
-
-                MetadataCompoundAttribute mca = mam.MetadataCompoundAttributeRepo.Get(pUsage.Member.Self.Id);
-
-                var x = from nestedUsage in mca.MetadataNestedAttributeUsages
-                        where nestedUsage.Id == Id && nestedUsage.Member.Self is MetadataSimpleAttribute
-                        select nestedUsage;
-
-                //var x = from c in mam.MetadataCompoundAttributeRepo.Get()
-                //        from u in c.Self.MetadataNestedAttributeUsages
-                //        where u.Id.Equals(parent.Id) && u.Member.Self.Id == Id && u.Member.Self is MetadataSimpleAttribute
-                //        select u;
-
-                return x.FirstOrDefault();
-            }
-            else if (parent is MetadataAttributeUsage)
-            {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)parent;
-                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
-                {
-                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
-                    return mca.MetadataNestedAttributeUsages.Where(m => m.Id.Equals(Id)).FirstOrDefault();
-                }
-
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Search in the packageusages 
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        public static BaseUsage GetUsageById(long Id)
-        {
-            BaseUsage usage = new BaseUsage();
-
-            MetadataStructureManager msm = new MetadataStructureManager();
-
-            var q = from p in msm.PackageUsageRepo.Get()
-                    where p.Id == Id
-                    select p;
-
-            if (q != null && q.ToList().Count > 0)
-            {
-                return q.FirstOrDefault();
-            }
-
-            return null;
-
-            //else
-            //{
-            //    MetadataAttributeManager mam = new MetadataAttributeManager();
-
-            //    var x = from c in mam.MetadataCompoundAttributeRepo.Get()
-            //            from u in c.Self.MetadataNestedAttributeUsages
-            //            where u.Id == Id
-            //            select u;
-
-            //    return x.FirstOrDefault();
-            //}
-        }
-
-        public static List<BaseUsage> GetChildren(BaseUsage usage)
-        {
-            List<BaseUsage> temp = new List<BaseUsage>();
-
-            if (usage is MetadataPackageUsage)
-            {
-                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
-
-                foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
-                {
-                    temp.Add(childUsage);
-                }
-            }
-
-            if (usage is MetadataAttributeUsage)
-            {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
-                {
-                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                    foreach (MetadataAttributeUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
                     {
+                        mauRepo.LoadIfNot((childUsage).MetadataAttribute);
                         temp.Add(childUsage);
                     }
                 }
-            }
 
-            if (usage is MetadataNestedAttributeUsage)
-            {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                if (mnau.Member.Self is MetadataCompoundAttribute)
+                if (type.Equals(typeof(MetadataAttributeUsage)))
                 {
-                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                    MetadataAttributeUsage mau = unitOfWork.GetReadOnlyRepository<MetadataAttributeUsage>().Get(usageId);
+                    if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                     {
-                        temp.Add(childUsage);
+                        var mnauRepo = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+                        foreach (MetadataNestedAttributeUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                        {
+                            mnauRepo.LoadIfNot(childUsage.Member);
+                            temp.Add(childUsage);
+                        }
                     }
                 }
-            }
 
-            return temp;
+                if (type.Equals(typeof(MetadataNestedAttributeUsage)))
+                {
+                    MetadataNestedAttributeUsage mnau = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get(usageId);
+
+                    if (mnau.Member.Self is MetadataCompoundAttribute)
+                    {
+                        var mnauRepo = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+                        foreach (MetadataNestedAttributeUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                        {
+                            temp.Add(childUsage);
+                        }
+                    }
+                }
+
+                return temp;
+            }
         }
 
-        public static List<BaseUsage> GetCompoundChildrens(BaseUsage usage)
+        public List<BaseUsage> GetCompoundChildrens(long usageId, Type type)
         {
-            List<BaseUsage> temp = new List<BaseUsage>();
-
-            if (usage is MetadataPackageUsage)
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+                List<BaseUsage> temp = new List<BaseUsage>();
+                BaseUsage usage = loadUsage(usageId, type);
 
-                foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+                if (type.Equals(typeof(MetadataPackageUsage)))
                 {
-                    if (IsCompound(childUsage))
-                        temp.Add(childUsage);
-                }
-            }
+                    MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+                    var mauRepo = unitOfWork.GetReadOnlyRepository<MetadataAttributeUsage>();
 
-            if (usage is MetadataAttributeUsage)
-            {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
-                {
-                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                    foreach (MetadataAttributeUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
                     {
                         if (IsCompound(childUsage))
+                        {
+                            mauRepo.LoadIfNot(childUsage.MetadataAttribute);
                             temp.Add(childUsage);
+                        }
                     }
                 }
-            }
 
-            if (usage is MetadataNestedAttributeUsage)
-            {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                if (mnau.Member.Self is MetadataCompoundAttribute)
+                if (type.Equals(typeof(MetadataAttributeUsage)))
                 {
-                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                    MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                    if (mau.MetadataAttribute.Self.GetType().Equals(typeof(MetadataCompoundAttribute)))
                     {
-                        if (IsCompound(childUsage))
-                            temp.Add(childUsage);
+                        var mnauRepo = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+                        foreach (MetadataNestedAttributeUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                        {
+                            if (IsCompound(childUsage))
+                            {
+                                mnauRepo.LoadIfNot(childUsage.Member);
+                                temp.Add(childUsage);
+                            }
+                        }
                     }
                 }
-            }
 
-            return temp;
+                if (type.Equals(typeof(MetadataNestedAttributeUsage)))
+                {
+                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+
+                    if (mnau.Member.Self.GetType().Equals(typeof(MetadataCompoundAttribute)))
+                    {
+                        var mnauRepo = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+                        foreach (MetadataNestedAttributeUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                        {
+                            if (IsCompound(childUsage))
+                            {
+                                mnauRepo.LoadIfNot(childUsage.Member);
+                                temp.Add(childUsage);
+                            }
+                        }
+                    }
+                }
+
+                return temp;
+            }
         }
 
-        public static List<BaseUsage> GetSimpleChildrens(BaseUsage usage)
+        public List<BaseUsage> GetSimpleChildrens(BaseUsage usage)
         {
-            List<BaseUsage> temp = new List<BaseUsage>();
-
-            if (usage is MetadataPackageUsage)
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+                List<BaseUsage> temp = new List<BaseUsage>();
 
-                foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+                if (usage is MetadataPackageUsage)
                 {
-                    if (IsSimple(childUsage))
-                        temp.Add(childUsage);
-                }
-            }
+                    MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+                    var mauRepo = unitOfWork.GetReadOnlyRepository<MetadataAttributeUsage>();
 
-            if (usage is MetadataAttributeUsage)
-            {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
-                {
-                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                    foreach (MetadataAttributeUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
                     {
                         if (IsSimple(childUsage))
+                        {
+                            mauRepo.LoadIfNot(childUsage.MetadataAttribute);
                             temp.Add(childUsage);
+                        }
                     }
                 }
-            }
 
-            if (usage is MetadataNestedAttributeUsage)
-            {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                if (mnau.Member.Self is MetadataCompoundAttribute)
+                if (usage is MetadataAttributeUsage)
                 {
-                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                    MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                    if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                     {
-                        if (IsSimple(childUsage))
-                            temp.Add(childUsage);
+                        var mnauRepo = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+                        foreach (MetadataNestedAttributeUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                        {
+                            if (IsSimple(childUsage))
+                            {
+                                mnauRepo.LoadIfNot(childUsage.Member);
+                                temp.Add(childUsage);
+
+                            }
+                        }
                     }
                 }
-            }
 
-            return temp;
+                if (usage is MetadataNestedAttributeUsage)
+                {
+                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                    if (mnau.Member.Self is MetadataCompoundAttribute)
+                    {
+                        var mnauRepo = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+
+                        foreach (MetadataNestedAttributeUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                        {
+                            if (IsSimple(childUsage))
+                            {
+                                mnauRepo.LoadIfNot(childUsage.Member);
+                                temp.Add(childUsage);
+                            }
+                        }
+                    }
+                }
+
+                return temp;
+            }
         }
 
-        private static bool IsCompound(BaseUsage usage)
+        private bool IsCompound(BaseUsage usage)
         {
-            MetadataAttributeManager mam = new MetadataAttributeManager();
-
-            if (usage is MetadataAttributeUsage)
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mau.MetadataAttribute.Id);
+                MetadataAttribute ma = null;
 
-                if (ma.Self is MetadataCompoundAttribute) return true;
+                if (usage is MetadataAttributeUsage)
+                {
+                    MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
+                }
 
+                if (usage is MetadataNestedAttributeUsage)
+                {
+                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
+                }
+
+                if (ma != null && ma.Self is MetadataCompoundAttribute) return true;
+
+                return false;
             }
-
-            if (usage is MetadataNestedAttributeUsage)
-            {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mnau.Member.Id);
-                if (ma.Self is MetadataCompoundAttribute) return true;
-            }
-
-            return false;
         }
 
-        public static bool IsSimple(BaseUsage usage)
+        public bool IsSimple(BaseUsage usage)
         {
-            if (usage is MetadataAttributeUsage)
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                if (mau.MetadataAttribute.Self is MetadataSimpleAttribute) return true;
+                MetadataAttribute ma = null;
 
+                if (usage is MetadataAttributeUsage)
+                {
+                    MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
+                }
+
+                if (usage is MetadataNestedAttributeUsage)
+                {
+                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
+                }
+
+                if (ma != null && ma.Self is MetadataSimpleAttribute) return true;
+
+                return false;
             }
-
-            if (usage is MetadataNestedAttributeUsage)
-            {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                if (mnau.Member.Self is MetadataSimpleAttribute) return true;
-            }
-
-            return false;
         }
 
-        public static string GetNameOfType(BaseUsage usage)
+        public string GetNameOfType(BaseUsage usage)
         {
 
             if (usage is MetadataPackageUsage)
@@ -322,7 +377,7 @@ namespace BExIS.Utils.Data.MetadataStructure
             return "";
         }
 
-        public static long GetIdOfType(BaseUsage usage)
+        public long GetIdOfType(BaseUsage usage)
         {
 
             if (usage is MetadataPackageUsage)
@@ -346,11 +401,14 @@ namespace BExIS.Utils.Data.MetadataStructure
             return 0;
         }
 
-        public static bool HasUsagesWithSimpleType(BaseUsage usage)
+        public bool HasUsagesWithSimpleType(long usageId, Type type)
         {
-            if (usage is MetadataPackageUsage)
+            BaseUsage usage = loadUsage(usageId, type);
+
+            if (type.Equals(typeof(MetadataPackageUsage)))
             {
-                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+
+                MetadataPackageUsage mpu = this.GetUnitOfWork().GetReadOnlyRepository<MetadataPackageUsage>().Get(usageId);
 
                 foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
                 {
@@ -358,9 +416,10 @@ namespace BExIS.Utils.Data.MetadataStructure
                 }
             }
 
-            if (usage is MetadataAttributeUsage)
+            if (type.Equals(typeof(MetadataAttributeUsage)))
             {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                MetadataAttributeUsage mau = this.GetUnitOfWork().GetReadOnlyRepository<MetadataAttributeUsage>().Get(usageId); ;
+
                 if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                 {
                     foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
@@ -370,7 +429,7 @@ namespace BExIS.Utils.Data.MetadataStructure
                 }
             }
 
-            if (usage is MetadataNestedAttributeUsage)
+            if (type.Equals(typeof(MetadataNestedAttributeUsage)))
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
                 if (mnau.Member.Self is MetadataCompoundAttribute)
@@ -385,7 +444,7 @@ namespace BExIS.Utils.Data.MetadataStructure
             return false;
         }
 
-        public static bool IsRequired(BaseUsage usage)
+        public bool IsRequired(BaseUsage usage)
         {
             if (usage.MinCardinality > 0)
                 return true;
@@ -393,7 +452,7 @@ namespace BExIS.Utils.Data.MetadataStructure
                 return false;
         }
 
-        public static bool HasRequiredSimpleTypes(BaseUsage usage)
+        public bool HasRequiredSimpleTypes(BaseUsage usage)
         {
             if (usage is MetadataPackageUsage)
             {
@@ -430,6 +489,18 @@ namespace BExIS.Utils.Data.MetadataStructure
             }
 
             return false;
+        }
+
+        private BaseUsage loadUsage(long Id, Type type)
+        {
+            if (type.Equals(typeof(MetadataAttributeUsage)))
+                return this.GetUnitOfWork().GetReadOnlyRepository<MetadataAttributeUsage>().Get(Id);
+            if (type.Equals(typeof(MetadataNestedAttributeUsage)))
+                return this.GetUnitOfWork().GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get(Id);
+            if (type.Equals(typeof(MetadataPackageUsage)))
+                return this.GetUnitOfWork().GetReadOnlyRepository<MetadataPackageUsage>().Get(Id);
+
+            return null;
         }
     }
 }

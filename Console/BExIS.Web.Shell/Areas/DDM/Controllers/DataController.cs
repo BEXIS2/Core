@@ -89,7 +89,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
                 dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
-                //metadataStructureId = dm.DatasetVersionRepo.Get(id).Dataset.MetadataStructure.Id;
+                metadataStructureId = dsv.Dataset.MetadataStructure.Id;
 
                 //MetadataStructureManager msm = new MetadataStructureManager();
                 //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
