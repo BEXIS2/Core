@@ -83,7 +83,28 @@ namespace BExIS.Dlm.Services.MetadataStructure
             }
         }
 
-        private List<MetadataPackageUsage> GetPackages(Int64 structureId)
+        public List<Int64> GetEffectivePackageIds(Int64 structureId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IReadOnlyRepository<MDS.MetadataPackageUsage> repo = uow.GetReadOnlyRepository<MDS.MetadataPackageUsage>();
+
+                /*PostgreSQL82Dialect, DB2Dialect*/
+                if (AppConfiguration.DatabaseDialect.Equals("DB2Dialect"))
+                {
+                    return GetPackages(structureId).Select(p=>p.Id).ToList();
+                }
+                else //if (AppConfiguration.DatabaseDialect.Equals("PostgreSQL82Dialect"))
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    parameters.Add("metadataStructureId", structureId);
+                    List<Int64> usages = uow.ExecuteList<Int64>("GetEffectivePackageUsageIds", parameters);
+                    return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+                }
+            }
+        }
+
+        private List<MetadataPackageUsage> GetPackages(Int64 structureId) 
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
