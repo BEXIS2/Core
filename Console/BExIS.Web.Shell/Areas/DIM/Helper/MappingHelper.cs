@@ -16,6 +16,9 @@ namespace BExIS.Modules.Dim.UI.Helper
 {
     public class MappingHelper
     {
+        private static MetadataStructureUsageHelper metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+
+
         #region load rootList
 
         public static List<LinkElementRootListItem> LoadSelectionList()
@@ -222,7 +225,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             //Debug.WriteLine("1: " + LEModel.Name + " " + LEModel.Type);
 
-            List<BaseUsage> childrenUsages = MetadataStructureUsageHelper.GetChildren(usage);
+            List<BaseUsage> childrenUsages = metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType());
 
             if (childrenUsages.Count > 0)
             {

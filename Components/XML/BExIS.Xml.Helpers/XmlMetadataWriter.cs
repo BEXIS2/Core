@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Vaiona.Persistence.Api;
 
 /// <summary>
 ///
@@ -54,74 +55,86 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
         {
-            MetadataStructureManager metadataStructureManager;
-            MetadataStructure metadataStructure;
-            metadataStructureManager = new MetadataStructureManager();
-            metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
-            List<MetadataPackageUsage> packages = metadataStructureManager.GetEffectivePackages(metadataStructureId).ToList();
 
-            // Create xml Document
-            // Create the xml document containe
-            XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
-            //XDeclaration dec = new XDeclaration("1.0", null, null);
-            //doc.Add(dec);// Create the root element
-            XElement root = new XElement("Metadata");
-            root.SetAttributeValue("id", metadataStructure.Id.ToString());
-            doc.Add(root);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-
-            List<MetadataAttributeUsage> attributes;
-            foreach (MetadataPackageUsage mpu in packages)
+            try
             {
-                XElement package;
-
-                // create the role
-                XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
-                if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
-
-                role.SetAttributeValue("id", mpu.Id.ToString());
-                root.Add(role);
-
-                // create the package
-                package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
-                if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
-                package.SetAttributeValue("roleId", mpu.Id.ToString());
-                package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
-                package.SetAttributeValue("number", "1");
-                role.Add(package);
-
-
-                attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
-
-                foreach (MetadataAttributeUsage mau in attributes)
+                using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
                 {
-                    XElement attribute;
+                    MetadataStructure metadataStructure;
+                    metadataStructureManager = new MetadataStructureManager();
+                    metadataStructure = unitOfWork.GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+                    List<MetadataPackageUsage> packages = metadataStructureManager.GetEffectivePackages(metadataStructureId).ToList();
 
-                    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
-                    if (_mode.Equals(XmlNodeMode.xPath))
+                    // Create xml Document
+                    // Create the xml document containe
+                    XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                                    //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                                    //doc.Add(dec);// Create the root element
+                    XElement root = new XElement("Metadata");
+                    root.SetAttributeValue("id", metadataStructure.Id.ToString());
+                    doc.Add(root);
+
+
+                    List<MetadataAttributeUsage> attributes;
+                    foreach (MetadataPackageUsage mpu in packages)
                     {
-                        attributeRole.SetAttributeValue("name", mau.Label);
-                        attributeRole.SetAttributeValue("id", mau.Id.ToString());
+                        XElement package;
+
+                        // create the role
+                        XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
+                        if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
+
+                        role.SetAttributeValue("id", mpu.Id.ToString());
+                        root.Add(role);
+
+                        // create the package
+                        package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
+                        if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
+                        package.SetAttributeValue("roleId", mpu.Id.ToString());
+                        package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
+                        package.SetAttributeValue("number", "1");
+                        role.Add(package);
+
+
+                        attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
+
+                        foreach (MetadataAttributeUsage mau in attributes)
+                        {
+                            XElement attribute;
+
+                            XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
+                            if (_mode.Equals(XmlNodeMode.xPath))
+                            {
+                                attributeRole.SetAttributeValue("name", mau.Label);
+                                attributeRole.SetAttributeValue("id", mau.Id.ToString());
+                            }
+                            package.Add(attributeRole);
+
+                            attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
+                            if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
+
+                            attribute.SetAttributeValue("roleId", mau.Id.ToString());
+                            attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
+                            attribute.SetAttributeValue("number", "1");
+
+                            string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
+
+                            attributeRole.Add(attribute);
+
+                            setChildren(attribute, mau, importXml);
+
+                        }
                     }
-                    package.Add(attributeRole);
 
-                    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
-                    if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
-
-                    attribute.SetAttributeValue("roleId", mau.Id.ToString());
-                    attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
-                    attribute.SetAttributeValue("number", "1");
-
-                    string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
-
-                    attributeRole.Add(attribute);
-
-                    setChildren(attribute, mau, importXml);
-
+                    return doc;
                 }
             }
-
-            return doc;
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
         }
 
         private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)

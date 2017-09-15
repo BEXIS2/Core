@@ -1,22 +1,47 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
-    public class FeaturePermissionManager
+    public class FeaturePermissionManager : IDisposable
     {
+        private IUnitOfWork guow = null;
         public FeaturePermissionManager()
         {
-            var uow = this.GetUnitOfWork();
+            guow = this.GetIsolatedUnitOfWork();
+            FeaturePermissionRepository = guow.GetReadOnlyRepository<FeaturePermission>();
+            FeatureRepository = guow.GetReadOnlyRepository<Feature>();
+            SubjectRepository = guow.GetReadOnlyRepository<Subject>();
+            OperationRepository = guow.GetReadOnlyRepository<Operation>();
+        }
 
-            FeaturePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
-            FeatureRepository = uow.GetReadOnlyRepository<Feature>();
-            SubjectRepository = uow.GetReadOnlyRepository<Subject>();
-            OperationRepository = uow.GetReadOnlyRepository<Operation>();
+        private bool isDisposed = false;
+        ~FeaturePermissionManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }

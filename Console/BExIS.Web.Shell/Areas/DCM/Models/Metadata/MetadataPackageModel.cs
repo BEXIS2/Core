@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
 
@@ -13,26 +14,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         {
             ErrorList = new List<Error>();
 
-        }
-
-        public static MetadataPackageModel Convert(BaseUsage mPUsage, int number)
-        {
-            MetadataPackageUsage metadataPackageUsage = (MetadataPackageUsage)mPUsage;
-            if (metadataPackageUsage != null)
-            {
-                return new MetadataPackageModel
-                {
-                    Source = metadataPackageUsage,
-                    Number = number,
-                    MetadataAttributeModels = new List<MetadataAttributeModel>(),
-                    DisplayName = metadataPackageUsage.Label,
-                    Discription = metadataPackageUsage.Description,
-                    MinCardinality = metadataPackageUsage.MinCardinality,
-                    MaxCardinality = metadataPackageUsage.MaxCardinality
-                };
-            }
-            else
-                return null;
         }
 
         public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, int stepId)
@@ -96,7 +77,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                         {
                             if (MetadataStructureUsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mpu, metadataStructureId, Number, stepId));
+                                MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mpu, metadataStructureId, Number, stepId));
                             }
                         }
                     }
