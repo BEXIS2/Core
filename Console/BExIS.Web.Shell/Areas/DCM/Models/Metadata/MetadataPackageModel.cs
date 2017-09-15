@@ -9,11 +9,12 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataPackageModel : AbstractMetadataStepModel
     {
+        private MetadataStructureUsageHelper metadataStructureUsageHelper;
 
         public MetadataPackageModel()
         {
             ErrorList = new List<Error>();
-
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
         }
 
         public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, int stepId)
@@ -69,13 +70,13 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 MetadataPackageUsage mpu = (MetadataPackageUsage)Source;
                 if (mpu.MetadataPackage is MetadataPackage)
                 {
-                    MetadataPackage mp = (MetadataPackage)mpu.MetadataPackage;
+                    MetadataPackage mp = mpu.MetadataPackage;
 
                     if (mp != null)
                     {
                         foreach (MetadataAttributeUsage usage in mp.MetadataAttributeUsages)
                         {
-                            if (MetadataStructureUsageHelper.IsSimple(usage))
+                            if (metadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mpu, metadataStructureId, Number, stepId));
                             }

@@ -78,8 +78,9 @@ namespace BExIS.Xml.Helpers
 
 
                     List<MetadataAttributeUsage> attributes;
-                    foreach (MetadataPackageUsage mpu in packages)
+                    foreach (long mpuId in packages.Select(p => p.Id))
                     {
+                        MetadataPackageUsage mpu = unitOfWork.GetReadOnlyRepository<MetadataPackageUsage>().Get(mpuId);
                         XElement package;
 
                         // create the role

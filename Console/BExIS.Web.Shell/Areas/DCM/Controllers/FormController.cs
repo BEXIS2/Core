@@ -935,7 +935,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var attrUsage = metadataStructureUsageHelper.GetChildren(parentUsage.Id, parentUsage.GetType()).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
             //remove from xml
-            RemoveAttributeToXml(stepModelHelperParent.Number, attrUsage, number, MetadataStructureUsageHelper.GetNameOfType(attrUsage), stepModelHelperParent.XPath);
+            RemoveAttributeToXml(stepModelHelperParent.Number, attrUsage, number, metadataStructureUsageHelper.GetNameOfType(attrUsage), stepModelHelperParent.XPath);
 
             if (model != null)
             {
@@ -1634,8 +1634,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 TaskManager.StepInfos = new List<StepInfo>();
 
-                foreach (var mpu in metadataPackageList)
+                foreach (var mpuId in metadataPackageList.Select(p => p.Id))
                 {
+                    MetadataPackageUsage mpu = metadataStructureManager.PackageUsageRepo.Get(mpuId);
+
                     //only add none optional usages
                     var si = new StepInfo(mpu.Label)
                     {
@@ -2086,7 +2088,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-            metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, attribute, number, MetadataStructureUsageHelper.GetNameOfType(attribute), MetadataStructureUsageHelper.GetIdOfType(attribute).ToString(), parentXPath);
+            metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, attribute, number, metadataStructureUsageHelper.GetNameOfType(attribute), metadataStructureUsageHelper.GetIdOfType(attribute).ToString(), parentXPath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
 
@@ -2103,7 +2105,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, MetadataStructureUsageHelper.GetNameOfType(usage), MetadataStructureUsageHelper.GetIdOfType(usage), metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
+            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, metadataStructureUsageHelper.GetNameOfType(usage), metadataStructureUsageHelper.GetIdOfType(usage), metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2120,8 +2122,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 metadataXml,
                 usage,
                 number,
-                MetadataStructureUsageHelper.GetNameOfType(usage),
-                MetadataStructureUsageHelper.GetIdOfType(usage),
+                metadataStructureUsageHelper.GetNameOfType(usage),
+                metadataStructureUsageHelper.GetIdOfType(usage),
                 metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()),
                 BExIS.Xml.Helpers.XmlNodeType.MetadataPackage,
                 BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage,
@@ -2165,7 +2167,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-            metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, MetadataStructureUsageHelper.GetNameOfType(usage));
+            metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, metadataStructureUsageHelper.GetNameOfType(usage));
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2188,7 +2190,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, MetadataStructureUsageHelper.GetNameOfType(attribute), parentXpath);
+            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
             // locat path
@@ -2205,8 +2207,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number,
-                MetadataStructureUsageHelper.GetNameOfType(usage),
-                MetadataStructureUsageHelper.GetIdOfType(usage),
+                metadataStructureUsageHelper.GetNameOfType(usage),
+                metadataStructureUsageHelper.GetIdOfType(usage),
                 metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()),
                 BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute,
                 BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);

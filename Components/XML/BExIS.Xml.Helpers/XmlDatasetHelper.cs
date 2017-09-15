@@ -23,10 +23,16 @@ namespace BExIS.Xml.Helpers
         public static string GetInformation(long datasetid, NameAttributeValues name)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset dataset = dm.GetDataset(datasetid);
-            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            try
+            {
+                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
 
-            return GetInformation(datasetVersion, name);
+                return GetInformation(datasetVersion, name);
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         /// <summary>

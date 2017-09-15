@@ -14,9 +14,12 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public bool last = false;
         public bool first = false;
 
+        private MetadataStructureUsageHelper metadataStructureUsageHelper;
+
         public MetadataCompoundAttributeModel()
         {
             MetadataAttributeModels = new List<MetadataAttributeModel>();
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
         }
 
         public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, long stepId)
@@ -36,7 +39,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
                         {
-                            if (MetadataStructureUsageHelper.IsSimple(usage))
+                            if (metadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mau, metadataStructureId, Number, stepId));
                             }
@@ -56,7 +59,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
                         {
-                            if (MetadataStructureUsageHelper.IsSimple(usage))
+                            if (metadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mnau, metadataStructureId, Number, stepId));
                             }
