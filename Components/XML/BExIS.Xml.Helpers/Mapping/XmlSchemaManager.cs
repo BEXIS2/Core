@@ -118,6 +118,7 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlReaderSettings settings2 = new XmlReaderSettings();
             settings2.DtdProcessing = DtdProcessing.Ignore;
 
+            // need to manage IO exceptions, e.g. pah not found , ...
             XmlReader xsd_file = XmlReader.Create(path, settings2);
             Schema = XmlSchema.Read(xsd_file, verifyErrors);
 
