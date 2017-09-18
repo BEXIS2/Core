@@ -181,7 +181,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             try
             {
                 createSystemKeyMappings();
-                //createPartyTypeMappings();
+                createPartyTypeMappings();
             }
             catch (Exception exception)
             {
@@ -219,12 +219,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region mapping ABCD BASIC to System Keys
 
                 Debug.WriteLine("abcd to root");
-                Mapping rootTo = mappingManager.CreateMapping(abcdRoot, system, 0, null, null);
+                Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null);
                 Debug.WriteLine("root to abcd");
-                Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
+                Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null);
                 Debug.WriteLine("Title");
-                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage,
-                    "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
                 createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("Details");
                 createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
@@ -473,12 +472,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     #region mapping ABCD BASIC to System Keys
 
-                    Mapping rootTo = mappingManager.CreateMapping(abcdRoot, system, 0, null, null);
-                    Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
+                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null);
+                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null);
 
                     // create mapping for paryttypes
 
-                    //person
+                    #region person
 
                     if (partyTypes.Any(p => p.Title.Equals("Person")))
                     {
@@ -542,7 +541,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 mappingManager,
                                 new TransformationRule());
 
-                            createToPartyTypeMapping(
+                            createFromPartyTypeMapping(
                                 "Address", LinkElementType.MetadataNestedAttributeUsage,
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
@@ -563,7 +562,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 mappingManager,
                                 new TransformationRule());
 
-                            createToPartyTypeMapping(
+                            createFromPartyTypeMapping(
                                 "Phone", LinkElementType.MetadataNestedAttributeUsage,
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
@@ -571,7 +570,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 new TransformationRule());
                         }
                     }
-
+                    #endregion
 
                     #endregion
                 }
