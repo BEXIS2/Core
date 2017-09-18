@@ -18,9 +18,9 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
-    public class DcmSeedDataGenerator
+    public class DcmSeedDataGenerator : IDisposable
     {
-        public static void GenerateSeedData()
+        public void GenerateSeedData()
         {
 
             #region create none researchPlan
@@ -268,29 +268,30 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             EntityManager entityManager = new EntityManager();
 
             XmlDocument xmlDoc = new XmlDocument();
+            if(metadataStructure != null)
+            { 
+                if (metadataStructure.Extra != null)
+                {
+                    xmlDoc = (XmlDocument)metadataStructure.Extra;
+                }
 
-            if (metadataStructure.Extra != null)
-            {
-                xmlDoc = (XmlDocument)metadataStructure.Extra;
+                // add title Node
+                xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+                // add Description
+                xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+
+                xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
+                // add mappingFilePath
+                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+                //set active
+                xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+
+                metadataStructure.Extra = xmlDoc;
+                mdsManager.Update(metadataStructure);
             }
-
-            // add title Node
-            xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-            // add Description
-            xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-
-            xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
-
-            // add mappingFilePath
-            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
-            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
-
-            //set active
-            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
-
-            metadataStructure.Extra = xmlDoc;
-            mdsManager.Update(metadataStructure);
-
         }
 
         private static XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
@@ -308,6 +309,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         #endregion
 
+        public void Dispose()
+        {
+            // nothing to do for now...
+        }
 
     }
 }

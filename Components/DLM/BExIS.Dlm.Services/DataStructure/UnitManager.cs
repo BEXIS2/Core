@@ -73,8 +73,11 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                repo.Put(u);
-                uow.Commit();
+                if (repo.Query(p => p.Name.ToLower() == u.Name.ToLower()).Count() <= 0)
+                {
+                    repo.Put(u);
+                    uow.Commit();
+                }
             }
             return (u);
         }
