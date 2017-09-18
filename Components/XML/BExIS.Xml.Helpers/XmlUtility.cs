@@ -126,7 +126,7 @@ namespace BExIS.Xml.Helpers
         private static XmlNode getXmlNodeByAttribute(XmlNode node, string name, string attrName, string attrValue)
         {
             if (node.LocalName.Equals(name) &&
-                node.Attributes.Any() &&
+                node.Attributes.Count > 0 &&
                 node.Attributes[attrName] != null &&
                 node.Attributes[attrName].Value.Equals(attrValue))
             {

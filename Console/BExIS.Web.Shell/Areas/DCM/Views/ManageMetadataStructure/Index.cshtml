@@ -1,5 +1,5 @@
 ﻿@using BExIS.Modules.Dcm.UI.Models
-@using BExIS.Dim.Entities.Mapping
+
 @using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc.Modularity
 @model MetadataStructureManagerModel
@@ -57,7 +57,7 @@
 
                                 @if (Html.IsAccessibale("DIM", "Mapping", "Mapping"))
                                 {
-                                    @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType= LinkElementType.System, targetType = LinkElementType.MetadataStructure }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
+                                    @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType= "System", targetType = "MetadataStructure" }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
                                 }
 
 
@@ -70,7 +70,7 @@
                                   "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Index\")){"+
                                   "@Html.ActionLink(\" \", \"Index\", \"Mapping\", new { area = \"DIM\", sourceId = @item.Id }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-right \" + className, title = \"Mapping to system\", disabled })}"+
                                   "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Switch\")){" +
-                                  "@Html.ActionLink(\" \", \"Mapping\", \"Mapping\", new { area = \"DIM\", sourceId = 0, targetId = @item.Id, sourceType= LinkElementType.MetadataStructur }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-left \" + className, title = \"Mapping to system\", disabled })}")
+                                  "@Html.ActionLink(\" \", \"Mapping\", \"Mapping\", new { area = \"DIM\", sourceId = 0, targetId = @item.Id, sourceType= \"MetadataStructure\" }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-left \" + className, title = \"Mapping to system\", disabled })}")
                   .Width(165);
 
       })
