@@ -25,57 +25,79 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Delete(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+
 
             try
             {
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
                 // delete local files
                 if (XmlSchemaManager.Delete(metadataStructure))
                 {
                     metadataStructureManager.Delete(metadataStructure);
                 }
+
+                if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
+
+                return Json(false);
+
             }
             catch (Exception ex)
             {
                 return Json(ex.Message);
             }
-
-            // delete links from search index
-
-            if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
-
-            return Json(false);
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
         }
 
         public ActionResult DownloadSchema(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
-            string name = metadataStructure.Name;
 
-            string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id);
+            try
+            {
 
-            ZipFile zip = new ZipFile();
-            if (Directory.Exists(path))
-                zip.AddDirectory(path);
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+                string name = metadataStructure.Name;
 
-            MemoryStream stream = new MemoryStream();
-            zip.Save(stream);
-            stream.Position = 0;
-            var result = new FileStreamResult(stream, "application/zip")
-            { FileDownloadName = name + ".zip" };
+                string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
 
-            return result;
+                ZipFile zip = new ZipFile();
+                if (Directory.Exists(path))
+                    zip.AddDirectory(path);
+
+                MemoryStream stream = new MemoryStream();
+                zip.Save(stream);
+                stream.Position = 0;
+                var result = new FileStreamResult(stream, "application/zip")
+                { FileDownloadName = name + ".zip" };
+
+                return result;
+            }
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
         }
 
         public ActionResult Edit(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
 
-            MetadataStructureModel model = convertToMetadataStructureModel(metadataStructure);
+            try
+            {
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
 
-            return PartialView("_editMetadataStructureView", model);
+                MetadataStructureModel model = convertToMetadataStructureModel(metadataStructure, metadataStructureManager);
+
+                return PartialView("_editMetadataStructureView", model);
+            }
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
+
         }
 
         // GET: DCM/ManageMetadataStructure
@@ -88,50 +110,69 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Save(MetadataStructureModel metadataStructureModel)
         {
-            if (ModelState.IsValid)
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+
+            try
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+
+
+
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
                     metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
                     metadataStructureManager.Update(metadataStructure);
-                }
-                catch (Exception ex)
-                {
-                    return Json(ex.Message);
+
+
+                    return Json(true);
                 }
 
-                return Json(true);
+                return Json(false);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+            finally
+            {
+                metadataStructureManager.Dispose();
             }
 
-            return Json(false);
         }
 
         private MetadataStructureManagerModel GetDefaultModel()
         {
-            MetadataStructureManagerModel tmp = new MetadataStructureManagerModel();
-
-            //load all metadatastructure
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
 
-            foreach (var metadataStructure in metadataStructures)
+            try
             {
-                tmp.MetadataStructureModels.Add(convertToMetadataStructureModel(metadataStructure));
-            }
 
-            if (tmp.MetadataStructureModels.Any())
+                MetadataStructureManagerModel tmp = new MetadataStructureManagerModel();
+
+                //load all metadatastructure
+                IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
+
+                foreach (var metadataStructure in metadataStructures)
+                {
+                    tmp.MetadataStructureModels.Add(convertToMetadataStructureModel(metadataStructure, metadataStructureManager));
+                }
+
+                if (tmp.MetadataStructureModels.Any())
+                {
+                    tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m => m.Id).ToList();
+                }
+
+                return tmp;
+            }
+            finally
             {
-                tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m => m.Id).ToList();
+                metadataStructureManager.Dispose();
             }
-
-            return tmp;
         }
 
         #region helper
 
-        private MetadataStructureModel convertToMetadataStructureModel(MetadataStructure metadataStructure)
+        private MetadataStructureModel convertToMetadataStructureModel(MetadataStructure metadataStructure, MetadataStructureManager metadataStructureManager)
         {
             MetadataStructureModel metadataStructureModel = new MetadataStructureModel();
             metadataStructureModel.Id = metadataStructure.Id;
@@ -143,7 +184,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //get all informaions from xml
                 metadataStructureModel.EntityClasses = GetEntityModelList();
-                string EntityClassPath = XmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id);
+                string EntityClassPath = XmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id, metadataStructureManager);
                 var entityModel =
                     metadataStructureModel.EntityClasses.Where(e => e.ClassPath.Equals(EntityClassPath))
                         .FirstOrDefault();
