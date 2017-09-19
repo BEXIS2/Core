@@ -228,7 +228,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
                 {
 
-
                     // initialize all necessary manager
 
                     DataTuple[] rows = null;
@@ -281,9 +280,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     ResearchPlan rp = unitOfWork.GetReadOnlyRepository<ResearchPlan>().Get().FirstOrDefault();
                     TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_ID, rp.Id);
                     TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_TITLE, rp.Title);
-
-                    //I don't see why this line is needed
-                    DatasetVersion workingCopy = new DatasetVersion();
 
                     #region Progress Information
 
@@ -345,11 +341,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //No matching DataAttribute => Create a new one
                             CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(Entry.Item2), Entry.Item2, "", false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
                         }
-                        //ToDo EASY Upload Failes here
+
                         Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, Entry.Item2, "", "", "");
-                        VariableIdentifier vi = new VariableIdentifier();
-                        vi.name = newVariable.Label;
-                        vi.id = newVariable.Id;
+                        VariableIdentifier vi = new VariableIdentifier
+                        {
+                            name = newVariable.Label,
+                            id = newVariable.Id
+                        };
                         identifiers.Add(vi);
 
                         XmlElement newVariableXml = xmldoc.CreateElement("variable");
@@ -369,7 +367,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Dataset ds = null;
                     ds = dm.CreateEmptyDataset(sds, rp, metadataStructure);
 
-                    //Don't think these lines are necessary
+                    //TODO Should a template be created?
                     /*ExcelTemplateProvider etp = new ExcelTemplateProvider();
                     etp.CreateTemplate(sds);*/
 
@@ -466,7 +464,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
                     }
 
-                    workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
                     counter++;
                     TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
@@ -521,22 +519,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             int currentBatchEndRow = currentBatchStartRow + batchSize;
 
                             //Set the indices for the reader
-                            EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
-                            fri.DataStartRow = currentBatchStartRow;
-                            //End row is either at the end of the batch or the end of the marked area
-                            fri.DataEndRow = (currentBatchEndRow > areaDataValues[2] + 1) ? areaDataValues[2] + 1 : currentBatchEndRow;
-                            //Column indices as marked in a previous step
-                            fri.DataStartColumn = areaDataValues[1] + 1;
-                            fri.DataEndColumn = areaDataValues[3] + 1;
+                            EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo
+                            {
+                                DataStartRow = currentBatchStartRow,
+                                //End row is either at the end of the batch or the end of the marked area
+                                //DataEndRow = (currentBatchEndRow > areaDataValues[2] + 1) ? areaDataValues[2] + 1 : currentBatchEndRow,
+                                DataEndRow = Math.Min(currentBatchEndRow, areaDataValues[2] + 1),
+                                //Column indices as marked in a previous step
+                                DataStartColumn = areaDataValues[1] + 1,
+                                DataEndColumn = areaDataValues[3] + 1,
 
-                            //Header area as marked in a previous step
-                            fri.VariablesStartRow = areaHeaderValues[0] + 1;
-                            fri.VariablesStartColumn = areaHeaderValues[1] + 1;
-                            fri.VariablesEndRow = areaHeaderValues[2] + 1;
-                            fri.VariablesEndColumn = areaHeaderValues[3] + 1;
+                                //Header area as marked in a previous step
+                                VariablesStartRow = areaHeaderValues[0] + 1,
+                                VariablesStartColumn = areaHeaderValues[1] + 1,
+                                VariablesEndRow = areaHeaderValues[2] + 1,
+                                VariablesEndColumn = areaHeaderValues[3] + 1,
 
-                            fri.Offset = areaDataValues[1];
-                            fri.Orientation = orientation;
+                                Offset = areaDataValues[1],
+                                Orientation = orientation
+                            };
 
                             //Set variable identifiers because they might differ from the variable names in the file
                             reader.setSubmittedVariableIdentifiers(identifiers);
@@ -676,30 +677,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         DataTypeCheck dtc;
                         double DummyValue = 0;
-                        //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
-                        //Should be removed as soon as this is fixed
-                        /*Boolean skipDataTypeCheck = false;
-                        if (datatypeName == "Double")
-                        {
-                            if (!Double.TryParse(vv, out DummyValue))
-                            {
-                                ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
-                                skipDataTypeCheck = true;
-                            }
-                        }
-
-                        if (datatypeName == "Char")
-                        {
-                            skipDataTypeCheck = true;
-                            char dummy;
-                            if (!Char.TryParse(vv, out dummy))
-                            {
-                                ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
-                            }
-                        }*/
-
-                        //if (!skipDataTypeCheck)
-                        //{
                         if (Double.TryParse(vv, out DummyValue))
                         {
                             if (vv.Contains("."))
@@ -721,7 +698,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             ErrorList.Add((Error)ValidationResult);
                         }
-                        //}
                     }
                 }
             }
