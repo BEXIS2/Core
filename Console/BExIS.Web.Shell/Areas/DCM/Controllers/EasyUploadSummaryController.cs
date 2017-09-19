@@ -222,12 +222,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //SubjectManager sm = new SubjectManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
+            List<Error> temp = new List<Error>();
             try
             {
                 using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
                 {
 
-                    List<Error> temp = new List<Error>();
 
                     // initialize all necessary manager
 
@@ -264,8 +264,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(EasyUploadTaskManager.DATASET_TITLE, title);
                         TaskManager.AddToBus(EasyUploadTaskManager.TITLE, title);
                     }
-
-                    // FIXIT
+                    
                     MetadataStructure metadataStructure = null;
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                     {
@@ -579,6 +578,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     return temp;
                 }
+            } catch (Exception ex)
+            {
+                temp.Add(new Error(ErrorType.Other, "An error occured during the upload. " +
+                    "Please try again later. If this problem keeps occuring, please contact your administrator."));
+                return temp;
             }
             finally
             {
