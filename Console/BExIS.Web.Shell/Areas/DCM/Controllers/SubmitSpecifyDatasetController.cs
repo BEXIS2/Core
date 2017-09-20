@@ -63,92 +63,110 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult SpecifyDataset(object[] data)
         {
-            TaskManager = (TaskManager)Session["TaskManager"];
-            ChooseDatasetViewModel model = new ChooseDatasetViewModel();
-            model.StepInfo = TaskManager.Current();
+            DatasetManager dm = new DatasetManager();
 
-            if (TaskManager != null)
+            try
             {
-                TaskManager.Current().SetValid(false);
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
+                TaskManager = (TaskManager)Session["TaskManager"];
+                ChooseDatasetViewModel model = new ChooseDatasetViewModel();
+                model.StepInfo = TaskManager.Current();
+
+                if (TaskManager != null)
                 {
-                    DatasetManager dm = new DatasetManager();
-                    Dataset ds = new Dataset();
-                    try
+                    TaskManager.Current().SetValid(false);
+
+                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
                     {
-                        dm = new DatasetManager();
-                        ds = dm.GetDataset((long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]));
+                        Dataset ds = new Dataset();
+                        try
+                        {
+                            dm = new DatasetManager();
+                            ds = dm.GetDataset((long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]));
 
-                        TaskManager.AddToBus(TaskManager.DATASTRUCTURE_ID, ((DataStructure)(ds.DataStructure.Self)).Id);
-                        TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TITLE, ((DataStructure)(ds.DataStructure.Self)).Name);
+                            TaskManager.AddToBus(TaskManager.DATASTRUCTURE_ID, ((DataStructure)(ds.DataStructure.Self)).Id);
+                            TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TITLE, ((DataStructure)(ds.DataStructure.Self)).Name);
 
-                        TaskManager.Current().SetValid(true);
+                            TaskManager.Current().SetValid(true);
 
+                        }
+                        catch
+                        {
+                            model.ErrorList.Add(new Error(ErrorType.Other, "Dataset not exist."));
+                        }
                     }
-                    catch
+                    else
                     {
                         model.ErrorList.Add(new Error(ErrorType.Other, "Dataset not exist."));
                     }
-                }
-                else
-                {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Dataset not exist."));
+
+                    if (TaskManager.Current().valid == true)
+                    {
+                        TaskManager.AddExecutedStep(TaskManager.Current());
+                        TaskManager.GoToNext();
+                        Session["TaskManager"] = TaskManager;
+                        ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                        return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                    }
+                    else
+                    {
+                        TaskManager.Current().SetStatus(StepStatus.error);
+
+                        //reload model
+                        model.StepInfo = TaskManager.Current();
+                        if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
+                    }
                 }
 
-                if (TaskManager.Current().valid == true)
-                {
-                    TaskManager.AddExecutedStep(TaskManager.Current());
-                    TaskManager.GoToNext();
-                    Session["TaskManager"] = TaskManager;
-                    ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                    return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
-                }
-                else
-                {
-                    TaskManager.Current().SetStatus(StepStatus.error);
-
-                    //reload model
-                    model.StepInfo = TaskManager.Current();
-                    if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
-                }
+                return PartialView(model);
             }
-
-            return PartialView(model);
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         [HttpPost]
         public ActionResult AddSelectedDatasetToBus(string id)
         {
-
-            ChooseDatasetViewModel model = new ChooseDatasetViewModel();
-
-            long datasetId = Convert.ToInt64(id);
             DatasetManager datasetManager = new DatasetManager();
-            Dataset dataset = datasetManager.GetDataset(datasetId);
 
-            DatasetVersion datasetVersion;
-
-            if (datasetManager.IsDatasetCheckedIn(datasetId))
+            try
             {
-                addSelectedDatasetToBus(datasetId);
+
+
+                ChooseDatasetViewModel model = new ChooseDatasetViewModel();
+
+                long datasetId = Convert.ToInt64(id);
+                Dataset dataset = datasetManager.GetDataset(datasetId);
+
+                DatasetVersion datasetVersion;
+
+                if (datasetManager.IsDatasetCheckedIn(datasetId))
+                {
+                    addSelectedDatasetToBus(datasetId);
+                }
+                else
+                {
+                    model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not checked in."));
+                }
+
+                Session["TaskManager"] = TaskManager;
+
+
+                //create Model
+                model.StepInfo = TaskManager.Current();
+                if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
+
+                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
+                    model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                model.SelectedDatasetId = Convert.ToInt32(id);
+                return PartialView("SpecifyDataset", model);
             }
-            else
+            finally
             {
-                model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not checked in."));
+                datasetManager.Dispose();
             }
-
-            Session["TaskManager"] = TaskManager;
-
-
-            //create Model
-            model.StepInfo = TaskManager.Current();
-            if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
-                model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-            model.SelectedDatasetId = Convert.ToInt32(id);
-            return PartialView("SpecifyDataset", model);
         }
 
         #region private methods
@@ -172,28 +190,37 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private void addSelectedDatasetToBus(long datasetId)
         {
-            TaskManager = (TaskManager)Session["TaskManager"];
             DatasetManager datasetManager = new DatasetManager();
 
-            if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
+            try
             {
-                TaskManager.AddToBus("DatasetStatus", "edit");
+
+                TaskManager = (TaskManager)Session["TaskManager"];
+
+                if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
+                {
+                    TaskManager.AddToBus("DatasetStatus", "edit");
+                }
+                else
+                    TaskManager.AddToBus("DatasetStatus", "new");
+
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
+
+                //Add Metadata to Bus
+                //TITLE
+                TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
+
+                ResearchPlanManager rpm = new ResearchPlanManager();
+                ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
+                TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
+                TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
             }
-            else
-                TaskManager.AddToBus("DatasetStatus", "new");
-
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-
-            TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
-
-            //Add Metadata to Bus
-            //TITLE
-            TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
-
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
-            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
-            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
+            finally
+            {
+                datasetManager.Dispose();
+            }
 
         }
 

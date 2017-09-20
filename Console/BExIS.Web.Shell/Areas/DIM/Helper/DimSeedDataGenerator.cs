@@ -1,11 +1,14 @@
 ﻿
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -17,91 +20,92 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
-    public class DimSeedDataGenerator: IDisposable
+    public class DimSeedDataGenerator : IDisposable
     {
         public void GenerateSeedData()
         {
+            SubmissionManager submissionManager = new SubmissionManager();
+            FeatureManager featureManager = new FeatureManager();
+            OperationManager operationManager = new OperationManager();
+
             try
             {
                 #region SECURITY
 
-                ////workflows = größere sachen, vielen operation
-                ////operations = einzelne actions
+                //workflows = größere sachen, vielen operation
+                //operations = einzelne actions
 
-                ////1.controller -> 1.Operation
-
-
-                //FeatureManager featureManager = new FeatureManager();
-
-                //Feature DataDissemination =
-                //    featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Dissemination"));
-                //if (DataDissemination == null)
-                //    DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
-
-                //Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
-                //if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping", DataDissemination);
-
-                //Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
-                //if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
-
-                //OperationManager operationManager = new OperationManager();
+                //1.controller -> 1.Operation
 
 
-                //#region Help Workflow
 
-                //operationManager.Create("DIM", "Help", "*", DataDissemination);
+                Feature DataDissemination =
+                    featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Dissemination"));
+                if (DataDissemination == null)
+                    DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
 
-                //#endregion
+                Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
+                if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping", DataDissemination);
 
-                //#region Admin Workflow
-
-                //operationManager.Create("Dim", "Admin", "*", DataDissemination);
-
-                //operationManager.Create("Dim", "Submission", "*", Submission);
-                //operationManager.Create("Dim", "Mapping", "*", Mapping);
-
-
-                //#endregion
-
-                //#region Mapping Workflow
-
-                ////ToDo add security after Refactoring DIM mapping workflow
+                Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
+                if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
 
 
-                ////workflow = new Workflow();
-                ////workflow.Name = "Mapping";
-                ////workflowManager.Create(workflow);
 
-                ////operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
-                ////workflow.Operations.Add(operation);
+                #region Help Workflow
 
-                ////Mapping.Workflows.Add(workflow);
+                operationManager.Create("DIM", "Help", "*", DataDissemination);
 
-                //#endregion
+                #endregion
 
-                //#region Submission Workflow
+                #region Admin Workflow
 
-                ////ToDo add security after Refactoring DIM Submission workflow
+                operationManager.Create("Dim", "Admin", "*", DataDissemination);
 
-                ////workflow = new Workflow();
-                ////workflow.Name = "Submission";
-                ////workflowManager.Create(workflow);
+                operationManager.Create("Dim", "Submission", "*", Submission);
+                operationManager.Create("Dim", "Mapping", "*", Mapping);
 
-                ////operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
-                ////workflow.Operations.Add(operation);
 
-                ////Submission.Workflows.Add(workflow);
+                #endregion
 
-                //#endregion
+                #region Mapping Workflow
+
+                //ToDo add security after Refactoring DIM mapping workflow
+
+
+                //workflow = new Workflow();
+                //workflow.Name = "Mapping";
+                //workflowManager.Create(workflow);
+
+                //operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
+                //workflow.Operations.Add(operation);
+
+                //Mapping.Workflows.Add(workflow);
+
+                #endregion
+
+                #region Submission Workflow
+
+                //ToDo add security after Refactoring DIM Submission workflow
+
+                //workflow = new Workflow();
+                //workflow.Name = "Submission";
+                //workflowManager.Create(workflow);
+
+                //operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
+                //workflow.Operations.Add(operation);
+
+                //Submission.Workflows.Add(workflow);
+
+                #endregion
 
                 #endregion
 
                 #region EXPORT
 
-                //SubmissionManager submissionManager = new SubmissionManager();
-                //submissionManager.Load();
+                submissionManager.Load();
 
-                //createMetadataStructureRepoMaps();
+                createMetadataStructureRepoMaps();
 
 
                 #endregion
@@ -116,56 +120,68 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 throw ex;
             }
+            finally
+            {
+                featureManager.Dispose();
+                operationManager.Dispose();
+            }
 
             //ImportPartyTypes();
         }
 
-        private static void createMetadataStructureRepoMaps()
+        private void createMetadataStructureRepoMaps()
         {
             PublicationManager publicationManager = new PublicationManager();
 
-            //set MetadataStructureToRepository for gbif and pensoft
-            long metadataStrutcureId = 0;
-            long repositoryId = 0;
-
-            //get id of metadatstructure
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            string metadatStrutcureName = "gbif";
-            if (metadataStructureManager.Repo.Get().Any(m => m.Name.ToLower().Equals(metadatStrutcureName)))
+            try
             {
-                MetadataStructure metadataStructure =
-                    metadataStructureManager.Repo.Get()
-                        .FirstOrDefault(m => m.Name.ToLower().Equals(metadatStrutcureName));
-                if (metadataStructure != null)
+                //set MetadataStructureToRepository for gbif and pensoft
+                long metadataStrutcureId = 0;
+                long repositoryId = 0;
+
+                //get id of metadatstructure
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                string metadatStrutcureName = "gbif";
+                if (metadataStructureManager.Repo.Get().Any(m => m.Name.ToLower().Equals(metadatStrutcureName)))
                 {
-                    metadataStrutcureId = metadataStructure.Id;
+                    MetadataStructure metadataStructure =
+                        metadataStructureManager.Repo.Get()
+                            .FirstOrDefault(m => m.Name.ToLower().Equals(metadatStrutcureName));
+                    if (metadataStructure != null)
+                    {
+                        metadataStrutcureId = metadataStructure.Id;
+                    }
+                }
+
+                //get id of metadatstructure
+                string repoName = "pensoft";
+                if (publicationManager.RepositoryRepo.Get().Any(m => m.Name.ToLower().Equals(repoName)))
+                {
+                    Repository repository =
+                        publicationManager.RepositoryRepo.Get().FirstOrDefault(m => m.Name.ToLower().Equals(repoName));
+                    if (repository != null)
+                    {
+                        repositoryId = repository.Id;
+                    }
+                }
+
+                if (metadataStrutcureId > 0 && repositoryId > 0)
+                {
+                    publicationManager.CreateMetadataStructureToRepository(metadataStrutcureId, repositoryId);
                 }
             }
-
-            //get id of metadatstructure
-            string repoName = "pensoft";
-            if (publicationManager.RepositoryRepo.Get().Any(m => m.Name.ToLower().Equals(repoName)))
+            finally
             {
-                Repository repository =
-                    publicationManager.RepositoryRepo.Get().FirstOrDefault(m => m.Name.ToLower().Equals(repoName));
-                if (repository != null)
-                {
-                    repositoryId = repository.Id;
-                }
-            }
-
-            if (metadataStrutcureId > 0 && repositoryId > 0)
-            {
-                publicationManager.CreateMetadataStructureToRepository(metadataStrutcureId, repositoryId);
+                publicationManager.Dispose();
             }
         }
 
-        private static void createMappings()
+        private void createMappings()
         {
             try
             {
                 createSystemKeyMappings();
-                //createPartyTypeMappings();
+                createPartyTypeMappings();
             }
             catch (Exception exception)
             {
@@ -177,7 +193,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         }
 
         #region createSystemKeyMappings
-        private static void createSystemKeyMappings()
+        private void createSystemKeyMappings()
         {
             object tmp = "";
             List<MetadataStructure> metadataStructures =
@@ -203,12 +219,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region mapping ABCD BASIC to System Keys
 
                 Debug.WriteLine("abcd to root");
-                Mapping rootTo = mappingManager.CreateMapping(abcdRoot, system, 0, null, null);
+                Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null);
                 Debug.WriteLine("root to abcd");
-                Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
+                Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null);
                 Debug.WriteLine("Title");
-                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, 
-                    "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
                 createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
                 Debug.WriteLine("Details");
                 createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
@@ -285,7 +300,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         /// <param name="root"></param>
         /// <param name="metadataRef"></param>
         /// <param name="mappingManager"></param>
-        private static void createToKeyMapping(
+        private void createToKeyMapping(
             string simpleNodeName, LinkElementType simpleType,
             string complexNodeName, LinkElementType complexType,
             Key key,
@@ -358,7 +373,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         /// <param name="root"></param>
         /// <param name="metadataRef"></param>
         /// <param name="mappingManager"></param>
-        private static void createFromKeyMapping(
+        private void createFromKeyMapping(
             string simpleNodeName, LinkElementType simpleType,
             string complexNodeName, LinkElementType complexType,
             Key key,
@@ -422,7 +437,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         #region createPartyTypeMappings
 
-        private static void createPartyTypeMappings()
+        private void createPartyTypeMappings()
         {
             object tmp = "";
             List<MetadataStructure> metadataStructures =
@@ -457,12 +472,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     #region mapping ABCD BASIC to System Keys
 
-                    Mapping rootTo = mappingManager.CreateMapping(abcdRoot, system, 0, null, null);
-                    Mapping rootFrom = mappingManager.CreateMapping(system, abcdRoot, 0, null, null);
+                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null);
+                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null);
 
                     // create mapping for paryttypes
 
-                    //person
+                    #region person
 
                     if (partyTypes.Any(p => p.Title.Equals("Person")))
                     {
@@ -526,7 +541,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 mappingManager,
                                 new TransformationRule());
 
-                            createToPartyTypeMapping(
+                            createFromPartyTypeMapping(
                                 "Address", LinkElementType.MetadataNestedAttributeUsage,
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
@@ -547,7 +562,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 mappingManager,
                                 new TransformationRule());
 
-                            createToPartyTypeMapping(
+                            createFromPartyTypeMapping(
                                 "Phone", LinkElementType.MetadataNestedAttributeUsage,
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
@@ -555,7 +570,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 new TransformationRule());
                         }
                     }
-
+                    #endregion
 
                     #endregion
                 }
@@ -572,7 +587,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        private static void createToPartyTypeMapping(
+        private void createToPartyTypeMapping(
             string simpleNodeName, LinkElementType simpleType,
             string complexNodeName, LinkElementType complexType,
             PartyCustomAttribute partyCustomAttr,
@@ -614,7 +629,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         }
 
-        private static void createFromPartyTypeMapping(
+        private void createFromPartyTypeMapping(
             string simpleNodeName, LinkElementType simpleType,
             string complexNodeName, LinkElementType complexType,
             PartyCustomAttribute partyCustomAttr,
@@ -658,7 +673,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         #endregion
 
-        private static LinkElement createLinkELementIfNotExist(
+        private LinkElement createLinkELementIfNotExist(
             MappingManager mappingManager,
             long id,
             string name,

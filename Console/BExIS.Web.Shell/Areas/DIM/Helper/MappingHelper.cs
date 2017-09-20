@@ -23,31 +23,39 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         public static List<LinkElementRootListItem> LoadSelectionList()
         {
-            List<LinkElementRootListItem> tmp = new List<LinkElementRootListItem>();
-
-            //load System
-            LinkElementRootListItem li = new LinkElementRootListItem(0, "System", LinkElementType.System);
-
-
-            tmp.Add(li);
-
-            //load Metadata Strutcure
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
 
-            foreach (var metadataStructure in metadataStructures)
+            try
             {
-                li = new LinkElementRootListItem(
-                    metadataStructure.Id,
-                    metadataStructure.Name,
-                    LinkElementType.MetadataStructure
-                    );
+                List<LinkElementRootListItem> tmp = new List<LinkElementRootListItem>();
+
+                //load System
+                LinkElementRootListItem li = new LinkElementRootListItem(0, "System", LinkElementType.System);
+
 
                 tmp.Add(li);
+
+                //load Metadata Strutcure
+                IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
+
+                foreach (var metadataStructure in metadataStructures)
+                {
+                    li = new LinkElementRootListItem(
+                        metadataStructure.Id,
+                        metadataStructure.Name,
+                        LinkElementType.MetadataStructure
+                        );
+
+                    tmp.Add(li);
+                }
+
+
+                return tmp;
             }
-
-
-            return tmp;
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
         }
 
         #endregion
@@ -59,41 +67,49 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
 
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
 
-            LinkElementRootModel model = new LinkElementRootModel(LinkElementType.MetadataStructure, id, metadataStructure.Name, rootModelType);
-
-            if (metadataStructure != null)
+            try
             {
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
 
-                MappingManager mappingManager = new MappingManager();
-                LinkElement metadataStructureLinkElement = mappingManager.GetLinkElement(metadataStructure.Id,
-                        LinkElementType.MetadataStructure);
+                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.MetadataStructure, id, metadataStructure.Name, rootModelType);
 
-                long metadataStructureLinkElementId = 0;
-                if (metadataStructureLinkElement != null)
-                    metadataStructureLinkElementId = metadataStructureLinkElement.Id;
-
-
-                LinkElementModel LEModel = new LinkElementModel(
-                    metadataStructureLinkElementId,
-                    metadataStructure.Id,
-                    LinkElementType.MetadataStructure,
-                    metadataStructure.Name, "Metadata",
-                    rootModelType,
-                    LinkElementComplexity.Complex,
-                    metadataStructure.Description);
-
-
-                foreach (var pUsage in metadataStructure.MetadataPackageUsages)
+                if (metadataStructure != null)
                 {
-                    addUsageAsLinkElement(pUsage, "Metadata", model, LEModel);
-                }
 
-                model = CreateLinkElementContainerModels(model);
-                model.Id = id;
+                    MappingManager mappingManager = new MappingManager();
+                    LinkElement metadataStructureLinkElement = mappingManager.GetLinkElement(metadataStructure.Id,
+                            LinkElementType.MetadataStructure);
+
+                    long metadataStructureLinkElementId = 0;
+                    if (metadataStructureLinkElement != null)
+                        metadataStructureLinkElementId = metadataStructureLinkElement.Id;
+
+
+                    LinkElementModel LEModel = new LinkElementModel(
+                        metadataStructureLinkElementId,
+                        metadataStructure.Id,
+                        LinkElementType.MetadataStructure,
+                        metadataStructure.Name, "Metadata",
+                        rootModelType,
+                        LinkElementComplexity.Complex,
+                        metadataStructure.Description);
+
+
+                    foreach (var pUsage in metadataStructure.MetadataPackageUsages)
+                    {
+                        addUsageAsLinkElement(pUsage, "Metadata", model, LEModel);
+                    }
+
+                    model = CreateLinkElementContainerModels(model);
+                    model.Id = id;
+                }
+                return model;
             }
-            return model;
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
         }
 
         public static void addUsageAsLinkElement(BaseUsage usage, string parentXpath, LinkElementRootModel rootModel,
@@ -246,63 +262,71 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         public static LinkElementRootModel LoadfromSystem(LinkElementPostion rootModelType)
         {
-            LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
-
             MappingManager mappingManager = new MappingManager();
-            LinkElement SystemRoot = mappingManager.GetLinkElement(0,
-                    LinkElementType.System);
 
-            long id = 0;
-            long elementId = 0;
-            if (SystemRoot != null)
+            try
             {
-                id = SystemRoot.Id;
-                elementId = SystemRoot.ElementId;
+                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
+
+                LinkElement SystemRoot = mappingManager.GetLinkElement(0,
+                        LinkElementType.System);
+
+                long id = 0;
+                long elementId = 0;
+                if (SystemRoot != null)
+                {
+                    id = SystemRoot.Id;
+                    elementId = SystemRoot.ElementId;
+                }
+
+
+                LinkElementModel LEParent = new LinkElementModel(
+                       id,
+                       elementId,
+                       LinkElementType.System,
+                       "System", "",
+                       rootModelType,
+                       LinkElementComplexity.Complex,
+                       "");
+
+                //get all parties - complex
+                PartyTypeManager partyTypeManager = new PartyTypeManager();
+                IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
+
+                foreach (var pt in partyTypes)
+                {
+                    LinkElementModel ptModel = createLinkElementModelType(pt, model, LEParent);
+                    model.LinkElements.Add(ptModel);
+                    //get all partyCustomTypeAttr -> simple
+                    model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel));
+                }
+
+                //get all keys -> simple
+                foreach (Key value in Key.GetValues(typeof(Key)))
+                {
+                    long linkElementId = GetId((int)value, LinkElementType.Key);
+                    //string mask = GetMask((int)value, LinkElementType.Key);
+
+                    LinkElementModel LEModel = new LinkElementModel(
+                            linkElementId,
+                            (int)value,
+                            LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
+
+                    LEModel.Parent = LEParent;
+
+                    model.LinkElements.Add(LEModel);
+
+                }
+
+                //create container
+                model = CreateLinkElementContainerModels(model);
+
+                return model;
             }
-
-
-            LinkElementModel LEParent = new LinkElementModel(
-                   id,
-                   elementId,
-                   LinkElementType.System,
-                   "System", "",
-                   rootModelType,
-                   LinkElementComplexity.Complex,
-                   "");
-
-            //get all parties - complex
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
-
-            foreach (var pt in partyTypes)
+            finally
             {
-                LinkElementModel ptModel = createLinkElementModelType(pt, model, LEParent);
-                model.LinkElements.Add(ptModel);
-                //get all partyCustomTypeAttr -> simple
-                model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel));
+                mappingManager.Dispose();
             }
-
-            //get all keys -> simple
-            foreach (Key value in Key.GetValues(typeof(Key)))
-            {
-                long linkElementId = GetId((int)value, LinkElementType.Key);
-                //string mask = GetMask((int)value, LinkElementType.Key);
-
-                LinkElementModel LEModel = new LinkElementModel(
-                        linkElementId,
-                        (int)value,
-                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
-
-                LEModel.Parent = LEParent;
-
-                model.LinkElements.Add(LEModel);
-
-            }
-
-            //create container
-            model = CreateLinkElementContainerModels(model);
-
-            return model;
         }
 
         private static LinkElementModel createLinkElementModelType(
@@ -355,32 +379,38 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         public static List<ComplexMappingModel> LoadMappings(Mapping rootMapping)
         {
-
-            List<ComplexMappingModel> tmp = new List<ComplexMappingModel>();
             MappingManager mappingManager = new MappingManager();
-
-            //get all complex mappings
-            List<Mapping> mappings = mappingManager.GetChildMapping(rootMapping.Id, 1).ToList();
-
-            foreach (var mapping in mappings)
+            try
             {
-
-                ComplexMappingModel model = CreateComplexMappingModel(mapping);
-
+                List<ComplexMappingModel> tmp = new List<ComplexMappingModel>();
 
                 //get all complex mappings
-                List<Mapping> childMappings = mappingManager.GetChildMapping(mapping.Id, 2).ToList();
+                List<Mapping> mappings = mappingManager.GetChildMapping(rootMapping.Id, 1).ToList();
 
-
-                foreach (var cm in childMappings)
+                foreach (var mapping in mappings)
                 {
-                    //ToDO Add transformation rule
-                    model.SimpleMappings.Add(CreateSimpleMappingModel(cm, cm.Source, cm.Target));
-                }
 
-                tmp.Add(model);
+                    ComplexMappingModel model = CreateComplexMappingModel(mapping);
+
+
+                    //get all complex mappings
+                    List<Mapping> childMappings = mappingManager.GetChildMapping(mapping.Id, 2).ToList();
+
+
+                    foreach (var cm in childMappings)
+                    {
+                        //ToDO Add transformation rule
+                        model.SimpleMappings.Add(CreateSimpleMappingModel(cm, cm.Source, cm.Target));
+                    }
+
+                    tmp.Add(model);
+                }
+                return tmp;
             }
-            return tmp;
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
 
@@ -464,19 +494,26 @@ namespace BExIS.Modules.Dim.UI.Helper
         private static List<LinkElementModel> getChildrenFromPartyType(LinkElementModel model)
         {
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            IEnumerable<PartyCustomAttribute> ptAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(p => p.PartyType.Id.Equals(model.ElementId));
-
-            foreach (var attr in ptAttr)
+            try
             {
-                model.Children.Add(
-                    new LinkElementModel(
-                        0,
-                        attr.Id,
-                        LinkElementType.PartyCustomType, attr.Name, "", model.Position, LinkElementComplexity.Simple, attr.Description)
-                    );
-            }
+                IEnumerable<PartyCustomAttribute> ptAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(p => p.PartyType.Id.Equals(model.ElementId));
 
-            return model.Children;
+                foreach (var attr in ptAttr)
+                {
+                    model.Children.Add(
+                        new LinkElementModel(
+                            0,
+                            attr.Id,
+                            LinkElementType.PartyCustomType, attr.Name, "", model.Position, LinkElementComplexity.Simple, attr.Description)
+                        );
+                }
+
+                return model.Children;
+            }
+            finally
+            {
+                partyTypeManager.Dispose();
+            }
         }
 
         private static List<LinkElementModel> getChildrenFromComplexMetadataAttribute(LinkElementModel model)
@@ -489,76 +526,102 @@ namespace BExIS.Modules.Dim.UI.Helper
             List<LinkElementModel> tmp = new List<LinkElementModel>();
 
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-            MetadataCompoundAttribute mca = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(metadataCompountAttributeId);
 
-            foreach (var attr in mca.MetadataNestedAttributeUsages)
+            try
             {
-                LinkElementComplexity complexity = LinkElementComplexity.None;
-                LinkElementType type = LinkElementType.ComplexMetadataAttribute;
 
-                complexity = attr.Member.Self is MetadataSimpleAttribute
-                    ? LinkElementComplexity.Simple
-                    : LinkElementComplexity.Complex;
+                MetadataCompoundAttribute mca = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(metadataCompountAttributeId);
 
-                //type = attr.Member.Self is MetadataSimpleAttribute
-                //    ? LinkElementType.SimpleMetadataAttribute
-                //    : LinkElementType.ComplexMetadataAttribute;
+                foreach (var attr in mca.MetadataNestedAttributeUsages)
+                {
+                    LinkElementComplexity complexity = LinkElementComplexity.None;
+                    LinkElementType type = LinkElementType.ComplexMetadataAttribute;
 
-                type = LinkElementType.MetadataNestedAttributeUsage;
+                    complexity = attr.Member.Self is MetadataSimpleAttribute
+                        ? LinkElementComplexity.Simple
+                        : LinkElementComplexity.Complex;
+
+                    //type = attr.Member.Self is MetadataSimpleAttribute
+                    //    ? LinkElementType.SimpleMetadataAttribute
+                    //    : LinkElementType.ComplexMetadataAttribute;
+
+                    type = LinkElementType.MetadataNestedAttributeUsage;
 
 
-                tmp.Add(
-                        new LinkElementModel(
-                            0,
-                            attr.Id,
-                            type, attr.Label, "", position, complexity, attr.Description)
-                        );
+                    tmp.Add(
+                            new LinkElementModel(
+                                0,
+                                attr.Id,
+                                type, attr.Label, "", position, complexity, attr.Description)
+                            );
+                }
+
+                return tmp;
             }
-
-            return tmp;
+            finally
+            {
+                metadataAttributeManager.Dispose();
+            }
         }
 
         private static List<LinkElementModel> getChildrenFromMetadataAttributeUsage(LinkElementModel model)
         {
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-            MetadataAttributeUsage metadataAttributeUsage = metadataAttributeManager.MetadataAttributeUsageRepo.Get(model.ElementId);
-
-            LinkElementComplexity complexity = LinkElementComplexity.None;
-            LinkElementType type = LinkElementType.ComplexMetadataAttribute;
-
-            complexity = metadataAttributeUsage.MetadataAttribute.Self is MetadataSimpleAttribute
-                ? LinkElementComplexity.Simple
-                : LinkElementComplexity.Complex;
-
-            if (complexity == LinkElementComplexity.Complex)
+            try
             {
-                return getChildrenFromComplexMetadataAttribute(metadataAttributeUsage.MetadataAttribute.Id, model.Position);
-            }
 
-            return new List<LinkElementModel>();
+                MetadataAttributeUsage metadataAttributeUsage = metadataAttributeManager.MetadataAttributeUsageRepo.Get(model.ElementId);
+
+                LinkElementComplexity complexity = LinkElementComplexity.None;
+                LinkElementType type = LinkElementType.ComplexMetadataAttribute;
+
+                complexity = metadataAttributeUsage.MetadataAttribute.Self is MetadataSimpleAttribute
+                    ? LinkElementComplexity.Simple
+                    : LinkElementComplexity.Complex;
+
+                if (complexity == LinkElementComplexity.Complex)
+                {
+                    return getChildrenFromComplexMetadataAttribute(metadataAttributeUsage.MetadataAttribute.Id, model.Position);
+                }
+
+                return new List<LinkElementModel>();
+            }
+            finally
+            {
+                metadataAttributeManager.Dispose();
+            }
 
         }
 
         private static List<LinkElementModel> getChildrenFromMetadataNestedUsage(LinkElementModel model)
         {
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-            MetadataNestedAttributeUsage metadataNestedAttributeUsage =
-                metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(model.ElementId);
 
-
-            LinkElementComplexity complexity = LinkElementComplexity.None;
-            LinkElementType type = LinkElementType.ComplexMetadataAttribute;
-
-            complexity = metadataNestedAttributeUsage.Member.Self is MetadataSimpleAttribute
-                ? LinkElementComplexity.Simple
-                : LinkElementComplexity.Complex;
-
-            if (complexity == LinkElementComplexity.Complex)
+            try
             {
-                return getChildrenFromComplexMetadataAttribute(metadataNestedAttributeUsage.Member.Id, model.Position);
-            }
 
-            return new List<LinkElementModel>();
+                MetadataNestedAttributeUsage metadataNestedAttributeUsage =
+                    metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(model.ElementId);
+
+
+                LinkElementComplexity complexity = LinkElementComplexity.None;
+                LinkElementType type = LinkElementType.ComplexMetadataAttribute;
+
+                complexity = metadataNestedAttributeUsage.Member.Self is MetadataSimpleAttribute
+                    ? LinkElementComplexity.Simple
+                    : LinkElementComplexity.Complex;
+
+                if (complexity == LinkElementComplexity.Complex)
+                {
+                    return getChildrenFromComplexMetadataAttribute(metadataNestedAttributeUsage.Member.Id, model.Position);
+                }
+
+                return new List<LinkElementModel>();
+            }
+            finally
+            {
+                metadataAttributeManager.Dispose();
+            }
         }
 
 
@@ -571,44 +634,60 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
 
             MetadataStructureManager msm = new MetadataStructureManager();
-            MetadataPackageUsage metadataPackageUsage = msm.PackageUsageRepo.Get(model.ElementId);
+            try
+            {
+                MetadataPackageUsage metadataPackageUsage = msm.PackageUsageRepo.Get(model.ElementId);
 
-            return getChildrenFromMetadataPackage(metadataPackageUsage.MetadataPackage.Id, model.Position);
+                return getChildrenFromMetadataPackage(metadataPackageUsage.MetadataPackage.Id, model.Position);
+            }
+            finally
+            {
+                msm.Dispose();
+            }
         }
 
         private static List<LinkElementModel> getChildrenFromMetadataPackage(long metadataPackageId, LinkElementPostion pos)
         {
             MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
 
-            MetadataPackage metadataPackage = metadataPackageManager.MetadataPackageRepo.Get(metadataPackageId);
-
-            List<LinkElementModel> tmp = new List<LinkElementModel>();
-            foreach (var attr in metadataPackage.MetadataAttributeUsages)
+            try
             {
-                LinkElementComplexity complexity = LinkElementComplexity.None;
-                LinkElementType type = LinkElementType.ComplexMetadataAttribute;
 
-                complexity = attr.MetadataAttribute.Self is MetadataSimpleAttribute
-                    ? LinkElementComplexity.Simple
-                    : LinkElementComplexity.Complex;
+                MetadataPackage metadataPackage = metadataPackageManager.MetadataPackageRepo.Get(metadataPackageId);
 
-                //type = attr.Member.Self is MetadataSimpleAttribute
-                //    ? LinkElementType.SimpleMetadataAttribute
-                //    : LinkElementType.ComplexMetadataAttribute;
+                List<LinkElementModel> tmp = new List<LinkElementModel>();
+                foreach (var attr in metadataPackage.MetadataAttributeUsages)
+                {
+                    LinkElementComplexity complexity = LinkElementComplexity.None;
+                    LinkElementType type = LinkElementType.ComplexMetadataAttribute;
 
-                type = LinkElementType.MetadataNestedAttributeUsage;
+                    complexity = attr.MetadataAttribute.Self is MetadataSimpleAttribute
+                        ? LinkElementComplexity.Simple
+                        : LinkElementComplexity.Complex;
+
+                    //type = attr.Member.Self is MetadataSimpleAttribute
+                    //    ? LinkElementType.SimpleMetadataAttribute
+                    //    : LinkElementType.ComplexMetadataAttribute;
+
+                    type = LinkElementType.MetadataNestedAttributeUsage;
 
 
-                tmp.Add(
-                        new LinkElementModel(
-                            0,
-                            attr.Id,
-                            type, attr.Label, "", pos, complexity, attr.Description)
-                        );
+                    tmp.Add(
+                            new LinkElementModel(
+                                0,
+                                attr.Id,
+                                type, attr.Label, "", pos, complexity, attr.Description)
+                            );
+
+                }
+
+                return tmp;
+            }
+            finally
+            {
+                metadataPackageManager.Dispose();
 
             }
-
-            return tmp;
         }
 
         #region create
@@ -692,36 +771,44 @@ namespace BExIS.Modules.Dim.UI.Helper
         public static LinkElement CreateLinkElement(LinkElementModel model)
         {
             MappingManager mappingManager = new MappingManager();
-
-
-            Debug.WriteLine("CreateLinkElement");
-            Debug.WriteLine(model.ElementId);
-            Debug.WriteLine(model.Type);
-            Debug.WriteLine(model.Name);
-
-            if (model.Parent != null)
+            try
             {
-                Debug.WriteLine("Parent");
-                Debug.WriteLine(model.Parent.ElementId);
-                Debug.WriteLine(model.Parent.Type);
-                Debug.WriteLine(model.Parent.Name);
-                Debug.WriteLine("------------------");
-            }
 
-            return mappingManager.CreateLinkElement(
-                        model.ElementId,
-                        model.Type,
-                        model.Complexity,
-                        model.Name,
-                        model.XPath
-                        );
+                Debug.WriteLine("CreateLinkElement");
+                Debug.WriteLine(model.ElementId);
+                Debug.WriteLine(model.Type);
+                Debug.WriteLine(model.Name);
+
+                if (model.Parent != null)
+                {
+                    Debug.WriteLine("Parent");
+                    Debug.WriteLine(model.Parent.ElementId);
+                    Debug.WriteLine(model.Parent.Type);
+                    Debug.WriteLine(model.Parent.Name);
+                    Debug.WriteLine("------------------");
+                }
+
+                return mappingManager.CreateLinkElement(
+                            model.ElementId,
+                            model.Type,
+                            model.Complexity,
+                            model.Name,
+                            model.XPath
+                            );
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
         public static LinkElement CreateLinkElement(LinkElementModel model, long parentId)
         {
             MappingManager mappingManager = new MappingManager();
+            try
+            {
 
-            return mappingManager.CreateLinkElement(
+                return mappingManager.CreateLinkElement(
                         model.ElementId,
                         model.Type,
                         model.Complexity,
@@ -729,21 +816,32 @@ namespace BExIS.Modules.Dim.UI.Helper
                         model.XPath,
                         false
                         );
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
         public static LinkElement CreateIfNotExistLinkElement(LinkElementModel leModel)
         {
             MappingManager mappingManager = new MappingManager();
-
-
-            if (ExistLinkElement(leModel))
+            try
             {
-                return mappingManager.LinkElementRepo.Get()
-                    .FirstOrDefault(le => le.ElementId.Equals(leModel.ElementId) && le.Type.Equals(leModel.Type));
+
+                if (ExistLinkElement(leModel))
+                {
+                    return mappingManager.LinkElementRepo.Get()
+                        .FirstOrDefault(le => le.ElementId.Equals(leModel.ElementId) && le.Type.Equals(leModel.Type));
+                }
+                else
+                {
+                    return CreateLinkElement(leModel);
+                }
             }
-            else
+            finally
             {
-                return CreateLinkElement(leModel);
+                mappingManager.Dispose();
             }
 
         }
@@ -752,21 +850,29 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
             MappingManager mappingManager = new MappingManager();
 
-            if (ExistLinkElement(leModel))
+            try
             {
-                return mappingManager.LinkElementRepo.Get()
-                    .FirstOrDefault(le =>
-                    le.ElementId.Equals(leModel.ElementId) &&
-                    le.Type.Equals(leModel.Type) &&
-                    le.Complexity.Equals(leModel.Complexity)
-                    //le.Parent.Id.Equals(parentId)
-                    );
-            }
-            else
-            {
-                return CreateLinkElement(leModel, parentId);
-            }
 
+                if (ExistLinkElement(leModel))
+                {
+                    return mappingManager.LinkElementRepo.Get()
+                        .FirstOrDefault(le =>
+                        le.ElementId.Equals(leModel.ElementId) &&
+                        le.Type.Equals(leModel.Type) &&
+                        le.Complexity.Equals(leModel.Complexity)
+                        //le.Parent.Id.Equals(parentId)
+                        );
+                }
+                else
+                {
+                    return CreateLinkElement(leModel, parentId);
+                }
+
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
         public static Mapping CreateIfNotExistMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent)
@@ -775,52 +881,58 @@ namespace BExIS.Modules.Dim.UI.Helper
             IEnumerable<Mapping> mappings = tmp.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get();
 
             MappingManager mappingManager = new MappingManager();
-
-            Mapping mapping = null;
-
-            if (parent != null)
+            try
             {
-                mapping = mappings.FirstOrDefault(
-                    m => m.Parent != null && m.Parent.Id.Equals(parent.Id)
-                         && m.Source.Id.Equals(source.Id)
-                         && m.Source.Type.Equals(source.Type)
-                         && m.Target.Id.Equals(target.Id)
-                         && m.Target.Type.Equals(target.Type)
-                         && m.Level.Equals(level));
-            }
-            else
-            {
-                mapping = mappings.FirstOrDefault(
-                    m => m.Parent == null
-                         && m.Source.Id.Equals(source.Id)
-                         && m.Source.Type.Equals(source.Type)
-                         && m.Target.Id.Equals(target.Id)
-                         && m.Target.Type.Equals(target.Type)
-                         && m.Level.Equals(level));
-            }
+                Mapping mapping = null;
 
-            if (mapping == null)
-            {
-                if (rule != null && rule.Id == 0 && rule.RegEx != null)
+                if (parent != null)
                 {
-                    rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask);
+                    mapping = mappings.FirstOrDefault(
+                        m => m.Parent != null && m.Parent.Id.Equals(parent.Id)
+                             && m.Source.Id.Equals(source.Id)
+                             && m.Source.Type.Equals(source.Type)
+                             && m.Target.Id.Equals(target.Id)
+                             && m.Target.Type.Equals(target.Type)
+                             && m.Level.Equals(level));
+                }
+                else
+                {
+                    mapping = mappings.FirstOrDefault(
+                        m => m.Parent == null
+                             && m.Source.Id.Equals(source.Id)
+                             && m.Source.Type.Equals(source.Type)
+                             && m.Target.Id.Equals(target.Id)
+                             && m.Target.Type.Equals(target.Type)
+                             && m.Level.Equals(level));
                 }
 
-                mapping = mappingManager.CreateMapping(source, target, level, rule, parent);
-            }
-            else
-            {
-                if (rule != null)
+                if (mapping == null)
                 {
-                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask);
+                    if (rule != null && rule.Id == 0 && rule.RegEx != null)
+                    {
+                        rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask);
+                    }
 
-                    mapping.TransformationRule = rule;
-                    mappingManager.UpdateMapping(mapping);
+                    mapping = mappingManager.CreateMapping(source, target, level, rule, parent);
                 }
+                else
+                {
+                    if (rule != null)
+                    {
+                        rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask);
+
+                        mapping.TransformationRule = rule;
+                        mappingManager.UpdateMapping(mapping);
+                    }
+                }
+
+
+                return mapping;
             }
-
-
-            return mapping;
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
         #endregion

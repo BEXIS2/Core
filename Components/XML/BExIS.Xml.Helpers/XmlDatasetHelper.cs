@@ -365,21 +365,29 @@ namespace BExIS.Xml.Helpers
         public static string GetEntityType(long datasetid)
         {
             DatasetManager datasetManager = new DatasetManager();
-            Dataset dataset = datasetManager.GetDataset(datasetid);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-            // get MetadataStructure 
-            if (dataset != null)
+            try
             {
-                return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id);
+                Dataset dataset = datasetManager.GetDataset(datasetid);
+
+                // get MetadataStructure 
+                if (dataset != null)
+                {
+                    return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id, metadataStructureManager);
+                }
+                return string.Empty;
             }
-            return string.Empty;
+            finally
+            {
+                datasetManager.Dispose();
+                metadataStructureManager.Dispose();
+            }
         }
 
         //todo entity extention
-        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId)
+        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId, MetadataStructureManager metadataStructureManager)
         {
-
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
 
             // get MetadataStructure 
