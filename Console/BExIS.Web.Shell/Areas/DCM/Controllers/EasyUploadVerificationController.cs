@@ -797,55 +797,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         string datatypeName = datatype.SystemType;
 
-
                         DataTypeCheck dtc;
                         double DummyValue = 0;
-                        //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
-                        //Should be removed as soon as this is fixed
-                        /*Boolean skipDataTypeCheck = false;
-                        if (datatypeName == "Double")
+                        if (Double.TryParse(vv, out DummyValue))
                         {
-                            if (!Double.TryParse(vv, out DummyValue))
-                            {
-                                ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
-                                skipDataTypeCheck = true;
-                            }
-                        }
-
-                        if (datatypeName == "Char")
-                        {
-                            skipDataTypeCheck = true;
-                            char dummy;
-                            if (!Char.TryParse(vv, out dummy))
-                            {
-                                ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
-                            }
-                        }*/
-
-                        //if (!skipDataTypeCheck)
-                        //{
-                            if (Double.TryParse(vv, out DummyValue))
-                            {
-                                if (vv.Contains("."))
-                                {
-                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                                }
-                                else
-                                {
-                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
-                                }
-                            }
-                            else
+                            if (vv.Contains("."))
                             {
                                 dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
                             }
-
-                            var ValidationResult = dtc.Execute(vv, y);
-                            if (ValidationResult is Error)
+                            else
                             {
-                                ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
                             }
-                        //}
+                        }
+                        else
+                        {
+                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                        }
+
+                        var ValidationResult = dtc.Execute(vv, y);
+                        if (ValidationResult is Error)
+                        {
+                            ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
+                        }
                     }
                 }
             }
