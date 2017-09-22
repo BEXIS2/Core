@@ -32,11 +32,18 @@
 </style>
 
 <script>
+    if (typeof (hotActive) !== 'undefined') {
+        //Another instance of the handsontable is defined, destroy it before creating a new one
+        if (hotActive) {
+            hot.destroy();
+        }
+    }
+
     var hot = null;
     var hotActive = false;
     var currentButton = null;
     var selectedDataArea = null;
-
+    
     $(document).ready(function () {
 
         function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -55,8 +62,7 @@
             }*/
 
             return td;
-        }
-
+        }        
 
         var container = document.getElementById('handsonExcelTable');
         hot = new Handsontable(container, {
