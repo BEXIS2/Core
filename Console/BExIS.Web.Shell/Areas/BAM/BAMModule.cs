@@ -17,7 +17,11 @@ namespace BExIS.Modules.Bam.UI
             try
             {
                 base.Install();
-                BAMSeedDataGenerator.GenerateSeedData();
+                using (BAMSeedDataGenerator generator = new BAMSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
+                
             }
             catch (Exception e)
             {

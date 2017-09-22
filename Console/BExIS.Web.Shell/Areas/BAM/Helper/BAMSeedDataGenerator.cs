@@ -61,14 +61,14 @@ namespace BExIS.Modules.Bam.UI.Helpers
         }
     }
 
-    public class BAMSeedDataGenerator
+    public class BAMSeedDataGenerator: IDisposable
     {
-        public static void GenerateSeedData()
+        public  void GenerateSeedData()
         {
             createSecuritySeedData();
             ImportPartyTypes();
         }
-        private static void createSecuritySeedData()
+        private void createSecuritySeedData()
         {
             // Javad:
             // 1) all the create operations should check for existence of the record
@@ -99,7 +99,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
         /// if title of an element is changed because remove is forbiden here ,  it adds it as a new element and the old one will remain there
         /// 
         /// </summary>
-        private static void ImportPartyTypes()
+        private void ImportPartyTypes()
         {
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             var filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "partyTypes.xml");
@@ -319,6 +319,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType);
             else
                 partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType);
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
     //Check duplicate and add edit 

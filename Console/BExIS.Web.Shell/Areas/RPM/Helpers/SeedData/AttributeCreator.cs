@@ -90,10 +90,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
         {
             UnitManager unitManager = new UnitManager();
             DataTypeManager dataTypeManger = new DataTypeManager();
-            Unit unit = new Unit();
 
+            // Javad: The whole loop can be improved!
             foreach (DataRow mapUnitsRow in mappedUnits.Rows)
             {
+                Unit unit = new Unit(); // Javad: this can not be out of the loop. in that case, it keeps its link to the session objects and causes the previous unit to be overriden as well as creating a new one!!
                 // values of the unit
                 unit.Name = mapUnitsRow["Name"].ToString();
                 unit.Abbreviation = mapUnitsRow["Abbreviation"].ToString();
