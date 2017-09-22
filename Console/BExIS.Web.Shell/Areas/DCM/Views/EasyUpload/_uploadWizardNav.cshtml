@@ -1,4 +1,4 @@
-﻿@{
+﻿ @{
     ViewBag.Title = "UploadWizardNav";
 }
 
@@ -8,50 +8,49 @@
 @{
 
     int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
-
+    
 }
 <div id="NavDiv">
 
     @if (!(Model.Current() == null))
-    {
-        <table id="NavigationTable">
-            <tr>
-                <td id="Nav_Left">
-                    @if (!Model.Prev().IsEmpty())
-                    {
-                        <button id="prevBt" onclick"PrevButton_OnClick()" class="t-button action" title="@Model.Prev().title">Prev</button>
-                    }
-                </td>
-                <td id="Nav_Pages">
-                    ( @currentPage  of   @Model.StepInfos.Count )
-                </td>
-                <td id="Nav_Options">
-                    @Html.ActionLink("Cancel", "CancelUpload", "EasyUpload", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button action", @style = "float:right" })
-                </td>
-                <td id="Nav_Right">
-                    @if (!Model.Next().IsEmpty())
-                    {
-                        <button id="nextBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="@Model.Next().title">Next</button>
-                    }
+    { 
+    <table id="NavigationTable">
+        <tr>
+            <td id="Nav_Left">
+                @if (!Model.Prev().IsEmpty())
+                {   
+                    <button id="prevBt" onclick"PrevButton_OnClick()"  class="t-button action" title="@Model.Prev().title" >Prev</button>
+               }
+            </td>
+            <td id="Nav_Pages">
+                 ( @currentPage  of   @Model.StepInfos.Count )
+            </td>
+            <td id="Nav_Options">
+               @Html.ActionLink("Cancel", "CancelUpload", "EasyUpload", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button action",  @style="float:right" })
+            </td>
+            <td id="Nav_Right">
+                 @if (!Model.Next().IsEmpty())
+                 { 
+                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="@Model.Next().title">Next</button>
+                 }
 
-                    @if (Model.Current().Equals(Model.Finish()))
-                    {
-                        <button id="finishBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="Finish">Finish</button>
-                    }
+                @if (Model.Current().Equals(Model.Finish()))
+                { 
+                    <button id="finishBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="Finish">Finish</button>
+                }
 
-                </td>
-            </tr>
-        </table>
+            </td>
+        </tr>
+    </table>
     }
 </div>
-<script type="text/javascript">
-
-
+<script type="text/javascript">              
+      
     $("#prevBt").click(function(){
-
-        $('#preloader').show();
+        
+        $('.uploadWizardStep').preloader(16, "Previous step is loading.");
         var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
-
+  
 
         if (index < 0) index = 0;
 
@@ -59,27 +58,29 @@
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();
-            $('#preloader').hide();
+            //$('#StepView').removePreloader();
         })
 
-
+       
     })
 
     $("#nextBt").click(function () {
+       
+        //fontsize, text, height
 
-        $('#preloader').show();
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
+        $('.uploadWizardStep').preloader(16, "Next step is loading.");
+
+        $.ajax({ 
+            type: 'POST', 
+            contentType: 'application/json; charset=utf-8', 
             data: JSON.stringify(Parameters),
-            dataType: 'html',
+            dataType: 'html', 
             url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName } })',
-                success: function(result) {
-
+                success: function(result) { 
                     $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();
-                    $('#preloader').hide();
+                   
                 }
             });
     })
@@ -91,13 +92,12 @@
 
         //StartProgress();
         StartUpload();
-
+        
     })
 
     function StartUpload()
     {
-        console.log( "@Model.Current().PostActionInfo.ActionName" + "       " + "@Model.Current().PostActionInfo.ControllerName" );
-        $('#preloader').show();
+        $('.uploadWizardStep').preloader(16, "Upload wizard step is loading.");
         $.ajax({
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -106,13 +106,13 @@
             url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName } })',
             success: function (result)
             {
-                console.log(result);
+
                 if (result == !null || result != "")
                 {
                     $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();
-                    $('#preloader').hide();
+                    
                 }
                 else
                 {
@@ -121,15 +121,14 @@
             }
         });
     }
-
+    
 
     function NavigationRefresh()
     {
 
         $.post('@Url.Action("RefreshNavigation", "EasyUpload", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-
+           
             $("#NavDiv").replaceWith(response);
         })
     }
 </script>
-
