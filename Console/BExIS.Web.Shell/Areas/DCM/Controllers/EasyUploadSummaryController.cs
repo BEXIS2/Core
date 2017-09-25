@@ -383,8 +383,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         XDocument metadataX = xmlMetadatWriter.CreateMetadataXml(METADATASTRUCTURE_ID);
                         XmlDocument metadataXml = XmlMetadataWriter.ToXmlDocument(metadataX);
                         dsv.Metadata = metadataXml;
-
-                        dsv.Metadata = XmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
+                        try
+                        {
+                            dsv.Metadata = XmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
+                        }
+                        catch (NullReferenceException ex)
+                        {
+                            //Reference of the title node is missing
+                            throw new NullReferenceException("The extra-field of this metadata-structure is missing the title-node-reference!");
+                        }
                         dm.EditDatasetVersion(dsv, null, null, null);
                     }
 
