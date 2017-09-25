@@ -629,6 +629,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         private List<Error> ValidateRows(string JsonArray)
         {
+            const int maxErrorsPerColumn = 20;
+
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
             string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
@@ -651,9 +653,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
 
-                for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
+                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                 {
-                    for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
+                    int errorsInColumn = 0;
+                    for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
                     {
                         int SelectedY = y - (IntDataArea[0]);
                         int SelectedX = x - (IntDataArea[1]);
@@ -697,6 +700,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (ValidationResult is Error)
                         {
                             ErrorList.Add((Error)ValidationResult);
+                            errorsInColumn++;
+                        }
+
+                        if (errorsInColumn >= maxErrorsPerColumn)
+                        {
+                            //Break inner (row) loop to jump to the next column
+                            break;
                         }
                     }
                 }

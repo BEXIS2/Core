@@ -726,19 +726,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List< Tuple<int, Error> > ErrorList = ValidateRows(JsonArray);
             List< Tuple<int, ErrorInfo> > ErrorMessageList = new List< Tuple<int, ErrorInfo> >();
 
-            if (ErrorList.Count <= 50)
+            foreach (Tuple<int, Error> error in ErrorList)
             {
-                foreach (Tuple<int, Error> error in ErrorList)
-                {
-                    ErrorMessageList.Add(new Tuple<int, ErrorInfo>(error.Item1, new ErrorInfo(error.Item2)));
-                }
-            }
-            else
-            {
-                for (int i = 0; i <= 50; i++)
-                {
-                    ErrorMessageList.Add(new Tuple<int, ErrorInfo>(ErrorList[i].Item1, new ErrorInfo(ErrorList[i].Item2)));
-                }
+                ErrorMessageList.Add(new Tuple<int, ErrorInfo>(error.Item1, new ErrorInfo(error.Item2)));
             }
 
             return Json(new { errors = ErrorMessageList.ToArray(), errorCount = (ErrorList.Count) });
@@ -751,6 +741,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         private List<Tuple<int, Error>> ValidateRows(string JsonArray)
         {
+            const int maxErrorsPerColumn = 20;
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
             string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
@@ -772,9 +763,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
 
-                for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
+                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                 {
-                    for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
+                    int errorsInColumn = 0;
+                    for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
                     {
                         int SelectedY = y - (IntDataArea[0]);
                         int SelectedX = x - (IntDataArea[1]);
@@ -783,20 +775,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
 
                         DataType datatype = null;
-
-                        //Moved handling of this case to SaveUnitSelection, just leaving it here in case of problems: 
-                        /*
-                        if (mappedHeader.Item3.SelectedDataTypeId == -1)
-                        {
-                            datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
-                        }
-                        else
-                        {*/
                         datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                        //}
-
                         string datatypeName = datatype.SystemType;
 
+                        #region DataTypeCheck
                         DataTypeCheck dtc;
                         double DummyValue = 0;
                         if (Double.TryParse(vv, out DummyValue))
@@ -814,11 +796,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
                         }
+                        #endregion
 
                         var ValidationResult = dtc.Execute(vv, y);
                         if (ValidationResult is Error)
                         {
                             ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
+                            errorsInColumn++;
+                        }
+
+                        if(errorsInColumn >= maxErrorsPerColumn)
+                        {
+                            //Break inner (row) loop to jump to the next column
+                            break;
                         }
                     }
                 }
