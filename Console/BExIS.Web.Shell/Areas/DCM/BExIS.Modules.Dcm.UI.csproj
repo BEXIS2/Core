@@ -180,6 +180,7 @@
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
+    <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Models\CreateDatasetViewModel.cs" />
@@ -610,6 +611,10 @@
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
       <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
       <Name>BExIS.Web.Shell</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DIM\BExIS.Modules.Dim.UI.csproj">
+      <Project>{9bfffd11-03c6-47df-9cc9-f458a9a49377}</Project>
+      <Name>BExIS.Modules.Dim.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

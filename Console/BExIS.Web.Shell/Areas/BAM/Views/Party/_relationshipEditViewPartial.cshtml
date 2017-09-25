@@ -4,7 +4,7 @@
     var viewMode = (Boolean)(ViewBag.viewMode);
 }
 @Html.HiddenFor(m => m.Id)
-<table>
+<table id="tblRelationship">
     <tr>
         <td style="width:200px">Title</td>
         <td>
@@ -64,7 +64,7 @@
 <script>
     $("#savePartyRelationship").bind("click", function () {
         var partyRelationshipData={partyRelationship:{
-            description:$("#Description").val(),
+            description:$("#tblRelationship #Description").val(),
             id: @Model.Id,
             scope:$("#Scope").val() ,
             startDate:new Date($("#StartDate").val()),

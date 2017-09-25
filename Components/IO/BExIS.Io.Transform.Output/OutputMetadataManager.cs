@@ -112,11 +112,10 @@ namespace BExIS.IO.Transform.Output
             return String.Empty;
         }
 
-        public static string GetSchemaDirectoryPathFromMetadataStructure(long metadataStructureId)
+        public static string GetSchemaDirectoryPathFromMetadataStructure(long metadataStructureId, MetadataStructureManager metadataStructureManager)
         {
             try
             {
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 MetadataStructure metadataStructure =
                     metadataStructureManager.Repo.Get(metadataStructureId);
 

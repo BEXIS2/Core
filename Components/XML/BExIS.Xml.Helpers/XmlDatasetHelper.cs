@@ -23,10 +23,16 @@ namespace BExIS.Xml.Helpers
         public static string GetInformation(long datasetid, NameAttributeValues name)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset dataset = dm.GetDataset(datasetid);
-            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            try
+            {
+                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
 
-            return GetInformation(datasetVersion, name);
+                return GetInformation(datasetVersion, name);
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         /// <summary>
@@ -207,6 +213,7 @@ namespace BExIS.Xml.Helpers
         public static bool HasExportInformation(long metadataStructrueId)
         {
             // get MetadataStructure 
+            // TODO Refactor Manager in Helper
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructrueId);
 
@@ -282,26 +289,35 @@ namespace BExIS.Xml.Helpers
         {
             // get MetadataStructure 
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructrueId);
 
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-            XElement tmp = XmlUtility.GetXElementsByAttribute(nodeNames.parameter.ToString(), AttributeNames.name.ToString(),
-                NameAttributeValues.active.ToString(), xDoc).FirstOrDefault();
-
-            if (tmp != null)
+            try
             {
-                try
-                {
-                    return Convert.ToBoolean(tmp.Attribute(AttributeNames.value.ToString()).Value);
-                }
-                catch (Exception)
-                {
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructrueId);
 
-                    return false;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                XElement tmp = XmlUtility.GetXElementsByAttribute(nodeNames.parameter.ToString(), AttributeNames.name.ToString(),
+                    NameAttributeValues.active.ToString(), xDoc).FirstOrDefault();
+
+                if (tmp != null)
+                {
+                    try
+                    {
+                        return Convert.ToBoolean(tmp.Attribute(AttributeNames.value.ToString()).Value);
+                    }
+                    catch (Exception)
+                    {
+
+                        return false;
+                    }
                 }
+
+                return false;
+            }
+            finally
+            {
+                metadataStructureManager.Dispose();
             }
 
-            return false;
         }
 
         public static bool HasTransmission(long datasetid, TransmissionType type)
@@ -349,21 +365,29 @@ namespace BExIS.Xml.Helpers
         public static string GetEntityType(long datasetid)
         {
             DatasetManager datasetManager = new DatasetManager();
-            Dataset dataset = datasetManager.GetDataset(datasetid);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-            // get MetadataStructure 
-            if (dataset != null)
+            try
             {
-                return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id);
+                Dataset dataset = datasetManager.GetDataset(datasetid);
+
+                // get MetadataStructure 
+                if (dataset != null)
+                {
+                    return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id, metadataStructureManager);
+                }
+                return string.Empty;
             }
-            return string.Empty;
+            finally
+            {
+                datasetManager.Dispose();
+                metadataStructureManager.Dispose();
+            }
         }
 
         //todo entity extention
-        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId)
+        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId, MetadataStructureManager metadataStructureManager)
         {
-
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
 
             // get MetadataStructure 
@@ -403,26 +427,36 @@ namespace BExIS.Xml.Helpers
         public static bool HasEntityType(long metadataStuctrueId, string entityClassPath)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
 
-            // get MetadataStructure 
-            if (metadataStructure != null)
+            try
             {
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
-                if (tmp.Any())
-                {
-                    foreach (var entity in tmp)
-                    {
-                        string tmpEntityClassPath = "";
-                        if (entity.HasAttributes && entity.Attribute("value") != null)
-                            tmpEntityClassPath = entity.Attribute("value").Value.ToLower();
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
 
-                        if (tmpEntityClassPath.Equals(entityClassPath.ToLower())) return true;
+                // get MetadataStructure 
+                if (metadataStructure != null)
+                {
+                    XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                    IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
+                    if (tmp.Any())
+                    {
+                        foreach (var entity in tmp)
+                        {
+                            string tmpEntityClassPath = "";
+                            if (entity.HasAttributes && entity.Attribute("value") != null)
+                                tmpEntityClassPath = entity.Attribute("value").Value.ToLower();
+
+                            if (tmpEntityClassPath.Equals(entityClassPath.ToLower())) return true;
+                        }
                     }
                 }
+                return false;
             }
-            return false;
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
+
+
         }
 
 

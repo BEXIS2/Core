@@ -1972,9 +1972,8 @@ namespace BExIS.Dlm.Services.Data
             /// the latest checked in version should be returned.
             /// if dataset is checked out, exception
             /// If the dataset is marked as deleted its like that it is not there at all
-
             if (dataset == null)
-                throw new Exception(string.Format("Provided dataset is null"));
+                    throw new Exception(string.Format("Provided dataset is null"));
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Dataset {0} is deleted", dataset.Id));
             if (dataset.Status == DatasetStatus.CheckedOut)
@@ -1983,10 +1982,14 @@ namespace BExIS.Dlm.Services.Data
             }
             if (dataset.Status == DatasetStatus.CheckedIn)
             {
-                DatasetVersion dsVersion = dataset.Versions
-                                                  .OrderByDescending(t => t.Timestamp)
-                                                  .FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn); // indeed the versions collection is ordered and there should be no need for ordering, but is just to prevent any side effects
-                return (dsVersion);
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    DatasetVersion dsVersion = uow.GetReadOnlyRepository<DatasetVersion>().Query()
+                                                .OrderByDescending(t => t.Timestamp)
+                                                .FirstOrDefault(p => p.Dataset.Id == dataset.Id 
+                                                    && p.Status == DatasetVersionStatus.CheckedIn); // indeed the versions collection is ordered and there should be no need for ordering, but is just to prevent any side effects
+                    return (dsVersion);
+                }
             }
             return null;
         }

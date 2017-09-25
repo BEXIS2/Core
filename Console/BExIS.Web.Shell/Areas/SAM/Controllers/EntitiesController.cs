@@ -6,10 +6,11 @@ using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class EntitiesController : Controller
+    public class EntitiesController : BaseController
     {
         public ActionResult Create()
         {
@@ -27,30 +28,44 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var entityManager = new EntityManager();
 
-            // Source + Transformation - Data
-            var entities = entityManager.Entities;
+            try
+            {
+                // Source + Transformation - Data
+                var entities = entityManager.Entities;
 
-            // Filtering
-            var filtered = entities;
-            var total = filtered.Count();
+                // Filtering
+                var filtered = entities;
+                var total = filtered.Count();
 
-            // Sorting
-            var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
+                // Sorting
+                var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
 
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
+                // Paging
+                var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+                    .Take(command.PageSize);
 
-            return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
+                return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
         }
 
         // GET: Entity
         public ActionResult Index()
         {
             var entityManager = new EntityManager();
-            entityManager.Create(new Entity() { EntityType = typeof(Dataset), EntityStoreType = typeof(DatasetStore), Securable = true, UseMetadata = true });
 
-            return View();
+            try
+            {
+                entityManager.Create(new Entity() { EntityType = typeof(Dataset), EntityStoreType = typeof(DatasetStore), Securable = true, UseMetadata = true });
+                return View();
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
         }
     }
 }

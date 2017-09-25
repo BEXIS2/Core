@@ -8,15 +8,41 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services
 {
-    public class PublicationManager
+    public class PublicationManager : IDisposable
     {
+        private IUnitOfWork guow = null;
+
         public PublicationManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.PublicationRepo = uow.GetReadOnlyRepository<Publication>();
-            this.BrokerRepo = uow.GetReadOnlyRepository<Broker>();
-            this.RepositoryRepo = uow.GetReadOnlyRepository<Repository>();
-            this.MetadataStructureToRepositoryRepo = uow.GetReadOnlyRepository<MetadataStructureToRepository>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.PublicationRepo = guow.GetReadOnlyRepository<Publication>();
+            this.BrokerRepo = guow.GetReadOnlyRepository<Broker>();
+            this.RepositoryRepo = guow.GetReadOnlyRepository<Repository>();
+            this.MetadataStructureToRepositoryRepo = guow.GetReadOnlyRepository<MetadataStructureToRepository>();
+        }
+
+        private bool isDisposed = false;
+        ~PublicationManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers

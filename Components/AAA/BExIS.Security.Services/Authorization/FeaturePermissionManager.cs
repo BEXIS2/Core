@@ -1,47 +1,49 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
-    public class FeaturePermissionManager
+    public class FeaturePermissionManager : IDisposable
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public FeaturePermissionManager()
         {
-            var uow = this.GetUnitOfWork();
+            _guow = this.GetIsolatedUnitOfWork();
+            FeaturePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
+        }
 
-            FeaturePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
-            FeatureRepository = uow.GetReadOnlyRepository<Feature>();
-            SubjectRepository = uow.GetReadOnlyRepository<Subject>();
-            OperationRepository = uow.GetReadOnlyRepository<Operation>();
+        ~FeaturePermissionManager()
+        {
+            Dispose(true);
         }
 
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }
+
         public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
-        public IReadOnlyRepository<Feature> FeatureRepository { get; }
-        public IReadOnlyRepository<Operation> OperationRepository { get; }
-        public IReadOnlyRepository<Subject> SubjectRepository { get; }
 
         public void Create(long? subjectId, long featureId, PermissionType permissionType)
         {
-            if (Exists(subjectId, featureId, permissionType)) return;
-
-            var featurePermission = new FeaturePermission
-            {
-                Feature = FeatureRepository.Get(featureId),
-                PermissionType = permissionType,
-                // Sven
-                // Workaround:
-                // FirstOrDefault may is not the proper method to call. But this is necessary because of possible empty call to "Get()"
-                // because subjectId can be null.
-                Subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault()
-            };
-
             using (var uow = this.GetUnitOfWork())
             {
+                var featureRepository = uow.GetReadOnlyRepository<Feature>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+
+                if (Exists(subjectId, featureId, permissionType)) return;
+
+                var featurePermission = new FeaturePermission
+                {
+                    Feature = featureRepository.Get(featureId),
+                    PermissionType = permissionType,
+                    Subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault()
+                };
+
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
                 featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
@@ -50,15 +52,18 @@ namespace BExIS.Security.Services.Authorization
 
         public void Create(Subject subject, Feature feature, PermissionType permissionType = PermissionType.Grant)
         {
-            var featurePermission = new FeaturePermission()
-            {
-                Subject = subject,
-                Feature = feature,
-                PermissionType = permissionType
-            };
-
             using (var uow = this.GetUnitOfWork())
             {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var featureRepository = uow.GetReadOnlyRepository<Feature>();
+
+                var featurePermission = new FeaturePermission()
+                {
+                    Subject = subjectRepository.Get(subject.Id),
+                    Feature = featureRepository.Get(feature.Id),
+                    PermissionType = permissionType
+                };
+
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
                 featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
@@ -77,146 +82,197 @@ namespace BExIS.Security.Services.Authorization
 
         public void Delete(long? subjectId, long featureId)
         {
-            var featurePermission = Find(subjectId, featureId);
-
-            if (featurePermission == null) return;
-
             using (var uow = this.GetUnitOfWork())
             {
+                var featurePermission = Find(subjectId, featureId);
+
+                if (featurePermission == null) return;
+
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
                 featurePermissionRepository.Delete(featurePermission);
                 uow.Commit();
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
         public bool Exists(Subject subject, Feature feature, PermissionType permissionType)
         {
-            if (feature == null)
-                return false;
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
-            if (subject == null)
-                return FeaturePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+                if (feature == null)
+                    return false;
 
-            return FeaturePermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+                if (subject == null)
+                    return featurePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+
+                return featurePermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+            }
         }
 
         public bool Exists(long? subjectId, long featureId, PermissionType permissionType)
         {
-            if (subjectId == null)
-                return FeaturePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
-            return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+
+                if (subjectId == null)
+                    return featurePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
+                return featurePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
+            }
         }
 
         public bool Exists(long? subjectId, long featureId)
         {
-            if (subjectId == null)
-                return FeaturePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId).Count == 1;
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
-            return FeaturePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count == 1;
+                if (subjectId == null)
+                    return featurePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId).Count == 1;
+
+                return featurePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count == 1;
+            }
         }
 
         public bool Exists(IEnumerable<long> subjectIds, IEnumerable<long> featureIds, PermissionType permissionType)
         {
-            return FeaturePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any();
+            }
         }
 
         public FeaturePermission Find(long? subjectId, long featureId)
         {
-            return subjectId == null ? FeaturePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault() : FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return subjectId == null ? featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault() : featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
+            }
         }
 
         public FeaturePermission Find(Subject subject, Feature feature)
         {
-            return
-                FeaturePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id)
-                    .FirstOrDefault();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id).FirstOrDefault();
+            }
         }
 
         public FeaturePermission FindById(long id)
         {
-            return FeaturePermissionRepository.Get(id);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Get(id);
+            }
         }
 
         public int GetPermissionType(long subjectId, long featureId)
         {
-            var featurePermission = Find(subjectId, featureId);
-
-            if (featurePermission != null)
+            using (var uow = this.GetUnitOfWork())
             {
-                return (int)featurePermission.PermissionType;
-            }
+                var featurePermission = Find(subjectId, featureId);
 
-            return 2;
+                if (featurePermission != null)
+                {
+                    return (int)featurePermission.PermissionType;
+                }
+
+                return 2;
+            }
         }
 
         public bool HasAccess(long? subjectId, long featureId)
         {
-            var feature = FeatureRepository.Get(featureId);
-            var subject = subjectId == null ? null : SubjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetReadOnlyRepository<Feature>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
 
-            return HasAccess(subject, feature);
+                var feature = featureRepository.Get(featureId);
+                var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+
+                return HasAccess(subject, feature);
+            }
         }
 
         public bool HasAccess(Subject subject, Feature feature)
         {
-            // Anonymous
-            if (subject == null)
+            using (var uow = this.GetUnitOfWork())
             {
+                // Anonymous
+                if (subject == null)
+                {
+                    while (feature != null)
+                    {
+                        if (Exists(null, feature.Id, PermissionType.Grant))
+                            return true;
+
+                        feature = feature.Parent;
+                    }
+
+                    return false;
+                }
+
+                // Non-Anonymous
                 while (feature != null)
                 {
                     if (Exists(null, feature.Id, PermissionType.Grant))
                         return true;
+
+                    if (Exists(subject.Id, feature.Id, PermissionType.Deny))
+                        return false;
+
+                    if (Exists(subject.Id, feature.Id, PermissionType.Grant))
+                        return true;
+
+                    if (subject is User)
+                    {
+                        var user = subject as User;
+                        var groupIds = user.Groups.Select(g => g.Id).ToList();
+
+                        if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
+                        {
+                            return false;
+                        }
+
+                        if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
+                        {
+                            return true;
+                        }
+                    }
 
                     feature = feature.Parent;
                 }
 
                 return false;
             }
-
-            // Non-Anonymous
-            while (feature != null)
-            {
-                if (Exists(null, feature.Id, PermissionType.Grant))
-                    return true;
-
-                if (Exists(subject.Id, feature.Id, PermissionType.Deny))
-                    return false;
-
-                if (Exists(subject.Id, feature.Id, PermissionType.Grant))
-                    return true;
-
-                if (subject is User)
-                {
-                    var user = subject as User;
-                    var groupIds = user.Groups.Select(g => g.Id).ToList();
-
-                    if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
-                    {
-                        return false;
-                    }
-
-                    if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
-                    {
-                        return true;
-                    }
-                }
-
-                feature = feature.Parent;
-            }
-
-            return false;
         }
 
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
-            var operation = OperationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var operationRepository = uow.GetReadOnlyRepository<Operation>();
+                var SubjectRepository = uow.GetReadOnlyRepository<Subject>();
 
-            var feature = operation?.Feature;
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
-            if (feature != null && subject != null)
-                return HasAccess(subject.Id, feature.Id);
+                var operation = operationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
+                var feature = operation?.Feature;
+                var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+                if (feature != null && subject != null)
+                    return HasAccess(subject.Id, feature.Id);
 
-            return false;
+                return false;
+            }
         }
 
         public void Update(FeaturePermission featurePermission)
@@ -226,6 +282,19 @@ namespace BExIS.Security.Services.Authorization
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
                 featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
+            }
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
             }
         }
     }

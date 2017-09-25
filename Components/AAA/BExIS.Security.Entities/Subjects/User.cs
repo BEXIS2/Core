@@ -1,5 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Security.Entities.Authentication;
+﻿using BExIS.Security.Entities.Authentication;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -26,7 +25,6 @@ namespace BExIS.Security.Entities.Subjects
         public virtual string Password { get; set; }
         public virtual string PhoneNumber { get; set; }
         public virtual string SecurityStamp { get; set; }
-        public virtual Party Party { get; set; }
 
         public virtual string UserName
         {

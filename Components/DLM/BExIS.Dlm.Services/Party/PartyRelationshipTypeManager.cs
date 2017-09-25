@@ -10,15 +10,40 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Party
 {
-    public class PartyRelationshipTypeManager
+    public class PartyRelationshipTypeManager:IDisposable
     {
-        public IReadOnlyRepository<PartyRelationshipType> Repo { get; private set; }
-        public IReadOnlyRepository<PartyTypePair> RepoPartyTypePair { get; private set; }
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public PartyRelationshipTypeManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            Repo = uow.GetReadOnlyRepository<PartyRelationshipType>();
-            RepoPartyTypePair = uow.GetReadOnlyRepository<PartyTypePair>();
+            _guow = this.GetIsolatedUnitOfWork();
+            PartyRelationshipTypeRepository = _guow.GetReadOnlyRepository<PartyRelationshipType>();
+            PartyTypePairRepository = _guow.GetReadOnlyRepository<PartyTypePair>();
+        }
+
+        ~PartyRelationshipTypeManager()
+        {
+            Dispose(true);
+        }
+        public IReadOnlyRepository<PartyTypePair> PartyTypePairRepository { get; }
+        public IReadOnlyRepository<PartyRelationshipType> PartyRelationshipTypeRepository { get; }
+        public IQueryable<PartyRelationshipType> PartyRelationshipTypes => PartyRelationshipTypeRepository.Query();
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        public void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
         }
         #region PartyRelationshipType
         /// <summary>
@@ -348,8 +373,9 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
+
                 //Find all the typePair which are IndicatesHierarchy and their target is equal to the input
-                var partyTypePairs = RepoPartyTypePair.Get(item => item.AllowedTarget.Id == targetPartyTypeId && item.PartyRelationshipType.IndicatesHierarchy);
+                var partyTypePairs = repoPartyTypePair.Get(item => item.AllowedTarget.Id == targetPartyTypeId && item.PartyRelationshipType.IndicatesHierarchy);
                 //Add all of their parties
                 partyTypes.AddRange(partyTypePairs.Select(item => item.AllowedSource).Distinct());
 

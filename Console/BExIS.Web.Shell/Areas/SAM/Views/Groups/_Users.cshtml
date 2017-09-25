@@ -1,7 +1,7 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
-@model long
+@model string
 
 @(Html.Telerik().Grid<UserMembershipGridRowModel>()
       .Name("grid_users")
@@ -18,7 +18,7 @@
                 <input type='checkbox' name='selectedUsers' value='@item.Id' />
             }
             </text>)
-              .ClientTemplate("<input type='checkbox' name='selectedUsers' data-userid='<#= Id #>' data-groupid='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='checkbox' name='selectedUsers' data-userid='<#= Id #>' data-groupname='" + Model + "' <#= IsUserInGroup ? checked='checked' : '' #> />")
               .Title("Member")
               .Width(64)
               .Filterable(false)
@@ -33,7 +33,7 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .Select("Users_Select", "Groups", new { GroupId = Model }))
+          .Select("Users_Select", "Groups", new { GroupName = Model }))
       .Filterable()
       .Pageable(pageable =>
       {

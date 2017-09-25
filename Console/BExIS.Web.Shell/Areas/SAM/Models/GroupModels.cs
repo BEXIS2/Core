@@ -1,5 +1,4 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Models
@@ -7,11 +6,7 @@ namespace BExIS.Modules.Sam.UI.Models
     public class CreateGroupModel
     {
         public string Description { get; set; }
-
-        [Required]
         public string Name { get; set; }
-
-        [Required]
         public int Type { get; set; }
     }
 

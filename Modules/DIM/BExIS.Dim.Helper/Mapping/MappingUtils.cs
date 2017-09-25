@@ -103,14 +103,14 @@ namespace BExIS.Dim.Helpers.Mapping
                 if (parentTypeId == 0)
                 {
                     partyType =
-                        partyTypeManager.Repo.Query()
+                        partyTypeManager.PartyTypeRepository.Query()
                             .FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
-                    parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
                 }
                 else
                 {
-                    partyType = partyTypeManager.Repo.Get(parentTypeId);
-                    parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+                    partyType = partyTypeManager.PartyTypeRepository.Get(parentTypeId);
+                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
                 }
 
                 if (parties != null)
@@ -124,7 +124,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
 
                             PartyCustomAttributeValue attrValue =
-                                partyManager.RepoCustomAttrValues.Get()
+                                partyManager.PartyCustomAttributeValueRepository.Get()
                                     .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
                                     .FirstOrDefault();
 

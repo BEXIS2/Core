@@ -14,7 +14,7 @@ namespace BExIS.Dim.Helpers
     {
         private const string sourceFile = "submissionConfig.xml";
         private XmlDocument requirementXmlDocument = null;
-        private PublicationManager publicationManager;
+
 
         public List<Broker> Brokers;
 
@@ -22,28 +22,37 @@ namespace BExIS.Dim.Helpers
         {
             requirementXmlDocument = new XmlDocument();
             Brokers = new List<Broker>();
-            publicationManager = new PublicationManager();
         }
 
         public void Load()
         {
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), sourceFile);
+            PublicationManager publicationManager = new PublicationManager();
 
-            if (FileHelper.FileExist(filepath))
+            try
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(filepath);
-                requirementXmlDocument = xmlDoc;
-                XmlNodeList brokerNodes = requirementXmlDocument.GetElementsByTagName("broker");
 
-                foreach (XmlNode child in brokerNodes)
+                string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), sourceFile);
+
+                if (FileHelper.FileExist(filepath))
                 {
-                    Brokers.Add(createBroker(child));
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.Load(filepath);
+                    requirementXmlDocument = xmlDoc;
+                    XmlNodeList brokerNodes = requirementXmlDocument.GetElementsByTagName("broker");
+
+                    foreach (XmlNode child in brokerNodes)
+                    {
+                        Brokers.Add(createBroker(child, publicationManager));
+                    }
                 }
+            }
+            finally
+            {
+                publicationManager.Dispose();
             }
         }
 
-        private Broker createBroker(XmlNode node)
+        private Broker createBroker(XmlNode node, PublicationManager publicationManager)
         {
             Broker tmp = new Broker();
 

@@ -21,7 +21,10 @@ namespace BExIS.Modules.Dim.UI
             try
             {
                 base.Install();
-                DimSeedDataGenerator.GenerateSeedData();
+                using (DimSeedDataGenerator generator = new DimSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
             }
             catch (Exception e)
             {

@@ -6,7 +6,10 @@ namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateUserModel
     {
+        [Required]
         public string Email { get; set; }
+
+        [Required]
         public string UserName { get; set; }
     }
 
@@ -59,13 +62,13 @@ namespace BExIS.Modules.Sam.UI.Models
         public bool IsUserInGroup { get; set; }
         public string Name { get; set; }
 
-        public static UserMembershipGridRowModel Convert(User user, long featureId)
+        public static UserMembershipGridRowModel Convert(User user, string groupName)
         {
             return new UserMembershipGridRowModel()
             {
                 Email = user.Email,
                 Id = user.Id,
-                IsUserInGroup = user.Groups.Any(g => g.Id == featureId),
+                IsUserInGroup = user.Groups.Any(g => g.Name.ToUpperInvariant() == groupName.ToUpperInvariant()),
                 Name = user.Name
             };
         }

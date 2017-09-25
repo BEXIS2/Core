@@ -33,7 +33,7 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            //testNHibernateSession();
+            testNHibernateSession();
             //getDatasetVersionIdsThatHaveSOmeTuples(1);
             //addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
@@ -41,12 +41,112 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         private void testNHibernateSession()
+        {
+            try
+            {
+                var dimLookup = new Dictionary<long, Dimension>();
+                var unitLookup = new Dictionary<string, Unit>();
+                var datatypeLookup = new Dictionary<string, DataType>();
+                var measSystemLookup = new Dictionary<string, MeasurementSystem>();
+                using (var uow = this.GetUnitOfWork())
+                {
+                    uow.GetReadOnlyRepository<Dimension>().Get().ToList().ForEach(p => dimLookup.Add(p.Id, p));
+                    uow.GetReadOnlyRepository<Unit>().Get().ToList().ForEach(p => unitLookup.Add(p.Name.ToLower(), p));
+                    uow.GetReadOnlyRepository<DataType>().Get().ToList().ForEach(p => datatypeLookup.Add(p.Name.ToLower(), p));
+                    Enum.GetValues(typeof(MeasurementSystem)).OfType<MeasurementSystem>().ToList().ForEach(p => measSystemLookup.Add(p.ToString(), p));
+
+                    // the for loop is inside th UOW because traversing over each unit's AssociatedDataTypes needs the DB session to remain open.
+                    // this may cause 'another operation is already in progress' problem
+                    foreach (var unit in unitLookup)
+                    {
+                        Unit u = unit.Value;
+                        var dataTypes = u.AssociatedDataTypes.Select(p => p.Name).ToList();
+                        createUnits(u, u.Dimension.Id, u.MeasurementSystem, dataTypes, dimLookup, unitLookup, datatypeLookup, measSystemLookup);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+
+
+        private long createUnits(Unit incomingUnit, long dimensionId, MeasurementSystem measurementSystem, List<string> dataTypes, Dictionary<long, Dimension> dimLookup, Dictionary<string, Unit> unitLookup, Dictionary<string, DataType> datatypeLookup, Dictionary<string, MeasurementSystem> measSystemLookup)
+        {
+            UnitManager unitManager = null;
+            //DataTypeManager dataTypeManger = new DataTypeManager();
+            try
+            {
+                unitManager = new UnitManager();
+                // create new unit
+                Unit unit = new Unit
+                {
+                    Name = incomingUnit.Name + (new Random()).Next(),
+                    Abbreviation = incomingUnit.Abbreviation,
+                    Description = incomingUnit.Description
+                };
+
+                if (unit.Description.Length > 255)
+                    unit.Description = unit.Description.Substring(0, 255);
+
+                // attach dimension
+                if (dimLookup.ContainsKey(dimensionId))
+                {
+                    unit.Dimension = dimLookup[dimensionId];
+                }
+
+                // find measurement system
+                var ms = measurementSystem.ToString();
+                if (measSystemLookup.ContainsKey(ms))
+                {
+                    unit.MeasurementSystem = measSystemLookup[ms];
+                }
+
+                // get existing unit or create new one
+                if (unitLookup.ContainsKey(unit.Name.ToLower()))
+                {
+                    unit = unitLookup[unit.Name.ToLower()];
+                }
+                else
+                {
+                    unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
+                }
+
+                // attach datatypes to units
+                foreach (string type in dataTypes)
+                {
+                    var t = type.ToLower();
+                    if (datatypeLookup.ContainsKey(t))
+                    {
+                        var dt = datatypeLookup[t];
+                        if (!(unit.AssociatedDataTypes.Contains(dt)))
+                        {
+                            unit.AssociatedDataTypes.Add(dt);
+                        }
+                    }
+                }
+                unitManager.Update(unit);
+
+                // add unit-ID to the mappedUnits Table
+                return unit.Id;
+            }
+            finally
+            {
+                unitManager.Dispose();
+            }
+        }
+
+        private void testNHibernateSession2()
 
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            var entityPermissions = entityPermissionManager.EntityPermissionRepository.Get();
+
             this.Disposables.Add(entityPermissionManager);
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 500; i++)
             {
                 var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
@@ -365,7 +465,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 party3.StartDate = DateTime.Now;
                 pm.Update(party3);
-                var partyUpdated = pm.Repo.Get(party3.Id);
+                var partyUpdated = pm.PartyRepository.Get(party3.Id);
                 if (partyUpdated.StartDate == party3.StartDate)
                     System.Diagnostics.Debug.WriteLine("success party update .");
                 else
@@ -379,7 +479,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 pca.DataType = "Integer";
                 ptm.UpdatePartyCustomAttribute(pca);
-                var pcaUpdated = ptm.RepoPartyCustomAttribute.Get(pca.Id);
+                var pcaUpdated = ptm.PartyCustomAttributeRepository.Get(pca.Id);
                 if (pcaUpdated.DataType == "Integer")
                     System.Diagnostics.Debug.WriteLine("success party custom attribute update .");
                 else
@@ -420,7 +520,7 @@ namespace BExIS.Web.Shell.Controllers
         private void updateTestParty(long id)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            var party = pm.Repo.Get(id);
+            var party = pm.PartyRepository.Get(id);
             party.Description = "updated..";
             pm.Update(party);
         }
@@ -479,7 +579,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyType addPartyType()
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
-            return ptm.Repo.Get(2);
+            return ptm.PartyTypeRepository.Get(2);
             // return ptm.Create("partyTypeTest", "just for test", null);
         }
         private void removePartyType(PartyType partyType)
