@@ -509,7 +509,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
                     }
 
-                    int batchSize = 1000;
+                    int batchSize = (new Object()).GetUnitOfWork().PersistenceManager.PreferredPushSize;
                     int batchnr = 1;
                     foreach (int[] areaDataValues in areaDataValuesList)
                     {
