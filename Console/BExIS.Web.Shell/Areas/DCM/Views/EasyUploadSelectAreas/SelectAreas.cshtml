@@ -10,23 +10,23 @@
     }
 
     #setSelectedHeaderArea {
-        background: #660705 none repeat scroll 0 0 !important;
+        background-color: rgba(102, 7, 5, 1) !important;
     }
 
     #setSelectDataArea {
-        background: #380566 none repeat scroll 0 0 !important;
+        background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    #expandSelection{
-        background: #380566 none repeat scroll 0 0 !important;
+    #expandSelection {
+        background-color: rgba(56, 5, 102, 1) !important;
     }
 
     .headerMarking {
-        background-color: rgba(40,3,2,0.5) !important;
+        background-color: rgba(102, 7, 5, 0.5) !important;
     }
 
     .dataMarking {
-        background-color: rgba(22,2,40,0.5) !important;
+        background-color: rgba(56, 5, 102, 0.5) !important;
     }
 
 </style>
@@ -43,7 +43,7 @@
     var hotActive = false;
     var currentButton = null;
     var selectedDataArea = null;
-    
+
     $(document).ready(function () {
 
         function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -52,17 +52,8 @@
 
             cellProperties.editor = false;
 
-            /*if(!jQuery.isEmptyObject(currentButton) && currentButton == "reset") {
-                if($(td).hasClass("dataMarking")) {
-                    cellProperties.className = "";
-                }
-                if($(td).hasClass("headerMarking")) {
-                    cellProperties.className = "";
-                }
-            }*/
-
             return td;
-        }        
+        }
 
         var container = document.getElementById('handsonExcelTable');
         hot = new Handsontable(container, {
@@ -73,7 +64,6 @@
             width: 800,
             height: 400,
             outsideClickDeselects: false,
-            /*autoRowSize: true,*/
             cells: function(row, col, prop) {
                 var cellProperties = {};
                 cellProperties.renderer = resetRenderer;
@@ -84,11 +74,6 @@
         hotActive = true;
 
         hot.render();
-
-        var selectedHeaderArea = $('#HeaderSelection').val();
-        if(selectedHeaderArea.length > 0) {
-            hot.selectCell(JSON.parse(selectedHeaderArea));
-        }
 
 
         $('#setSelectDataArea').click(function() {
@@ -109,18 +94,13 @@
                 }
 
                 // set the css class for all selected cells
-                for(i = selected[0]; i <= selected[2]; i++) {
-                    for(j = selected[1]; j <= selected[3]; j++) {
-                        var cell = hot.getCellMeta(i,j, true);
-                        cell.className = 'dataMarking';
-                    }
-                }
+                markArea(selected[0], selected[2], selected[1], selected[3], 'dataMarking');
+
 
                 // render table again
                 hot.render();
 
                 // save selection area
-                $('#DataSelection').val(JSON.stringify(selected));
                 currentButton = null;
 
                 // push selection to the server
@@ -139,19 +119,12 @@
                 }
 
                 // set the css class for all selected cells
-                for(i = selected[0]; i <= selected[2]; i++) {
-                    for(j = selected[1]; j <= selected[3]; j++) {
-                        var cell = hot.getCellMeta(i,j, true);
-                        cell.className = 'headerMarking';
-
-                    }
-                }
+                markArea(selected[0], selected[2], selected[1], selected[3], 'headerMarking');
 
                 // render table again
                 hot.render();
 
                 // save selection area
-                $('#HeaderSelection').val(JSON.stringify(selected));
                 currentButton = null;
 
                 // push selection to the server
@@ -165,18 +138,10 @@
             var num_rows = hot.countRows();
             var num_cols = hot.countCols();
 
-            $('#HeaderSelection').val("");
-            $('#DataSelection').val("");
-
             selectedDataArea = null;
 
             //Reset all markings
-            for(var i = 0; i < num_rows; i++){
-                for(var j = 0; j < num_cols; j++){
-                    var cell = hot.getCellMeta(i,j, true);
-                    cell.className = '';
-                }
-            }
+            markArea(0, num_rows, 0, num_cols, '');
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
 
@@ -220,45 +185,42 @@
                 hot.render();
 
                 // save selection area
-                $('#DataSelection').val(JSON.stringify(selected));
                 currentButton = null;
 
                 // push selection to the server
                 $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
             }
         });
+        
+        var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
+        if (array) {
+            array = $.parseJSON(array);
+            markArea(array[0], array[2], array[1], array[3], 'headerMarking');
+        }    
 
-        if($('#HeaderSelection').val().length > 0) {
-            var array =  $.parseJSON($('#HeaderSelection').val());
-
-            for(i = array[0]; i <= array[2]; i++) {
-                for(j = array[1]; j <= array[3]; j++) {
-                    var cell = hot.getCellMeta(i,j, true);
-                    cell.className = 'headerMarking';
-
-                }
-            }
-            hot.render();
-        }
-
-        if($('#DataSelection').val().length > 0) {
-            //If there was a previous selection, parse it and mark the cells
-            var nestedArray =  $.parseJSON($('#DataSelection').val());
-            if(array != null){
-                for(var pos = 0; pos < nestedArray.length; pos++){
-                    var array = $.parseJSON(nestedArray[pos]);
-                    for(i = array[0]; i <= array[2]; i++) {
-                        for(j = array[1]; j <= array[3]; j++) {
-                            var cell = hot.getCellMeta(i,j, true);
-                            cell.className = 'dataMarking';
-
-                        }
-                    }
-                }
-                hot.render();
+        //If there was a previous selection, parse it and mark the cells
+        var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
+        if (nestedArray != null){
+            for(var pos = 0; pos < nestedArray.length; pos++){
+                var array = $.parseJSON(nestedArray[pos]);
+                markArea(array[0], array[2], array[1], array[3], 'dataMarking');
             }
         }
+        hot.render();
     });
+
+    /*
+    *Marks the area specified by the parameters by setting the class name
+    */
+    function markArea(startX, endX, startY, endY, type) {
+        for (i = startX; i <= endX; i++) {
+            for (j = startY; j <= endY; j++) {
+                var cell = hot.getCellMeta(i, j, true);
+                cell.className = type;
+
+            }
+        }
+    }
 
     function reverseArea(selected) {
         var startCol = selected[3];
@@ -291,17 +253,15 @@
         </div>
 
         <div class="uploadWizardStep_Content stepper">
-            <input type="button" class="t-button action areaSelect" id="setSelectedHeaderArea" value="Header" />
-            <input type="hidden" name="HeaderSelection" id="HeaderSelection" value="@Html.Raw(Model.HeaderArea)" />
+            <button type="button" class="t-button action areaSelect" id="setSelectedHeaderArea">Header</button>
 
-            <input type="button" class="t-button action areaSelect" id="setSelectDataArea" value="Data" />
-            <input type="hidden" name="DataSelection" id="DataSelection" value=@Html.Raw(Json.Encode(Model.DataArea)) />
+            <button type="button" class="t-button action areaSelect" id="setSelectDataArea">Data</button>
 
-            <input type="button" class="t-button action areaSelect" id="expandSelection" value="Expand Selection" title="Expand the latest marked data-area vertically to the end of the table."/>
+            <button type="button" class="t-button action areaSelect" id="expandSelection" title="Expand the latest marked data-area vertically to the end of the table.">Expand Selection</button>
 
-            <input type="button" class="t-button action areaSelect" id="setSelectReset" value="Reset" />
+            <button type="button" class="t-button action areaSelect" id="setSelectReset">Reset</button>
             
-            <div id="handsonExcelTable"></div>
+            <div id="handsonExcelTable" style="margin-bottom: 2em"></div>
             
         </div>
 
