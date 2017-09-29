@@ -261,53 +261,32 @@
         </div>
 
         <div class="uploadWizardStep_Content stepper">
-            <button type="button" class="t-button action areaSelect" id="setSelectedHeaderArea">Header</button>
+            <div style="margin-bottom: 1em">
+                <button type="button" class="t-button action areaSelect" id="setSelectedHeaderArea">Header</button>
 
-            <button type="button" class="t-button action areaSelect" id="setSelectDataArea">Data</button>
+                <button type="button" class="t-button action areaSelect" id="setSelectDataArea">Data</button>
 
-            <button type="button" class="t-button action areaSelect" id="expandSelection" title="Expand the latest marked data-area vertically to the end of the table.">Expand Selection</button>
+                <button type="button" class="t-button action areaSelect" id="expandSelection" title="Expand the latest marked data-area vertically to the end of the table.">Expand Selection</button>
 
-            <button type="button" class="t-button action areaSelect" id="setSelectReset">Reset</button>
+                <button type="button" class="t-button action areaSelect" id="setSelectReset">Reset</button>
 
-            <button type="button" class="t-button action areaSelect" id="changeWorksheet">change Worksheet</button>
+                <!--<button type="button" class="t-button action areaSelect" id="changeWorksheet" style="float: right">Change Worksheet</button>-->
+            </div>
             
             <div id="handsonExcelTable" style="margin-bottom: 2em"></div>
             
         </div>
 
         <div class="uploadWizardStep_Error stepper">
-            @if (Model != null)
+            @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
             {
-                if (Model.ErrorList != null)
+                <ul>
+                    @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                 {
-                    if (Model.ErrorList.Count != 0)
-                    {
-                        <ul>
-                            @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                            {
-                                <li>@s.ToString()</li>
-                            }
-                        </ul>
-
+                        <li>@s.ToString()</li>
                     }
-                }
-
+                </ul>
             }
         </div>
     </div>
 </div>
-
-
-<script type="text/javascript">
-
-
-    $("#setSelectedHeaderArea").click(function () {
-        if ($(this).val() != null && $(this).val() != '') {
-            SelectedSheetFormat = $(this).val();
-
-
-        }
-    })
-
-
-</script>
