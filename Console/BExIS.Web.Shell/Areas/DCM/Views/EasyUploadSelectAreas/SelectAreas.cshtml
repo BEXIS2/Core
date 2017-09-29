@@ -29,6 +29,14 @@
         background-color: rgba(56, 5, 102, 0.5) !important;
     }
 
+    /*Overwriting the css of the wizard*/
+    #Step4 .uploadWizardStep_Main{
+       width: 90%
+    }
+    #Step4 .uploadWizardStep_Content{
+        height: auto;
+    }
+
 </style>
 
 <script>
@@ -241,7 +249,7 @@
     }
 </script>
 
-<div id="Step3" class="uploadWizardStep">
+<div id="Step4" class="uploadWizardStep">
 
     <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
@@ -260,6 +268,8 @@
             <button type="button" class="t-button action areaSelect" id="expandSelection" title="Expand the latest marked data-area vertically to the end of the table.">Expand Selection</button>
 
             <button type="button" class="t-button action areaSelect" id="setSelectReset">Reset</button>
+
+            <button type="button" class="t-button action areaSelect" id="changeWorksheet">change Worksheet</button>
             
             <div id="handsonExcelTable" style="margin-bottom: 2em"></div>
             
