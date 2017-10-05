@@ -680,7 +680,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElementType type,
             LinkElementComplexity complexity)
         {
-            LinkElement element = mappingManager.GetLinkElement(id, type);
+            LinkElement element = mappingManager.GetLinkElement(id, name, type);
 
             if (element == null)
             {

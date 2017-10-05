@@ -84,6 +84,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 datasetVersionId = datasetVersion.Id;
                 versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
+
+                model.MetadataIsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ? true : false;
             }
 
             //todo check if datasetversion id is correct
