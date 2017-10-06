@@ -25,7 +25,7 @@ namespace BExIS.Security.Services.Subjects
             Dispose(true);
         }
 
-        public IQueryable<User> Users => UserRepository.Query();
+        public IQueryable<User> Users => UserRepository.Query(); // this may cause "object associated to more than one session" issue.
 
         private IReadOnlyRepository<User> UserRepository { get; }
 
@@ -85,7 +85,7 @@ namespace BExIS.Security.Services.Subjects
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var userRepository = uow.GetRepository<User>();
+                var userRepository = uow.GetReadOnlyRepository<User>();
                 return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
             }
         }
@@ -99,8 +99,9 @@ namespace BExIS.Security.Services.Subjects
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Get(userId));
+                var userRepository = uow.GetReadOnlyRepository<User>();
+                var user = userRepository.Get(userId);
+                return Task.FromResult(user);
             }
         }
 
@@ -393,15 +394,17 @@ namespace BExIS.Security.Services.Subjects
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var groupRepository = uow.GetRepository<Group>();
+                var groupRepository = uow.GetReadOnlyRepository<Group>();
                 var userRepository = uow.GetRepository<User>();
+
+                var _user = userRepository.Get(user.Id); // load the user using a repo linked to the current UoW to avoid possible lazyloading issue on user.Groups
                 var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
 
                 if (group == null) return Task.FromResult(0);
 
-                user.Groups.Add(group);
+                _user.Groups.Add(group);
 
-                userRepository.Put(user);
+                userRepository.Put(_user);
                 uow.Commit();
 
                 return Task.FromResult(0);
@@ -417,7 +420,7 @@ namespace BExIS.Security.Services.Subjects
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var groupRepository = uow.GetRepository<Group>();
+                var groupRepository = uow.GetReadOnlyRepository<Group>();
                 return Task.FromResult((IList<string>)groupRepository.Query(g => g.Users.Any(u => u.Id == user.Id)).Select(m => m.Name).ToList());
             }
         }
