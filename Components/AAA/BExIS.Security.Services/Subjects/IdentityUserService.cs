@@ -6,9 +6,9 @@ using System;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public class IdentityUserManager : UserManager<User, long>
+    public class IdentityUserService : UserManager<User, long>
     {
-        public IdentityUserManager() : base(new UserStore())
+        public IdentityUserService() : base(new UserManager())
         {
             // Configure validation logic for usernames
             UserValidator = new UserValidator<User, long>(this)

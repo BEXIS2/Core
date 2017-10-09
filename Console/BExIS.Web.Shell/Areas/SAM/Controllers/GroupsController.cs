@@ -20,18 +20,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public void AddUserToGroup(long userId, string groupName)
+        public async void AddUserToGroup(long userId, string groupName)
         {
-            var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
 
             try
             {
-                var user = userManager.FindByIdAsync(userId).Result;
-                userManager.AddToGroupAsync(user.Id, groupName);
+                var user = identityUserService.FindByIdAsync(userId).Result;
+                await identityUserService.AddToRoleAsync(user.Id, groupName);
             }
             finally
             {
-                userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 
@@ -41,7 +41,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Create()
         {
-            return PartialView("_Create");
+            return PartialView("_Create", new CreateGroupModel());
         }
 
         /// <summary>
@@ -128,18 +128,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public void RemoveUserFromGroup(long userId, string groupName)
+        public async void RemoveUserFromGroup(long userId, string groupName)
         {
-            var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
 
             try
             {
-                var user = userManager.FindByIdAsync(userId).Result;
-                userManager.RemoveFromGroupAsync(user.Id, groupName);
+                var user = identityUserService.FindByIdAsync(userId).Result;
+                await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
             }
             finally
             {
-                userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 

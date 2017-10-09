@@ -23,8 +23,8 @@ namespace BExIS.Web.Shell.Controllers
             {
                 return View("Error");
             }
-            var userManager = new UserManager();
-            var result = await userManager.ConfirmEmailAsync(userId, code);
+            var identityUserService = new IdentityUserService();
+            var result = await identityUserService.ConfirmEmailAsync(userId, code);
 
             if (!result.Succeeded) return View("Error");
 
@@ -93,11 +93,11 @@ namespace BExIS.Web.Shell.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new User { UserName = model.Email, Email = model.Email };
-                var userManager = new UserManager();
-                var result = await userManager.CreateAsync(user);
+                var identityUserService = new IdentityUserService();
+                var result = await identityUserService.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    result = await userManager.AddLoginAsync(user.Id, info.Login);
+                    result = await identityUserService.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
                         var signInManager = new SignInManager(AuthenticationManager);
@@ -136,18 +136,18 @@ namespace BExIS.Web.Shell.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userManager = new UserManager();
+                var identityUserService = new IdentityUserService();
 
-                var user = await userManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await userManager.IsEmailConfirmedAsync(user.Id)))
+                var user = await identityUserService.FindByEmailAsync(model.Email);
+                if (user == null || !(await identityUserService.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
 
-                var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
-                await userManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                await identityUserService.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
@@ -185,11 +185,11 @@ namespace BExIS.Web.Shell.Controllers
             HttpContext.Items.Add("Test", 1);
 
             // Require the user to have a confirmed email before they can log on.
-            var userManager = new UserManager();
-            var user = await userManager.FindByNameAsync(model.UserName);
+            var identityUserService = new IdentityUserService();
+            var user = await identityUserService.FindByNameAsync(model.UserName);
             if (user != null)
             {
-                if (!await userManager.IsEmailConfirmedAsync(user.Id))
+                if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
                 {
                     ViewBag.errorMessage = "You must have a confirmed email to log in.";
                     return View("Error");
@@ -240,10 +240,10 @@ namespace BExIS.Web.Shell.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
             var user = new User { UserName = model.UserName, Email = model.Email };
 
-            var result = await userManager.CreateAsync(user, model.Password);
+            var result = await identityUserService.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
                 //var signInManager = new SignInManager(userManager, AuthenticationManager);
@@ -251,7 +251,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                 // E-Mail-Nachricht mit diesem Link senden
-                var code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
                 await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
                 ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
@@ -282,19 +282,19 @@ namespace BExIS.Web.Shell.Controllers
             {
                 return View(model);
             }
-            var userManager = new UserManager();
-            var user = await userManager.FindByEmailAsync(model.Email);
+            var identityUserService = new IdentityUserService();
+            var user = await identityUserService.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Nicht anzeigen, dass der Benutzer nicht vorhanden ist.
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
 
-            var result = await userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            var result = await identityUserService.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 user.IsEmailConfirmed = true;
-                await userManager.UpdateAsync(user);
+                await identityUserService.UpdateAsync(user);
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
 
@@ -312,11 +312,11 @@ namespace BExIS.Web.Shell.Controllers
 
         private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
         {
-            var userManager = new UserManager();
-            var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
+            var identityUserService = new IdentityUserService();
+            var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
                new { userId, code }, Request.Url.Scheme);
-            await userManager.SendEmailAsync(userId, subject, $"Please confirm your account by clicking <a href=\"{callbackUrl}\">here</a>");
+            await identityUserService.SendEmailAsync(userId, subject, $"Please confirm your account by clicking <a href=\"{callbackUrl}\">here</a>");
 
             return callbackUrl;
         }
