@@ -3,6 +3,7 @@ using BExIS.Security.Services.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Subjects
 {
@@ -44,6 +45,11 @@ namespace BExIS.Security.Services.Subjects
             UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
         }
 
+        [Obsolete("Dot not use it, and there is no other way of chaning phone numbers!", true)] // this is an example of making a base class method obsolete and causing compilation error
+        public new Task<IdentityResult> ChangePhoneNumberAsync(long userId, string phoneNumber, string token)
+        {
+            return base.ChangePhoneNumberAsync(userId, phoneNumber, token);
+        }
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
