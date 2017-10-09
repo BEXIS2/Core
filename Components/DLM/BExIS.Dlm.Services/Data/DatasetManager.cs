@@ -35,11 +35,6 @@ namespace BExIS.Dlm.Services.Data
             this.DatasetRepo = guow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = guow.GetReadOnlyRepository<DatasetVersion>();
             this.DataTupleRepo = guow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
-            //this.DataTupleVerionRepo = guow.GetReadOnlyRepository<DataTupleVersion>();
-            //this.ExtendedPropertyValueRepo = guow.GetReadOnlyRepository<ExtendedPropertyValue>();
-            //this.VariableValueRepo = guow.GetReadOnlyRepository<VariableValue>();
-            //this.ParameterValueRepo = guow.GetReadOnlyRepository<ParameterValue>();
-            //this.AmendmentRepo = guow.GetReadOnlyRepository<Amendment>();
         }
 
         private bool isDisposed = false;
@@ -1274,12 +1269,12 @@ namespace BExIS.Dlm.Services.Data
 
                 workingCopyDatasetVersion.Dematerialize(false);
 
-            //preserve metadata and XmlExtendedPropertyValues for later use
-            var workingCopyDatasetVersionId = workingCopyDatasetVersion.Id;
-            var metadata = workingCopyDatasetVersion.Metadata;
-            var xmlExtendedPropertyValues = workingCopyDatasetVersion.XmlExtendedPropertyValues;
-            var contentDescriptors = workingCopyDatasetVersion.ContentDescriptors;
-            var stateInfo = workingCopyDatasetVersion.StateInfo;
+                //preserve metadata and XmlExtendedPropertyValues for later use
+                var workingCopyDatasetVersionId = workingCopyDatasetVersion.Id;
+                var metadata = workingCopyDatasetVersion.Metadata;
+                var xmlExtendedPropertyValues = workingCopyDatasetVersion.XmlExtendedPropertyValues;
+                var contentDescriptors = workingCopyDatasetVersion.ContentDescriptors;
+                var stateInfo = workingCopyDatasetVersion.StateInfo;
 
                 // do not move them to editDatasetVersion function
                 //this.DatasetRepo.Evict();
@@ -1288,16 +1283,16 @@ namespace BExIS.Dlm.Services.Data
                 //this.DataTupleVerionRepo.Evict();
                 //this.DatasetRepo.UnitOfWork.ClearCache();
 
-            // maybe its better to use Merge function ...
-            workingCopyDatasetVersion = this.DatasetVersionRepo.Get(workingCopyDatasetVersionId);
-            if (metadata != null)
-                workingCopyDatasetVersion.Metadata = metadata;
-            if (xmlExtendedPropertyValues != null)
-                workingCopyDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
-            if (contentDescriptors != null)
-                workingCopyDatasetVersion.ContentDescriptors = contentDescriptors;
-            if (stateInfo != null)
-                workingCopyDatasetVersion.StateInfo = stateInfo;
+                // maybe its better to use Merge function ...
+                workingCopyDatasetVersion = datasetVersionRepo.Get(workingCopyDatasetVersionId);
+                if (metadata != null)
+                    workingCopyDatasetVersion.Metadata = metadata;
+                if (xmlExtendedPropertyValues != null)
+                    workingCopyDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
+                if (contentDescriptors != null)
+                    workingCopyDatasetVersion.ContentDescriptors = contentDescriptors;
+                if (stateInfo != null)
+                    workingCopyDatasetVersion.StateInfo = stateInfo;
 
                 return editDatasetVersion(workingCopyDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
             }
