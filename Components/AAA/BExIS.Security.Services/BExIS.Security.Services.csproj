@@ -107,12 +107,11 @@
     <Compile Include="Requests\RequestManager.cs" />
     <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\IdentityGroupManager.cs" />
-    <Compile Include="Subjects\IdentityUserManager.cs" />
+    <Compile Include="Subjects\IdentityUserService.cs" />
     <Compile Include="Subjects\IUserManager.cs" />
     <Compile Include="Subjects\GroupStore.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserManager.cs" />
-    <Compile Include="Subjects\UserStore.cs" />
     <Compile Include="Utilities\Auth.cs" />
     <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\SmsService.cs" />
