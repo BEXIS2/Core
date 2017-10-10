@@ -167,6 +167,28 @@ namespace BExIS.Dim.Helpers.GFBIO
             return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", json);
         }
 
+        public async Task<string> UpdateResearchObject(long researchobjectid, string name, string description, XmlDocument extendedData, List<string> authornames)
+        {
+            string functionName = "update-research-object";
+            string entityName = "researchobject";
+
+            string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName/* + "/" + addtionalPath + "/"*/;
+
+            GFBIOResearchObjectUpdateJSON researchObject = new GFBIOResearchObjectUpdateJSON();
+
+            researchObject.researchobjectid = researchobjectid;
+            researchObject.name = name;
+            researchObject.description = description;
+            researchObject.extendeddata = extendedData;
+            researchObject.authornames = authornames.ToList();
+
+            string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
+
+            //string body = WebServiceHelper.Encode(json);
+
+            return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", json);
+        }
+
         #endregion
 
     }
@@ -229,6 +251,29 @@ namespace BExIS.Dim.Helpers.GFBIO
             authornames = new List<string>();
             extendeddata = new XmlDocument();
             metadatalabel = "";
+        }
+    }
+
+    public class GFBIOResearchObjectUpdateJSON
+    {
+        public long researchobjectid { get; set; }
+
+        // length 200
+        public string name { get; set; }
+        // length 15000
+        public string description { get; set; }
+        // length 1500
+        public List<string> authornames { get; set; }
+        // length 1500
+        public XmlDocument extendeddata { get; set; }
+
+        public GFBIOResearchObjectUpdateJSON()
+        {
+            researchobjectid = 0;
+            name = "";
+            description = "";
+            authornames = new List<string>();
+            extendeddata = new XmlDocument();
         }
     }
 
