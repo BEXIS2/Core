@@ -604,17 +604,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             switch (sheetFormat)
             {
                 case SheetFormat.TopDown:
-                    headerValues = GetExcelHeaderFieldsLeftRight(excelWorksheet, selectedArea);
-                    break;
-                case SheetFormat.LeftRight:
                     headerValues = GetExcelHeaderFieldsTopDown(excelWorksheet, selectedArea);
                     break;
+                case SheetFormat.LeftRight:
+                    headerValues = GetExcelHeaderFieldsLeftRight(excelWorksheet, selectedArea);
+                    break;
                 case SheetFormat.Matrix:
-                    headerValues.AddRange(GetExcelHeaderFieldsLeftRight(excelWorksheet, selectedArea));
                     headerValues.AddRange(GetExcelHeaderFieldsTopDown(excelWorksheet, selectedArea));
+                    headerValues.AddRange(GetExcelHeaderFieldsLeftRight(excelWorksheet, selectedArea));
                     break;
                 default:
                     break;
+            }
+
+            return headerValues;
+        }
+
+        /// <summary>
+        /// Gets all values from selected header area. This method is for top to down scheme, so the header fields are in one row
+        /// </summary>
+        /// <param name="excelWorksheet">ExcelWorksheet with the data</param>
+        /// <param name="selectedArea">Defined header area with start and end for rows and columns</param>
+        /// <returns>Simple list with values of the header fields as string</returns>
+        private List<String> GetExcelHeaderFieldsTopDown(ExcelWorksheet excelWorksheet, SheetArea selectedArea)
+        {
+            List<String> headerValues = new List<string>();
+
+            String jsonTableString = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+            String[][] jsonTable = JsonConvert.DeserializeObject<string[][]>(jsonTableString);
+
+            for (int i = selectedArea.StartColumn; i <= selectedArea.EndColumn; i++)
+            {
+                headerValues.Add(jsonTable[selectedArea.StartRow][i]);
             }
 
             return headerValues;
@@ -630,83 +651,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             List<String> headerValues = new List<string>();
 
-            ExcelCellAddress SheetStartCell = excelWorksheet.Dimension.Start;
-            ExcelCellAddress SheetEndCell = excelWorksheet.Dimension.End;
+            String jsonTableString = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+            String[][] jsonTable = JsonConvert.DeserializeObject<string[][]>(jsonTableString);
 
-            // constant, because just one row is for header allowed
-            int Row = selectedArea.StartRow + 1;
-
-            #region Validation
-            bool isStartColumnValid = selectedArea.StartColumn + 1 >= SheetStartCell.Column;
-            bool isEndColumnValid = selectedArea.EndColumn + 1 <= SheetEndCell.Column;
-            bool isStartRowValid = selectedArea.StartRow + 1 >= SheetStartCell.Row;
-            bool isEndRowValid = selectedArea.EndRow + 1 <= SheetEndCell.Row;
-
-
-            if (!isStartColumnValid || !isStartRowValid || !isEndColumnValid || !isEndRowValid)
+            for(int row = selectedArea.StartRow; row <= selectedArea.EndColumn; row++)
             {
-                throw new InvalidOperationException("Selected area is not located in given excel sheet.");
-            }
-            #endregion
-
-            for (int Column = selectedArea.StartColumn + 1; Column <= selectedArea.EndColumn + 1; Column++)
-            {
-                ExcelRange cell = excelWorksheet.Cells[Row, Column];
-
-                string headerText = "";
-
-                if (cell.Value != null)
-                {
-                    headerText = cell.Value.ToString();
-                }
-
-                headerValues.Add(headerText);
-            }
-
-
-            return headerValues;
-        }
-
-        /// <summary>
-        /// Gets all values from selected header area. This method is for top to down scheme, so the header fields are in one row
-        /// </summary>
-        /// <param name="excelWorksheet">ExcelWorksheet with the data</param>
-        /// <param name="selectedArea">Defined header area with start and end for rows and columns</param>
-        /// <returns>Simple list with values of the header fields as string</returns>
-        private List<String> GetExcelHeaderFieldsTopDown(ExcelWorksheet excelWorksheet, SheetArea selectedArea)
-        {
-            List<String> headerValues = new List<string>();
-
-            ExcelCellAddress SheetStartCell = excelWorksheet.Dimension.Start;
-            ExcelCellAddress SheetEndCell = excelWorksheet.Dimension.End;
-
-            #region Validation
-            bool isStartColumnValid = selectedArea.StartColumn >= SheetStartCell.Column;
-            bool isEndColumnValid = selectedArea.EndColumn <= SheetEndCell.Column;
-            bool isStartRowValid = selectedArea.StartRow >= SheetStartCell.Row;
-            bool isEndRowValid = selectedArea.EndRow <= SheetEndCell.Row;
-
-
-            if (!isStartColumnValid || !isStartRowValid || !isEndColumnValid || !isEndRowValid)
-            {
-                throw new InvalidOperationException("Selected area is not located in given excel sheet.");
-            }
-            #endregion
-
-            int Column = selectedArea.StartColumn;
-
-            for (int Row = selectedArea.StartRow; Row >= selectedArea.EndRow; Row++)
-            {
-                ExcelRange cell = excelWorksheet.Cells[Row, Column];
-
-                string headerText = "";
-
-                if (cell.Value != null)
-                {
-                    headerText = cell.Value.ToString();
-                }
-
-                headerValues.Add(headerText);
+                headerValues.Add(jsonTable[row][selectedArea.StartColumn]);
             }
 
             return headerValues;
