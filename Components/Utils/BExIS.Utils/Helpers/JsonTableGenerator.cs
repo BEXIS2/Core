@@ -28,7 +28,7 @@ namespace BExIS.Utils.Helpers
         private Stylesheet _stylesheet;
         private int maxCellCount = -1;
         private List<List<String>> table = new List<List<string>>();
-        private Uri worksheetUri;
+        private List<Uri> worksheetUris;
 
         public void Open(FileStream fileStream)
         {
@@ -48,7 +48,179 @@ namespace BExIS.Utils.Helpers
             //get worksheet part
             string sheetId = workbookPart.Workbook.Descendants<Sheet>().First().Id;
             WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheetId);
-            this.worksheetUri = worksheetPart.Uri;
+
+            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
+
+            while (reader.Read())
+            {
+                if (reader.ElementType == typeof(DocumentFormat.OpenXml.Spreadsheet.Row))
+                {
+                    do
+                    {
+
+                        DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
+
+                        List<String> rowAsStringList = new List<string>();
+
+                        // create a new cell
+                        Cell c = new Cell();
+
+                        int expectedIndex = 0; //To check whether we skipped cells because they were empty
+                        for (int i = 0; i < row.ChildElements.Count(); i++)
+                        {
+                            // get current cell at i
+                            c = row.Elements<Cell>().ElementAt(i);
+
+                            string value = "";
+
+                            if (c != null)
+                            {
+                                //See if cells have been skipped (empty cells are not contained in the xml and therefore not contained in row.ChildElements)
+                                //See: https://stackoverflow.com/a/3981249
+
+                                // Gets the column index of the cell with data
+                                int cellColumnIndex = (int)GetColumnIndexFromName(GetColumnName(c.CellReference));
+                                if (expectedIndex < cellColumnIndex)
+                                {
+                                    //We skipped one or more cells so add some blank data
+                                    do
+                                    {
+                                        rowAsStringList.Add(""); //Insert blank data
+                                        expectedIndex++;
+                                    }
+                                    while (expectedIndex < cellColumnIndex);
+                                }
+
+                                //We now have the correct index and can grab the value of the cell
+                                if (c.CellValue != null)
+                                {
+                                    // if Value a text
+                                    if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+                                    {
+                                        int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+                                        SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+                                        value = sharedStringItem.InnerText;
+                                    }
+                                    // not a text
+                                    else if (c.StyleIndex != null && c.StyleIndex.HasValue)
+                                    {
+                                        uint styleIndex = c.StyleIndex.Value;
+                                        CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+                                        if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                                        {
+                                            uint numberFormatId = cellFormat.NumberFormatId.Value;
+
+                                            // Number format 14-22 and 45-47 are built-in date and/or time formats
+                                            if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
+                                            {
+                                                DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                value = dateTime.ToString();
+                                            }
+                                            else
+                                            {
+                                                if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
+                                                {
+                                                    NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+
+                                                    if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+                                                    {
+                                                        string formatCode = numberFormat.FormatCode.Value;
+                                                        if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
+                                                        {
+                                                            DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                            value = dateTime.ToString();
+
+                                                        }
+                                                        else
+                                                        {
+                                                            value = c.CellValue.Text;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        value = c.CellValue.Text;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    value = c.CellValue.Text;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            value = c.CellValue.Text;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        value = c.CellValue.Text;
+                                    }
+
+                                    rowAsStringList.Add(value);
+
+                                }//end if cell value
+                                else
+                                {
+                                    rowAsStringList.Add("");
+                                }
+                            }//end if cell null
+
+                            expectedIndex++;
+                        }//for children of row
+
+                        maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
+                        table.Add(rowAsStringList);
+                    } while (reader.ReadNextSibling()); // Skip to the next row
+
+                    break;
+                }
+
+            }
+
+            //Make sure each row has the same number of values in it
+            foreach (List<String> row in table)
+            {
+                while (row.Count < maxCellCount)
+                {
+                    row.Add("");
+                }
+            }
+
+            //Convert the Lists to Arrays
+            List<String>[] rowArray = table.ToArray(); //The elements of the Array are the rows in form of String-lists
+            String[][] tableArray = new String[rowArray.Length][];
+            for (int i = 0; i < rowArray.Length; i++)
+            {
+                tableArray[i] = rowArray[i].ToArray();
+            }
+
+            return JsonConvert.SerializeObject(tableArray);
+        }
+
+        public string GenerateJsonTable(SheetFormat sheetFormat, String worksheetUri)
+        {
+            // open excel file
+            SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+            _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+            _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+            string sheetId = "";
+            WorksheetPart worksheetPart = null;
+            foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+            {
+                //Get the current worksheetpart and see if it is the correct one
+                WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                if(tmp.Uri.ToString() == worksheetUri)
+                {
+                    //Found the correct WorksheetPart
+                    worksheetPart = tmp;
+                }
+            }
 
             OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
 
@@ -258,11 +430,42 @@ namespace BExIS.Utils.Helpers
             return columnIndex;
         }
 
-        //Returns the Uri of the worksheet that was used to create the JsonTable
-        public Uri getWorksheetUri()
+        public Dictionary<Uri, String> GetWorksheetUris()
         {
-            return this.worksheetUri;
+            if (this.fileStream != null)
+            {
+                Dictionary<Uri, String> output = new Dictionary<Uri, String>();
+
+                // open excel file
+                SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+                //get worksheet part
+                //Save uris and names of all worksheets
+                foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+                {
+                    WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                    output.Add(tmp.Uri, worksheet.Name);
+                }
+                return output;
+            }
+            return null;
         }
 
+        //Returns the Uri of the worksheet that was used to create the JsonTable
+        public Uri GetFirstWorksheetUri()
+        {
+            // open excel file
+            SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+            //get first uri
+            string id = workbookPart.Workbook.Descendants<Sheet>().First().Id;
+            return workbookPart.GetPartById(id).Uri;
+        }
     }
 }

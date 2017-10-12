@@ -5,7 +5,7 @@
 
 
 <style>
-    .areaSelect {
+    .selectAreasButton {
         padding: 5px 10px;
     }
 
@@ -29,15 +29,78 @@
         background-color: rgba(56, 5, 102, 0.5) !important;
     }
 
+    #tableControlRight{
+        float: right;
+    }
+
     /*Overwriting the css of the wizard*/
-    #Step4 .uploadWizardStep_Main{
-       width: 90%
+    #Step4 .uploadWizardStep_Main {
+        width: 90%
     }
     #Step4 .uploadWizardStep_Content{
         height: auto;
     }
 
 </style>
+
+<div id="Step4" class="uploadWizardStep">
+
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="uploadWizardStep_Description stepper">
+            <p>Please mark your header (the names of the variables) and data area.</p>
+        </div>
+
+        <div class="uploadWizardStep_Content stepper">
+            <div style="margin-bottom: 1em">
+                <button type="button" class="t-button action selectAreasButton" id="setSelectedHeaderArea">Header</button>
+
+                <button type="button" class="t-button action selectAreasButton" id="setSelectDataArea">Data</button>
+
+                <button type="button" class="t-button action selectAreasButton" id="expandSelection" title="Expand the latest marked data-area vertically to the end of the table.">Expand Selection</button>
+
+                <button type="button" class="t-button action selectAreasButton" id="setSelectReset">Reset</button>
+
+                <div id="tableControlRight">
+                    @{ 
+                        SelectListItem tmp;
+                        List<SelectListItem> listItems = new List<SelectListItem>();
+                        foreach (KeyValuePair<Uri, String> worksheetIdentifier in Model.SheetUriDictionary)
+                        {
+                            tmp = new SelectListItem
+                            {
+                                Text = worksheetIdentifier.Value,
+                                Value = worksheetIdentifier.Key.ToString(),
+                                Selected = (worksheetIdentifier.Key.ToString() == Model.activeSheetUri)
+                            };
+                            listItems.Add(tmp);
+                        }
+                    }
+                    @Html.DropDownList("Sheet Select", listItems, "Select", new { @class = "buttonsRight", @id = "sheetSelect" })
+                    <button type="button" class="t-button action selectAreasButton" id="changeWorksheet">Change Worksheet</button>
+                </div>
+            </div>
+            
+            <div id="handsonExcelTable" style="margin-bottom: 2em"></div>
+            
+        </div>
+
+        <div class="uploadWizardStep_Error stepper">
+            @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
+            {
+                <ul>
+                    @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                {
+                        <li>@s.ToString()</li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
 
 <script>
     if (typeof (hotActive) !== 'undefined') {
@@ -52,9 +115,16 @@
     var currentButton = null;
     var selectedDataArea = null;
 
-    $(document).ready(function () {
+    function createHandsontableForData(data, container) {
+        if (typeof (hotActive) !== 'undefined') {
+            //Another instance of the handsontable is defined, destroy it before creating a new one
+            if (hotActive) {
+                hot.destroy();
+            }
+        }
 
-        function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
+        //Define the renderer
+        resetRenderer = function (instance, td, row, col, prop, value, cellProperties) {
 
             Handsontable.renderers.TextRenderer.apply(this, arguments);
 
@@ -63,26 +133,31 @@
             return td;
         }
 
-        var container = document.getElementById('handsonExcelTable');
-        hot = new Handsontable(container, {
-            data: @Html.Raw(Model.JsonTableData),
+        //The handsontable will be active after this function returns
+        hotActive = true;
+
+        //Create the actual table
+        return new Handsontable(container, {
+            data: data,
             rowHeaders: true,
             colHeaders: true,
             contextMenu: false,
             width: 800,
             height: 400,
             outsideClickDeselects: false,
-            cells: function(row, col, prop) {
+            cells: function (row, col, prop) {
                 var cellProperties = {};
                 cellProperties.renderer = resetRenderer;
                 return cellProperties;
             }
         });
+    }
 
-        hotActive = true;
-
+    $(document).ready(function () {
+        var container = document.getElementById('handsonExcelTable');
+        var hotData = @Html.Raw(Model.JsonTableData);
+        hot = createHandsontableForData(hotData, container);
         hot.render();
-
 
         $('#setSelectDataArea').click(function() {
             currentButton = "data";
@@ -94,12 +169,19 @@
                 if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
                 }
-                selectedDataArea = selected;
+                
 
                 //Check if selection is from bottom to top and reverse it
                 if(selected[0] > selected[2]){
                     selected = reverseAreaVertically(selected);
                 }
+
+                if (selected[3] <= selected[1]) {
+                    selected = reverseAreaHorizontally(selected);
+                }
+
+                console.log(selected);
+                selectedDataArea = selected;
 
                 // set the css class for all selected cells
                 markArea(selected[0], selected[2], selected[1], selected[3], 'dataMarking');
@@ -199,12 +281,26 @@
                 $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
             }
         });
-        
+
+        $('#changeWorksheet').click(function () {
+            var selVal = $('#sheetSelect').val();
+            if (selVal != null && selVal != "") {
+                $.post('@Url.Action("ChangeWorksheet", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { sheetIdentifier: selVal }, function (response) {
+                    //Reset the markings that are stored on the bus
+                    $('#setSelectReset').click();
+                    //Get the container that
+                    var container = document.getElementById('handsonExcelTable');
+                    hot = createHandsontableForData(JSON.parse(response), container);
+                    hot.render();
+                });
+            }
+        });
+
         var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
         if (array) {
             array = $.parseJSON(array);
             markArea(array[0], array[2], array[1], array[3], 'headerMarking');
-        }    
+        }
 
         //If there was a previous selection, parse it and mark the cells
         var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
@@ -225,7 +321,6 @@
             for (j = startY; j <= endY; j++) {
                 var cell = hot.getCellMeta(i, j, true);
                 cell.className = type;
-
             }
         }
     }
@@ -247,46 +342,13 @@
 
         return [startRow, startCol, endRow, endCol];
     }
+
+    function reverseAreaHorizontally(selected) {
+        var startRow = selected[0];
+        var startCol = selected[3];
+        var endCol = selected[1];
+        var endRow = selected[2];
+
+        return [startRow, startCol, endRow, endCol];
+    }
 </script>
-
-<div id="Step4" class="uploadWizardStep">
-
-    <div class="uploadWizardStep_Main">
-        <div class="uploadWizardStep_Header stepper">
-            <h3>@Model.StepInfo.title</h3>
-        </div>
-
-        <div class="uploadWizardStep_Description stepper">
-            <p>Please mark your header (the names of the variables) and data area.</p>
-        </div>
-
-        <div class="uploadWizardStep_Content stepper">
-            <div style="margin-bottom: 1em">
-                <button type="button" class="t-button action areaSelect" id="setSelectedHeaderArea">Header</button>
-
-                <button type="button" class="t-button action areaSelect" id="setSelectDataArea">Data</button>
-
-                <button type="button" class="t-button action areaSelect" id="expandSelection" title="Expand the latest marked data-area vertically to the end of the table.">Expand Selection</button>
-
-                <button type="button" class="t-button action areaSelect" id="setSelectReset">Reset</button>
-
-                <!--<button type="button" class="t-button action areaSelect" id="changeWorksheet" style="float: right">Change Worksheet</button>-->
-            </div>
-            
-            <div id="handsonExcelTable" style="margin-bottom: 2em"></div>
-            
-        </div>
-
-        <div class="uploadWizardStep_Error stepper">
-            @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
-            {
-                <ul>
-                    @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                {
-                        <li>@s.ToString()</li>
-                    }
-                </ul>
-            }
-        </div>
-    </div>
-</div>

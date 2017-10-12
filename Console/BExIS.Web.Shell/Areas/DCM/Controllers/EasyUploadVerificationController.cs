@@ -259,7 +259,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }*/
                     model.AssignedHeaderUnits = mappedHeaderUnits;
-                    
+
                     TaskManager.Current().SetValid(true);
                 }
                 else
@@ -354,7 +354,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //Filter the suggestions to only show those, that use the selected unit
                 int index = selectFieldId ?? -1;
                 List<EasyUploadSuggestion> suggestionList = null;
-                if( model.Suggestions.TryGetValue(index, out suggestionList) )
+                if (model.Suggestions.TryGetValue(index, out suggestionList))
                 {
                     if (suggestionList != null)
                     {
@@ -363,7 +363,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             suggestion.show = (suggestion.unitID == selectOptionId);
                         }
                     }
-                }       
+                }
             }
 
             TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
@@ -590,7 +590,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<String> GetExcelHeaderFields(ExcelWorksheet excelWorksheet, SheetFormat sheetFormat, string selectedAreaJsonArray)
         {
             List<String> headerValues = new List<string>();
-            
+
             int[] areaValues = JsonConvert.DeserializeObject<int[]>(selectedAreaJsonArray);
 
             if (areaValues.Length != 4)
@@ -654,7 +654,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             String jsonTableString = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
             String[][] jsonTable = JsonConvert.DeserializeObject<string[][]>(jsonTableString);
 
-            for(int row = selectedArea.StartRow; row <= selectedArea.EndColumn; row++)
+            for (int row = selectedArea.StartRow; row <= selectedArea.EndColumn; row++)
             {
                 headerValues.Add(jsonTable[row][selectedArea.StartColumn]);
             }
@@ -673,8 +673,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
 
-            List< Tuple<int, Error> > ErrorList = ValidateRows(JsonArray);
-            List< Tuple<int, ErrorInfo> > ErrorMessageList = new List< Tuple<int, ErrorInfo> >();
+            List<Tuple<int, Error>> ErrorList = ValidateRows(JsonArray);
+            List<Tuple<int, ErrorInfo>> ErrorMessageList = new List<Tuple<int, ErrorInfo>>();
 
             foreach (Tuple<int, Error> error in ErrorList)
             {
@@ -685,7 +685,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #region private methods
-        
+
         /// <summary>
         /// Determin whether the selected datatypes are suitable
         /// </summary>
@@ -696,7 +696,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
 
-            List<Tuple<int, Error>> ErrorList = new List< Tuple<int, Error> >();
+            List<Tuple<int, Error>> ErrorList = new List<Tuple<int, Error>>();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
@@ -704,12 +704,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();
-            foreach(string area in DataArea)
+            foreach (string area in DataArea)
             {
                 IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
             }
 
-            foreach(int[] IntDataArea in IntDataAreaList)
+            foreach (int[] IntDataArea in IntDataAreaList)
             {
                 string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
 
@@ -755,7 +755,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             errorsInColumn++;
                         }
 
-                        if(errorsInColumn >= maxErrorsPerColumn)
+                        if (errorsInColumn >= maxErrorsPerColumn)
                         {
                             //Break inner (row) loop to jump to the next column
                             break;
@@ -763,7 +763,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
             }
-           
+
             return ErrorList;
         }
 
@@ -855,7 +855,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private double similarityDiceCoefficient(string a, string b)
         {
             //Workaround for |a| == |b| == 1
-            if ( a.Length <= 1 && b.Length <= 1)
+            if (a.Length <= 1 && b.Length <= 1)
             {
                 if (a.Equals(b))
                     return 1.0;
