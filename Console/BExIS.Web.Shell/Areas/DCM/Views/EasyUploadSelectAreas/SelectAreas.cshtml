@@ -103,19 +103,12 @@
 </div>
 
 <script>
-    if (typeof (hotActive) !== 'undefined') {
-        //Another instance of the handsontable is defined, destroy it before creating a new one
-        if (hotActive) {
-            hot.destroy();
-        }
-    }
-
     var hot = null;
     var hotActive = false;
     var currentButton = null;
     var selectedDataArea = null;
 
-    function createHandsontableForData(data, container) {
+    $(document).ready(function () {
         if (typeof (hotActive) !== 'undefined') {
             //Another instance of the handsontable is defined, destroy it before creating a new one
             if (hotActive) {
@@ -123,37 +116,6 @@
             }
         }
 
-        //Define the renderer
-        resetRenderer = function (instance, td, row, col, prop, value, cellProperties) {
-
-            Handsontable.renderers.TextRenderer.apply(this, arguments);
-
-            cellProperties.editor = false;
-
-            return td;
-        }
-
-        //The handsontable will be active after this function returns
-        hotActive = true;
-
-        //Create the actual table
-        return new Handsontable(container, {
-            data: data,
-            rowHeaders: true,
-            colHeaders: true,
-            contextMenu: false,
-            width: 800,
-            height: 400,
-            outsideClickDeselects: false,
-            cells: function (row, col, prop) {
-                var cellProperties = {};
-                cellProperties.renderer = resetRenderer;
-                return cellProperties;
-            }
-        });
-    }
-
-    $(document).ready(function () {
         var container = document.getElementById('handsonExcelTable');
         var hotData = @Html.Raw(Model.JsonTableData);
         hot = createHandsontableForData(hotData, container);
@@ -169,7 +131,7 @@
                 if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
                 }
-                
+
 
                 //Check if selection is from bottom to top and reverse it
                 if(selected[0] > selected[2]){
@@ -312,6 +274,44 @@
         }
         hot.render();
     });
+
+    function createHandsontableForData(data, container) {
+        if (typeof (hotActive) !== 'undefined') {
+            //Another instance of the handsontable is defined, destroy it before creating a new one
+            if (hotActive) {
+                hot.destroy();
+            }
+        }
+
+        //Define the renderer
+        resetRenderer = function (instance, td, row, col, prop, value, cellProperties) {
+
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+
+            cellProperties.editor = false;
+
+            return td;
+        }
+
+        //The handsontable will be active after this function returns
+        hotActive = true;
+
+        //Create the actual table
+        return new Handsontable(container, {
+            data: data,
+            rowHeaders: true,
+            colHeaders: true,
+            contextMenu: false,
+            width: 800,
+            height: 400,
+            outsideClickDeselects: false,
+            cells: function (row, col, prop) {
+                var cellProperties = {};
+                cellProperties.renderer = resetRenderer;
+                return cellProperties;
+            }
+        });
+    }
 
     /*
     *Marks the area specified by the parameters by setting the class name
