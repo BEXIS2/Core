@@ -31,8 +31,7 @@
                     {
                         <tr>
                             <td varName="@Html.Name(Model.HeaderFields[i])" index=@i>
-                                <i class="fa fa-exclamation-triangle" aria-hidden="true" title=""></i>
-                                @*Html.Name(Model.HeaderFields[i])*@
+                                <i class="fa" aria-hidden="true" title=""></i>
 
                                 <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
                                 <select  style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
@@ -76,8 +75,6 @@
 
                                         if (Model.AssignedHeaderUnits.Count > 0)
                                         {
-
-                                            //Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item2 == Model.HeaderFields[i]).FirstOrDefault();
                                             Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item1 == i).FirstOrDefault();
 
                                             if (tuple != null)
@@ -148,7 +145,6 @@
 
 <style>
     .fa-exclamation-triangle {
-        display: none;
         color: darkorange;
     }
 
@@ -177,6 +173,12 @@
             //Restore old button content
             $(button).html(oldHtml);
 
+            //Remove all old icons, they are added while parsing the errors
+            $('td > i').each(function () {
+                $(this).removeClass("fa-exclamation-triangle");
+                $(this).removeClass("fa-check");
+            });
+
             //See if there are errors, display them or display a check mark
             if (response.errors.length > 0) {
                 for (var i = 0; i < response.errors.length; i++) {
@@ -184,6 +186,10 @@
                     //var VariableName = error.VariableName;
                     //var TitleCell = $('td[varName="' + VariableName + '"] > i');
                     var TitleCell = $('td[index="' + error.Item1 + '"] > i');
+
+                    //Show a warning sign, hide check marks if they were visible before
+                    TitleCell.removeClass("fa-check");
+                    TitleCell.addClass("fa-exclamation-triangle");
 
                     if (TitleCell.is(":visible")) {
                         var currentTitle = TitleCell.attr("title");
@@ -201,9 +207,18 @@
                         TitleCell.attr("title", "\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
                     }
                 }
-            } else {
+                //Show check marks for all Title cells that did not receive an error
                 $('td > i').each(function () {
-                    $(this).removeClass("fa-exclamation-triangle");
+                    if ( !$(this).hasClass("fa-exclamation-triangle") ) {
+                        $(this).addClass("fa-check");
+                    }
+                    if ( !$(this).is(":visible") ) {
+                        $(this).show();
+                    }
+                });
+            } else {
+                //No errors so show a check-mark for all title cells
+                $('td > i').each(function () {
                     $(this).addClass("fa-check");
                 });
             }
