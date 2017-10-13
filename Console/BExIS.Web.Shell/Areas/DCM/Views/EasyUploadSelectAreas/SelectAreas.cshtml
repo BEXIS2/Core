@@ -107,6 +107,7 @@
     var hotActive = false;
     var currentButton = null;
     var selectedDataArea = null;
+    var markedAreas = [];
 
     $(document).ready(function () {
         if (typeof (hotActive) !== 'undefined') {
@@ -142,21 +143,23 @@
                     selected = reverseAreaHorizontally(selected);
                 }
 
-                console.log(selected);
-                selectedDataArea = selected;
+                //Only mark and save if the marked area is not intersecting an area that's marked differently
+                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
+                    selectedDataArea = selected;
 
-                // set the css class for all selected cells
-                markArea(selected[0], selected[2], selected[1], selected[3], 'dataMarking');
+                    // set the css class for all selected cells
+                    markArea(selected[0], selected[2], selected[1], selected[3], 'dataMarking');
 
 
-                // render table again
-                hot.render();
+                    // render table again
+                    hot.render();
 
-                // save selection area
-                currentButton = null;
+                    // save selection area
+                    currentButton = null;
 
-                // push selection to the server
-                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                    // push selection to the server
+                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                }
             }
         });
 
@@ -170,17 +173,20 @@
                     selected = reverseArea(selected);
                 }
 
-                // set the css class for all selected cells
-                markArea(selected[0], selected[2], selected[1], selected[3], 'headerMarking');
+                //Only mark and save if the marked area is not intersecting an area that's marked differently
+                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'headerMarking')) {
+                    // set the css class for all selected cells
+                    markArea(selected[0], selected[2], selected[1], selected[3], 'headerMarking');
 
-                // render table again
-                hot.render();
+                    // render table again
+                    hot.render();
 
-                // save selection area
-                currentButton = null;
+                    // save selection area
+                    currentButton = null;
 
-                // push selection to the server
-                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { headerArea: JSON.stringify(selected) }, function (response) { });
+                    // push selection to the server
+                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { headerArea: JSON.stringify(selected) }, function (response) { });
+                }
             }
         });
 
@@ -194,6 +200,7 @@
 
             //Reset all markings
             markArea(0, num_rows, 0, num_cols, '');
+            markedAreas = [];
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
 
@@ -219,28 +226,32 @@
                     selected = reverseArea(selected);
                 }
 
+                //Save old selection in case the marking is not sucessfull because of an intersection
+                var oldSelection = selected;
                 //Select the cells to the end of the table
                 hot.selectCell(selected[0], selected[1], hot.countRows() - 1, selected[3] );
                 //Get the new selection
                 selected = hot.getSelected();
-                selectedDataArea = selected;
 
-                // set the css class for all selected cells
-                for(i = selected[0]; i <= selected[2]; i++) {
-                    for(j = selected[1]; j <= selected[3]; j++) {
-                        var cell = hot.getCellMeta(i,j, true);
-                        cell.className = 'dataMarking';
-                    }
+                //Only mark and save if the marked area is not intersecting an area that's marked differently
+                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
+                    selectedDataArea = selected;
+
+                    //Mark the selected cells as data
+                    markArea(selected[0], selected[2], selected[1], selected[3], 'dataMarking');
+
+                    // render table again
+                    hot.render();
+
+                    // save selection area
+                    currentButton = null;
+
+                    // push selection to the server
+                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                } else {
+                    //Restore old selection
+                    hot.selectCell(oldSelection[0], oldSelection[1], oldSelection[2], oldSelection[3]);
                 }
-
-                // render table again
-                hot.render();
-
-                // save selection area
-                currentButton = null;
-
-                // push selection to the server
-                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
             }
         });
 
@@ -321,8 +332,22 @@
             for (j = startY; j <= endY; j++) {
                 var cell = hot.getCellMeta(i, j, true);
                 cell.className = type;
+                markedAreas.push([startX, startY, endX, endY, type]);
             }
         }
+    }
+
+    function intersectsDifferentMarking(startX, startY, endX, endY, type) {
+        for (var i = 0; i < markedAreas.length; i++) {
+            oldArea = markedAreas[i]; //oldArea[0] => startX, [1] => startY, [2] => endX, [3] => endY, [4] => type
+            if (oldArea[4] != type) {
+                //Different marking, now check intersection (rectangle intersection, see https://stackoverflow.com/a/13390495)
+                if ( !(endX < oldArea[0] || oldArea[2] < startX || endY < oldArea[1] || oldArea[3] < startY) ){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     function reverseArea(selected) {
