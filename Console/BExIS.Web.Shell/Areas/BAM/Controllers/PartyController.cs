@@ -349,35 +349,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Id">PartyType Id</param>
-        /// <returns></returns>
-        public ActionResult LoadPartyCustomAttr(int id)
-        {
-            PartyManager partyManager = null;
-            try
-            {
-                long partyId = 0;
-                var partyIdStr = HttpContext.Request.Params["partyId"];
-                if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
-                {
-                    partyManager = new PartyManager();
-                    ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
-                }
-                var customAttrList = new List<PartyCustomAttribute>();
-                PartyTypeManager partyTypeManager = new PartyTypeManager();
-                IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);
-                if (partyType != null)
-                    customAttrList = partyType.First().CustomAttributes.ToList();
-                return PartialView("_customAttributesPartial", customAttrList);
-            }
-            finally
-            {
-                partyManager?.Dispose();
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="id">party id</param>
         /// <returns></returns>
         public ActionResult LoadPartyRelationships(int id)

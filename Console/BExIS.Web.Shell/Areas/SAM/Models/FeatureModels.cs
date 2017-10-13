@@ -44,17 +44,18 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public string FeatureName { get; set; }
         public long Id { get; set; }
+        public long? ParentId { get; set; }
         public bool IsPublic { get; set; }
 
-        public static FeatureTreeViewModel Convert(Feature feature)
+        public static FeatureTreeViewModel Convert(Feature feature, bool isPublic, long? parentId)
         {
             return new FeatureTreeViewModel()
             {
                 Id = feature.Id,
                 FeatureName = feature.Name,
                 Description = feature.Description,
-                Children = feature.Children.Select(Convert).ToList(),
-                IsPublic = feature.Permissions.Any(p => p.Subject == null)
+                Children = new List<FeatureTreeViewModel>(),
+                IsPublic = isPublic
             };
         }
     }

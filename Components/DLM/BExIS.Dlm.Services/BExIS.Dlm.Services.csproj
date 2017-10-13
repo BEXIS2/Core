@@ -164,6 +164,10 @@
     <Compile Include="TypeSystem\DataTypeUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\EXT\BExIS.Ext.Model\BExIS.Ext.Model.csproj">
       <Project>{f296cb14-3b71-40c9-89f7-f928ba2c7c5b}</Project>
       <Name>BExIS.Ext.Model</Name>

@@ -15,7 +15,7 @@
                     item.Value = entity.Id.ToString();
                     item.LinkHtmlAttributes["title"] = "Select " + entity.Name + " to manage the corresponding entity permissions on the right.";
                 })
-                .Children(feature => feature.Children));
+                .Children(entity => entity.Children));
         })
         .ClientEvents(events => events
             .OnSelect("treeView_entities_onSelect")

@@ -206,7 +206,7 @@
 
             partyTabStrip.enable($(".t-item", partyTabStrip.element)[1]);
             $('#imgPartyCustomeAttrLoading').show();
-            $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Id, function (response, status, xhr) {
+            $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Id, function (response, status, xhr) {
                 if (status == "error") {
                     $('#divPartyCustomAttr').html("")
                     alert(response);
