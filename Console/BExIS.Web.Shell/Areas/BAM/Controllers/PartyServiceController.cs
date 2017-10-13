@@ -16,8 +16,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: PartyService
         public ActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
+
         public ActionResult UserRegisteration()
         {
             PartyManager partyManager = null;
@@ -64,13 +65,15 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     partyTypeAccountModel.PartyRelationshipsTypes.Add(partyType, allowedPartyTypePairs);
                 }
                 //Bind party if there is already a user associated to this party
-                var user = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-                //   var party=pm.GetPartyByUser(um.FindByNameAsync
-                //    partyTypeAccountModel.Party=pm.Repo.Get(id);
-
-                //  ViewBag.CallBackUrl = callbackUrl;
+                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+                partyTypeAccountModel.Party = partyManager.GetPartyByUser(user.Id);
+                //TODO: Discuss . Current soloution is to navigate the user to edit party
+                if (partyTypeAccountModel.Party != null)
+                    return RedirectToAction("CreateEdit", "Party", new { id = partyTypeAccountModel.Party.Id });
                 return View("_userRegisterationPartial", partyTypeAccountModel);
-                // return PartialView("_userRegisterationPartial", partyTypeAccountModel);
+
             }
             finally
             {
@@ -92,14 +95,16 @@ namespace BExIS.Modules.Bam.UI.Controllers
         [HttpPost]
         public ActionResult CreateUserParty(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships)
         {
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyManager partyManager = new PartyManager();
-            var partyRelationshipManager = new PartyRelationshipTypeManager();
+            PartyTypeManager partyTypeManager = null;
+            PartyManager partyManager = null;
+            PartyRelationshipTypeManager partyRelationshipManager = null;
+            UserManager userManager = null;
             try
             {
-                partyTypeManager = null;
-                partyManager = null;
-                partyRelationshipManager = null;
+                userManager = new UserManager();
+                partyTypeManager = new PartyTypeManager();
+                partyManager = new PartyManager();
+                partyRelationshipManager = new PartyRelationshipTypeManager();
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                 //Create party
@@ -112,7 +117,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                         partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
                     }
-                //TODO: Call Sven method to link the party with account
+                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+                partyManager.AddPartyUser(party, user.Id);
                 return RedirectToAction("Index");
             }
             finally

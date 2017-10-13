@@ -105,7 +105,7 @@
                    ,
                    partyCustomAttributeValues:customAttributeValues,
                    partyRelationships:relations,
-                   callBackUrl: "@ViewBag.CallBackUrl"
+                   callBackUrl: ""
 
                } ,function(data){
                    window.location="/home";
@@ -130,7 +130,7 @@
         partyTypeId = $("#ddl_PartyType").val();
         showLoading(true);
         //Retrieving custome attribute types
-        $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId, function (response, status, xhr) {
+        $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@(Model.Party!=null ? Model.Party.Id:0), function (response, status, xhr) {
             if (status == "error") {
                 $('#divPartyCustomAttr').html("")
                 alert(response);
