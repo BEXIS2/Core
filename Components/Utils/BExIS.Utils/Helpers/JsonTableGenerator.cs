@@ -77,6 +77,7 @@ namespace BExIS.Utils.Helpers
                             List<String> dummyRow = new List<string>();
                             dummyRow.Add("");
                             table.Add(dummyRow);
+                            expectedRowIndex++;
                         }
 
                         // create a new cell
