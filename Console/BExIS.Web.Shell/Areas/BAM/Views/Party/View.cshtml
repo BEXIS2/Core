@@ -83,7 +83,7 @@
 
         var  partyTypeId= e.value;
         var lastPartyTypeId=@Model.PartyType.Id;
-        $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+ "?readOnly=true&"+((lastPartyTypeId==partyTypeId)? "partyId="+@Model.Id:""), function (response, status, xhr) {
+        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+ "?readOnly=true&"+((lastPartyTypeId==partyTypeId)? "partyId="+@Model.Id:""), function (response, status, xhr) {
             if (status == "error")
                 $('#divPartyCustomAttr').html("");
         });
