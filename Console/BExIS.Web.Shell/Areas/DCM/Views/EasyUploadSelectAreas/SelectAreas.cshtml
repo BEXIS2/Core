@@ -328,11 +328,11 @@
     *Marks the area specified by the parameters by setting the class name
     */
     function markArea(startX, endX, startY, endY, type) {
+        markedAreas.push([startX, startY, endX, endY, type]);
         for (i = startX; i <= endX; i++) {
             for (j = startY; j <= endY; j++) {
                 var cell = hot.getCellMeta(i, j, true);
                 cell.className = type;
-                markedAreas.push([startX, startY, endX, endY, type]);
             }
         }
     }
