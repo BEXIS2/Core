@@ -28,7 +28,6 @@ namespace BExIS.Utils.Helpers
         private Stylesheet _stylesheet;
         private int maxCellCount = -1;
         private List<List<String>> table = new List<List<string>>();
-        private List<Uri> worksheetUris;
 
         public void Open(FileStream fileStream)
         {
@@ -60,6 +59,7 @@ namespace BExIS.Utils.Helpers
 
             OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
 
+            int expectedRowIndex = 1;
             while (reader.Read())
             {
                 if (reader.ElementType == typeof(DocumentFormat.OpenXml.Spreadsheet.Row))
@@ -70,6 +70,14 @@ namespace BExIS.Utils.Helpers
                         DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
 
                         List<String> rowAsStringList = new List<string>();
+
+                        //Since this library will ignore empty rows, check if we skipped some and add empty rows if necessary
+                        while(row.RowIndex > expectedRowIndex)
+                        {
+                            List<String> dummyRow = new List<string>();
+                            dummyRow.Add("");
+                            table.Add(dummyRow);
+                        }
 
                         // create a new cell
                         Cell c = new Cell();
@@ -179,7 +187,12 @@ namespace BExIS.Utils.Helpers
                             expectedIndex++;
                         }//for children of row
 
+                        //Check if there's a new max length for the length of a row
                         maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
+
+                        //Just read a row, so increase the expected index for the next one
+                        expectedRowIndex++;
+
                         table.Add(rowAsStringList);
                     } while (reader.ReadNextSibling()); // Skip to the next row
 
