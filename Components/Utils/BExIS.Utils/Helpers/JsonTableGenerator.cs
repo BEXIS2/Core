@@ -28,14 +28,14 @@ namespace BExIS.Utils.Helpers
         private Stylesheet _stylesheet;
         private int maxCellCount = -1;
         private List<List<String>> table = new List<List<string>>();
-        private Uri worksheetUri;
+        private List<Uri> worksheetUris;
 
         public void Open(FileStream fileStream)
         {
             this.fileStream = fileStream;
         }
 
-        public string GenerateJsonTable(SheetFormat sheetFormat)
+        public string GenerateJsonTable(SheetFormat sheetFormat, String worksheetUri)
         {
             // open excel file
             SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
@@ -45,10 +45,18 @@ namespace BExIS.Utils.Helpers
             _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
             _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
-            //get worksheet part
-            string sheetId = workbookPart.Workbook.Descendants<Sheet>().First().Id;
-            WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheetId);
-            this.worksheetUri = worksheetPart.Uri;
+            string sheetId = "";
+            WorksheetPart worksheetPart = null;
+            foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+            {
+                //Get the current worksheetpart and see if it is the correct one
+                WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                if(tmp.Uri.ToString() == worksheetUri)
+                {
+                    //Found the correct WorksheetPart
+                    worksheetPart = tmp;
+                }
+            }
 
             OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
 
@@ -258,11 +266,42 @@ namespace BExIS.Utils.Helpers
             return columnIndex;
         }
 
-        //Returns the Uri of the worksheet that was used to create the JsonTable
-        public Uri getWorksheetUri()
+        public Dictionary<Uri, String> GetWorksheetUris()
         {
-            return this.worksheetUri;
+            if (this.fileStream != null)
+            {
+                Dictionary<Uri, String> output = new Dictionary<Uri, String>();
+
+                // open excel file
+                SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+                //get worksheet part
+                //Save uris and names of all worksheets
+                foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+                {
+                    WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                    output.Add(tmp.Uri, worksheet.Name);
+                }
+                return output;
+            }
+            return null;
         }
 
+        //Returns the Uri of the worksheet that was used to create the JsonTable
+        public Uri GetFirstWorksheetUri()
+        {
+            // open excel file
+            SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+            //get first uri
+            string id = workbookPart.Workbook.Descendants<Sheet>().First().Id;
+            return workbookPart.GetPartById(id).Uri;
+        }
     }
 }

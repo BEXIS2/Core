@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Vaiona.Utils.Cfg;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -49,8 +50,7 @@ namespace BExIS.IO.Transform.Output
 
         public DataStructureDataTable(long datasetId) : this()
         {
-            DatasetManager datasetManager = new DatasetManager();
-            var dataset = datasetManager.DatasetRepo.Get(datasetId);
+            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
             if (dataset != null && dataset.DataStructure.Id != 0)
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
@@ -201,8 +201,7 @@ namespace BExIS.IO.Transform.Output
 
         public DataStructureDataList(long datasetId) : this()
         {
-            DatasetManager datasetManager = new DatasetManager();
-            var dataset = datasetManager.DatasetRepo.Get(datasetId);
+            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
             if (dataset != null && dataset.DataStructure.Id != 0)
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();

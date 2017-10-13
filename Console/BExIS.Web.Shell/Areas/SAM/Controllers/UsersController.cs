@@ -16,17 +16,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
     public class UsersController : BaseController
     {
         [HttpPost]
-        public void AddUserToGroup(long userId, string groupName)
+        public async void AddUserToGroup(long userId, string groupName)
         {
-            var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
 
             try
             {
-                userManager.AddToGroupAsync(userId, groupName);
+                await identityUserService.AddToRoleAsync(userId, groupName);
             }
             finally
             {
-                userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 
@@ -39,7 +39,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateUserModel model)
         {
-            var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
 
             try
             {
@@ -47,14 +47,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 var user = new User { UserName = model.UserName, Email = model.Email };
 
-                var result = await userManager.CreateAsync(user);
+                var result = await identityUserService.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "", userId = user.Id, code },
                         Request.Url.Scheme);
                     await
-                        userManager.SendEmailAsync(user.Id, "Set your password!",
+                        identityUserService.SendEmailAsync(user.Id, "Set your password!",
                             "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     return Json(new { success = true });
@@ -66,7 +66,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             finally
             {
-                userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 
@@ -119,17 +119,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public void RemoveUserFromGroup(long userId, string groupName)
+        public async void RemoveUserFromGroup(long userId, string groupName)
         {
-            var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
 
             try
             {
-                userManager.RemoveFromGroupAsync(userId, groupName);
+                await identityUserService.RemoveFromRoleAsync(userId, groupName);
             }
             finally
             {
-                userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 

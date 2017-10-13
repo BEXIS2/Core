@@ -19,12 +19,19 @@ This guide will walk you through the basics of data collection including how to 
 <p></p>&nbsp;&nbsp; <a href="#_Toc468355760">3.4. Validation</a>
 <p></p>&nbsp;&nbsp; <a href="#_Toc468355761">3.5. Summary</a>
 <p></p>&nbsp;&nbsp; <a href="#_upload_data">3.6. Upload Data</a>
-<p></p>    <a href="#_push_big_file">4. Push Big File</a>
-<p></p>    <a href="#_manage_metadata_structure">5. Manage Metadata Structure</a>
-<p></p>&nbsp;&nbsp; <a href="#_select_xsd">5.1. Select File</a>
-<p></p>&nbsp;&nbsp; <a href="#_read_source">5.2. Read Source</a>
-<p></p>&nbsp;&nbsp; <a href="#_set_parameters">5.3. Set Parameters</a>
-<p></p>&nbsp;&nbsp; <a href="#_summary">5.4. Summary</a>
+<p></p>    <a href="#_easy_upload_import_data">4. Import Data</a>
+<p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_file">4.1. Select File</a>
+<p></p>&nbsp;&nbsp; <a href="#_easy_upload_metadata">4.2. Metadata</a>
+<p></p>&nbsp;&nbsp; <a href="#_easy_upload_sheet_structure">4.3. Sheet Structure</a>
+<p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_areas">4.4. Select Areas</a>
+<p></p>&nbsp;&nbsp; <a href="#_easy_upload_verification">4.5. Verification</a>
+<p></p>&nbsp;&nbsp; <a href="#_easy_upload_summary">4.6. Summary</a>
+<p></p>    <a href="#_push_big_file">5. Push Big File</a>
+<p></p>    <a href="#_manage_metadata_structure">6. Manage Metadata Structure</a>
+<p></p>&nbsp;&nbsp; <a href="#_select_xsd">6.1. Select File</a>
+<p></p>&nbsp;&nbsp; <a href="#_read_source">6.2. Read Source</a>
+<p></p>&nbsp;&nbsp; <a href="#_set_parameters">6.3. Set Parameters</a>
+<p></p>&nbsp;&nbsp; <a href="#_summary">6.4. Summary</a>
   </div>
 }
 <style>
@@ -41,6 +48,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>The Data Collection Module provides tools to create new datasets, enter metadata, upload data to the system, and import metadata structures (i.e. schemas). There are some workflows available under the Collect tab and also in the Setup:</p>
 <li>Create Dataset</li>
 <li>Upload Data</li>
+<li>Import Data</li>
 <li>Push Big File</li>
 <li>Manage Metadata Structure</li>
 <li>Export Metadata</li>
@@ -123,12 +131,40 @@ This guide will walk you through the basics of data collection including how to 
 <p>The Maximum acceptable file size up to now is: 1024 MB.</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/select_file.png" width="900" alt="Select File" />&#xa0;</p>
 <p>&#xa0;</p>
-<h1><a id="_push_big_file">4. Push Big File</a></h1>
+<h1><a id="_easy_upload_import_data">4. Import Data</a></h1>
+<p>The Import Data wizard enables you to import both a tabular datastructure and data from a file in a single workflow.</p>
+<p>&#xa0;</p>
+<h2><a id="_easy_upload_select_file">4.1. Select File</a></h2>
+<p>In the first step an existing file containing both your data and the names of the variables needs to be selected. You can either select a file from your local computer or a file that has been uploaded to the server prior to starting the Upload Wizard. The second option is designed for files larger than 4 MB that may take several minutes to transfer. The wizard supports file formats of Microsoft Excel (*.xlsm, *.xlsx). Once a file has been successfully selected, click the Next button to proceed to the next step.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_select_file.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>&#xa0;</p>
+<h2><a id="_easy_upload_metadata">4.2. Metadata</a></h2>
+<p>This step allows you to select the metadata schema that you would like to use for the dataset. There is no need to enter any metadata yet - after the last step you will be redirected to a page that allows you to enter the metadata. You can, however, change the title of the dataset. If you don't wish to change it, it will default to the name of the file you are using. Once you have selected a schema, click the Next button to proceed to the next step.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_metadata.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>&#xa0;</p>
+<h2><a id="_easy_upload_sheet_structure">4.3. Sheet Structure</a></h2>
+<p>In this step you have to select the structure of your file. Red represents the names of the variables of your dataset while green represents the actual data. Currently we only support files that contain all variables in a single row (without gaps) and the data in rows as well. Select the structure to proceed to the next step.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_sheet_structure.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>&#xa0;</p>
+<h2><a id="_easy_upload_select_areas">4.4. Select Areas</a></h2>
+<p>You will see a table that represents the file that you selected during the first step. Here you can select, which part of the file should be used as variables and which parts should be interpreted as data. For the variables, select a row or one part of a row and click the "Header" button. The selected area should now be highlighted in red. If you are using a BEXIS 2 template file there is no need to select the whole header with unit, datatype, etc. Just select the names of the variables. For the data, you can select multiple rows and click the "Data" button. The selected area should now be highlighted in blue. Please make sure that the data area contains as many columns as the header area. You can skip one or more rows by selecting the area above them, mark it as data, and then select the area below them and mark it as well. You can use the "Expand Selection" button to expand the last data area you selected to the last row of the file. This can be very helpful when working with large datasets. If you made any mistakes during the selection process just use the "Reset" button to remove all markings and start over. Once you have selected the header and at least one data area, click the Next Button to proceed to the next step.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_select_areas.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>&#xa0;</p>
+<h2><a id="_easy_upload_verification">4.5. Verification</a></h2>
+<p>With this step you can define which units and datatypes your variables are using. The first column of dropdown-menus provides suggestions for attributes that are being used in other datasets and are similar to your variables. If you select one of the suggestions, unit and datatype are automatically adjusted. If you don't wish to use the suggestions, feel free to choose unit and datatype yourself. The "Validate" button allows you to check if the datatypes you selected are suitable for the data you selected in the previous step. This allows you to recognize errors early and correct your selection. Once you've selected your units and datatypes, click the Next button to proceed.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_verification.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>&#xa0;</p>
+<h2><a id="_easy_upload_summary">4.6. Summary</a></h2>
+<p>The summary step provides an overview of the dataset that is about to be created. When you click the Finish button, datastructure and dataset will be created and the data will be added. This might take a while, depending of the size of your file.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_summary.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>As soon as this process is finished, you will be redirected to your new dataset and can add metadata, view primary data and datastructure, set permissions or publish the dataset.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_end.png" width="600" height="450" alt="Upload_Tabular_1" />&#xa0;</p>
+<p>&#xa0;</p>
+<h1><a id="_push_big_file">5. Push Big File</a></h1>
 <p>Each user has a personal folder on the server where files are stored temporary. On this page you can see the uploaded files. You can delete each file by clicking on the X, or use these files later, when you want to upload data to a dataset.</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/push_big_file.png" width="900" alt="Push Big File" />&#xa0;</p>
 <p>&#xa0;</p>
-<p>&#xa0;</p>
-<h1><a id="_manage_metadata_structure">5. Manage Metadata Structure</a></h1>
+<h1><a id="_manage_metadata_structure">6. Manage Metadata Structure</a></h1>
 <p>&#xa0;</p>
 <p>Metadata structures (also called schemas or profiles) are typically created and imported by a data manager or administrator of the system. Thus this import function is available under the Setup > Import metadata Structure. The wizard will assist you in importing your metadata structure into the BEXIS 2. A metadata structure must be defined in a XSD schema file. </p>
 <p>When importing a metadata schema into BEXIS 2, each element of the XSD file(s) is analyzed for its type, name, annotations, attributes, data types, constraints etc.  Based on this information a form is automatically being created. For example, if an element is of data type Date, a date picker UI component will be used in the form. Also all names and descriptions are used exactly as they are in the XSD file(s). </p>
@@ -141,24 +177,24 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
-<h2><a id="_select_xsd">5.1. Select File</a></h2>
+<h2><a id="_select_xsd">6.1. Select File</a></h2>
 <p>In the first step an existing file containing your data needs to be selected. You can either select a XSD file from your local computer or a file that has been uploaded to the server prior to starting the Wizard. You may use the "Push big data to server" function in the Collect menu to upload multiple related XSD files.</p>
 <p>Note: Please upload a valid XSD structure. BEXIS 2 does not check this kind of validation.</p>
 <p>&#xa0;</p>
 <br/><p><img src="~/Areas/DCM/Content/Images/Help/select_xsd.png" width="900" alt="Select XSD File" />&#xa0;</p>
 <p>&#xa0;</p>
-<h2><a id="_read_source">5.2. Read Source</a></h2>
+<h2><a id="_read_source">6.2. Read Source</a></h2>
 <p>Please specify a name (i.e. display name) for the new metadata structure. You may also enter a root node if only a part of the XSD is to be used (optional).</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/read_xsd.png" width="900" alt="Read XSD File" /><br/><br/>To find the root node open the XSD Schema file and have a look on the element tags. In the example of ABCD it looks like this.</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/Help_img27.png" width="490" height="234" alt="img27" /><br/><br/>If no root node is selected then the wizard will automatically select the first element which is a complex type. But it is also possible to define the element "DataSet" as root node and the metadata structure starts from this element. The Name of a metadata structure must be unique and the root node must exist.</p>
 <p>&#xa0;</p>
-<h2><a id="_set_parameters">5.3. Set Parameters</a></h2>
+<h2><a id="_set_parameters">6.3. Set Parameters</a></h2>
 <p>For the system to handle a dataset at least the title and a description is needed. In this step these two elements, which are typically available in all metadata structures, should be identified and made explicit to the system. </p>
 <br/><p><img src="~/Areas/DCM/Content/Images/Help/set_xsd_parameters.png" width="900" alt="Set XSD Parameters" />&#xa0;</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
-<h2><a id="_summary">5.4. Summary</a></h2>
+<h2><a id="_summary">6.4. Summary</a></h2>
 <p>The Summary page is an overview about the created metadata structure.
 <br/><img src="~/Areas/DCM/Content/Images/Help/summary_xsd.png" width="900" alt="Summary" /> </p>
 <p>&#xa0;</p>

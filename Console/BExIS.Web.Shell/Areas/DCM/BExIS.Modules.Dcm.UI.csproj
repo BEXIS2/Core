@@ -421,6 +421,13 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\help\create_dataset.png" />
     <Content Include="Content\Images\help\down.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_end.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_metadata.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_select_areas.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_select_file.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_sheet_structure.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_summary.png" />
+    <Content Include="Content\Images\help\Help_easy_upload_verification.png" />
     <Content Include="Content\Images\help\Help_img12.jpeg" />
     <Content Include="Content\Images\help\Help_img13.jpeg" />
     <Content Include="Content\Images\help\Help_img14.jpeg" />

@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Services.TypeSystem;
 using System.Xml;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
@@ -92,6 +93,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             DataTypeManager dataTypeManger = new DataTypeManager();
 
             // Javad: The whole loop can be improved!
+            var dimentionRepo = unitManager.GetUnitOfWork().GetReadOnlyRepository<Dimension>();
             foreach (DataRow mapUnitsRow in mappedUnits.Rows)
             {
                 Unit unit = new Unit(); // Javad: this can not be out of the loop. in that case, it keeps its link to the session objects and causes the previous unit to be overriden as well as creating a new one!!
@@ -103,7 +105,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                 if (unit.Description.Length > 255)
                     unit.Description = unit.Description.Substring(0, 255);
 
-                unit.Dimension = unitManager.DimensionRepo.Get(Convert.ToInt64(mapUnitsRow["DimensionId"]));
+                unit.Dimension = dimentionRepo.Get(Convert.ToInt64(mapUnitsRow["DimensionId"]));
 
                 // find measurement system
                 foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
@@ -122,32 +124,32 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                 if (existU == null)
                 {
                     unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
-                    addDataTypes(unit.Id, Types);
+                    addDataTypes(unit.Id, Types, unitManager, dataTypeManger);
                 }
                 else
                 {
-                    addDataTypes(existU.Id, Types);
+                    addDataTypes(existU.Id, Types, unitManager, dataTypeManger);
                 }
                 // add unit-ID to the mappedUnits Table
                 mapUnitsRow["UnitId"] = unit.Id;
             }
         }
 
-        private void addDataTypes(long unitId, List<string> datatypeNames)
+        private void addDataTypes(long unitId, List<string> datatypeNames, UnitManager unitManager, DataTypeManager dataTypeManger)
         {
             if (unitId <= 0 || datatypeNames == null || datatypeNames.Count <= 0)
                 return;
-            UnitManager unitManager = new UnitManager();
-            DataTypeManager dataTypeManger = new DataTypeManager();
+            var unitRepo = unitManager.GetUnitOfWork().GetReadOnlyRepository<Unit>();
+            var dataTypeRepo = dataTypeManger.GetUnitOfWork().GetReadOnlyRepository<DataType>();
 
-            Unit unit = unitManager.Repo.Get(unitId);
+            Unit unit = unitRepo.Get(unitId);
             // add bpp-dataTypes to the unit
             if (unit == null)
                 return;
             DataType dt = new DataType();
             foreach (string type in datatypeNames)
             {
-                dt = dataTypeManger.Repo.Get().Where(d => d.Name.ToLower().Equals(type.ToLower())).FirstOrDefault();
+                dt = dataTypeRepo.Get().Where(d => d.Name.ToLower().Equals(type.ToLower())).FirstOrDefault();
                 if (dt != null && !(unit.AssociatedDataTypes.Contains(dt)))
                     unit.AssociatedDataTypes.Add(dt);
             }

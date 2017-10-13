@@ -502,11 +502,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             break;
                     }
 
-                    Uri worksheetUri = null;
+                    String worksheetUri = null;
                     //Get the Uri to identify the correct worksheet
-                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.WORKSHEET_URI))
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
                     {
-                        worksheetUri = (Uri)TaskManager.Bus[EasyUploadTaskManager.WORKSHEET_URI];
+                        worksheetUri = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
                     }
 
                     int batchSize = (new Object()).GetUnitOfWork().PersistenceManager.PreferredPushSize;

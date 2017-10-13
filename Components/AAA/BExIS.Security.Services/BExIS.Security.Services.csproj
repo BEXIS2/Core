@@ -83,9 +83,6 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
@@ -107,29 +104,16 @@
     <Compile Include="Requests\RequestManager.cs" />
     <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\IdentityGroupManager.cs" />
-    <Compile Include="Subjects\IdentityUserManager.cs" />
+    <Compile Include="Subjects\IdentityUserService.cs" />
     <Compile Include="Subjects\IUserManager.cs" />
     <Compile Include="Subjects\GroupStore.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserManager.cs" />
-    <Compile Include="Subjects\UserStore.cs" />
     <Compile Include="Utilities\Auth.cs" />
     <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
-      <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
-      <Name>BExIS.Utils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
       <Name>BExIS.Security.Entities</Name>

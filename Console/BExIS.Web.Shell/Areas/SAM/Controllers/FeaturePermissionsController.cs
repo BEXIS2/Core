@@ -98,10 +98,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
 
-                var features = new List<FeatureTreeViewModel>();
+                var features = featureManager.Features.Select(f => FeatureTreeViewModel.Convert(f, f.Permissions.Any(p => p.Subject == null), f.Parent.Id)).ToList();
 
-                var roots = featureManager.FindRoots();
-                roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f)));
+                foreach (var feature in features)
+                {
+                    feature.Children = features.Where(f => f.ParentId == feature.Id).ToList();
+                }
 
                 return View(features.AsEnumerable());
             }

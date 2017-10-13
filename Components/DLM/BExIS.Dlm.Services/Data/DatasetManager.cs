@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
+using BExIS.Security.Services.Objects;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -35,11 +36,6 @@ namespace BExIS.Dlm.Services.Data
             this.DatasetRepo = guow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = guow.GetReadOnlyRepository<DatasetVersion>();
             this.DataTupleRepo = guow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
-            //this.DataTupleVerionRepo = guow.GetReadOnlyRepository<DataTupleVersion>();
-            //this.ExtendedPropertyValueRepo = guow.GetReadOnlyRepository<ExtendedPropertyValue>();
-            //this.VariableValueRepo = guow.GetReadOnlyRepository<VariableValue>();
-            //this.ParameterValueRepo = guow.GetReadOnlyRepository<ParameterValue>();
-            //this.AmendmentRepo = guow.GetReadOnlyRepository<Amendment>();
         }
 
         private bool isDisposed = false;
@@ -582,7 +578,7 @@ namespace BExIS.Dlm.Services.Data
 
                 #region Delete tupleIds
                 var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
-                
+
                 IList<Int64> tupleIds = (versionIds == null || versionIds.Count() <= 0) ? null : dataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
                 if (tupleIds != null && tupleIds.Count > 0)
                 {
@@ -1274,12 +1270,12 @@ namespace BExIS.Dlm.Services.Data
 
                 workingCopyDatasetVersion.Dematerialize(false);
 
-            //preserve metadata and XmlExtendedPropertyValues for later use
-            var workingCopyDatasetVersionId = workingCopyDatasetVersion.Id;
-            var metadata = workingCopyDatasetVersion.Metadata;
-            var xmlExtendedPropertyValues = workingCopyDatasetVersion.XmlExtendedPropertyValues;
-            var contentDescriptors = workingCopyDatasetVersion.ContentDescriptors;
-            var stateInfo = workingCopyDatasetVersion.StateInfo;
+                //preserve metadata and XmlExtendedPropertyValues for later use
+                var workingCopyDatasetVersionId = workingCopyDatasetVersion.Id;
+                var metadata = workingCopyDatasetVersion.Metadata;
+                var xmlExtendedPropertyValues = workingCopyDatasetVersion.XmlExtendedPropertyValues;
+                var contentDescriptors = workingCopyDatasetVersion.ContentDescriptors;
+                var stateInfo = workingCopyDatasetVersion.StateInfo;
 
                 // do not move them to editDatasetVersion function
                 //this.DatasetRepo.Evict();
@@ -1288,16 +1284,16 @@ namespace BExIS.Dlm.Services.Data
                 //this.DataTupleVerionRepo.Evict();
                 //this.DatasetRepo.UnitOfWork.ClearCache();
 
-            // maybe its better to use Merge function ...
-            workingCopyDatasetVersion = this.DatasetVersionRepo.Get(workingCopyDatasetVersionId);
-            if (metadata != null)
-                workingCopyDatasetVersion.Metadata = metadata;
-            if (xmlExtendedPropertyValues != null)
-                workingCopyDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
-            if (contentDescriptors != null)
-                workingCopyDatasetVersion.ContentDescriptors = contentDescriptors;
-            if (stateInfo != null)
-                workingCopyDatasetVersion.StateInfo = stateInfo;
+                // maybe its better to use Merge function ...
+                workingCopyDatasetVersion = datasetVersionRepo.Get(workingCopyDatasetVersionId);
+                if (metadata != null)
+                    workingCopyDatasetVersion.Metadata = metadata;
+                if (xmlExtendedPropertyValues != null)
+                    workingCopyDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
+                if (contentDescriptors != null)
+                    workingCopyDatasetVersion.ContentDescriptors = contentDescriptors;
+                if (stateInfo != null)
+                    workingCopyDatasetVersion.StateInfo = stateInfo;
 
                 return editDatasetVersion(workingCopyDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
             }
@@ -1961,7 +1957,7 @@ namespace BExIS.Dlm.Services.Data
                 var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
 
                 List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
-                Int32 tupleCount = (versionIds == null || versionIds.Count() <= 0) ? 0 : 
+                Int32 tupleCount = (versionIds == null || versionIds.Count() <= 0) ? 0 :
                     dataTupleRepo.Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id)).Select(p => p.Id).Count();
                 return (tupleCount);
             }
@@ -1973,7 +1969,7 @@ namespace BExIS.Dlm.Services.Data
             /// if dataset is checked out, exception
             /// If the dataset is marked as deleted its like that it is not there at all
             if (dataset == null)
-                    throw new Exception(string.Format("Provided dataset is null"));
+                throw new Exception(string.Format("Provided dataset is null"));
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Dataset {0} is deleted", dataset.Id));
             if (dataset.Status == DatasetStatus.CheckedOut)
@@ -1986,7 +1982,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     DatasetVersion dsVersion = uow.GetReadOnlyRepository<DatasetVersion>().Query()
                                                 .OrderByDescending(t => t.Timestamp)
-                                                .FirstOrDefault(p => p.Dataset.Id == dataset.Id 
+                                                .FirstOrDefault(p => p.Dataset.Id == dataset.Id
                                                     && p.Status == DatasetVersionStatus.CheckedIn); // indeed the versions collection is ordered and there should be no need for ordering, but is just to prevent any side effects
                     return (dsVersion);
                 }
@@ -2276,7 +2272,7 @@ namespace BExIS.Dlm.Services.Data
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
                 var dataTupleVersionRepo = uow.GetReadOnlyRepository<DataTupleVersion>();
-                
+
                 // do nothing with unchanged for now
                 #region Process Newly Created Tuples
 
@@ -2906,7 +2902,7 @@ namespace BExIS.Dlm.Services.Data
             Contract.Requires(view != null && view.Id >= 0);
             Contract.Requires(view.Dataset == null);
 
-            
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 // save the relation controller object which is the 1 side in 1:N relationships. in this case: View
@@ -2956,5 +2952,16 @@ namespace BExIS.Dlm.Services.Data
         }
 
         #endregion
+
+        public List<EntityStoreItem> GetEntities()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetReadOnlyRepository<Dataset>();
+
+                var entities = repo.Query().Select(x => new EntityStoreItem() { Id = x.Id, Title = "Not Available" });
+                return entities.ToList();
+            }
+        }
     }
 }
