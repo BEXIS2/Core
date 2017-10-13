@@ -84,6 +84,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 datasetVersionId = datasetVersion.Id;
                 versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
+
+                model.MetadataIsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ? true : false;
             }
 
             //todo check if datasetversion id is correct
@@ -109,7 +111,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     Broker = new BrokerModel(broker.Name, repos),
                     DataRepo = dataRepoName,
-                    DatasetVersionId = datasetVersionId,
+                    DatasetVersionId = pub.DatasetVersion.Id,
                     CreationDate = pub.Timestamp,
                     ExternalLink = pub.ExternalLink,
                     FilePath = pub.FilePath,
@@ -386,16 +388,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
+            PublicationManager publicationManager = new PublicationManager();
+            DatasetManager datasetManager = new DatasetManager();
+
             try
             {
                 string zipfilepath = "";
                 if (Session["ZipFilePath"] != null)
                     zipfilepath = Session["ZipFilePath"].ToString();
 
-                DatasetManager datasetManager = new DatasetManager();
-
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-                PublicationManager publicationManager = new PublicationManager();
 
                 Publication publication =
                     publicationManager.GetPublication()
@@ -518,17 +520,41 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     TransmissionType.mappingFileExport,
                                     broker.MetadataFormat);
 
+                                string roJsonResult = "";
 
-                                string roJsonResult = await gfbioWebserviceManager.CreateResearchObject(
-                                    gfbioUser.userid,
-                                    gbfioProject.projectid,
-                                    name,
-                                    description,
-                                    "Dataset",
-                                    metadataExportFormat,
-                                    authorList,
-                                    metadataLabel
-                                    );
+                                //if a publication from a previus version exist, the researchobject need to get
+                                long researchobjectId = 0;
+
+                                var tmp = publicationManager.GetPublication().FirstOrDefault(
+                                p => p.DatasetVersion.Dataset.Id.Equals(datasetId) && p.Broker.Name.ToLower().Equals(datarepo.ToLower()));
+
+                                if (tmp != null) researchobjectId = tmp.ResearchObjectId;
+
+                                if (researchobjectId == 0)
+                                {
+                                    roJsonResult = await gfbioWebserviceManager.CreateResearchObject(
+                                        gfbioUser.userid,
+                                        gbfioProject.projectid,
+                                        name,
+                                        description,
+                                        "Dataset",
+                                        metadataExportFormat,
+                                        authorList,
+                                        metadataLabel
+                                        );
+                                }
+                                else
+                                {
+                                    //todo update
+                                    roJsonResult = await gfbioWebserviceManager.UpdateResearchObject(
+                                        researchobjectId,
+                                        name,
+                                        description,
+                                        metadataExportFormat,
+                                        authorList
+                                        );
+                                }
+
 
                                 List<GFBIOResearchObjectResult> gfbioResearchObjectList =
                                     new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectResult>>(roJsonResult);
@@ -574,6 +600,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     if (datarepo.ToLower().Contains("pensoft"))
                     {
+                        #region pensoft
                         Broker broker =
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
@@ -587,6 +614,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
                             "no status available");
+                        #endregion
                     }
 
                     if (datarepo.ToLower().Equals("generic"))
@@ -613,7 +641,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 return Json(ex.Message);
             }
-
+            finally
+            {
+                publicationManager.Dispose();
+                datasetManager.Dispose();
+            }
 
             return Json(true);
         }

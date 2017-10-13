@@ -104,13 +104,13 @@ function leSimpleSelectorClick(e) {
             ////console.log("type : "+type);
             if (position.toLowerCase() === "source") {
                 $("#emptySourceContainer").replaceWith(data);
+                
 
                 //deactivacte all source add icons
                 disableAddicons("Source");
 
             } else {
                 $("#emptyTargetContainer").replaceWith(data);
-
                 //deactivacte all source add icons
                 disableAddicons("Target");
             }
@@ -118,6 +118,10 @@ function leSimpleSelectorClick(e) {
             updateSaveOptionOnNewContainer();
             reloadAllConnections();
 
+            var trashBT = $("#mapping_container_0").find(".bx-trash")
+            console.log(trashBT);
+            $(trashBT).show();
+            console.log(trashBT);
             
         },
         error: function(data) { alert("error") }

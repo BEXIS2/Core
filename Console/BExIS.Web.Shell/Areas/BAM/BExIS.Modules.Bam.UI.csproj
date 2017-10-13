@@ -197,13 +197,13 @@
     <Content Include="Views\Party\CreateEdit.cshtml" />
     <Content Include="Views\Party\DeleteConfirm.cshtml" />
     <Content Include="Views\Party\View.cshtml" />
-    <Content Include="Views\Party\_customAttributesPartial.cshtml" />
     <Content Include="Views\Party\_partiesPartial.cshtml" />
     <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />
     <Content Include="Views\Party\_relationshipEditViewPartial.cshtml" />
     <Content Include="Views\Party\_addPartyRelationshipPartial.cshtml" />
     <Content Include="Views\PartyService\_userRegisterationPartial.cshtml" />
     <Content Include="Views\Help\Index.cshtml" />
+    <Content Include="Views\PartyService\_customAttributesPartial.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

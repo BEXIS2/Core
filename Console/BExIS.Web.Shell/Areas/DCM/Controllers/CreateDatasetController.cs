@@ -497,8 +497,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
 
                         //set status
-                        if (valid) workingCopy.StateInfo.State = "valid";
-                        else workingCopy.StateInfo.State = "not valid";
+                        if (valid) workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
+                        else workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
 
                         string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";

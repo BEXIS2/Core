@@ -18,7 +18,6 @@
             .ClientEvents(events => events.OnSelect("tabSelected")).SelectedIndex(0)
             .Items(tabs =>
             {
-
             tabs.Add()
                     .Text("Party").Content(@<text>
                     <table>                        <tr>
@@ -27,7 +26,7 @@
                                 @Html.LabelFor(m => m.PartyType)
                             </td>
                             <td>
-                                <span>    @Model.PartyType.Title</span>
+                                <span>@Model.PartyType.Title</span>
                             </td>
                         </tr>
                         <tr>
@@ -36,7 +35,7 @@
                                 @Html.LabelFor(m => m.StartDate)
                             </td>
                             <td>
-                                <span> @Model.StartDate</span>
+                                <span>@Model.StartDate</span>
                             </td>
                         </tr>
                         <tr>
@@ -45,7 +44,7 @@
                                 @Html.LabelFor(m => m.EndDate)
                             </td>
                             <td>
-                                <span> @Model.EndDate</span>
+                                <span>@Model.EndDate</span>
                             </td>
                         </tr>
                         <tr>
@@ -54,12 +53,12 @@
                                 @Html.LabelFor(m => m.Description)
                             </td>
                             <td>
-                                <span> @Model.Description</span>
+                                <span>@Model.Description</span>
                             </td>
                         </tr>
                     </table>
                     </text>);
-                tabs.Add().Text("Custom Attributes").Content(@<text>
+                tabs.Add().Text("Additional attributes").Content(@<text>
                         <div id="divPartyCustomAttr"></div>
                 </text>);
 
@@ -84,7 +83,7 @@
 
         var  partyTypeId= e.value;
         var lastPartyTypeId=@Model.PartyType.Id;
-        $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+ "?readOnly=true&"+((lastPartyTypeId==partyTypeId)? "partyId="+@Model.Id:""), function (response, status, xhr) {
+        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+ "?readOnly=true&"+((lastPartyTypeId==partyTypeId)? "partyId="+@Model.Id:""), function (response, status, xhr) {
             if (status == "error")
                 $('#divPartyCustomAttr').html("");
         });
