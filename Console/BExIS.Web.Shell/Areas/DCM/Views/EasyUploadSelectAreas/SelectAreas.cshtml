@@ -132,13 +132,13 @@
                 if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
                 }
-
-
-                //Check if selection is from bottom to top and reverse it
+                
+                //Check if selection is from bottom to top and reverse it vertically
                 if(selected[0] > selected[2]){
                     selected = reverseAreaVertically(selected);
                 }
 
+                //Check if selection is from right to left and reverse it horizontally
                 if (selected[3] <= selected[1]) {
                     selected = reverseAreaHorizontally(selected);
                 }
@@ -169,8 +169,18 @@
             if(!jQuery.isEmptyObject(selected)) {
 
                 // check if selection is from right bottom to left top and reverse it
-                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
+                }
+
+                //Check if selection is from bottom to top and reverse it vertically
+                if (selected[0] > selected[2]) {
+                    selected = reverseAreaVertically(selected);
+                }
+
+                //Check if selection is from right to left and reverse it horizontally
+                if (selected[3] <= selected[1]) {
+                    selected = reverseAreaHorizontally(selected);
                 }
 
                 //Only mark and save if the marked area is not intersecting an area that's marked differently
@@ -222,8 +232,18 @@
 
             if(!jQuery.isEmptyObject(selected)) {
                 // check if selection is from right bottom to left top and reverse it
-                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
+                }
+
+                //Check if selection is from bottom to top and reverse it vertically
+                if (selected[0] > selected[2]) {
+                    selected = reverseAreaVertically(selected);
+                }
+
+                //Check if selection is from right to left and reverse it horizontally
+                if (selected[3] <= selected[1]) {
+                    selected = reverseAreaHorizontally(selected);
                 }
 
                 //Save old selection in case the marking is not sucessfull because of an intersection
