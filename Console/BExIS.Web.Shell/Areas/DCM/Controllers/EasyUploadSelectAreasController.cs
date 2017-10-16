@@ -79,9 +79,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
                 model.activeSheetUri = activeWorksheet;
-                
-                //Send 2d-json-array to model
-                model.JsonTableData = jsonTable;
             }
             catch (Exception ex)
             {
@@ -167,11 +164,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.HeaderArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
                     }
 
-                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
-                    {
-                        model.JsonTableData = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
-                    }
-
                     #region Generate sheet-list and table for active sheet
                     //Grab the sheet format from the bus
                     string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
@@ -211,9 +203,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
                     model.activeSheetUri = activeWorksheet;
-
-                    //Send 2d-json-array to model
-                    model.JsonTableData = jsonTable;
                     #endregion
 
                     model.StepInfo = TaskManager.Current();

@@ -110,6 +110,7 @@
 <script>
     var hot = null;
     var hotActive = false;
+    var loadingInitialTable = true;
     var currentButton = null;
     var selectedDataArea = null;
     var markedAreas = [];
@@ -121,11 +122,6 @@
                 hot.destroy();
             }
         }
-
-        var container = document.getElementById('handsonExcelTable');
-        var hotData = @Html.Raw(Model.JsonTableData);
-        hot = createHandsontableForData(hotData, container);
-        hot.render();
 
         $('#setSelectDataArea').click(function() {
             currentButton = "data";
@@ -220,19 +216,20 @@
 
         $('#setSelectReset').click(function() {
             currentButton = "reset";
-
-            var num_rows = hot.countRows();
-            var num_cols = hot.countCols();
-
+            
+            if (hotActive) {
+                //Reset all markings
+                var num_rows = hot.countRows();
+                var num_cols = hot.countCols();
+                markArea(0, 0, num_rows, num_cols, '');
+                hot.render();
+            }
+            
             selectedDataArea = null;
-
-            //Reset all markings
-            markArea(0, 0, num_rows, num_cols, '');
+            
             markedAreas = [];
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
-
-            hot.render();
 
             currentButton = "null";
         });
@@ -316,30 +313,39 @@
                     $(button).prop('disabled', false);
 
                     //Reset the markings that are stored on the bus
-                    $('#setSelectReset').click();
+                    if (!loadingInitialTable) {
+                        $('#setSelectReset').click();
+                    }
+                    
                     //Get the container that
                     var container = document.getElementById('handsonExcelTable');
                     hot = createHandsontableForData(JSON.parse(response), container);
+
+                    if (loadingInitialTable) {
+                        //If there was a previous selection, parse it and mark the cells
+                        var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
+                        if (array) {
+                            array = $.parseJSON(array);
+                            markArea(array[0], array[1], array[2],  array[3], 'headerMarking');
+                        }
+
+                        var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
+                        if (nestedArray != null){
+                            for(var pos = 0; pos < nestedArray.length; pos++){
+                                var array = $.parseJSON(nestedArray[pos]);
+                                markArea(array[0], array[1], array[2], array[3], 'dataMarking');
+                            }
+                        }
+                        loadingInitialTable = false;
+                    }
+
                     hot.render();
                 });
             }
         });
 
-        var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
-        if (array) {
-            array = $.parseJSON(array);
-            markArea(array[0], array[1], array[2],  array[3], 'headerMarking');
-        }
-
-        //If there was a previous selection, parse it and mark the cells
-        var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
-        if (nestedArray != null){
-            for(var pos = 0; pos < nestedArray.length; pos++){
-                var array = $.parseJSON(nestedArray[pos]);
-                markArea(array[0], array[1], array[2], array[3], 'dataMarking');
-            }
-        }
-        hot.render();
+        //Trigger the initial loading of the table
+        $('#changeWorksheet').click();
     });
 
     function createHandsontableForData(data, container) {
