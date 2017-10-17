@@ -2,7 +2,6 @@
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
@@ -36,16 +35,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
-
-            var entities = new List<EntityTreeViewItemModel>();
-
             var entityManager = new EntityManager();
 
-            var roots = entityManager.FindRoots();
-            roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
+            try
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
 
-            return View(entities.AsEnumerable());
+                var entities = entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+
+                foreach (var entity in entities)
+                {
+                    entity.Children = entities.Where(e => e.ParentId == entity.Id).ToList();
+                }
+
+                return View(entities.AsEnumerable());
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
         }
 
         public ActionResult Requests(long entityId)

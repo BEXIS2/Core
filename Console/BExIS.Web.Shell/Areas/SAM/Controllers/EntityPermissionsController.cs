@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
@@ -68,10 +69,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Permissions", Session.GetTenant());
 
-                var entities = new List<EntityTreeViewItemModel>();
+                var entities = entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
-                var roots = entityManager.FindRoots();
-                roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
+                foreach (var entity in entities)
+                {
+                    entity.Children = entities.Where(e => e.ParentId == entity.Id).ToList();
+                }
 
                 return View(entities.AsEnumerable());
             }

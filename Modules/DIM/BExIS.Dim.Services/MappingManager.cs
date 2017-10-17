@@ -79,6 +79,11 @@ namespace BExIS.Dim.Services
             return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
+        public LinkElement GetLinkElement(long elementid, string name, LinkElementType type)
+        {
+            return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type));
+        }
+
         public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath, bool isSequence = false)
         {
             Contract.Requires(elementId >= 0);

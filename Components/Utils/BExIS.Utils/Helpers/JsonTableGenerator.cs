@@ -28,14 +28,13 @@ namespace BExIS.Utils.Helpers
         private Stylesheet _stylesheet;
         private int maxCellCount = -1;
         private List<List<String>> table = new List<List<string>>();
-        private Uri worksheetUri;
 
         public void Open(FileStream fileStream)
         {
             this.fileStream = fileStream;
         }
 
-        public string GenerateJsonTable(SheetFormat sheetFormat)
+        public string GenerateJsonTable(SheetFormat sheetFormat, String worksheetUri)
         {
             // open excel file
             SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
@@ -45,13 +44,22 @@ namespace BExIS.Utils.Helpers
             _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
             _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
-            //get worksheet part
-            string sheetId = workbookPart.Workbook.Descendants<Sheet>().First().Id;
-            WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheetId);
-            this.worksheetUri = worksheetPart.Uri;
+            string sheetId = "";
+            WorksheetPart worksheetPart = null;
+            foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+            {
+                //Get the current worksheetpart and see if it is the correct one
+                WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                if(tmp.Uri.ToString() == worksheetUri)
+                {
+                    //Found the correct WorksheetPart
+                    worksheetPart = tmp;
+                }
+            }
 
             OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
 
+            int expectedRowIndex = 1;
             while (reader.Read())
             {
                 if (reader.ElementType == typeof(DocumentFormat.OpenXml.Spreadsheet.Row))
@@ -62,6 +70,15 @@ namespace BExIS.Utils.Helpers
                         DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
 
                         List<String> rowAsStringList = new List<string>();
+
+                        //Since this library will ignore empty rows, check if we skipped some and add empty rows if necessary
+                        while(row.RowIndex > expectedRowIndex)
+                        {
+                            List<String> dummyRow = new List<string>();
+                            dummyRow.Add("");
+                            table.Add(dummyRow);
+                            expectedRowIndex++;
+                        }
 
                         // create a new cell
                         Cell c = new Cell();
@@ -171,7 +188,12 @@ namespace BExIS.Utils.Helpers
                             expectedIndex++;
                         }//for children of row
 
+                        //Check if there's a new max length for the length of a row
                         maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
+
+                        //Just read a row, so increase the expected index for the next one
+                        expectedRowIndex++;
+
                         table.Add(rowAsStringList);
                     } while (reader.ReadNextSibling()); // Skip to the next row
 
@@ -258,11 +280,42 @@ namespace BExIS.Utils.Helpers
             return columnIndex;
         }
 
-        //Returns the Uri of the worksheet that was used to create the JsonTable
-        public Uri getWorksheetUri()
+        public Dictionary<Uri, String> GetWorksheetUris()
         {
-            return this.worksheetUri;
+            if (this.fileStream != null)
+            {
+                Dictionary<Uri, String> output = new Dictionary<Uri, String>();
+
+                // open excel file
+                SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+                //get worksheet part
+                //Save uris and names of all worksheets
+                foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+                {
+                    WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                    output.Add(tmp.Uri, worksheet.Name);
+                }
+                return output;
+            }
+            return null;
         }
 
+        //Returns the Uri of the worksheet that was used to create the JsonTable
+        public Uri GetFirstWorksheetUri()
+        {
+            // open excel file
+            SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+            //get first uri
+            string id = workbookPart.Workbook.Descendants<Sheet>().First().Id;
+            return workbookPart.GetPartById(id).Uri;
+        }
     }
 }

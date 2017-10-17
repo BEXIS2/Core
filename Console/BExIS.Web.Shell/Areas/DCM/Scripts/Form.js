@@ -687,7 +687,12 @@ function Activate(e) {
         id : stepid
     },
         function (response) {
+
+            console.log(response);
+
             $('#' + stepid).replaceWith(response);
+
+            
 
             if (!active) {
                 $('html, body').animate({
