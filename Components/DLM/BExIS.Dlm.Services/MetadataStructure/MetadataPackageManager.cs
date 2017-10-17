@@ -138,10 +138,9 @@ namespace BExIS.Dlm.Services.MetadataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var metadataPackageRepo = uow.GetReadOnlyRepository<MetadataPackage>();
-                var metadataAttrRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
+                var attributesRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
 
-                attribute = metadataAttrRepo.Get().Where(ma => ma.Id.Equals(attribute.Id)).FirstOrDefault();
-
+                attribute = attributesRepo.Get(attribute.Id);
                 metadataPackageRepo.Reload(package);
                 metadataPackageRepo.LoadIfNot(package.MetadataAttributeUsages);
                 int count = 0;

@@ -33,6 +33,11 @@
         float: right;
     }
 
+    #tableControlRight select{
+        max-width: 150px;
+        text-overflow: ellipsis;
+    }
+
     /*Overwriting the css of the wizard*/
     #Step4 .uploadWizardStep_Main {
         width: 90%
@@ -105,8 +110,10 @@
 <script>
     var hot = null;
     var hotActive = false;
+    var loadingInitialTable = true;
     var currentButton = null;
     var selectedDataArea = null;
+    var markedAreas = [];
 
     $(document).ready(function () {
         if (typeof (hotActive) !== 'undefined') {
@@ -115,11 +122,6 @@
                 hot.destroy();
             }
         }
-
-        var container = document.getElementById('handsonExcelTable');
-        var hotData = @Html.Raw(Model.JsonTableData);
-        hot = createHandsontableForData(hotData, container);
-        hot.render();
 
         $('#setSelectDataArea').click(function() {
             currentButton = "data";
@@ -132,31 +134,33 @@
                     selected = reverseArea(selected);
                 }
 
-
-                //Check if selection is from bottom to top and reverse it
+                //Check if selection is from bottom to top and reverse it vertically
                 if(selected[0] > selected[2]){
                     selected = reverseAreaVertically(selected);
                 }
 
+                //Check if selection is from right to left and reverse it horizontally
                 if (selected[3] <= selected[1]) {
                     selected = reverseAreaHorizontally(selected);
                 }
 
-                console.log(selected);
-                selectedDataArea = selected;
+                //Only mark and save if the marked area is not intersecting an area that's marked differently
+                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
+                    selectedDataArea = selected;
 
-                // set the css class for all selected cells
-                markArea(selected[0], selected[2], selected[1], selected[3], 'dataMarking');
+                    // set the css class for all selected cells
+                    markArea(selected[0], selected[1], selected[2], selected[3], 'dataMarking');
 
 
-                // render table again
-                hot.render();
+                    // render table again
+                    hot.render();
 
-                // save selection area
-                currentButton = null;
+                    // save selection area
+                    currentButton = null;
 
-                // push selection to the server
-                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                    // push selection to the server
+                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                }
             }
         });
 
@@ -166,38 +170,66 @@
             if(!jQuery.isEmptyObject(selected)) {
 
                 // check if selection is from right bottom to left top and reverse it
-                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
                 }
 
-                // set the css class for all selected cells
-                markArea(selected[0], selected[2], selected[1], selected[3], 'headerMarking');
+                //Check if selection is from bottom to top and reverse it vertically
+                if (selected[0] > selected[2]) {
+                    selected = reverseAreaVertically(selected);
+                }
 
-                // render table again
-                hot.render();
+                //Check if selection is from right to left and reverse it horizontally
+                if (selected[3] <= selected[1]) {
+                    selected = reverseAreaHorizontally(selected);
+                }
 
-                // save selection area
-                currentButton = null;
+                //Only mark and save if the marked area is not intersecting an area that's marked differently
+                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'headerMarking')) {
 
-                // push selection to the server
-                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { headerArea: JSON.stringify(selected) }, function (response) { });
+                    //Check if there's already a marked header
+                    var exIndex = markedAreas.findIndex(function (el) {
+                        return el[4] == 'headerMarking';
+                    });
+
+                    if (exIndex > -1) {
+                        //We found an already marked area, reset its marking and remove it from the list of marked areas
+                        var exArea = markedAreas[exIndex];
+                        markArea(exArea[0], exArea[1], exArea[2], exArea[3], '');
+                        markedAreas.splice(exIndex, 1);
+                    }
+
+                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { headerArea: JSON.stringify(selected) }, function (response) {
+                    });
+
+                    // set the css class for all selected cells
+                    markArea(selected[0], selected[1], selected[2], selected[3], 'headerMarking');
+
+                    // render table again
+                    hot.render();
+
+                    // save selection area
+                    currentButton = null;
+                }
             }
         });
 
         $('#setSelectReset').click(function() {
             currentButton = "reset";
-
-            var num_rows = hot.countRows();
-            var num_cols = hot.countCols();
-
+            
+            if (hotActive) {
+                //Reset all markings
+                var num_rows = hot.countRows();
+                var num_cols = hot.countCols();
+                markArea(0, 0, num_rows, num_cols, '');
+                hot.render();
+            }
+            
             selectedDataArea = null;
-
-            //Reset all markings
-            markArea(0, num_rows, 0, num_cols, '');
+            
+            markedAreas = [];
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
-
-            hot.render();
 
             currentButton = "null";
         });
@@ -215,64 +247,105 @@
 
             if(!jQuery.isEmptyObject(selected)) {
                 // check if selection is from right bottom to left top and reverse it
-                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
                 }
 
+                //Check if selection is from bottom to top and reverse it vertically
+                if (selected[0] > selected[2]) {
+                    selected = reverseAreaVertically(selected);
+                }
+
+                //Check if selection is from right to left and reverse it horizontally
+                if (selected[3] <= selected[1]) {
+                    selected = reverseAreaHorizontally(selected);
+                }
+
+                //Save old selection in case the marking is not sucessfull because of an intersection
+                var oldSelection = selected;
                 //Select the cells to the end of the table
                 hot.selectCell(selected[0], selected[1], hot.countRows() - 1, selected[3] );
                 //Get the new selection
                 selected = hot.getSelected();
-                selectedDataArea = selected;
 
-                // set the css class for all selected cells
-                for(i = selected[0]; i <= selected[2]; i++) {
-                    for(j = selected[1]; j <= selected[3]; j++) {
-                        var cell = hot.getCellMeta(i,j, true);
-                        cell.className = 'dataMarking';
-                    }
+                //Only mark and save if the marked area is not intersecting an area that's marked differently
+                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
+                    selectedDataArea = selected;
+
+                    //Mark the selected cells as data
+                    markArea(selected[0], selected[1], selected[2],  selected[3], 'dataMarking');
+
+                    // render table again
+                    hot.render();
+
+                    // save selection area
+                    currentButton = null;
+
+                    // push selection to the server
+                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                } else {
+                    //Restore old selection
+                    hot.selectCell(oldSelection[0], oldSelection[1], oldSelection[2], oldSelection[3]);
                 }
-
-                // render table again
-                hot.render();
-
-                // save selection area
-                currentButton = null;
-
-                // push selection to the server
-                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
             }
         });
 
         $('#changeWorksheet').click(function () {
+            //Grab the sheet identifier
             var selVal = $('#sheetSelect').val();
             if (selVal != null && selVal != "") {
+                //Show a spinner & disable the button - making sure the button is not resized by setting min-width and -height
+                var button = this;
+                $(button).prop('disabled', true);
+                var oldHtml = $(button).html();
+                var curWidth = $(button).outerWidth();
+                var curHeight = $(button).outerHeight();
+                $(button).css({
+                    "min-width": curWidth.toString() + "px",
+                    "min-height": curHeight.toString() + "px"
+                });
+                $(button).html('<i class="fa fa-spinner fa-spin fa-fw"></i><span class="sr-only">Loading...</span>');
+
+                //Request the new sheet
                 $.post('@Url.Action("ChangeWorksheet", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { sheetIdentifier: selVal }, function (response) {
+                    //Restore old button content
+                    $(button).html(oldHtml);
+                    $(button).prop('disabled', false);
+
                     //Reset the markings that are stored on the bus
-                    $('#setSelectReset').click();
+                    if (!loadingInitialTable) {
+                        $('#setSelectReset').click();
+                    }
+                    
                     //Get the container that
                     var container = document.getElementById('handsonExcelTable');
                     hot = createHandsontableForData(JSON.parse(response), container);
+
+                    if (loadingInitialTable) {
+                        //If there was a previous selection, parse it and mark the cells
+                        var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
+                        if (array) {
+                            array = $.parseJSON(array);
+                            markArea(array[0], array[1], array[2],  array[3], 'headerMarking');
+                        }
+
+                        var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
+                        if (nestedArray != null){
+                            for(var pos = 0; pos < nestedArray.length; pos++){
+                                var array = $.parseJSON(nestedArray[pos]);
+                                markArea(array[0], array[1], array[2], array[3], 'dataMarking');
+                            }
+                        }
+                        loadingInitialTable = false;
+                    }
+
                     hot.render();
                 });
             }
         });
 
-        var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
-        if (array) {
-            array = $.parseJSON(array);
-            markArea(array[0], array[2], array[1], array[3], 'headerMarking');
-        }
-
-        //If there was a previous selection, parse it and mark the cells
-        var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
-        if (nestedArray != null){
-            for(var pos = 0; pos < nestedArray.length; pos++){
-                var array = $.parseJSON(nestedArray[pos]);
-                markArea(array[0], array[2], array[1], array[3], 'dataMarking');
-            }
-        }
-        hot.render();
+        //Trigger the initial loading of the table
+        $('#changeWorksheet').click();
     });
 
     function createHandsontableForData(data, container) {
@@ -316,13 +389,43 @@
     /*
     *Marks the area specified by the parameters by setting the class name
     */
-    function markArea(startX, endX, startY, endY, type) {
+    function markArea(startX, startY, endX, endY, type) {
+        if (type == "") {
+            //type "" means no marking, so remove this area from the markedAreas-Array
+            var exIndex = markedAreas.findIndex(function (el, startX, startY, endX, endY) {
+                return (el[0] == startX &&
+                    el[1] == startY &&
+                    el[2] == endX &&
+                    el[3] == endY);
+            });
+            if (exIndex > -1) {
+                markedAreas.splice(exIndex, 1);
+            }
+        } else {
+            //Any other type means it's marked, so add the area to the array
+            markedAreas.push([startX, startY, endX, endY, type]);
+        }
+
+        //Set the class so the css will set the correct color
         for (i = startX; i <= endX; i++) {
             for (j = startY; j <= endY; j++) {
                 var cell = hot.getCellMeta(i, j, true);
                 cell.className = type;
             }
         }
+    }
+
+    function intersectsDifferentMarking(startX, startY, endX, endY, type) {
+        for (var i = 0; i < markedAreas.length; i++) {
+            oldArea = markedAreas[i]; //oldArea[0] => startX, [1] => startY, [2] => endX, [3] => endY, [4] => type
+            if (oldArea[4] != type) {
+                //Different marking, now check intersection (rectangle intersection, see https://stackoverflow.com/a/13390495)
+                if ( !(endX < oldArea[0] || oldArea[2] < startX || endY < oldArea[1] || oldArea[3] < startY) ){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     function reverseArea(selected) {

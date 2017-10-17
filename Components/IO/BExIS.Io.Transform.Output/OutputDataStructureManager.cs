@@ -407,7 +407,7 @@ namespace BExIS.IO.Transform.Output
         public string CreateTemplate(StructuredDataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            List<Variable> variables = getOrderedVariables(dataStructure);
+            //List<Variable> variables = getOrderedVariables(dataStructure);
 
             string rgxPattern = "[<>?\":|\\\\/*]";
             string rgxReplace = "-";
@@ -417,11 +417,12 @@ namespace BExIS.IO.Transform.Output
 
             string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
 
-            CreateTemplate(variables, path, filename);
+            CreateTemplate(dataStructure.Variables.Select(p=>p.Id).ToList(), path, filename);
 
             XmlDocument resources = new XmlDocument();
 
             resources.LoadXml("<Resources><Resource Type=\"Excel\" Edition=\"2010\" Path=\"" + Path.Combine(path, filename) + "\"></Resource></Resources>");
+            dataStructure = this.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(dataStructure.Id); //Javad: This line should not be here, but I could not find where oes the dataStructure come from!!
             dataStructure.TemplatePaths = resources;
             dataStructureManager.UpdateStructuredDataStructure(dataStructure);
 
@@ -445,9 +446,9 @@ namespace BExIS.IO.Transform.Output
 
             if (dataStructure != null)
             {
-                List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
-                variables = getOrderedVariables(variables);
-                return CreateTemplate(variables, path, filename);
+                //List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
+                //variables = getOrderedVariables(variables);
+                return CreateTemplate(variableIds, path, filename);
             }
             else
             {
@@ -464,7 +465,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="path"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public SpreadsheetDocument CreateTemplate(List<Variable> variables, string path, string filename)
+        public SpreadsheetDocument CreateTemplate(List<long> variableIds, string path, string filename)
         {
             if (!Directory.Exists(Path.Combine(AppConfiguration.DataPath, path)))
             {
@@ -529,6 +530,10 @@ namespace BExIS.IO.Transform.Output
 
             List<Row> rows = GetRows(worksheet, 1, 11);
 
+            List<Variable> variables = this.GetUnitOfWork().GetReadOnlyRepository<Variable>()
+                                                            .Query(p => variableIds.Contains(p.Id))
+                                                            .OrderBy(p=> p.OrderNo)
+                                                            .ToList();
             foreach (Variable var in variables)
             {
                 DataContainerManager CM = new DataContainerManager();
