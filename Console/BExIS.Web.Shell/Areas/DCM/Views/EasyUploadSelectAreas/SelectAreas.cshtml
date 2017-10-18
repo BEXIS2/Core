@@ -112,6 +112,7 @@
 <script>
     var hot = null;
     var hotActive = false;
+    var activeSheet = "";
     var loadingInitialTable = true;
     var currentButton = null;
     var selectedDataArea = null;
@@ -295,7 +296,7 @@
         $('#changeWorksheet').click(function () {
             //Grab the sheet identifier
             var selVal = $('#sheetSelect').val();
-            if (selVal != null && selVal != "") {
+            if (selVal != null && selVal != "" && selVal != activeSheet) {
                 //Show a spinner & disable the button - making sure the button is not resized by setting min-width and -height
                 var button = this;
                 $(button).prop('disabled', true);
@@ -313,6 +314,9 @@
                     //Restore old button content
                     $(button).html(oldHtml);
                     $(button).prop('disabled', false);
+
+                    //Store the new active sheet
+                    activeSheet = selVal;
 
                     //Reset the markings that are stored on the bus
                     if (!loadingInitialTable) {
