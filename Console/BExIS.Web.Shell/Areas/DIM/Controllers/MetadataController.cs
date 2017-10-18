@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Xml;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using System.IO;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Xml.Helpers.Mapping;
-using System.Text;
 using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Web.Http;
+using System.Xml;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class MetadataController : ApiController
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
         // GET: api/Metadata
         public IEnumerable<MetadataViewObject> Get()
         {
@@ -29,8 +28,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 MetadataViewObject mvo = new MetadataViewObject();
                 mvo.DatasetId = id;
-                
-                List<string> t = XmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+
+                List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
                 mvo.Format = t.ToArray();
 

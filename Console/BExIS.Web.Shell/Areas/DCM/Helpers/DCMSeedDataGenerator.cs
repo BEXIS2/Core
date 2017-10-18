@@ -14,12 +14,15 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
-
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class DcmSeedDataGenerator : IDisposable
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         public void GenerateSeedData()
         {
 
@@ -237,32 +240,34 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             try
             {
                 metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
+
+                try
+                {
+                    //set parameters
+                    string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
+                    string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
+
+                    StoreParametersToMetadataStruture(
+                        metadataStructureid,
+                        titlePath,
+                        descriptionPath,
+                        entity,
+                        entityFullName,
+                        mappingFileImport,
+                        mappingFileExport);
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
             }
             catch (Exception ex)
             {
                 xmlSchemaManager.Delete(schemaName);
             }
 
-            try
-            {
-                //set parameters
-                string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
-                string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 
-                StoreParametersToMetadataStruture(
-                    metadataStructureid,
-                    titlePath,
-                    descriptionPath,
-                    entity,
-                    entityFullName,
-                    mappingFileImport,
-                    mappingFileExport);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
 
 
         }
@@ -280,40 +285,49 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string entityFullName, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(id);
             EntityManager entityManager = new EntityManager();
 
-            XmlDocument xmlDoc = new XmlDocument();
-            if(metadataStructure != null)
-            { 
-                if (metadataStructure.Extra != null)
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+
+                if (metadataStructure != null)
                 {
-                    xmlDoc = (XmlDocument)metadataStructure.Extra;
+                    if (metadataStructure.Extra != null)
+                    {
+                        xmlDoc = (XmlDocument)metadataStructure.Extra;
+                    }
+
+                    // add title Node
+                    xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+                    // add Description
+                    xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+
+                    xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
+                    // add mappingFilePath
+                    xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+                    xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+                    //set active
+                    xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+
+                    metadataStructure.Extra = xmlDoc;
+                    mdsManager.Update(metadataStructure);
                 }
-
-                // add title Node
-                xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-                // add Description
-                xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-
-                xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
-
-                // add mappingFilePath
-                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
-                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
-
-                //set active
-                xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
-
-                metadataStructure.Extra = xmlDoc;
-                mdsManager.Update(metadataStructure);
+            }
+            finally
+            {
+                mdsManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
 
-            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+            XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
             return doc;
 

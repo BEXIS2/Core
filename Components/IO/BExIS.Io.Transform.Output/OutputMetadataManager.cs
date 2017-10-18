@@ -18,10 +18,12 @@ namespace BExIS.IO.Transform.Output
         {
             try
             {
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
                 DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+                string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -57,8 +59,9 @@ namespace BExIS.IO.Transform.Output
             {
                 DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-                string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+                string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -66,7 +69,7 @@ namespace BExIS.IO.Transform.Output
 
                 newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
 
-                string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
 
                 // store in content descriptor
                 if (storing)
@@ -169,10 +172,11 @@ namespace BExIS.IO.Transform.Output
 
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 MetadataStructure metadataStructure = metadataMetadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
                 string mappingName = metadataStructure.Name;
 
-                string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+                string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -180,7 +184,7 @@ namespace BExIS.IO.Transform.Output
 
                 newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
 
-                string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
 
                 // store in content descriptor
                 string filename = "metadata";

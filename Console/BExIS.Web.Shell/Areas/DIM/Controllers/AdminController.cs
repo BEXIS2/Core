@@ -23,6 +23,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private List<long> datasetVersionIds = new List<long>();
         private XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         //
         // GET: /DIM/Admin/
@@ -173,7 +174,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             DatasetVersionId = datasetVersion.Id,
                             DatasetId = datasetVersion.Dataset.Id,
-                            Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
+                            Title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title),
                             MetadataDownloadPath = OutputMetadataManager.GetMetadataPath(datasetVersion.Id)
                         });
                 }

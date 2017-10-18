@@ -55,20 +55,19 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
         {
-            MetadataStructureManager metadataStructureManager;
-            MetadataStructure metadataStructure;
-            metadataStructureManager = new MetadataStructureManager();
-            metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
             List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
 
-                    // Create xml Document
-                    // Create the xml document containe
-                    XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
-                                                    //XDeclaration dec = new XDeclaration("1.0", null, null);
-                                                    //doc.Add(dec);// Create the root element
-                    XElement root = new XElement("Metadata");
-                    root.SetAttributeValue("id", metadataStructure.Id.ToString());
-                    doc.Add(root);
+            // Create xml Document
+            // Create the xml document containe
+            XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                            //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                            //doc.Add(dec);// Create the root element
+            XElement root = new XElement("Metadata");
+            root.SetAttributeValue("id", metadataStructure.Id.ToString());
+            doc.Add(root);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -147,7 +146,9 @@ namespace BExIS.Xml.Helpers
 
             if (metadataAttribute.Self is MetadataCompoundAttribute)
             {
-                MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttribute.Self;
+                //MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttribute.Self;
+
+                MetadataCompoundAttribute mca = this.GetUnitOfWork().GetReadOnlyRepository<MetadataCompoundAttribute>().Get(metadataAttribute.Self.Id);
 
                 foreach (MetadataNestedAttributeUsage nestedUsage in mca.MetadataNestedAttributeUsages)
                 {

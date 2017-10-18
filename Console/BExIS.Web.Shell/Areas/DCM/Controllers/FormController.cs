@@ -40,6 +40,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private CreateTaskmanager TaskManager;
         private MetadataStructureUsageHelper metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         #region Load Metadata formular actions
 
@@ -1858,7 +1860,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private bool IsImportAvavilable(long metadataStructureId)
         {
-            return XmlDatasetHelper.HasExportInformation(metadataStructureId);
+            return xmlDatasetHelper.HasExportInformation(metadataStructureId);
         }
 
         private BaseUsage loadUsage(long Id, Type type)

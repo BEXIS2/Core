@@ -18,8 +18,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class SubmitSpecifyDatasetController : Controller
     {
         private TaskManager TaskManager;
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        //
+
         // GET: /DCM/SpecifyDataset/
 
         [HttpGet]
@@ -210,7 +211,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //Add Metadata to Bus
                 //TITLE
-                TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
+                TaskManager.AddToBus(TaskManager.DATASET_TITLE, xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title));
 
                 ResearchPlanManager rpm = new ResearchPlanManager();
                 ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);

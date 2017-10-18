@@ -25,6 +25,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class DataController : ApiController
     {
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         // GET: api/data
         public IEnumerable<long> Get()
         {
@@ -54,7 +58,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.GetDatasetLatestVersion(id);
 
-            string title = XmlDatasetHelper.GetInformation(version, NameAttributeValues.title);
+            string title = xmlDatasetHelper.GetInformation(version.Id, NameAttributeValues.title);
 
             // check the data sturcture type ...
             if (version.Dataset.DataStructure.Self is StructuredDataStructure)

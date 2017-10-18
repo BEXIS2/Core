@@ -37,6 +37,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class CreateDatasetController : BaseController
     {
         private CreateTaskmanager TaskManager;
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         #region Create a Dataset Setup Page
 
@@ -213,6 +214,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             DatasetManager datasetManager = new DatasetManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
             this.Disposables.Add(datasetManager);
 
             if (model == null)
@@ -240,7 +243,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
                             datasetVersion.Dataset.ResearchPlan.Id);
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE,
-                            XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
+                            xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title));
 
                         // set datastructuretype
                         TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
@@ -443,6 +446,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
             ResearchPlanManager rpm = new ResearchPlanManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
             try
             {
@@ -497,10 +501,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
 
                         //set status
-                        if (valid) workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
+
+                        if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+
+                        if (valid)
+                            workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
                         else workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
 
-                        string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformation(workingCopy.Id, NameAttributeValues.title);
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
@@ -699,6 +707,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             //get all datasetsid where the current userer has access to
             UserManager userManager = new UserManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
             try
             {
@@ -710,8 +719,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     if (datasetManager.IsDatasetCheckedIn(id))
                     {
-                        string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                        string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        string description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
 
                         temp.Add(new ListViewItem(id, title, description));
                     }
@@ -775,8 +784,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 foreach (MetadataStructure metadataStructure in metadataStructureList)
                 {
-                    if (XmlDatasetHelper.IsActive(metadataStructure.Id) &&
-                        XmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                    if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                        xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
                     {
                         string title = metadataStructure.Name;
 

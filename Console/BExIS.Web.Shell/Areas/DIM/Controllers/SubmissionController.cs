@@ -29,6 +29,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class SubmissionController : Controller
     {
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
         // GET: Submission
 
         #region submission
@@ -161,7 +164,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     //if convertion check ist needed
                     //get all export attr from metadata structure
                     List<string> exportNames =
-                        XmlDatasetHelper.GetAllTransmissionInformation(datasetid,
+                        xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
                             TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                     if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
 
@@ -242,7 +245,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //if convertion check ist needed
                         //get all export attr from metadata structure
                         List<string> exportNames =
-                            XmlDatasetHelper.GetAllTransmissionInformation(datasetid,
+                            xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
                                 TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                         if (exportNames.Contains(broker.MetadataFormat))
                             isMetadataConvertable = true;
@@ -576,7 +579,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
 
                                     //Store ro in db
-                                    string title = XmlDatasetHelper.GetInformation(datasetVersion,
+                                    string title = xmlDatasetHelper.GetInformation(datasetVersion.Id,
                                         NameAttributeValues.title);
                                     publicationManager.CreatePublication(datasetVersion, broker, title,
                                         gfbioRoStatus.researchobjectid, zipfilepath, "",
@@ -611,7 +614,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
 
-                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
                             "no status available");
                         #endregion
@@ -625,7 +628,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
-                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
                             "created");
 
