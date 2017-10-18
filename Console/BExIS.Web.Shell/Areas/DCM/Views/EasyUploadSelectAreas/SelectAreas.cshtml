@@ -85,11 +85,13 @@
                         }
                     }
                     @Html.DropDownList("Sheet Select", listItems, "Select", new { @class = "buttonsRight", @id = "sheetSelect" })
-                    <button type="button" class="t-button action selectAreasButton" id="changeWorksheet">Change Worksheet</button>
+                    <button type="button" class="t-button action selectAreasButton" id="changeWorksheet" title="This will change the active worksheet and reset all your marked areas.">Change Worksheet</button>
                 </div>
             </div>
             
-            <div id="handsonExcelTable" style="margin-bottom: 2em"></div>
+            <div id="handsonExcelTable" style="margin-bottom: 2em">
+            </div>
+            <div style="display:none" id="emptyTableMessage">It seems like the worksheet you selected is empty. Please select a different worksheet.</div>
             
         </div>
 
@@ -110,6 +112,7 @@
 <script>
     var hot = null;
     var hotActive = false;
+    var activeSheet = "";
     var loadingInitialTable = true;
     var currentButton = null;
     var selectedDataArea = null;
@@ -216,7 +219,7 @@
 
         $('#setSelectReset').click(function() {
             currentButton = "reset";
-            
+
             if (hotActive) {
                 //Reset all markings
                 var num_rows = hot.countRows();
@@ -224,9 +227,9 @@
                 markArea(0, 0, num_rows, num_cols, '');
                 hot.render();
             }
-            
+
             selectedDataArea = null;
-            
+
             markedAreas = [];
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
@@ -234,58 +237,56 @@
             currentButton = "null";
         });
 
-        $('#expandSelection').click(function(){
-            var selected = null;
+        $('#expandSelection').click(function () {
+            if (hotActive) {
+                var selected = null;
 
-            //If there is a marked data area we want to expand it
-            if(!jQuery.isEmptyObject(selectedDataArea)) {
-                selected = selectedDataArea;
-            } else{
-                //If there is no marked data area yet, we want to expand the current selection
-                selected = hot.getSelected();
-            }
-
-            if(!jQuery.isEmptyObject(selected)) {
-                // check if selection is from right bottom to left top and reverse it
-                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                    selected = reverseArea(selected);
+                //If there is a marked data area we want to expand it
+                if(!jQuery.isEmptyObject(selectedDataArea)) {
+                    selected = selectedDataArea;
+                } else{
+                    //If there is no marked data area yet, we want to expand the current selection
+                    selected = hot.getSelected();
                 }
 
-                //Check if selection is from bottom to top and reverse it vertically
-                if (selected[0] > selected[2]) {
-                    selected = reverseAreaVertically(selected);
-                }
+                if(!jQuery.isEmptyObject(selected)) {
+                    // check if selection is from right bottom to left top and reverse it
+                    if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                        selected = reverseArea(selected);
+                    }
 
-                //Check if selection is from right to left and reverse it horizontally
-                if (selected[3] <= selected[1]) {
-                    selected = reverseAreaHorizontally(selected);
-                }
+                    //Check if selection is from bottom to top and reverse it vertically
+                    if (selected[0] > selected[2]) {
+                        selected = reverseAreaVertically(selected);
+                    }
 
-                //Save old selection in case the marking is not sucessfull because of an intersection
-                var oldSelection = selected;
-                //Select the cells to the end of the table
-                hot.selectCell(selected[0], selected[1], hot.countRows() - 1, selected[3] );
-                //Get the new selection
-                selected = hot.getSelected();
+                    //Check if selection is from right to left and reverse it horizontally
+                    if (selected[3] <= selected[1]) {
+                        selected = reverseAreaHorizontally(selected);
+                    }
 
-                //Only mark and save if the marked area is not intersecting an area that's marked differently
-                if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
-                    selectedDataArea = selected;
+                    //Get the new selection
+                    selected = [selected[0], selected[1], hot.countRows() - 1, selected[3]];
 
-                    //Mark the selected cells as data
-                    markArea(selected[0], selected[1], selected[2],  selected[3], 'dataMarking');
+                    //Only mark and save if the area is not intersecting an area that's marked differently
+                    if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
+                        selectedDataArea = selected;
 
-                    // render table again
-                    hot.render();
+                        //Mark the selected cells as data
+                        markArea(selected[0], selected[1], selected[2], selected[3], 'dataMarking');
 
-                    // save selection area
-                    currentButton = null;
+                        //Select the cells to the end of the table
+                        hot.selectCell(selected[0], selected[1], selected[2], selected[3]);
 
-                    // push selection to the server
-                    $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
-                } else {
-                    //Restore old selection
-                    hot.selectCell(oldSelection[0], oldSelection[1], oldSelection[2], oldSelection[3]);
+                        // render table again
+                        hot.render();
+
+                        // save selection area
+                        currentButton = null;
+
+                        // push selection to the server
+                        $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+                    }
                 }
             }
         });
@@ -293,7 +294,7 @@
         $('#changeWorksheet').click(function () {
             //Grab the sheet identifier
             var selVal = $('#sheetSelect').val();
-            if (selVal != null && selVal != "") {
+            if (selVal != null && selVal != "" && selVal != activeSheet) {
                 //Show a spinner & disable the button - making sure the button is not resized by setting min-width and -height
                 var button = this;
                 $(button).prop('disabled', true);
@@ -312,34 +313,50 @@
                     $(button).html(oldHtml);
                     $(button).prop('disabled', false);
 
+                    //Store the new active sheet
+                    activeSheet = selVal;
+
                     //Reset the markings that are stored on the bus
                     if (!loadingInitialTable) {
                         $('#setSelectReset').click();
                     }
-                    
+
                     //Get the container that
                     var container = document.getElementById('handsonExcelTable');
-                    hot = createHandsontableForData(JSON.parse(response), container);
-
-                    if (loadingInitialTable) {
-                        //If there was a previous selection, parse it and mark the cells
-                        var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
-                        if (array) {
-                            array = $.parseJSON(array);
-                            markArea(array[0], array[1], array[2],  array[3], 'headerMarking');
-                        }
-
-                        var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
-                        if (nestedArray != null){
-                            for(var pos = 0; pos < nestedArray.length; pos++){
-                                var array = $.parseJSON(nestedArray[pos]);
-                                markArea(array[0], array[1], array[2], array[3], 'dataMarking');
+                    if (isTableEmpty(JSON.parse(response))) {
+                        if (typeof (hotActive) !== 'undefined') {
+                            if (hotActive) {
+                                hot.destroy();
+                                hotActive = false;
                             }
                         }
-                        loadingInitialTable = false;
-                    }
+                        $('#handsonExcelTable').hide();
+                        $('#emptyTableMessage').show();
+                    } else {
+                        $('#handsonExcelTable').show();
+                        $('#emptyTableMessage').hide();
+                        hot = createHandsontableForData(JSON.parse(response), container);
 
-                    hot.render();
+                        if (loadingInitialTable) {
+                            //If there was a previous selection, parse it and mark the cells
+                            var array =  @Html.Raw(Json.Encode(Model.HeaderArea));
+                            if (array) {
+                                array = $.parseJSON(array);
+                                markArea(array[0], array[1], array[2],  array[3], 'headerMarking');
+                            }
+
+                            var nestedArray =  @Html.Raw(Json.Encode(Model.DataArea));
+                            if (nestedArray != null){
+                                for(var pos = 0; pos < nestedArray.length; pos++){
+                                    var array = $.parseJSON(nestedArray[pos]);
+                                    markArea(array[0], array[1], array[2], array[3], 'dataMarking');
+                                }
+                            }
+                            loadingInitialTable = false;
+                        }
+
+                        hot.render();
+                    }
                 });
             }
         });
@@ -348,6 +365,7 @@
         $('#changeWorksheet').click();
     });
 
+    /*Create the handsontable for the given data and places it in the given html-container*/
     function createHandsontableForData(data, container) {
         if (typeof (hotActive) !== 'undefined') {
             //Another instance of the handsontable is defined, destroy it before creating a new one
@@ -384,6 +402,26 @@
                 return cellProperties;
             }
         });
+    }
+
+    function isTableEmpty(jsonArray) {
+        if (jsonArray.length == 0) {
+            return true;
+        }
+        else {
+            var onlyWhitespaces = true;
+            for (var i = 0; i < jsonArray.length; i++) {
+                var row = jsonArray[i];
+                if (row.constructor == Array) {
+                    for (var j = 0; j < row.length; j++) {
+                        if ( (typeof row[j] == "string") && (row[j].trim() !== "") ) {
+                            onlyWhitespaces = false;
+                        }
+                    }
+                }
+            }
+            return onlyWhitespaces;
+        }
     }
 
     /*

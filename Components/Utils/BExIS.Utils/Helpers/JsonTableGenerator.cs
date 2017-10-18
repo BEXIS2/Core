@@ -1,18 +1,12 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using OfficeOpenXml;
 using System.IO;
 using System.Linq;
-using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml.Spreadsheet;
 using BExIS.Utils.Models;
 using Newtonsoft.Json;
@@ -29,7 +23,7 @@ namespace BExIS.Utils.Helpers
         private int maxCellCount = -1;
         private List<List<String>> table = new List<List<string>>();
 
-        public void Open(FileStream fileStream)
+        public JsonTableGenerator(FileStream fileStream)
         {
             this.fileStream = fileStream;
         }
@@ -43,8 +37,7 @@ namespace BExIS.Utils.Helpers
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
             _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
             _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
-
-            string sheetId = "";
+            
             WorksheetPart worksheetPart = null;
             foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
             {
@@ -72,6 +65,7 @@ namespace BExIS.Utils.Helpers
                         List<String> rowAsStringList = new List<string>();
 
                         //Since this library will ignore empty rows, check if we skipped some and add empty rows if necessary
+                        //This will still ignore empty rows at the end of the file but those wouldn't have any influence on the indices of data & header anyway
                         while(row.RowIndex > expectedRowIndex)
                         {
                             List<String> dummyRow = new List<string>();
@@ -178,7 +172,7 @@ namespace BExIS.Utils.Helpers
 
                                     rowAsStringList.Add(value);
 
-                                }//end if cell value
+                                }//end if cell value null
                                 else
                                 {
                                     rowAsStringList.Add("");
