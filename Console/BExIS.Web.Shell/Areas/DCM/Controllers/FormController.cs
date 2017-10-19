@@ -1704,8 +1704,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 TaskManager.StepInfos = new List<StepInfo>();
 
-                foreach (var mpu in metadataPackageList)
+                foreach (var mpuId in metadataPackageList.Select(p => p.Id))
                 {
+                    MetadataPackageUsage mpu = metadataStructureManager.PackageUsageRepo.Get(mpuId);
+
                     //only add none optional usages
                     var si = new StepInfo(mpu.Label)
                     {

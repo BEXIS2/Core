@@ -579,7 +579,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
 
                                     //Store ro in db
-                                    string title = xmlDatasetHelper.GetInformation(datasetVersion.Id,
+                                    string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id,
                                         NameAttributeValues.title);
                                     publicationManager.CreatePublication(datasetVersion, broker, title,
                                         gfbioRoStatus.researchobjectid, zipfilepath, "",
@@ -614,7 +614,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
 
-                        string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
                             "no status available");
                         #endregion
@@ -628,7 +628,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
-                        string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
                             "created");
 

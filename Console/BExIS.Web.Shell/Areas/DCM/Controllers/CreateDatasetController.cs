@@ -243,7 +243,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
                             datasetVersion.Dataset.ResearchPlan.Id);
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE,
-                            xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title));
+                            xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
 
                         // set datastructuretype
                         TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
@@ -508,7 +508,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
                         else workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
 
-                        string title = xmlDatasetHelper.GetInformation(workingCopy.Id, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);

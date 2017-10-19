@@ -28,7 +28,7 @@ namespace BExIS.Xml.Helpers
             {
                 DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
 
-                return GetInformation(datasetVersion.Id, name);
+                return GetInformationFromVersion(datasetVersion.Id, name);
             }
             finally
             {
@@ -44,31 +44,34 @@ namespace BExIS.Xml.Helpers
         /// <param name="datasetVersion"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public string GetInformation(long datasetVersionId, NameAttributeValues name, bool tmp = false)
+        public string GetInformationFromVersion(long datasetVersionId, NameAttributeValues name)
         {
-            DatasetVersion datasetVersion = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(datasetVersionId);
-            Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetVersion.Dataset.Id);
 
-            // get MetadataStructure 
-            if (datasetVersion != null && datasetVersion.Dataset != null &&
-                datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
+            using (var unitOfWork = this.GetUnitOfWork())
             {
-                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
-                    xDoc);
+                DatasetVersion datasetVersion = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(datasetVersionId);
 
-                string xpath = temp.Attribute("value").Value.ToString();
+                // get MetadataStructure 
+                if (datasetVersion != null && datasetVersion.Dataset != null &&
+                    datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
+                {
+                    MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                    XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                    XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                        xDoc);
 
-                XmlNode node = datasetVersion.Metadata.SelectSingleNode(xpath);
+                    string xpath = temp.Attribute("value").Value.ToString();
 
-                string title = "";
-                if (node != null)
-                    title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+                    XmlNode node = datasetVersion.Metadata.SelectSingleNode(xpath);
 
-                return title;
+                    string title = "";
+                    if (node != null)
+                        title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+                    return title;
+                }
+                return string.Empty;
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace BExIS.Xml.Helpers
             {
                 DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
 
-                return GetInformation(datasetVersion.Id, name);
+                return GetInformationFromVersion(datasetVersion.Id, name);
             }
             finally
             {

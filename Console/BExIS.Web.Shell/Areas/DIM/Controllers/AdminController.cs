@@ -174,7 +174,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             DatasetVersionId = datasetVersion.Id,
                             DatasetId = datasetVersion.Dataset.Id,
-                            Title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title),
+                            Title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title),
                             MetadataDownloadPath = OutputMetadataManager.GetMetadataPath(datasetVersion.Id)
                         });
                 }

@@ -58,7 +58,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.GetDatasetLatestVersion(id);
 
-            string title = xmlDatasetHelper.GetInformation(version.Id, NameAttributeValues.title);
+            string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
 
             // check the data sturcture type ...
             if (version.Dataset.DataStructure.Self is StructuredDataStructure)

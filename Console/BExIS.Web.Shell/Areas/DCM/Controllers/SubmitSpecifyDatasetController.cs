@@ -211,7 +211,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //Add Metadata to Bus
                 //TITLE
-                TaskManager.AddToBus(TaskManager.DATASET_TITLE, xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title));
+                TaskManager.AddToBus(TaskManager.DATASET_TITLE, xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
 
                 ResearchPlanManager rpm = new ResearchPlanManager();
                 ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);

@@ -97,7 +97,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //MetadataStructureManager msm = new MetadataStructureManager();
                 //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                title = xmlDatasetHelper.GetInformation(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
                 dataStructureId = dsv.Dataset.DataStructure.Id;
                 researchPlanId = dsv.Dataset.ResearchPlan.Id;
                 metadata = dsv.Metadata;
@@ -241,7 +241,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                 //TITLE
-                string title = xmlDatasetHelper.GetInformation(dsv.Id, NameAttributeValues.title);
+                string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
 
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
@@ -645,7 +645,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     datasetVersion.Dataset.MetadataStructure = msm.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
                     //TITLE
-                    string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
+                    string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
