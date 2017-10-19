@@ -53,8 +53,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
 
                 //Transforms the content of the file into a 2d-json-array
-                JsonTableGenerator EUEReader = new JsonTableGenerator();
-                EUEReader.Open(fis);
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
                 //If the active worksheet was never changed, we default to the first one
                 string activeWorksheet;
                 if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
@@ -79,9 +78,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
                 model.activeSheetUri = activeWorksheet;
-                
-                //Send 2d-json-array to model
-                model.JsonTableData = jsonTable;
             }
             catch (Exception ex)
             {
@@ -167,11 +163,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.HeaderArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
                     }
 
-                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
-                    {
-                        model.JsonTableData = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
-                    }
-
                     #region Generate sheet-list and table for active sheet
                     //Grab the sheet format from the bus
                     string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
@@ -185,8 +176,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
                     //Generate the Sheet-List and grab the active worksheet
-                    JsonTableGenerator EUEReader = new JsonTableGenerator();
-                    EUEReader.Open(fis);
+                    JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
                     //If the active worksheet was never changed, we default to the first one
                     string activeWorksheet;
                     if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
@@ -211,9 +201,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
                     model.activeSheetUri = activeWorksheet;
-
-                    //Send 2d-json-array to model
-                    model.JsonTableData = jsonTable;
                     #endregion
 
                     model.StepInfo = TaskManager.Current();
@@ -251,8 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
 
                 //Transforms the content of the file into a 2d-json-array
-                JsonTableGenerator EUEReader = new JsonTableGenerator();
-                EUEReader.Open(fis);
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
                 jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, sheetIdentifier);
 
                 if (!String.IsNullOrEmpty(jsonTable))
@@ -366,8 +352,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //FileStream for the users file
                 fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
-                JsonTableGenerator EUEReader = new JsonTableGenerator();
-                EUEReader.Open(fis);
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
 
                 //Get the worksheet uris and save them to the model
                 model.SheetUriDictionary = EUEReader.GetWorksheetUris();                

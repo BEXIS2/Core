@@ -17,6 +17,7 @@ using System.Web;
 using System.Web.Mvc;
 using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -764,13 +765,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         // checkout the dataset, apply the changes, and check it in.
                         if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                         {
-                            workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                            SaveFileInContentDiscriptor(workingCopy);
 
-                            dm.EditDatasetVersion(workingCopy, null, null, null);
+                            try
+                            {
+                                workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                            // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                                using (var unitOfWork = this.GetUnitOfWork())
+                                {
+                                    workingCopy = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(workingCopy.Id);
+                                    unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
+
+                                    SaveFileInContentDiscriptor(workingCopy);
+
+                                }
+                                dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                                // ToDo: Get Comment from ui and users
+                                dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                            }
+                            catch (Exception ex)
+                            {
+                                throw ex;
+                            }
                         }
                     }
 

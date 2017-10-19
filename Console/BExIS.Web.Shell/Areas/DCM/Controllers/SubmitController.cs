@@ -33,6 +33,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private FileStream Stream;
         private TaskManager TaskManager;
 
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
@@ -222,7 +225,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (datasetIDs.Contains(d.Id))
                             {
                                 temp.Add(new ListViewItem(d.Id,
-                                    XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d),
+                                    xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(d).Id,
                                         NameAttributeValues.title)));
                             }
                         }
@@ -243,7 +246,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
                                 temp.Add(new ListViewItem(d.Id,
-                                    XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title)));
+                                    xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title)));
                             }
                         }
                     }
@@ -307,7 +310,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // is checkedIn?
                     if (dm.IsDatasetCheckedIn(datasetid))
                     {
-                        title = XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(datasetid),
+                        title = xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(datasetid).Id,
                             NameAttributeValues.title);
                     }
 

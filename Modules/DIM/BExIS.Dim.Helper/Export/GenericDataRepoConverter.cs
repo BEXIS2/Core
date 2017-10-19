@@ -19,6 +19,7 @@ namespace BExIS.Dim.Helpers.Export
 {
     public class GenericDataRepoConverter : IDataRepoConverter
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
         private Repository _dataRepo { get; set; }
         private Broker _broker { get; set; }
 
@@ -63,7 +64,7 @@ namespace BExIS.Dim.Helpers.Export
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
 
-                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformation(datasetVersion.Id, NameAttributeValues.title);
 
                         odm.GenerateAsciiFile(datasetId, title, broker.PrimaryDataFormat);
                     }

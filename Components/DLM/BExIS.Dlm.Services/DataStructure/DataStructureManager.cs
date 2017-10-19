@@ -207,7 +207,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var localEntity = repo.Get(entity.Id);
+                repo.Put(localEntity); // Merge is required here!!!!
                 uow.Commit();
             }
             return (entity);
@@ -341,6 +343,11 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> structuredDataStructureRepo = uow.GetRepository<StructuredDataStructure>();
+                IRepository<DataAttribute> attributesRepo = uow.GetRepository<DataAttribute>();
+
+                dataStructure = structuredDataStructureRepo.Get(dataStructure.Id);
+                dataAttribute = attributesRepo.Get(dataAttribute.Id);
+
                 structuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
                 int count = (from v in dataStructure.Variables
                              where v.DataAttribute.Id.Equals(dataAttribute.Id)
@@ -387,6 +394,8 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<Variable> repo = uow.GetRepository<Variable>();
                 IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                usage = repo.Get(usage.Id);
+
                 repo.Delete(usage);
                 paramRepo.Delete(usage.Parameters.ToList());
                 uow.Commit();

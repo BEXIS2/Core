@@ -175,25 +175,32 @@ namespace BExIS.Dlm.Services.Data
 
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
 
-            Dataset dataset = new Dataset(dataStructure);
-
-            dataset.ResearchPlan = researchPlan;
-            researchPlan.Datasets.Add(dataset);
-
-            dataset.MetadataStructure = metadataStructure;
-            metadataStructure.Datasets.Add(dataset);
-
-            dataset.Status = DatasetStatus.CheckedIn;
-            dataset.CheckOutUser = string.Empty;
-            dataset.LastCheckIOTimestamp = DateTime.UtcNow;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dataset> repo = uow.GetRepository<Dataset>();
+                var structureRepo = uow.GetReadOnlyRepository<Entities.DataStructure.DataStructure>();
+                var researchPlanRepo = uow.GetReadOnlyRepository<ResearchPlan>();
+
+                dataStructure = structureRepo.Get(dataStructure.Id);
+                researchPlan = researchPlanRepo.Get(researchPlan.Id);
+
+                Dataset dataset = new Dataset(dataStructure);
+
+                dataset.ResearchPlan = researchPlan;
+                researchPlan.Datasets.Add(dataset);
+
+                dataset.MetadataStructure = metadataStructure;
+                metadataStructure.Datasets.Add(dataset);
+
+                dataset.Status = DatasetStatus.CheckedIn;
+                dataset.CheckOutUser = string.Empty;
+                dataset.LastCheckIOTimestamp = DateTime.UtcNow;
+
                 repo.Put(dataset);
                 uow.Commit();
+                return (dataset);
             }
-            return (dataset);
         }
 
         /// <summary>

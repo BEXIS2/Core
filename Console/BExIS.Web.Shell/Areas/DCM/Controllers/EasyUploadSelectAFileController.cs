@@ -119,6 +119,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult SelectFileProcess(HttpPostedFileBase SelectFileUploader)
         {
             EasyUploadTaskManager TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            #region Remove selected information from the bus
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_JSON_DATA);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_HEADER_AREA);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_DATA_AREA);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_FORMAT);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS);
+            #endregion
+
             if (SelectFileUploader != null)
             {
                 //data/datasets/1/1/
@@ -153,6 +165,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult SelectFileFromServerProcess(string fileName)
         {
             EasyUploadTaskManager TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            #region Remove selected information from the bus
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_JSON_DATA);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_HEADER_AREA);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_DATA_AREA);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.SHEET_FORMAT);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS);
+            #endregion
+
             if (fileName != null)
             {
                 //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "ServerFiles",fileName);

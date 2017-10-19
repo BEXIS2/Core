@@ -18,6 +18,7 @@ namespace BExIS.IO.Transform.Output
 
             Dataset dataset = datasetManager.GetDataset(datasetId);
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
             GFBIODataCenterFormularObject gfbioDataCenterFormularObject = new GFBIODataCenterFormularObject();
 
@@ -35,9 +36,9 @@ namespace BExIS.IO.Transform.Output
             gfbioDataCenterFormularObject.DatasetId = datasetId;
             gfbioDataCenterFormularObject.DatasetVersion = datasetVersion.Id;
             gfbioDataCenterFormularObject.License = "";
-            gfbioDataCenterFormularObject.DatasetTitle = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-            gfbioDataCenterFormularObject.DatasetLabel = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-            gfbioDataCenterFormularObject.DatasetDescription = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+            gfbioDataCenterFormularObject.DatasetTitle = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+            gfbioDataCenterFormularObject.DatasetLabel = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+            gfbioDataCenterFormularObject.DatasetDescription = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
             //gfbioDataCenterFormularObject.DatasetAuthors = new List<string>();
 
 
@@ -66,8 +67,10 @@ namespace BExIS.IO.Transform.Output
 
             GFBIOPangaeaFormularObject gfbioPangaeaFormularObject = new GFBIOPangaeaFormularObject();
 
-            string title = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-            string description = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+            string title = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+            string description = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
 
             return gfbioPangaeaFormularObject;
         }

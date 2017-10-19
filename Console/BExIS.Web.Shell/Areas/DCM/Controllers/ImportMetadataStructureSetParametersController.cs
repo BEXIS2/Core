@@ -24,6 +24,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private List<SearchMetadataNode> _metadataNodes = new List<SearchMetadataNode>();
         private ImportMetadataStructureTaskManager TaskManager;
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes()
         {
@@ -371,7 +373,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
-            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+            XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
             return doc;
         }
@@ -386,9 +388,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
+            EntityManager entityManager = new EntityManager();
+
             try
             {
-                MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(id);
 
                 XmlDocument xmlDoc = new XmlDocument();
 
@@ -402,7 +407,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // add Description
                 xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
 
-                EntityManager entityManager = new EntityManager();
 
                 if (entityManager.EntityRepository.Get().Any(e => { return e.Name != null && e.Name.Equals(entity); }))
                 {
@@ -424,6 +428,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 mdsManager.Dispose();
+                entityManager.Dispose();
             }
         }
 

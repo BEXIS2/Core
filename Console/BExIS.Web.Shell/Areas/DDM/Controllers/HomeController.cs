@@ -25,6 +25,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         public bool searchConfigFileInUse = false;
 
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         /// <summary>
         /// is called when the Search View is selected
         /// 
@@ -819,8 +822,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //MetadataStructureManager msm = new MetadataStructureManager();
                         //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-                        string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
+                        string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
+                        string description = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.description);
 
                         rowArray[0] = Convert.ToInt64(datasetId);
                         rowArray[1] = title;

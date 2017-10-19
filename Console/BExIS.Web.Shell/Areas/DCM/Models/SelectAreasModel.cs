@@ -8,7 +8,6 @@ namespace BExIS.Modules.Dcm.UI.Models
     public class SelectAreasModel
     {
         public StepInfo StepInfo { get; set; }
-        public string JsonTableData { get; set; }
         public List<string> DataArea { get; set; }
         public string HeaderArea { get; set; }
         public Dictionary<Uri, String> SheetUriDictionary { get; set; }
