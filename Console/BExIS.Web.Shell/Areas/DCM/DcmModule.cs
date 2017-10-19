@@ -14,7 +14,7 @@ namespace BExIS.Modules.Dcm.UI
 
         public override void Install()
         {
-            LoggerFactory.GetFileLogger().LogCustom("...start install of dim...");
+            LoggerFactory.GetFileLogger().LogCustom("...start install of dcm...");
             try
             {
                 base.Install();
@@ -30,7 +30,7 @@ namespace BExIS.Modules.Dcm.UI
                 LoggerFactory.GetFileLogger().LogCustom(e.StackTrace);
             }
 
-            LoggerFactory.GetFileLogger().LogCustom("...end install of dim...");
+            LoggerFactory.GetFileLogger().LogCustom("...end install of dcm...");
         }
     }
 }

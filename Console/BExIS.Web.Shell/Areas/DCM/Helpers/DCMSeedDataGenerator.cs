@@ -180,7 +180,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
 
-                    ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName,
+                    ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
+                        titleXPath, descriptionXpath);
+
+                }
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
+                {
+                    string titleXPath =
+                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                    string descriptionXpath =
+                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+
+
+                    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
                         titleXPath, descriptionXpath);
 
                 }
@@ -191,7 +204,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     string titleXPath = "Metadata/Basic/BasicType/title/titleType";
                     string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
 
-                    ImportSchema("GBIF", "eml.xsd", entity.Name, entity.Name, entity.EntityType.FullName, titleXPath,
+                    ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
                         descriptionXpath);
                 }
                 //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
@@ -239,7 +252,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             //generate
             try
             {
-                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
+                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
 
                 try
                 {
