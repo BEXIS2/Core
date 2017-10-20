@@ -115,7 +115,6 @@
     var activeSheet = "";
     var loadingInitialTable = true;
     var currentButton = null;
-    var selectedDataArea = null;
     var markedAreas = [];
 
     $(document).ready(function () {
@@ -149,8 +148,6 @@
 
                 //Only mark and save if the marked area is not intersecting an area that's marked differently
                 if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
-                    selectedDataArea = selected;
-
                     // set the css class for all selected cells
                     markArea(selected[0], selected[1], selected[2], selected[3], 'dataMarking');
 
@@ -228,8 +225,6 @@
                 hot.render();
             }
 
-            selectedDataArea = null;
-
             markedAreas = [];
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
@@ -242,8 +237,11 @@
                 var selected = null;
 
                 //If there is a marked data area we want to expand it
-                if(!jQuery.isEmptyObject(selectedDataArea)) {
-                    selected = selectedDataArea;
+                var lastDataAreaIndex = lastIndexInArray(markedAreas, function (el) {
+                    return (el[4] == 'dataMarking');
+                });
+                if (lastDataAreaIndex > -1) {
+                    selected = markedAreas[lastDataAreaIndex];
                 } else{
                     //If there is no marked data area yet, we want to expand the current selection
                     selected = hot.getSelected();
@@ -270,8 +268,6 @@
 
                     //Only mark and save if the area is not intersecting an area that's marked differently
                     if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
-                        selectedDataArea = selected;
-
                         //Mark the selected cells as data
                         markArea(selected[0], selected[1], selected[2], selected[3], 'dataMarking');
 
@@ -492,4 +488,19 @@
 
         return [startRow, startCol, endRow, endCol];
     }
+
+    /*Arguments: An array and a function that takes one element of the array as parameter
+    Returns: Last index of the array for which the given functions returns true
+    Returns -1 if no element satisfies the given function*/
+    function lastIndexInArray(array, callback) {
+        var index = -1;
+        for (var i = 0; i < array.length; i++) {
+            if (callback(array[i]) === true) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+
 </script>
