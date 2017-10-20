@@ -5,27 +5,27 @@
 
 
 <style>
-    .selectAreasButton {
+    .selectAreasButton{
         padding: 5px 10px;
     }
 
-    #setSelectedHeaderArea {
+    #setSelectedHeaderArea{
         background-color: rgba(102, 7, 5, 1) !important;
     }
 
-    #setSelectDataArea {
+    #setSelectDataArea{
         background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    #expandSelection {
+    #expandSelection{
         background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    .headerMarking {
+    .headerMarking{
         background-color: rgba(102, 7, 5, 0.5) !important;
     }
 
-    .dataMarking {
+    .dataMarking{
         background-color: rgba(56, 5, 102, 0.5) !important;
     }
 
@@ -33,19 +33,19 @@
         float: right;
     }
 
-    #tableControlRight select{
-        max-width: 150px;
-        text-overflow: ellipsis;
-    }
+        #tableControlRight select{
+            max-width: 150px;
+            text-overflow: ellipsis;
+        }
 
     /*Overwriting the css of the wizard*/
-    #Step4 .uploadWizardStep_Main {
+    #Step4 .uploadWizardStep_Main{
         width: 90%
     }
+
     #Step4 .uploadWizardStep_Content{
         height: auto;
     }
-
 </style>
 
 <div id="Step4" class="uploadWizardStep">
@@ -70,7 +70,7 @@
                 <button type="button" class="t-button action selectAreasButton" id="setSelectReset">Reset</button>
 
                 <div id="tableControlRight">
-                    @{ 
+                    @{
                         SelectListItem tmp;
                         List<SelectListItem> listItems = new List<SelectListItem>();
                         foreach (KeyValuePair<Uri, String> worksheetIdentifier in Model.SheetUriDictionary)
@@ -88,11 +88,11 @@
                     <button type="button" class="t-button action selectAreasButton" id="changeWorksheet" title="This will change the active worksheet and reset all your marked areas.">Change Worksheet</button>
                 </div>
             </div>
-            
+
             <div id="handsonExcelTable" style="margin-bottom: 2em">
             </div>
             <div style="display:none" id="emptyTableMessage">It seems like the worksheet you selected is empty. Please select a different worksheet.</div>
-            
+
         </div>
 
         <div class="uploadWizardStep_Error stepper">
@@ -130,21 +130,7 @@
             var selected = hot.getSelected();
 
             if(!jQuery.isEmptyObject(selected)) {
-
-                // check if selection is from right bottom to left top and reverse it
-                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                    selected = reverseArea(selected);
-                }
-
-                //Check if selection is from bottom to top and reverse it vertically
-                if(selected[0] > selected[2]){
-                    selected = reverseAreaVertically(selected);
-                }
-
-                //Check if selection is from right to left and reverse it horizontally
-                if (selected[3] <= selected[1]) {
-                    selected = reverseAreaHorizontally(selected);
-                }
+                selected = orderSelectionArray(selected);
 
                 //Only mark and save if the marked area is not intersecting an area that's marked differently
                 if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
@@ -168,21 +154,7 @@
             currentButton = "header";
             var selected = hot.getSelected();
             if(!jQuery.isEmptyObject(selected)) {
-
-                // check if selection is from right bottom to left top and reverse it
-                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                    selected = reverseArea(selected);
-                }
-
-                //Check if selection is from bottom to top and reverse it vertically
-                if (selected[0] > selected[2]) {
-                    selected = reverseAreaVertically(selected);
-                }
-
-                //Check if selection is from right to left and reverse it horizontally
-                if (selected[3] <= selected[1]) {
-                    selected = reverseAreaHorizontally(selected);
-                }
+                selected = orderSelectionArray(selected);
 
                 //Only mark and save if the marked area is not intersecting an area that's marked differently
                 if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'headerMarking')) {
@@ -247,21 +219,8 @@
                     selected = hot.getSelected();
                 }
 
-                if(!jQuery.isEmptyObject(selected)) {
-                    // check if selection is from right bottom to left top and reverse it
-                    if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                        selected = reverseArea(selected);
-                    }
-
-                    //Check if selection is from bottom to top and reverse it vertically
-                    if (selected[0] > selected[2]) {
-                        selected = reverseAreaVertically(selected);
-                    }
-
-                    //Check if selection is from right to left and reverse it horizontally
-                    if (selected[3] <= selected[1]) {
-                        selected = reverseAreaHorizontally(selected);
-                    }
+                if (!jQuery.isEmptyObject(selected)) {
+                    selected = orderSelectionArray(selected);
 
                     //Get the new selection
                     selected = [selected[0], selected[1], hot.countRows() - 1, selected[3]];
@@ -502,5 +461,22 @@
         return index;
     }
 
+    function orderSelectionArray(selection) {
+        // check if selection is from right bottom to left top and reverse it
+        if (selection[2] <= selection[0] && selection[3] <= selection[1]) {
+            return reverseArea(selection);
+        }
 
+        //Check if selection is from bottom to top and reverse it vertically
+        if (selection[0] > selection[2]) {
+            return reverseAreaVertically(selection);
+        }
+
+        //Check if selection is from right to left and reverse it horizontally
+        if (selection[3] <= selection[1]) {
+            return reverseAreaHorizontally(selection);
+        }
+
+        return selection;
+    }
 </script>
