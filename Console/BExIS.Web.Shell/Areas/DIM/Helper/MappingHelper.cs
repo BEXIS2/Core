@@ -1023,21 +1023,30 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
 
             MappingManager mappingManager = new MappingManager();
-            Mapping mapping = mappingManager.GetMappings(id);
 
-            if (recursive)
+
+            try
             {
-                IEnumerable<Mapping> childMappings = mappingManager.GetChildMapping(id);
+                Mapping mapping = mappingManager.GetMappings(id);
 
-                foreach (var cm in childMappings)
+                if (recursive)
                 {
-                    mappingManager.DeleteMapping(cm);
+                    IEnumerable<Mapping> childMappings = mappingManager.GetChildMapping(id);
+
+                    foreach (var cm in childMappings)
+                    {
+                        mappingManager.DeleteMapping(cm);
+                    }
                 }
+                mappingManager.DeleteMapping(mapping);
+
+
+                return true;
             }
-            mappingManager.DeleteMapping(mapping);
-
-
-            return true;
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
 

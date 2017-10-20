@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -16,11 +17,12 @@ namespace BExIS.IO.Transform.Output
     {
         public static string IsValideAgainstSchema(long datasetId, TransmissionType type, string mappingName)
         {
+            DatasetManager datasetManager = new DatasetManager();
+
             try
             {
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-                DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
@@ -49,15 +51,20 @@ namespace BExIS.IO.Transform.Output
 
                 return ex.Message;
             }
+            finally
+            {
+                datasetManager.Dispose();
+            }
 
         }
 
         public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
         {
             XmlDocument newXml;
+            DatasetManager datasetManager = new DatasetManager();
+
             try
             {
-                DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
@@ -92,9 +99,11 @@ namespace BExIS.IO.Transform.Output
 
         public static string GetSchemaDirectoryPath(long datasetId)
         {
+
+            DatasetManager datasetManager = new DatasetManager();
+
             try
             {
-                DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
@@ -110,6 +119,10 @@ namespace BExIS.IO.Transform.Output
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                datasetManager.Dispose();
             }
 
             return String.Empty;
@@ -141,13 +154,12 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <param name="datasetVersionId"></param>
         /// <returns></returns>
-        public static string GetMetadataPath(long datasetVersionId)
+        public static string GetMetadataPath(ICollection<ContentDescriptor> contentDescriptors)
         {
             string path = "";
 
             DatasetManager datasetManager = new DatasetManager();
-            ContentDescriptor contentDescriptor = datasetManager.GetDatasetVersion(datasetVersionId).
-                ContentDescriptors.ToList().FirstOrDefault(c => c.Name.Equals("metadata"));
+            ContentDescriptor contentDescriptor = contentDescriptors.ToList().FirstOrDefault(c => c.Name.Equals("metadata"));
 
             if (contentDescriptor != null)
             {
@@ -163,12 +175,13 @@ namespace BExIS.IO.Transform.Output
         public static string CreateConvertedMetadata(long datasetId, TransmissionType type)
         {
             XmlDocument newXml;
+            DatasetManager datasetManager = new DatasetManager();
+            MetadataStructureManager metadataMetadataStructureManager = new MetadataStructureManager();
+
             try
             {
 
 
-                DatasetManager datasetManager = new DatasetManager();
-                MetadataStructureManager metadataMetadataStructureManager = new MetadataStructureManager();
 
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 MetadataStructure metadataStructure = metadataMetadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
@@ -206,7 +219,11 @@ namespace BExIS.IO.Transform.Output
             {
                 throw ex;
             }
-
+            finally
+            {
+                datasetManager.Dispose();
+                metadataMetadataStructureManager.Dispose();
+            }
             return "";
         }
 
@@ -236,25 +253,35 @@ namespace BExIS.IO.Transform.Output
             //};
 
             DatasetManager dm = new DatasetManager();
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-            {   // remove the one contentdesciptor 
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                {
-                    if (cd.Name == name)
+
+            try
+            {
+                datasetVersion = dm.GetDatasetVersion(datasetVersion.Id);
+
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                {   // remove the one contentdesciptor 
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        cd.URI = dynamicPath;
-                        dm.UpdateContentDescriptor(cd);
+                        if (cd.Name == name)
+                        {
+                            cd.URI = dynamicPath;
+                            dm.UpdateContentDescriptor(cd);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
-                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
-            }
+                else
+                {
+                    // add current contentdesciptor to list
+                    //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                    dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+                }
 
-            //dm.EditDatasetVersion(datasetVersion, null, null, null);
+                //dm.EditDatasetVersion(datasetVersion, null, null, null);
+            }
+            finally
+            {
+                dm.Dispose();
+            }
 
         }
     }

@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Xml.Helpers;
@@ -12,13 +11,15 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
 
         private List<long> datasetVersionIds = new List<long>();
@@ -34,12 +35,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             AdminModel model = new AdminModel();
 
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            IList<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
+            IList<MetadataStructure> metadataStructures = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get();
 
             foreach (MetadataStructure metadataStructure in metadataStructures)
             {
-                model.Add(metadataStructure);
+                model.Add(metadataStructure.Id, metadataStructure.Name);
             }
 
             return View(model);
@@ -50,24 +50,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
             #region load Model
 
             DatasetManager datasetManager = new DatasetManager();
-            // retrieves all the dataset version IDs which are in the checked-in state
-            datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
+            try
+            {
+                // retrieves all the dataset version IDs which are in the checked-in state
+                datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
 
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(Id);
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(Id);
 
-            MetadataStructureModel model = new MetadataStructureModel(
-                    metadataStructure.Id,
-                    metadataStructure.Name,
-                    metadataStructure.Description,
-                    getDatasetVersionsDic(metadataStructure, datasetVersionIds),
-                     IsExportAvailable(metadataStructure)
+                MetadataStructureModel model = new MetadataStructureModel(
+                        metadataStructure.Id,
+                        metadataStructure.Name,
+                        metadataStructure.Description,
+                        getDatasetVersionsDic(metadataStructure, datasetVersionIds),
+                         IsExportAvailable(metadataStructure)
+                    );
 
-                );
+                #endregion
 
-            #endregion
-
-            return PartialView("_metadataStructureView", model);
+                return PartialView("_metadataStructureView", model);
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         public ActionResult ConvertSelectedDatasetVersion(string Id, string SelectedDatasetIds)
@@ -76,39 +81,45 @@ namespace BExIS.Modules.Dim.UI.Controllers
             #region load Model
 
             DatasetManager datasetManager = new DatasetManager();
-            datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
-
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(Convert.ToInt64(Id));
-
-            MetadataStructureModel model = new MetadataStructureModel(
-                    metadataStructure.Id,
-                    metadataStructure.Name,
-                    metadataStructure.Description,
-                    getDatasetVersionsDic(metadataStructure, datasetVersionIds),
-                    IsExportAvailable(metadataStructure)
-
-                );
-
-            #endregion
-
-            #region convert
-
-            if (SelectedDatasetIds != null && SelectedDatasetIds != "")
+            try
             {
+                datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
 
-                string[] ids = SelectedDatasetIds.Split(',');
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(Convert.ToInt64(Id));
 
-                foreach (string id in ids)
+                MetadataStructureModel model = new MetadataStructureModel(
+                        metadataStructure.Id,
+                        metadataStructure.Name,
+                        metadataStructure.Description,
+                        getDatasetVersionsDic(metadataStructure, datasetVersionIds),
+                        IsExportAvailable(metadataStructure)
+
+                    );
+
+                #endregion
+
+                #region convert
+
+                if (SelectedDatasetIds != null && SelectedDatasetIds != "")
                 {
-                    string path = Export(Convert.ToInt64(id));
-                    model.AddMetadataPath(Convert.ToInt64(id), path);
+
+                    string[] ids = SelectedDatasetIds.Split(',');
+
+                    foreach (string id in ids)
+                    {
+                        string path = Export(Convert.ToInt64(id));
+                        model.AddMetadataPath(Convert.ToInt64(id), path);
+                    }
                 }
+
+                #endregion
+
+                return PartialView("_metadataStructureView", model);
             }
-
-            #endregion
-
-            return PartialView("_metadataStructureView", model);
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         public ActionResult Download(string path)
@@ -118,8 +129,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private string Export(long datasetVersionId)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+            DatasetVersion datasetVersion = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(datasetVersionId);
 
             string path_mapping_file = "";
             try
@@ -159,27 +169,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             List<DatasetVersionModel> datasetVersions = new List<DatasetVersionModel>();
             DatasetManager datasetManager = new DatasetManager();
-
-            // gets all the dataset versions that their Id is in the datasetVersionIds and they are using a specific metadata structure as indicated by metadataStructure parameter
-            var q = datasetManager.DatasetVersionRepo.Get(p => datasetVersionIds.Contains(p.Id) &&
-                                                          p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
-
-
-            foreach (DatasetVersion datasetVersion in q)
+            try
             {
-                if (datasetManager.IsDatasetCheckedIn(datasetVersion.Dataset.Id))
+                using (var uow = this.GetUnitOfWork())
                 {
-                    datasetVersions.Add(
-                        new DatasetVersionModel
+                    // gets all the dataset versions that their Id is in the datasetVersionIds and they are using a specific metadata structure as indicated by metadataStructure parameter
+                    var q = uow.GetReadOnlyRepository<DatasetVersion>().Get(p => datasetVersionIds.Contains(p.Id) &&
+                                                                  p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
+
+                    foreach (DatasetVersion datasetVersion in q)
+                    {
+                        if (datasetManager.IsDatasetCheckedIn(datasetVersion.Dataset.Id))
                         {
-                            DatasetVersionId = datasetVersion.Id,
-                            DatasetId = datasetVersion.Dataset.Id,
-                            Title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title),
-                            MetadataDownloadPath = OutputMetadataManager.GetMetadataPath(datasetVersion.Id)
-                        });
+                            uow.GetReadOnlyRepository<DatasetVersion>().Load(datasetVersion.ContentDescriptors);
+                            datasetVersions.Add(
+                            new DatasetVersionModel
+                            {
+                                DatasetVersionId = datasetVersion.Id,
+                                DatasetId = datasetVersion.Dataset.Id,
+                                Title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title),
+                                MetadataDownloadPath = OutputMetadataManager.GetMetadataPath(datasetVersion.ContentDescriptors)
+                            });
+                        }
+                    }
+                    return datasetVersions;
                 }
             }
-            return datasetVersions;
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         private bool IsExportAvailable(MetadataStructure metadataStructure)

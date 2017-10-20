@@ -20,6 +20,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         private bool _includePrimaryData = false;
 
         private BexisIndexer bexisIndexer = new BexisIndexer();
+        private XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
 
         public List<SearchAttribute> Get()
         {
@@ -140,7 +141,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
         {
-            return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(id);
+            return xmlMetadataHelper.GetAllXPathsOfSimpleAttributes(id);
         }
 
         public void Set(List<SearchAttribute> SearchAttributeList)
