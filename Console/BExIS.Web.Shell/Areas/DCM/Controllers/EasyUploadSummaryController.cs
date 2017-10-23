@@ -36,8 +36,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private EasyUploadTaskManager TaskManager;
         private FileStream Stream;
         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
-
+        
         private static IDictionary<Guid, int> tasks = new Dictionary<Guid, int>();
 
         [HttpGet]
