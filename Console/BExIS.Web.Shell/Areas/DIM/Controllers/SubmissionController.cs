@@ -74,9 +74,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 model.Brokers = Brokers.Select(b => b.Name).ToList();
                 model.DatasetId = datasetId;
 
-
-
-
                 //Todo Download Rigths -> currently set read rigths for this case
                 model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
                     typeof(Dataset), datasetId, RightType.Read);

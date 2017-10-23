@@ -52,8 +52,8 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
             var featurePermissionManager = new FeaturePermissionManager();
 
-            if (!featurePermissionManager.Exists(null, featurePermissionFeature, PermissionType.Grant))
-                featurePermissionManager.Create(null, featurePermissionFeature);
+            if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
+                featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);
         }
     }
 }

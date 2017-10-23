@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -33,8 +34,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
-            var datasetIds = dm.GetDatasetLatestIds();
-            return datasetIds;
+            try
+            {
+                var datasetIds = dm.GetDatasetLatestIds();
+                return datasetIds;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         // GET: api/data/5
@@ -53,47 +61,55 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
 
-            OutputDataManager ioOutputDataManager = new OutputDataManager();
-
-            DatasetManager dm = new DatasetManager();
-            DatasetVersion version = dm.GetDatasetLatestVersion(id);
-
-            string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
-
-            // check the data sturcture type ...
-            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            DatasetManager datasetManager = new DatasetManager();
+            try
             {
-                // apply selection and projection
-                //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
-                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(dm, version, title, true);
 
-                if (!string.IsNullOrEmpty(selection))
+                OutputDataManager ioOutputDataManager = new OutputDataManager();
+
+                DatasetVersion version = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(id);
+
+                string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
+
+                // check the data sturcture type ...
+                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                }
+                    // apply selection and projection
+                    //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
+                    DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(datasetManager, version, title, true);
 
-                if (!string.IsNullOrEmpty(projection))
+                    if (!string.IsNullOrEmpty(selection))
+                    {
+                        dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                    }
+
+                    if (!string.IsNullOrEmpty(projection))
+                    {
+                        // make the header names upper case to make them case insensitive
+                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                    }
+
+                    DatasetModel model = new DatasetModel();
+                    model.DataTable = dt;
+
+                    var response = Request.CreateResponse();
+                    response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+
+
+                    //set headers on the "response"
+                    return response;
+
+                    //return model;
+
+                }
+                else
                 {
-                    // make the header names upper case to make them case insensitive
-                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                    return Request.CreateResponse();
                 }
-
-                DatasetModel model = new DatasetModel();
-                model.DataTable = dt;
-
-                var response = Request.CreateResponse();
-                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-
-
-                //set headers on the "response"
-                return response;
-
-                //return model;
-
             }
-            else
+            finally
             {
-                return Request.CreateResponse();
+                datasetManager.Dispose();
             }
         }
 

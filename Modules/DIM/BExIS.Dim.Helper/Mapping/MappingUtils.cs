@@ -3,7 +3,6 @@ using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Xml.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -48,18 +47,18 @@ namespace BExIS.Dim.Helpers.Mapping
                 return tmp;
             }
 
-                /*
-             *e.g. 
-             * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
-             * 
-             * linkt to 
-             * 
-             * Person/FirstName     David
-             * Person/SecondName    Blaa
-             * 
-             * 
-             * => all mappings know must be only the Person/FirstName & Person/SecondName
-             */
+            /*
+         *e.g. 
+         * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
+         * 
+         * linkt to 
+         * 
+         * Person/FirstName     David
+         * Person/SecondName    Blaa
+         * 
+         * 
+         * => all mappings know must be only the Person/FirstName & Person/SecondName
+         */
 
 
         }
@@ -168,45 +167,52 @@ namespace BExIS.Dim.Helpers.Mapping
             //grab values from metadata where targetelementid and targetType is mapped
             // e.g. get title from metadata
 
-            MappingManager _mappingManager = new MappingManager();
+            MappingManager mappingManager = new MappingManager();
 
-            List<string> tmp = new List<string>();
-
-            var mappings = _mappingManager.GetMappings().Where(m =>
-                m.Target.ElementId.Equals(targetElementId) &&
-                m.Target.Type.Equals(targetType) &&
-                getRootMapping(m) != null &&
-                getRootMapping(m).Source.ElementId.Equals(sourceRootId) &&
-                getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
-                m.Level.Equals(2));
-
-
-            foreach (var m in mappings)
+            try
             {
+                List<string> tmp = new List<string>();
 
-                Dictionary<string, string> AttrDic = new Dictionary<string, string>();
+                var mappings = mappingManager.GetMappings().Where(m =>
+                    m.Target.ElementId.Equals(targetElementId) &&
+                    m.Target.Type.Equals(targetType) &&
+                    getRootMapping(m) != null &&
+                    getRootMapping(m).Source.ElementId.Equals(sourceRootId) &&
+                    getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
+                    m.Level.Equals(2));
 
-                if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                    m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+
+                foreach (var m in mappings)
                 {
-                    AttrDic.Add("id", m.Source.ElementId.ToString());
-                    AttrDic.Add("name", m.Source.Name);
-                    AttrDic.Add("type", "MetadataAttributeUsage");
 
-                    //find sourceelement in xmldocument
-                    IEnumerable<XElement> elements = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+                    Dictionary<string, string> AttrDic = new Dictionary<string, string>();
 
-                    foreach (var element in elements)
+                    if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                        m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
                     {
-                        tmp.Add(element.Value);
+                        AttrDic.Add("id", m.Source.ElementId.ToString());
+                        AttrDic.Add("name", m.Source.Name);
+                        AttrDic.Add("type", "MetadataAttributeUsage");
+
+                        //find sourceelement in xmldocument
+                        IEnumerable<XElement> elements = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+
+                        foreach (var element in elements)
+                        {
+                            tmp.Add(element.Value);
+                        }
                     }
+
+
+
                 }
 
-
-
+                return tmp;
             }
-
-            return tmp;
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
 

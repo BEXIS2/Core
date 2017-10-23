@@ -20,62 +20,79 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
-            var datasetIds = dm.GetDatasetLatestIds();
 
-            List<MetadataViewObject> tmp = new List<MetadataViewObject>();
-
-            foreach (var id in datasetIds)
+            try
             {
-                MetadataViewObject mvo = new MetadataViewObject();
-                mvo.DatasetId = id;
 
-                List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                var datasetIds = dm.GetDatasetLatestIds();
 
-                mvo.Format = t.ToArray();
+                List<MetadataViewObject> tmp = new List<MetadataViewObject>();
 
-                tmp.Add(mvo);
+                foreach (var id in datasetIds)
+                {
+                    MetadataViewObject mvo = new MetadataViewObject();
+                    mvo.DatasetId = id;
+
+                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+
+                    mvo.Format = t.ToArray();
+
+                    tmp.Add(mvo);
+                }
+
+                return tmp;
             }
-
-            return tmp;
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         // GET: api/Metadata/5
         // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
         public HttpResponseMessage Get(int id)
         {
-            string convertTo = "";
+            DatasetManager dm = new DatasetManager();
+
             try
             {
-                convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            }
-            catch (Exception ex) { }
-
-            DatasetManager dm = new DatasetManager();
-            DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
-            XmlDocument xmldoc = dsv.Metadata;
-
-            if (string.IsNullOrEmpty(convertTo))
-            {
-                //return xmldoc;
-                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
-                return response;
-            }
-            else
-            {
-
+                string convertTo = "";
                 try
                 {
-                    XmlDocument newXmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
-                        convertTo);
+                    convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+                }
+                catch (Exception ex) { }
 
-                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+                DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+                XmlDocument xmldoc = dsv.Metadata;
 
+                if (string.IsNullOrEmpty(convertTo))
+                {
+                    //return xmldoc;
+                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
                     return response;
                 }
-                catch (Exception ex)
+                else
                 {
-                    return null;
+
+                    try
+                    {
+                        XmlDocument newXmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
+                            convertTo);
+
+                        HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
                 }
+            }
+            finally
+            {
+                dm.Dispose();
             }
 
         }
