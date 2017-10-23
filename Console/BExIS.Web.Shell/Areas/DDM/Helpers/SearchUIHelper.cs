@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 // Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BExIS.Dlm.Services.Helpers.DatasetConvertor. 
@@ -20,7 +20,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class SearchUIHelper
     {
-        private static DataStructureManager dsm = new DataStructureManager();
 
         public static string ConvertXmlToHtml(string m, string xslPath = "")
         {
@@ -49,104 +48,111 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
         }
 
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds)
+        public DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
-            DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+            DatasetManager datasetManager = new DatasetManager();
 
-            if (dsVersionTupleIds != null && sds != null)
+            try
             {
-                foreach (var vu in sds.Variables)
+                StructuredDataStructure sds = this.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(dsv.Dataset.DataStructure.Id);
+
+                if (dsVersionTupleIds != null && sds != null)
                 {
-                    // use vu.Label or vu.DataAttribute.Name
-                    DataColumn col = dt.Columns.Add("ID" + vu.Id.ToString()); // or DisplayName also
-                    col.Caption = vu.Label;
-
-                    switch (vu.DataAttribute.DataType.SystemType)
+                    foreach (var vu in sds.Variables)
                     {
-                        case "String":
-                            {
-                                col.DataType = Type.GetType("System.String");
-                                break;
-                            }
+                        // use vu.Label or vu.DataAttribute.Name
+                        DataColumn col = dt.Columns.Add("ID" + vu.Id.ToString()); // or DisplayName also
+                        col.Caption = vu.Label;
 
-                        case "Double":
-                            {
-                                col.DataType = Type.GetType("System.Double");
-                                break;
-                            }
-
-                        case "Int16":
-                            {
-                                col.DataType = Type.GetType("System.Int16");
-                                break;
-                            }
-
-                        case "Int32":
-                            {
-                                col.DataType = Type.GetType("System.Int32");
-                                break;
-                            }
-
-                        case "Int64":
-                            {
-                                col.DataType = Type.GetType("System.Int64");
-                                break;
-                            }
-
-                        case "Decimal":
-                            {
-                                col.DataType = Type.GetType("System.Decimal");
-                                break;
-                            }
-
-                        case "DateTime":
-                            {
-                                col.DataType = Type.GetType("System.DateTime");
-                                break;
-                            }
-
-                        default:
-                            {
-                                col.DataType = Type.GetType("System.String");
-                                break;
-                            }
-                    }
-
-
-
-                    if (vu.Parameters.Count > 0)
-                    {
-                        foreach (var pu in vu.Parameters)
+                        switch (vu.DataAttribute.DataType.SystemType)
                         {
-                            DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
-                            col2.Caption = pu.Label;
+                            case "String":
+                                {
+                                    col.DataType = Type.GetType("System.String");
+                                    break;
+                                }
 
+                            case "Double":
+                                {
+                                    col.DataType = Type.GetType("System.Double");
+                                    break;
+                                }
+
+                            case "Int16":
+                                {
+                                    col.DataType = Type.GetType("System.Int16");
+                                    break;
+                                }
+
+                            case "Int32":
+                                {
+                                    col.DataType = Type.GetType("System.Int32");
+                                    break;
+                                }
+
+                            case "Int64":
+                                {
+                                    col.DataType = Type.GetType("System.Int64");
+                                    break;
+                                }
+
+                            case "Decimal":
+                                {
+                                    col.DataType = Type.GetType("System.Decimal");
+                                    break;
+                                }
+
+                            case "DateTime":
+                                {
+                                    col.DataType = Type.GetType("System.DateTime");
+                                    break;
+                                }
+
+                            default:
+                                {
+                                    col.DataType = Type.GetType("System.String");
+                                    break;
+                                }
+                        }
+
+
+
+                        if (vu.Parameters.Count > 0)
+                        {
+                            foreach (var pu in vu.Parameters)
+                            {
+                                DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
+                                col2.Caption = pu.Label;
+
+                            }
                         }
                     }
+
+
+                    foreach (var id in dsVersionTupleIds)
+                    {
+                        DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(id)).FirstOrDefault();
+                        dataTuple.Materialize();
+                        dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple, sds));
+                    }
                 }
 
-                DatasetManager datasetManager = new DatasetManager();
-
-                foreach (var id in dsVersionTupleIds)
-                {
-                    DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(id)).FirstOrDefault();
-                    dataTuple.Materialize();
-                    dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple, sds));
-                }
+                return dt;
             }
-
-            return dt;
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<AbstractTuple> dsVersionTuples)
+        public DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<AbstractTuple> dsVersionTuples)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
-            DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+
+            StructuredDataStructure sds = this.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(dsv.Dataset.DataStructure.Id);
 
             XmlDocument doc = new XmlDocument();
             doc = (XmlDocument)sds.Extra;
@@ -236,6 +242,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
 
             return dt;
+
         }
 
         /// <summary>
@@ -371,7 +378,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             return dr;
         }
 
-        public static DataTable ConvertStructuredDataStructureToDataTable(StructuredDataStructure sds)
+        public DataTable ConvertStructuredDataStructureToDataTable(StructuredDataStructure sds)
         {
             DataTable dt = new DataTable();
 
@@ -385,56 +392,58 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             dt.Columns.Add("Unit");
             dt.Columns.Add("DataType");
 
-            DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure datastructure = dsm.StructuredDataStructureRepo.Get(sds.Id);
-            if (datastructure != null)
+            using (var uow = this.GetUnitOfWork())
             {
-                List<Variable> variables = SortVariablesOnDatastructure(datastructure.Variables.ToList(), datastructure);
-
-                foreach (Variable var in variables)
+                StructuredDataStructure datastructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(sds.Id);
+                if (datastructure != null)
                 {
-                    Variable sdvu = dsm.VariableRepo.Get(var.Id);
+                    List<Variable> variables = SortVariablesOnDatastructure(datastructure.Variables.ToList(), datastructure);
 
-                    DataRow dr = dt.NewRow();
-                    if (sdvu.Label != null)
-                        dr["VariableName"] = sdvu.Label;
-                    else
-                        dr["VariableName"] = "n/a";
+                    foreach (Variable var in variables)
+                    {
+                        Variable sdvu = uow.GetReadOnlyRepository<Variable>().Get(var.Id);
 
-                    dr["Optional"] = sdvu.IsValueOptional.ToString();
+                        DataRow dr = dt.NewRow();
+                        if (sdvu.Label != null)
+                            dr["VariableName"] = sdvu.Label;
+                        else
+                            dr["VariableName"] = "n/a";
 
-                    if (sdvu.Label != null)
-                        dr["VariableId"] = sdvu.Id;
-                    else
-                        dr["VariableId"] = "n/a";
+                        dr["Optional"] = sdvu.IsValueOptional.ToString();
 
-                    if (sdvu.DataAttribute.DataType != null)
-                        dr["ShortName"] = sdvu.DataAttribute.ShortName;
-                    else
-                        dr["ShortName"] = "n/a";
+                        if (sdvu.Label != null)
+                            dr["VariableId"] = sdvu.Id;
+                        else
+                            dr["VariableId"] = "n/a";
 
-                    //if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
-                    //else dr["Parameters"] = "n/a";
+                        if (sdvu.DataAttribute.DataType != null)
+                            dr["ShortName"] = sdvu.DataAttribute.ShortName;
+                        else
+                            dr["ShortName"] = "n/a";
 
-                    if (sdvu.Description != null || sdvu.Description != "")
-                        dr["Description"] = sdvu.Description;
-                    else
-                        dr["Description"] = "n/a";
+                        //if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
+                        //else dr["Parameters"] = "n/a";
 
-                    if (sdvu.Unit != null)
-                        dr["Unit"] = sdvu.Unit.Name;
-                    else
-                        dr["Unit"] = "n/a";
+                        if (sdvu.Description != null || sdvu.Description != "")
+                            dr["Description"] = sdvu.Description;
+                        else
+                            dr["Description"] = "n/a";
 
-                    if (sdvu.DataAttribute.DataType != null)
-                        dr["DataType"] = sdvu.DataAttribute.DataType.Name;
-                    else
-                        dr["DataType"] = "n/a";
+                        if (sdvu.Unit != null)
+                            dr["Unit"] = sdvu.Unit.Name;
+                        else
+                            dr["Unit"] = "n/a";
 
-                    dt.Rows.Add(dr);
+                        if (sdvu.DataAttribute.DataType != null)
+                            dr["DataType"] = sdvu.DataAttribute.DataType.Name;
+                        else
+                            dr["DataType"] = "n/a";
+
+                        dt.Rows.Add(dr);
+                    }
                 }
+                return dt;
             }
-            return dt;
         }
 
         private string GetParameterNamesAsString(ICollection<Parameter> vpuList)

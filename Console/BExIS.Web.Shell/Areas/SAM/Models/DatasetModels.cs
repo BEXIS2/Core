@@ -13,10 +13,14 @@ namespace BExIS.Modules.Sam.UI.Models
 
         public static DatasetGridRowModel Convert(DatasetVersion datasetVersion, bool isPublic)
         {
+
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
             return new DatasetGridRowModel()
             {
                 Id = datasetVersion.Dataset.Id,
-                Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
+                Title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title),
                 IsPublic = isPublic
             };
         }

@@ -1,6 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Entities.Publication;
-using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Mapping;
@@ -23,12 +22,17 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
-    public class SubmissionController : Controller
+    public class SubmissionController : BaseController
     {
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
         // GET: Submission
 
         #region submission
@@ -58,69 +62,76 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             PublicationManager publicationManager = new PublicationManager();
             DatasetManager datasetManager = new DatasetManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             ShowPublishDataModel model = new ShowPublishDataModel();
 
-
-            Dataset dataset = datasetManager.GetDataset(datasetId);
-
-            List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
-
-            model.Brokers = Brokers.Select(b => b.Name).ToList();
-            model.DatasetId = datasetId;
-
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-
-            //Todo Download Rigths -> currently set read rigths for this case
-            model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
-                typeof(Dataset), datasetId, RightType.Read);
-            model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
-                typeof(Dataset), datasetId, RightType.Write);
-
-
-            List<long> versions = new List<long>();
-            if (datasetVersionId == -1)
+            try
             {
-                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-                datasetVersionId = datasetVersion.Id;
-                versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
+                Dataset dataset = datasetManager.GetDataset(datasetId);
 
-                model.MetadataIsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ? true : false;
-            }
+                List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
-            //todo check if datasetversion id is correct
-            List<Publication> publications =
-                publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
+                model.Brokers = Brokers.Select(b => b.Name).ToList();
+                model.DatasetId = datasetId;
 
-            foreach (var pub in publications)
-            {
-                Broker broker = publicationManager.BrokerRepo.Get(pub.Broker.Id);
-                Repository repo = null;
+                //Todo Download Rigths -> currently set read rigths for this case
+                model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
+                    typeof(Dataset), datasetId, RightType.Read);
+                model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
+                    typeof(Dataset), datasetId, RightType.Write);
 
-                if (pub.Repository != null)
+
+                List<long> versions = new List<long>();
+                if (datasetVersionId == -1)
                 {
-                    repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                    datasetVersionId = datasetVersion.Id;
+                    versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
+
+                    if (datasetVersion.StateInfo != null)
+                        model.MetadataIsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ? true : false;
                 }
-                string dataRepoName = repo == null ? "" : repo.Name;
 
+                //todo check if datasetversion id is correct
+                List<Publication> publications =
+                    publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
 
-                List<string> repos =
-                    GetRepos(dataset.MetadataStructure.Id, broker.Id, publicationManager).Select(r => r.Name).ToList();
-
-                model.Publications.Add(new PublicationModel()
+                foreach (var pub in publications)
                 {
-                    Broker = new BrokerModel(broker.Name, repos),
-                    DataRepo = dataRepoName,
-                    DatasetVersionId = pub.DatasetVersion.Id,
-                    CreationDate = pub.Timestamp,
-                    ExternalLink = pub.ExternalLink,
-                    FilePath = pub.FilePath,
-                    Status = pub.Status,
+                    Broker broker = publicationManager.BrokerRepo.Get(pub.Broker.Id);
+                    Repository repo = null;
 
-                });
+                    if (pub.Repository != null)
+                    {
+                        repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
+                    }
+                    string dataRepoName = repo == null ? "" : repo.Name;
+
+
+                    List<string> repos =
+                        GetRepos(dataset.MetadataStructure.Id, broker.Id, publicationManager).Select(r => r.Name).ToList();
+
+                    model.Publications.Add(new PublicationModel()
+                    {
+                        Broker = new BrokerModel(broker.Name, repos),
+                        DataRepo = dataRepoName,
+                        DatasetVersionId = pub.DatasetVersion.Id,
+                        CreationDate = pub.Timestamp,
+                        ExternalLink = pub.ExternalLink,
+                        FilePath = pub.FilePath,
+                        Status = pub.Status,
+
+                    });
+                }
+
+                return model;
             }
-
-            return model;
+            finally
+            {
+                publicationManager.Dispose();
+                datasetManager.Dispose();
+                entityPermissionManager.Dispose();
+            }
         }
 
         public ActionResult LoadDataRepoRequirementView(string datarepo, long datasetid)
@@ -130,63 +141,72 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             //get broker
             PublicationManager publicationManager = new PublicationManager();
-
-
             // datasetversion
             DatasetManager dm = new DatasetManager();
-            long version = dm.GetDatasetLatestVersion(datasetid).Id;
-            model.DatasetVersionId = version;
-            if (publicationManager.BrokerRepo.Get().Any(d => d.Name.ToLower().Equals(datarepo.ToLower())))
+
+            try
             {
-                Broker broker =
-                    publicationManager.BrokerRepo.Get()
-                        .Where(d => d.Name.ToLower().Equals(datarepo.ToLower()))
-                        .FirstOrDefault();
-
-                Publication publication =
-                    publicationManager.PublicationRepo.Get()
-                        .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
-                        .FirstOrDefault();
 
 
-                if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
-                    && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
+                long version = dm.GetDatasetLatestVersionId(datasetid);
+                model.DatasetVersionId = version;
+                if (publicationManager.BrokerRepo.Get().Any(d => d.Name.ToLower().Equals(datarepo.ToLower())))
                 {
-                    model.Exist = true;
+                    Broker broker =
+                        publicationManager.BrokerRepo.Get()
+                            .Where(d => d.Name.ToLower().Equals(datarepo.ToLower()))
+                            .FirstOrDefault();
 
-                }
-                else
-                {
-
-                    //if convertion check ist needed
-                    //get all export attr from metadata structure
-                    List<string> exportNames =
-                        XmlDatasetHelper.GetAllTransmissionInformation(datasetid,
-                            TransmissionType.mappingFileExport, AttributeNames.name).ToList();
-                    if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
+                    Publication publication =
+                        publicationManager.PublicationRepo.Get()
+                            .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
+                            .FirstOrDefault();
 
 
-                    // Validate
-                    model.metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
-                        TransmissionType.mappingFileExport, datarepo);
-
-
-                    #region primary Data
-
-                    if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
-                        broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
-                        broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
-                        String.IsNullOrEmpty(broker.PrimaryDataFormat))
+                    if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
+                        && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
                     {
-                        model.IsDataConvertable = true;
+                        model.Exist = true;
+
+                    }
+                    else
+                    {
+
+                        //if convertion check ist needed
+                        //get all export attr from metadata structure
+                        List<string> exportNames =
+                            xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
+                                TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                        if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
+
+
+                        // Validate
+                        model.metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
+                            TransmissionType.mappingFileExport, datarepo);
+
+
+                        #region primary Data
+
+                        if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                            broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                            broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                            String.IsNullOrEmpty(broker.PrimaryDataFormat))
+                        {
+                            model.IsDataConvertable = true;
+                        }
+
+                        #endregion
                     }
 
-                    #endregion
                 }
 
+                return PartialView("_dataRepositoryRequirementsView", model);
             }
-
-            return PartialView("_dataRepositoryRequirementsView", model);
+            finally
+            {
+                publicationManager.Dispose();
+                dm.Dispose();
+            }
         }
 
         public JsonResult CheckExportPossibility(string datarepo, long datasetid)
@@ -242,7 +262,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //if convertion check ist needed
                         //get all export attr from metadata structure
                         List<string> exportNames =
-                            XmlDatasetHelper.GetAllTransmissionInformation(datasetid,
+                            xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
                                 TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                         if (exportNames.Contains(broker.MetadataFormat))
                             isMetadataConvertable = true;
@@ -305,13 +325,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             //}
 
 
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetversionid);
+            DatasetVersion datasetVersion = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(datasetversionid);
             long datasetId = datasetVersion.Dataset.Id;
 
-            SubmissionManager publishingManager = new SubmissionManager();
-
-            //string zipName = publishingManager.GetZipFileName(datasetId, datasetversionid);
             Tuple<string, string> tmp = PrepareData(datasetversionid, datasetId, datarepo, broker);
 
             string filepath = tmp.Item1;
@@ -576,7 +592,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
 
                                     //Store ro in db
-                                    string title = XmlDatasetHelper.GetInformation(datasetVersion,
+                                    string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id,
                                         NameAttributeValues.title);
                                     publicationManager.CreatePublication(datasetVersion, broker, title,
                                         gfbioRoStatus.researchobjectid, zipfilepath, "",
@@ -611,7 +627,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
 
-                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
                             "no status available");
                         #endregion
@@ -625,7 +641,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
-                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                         publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
                             "created");
 
