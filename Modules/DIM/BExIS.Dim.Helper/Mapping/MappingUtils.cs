@@ -2,66 +2,65 @@
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
+using BExIS.Xml.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
     public class MappingUtils
     {
 
-        public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType, string value = "")
+        #region GET FROM SYSTEM
+
+
+        /// <summary>
+        /// e.g.
+        /// targetElementId : 3
+        /// targetType : nested usage
+        /// value search
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetType"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType,
+            string value = "")
         {
-            long destinationElementRootId = 0;
-            LinkElementType destinationType = LinkElementType.System;
 
-            MappingManager _mappingManager = new MappingManager();
-
-            List<string> tmp = new List<string>();
-
-            //getAll mappings
-            var mappings = _mappingManager.GetMappings().Where(m =>
-                m.Target.ElementId.Equals(targetElementId) &&
-                m.Target.Type.Equals(targetType));
-
-            List<Entities.Mapping.Mapping> mappingsForDestiantion = new List<Entities.Mapping.Mapping>();
-
-            //get All mappings for the destination
-            foreach (var mapping in mappings)
+            //get all mapppings where target is mapped
+            // LinkElementType.PartyCustomType is set because of the function name
+            // all mapped attributes are LinkElementType.PartyCustomType in this case
+            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
             {
-                LinkElement root = GetIdOfRoot(mapping.Source);
-                if (root != null && root.ElementId.Equals(destinationElementRootId) &&
-                     root.Type.Equals(destinationType))
-                    mappingsForDestiantion.Add(mapping);
+                List<string> tmp = new List<string>();
+                var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                    .Where(m =>
+                        m.Target.ElementId.Equals(targetElementId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                    ).ToList();
+                tmp = getAllValuesFromSystem(mappings, value);
+                return tmp;
             }
 
             /*
-             *e.g. 
-             * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
-             * 
-             * linkt to 
-             * 
-             * Person/FirstName     David
-             * Person/SecondName    Blaa
-             * 
-             * 
-             * => all mappings know must be opnly the Person/FirstName & Person/SecondName
-             */
+         *e.g. 
+         * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
+         * 
+         * linkt to 
+         * 
+         * Person/FirstName     David
+         * Person/SecondName    Blaa
+         * 
+         * 
+         * => all mappings know must be only the Person/FirstName & Person/SecondName
+         */
 
 
-            tmp = GetAllValuesFromSystem(mappingsForDestiantion, value);
-
-
-
-            return tmp;
-        }
-
-        private static LinkElement GetIdOfRoot(LinkElement element)
-        {
-            if (element.Parent == null) return element;
-
-            return GetIdOfRoot(element.Parent);
         }
 
         /// <summary>
@@ -70,57 +69,163 @@ namespace BExIS.Dim.Helpers.Mapping
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
-        private static List<string> GetAllValuesFromSystem(List<Entities.Mapping.Mapping> mappings, string value)
+        private static List<string> getAllValuesFromSystem(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
         {
+            MappingManager _mappingManager = new MappingManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
 
             List<string> tmp = new List<string>();
 
-            if (mappings.Any())
+            IEnumerable<long> parentIds = mappings.Where(m => m.Parent != null).Select(m => m.Parent.Id).Distinct();
+
+            IEnumerable<Entities.Mapping.Mapping> selectedMappings;
+
+            // all Masks are the same
+            string mask = "";
+            PartyType partyType = null;
+            List<Party> parties = null;
+
+            foreach (var pId in parentIds)
             {
-                // all mappings belong to the same parent
-                long parentTypeId = mappings.FirstOrDefault().Source.Parent.ElementId;
+                Entities.Mapping.Mapping parentMapping = _mappingManager.GetMapping(pId);
 
-                // all Masks are the same
-                string mask = mappings.FirstOrDefault().Target.Mask;
+                selectedMappings =
+                    mappings.Where(m => m.Parent != null && m.Parent.Id.Equals(pId));
 
-                PartyType partyType = partyTypeManager.Repo.Get(parentTypeId);
-                List<Party> parties = partyManager.Repo.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
 
-                foreach (var p in parties)
+                long parentTypeId = parentMapping.Source.ElementId;
+                long sourceId = selectedMappings.FirstOrDefault().Source.ElementId;
+
+                //mappings.FirstOrDefault().TransformationRule.Mask;
+
+                if (parentTypeId == 0)
                 {
-                    mask = mappings.FirstOrDefault().Target.Mask;
-
-                    foreach (var mapping in mappings)
-                    {
-                        long attributeId = mapping.Source.ElementId;
-
-                        PartyCustomAttributeValue attrValue =
-                            partyManager.RepoCustomAttrValues.Get()
-                                .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
-                                .FirstOrDefault();
-
-
-
-
-                        List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
-                        string placeHolderName = attrValue.CustomAttribute.Name;
-
-
-                        mask = setOrReplace(mask, regExResultList, placeHolderName);
-
-
-                    }
-
-                    if (mask.ToLower().Contains(value.ToLower()))
-                        tmp.Add(mask);
+                    partyType =
+                        partyTypeManager.PartyTypeRepository.Query()
+                            .FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
+                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+                }
+                else
+                {
+                    partyType = partyTypeManager.PartyTypeRepository.Get(parentTypeId);
+                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
                 }
 
+                if (parties != null)
+                    foreach (var p in parties)
+                    {
+                        mask = mappings.FirstOrDefault().TransformationRule.Mask;
 
+                        foreach (var mapping in mappings)
+                        {
+                            long attributeId = mapping.Source.ElementId;
+
+
+                            PartyCustomAttributeValue attrValue =
+                                partyManager.PartyCustomAttributeValueRepository.Get()
+                                    .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
+                                    .FirstOrDefault();
+
+
+
+
+                            List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
+                            string placeHolderName = attrValue.CustomAttribute.Name;
+
+
+                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+
+
+                        }
+
+                        if (mask.ToLower().Contains(value.ToLower()))
+                            tmp.Add(mask);
+                    }
             }
 
             return tmp;
+        }
+
+        #endregion
+
+        #region GET FROM Specific MetadataStructure // Source 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetType"></param>
+        /// <param name="sourceRootId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static List<string> GetValuesFromMetadata(long targetElementId, LinkElementType targetType,
+            long sourceRootId, XDocument metadata)
+        {
+
+            //grab values from metadata where targetelementid and targetType is mapped
+            // e.g. get title from metadata
+
+            MappingManager mappingManager = new MappingManager();
+
+            try
+            {
+                List<string> tmp = new List<string>();
+
+                var mappings = mappingManager.GetMappings().Where(m =>
+                    m.Target.ElementId.Equals(targetElementId) &&
+                    m.Target.Type.Equals(targetType) &&
+                    getRootMapping(m) != null &&
+                    getRootMapping(m).Source.ElementId.Equals(sourceRootId) &&
+                    getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
+                    m.Level.Equals(2));
+
+
+                foreach (var m in mappings)
+                {
+
+                    Dictionary<string, string> AttrDic = new Dictionary<string, string>();
+
+                    if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                        m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        AttrDic.Add("id", m.Source.ElementId.ToString());
+                        AttrDic.Add("name", m.Source.Name);
+                        AttrDic.Add("type", "MetadataAttributeUsage");
+
+                        //find sourceelement in xmldocument
+                        IEnumerable<XElement> elements = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+
+                        foreach (var element in elements)
+                        {
+                            tmp.Add(element.Value);
+                        }
+                    }
+
+
+
+                }
+
+                return tmp;
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
+        }
+
+
+        #endregion
+
+
+        #region Helpers
+
+        private static Entities.Mapping.Mapping getRootMapping(Entities.Mapping.Mapping mapping)
+        {
+            if (mapping.Parent == null) return mapping;
+
+            return getRootMapping(mapping.Parent);
         }
 
 
@@ -164,5 +269,8 @@ namespace BExIS.Dim.Helpers.Mapping
 
             return mask;
         }
+
+        #endregion
+
     }
 }

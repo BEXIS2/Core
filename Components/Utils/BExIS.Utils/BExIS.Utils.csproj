@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml">
+      <HintPath>..\..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
       <Private>True</Private>
@@ -41,7 +44,12 @@
       <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -91,12 +99,13 @@
     <Reference Include="Vaiona.Web.Mvc.Modularity">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\QueryBuilder.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\QueryableExtensions.cs" />
-    <Compile Include="Extensions\Int32Extensions.cs" />
+    <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Models\SearchAttribute.cs" />
@@ -109,6 +118,7 @@
     <Compile Include="Models\SheetArea.cs" />
     <Compile Include="Models\SheetFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebHelpers\HtmlDisplayWithLinksFor.cs" />
     <Compile Include="WebHelpers\HtmlNavigationExtensions.cs" />
     <Compile Include="WebHelpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="WebHelpers\HtmlTenantExtensions.cs" />

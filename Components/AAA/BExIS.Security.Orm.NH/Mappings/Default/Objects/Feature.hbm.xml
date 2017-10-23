@@ -24,9 +24,9 @@
       <key column="FeatureRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.FeaturePermission, BExIS.Security.Entities" />
     </set>
-    <set name="Workflows" inverse="true" cascade="save-update" lazy="true">
+    <set name="Operations" inverse="true" cascade="save-update" lazy="true">
       <key column="FeatureRef" />
-      <one-to-many class="BExIS.Security.Entities.Objects.Workflow, BExIS.Security.Entities" />
+      <one-to-many class="BExIS.Security.Entities.Objects.Operation, BExIS.Security.Entities" />
     </set>
   </class>
 </hibernate-mapping>

@@ -9,44 +9,76 @@ using PartyX = BExIS.Dlm.Entities.Party.Party;
 
 namespace BExIS.Dlm.Services.Party
 {
-    public sealed class PartyManager
+    public sealed class PartyManager : IDisposable
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
         // Managing Party , PartyCustomAttributeValue,  PartyStatus, PartyRelationship
-        #region Attributes
-
-        public IReadOnlyRepository<PartyX> Repo { get; private set; }
-        public IReadOnlyRepository<PartyCustomAttributeValue> RepoCustomAttrValues { get; private set; }
-        public IReadOnlyRepository<PartyRelationship> RepoPartyRelationships { get; private set; }
-        #endregion
 
         #region Ctors
 
         public PartyManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<PartyX>();
-            RepoCustomAttrValues = uow.GetReadOnlyRepository<PartyCustomAttributeValue>();
-            RepoPartyRelationships = uow.GetReadOnlyRepository<PartyRelationship>();
+            _guow = this.GetIsolatedUnitOfWork();
+            PartyRepository = _guow.GetReadOnlyRepository<PartyX>();
+            PartyCustomAttributeValueRepository = _guow.GetReadOnlyRepository<PartyCustomAttributeValue>();
+            PartyRelationshipRepository = _guow.GetReadOnlyRepository<PartyRelationship>();
         }
 
+        ~PartyManager()
+        {
+            Dispose(true);
+        }
+        public IReadOnlyRepository<PartyRelationship> PartyRelationshipRepository { get; }
+        public IReadOnlyRepository<PartyCustomAttributeValue> PartyCustomAttributeValueRepository { get; }
+        public IReadOnlyRepository<PartyX> PartyRepository { get; }
+        public IQueryable<PartyX> Parties => PartyRepository.Query();
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        public void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
+        }
         #endregion
 
         #region Methods
 
         //Currently there is no need to use name due to the conversation in a project meeting on December</param>
-        public PartyX Create(PartyType partyType, string alias, string description, DateTime? startDate, DateTime? endDate, PartyStatusType initialStatusType)
+        /// <summary>
+        /// Create a party
+        /// </summary>
+        /// <param name="partyType"></param>
+        /// <param name="alias"></param>
+        /// <param name="description"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="initialStatusType"></param>
+        /// <param name="isTemp"></param>
+        /// <returns></returns>
+        public PartyX Create(PartyType partyType, string alias, string description, DateTime? startDate, DateTime? endDate, PartyStatusType initialStatusType, bool isTemp = true)
         {
             //Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(partyType != null);
             Contract.Requires(initialStatusType != null);
-            Contract.Requires(partyType.StatusTypes.Contains(initialStatusType));
+            Contract.Requires(partyType.StatusTypes.Any(cc => cc.Id == initialStatusType.Id));
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0);
             if (startDate == null)
                 startDate = DateTime.MinValue;
             if (endDate == null || endDate == DateTime.MinValue)
                 endDate = DateTime.MaxValue;
-            if (endDate <= startDate)
-                BexisException.Throw(null, "End date should be equal or greater than start date.");
+            if (startDate > endDate)
+                BexisException.Throw(null, "End date should be greater than start date.");
 
             //Create a create status
             PartyStatus initialStatus = new PartyStatus();
@@ -61,7 +93,8 @@ namespace BExIS.Dlm.Services.Party
                 Description = description,
                 StartDate = startDate.Value,
                 EndDate = endDate.Value,
-                CurrentStatus = initialStatus
+                CurrentStatus = initialStatus,
+                IsTemp = isTemp
             };
             initialStatus.Party = entity;
             entity.History = new List<PartyStatus>();
@@ -73,6 +106,39 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return (entity);
+        }
+
+        /// <summary>
+        /// create a party with custom attribute values
+        /// </summary>
+        /// <param name="partyType">Party type</param>
+        /// <param name="description">Description</param>
+        /// <param name="startDate">Party start date</param>
+        /// <param name="endDate">Party end date</param>
+        /// <param name="partyCustomAttributeValues">Custom attribute values</param>
+        /// <returns>Party</returns>
+        public PartyX Create(PartyType partyType, string description, DateTime? startDate, DateTime? endDate, Dictionary<string, string> partyCustomAttributeValues)
+        {
+            var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
+            var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
+            AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
+            return party;
+        }
+        /// <summary>
+        /// create a party with custom attribute values
+        /// </summary>
+        /// <param name="partyType">Party type</param>
+        /// <param name="description">Description</param>
+        /// <param name="startDate">Party start date</param>
+        /// <param name="endDate">Party end date</param>
+        /// <param name="partyCustomAttributeValues">Custom attribute values</param>
+        /// <returns>Party</returns>
+        public PartyX Create(PartyType partyType, string description, DateTime? startDate, DateTime? endDate, Dictionary<long, string> partyCustomAttributeValues)
+        {
+            var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
+            var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
+            AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
+            return party;
         }
 
         public bool Delete(PartyX entity)
@@ -101,10 +167,6 @@ namespace BExIS.Dlm.Services.Party
                 //remove all 'CustomAttributeValues'
                 repoCustomeAttrVal.Delete(latest.CustomAttributeValues);
                 latest.CustomAttributeValues.Clear();
-
-
-
-
                 //delete the entity
                 repo.Delete(latest);
                 // commit changes
@@ -154,29 +216,23 @@ namespace BExIS.Dlm.Services.Party
             }
             return (entity);
         }
-        
-        // Find the main fields of custom attributes and merge them for party name
-        // party name comes from the custom attribute valies which are the main fields (isMain == true)
-        private void UpdatePartyName(PartyX party)
+
+        public bool TempPartyToPermanent(int partyId)
         {
-            //TODO: change it to a trigger
-            //using (IUnitOfWork uow = this.GetBulkUnitOfWork())
-            //{
-            //    IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-            //    party = repo.Reload(party);
-            //    var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
-            //    string name = "";
-            //    if (mainValues.Length > 0)
-            //        name = string.Join(" ", mainValues);
-            //    party.Name = name;
-            //    repo.Put(party);
-            //    uow.Commit();
-            //}
+            Contract.Requires(partyId >= 0, "Provided entity must have a permanent ID");
 
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+                var party = repo.Get(partyId);
+                party.IsTemp = false;
+                repo.Put(party); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return true;
         }
+
         #endregion
-
-
 
         #region PartyRelationship
 
@@ -194,7 +250,7 @@ namespace BExIS.Dlm.Services.Party
                 startDate = DateTime.MinValue;
             if (endDate == null)
                 endDate = DateTime.MaxValue;
-            if (endDate <= startDate)
+            if (startDate > endDate)
                 BexisException.Throw(firstParty, "End date should be greater than start date.");
             var entity = new PartyRelationship()
             {
@@ -214,14 +270,14 @@ namespace BExIS.Dlm.Services.Party
                 partyRelationshipType = repoRelType.Reload(partyRelationshipType);
                 var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
                                         && (item.FirstParty != null && item.FirstParty.Id == firstParty.Id)
-                                         && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count();
+                                         && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Where(item => item.EndDate > startDate).Count();
                 //Check maximun cardinality
                 if (partyRelationshipType.MaxCardinality != -1 && partyRelationshipType.MaxCardinality <= cnt)
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
-                var alowedSource = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedSource == firstParty.PartyType || item.AllowedSource == secondParty.PartyType);
-                var alowedTarget = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedTarget == firstParty.PartyType || item.AllowedTarget == secondParty.PartyType);
+                var alowedSource = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedSource.Id == firstParty.PartyType.Id || item.AllowedSource.Id == secondParty.PartyType.Id);
+                var alowedTarget = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AllowedTarget.Id == firstParty.PartyType.Id || item.AllowedTarget.Id == secondParty.PartyType.Id);
                 if (alowedSource == null || alowedTarget == null)
                     BexisException.Throw(entity, "There is not relevant 'PartyTypePair' for these types of parties.", BexisException.ExceptionType.Add);
                 partyRelationshipType.PartyRelationships.Add(entity);
@@ -235,6 +291,8 @@ namespace BExIS.Dlm.Services.Party
         {
             Contract.Requires(!string.IsNullOrEmpty(title), "Title can not be empty");
             Contract.Requires(id >= 0, "a permanent ID is required.");
+            if (startDate > endDate)
+                BexisException.Throw(new PartyRelationship() { Id = id }, "End date should be greater than start date.");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -343,7 +401,6 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(party);
             return (entity);
         }
 
@@ -389,8 +446,11 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            UpdatePartyName(party);
             return party.CustomAttributeValues;
+        }
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
+        {
+            return AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
         }
 
         public PartyX GetParty(long id)
@@ -418,7 +478,6 @@ namespace BExIS.Dlm.Services.Party
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            UpdatePartyName(entity.Party);
             return (entity);
         }
 
@@ -426,7 +485,7 @@ namespace BExIS.Dlm.Services.Party
         {
             Contract.Requires(partyCustomAttributeValues != null && partyCustomAttributeValues.Any(), "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
-            if (!CheckUniqueness(this.Repo, partyCustomAttributeValues, partyCustomAttributeValues.First().Party))
+            if (!CheckUniqueness(this.PartyRepository, partyCustomAttributeValues, partyCustomAttributeValues.First().Party))
                 BexisException.Throw(partyCustomAttributeValues.First(), String.Format("Due the party uniqueness policy for this party type this value couldn't save"), BexisException.ExceptionType.Edit, true);
             var entity = new PartyCustomAttributeValue();
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -441,9 +500,9 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(entity.Party);
             return (entity);
         }
+
         //public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute, PartyX party, string value)
         //{
         //    Contract.Requires(partyCustomAttribute != null && party != null, "Provided entities can not be null");
@@ -466,8 +525,6 @@ namespace BExIS.Dlm.Services.Party
         //    return (entity);
 
         //}
-
-
         public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
         {
             Contract.Requires(partyCustomAttributeValue != null);
@@ -481,7 +538,6 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
         }
 
@@ -500,8 +556,6 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            if (entities.Any())
-                UpdatePartyName(entities.First().Party);
             return (true);
         }
 
@@ -526,6 +580,27 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return (entity);
+        }
+
+        /// <summary>
+        /// Filter parties by their custom attribute values and a related party type. 
+        /// </summary>
+        /// <param name="partyType">Party type</param>
+        /// <param name="customAttributeAndValues">key is CustomAttribute Name and the value is CustomAttribute Value</param>
+        /// <returns></returns>
+        public IEnumerable<PartyX> GetPartyByCustomAttributeValues(PartyType partyType, Dictionary<string, string> customAttributeAndValues)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyX> repoParty = uow.GetRepository<PartyX>();
+                IRepository<PartyCustomAttributeValue> repoPartyCustomAttributeValue = uow.GetRepository<PartyCustomAttributeValue>();
+                var parties = repoParty.Get(cc => cc.PartyType.Id == partyType.Id);
+                foreach (var customAttributeAndValue in customAttributeAndValues)
+                {
+                    parties = parties.Where(item => item.CustomAttributeValues.Where(cc => cc.Value == customAttributeAndValue.Value && cc.CustomAttribute.Name == customAttributeAndValue.Key).Any()).ToList();
+                }
+                return parties;
+            }
         }
 
         /// <summary>
@@ -584,15 +659,26 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
         }
+        public void RemovePartyUser(PartyX party, long userId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+                var partyUser = repo.Get(cc => cc.PartyId == party.Id && cc.UserId == userId);
+                if (partyUser != null)
+                    repo.Delete(partyUser);
+                uow.Commit();
+            }
+        }
 
-        //public PartyX GetPartyByUser(int userId)
-        //{
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-        //        return repo.Get(c => c.UserId == userId).Select(c=>c.Party).FirstOrDefault();
-        //    }
-        //}
+        public PartyX GetPartyByUser(long userId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
+                return repo.Get(c => c.UserId == userId).Select(c => c.Party).FirstOrDefault();
+            }
+        }
 
         public long GetUserIdByParty(int partyId)
         {
@@ -686,6 +772,46 @@ namespace BExIS.Dlm.Services.Party
                 hash += partyCustomAttr.Value;
             return hash;
         }
+
+        /// <summary>
+        /// Conver a simple string,string dictionary to PartyCustomAttribute, string
+        /// </summary>
+        /// <param name="partyCustomAttributes"></param>
+        /// <returns></returns>
+        private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<long, string> partyCustomAttributes)
+        {
+            var result = new Dictionary<PartyCustomAttribute, string>();
+            var partyTypeManager = new PartyTypeManager();
+            foreach (var partyCustomAttribute in partyCustomAttributes)
+            {
+                var customAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(partyCustomAttribute.Key);
+                if (customAttribute != null && customAttribute.Id != 0)
+                    result.Add(customAttribute, partyCustomAttribute.Value);
+                else
+                    throw new Exception("Error in custom attribute values.");
+            }
+            return result;
+        }
+        /// <summary>
+        /// Conver a simple string,string dictionary to PartyCustomAttribute, string
+        /// </summary>
+        /// <param name="partyCustomAttributes"></param>
+        /// <returns></returns>
+        private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<string, string> partyCustomAttributes, PartyType partyType)
+        {
+            var result = new Dictionary<PartyCustomAttribute, string>();
+            var partyTypeManager = new PartyTypeManager();
+            foreach (var partyCustomAttribute in partyCustomAttributes)
+            {
+                var customAttribiute = partyTypeManager.PartyCustomAttributeRepository.Get(cc => cc.Name == partyCustomAttribute.Key && cc.PartyType == partyType).FirstOrDefault();
+                if (customAttribiute == null)
+                    BexisException.Throw(customAttribiute, "There is no custom attribute with name of " + partyCustomAttribute.Key + " for this party type!");
+                result.Add(customAttribiute, partyCustomAttribute.Value);
+            }
+            return result;
+        }
+
+
         #endregion privateMethod
     }
 }

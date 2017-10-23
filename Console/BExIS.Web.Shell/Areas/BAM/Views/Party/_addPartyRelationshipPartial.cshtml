@@ -1,0 +1,170 @@
+﻿@model List<BExIS.Dlm.Entities.Party.PartyRelationshipType>
+@{ var hasParty = false;
+    var sourceParty = (BExIS.Dlm.Entities.Party.Party)ViewBag.sourceParty;
+}
+<h2>Relationships:</h2>
+<div style="max-height:420px;overflow:auto;">
+    <form action="/BAM/Party/CreatePartyRelationships" method="post" id="frmRelationship">
+        <input type="hidden" name="partyId" id="PartyRelationWindowPartyId" value="" />
+        @*Find all the allowed partyRelationType*@
+        @foreach (var partyRelationType in Model)
+        {
+            if (!partyRelationType.AssociatedPairs.Any(item => item.AllowedTarget.Parties.Any()))
+            {
+                continue;
+            }
+            else
+            {
+                hasParty = true;
+
+            }
+            var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" onclick="togglePartyRelDetail(@partyRelationType.Id,this)" @(cntRelations >= partyRelationType.MaxCardinality && (partyRelationType.MaxCardinality != -1) ? "disabled" : "") class="chkPartyRelationshipType" /><label>
+                            <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3>
+                        </label>
+
+                        @if (partyRelationType.MaxCardinality != -1)
+                        {
+                            @Html.Raw("(<span style=" + (cntRelations >= partyRelationType.MaxCardinality ? "color:red;" : "") + ">" + cntRelations + " of " + partyRelationType.MaxCardinality + "</span>)");
+                        }
+                        <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
+                    </td>
+                </tr>
+                @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
+                {
+                    <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                        <td>
+                            <label>
+                                <b> @partyTypePair.Title</b>
+                            </label>
+                        </td>
+                        <td style="min-width:300px;">
+                            <table>
+                                @foreach (var party in partyTypePair.AllowedTarget.Parties)
+                                {
+                                    <tr>
+                                        <td class="partyRelationship">
+                                            <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@party.StartDate" endDate="@party.EndDate" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
+                                            <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        @if (hasParty)
+        {
+            <div class="bx-footer right" style="text-align:left;">
+                <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Save</button>
+            </div>
+        }
+        else
+        {
+            <div id="divRelationshipNotFoundTitle">There is not any allowed related parties for making relationship!</div>
+        }
+    </form>
+</div>
+<script type="text/javascript">
+    function togglePartyRelDetail(partyRelationTypeId, checkboxElement) {
+        if ($(checkboxElement).is(":checked"))
+            $('.PartyRelationTypeDetails_' + partyRelationTypeId).show();
+        else {
+            $('.PartyRelationTypeDetails_' + partyRelationTypeId + '  input[type=checkbox]').attr('checked', false);
+            $('.PartyRelationTypeDetails_' + partyRelationTypeId + ' .divPartyRelationship').html('');
+            $('.PartyRelationTypeDetails_' + partyRelationTypeId).hide();
+        }
+    }
+    function checkDateRange() {
+        $thisElement = $(this);
+        $parentElement = $thisElement.closest(".divPartyRelationship");
+        $warningElement = $parentElement.find(".dateWarning");
+        startDate = new Date($parentElement.find("[id*='StartDate']").val());
+        endDate = new Date($parentElement.find("[id*='EndDate']").val());
+        targetStartDate = new Date($thisElement.closest(".divPartyRelationship").attr("startDate"));
+        targetEndDate = new Date($thisElement.closest(".divPartyRelationship").attr("endDate"));
+        $warningElement.html("");
+        if ((startDate > endDate))
+            $warningElement.html("Start date should be less than end date.");
+        if ((startDate < targetStartDate) || (endDate > targetEndDate)) {
+            var lblPartyRel = $thisElement.closest(".partyRelationship").find("#lblPartyName").text();
+            $warningElement.html($warningElement.html() + " dates should be in the range of " + lblPartyRel + "'s dates. From " + targetStartDate.toLocaleDateString() + " to " + targetEndDate.toLocaleDateString());
+        }
+    }
+
+    $(".chkPartyRelationType").on("click", function () {
+        val = $(this).val();
+        alert("here");
+        $(".PartyRelationTypeDetails_" + val).show();
+    });
+    $(".chkPartyRelationship").on("click", function () {
+        str = $('#partyRelationshipTemplate').html();
+        str = str.replace(/{partyId}/gi, $(this).attr("partyId"));
+        str = str.replace(/{PartyRelationshipTypeId}/gi, $(this).attr("partyRelationshipTypeId"));
+        str = str.replace(/{partyTypepairId}/gi, $(this).attr("partyTypepairId"));
+        str = str.replace(/{PartyRelationshipTitle}/gi, $(this).attr("partyRelationshipTitle"));
+        str = str.replace(/{TargetPartyStartDate}/gi, $(this).attr("StartDate"));
+        str = str.replace(/{TargetPartyEndDate}/gi, $(this).attr("EndDate"));
+        if ($(this).is(':checked'))
+            $(this).nextAll('.divPartyRelationship').html(str);
+        else
+            $(this).nextAll('.divPartyRelationship').html('');
+
+        $(".partyRelationshipsDate").tDatePicker({ style: "width:275px;display:inline-block ", onChange: checkDateRange });
+        var $form = $("#frmRelationship");
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+        // Re add validation with changes
+        $form.validate($form.data("unobtrusiveValidation").options);
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    $('[data-toggle="tooltip"]').tooltip();
+</script>
+<script id="partyRelationshipTemplate" type="text/html">
+    <table>
+        <tr>
+            <td style="width:200px">Title</td>
+            <td>
+                <input type="hidden" name="partyRelationshipsDic[PartyRelationshipTypeId_{partyId}_{partyTypepairId}]" value="{PartyRelationshipTypeId}" />
+                <input type="text" name="partyRelationshipsDic[Title_{partyId}_{partyTypepairId}]" class="t-input bx-input" value="{PartyRelationshipTitle}" data-val="true" data-val-required="This field is required." />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship title" />*@
+            </td>
+        </tr>
+        <tr>
+            <td style="width:200px">Description</td>
+            <td><input type="text" name="partyRelationshipsDic[Description_{partyId}_{partyTypepairId}]" class="t-input bx-input" value="" />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship description" />*@</td>
+        </tr>
+        <tr>
+            <td style="width:200px">StartDate</td>
+
+            <td>
+                <div>
+                    <input class="partyRelationshipsDate t-input bx-input" id="partyRelationshipsDic[StartDate_{partyId}_{partyTypepairId}]" value="{TargetPartyStartDate}" name="partyRelationshipsDic[StartDate_{partyId}_{partyTypepairId}]" type="text">
+
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="width:200px">EndDate</td>
+            <td>
+                <div>
+                    <input class="partyRelationshipsDate t-input bx-input" id="partyRelationshipsDic[EndDate_{partyId}_{partyTypepairId}]" value="{TargetPartyEndDate}" name="partyRelationshipsDic[EndDate_{partyId}_{partyTypepairId}]" type="text" style="display:inline-block" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"> <span class="dateWarning" style="color:orange"></span></td>
+        </tr>
+        <tr>
+            <td style="width:200px">Scope</td>
+            <td><input type="text" name="partyRelationshipsDic[Scope_{partyId}_{partyTypepairId}]" value="" class="t-input bx-input" />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship scope" />*@</td>
+        </tr>
+    </table>
+</script>

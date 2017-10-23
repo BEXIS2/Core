@@ -10,7 +10,7 @@ namespace BExIS.Security.Entities.Objects
         {
             Children = new List<Feature>();
             Permissions = new List<FeaturePermission>();
-            Workflows = new List<Workflow>();
+            Operations = new List<Operation>();
         }
 
         public virtual ICollection<Feature> Ancestors
@@ -31,7 +31,7 @@ namespace BExIS.Security.Entities.Objects
         public virtual string Description { get; set; }
         public virtual string Name { get; set; }
         public virtual Feature Parent { get; set; }
+        public virtual ICollection<Operation> Operations { get; set; }
         public virtual ICollection<FeaturePermission> Permissions { get; set; }
-        public virtual ICollection<Workflow> Workflows { get; set; }
     }
 }

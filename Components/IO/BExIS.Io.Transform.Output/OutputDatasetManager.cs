@@ -14,62 +14,77 @@ namespace BExIS.IO.Transform.Output
         public static GFBIODataCenterFormularObject GetGFBIODataCenterFormularObject(long datasetId)
         {
             DatasetManager datasetManager = new DatasetManager();
-            datasetManager.GetDataset(datasetId);
+            try
+            {
 
-            Dataset dataset = datasetManager.GetDataset(datasetId);
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                Dataset dataset = datasetManager.GetDataset(datasetId);
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-            GFBIODataCenterFormularObject gfbioDataCenterFormularObject = new GFBIODataCenterFormularObject();
+                GFBIODataCenterFormularObject gfbioDataCenterFormularObject = new GFBIODataCenterFormularObject();
 
-            //gfbioDataCenterFormularObject.ProjectId = 1;
-            //gfbioDataCenterFormularObject.ProjectTitle = "Test Poject title";
-            //gfbioDataCenterFormularObject.ProjectLabel = "Test Poject label";
-            //gfbioDataCenterFormularObject.ProjectAbstract = "";
-            //gfbioDataCenterFormularObject.ProjectPi = "ProjectPi";
+                //gfbioDataCenterFormularObject.ProjectId = 1;
+                //gfbioDataCenterFormularObject.ProjectTitle = "Test Poject title";
+                //gfbioDataCenterFormularObject.ProjectLabel = "Test Poject label";
+                //gfbioDataCenterFormularObject.ProjectAbstract = "";
+                //gfbioDataCenterFormularObject.ProjectPi = "ProjectPi";
 
-            //gfbioDataCenterFormularObject.UserId = 1;
-            //gfbioDataCenterFormularObject.UserName = "TestUser";
-            //gfbioDataCenterFormularObject.UserEmail = "testEmail";
-            //gfbioDataCenterFormularObject.DatasetAuthor = "TestAuthor";
+                //gfbioDataCenterFormularObject.UserId = 1;
+                //gfbioDataCenterFormularObject.UserName = "TestUser";
+                //gfbioDataCenterFormularObject.UserEmail = "testEmail";
+                //gfbioDataCenterFormularObject.DatasetAuthor = "TestAuthor";
 
-            gfbioDataCenterFormularObject.DatasetId = datasetId;
-            gfbioDataCenterFormularObject.DatasetVersion = datasetVersion.Id;
-            gfbioDataCenterFormularObject.License = "";
-            gfbioDataCenterFormularObject.DatasetTitle = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-            gfbioDataCenterFormularObject.DatasetLabel = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-            gfbioDataCenterFormularObject.DatasetDescription = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
-            //gfbioDataCenterFormularObject.DatasetAuthors = new List<string>();
-
-
-
-            gfbioDataCenterFormularObject.DatasetCollectionTime = datasetVersion.Dataset.LastCheckIOTimestamp;
-
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
-
-            gfbioDataCenterFormularObject.MetadataSchemaName = metadataStructure.Name;
+                gfbioDataCenterFormularObject.DatasetId = datasetId;
+                gfbioDataCenterFormularObject.DatasetVersion = datasetVersion.Id;
+                gfbioDataCenterFormularObject.License = "";
+                gfbioDataCenterFormularObject.DatasetTitle = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+                gfbioDataCenterFormularObject.DatasetLabel = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+                gfbioDataCenterFormularObject.DatasetDescription = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+                //gfbioDataCenterFormularObject.DatasetAuthors = new List<string>();
 
 
-            return gfbioDataCenterFormularObject;
+
+                gfbioDataCenterFormularObject.DatasetCollectionTime = datasetVersion.Dataset.LastCheckIOTimestamp;
+
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
+
+                gfbioDataCenterFormularObject.MetadataSchemaName = metadataStructure.Name;
+
+
+                return gfbioDataCenterFormularObject;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         public static GFBIOPangaeaFormularObject GetGFBIOPangaeaFormularObject(long datasetId)
         {
             DatasetManager datasetManager = new DatasetManager();
-            datasetManager.GetDataset(datasetId);
 
-            Dataset dataset = datasetManager.GetDataset(datasetId);
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+            try
+            {
+                Dataset dataset = datasetManager.GetDataset(datasetId);
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
 
-            GFBIOPangaeaFormularObject gfbioPangaeaFormularObject = new GFBIOPangaeaFormularObject();
+                GFBIOPangaeaFormularObject gfbioPangaeaFormularObject = new GFBIOPangaeaFormularObject();
 
-            string title = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-            string description = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-            return gfbioPangaeaFormularObject;
+                string title = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
+                string description = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+
+                return gfbioPangaeaFormularObject;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         public static string GetDynamicDatasetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)

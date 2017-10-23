@@ -26,15 +26,18 @@ using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Logging;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class CreateDatasetController : Controller
+    public class CreateDatasetController : BaseController
     {
         private CreateTaskmanager TaskManager;
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         #region Create a Dataset Setup Page
 
@@ -75,8 +78,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
 
-                    DatasetManager datasetManager = new DatasetManager();
-                    Dataset dataset = datasetManager.DatasetRepo.Get(id);
+
+                    Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
                     Model.SelectedDatasetId = id;
                     Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
                     Model.SelectedDataStructureId = dataset.DataStructure.Id;
@@ -122,7 +125,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //if id is set and its type dataset
             if (id != -1 && type.ToLower().Equals("datasetid"))
             {
-                Dataset dataset = datasetManager.DatasetRepo.Get(id);
+
+
+                Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
                 Model.SelectedDatasetId = id;
                 Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
                 Model.SelectedDataStructureId = dataset.DataStructure.Id;
@@ -143,7 +148,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.COPY_OF_ENTITY_ID))
                 {
                     Model.SelectedDatasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.COPY_OF_ENTITY_ID]);
-                    Dataset dataset = datasetManager.DatasetRepo.Get(Model.SelectedDatasetId);
+
+                    Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
                     Model.BlockMetadataStructureId = true;
                     Model.BlockDatasetId = false;
                 }
@@ -161,7 +167,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Model.SelectedDatasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.COPY_OF_ENTITY_ID]);
 
-                    Dataset dataset = datasetManager.DatasetRepo.Get(Model.SelectedDatasetId);
+                    Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
                     Model.BlockMetadataStructureId = true;
                     Model.BlockDatasetId = false;
                 }
@@ -175,8 +181,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            DatasetManager dm = new DatasetManager();
-            Dataset dataset = dm.GetDataset(id);
+            Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
 
             SetupModel Model = GetDefaultModel();
 
@@ -208,7 +213,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult StoreSelectedDatasetSetup(SetupModel model)
         {
             CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            DatasetManager dm = new DatasetManager();
+            DatasetManager datasetManager = new DatasetManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+            this.Disposables.Add(datasetManager);
 
             if (model == null)
             {
@@ -229,13 +237,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //dataset is selected
                 if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
                 {
-                    if (dm.IsDatasetCheckedIn(model.SelectedDatasetId))
+                    if (datasetManager.IsDatasetCheckedIn(model.SelectedDatasetId))
                     {
-                        DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
+                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(model.SelectedDatasetId);
                         TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
                             datasetVersion.Dataset.ResearchPlan.Id);
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE,
-                            XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
+                            xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
 
                         // set datastructuretype
                         TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
@@ -410,10 +418,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public ActionResult Submit()
+        public ActionResult Submit(bool valid)
         {
             // create and submit Dataset
-            long datasetId = SubmitDataset();
+            long datasetId = SubmitDataset(valid);
 
             bool editMode = false;
 
@@ -432,96 +440,118 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset()
+        public long SubmitDataset(bool valid)
         {
             #region create dataset
+            DatasetManager dm = new DatasetManager();
+            DataStructureManager dsm = new DataStructureManager();
+            ResearchPlanManager rpm = new ResearchPlanManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID)
-                && TaskManager.Bus.ContainsKey(CreateTaskmanager.RESEARCHPLAN_ID)
-                && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+            try
             {
-                DatasetManager dm = new DatasetManager();
-                long datasetId = 0;
-                // for e new dataset
-                if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-                {
-                    long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
-                    long researchPlanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
-                    long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-
-                    DataStructureManager dsm = new DataStructureManager();
-
-                    DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
-                    //if datastructure is not a structured one
-                    if (dataStructure == null) dataStructure = dsm.UnStructuredDataStructureRepo.Get(datastructureId);
-
-                    ResearchPlanManager rpm = new ResearchPlanManager();
-                    ResearchPlan rp = rpm.Repo.Get(researchPlanId);
-
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
-
-                    var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
-                    datasetId = ds.Id;
-
-                    // add security
-                    if (GetUsernameOrDefault() != "DEFAULT")
-                    {
-                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-                    }
-                }
-                else
-                {
-                    datasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-                }
-
                 TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID)
+                    && TaskManager.Bus.ContainsKey(CreateTaskmanager.RESEARCHPLAN_ID)
+                    && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                 {
-                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
-
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
+                    long datasetId = 0;
+                    // for e new dataset
+                    if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
                     {
-                        XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-                        workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
+                        long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
+                        long researchPlanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
+                        long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+                        DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
+                        //if datastructure is not a structured one
+                        if (dataStructure == null) dataStructure = dsm.UnStructuredDataStructureRepo.Get(datastructureId);
+
+                        ResearchPlan rp = rpm.Repo.Get(researchPlanId);
+
+                        MetadataStructureManager msm = new MetadataStructureManager();
+                        MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+
+                        var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
+                        datasetId = ds.Id;
+
+                        // add security
+                        if (GetUsernameOrDefault() != "DEFAULT")
+                        {
+                            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                            entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                        }
+                    }
+                    else
+                    {
+                        datasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                     }
 
-                    string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
-                    if (string.IsNullOrEmpty(title)) title = "No Title available.";
+                    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                    TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
-                    TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
+                    if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
+                    {
+                        DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
 
-                    dm.EditDatasetVersion(workingCopy, null, null, null);
-                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault());
+                        if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
+                        {
+                            XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                            workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
+                        }
 
-                    //add to index
-                    // ToDo check which SearchProvider it is, default luceneprovider
+                        //set status
 
-                    // BUG: invalid call to ddm method
-                    // TODO: mODULARITY ->Call DDM Reindex
-                    /*
-                     <Export tag="internalApi" id="SearchIndex"
-                    title="Reindex Search" description="Reindex Search" icon=""
-                    controller="SearchIndex" action="Get"
-                    extends="" />
-                     */
-                    // WORKAROUND: do not reindex
-                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+                        if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
 
-                    var x = this.Run("DDM", "SearchIndex", "ReIndex", new RouteValueDictionary() { { "id", datasetId } });
+                        if (valid)
+                            workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
+                        else workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
+
+                        string title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
+                        if (string.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+                        TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
+
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+                        dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault());
+
+                        //add to index
+                        // ToDo check which SearchProvider it is, default luceneprovider
+
+                        // BUG: invalid call to ddm method
+                        // TODO: mODULARITY ->Call DDM Reindex
+                        /*
+                         <Export tag="internalApi" id="SearchIndex"
+                        title="Reindex Search" description="Reindex Search" icon=""
+                        controller="SearchIndex" action="Get"
+                        extends="" />
+                         */
+                        // WORKAROUND: do not reindex
+                        //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                        //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                        if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                        {
+
+                            var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
+                        }
+
+                        LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
+                    }
 
 
-                    LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
+                    return datasetId;
                 }
-
-                return datasetId;
             }
+            finally
+            {
+                dm.Dispose();
+                rpm.Dispose();
+                dsm.Dispose();
+            }
+
 
             #endregion create dataset
 
@@ -671,79 +701,112 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public List<ListViewItem> LoadDatasetViewList()
         {
-            DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
-            //get all datasetsid where the current userer has access to
+            DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager(new UserStore());
+            //get all datasetsid where the current userer has access to
+            UserManager userManager = new UserManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-            List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
-                typeof(Dataset), RightType.Write);
-
-            foreach (long id in datasetIds)
+            try
             {
-                if (datasetManager.IsDatasetCheckedIn(id))
+
+                List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
+                    typeof(Dataset), RightType.Write);
+
+                foreach (long id in datasetIds)
                 {
-                    string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                    string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                    if (datasetManager.IsDatasetCheckedIn(id))
+                    {
+                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        string description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
 
-                    temp.Add(new ListViewItem(id, title, description));
+                        temp.Add(new ListViewItem(id, title, description));
+                    }
                 }
+
+
+                return temp.OrderBy(p => p.Title).ToList();
             }
-
-
-            return temp.OrderBy(p => p.Title).ToList();
+            finally
+            {
+                datasetManager.Dispose();
+                entityPermissionManager.Dispose();
+                userManager.Dispose();
+            }
         }
 
         public List<ListViewItemWithType> LoadDataStructureViewList()
         {
             DataStructureManager dsm = new DataStructureManager();
-            List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
-
-            foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
+            try
             {
-                string title = dataStructure.Name;
-                string type = "";
-                if (dataStructure is StructuredDataStructure)
+
+                List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
+
+                foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
                 {
-                    type = "structured";
+                    string title = dataStructure.Name;
+                    string type = "";
+                    if (dataStructure is StructuredDataStructure)
+                    {
+                        type = "structured";
+                    }
+
+                    if (dataStructure is UnStructuredDataStructure)
+                    {
+                        type = "unstructured";
+                    }
+
+                    temp.Add(new ListViewItemWithType(dataStructure.Id, title, dataStructure.Description, type));
                 }
 
-                if (dataStructure is UnStructuredDataStructure)
-                {
-                    type = "unstructured";
-                }
-
-                temp.Add(new ListViewItemWithType(dataStructure.Id, title, dataStructure.Description, type));
+                return temp.OrderBy(p => p.Title).ToList();
+            }
+            finally
+            {
+                dsm.Dispose();
             }
 
-            return temp.OrderBy(p => p.Title).ToList();
         }
 
         public List<ListViewItem> LoadMetadataStructureViewList()
         {
-            MetadataStructureManager msm = new MetadataStructureManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-            foreach (MetadataStructure metadataStructure in msm.Repo.Get())
+            try
             {
-                if (XmlDatasetHelper.IsActive(metadataStructure.Id) &&
-                    XmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+
+                IEnumerable<MetadataStructure> metadataStructureList = metadataStructureManager.Repo.Get();
+
+                List<ListViewItem> temp = new List<ListViewItem>();
+
+                foreach (MetadataStructure metadataStructure in metadataStructureList)
                 {
-                    string title = metadataStructure.Name;
+                    if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                        xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                    {
+                        string title = metadataStructure.Name;
 
-                    temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+                        temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+                    }
                 }
-            }
 
-            return temp.OrderBy(p => p.Title).ToList();
+                return temp.OrderBy(p => p.Title).ToList();
+            }
+            finally
+            {
+                metadataStructureManager.Dispose();
+            }
         }
 
         private DataStructureType GetDataStructureType(long id)
         {
-            DataStructureManager dataStructuremanager = new DataStructureManager();
-            DataStructure dataStructure = dataStructuremanager.AllTypesDataStructureRepo.Get(id);
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
+            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(id);
 
             if (dataStructure is StructuredDataStructure)
             {

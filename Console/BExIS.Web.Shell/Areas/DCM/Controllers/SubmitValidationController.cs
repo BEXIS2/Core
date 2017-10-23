@@ -1,19 +1,20 @@
-﻿using System;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
+using System;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Dcm.Wizard;
-using BExIS.IO.Transform.Input;
-using BExIS.Dcm.UploadWizard;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitValidationController : Controller
+    public class SubmitValidationController : BaseController
     {
         private TaskManager TaskManager;
         private FileStream Stream;
@@ -23,7 +24,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public ActionResult Validation(int index)
         {
-            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
+            TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
             {
@@ -96,82 +97,93 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult ValidateFile()
         {
-            BExIS.Dcm.UploadWizard.TaskManager TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
-            ValidationModel model = new ValidationModel();
-            model.StepInfo = TaskManager.Current();
+            DataStructureManager dsm = new DataStructureManager();
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID) && TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
+            try
             {
-                try
+
+                BExIS.Dcm.UploadWizard.TaskManager TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
+                ValidationModel model = new ValidationModel();
+                model.StepInfo = TaskManager.Current();
+
+                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID) && TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
                 {
-                    long id = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-                    DataStructureManager dsm = new DataStructureManager();
-                    long iddsd = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
-                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
-                    dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
-
-
-                    if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
+                    try
                     {
-                        // open FileStream
-                        ExcelReader reader = new ExcelReader();
-                        Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                        reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
-                        model.ErrorList = reader.ErrorMessages;
+                        long id = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
+                        this.Disposables.Add(dsm);
 
-                        if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                        long iddsd = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
+                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
+                        dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
+
+
+                        if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                         {
-                            TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                            // open FileStream
+                            ExcelReader reader = new ExcelReader();
+                            Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
+                            model.ErrorList = reader.ErrorMessages;
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                            {
+                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                            }
+                            else
+                            {
+                                TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
+                            }
+
                         }
-                        else
+
+                        if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
+                            TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
                         {
-                            TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows); 
+                            AsciiReader reader = new AsciiReader();
+                            Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
+                            model.ErrorList = reader.ErrorMessages;
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                            {
+                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                            }
                         }
+
+
+
 
                     }
-
-                    if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                        TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                    catch (Exception ex)
                     {
-                        AsciiReader reader = new AsciiReader();
-                        Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                        reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
-                        model.ErrorList = reader.ErrorMessages;
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid. :  " + ex.Message));
+                        TaskManager.AddToBus(TaskManager.VALID, false);
 
-                        if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
-                        {
-                            TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
-                        }
                     }
-
-                    
-
-                    
+                    finally
+                    {
+                        Stream.Close();
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid. :  " + ex.Message));
+                    model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
                     TaskManager.AddToBus(TaskManager.VALID, false);
-
                 }
-                finally
+
+                if (model.ErrorList.Count() == 0)
                 {
-                    Stream.Close();
+                    model.Validated = true;
+                    TaskManager.AddToBus(TaskManager.VALID, true);
                 }
-            }
-            else
-            {
-                model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
-                TaskManager.AddToBus(TaskManager.VALID, false);
-            }
 
-            if (model.ErrorList.Count() == 0)
-            {
-                model.Validated = true;
-                TaskManager.AddToBus(TaskManager.VALID, true);
+                return PartialView(TaskManager.Current().GetActionInfo.ActionName, model);
             }
-
-            return PartialView(TaskManager.Current().GetActionInfo.ActionName, model);
+            finally
+            {
+                dsm.Dispose();
+            }
         }
     }
 }

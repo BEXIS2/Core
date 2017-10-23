@@ -19,11 +19,12 @@ using System.Web.Routing;
 using System.Xml;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitController : Controller
+    public class SubmitController : BaseController
     {
         //
         // GET: /Collect/Home/
@@ -31,6 +32,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<string> ids = new List<string>();
         private FileStream Stream;
         private TaskManager TaskManager;
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         public ActionResult Index()
         {
@@ -196,7 +200,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 RightType.Write).ToList();
 
             DataStructureManager dataStructureManager = new DataStructureManager();
+            this.Disposables.Add(dataStructureManager);
+
             DatasetManager dm = new DatasetManager();
+            this.Disposables.Add(dm);
 
             Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
             dmtemp = dm.GetDatasetLatestMetadataVersions();
@@ -218,7 +225,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (datasetIDs.Contains(d.Id))
                             {
                                 temp.Add(new ListViewItem(d.Id,
-                                    XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d),
+                                    xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(d).Id,
                                         NameAttributeValues.title)));
                             }
                         }
@@ -239,7 +246,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
                                 temp.Add(new ListViewItem(d.Id,
-                                    XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title)));
+                                    xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title)));
                             }
                         }
                     }
@@ -252,6 +259,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<ListViewItem> LoadDataStructureViewList(DataStructureType dataStructureType)
         {
             DataStructureManager dsm = new DataStructureManager();
+            this.Disposables.Add(dsm);
+
             List<ListViewItem> temp = new List<ListViewItem>();
 
             foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
@@ -301,7 +310,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // is checkedIn?
                     if (dm.IsDatasetCheckedIn(datasetid))
                     {
-                        title = XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(datasetid),
+                        title = xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(datasetid).Id,
                             NameAttributeValues.title);
                     }
 

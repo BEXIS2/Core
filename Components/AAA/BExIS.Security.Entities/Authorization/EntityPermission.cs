@@ -17,10 +17,11 @@ namespace BExIS.Security.Entities.Authorization
     /// </summary>
     public enum RightType
     {
-        Read = 0,
-        Write = 1,
-        Delete = 2,
-        Grant = 3
+        Read = 1,
+        Download = 2,
+        Write = 4,
+        Delete = 8,
+        Grant = 16
     }
 
     /// <summary>

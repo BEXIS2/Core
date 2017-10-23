@@ -1,10 +1,10 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using System;
@@ -24,6 +24,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     public class HomeController : Controller
     {
         public bool searchConfigFileInUse = false;
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         /// <summary>
         /// is called when the Search View is selected
@@ -790,90 +793,74 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager();
+            EntityManager entityManager = new EntityManager();
 
-            List<long> gridCommands = datasetManager.GetDatasetLatestIds();
-            gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
 
-            foreach (long datasetId in gridCommands)
+            try
             {
-                //get permissions
-                List<RightType> rights = entityPermissionManager.GetRights<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), datasetId);
 
-                if (rights.Count > 0)
+                var entity = entityManager.FindByName("Dataset");
+                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+
+                List<long> gridCommands = datasetManager.GetDatasetLatestIds();
+                gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
+
+                foreach (long datasetId in gridCommands)
                 {
-                    DataRow dataRow = model.NewRow();
-                    Object[] rowArray = new Object[8];
+                    //get permissions
+                    int rights = entityPermissionManager.GetRights(user, entity, datasetId);
 
-                    if (datasetManager.IsDatasetCheckedIn(datasetId))
+                    if (rights > 0)
                     {
-                        DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
+                        DataRow dataRow = model.NewRow();
+                        Object[] rowArray = new Object[8];
 
-                        MetadataStructureManager msm = new MetadataStructureManager();
-                        dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                        if (datasetManager.IsDatasetCheckedIn(datasetId))
+                        {
+                            //long versionId = datasetManager.GetDatasetLatestVersionId (datasetId); // check for zero value
+                            //DatasetVersion dsv = datasetManager.DatasetVersionRepo.Get(versionId);
 
-                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-                        string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
+                            DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                        rowArray[0] = Convert.ToInt64(datasetId);
-                        rowArray[1] = title;
-                        rowArray[2] = description;
-                    }
-                    else
-                    {
-                        rowArray[0] = Convert.ToInt64(datasetId);
-                        rowArray[1] = "";
-                        rowArray[2] = "Dataset is just in processing.";
-                    }
+                            //MetadataStructureManager msm = new MetadataStructureManager();
+                            //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                    if (rights.Contains(RightType.Read))
-                    {
-                        rowArray[3] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[3] = "✘";
-                    }
-                    if (rights.Contains(RightType.Write))
-                    {
-                        rowArray[4] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[4] = "✘";
-                    }
-                    if (rights.Contains(RightType.Delete))
-                    {
-                        rowArray[5] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[5] = "✘";
-                    }
-                    if (rights.Contains(RightType.Read))
-                    {
-                        //ToDo RigthType Download not exist -> set RigthType Read
-                        rowArray[6] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[6] = "✘";
-                    }
-                    if (rights.Contains(RightType.Grant))
-                    {
-                        rowArray[7] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[7] = "✘";
-                    }
+                            string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
+                            string description = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.description);
 
-                    dataRow = model.NewRow();
-                    dataRow.ItemArray = rowArray;
-                    model.Rows.Add(dataRow);
+                            rowArray[0] = Convert.ToInt64(datasetId);
+                            rowArray[1] = title;
+                            rowArray[2] = description;
+                        }
+                        else
+                        {
+                            rowArray[0] = Convert.ToInt64(datasetId);
+                            rowArray[1] = "";
+                            rowArray[2] = "Dataset is just in processing.";
+                        }
+
+                        rowArray[3] = (rights & (int)RightType.Read) > 0 ? "✔" : "✘";
+                        rowArray[4] = (rights & (int)RightType.Write) > 0 ? "✔" : "✘";
+                        rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
+                        rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
+                        rowArray[7] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
+
+                        dataRow = model.NewRow();
+                        dataRow.ItemArray = rowArray;
+                        model.Rows.Add(dataRow);
+                    }
                 }
-            }
 
-            return View(new GridModel(model));
+                return View(new GridModel(model));
+            }
+            finally
+            {
+                datasetManager.Dispose();
+                entityPermissionManager.Dispose();
+                entityManager.Dispose();
+                userManager.Dispose();
+            }
         }
 
 

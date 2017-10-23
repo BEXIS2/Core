@@ -1,66 +1,64 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
+@section Information
+{
+    This is the details of a party; its main fields, attributes and relationships. Also it is possible to view the detial of each relationship on relationshipgrid.
+   <p>
+        <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+
+}
+
 
 @using (Html.BeginForm("Edit", "Party", new { area = "BAM" }, FormMethod.Post))
 {
-    @Html.HiddenFor(m => m.Party.Id)
-    @Html.HiddenFor(m => m.Party.PartyType.Id)
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.PartyType.Id)
     @(Html.Telerik().TabStrip()
             .Name("ShowDataTabStrip")
-            .ClientEvents(events => events.OnSelect("tabSelected"))
+            .ClientEvents(events => events.OnSelect("tabSelected")).SelectedIndex(0)
             .Items(tabs =>
             {
-
             tabs.Add()
                     .Text("Party").Content(@<text>
-                    <table>
-                        <tr>
-                            <td style="width:40px;"></td>
-                            <td>
-                                @Html.LabelFor(m => m.Party.Name)
-                            </td>
-                            <td>
-                                <span> @Model.Party.Name</span>
-                            </td>
-                        </tr>
-                        <tr>
+                    <table>                        <tr>
                             <td></td>
                             <td style="width:300px;">
-                                @Html.LabelFor(m => m.Party.PartyType)
+                                @Html.LabelFor(m => m.PartyType)
                             </td>
                             <td>
-                                <span>    @Model.Party.PartyType.Title</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                @Html.LabelFor(m => m.Party.StartDate)
-                            </td>
-                            <td>
-                                <span> @Model.Party.StartDate</span>
+                                <span>@Model.PartyType.Title</span>
                             </td>
                         </tr>
                         <tr>
                             <td></td>
                             <td>
-                                @Html.LabelFor(m => m.Party.EndDate)
+                                @Html.LabelFor(m => m.StartDate)
                             </td>
                             <td>
-                                <span> @Model.Party.EndDate</span>
+                                <span>@Model.StartDate</span>
                             </td>
                         </tr>
                         <tr>
                             <td></td>
                             <td>
-                                @Html.LabelFor(m => m.Party.Description)
+                                @Html.LabelFor(m => m.EndDate)
                             </td>
                             <td>
-                                <span> @Model.Party.Description</span>
+                                <span>@Model.EndDate</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                @Html.LabelFor(m => m.Description)
+                            </td>
+                            <td>
+                                <span>@Model.Description</span>
                             </td>
                         </tr>
                     </table>
                     </text>);
-                tabs.Add().Text("Custom Attributes").Content(@<text>
+                tabs.Add().Text("Additional attributes").Content(@<text>
                         <div id="divPartyCustomAttr"></div>
                 </text>);
 
@@ -70,8 +68,11 @@
                 </text>);
             })
     )
-
+    <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
+        @Html.ActionLink("Back", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
+    </div>
 }
+
 <div id="divPartyRelation">
 
 </div>
@@ -81,8 +82,8 @@
     {
 
         var  partyTypeId= e.value;
-        var lastPartyTypeId=@Model.Party.PartyType.Id;
-        $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+ "?readOnly=true&"+((lastPartyTypeId==partyTypeId)? "partyId="+@Model.Party.Id:""), function (response, status, xhr) {
+        var lastPartyTypeId=@Model.PartyType.Id;
+        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+ "?readOnly=true&"+((lastPartyTypeId==partyTypeId)? "partyId="+@Model.Id:""), function (response, status, xhr) {
             if (status == "error")
                 $('#divPartyCustomAttr').html("");
         });
@@ -95,82 +96,9 @@
             $("#divSubmitButtons").show();
 
     }
-    @if (Model.Party.PartyType.Id != 0)
+    @if (Model.PartyType.Id != 0)
     {
-       @Html.Raw("loadPartyType( {value: " + Model.Party.PartyType.Id + "});");
+       @Html.Raw("loadPartyType( {value: " + Model.PartyType.Id + "});");
     }
 
 </script>
-
-@*<table>
-            <tr>
-                <td style="width:40px;"><b title="Required" style="color: red">*</b></td>
-                <td>
-                    @Html.LabelFor(m => m.Party.Name)
-                </td>
-                <td>
-                    @Model.Party.Name
-                </td>
-            </tr>
-            <tr>
-                <td><b title="Required" style="color: red">*</b></td>
-                <td style="width:300px;">
-                    @Html.LabelFor(m => m.Party.PartyType)
-                </td>
-                <td>
-                   @Model.Party.PartyType.Title
-                </td>
-            </tr>
-            <tr>
-                <td><b title="Required" style="color: red">*</b></td>
-                <td>
-                    @Html.LabelFor(m => m.Party.StartDate)
-                </td>
-                <td>
-                   @Model.Party.StartDate
-                </td>
-            </tr>
-            <tr>
-                <td><b title="Required" style="color: red">*</b></td>
-                <td>
-                    @Html.LabelFor(m => m.Party.EndDate)
-                </td>
-                <td>
-                   @Model.Party.EndDate
-                </td>
-            </tr>
-            <tr>
-                <td><b title="Required" style="color: red">*</b></td>
-                <td>
-                    @Html.LabelFor(m => m.Party.Description)
-                </td>
-                <td>
-                    @Model.Party.Description
-                </td>
-            </tr>
-        </table>
-
-        <br />
-        <div id="divPartyCustomAttr"></div>
-
-
-
-    <script type="text/javascript">
-
-        function showPartyCustomAttr(e)
-        {
-            var  partyTypeId= e.value;
-            var lastPartyTypeId=@Model.Party.PartyType.Id;
-            if(lastPartyTypeId==partyTypeId)
-                //should load party custom values
-                $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+"?readOnly=true&&partyId="+@Model.Party.Id);
-
-
-
-        }
-        @if (Model.Party.PartyType.Id != 0)
-        {
-           @Html.Raw("showPartyCustomAttr( {value: " + Model.Party.PartyType.Id + "});");
-        }
-
-    </script>*@

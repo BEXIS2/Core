@@ -1,6 +1,6 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
+﻿using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using System;
 
 namespace BExIS.Ext.Services
@@ -18,17 +18,20 @@ namespace BExIS.Ext.Services
             var operationManager = new OperationManager();
 
             var operation = operationManager.Find(areaName, controllerName, "*");
-
-            if (operation != null)
+            if (operation == null)
             {
-                var featurePermissionManager = new FeaturePermissionManager();
-
-                if (!featurePermissionManager.HasAccess<User>(username, areaName, controllerName, actionName))
-                {
-                    throw new UnauthorizedAccessException();
-                }
+                throw new UnauthorizedAccessException();
             }
-            else
+
+            var feature = operation.Feature;
+
+            if (feature == null) return;
+
+            var userManager = new UserManager();
+            var result = userManager.FindByNameAsync(username);
+
+            var featurePermissionManager = new FeaturePermissionManager();
+            if (!featurePermissionManager.HasAccess(result.Result, feature))
             {
                 throw new UnauthorizedAccessException();
             }

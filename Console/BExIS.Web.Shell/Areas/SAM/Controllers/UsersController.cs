@@ -1,73 +1,117 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
+        [HttpPost]
+        public async Task<bool> AddUserToGroup(long userId, string groupName)
+        {
+            var identityUserService = new IdentityUserService();
+
+            try
+            {
+                var result = await identityUserService.AddToRoleAsync(userId, groupName);
+                return result.Succeeded;
+            }
+            finally
+            {
+                identityUserService.Dispose();
+            }
+        }
+
         public ActionResult Create()
         {
             return PartialView("_Create");
         }
 
         [HttpPost]
-        public ActionResult Create(CreateUserModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(CreateUserModel model)
         {
-            if (ModelState.IsValid)
+            var identityUserService = new IdentityUserService();
+
+            try
             {
-                var userManager = new UserManager(new UserStore());
-                userManager.CreateAsync(new User()
+                if (!ModelState.IsValid) return PartialView("_Create", model);
+
+                var user = new User { UserName = model.UserName, Email = model.Email };
+
+                var result = await identityUserService.CreateAsync(user);
+                if (result.Succeeded)
                 {
-                    Email = model.Email,
-                    UserName = model.UserName,
-                    IsAdministrator = model.IsAdministrator
-                });
+                    var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "", userId = user.Id, code },
+                        Request.Url.Scheme);
+                    await
+                        identityUserService.SendEmailAsync(user.Id, "Set your password!",
+                            "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                RedirectToAction("Index");
+                    return Json(new { success = true });
+                }
+
+                AddErrors(result);
+
+                return PartialView("_Create", model);
             }
-
-            return PartialView("_Create", model);
+            finally
+            {
+                identityUserService.Dispose();
+            }
         }
 
         [HttpPost]
         public void Delete(long userId)
         {
-            var userStore = new UserStore();
-            userStore.Delete(userId);
+            var userManager = new UserManager();
+
+            try
+            {
+                var user = userManager.FindByIdAsync(userId).Result;
+                userManager.DeleteAsync(user);
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
         }
 
-        public void Groups_Save(UserMembershipGridRowModel[] groups)
+        public ActionResult Groups(long userId)
         {
-            Session["SelectedGroups"] = groups.Where(g => g.IsUserInGroup).Select(g => g.Id).ToList();
+            return PartialView("_Groups", userId);
         }
 
         [GridAction]
         public ActionResult Groups_Select(long userId)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
-
-            List<long> test = new List<long>();
-            if (Session["SelectedGroups"] == null)
-            {
-                test.AddRange(user.Groups.Select(g => g.Id).ToList());
-            }
-            else
-            {
-                test.AddRange(Session["SelectedGroups"] as List<long>);
-            }
-
             var groupManager = new GroupManager();
-            var groups = groupManager.Groups.Select(g => GroupMembershipGridRowModel.Convert(g, test)).ToList();
 
-            return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
+            try
+            {
+                var groups = new List<GroupMembershipGridRowModel>();
+
+                foreach (var group in groupManager.Groups)
+                {
+                    groups.Add(GroupMembershipGridRowModel.Convert(group, userId));
+                }
+
+                return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
         }
 
         public ActionResult Index()
@@ -75,27 +119,84 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<bool> RemoveUserFromGroup(long userId, string groupName)
+        {
+            var identityUserService = new IdentityUserService();
+
+            try
+            {
+                var result = await identityUserService.RemoveFromRoleAsync(userId, groupName);
+                return result.Succeeded;
+            }
+            finally
+            {
+                identityUserService.Dispose();
+            }
+        }
+
         public ActionResult Update(long userId)
         {
-            var userStore = new UserStore();
-            var user = userStore.FindById(userId);
+            var userManager = new UserManager();
 
-            return PartialView("_Update", UpdateUserModel.Convert(user));
+            try
+            {
+                var user = userManager.FindByIdAsync(userId).Result;
+                return PartialView("_Update", UpdateUserModel.Convert(user));
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
         }
 
         [HttpPost]
         public ActionResult Update(UpdateUserModel model)
         {
-            return PartialView("_Update", model);
+            var userManager = new UserManager();
+
+            try
+            {
+                if (!ModelState.IsValid) return PartialView("_Update", model);
+
+                var user = userManager.FindByIdAsync(model.Id).Result;
+
+                if (user == null) return PartialView("_Update", model);
+
+                user.Email = model.Email;
+
+                userManager.UpdateAsync(user);
+                return Json(new { success = true });
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
         }
 
         [GridAction]
         public ActionResult Users_Select()
         {
-            var userManager = new UserManager(new UserStore());
-            var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
+            var userManager = new UserManager();
 
-            return View(new GridModel<UserGridRowModel> { Data = users });
+            try
+            {
+                var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
+
+                return View(new GridModel<UserGridRowModel> { Data = users });
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
+            }
         }
     }
 }

@@ -42,56 +42,59 @@
 </div>
 <script type="text/javascript">
 
-    $("#prevBt").click(function(){
+    $("#prevBt")
+        .click(function() {
 
-        $('#preloader').show();
-        var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
-
-
-        if (index < 0) index = 0;
-
-        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName  } })', { index: index }, function (response) {
-            $("#StepView").html(response);
-            NavigationRefresh();
-            TaskListRefresh();
-            $('#preloader').hide();
-        })
+            $('.wizardStep').preloader(16, "Previous step is loading.");
+            var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
 
 
-    })
+            if (index < 0) index = 0;
 
-    $("#nextBt").click(function () {
+            $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName  } })',
+                    { index: index },
+                    function(response) {
+                        $("#StepView").html(response);
+                        NavigationRefresh();
+                        TaskListRefresh();
+                    });
 
-        $('#preloader').show();
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(Parameters),
-            dataType: 'html',
-            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
-            success: function(result) {
-                $('#StepView').html(result);
-                NavigationRefresh();
-                TaskListRefresh();
-                $('#preloader').hide();
-            }
+
         });
-    })
+
+    $("#nextBt")
+        .click(function() {
+
+            $('.wizardStep').preloader(16, "Next step is loading.");
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(Parameters),
+                dataType: 'html',
+                url:
+                    '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+                success: function(result) {
+                    $('#StepView').html(result);
+                    NavigationRefresh();
+                    TaskListRefresh();
+                }
+            });
+        });
 
     $("#finishBt")
         .click(function() {
 
-            $('#preloader').show();
+            $('.wizardStep').preloader(16);
             window.top.location = "/DCM/ImportMetadataStructure/FinishUpload/";
 
-        })
+        });
 
-    function NavigationRefresh()
-    {
+    function NavigationRefresh() {
 
-        $.post('@Url.Action("RefreshNavigation", "ImportMetadataStructure", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+        $.post('@Url.Action("RefreshNavigation", "ImportMetadataStructure", new RouteValueDictionary { { "area", "DCM" } })',
+                function(response) {
 
-            $("#NavDiv").replaceWith(response);
-        })
+                    $("#NavDiv").replaceWith(response);
+                });
     }
 </script>

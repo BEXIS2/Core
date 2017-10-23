@@ -9,6 +9,7 @@ namespace BExIS.Modules.Dim.UI.Models
         public long DatasetId;
         public bool EditRights;
         public bool DownloadRights;
+        public bool MetadataIsValid;
 
         public List<PublicationModel> Publications;
 
@@ -19,6 +20,7 @@ namespace BExIS.Modules.Dim.UI.Models
             DatasetId = 0;
             EditRights = false;
             DownloadRights = false;
+            MetadataIsValid = false;
         }
 
     }
@@ -27,11 +29,31 @@ namespace BExIS.Modules.Dim.UI.Models
     {
         public long DatasetVersionId { get; set; }
 
-        public string Broker { get; set; }
+        public BrokerModel Broker { get; set; }
+        public string DataRepo { get; set; }
         public string FilePath { get; set; }
         public string ExternalLink { get; set; }
         public string Status { get; set; }
+        public List<string> DataRepos { get; set; }
         public DateTime CreationDate { get; set; }
+    }
+
+    public class BrokerModel
+    {
+        public string Name { get; set; }
+        public List<string> DataRepos { get; set; }
+
+        public BrokerModel()
+        {
+            Name = "";
+            DataRepos = new List<string>();
+        }
+
+        public BrokerModel(string name, List<string> datarepos)
+        {
+            Name = name;
+            DataRepos = datarepos;
+        }
     }
 
     public class DataRepoRequirentModel

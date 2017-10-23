@@ -1,7 +1,9 @@
 ﻿using BExIS.Dim.Entities.Publication;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 
 
 namespace BExIS.Dim.Helpers.GFBIO
@@ -140,7 +142,7 @@ namespace BExIS.Dim.Helpers.GFBIO
         /// <param name="researchobjecttype"></param>
         /// <param name="authornames"></param>
         /// <returns></returns>
-        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, string extendedData, string[] authornames)
+        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, XmlDocument extendedData, List<string> authornames, string metadataLabel)
         {
             string functionName = "create-research-object";
             string entityName = "researchobject";
@@ -155,14 +157,32 @@ namespace BExIS.Dim.Helpers.GFBIO
             researchObject.description = description;
             researchObject.researchobjecttype = researchobjecttype;
             researchObject.extendeddata = extendedData;
+            researchObject.metadatalabel = metadataLabel;
+            researchObject.authornames = authornames.ToList();
 
             string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
 
+            //string body = WebServiceHelper.Encode(json);
 
-            //"," +
-            //"\"authornames\":[" + string.Join(",", authornames) + "]}";
+            return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", json);
+        }
 
-            //json = "[{ \"name\":\"test\",\"description\":\"test description\",\"submitterid\":16297,\"researchobjecttype\":\"x\"}]";
+        public async Task<string> UpdateResearchObject(long researchobjectid, string name, string description, XmlDocument extendedData, List<string> authornames)
+        {
+            string functionName = "update-research-object";
+            string entityName = "researchobject";
+
+            string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName/* + "/" + addtionalPath + "/"*/;
+
+            GFBIOResearchObjectUpdateJSON researchObject = new GFBIOResearchObjectUpdateJSON();
+
+            researchObject.researchobjectid = researchobjectid;
+            researchObject.name = name;
+            researchObject.description = description;
+            researchObject.extendeddata = extendedData;
+            researchObject.authornames = authornames.ToList();
+
+            string json = "[" + JsonConvert.SerializeObject(researchObject) + "]";
 
             //string body = WebServiceHelper.Encode(json);
 
@@ -189,6 +209,17 @@ namespace BExIS.Dim.Helpers.GFBIO
     //}
 
 
+    public class GFBIOResearchObjectMiniJSON
+    {
+        public long userid { get; set; }
+
+        // length 200
+        public string name { get; set; }
+        // length 15000
+        public string description { get; set; }
+        public string researchobjecttype { get; set; }
+    }
+
     /// <summary>
     /// GFBIO Recieve Research Object
     /// WHat you get after call a get ResearchObject webservice
@@ -207,7 +238,7 @@ namespace BExIS.Dim.Helpers.GFBIO
         // length 1500
         public List<string> authornames { get; set; }
         // length 1500
-        public string extendeddata { get; set; }
+        public XmlDocument extendeddata { get; set; }
         public string metadatalabel { get; set; }
 
         public GFBIOResearchObjectJSON()
@@ -218,8 +249,31 @@ namespace BExIS.Dim.Helpers.GFBIO
             description = "";
             researchobjecttype = "";
             authornames = new List<string>();
-            extendeddata = "";
+            extendeddata = new XmlDocument();
             metadatalabel = "";
+        }
+    }
+
+    public class GFBIOResearchObjectUpdateJSON
+    {
+        public long researchobjectid { get; set; }
+
+        // length 200
+        public string name { get; set; }
+        // length 15000
+        public string description { get; set; }
+        // length 1500
+        public List<string> authornames { get; set; }
+        // length 1500
+        public XmlDocument extendeddata { get; set; }
+
+        public GFBIOResearchObjectUpdateJSON()
+        {
+            researchobjectid = 0;
+            name = "";
+            description = "";
+            authornames = new List<string>();
+            extendeddata = new XmlDocument();
         }
     }
 

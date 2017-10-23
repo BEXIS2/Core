@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Vaiona.Utils.Cfg;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -49,8 +50,7 @@ namespace BExIS.IO.Transform.Output
 
         public DataStructureDataTable(long datasetId) : this()
         {
-            DatasetManager datasetManager = new DatasetManager();
-            var dataset = datasetManager.DatasetRepo.Get(datasetId);
+            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
             if (dataset != null && dataset.DataStructure.Id != 0)
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
@@ -89,7 +89,7 @@ namespace BExIS.IO.Transform.Output
                             dataRow["Label"] = vs.Label;
                             dataRow["Description"] = vs.Description;
                             dataRow["isOptional"] = vs.IsValueOptional;
-                            dataRow["Unit"] = vs.Unit;
+                            dataRow["Unit"] = vs.Unit.Name;
                             dataRow["DataType"] = vs.DataAttribute.DataType.Name;
                             dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
                             this.Variables.Rows.Add(dataRow);
@@ -99,6 +99,144 @@ namespace BExIS.IO.Transform.Output
             }
         }
     }
+
+    public class VariableElement
+    {
+        public long Id { get; set; }
+        public string Label { get; set; }
+        public string Description { get; set; }
+        public bool isOptional { get; set; }
+        public UnitElement unit { get; set; }
+        public DataTypeElement dataType { get; set; }
+
+        public VariableElement(Variable variable)
+        {
+
+            Id = variable.Id;
+            Label = variable.Label;
+            Description = variable.Description;
+            isOptional = variable.IsValueOptional;
+            unit = new UnitElement(variable.Unit.Id);
+            dataType = new DataTypeElement(variable.DataAttribute.DataType.Id);
+        }
+
+    }
+
+    public class UnitElement
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DimensionElement Dimension { get; set; }
+        public string MeasurementSystem { get; set; }
+
+        public UnitElement(long unitId)
+        {
+            UnitManager um = new UnitManager();
+            Unit unit = um.Repo.Get(unitId);
+            var dim = um.DimensionRepo.Get(unit.Dimension.Id);
+
+            Id = unit.Id;
+            Name = unit.Name;
+            Description = unit.Description;
+            Dimension = new DimensionElement(dim.Name, dim.Description, dim.Specification);
+            MeasurementSystem = unit.MeasurementSystem.ToString();
+        }
+
+    }
+
+    public class DimensionElement
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Specification { get; set; }
+
+        public DimensionElement(string name, string description, string specification)
+        {
+            Name = name;
+            Description = description;
+            Specification = specification;
+        }
+
+    }
+
+    public class DataTypeElement
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string SystemType { get; set; }
+
+        public DataTypeElement(long dataTypeId)
+        {
+            DataTypeManager dtm = new DataTypeManager();
+            Dlm.Entities.DataStructure.DataType dataType = dtm.Repo.Get(dataTypeId);
+            Id = dataType.Id;
+            Name = dataType.Name;
+            Description = dataType.Description;
+            SystemType = dataType.SystemType;
+
+        }
+    }
+
+    public class DataStructureDataList
+    {
+
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool inUse { get; set; }
+        public bool Structured { get; set; }
+        public List<VariableElement> Variables { get; set; }
+
+        public DataStructureDataList()
+        {
+            this.Id = 0;
+            this.Title = null;
+            this.Description = null;
+            this.inUse = false;
+            this.Structured = false;
+            this.Variables = new List<VariableElement>();
+        }
+
+        public DataStructureDataList(long datasetId) : this()
+        {
+            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
+            if (dataset != null && dataset.DataStructure.Id != 0)
+            {
+                DataStructureManager dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(dataset.DataStructure.Id);
+                if (dataStructure != null)
+                {
+                    this.Id = dataStructure.Id;
+                    this.Title = dataStructure.Name;
+                    this.Description = dataStructure.Description;
+
+                    if (dataStructure.Datasets.Count > 0)
+                        this.inUse = true;
+                    else
+                        this.inUse = false;
+
+                    this.Structured = false;
+                    this.Variables = new List<VariableElement>();
+
+                    if (dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id) != null)
+                    {
+                        StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
+                        this.Structured = true;
+                        foreach (Variable vs in structuredDataStructure.Variables)
+                        {
+                            vs.Materialize();
+                            this.Variables.Add(new VariableElement(vs));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
     public class OutputDataStructureManager
     {
         /// <summary>
@@ -113,6 +251,17 @@ namespace BExIS.IO.Transform.Output
         {
             return JsonConvert.SerializeObject(new DataStructureDataTable(datasetId));
         }
+
+        public static string GetVariableListAsJson(long datasetId)
+        {
+            return JsonConvert.SerializeObject(new DataStructureDataList(datasetId));
+        }
+
+        public static DataStructureDataList GetVariableList(long datasetId)
+        {
+            return new DataStructureDataList(datasetId);
+        }
+
         public static string GenerateDataStructure(long datasetId)
         {
             string path = "";
@@ -247,63 +396,18 @@ namespace BExIS.IO.Transform.Output
 
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
-            return getOrderedVariables(structuredDataStructure.Id, structuredDataStructure.Variables.ToList());
+            return getOrderedVariables(structuredDataStructure.Variables.ToList());
         }
 
-        public List<Variable> getOrderedVariables(long dataStructureID, List<Variable> Variables)
+        public List<Variable> getOrderedVariables(List<Variable> Variables)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureID);
-            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
-            XmlNode order;
-            XmlNodeList temp;
-            if (doc == null)
-            {
-                doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(System.Xml.XmlNodeType.Element, "extra", null);
-                doc.AppendChild(root);
-            }
-            if (doc.GetElementsByTagName("order").Count == 0)
-            {
-
-                if (structuredDataStructure.Variables.Count != 0)
-                {
-                    order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order.AppendChild(variable);
-                    }
-                    doc.FirstChild.AppendChild(order);
-                    structuredDataStructure.Extra = doc;
-                    dataStructureManager.UpdateStructuredDataStructure(structuredDataStructure);
-                }
-            }
-
-            temp = doc.GetElementsByTagName("order");
-            order = temp[0];
-            List<Variable> orderedVariables = new List<Variable>();
-            if (Variables.Count != 0)
-            {
-                foreach (XmlNode x in order)
-                {
-                    foreach (Variable v in Variables)
-                    {
-                        if (v.Id == Convert.ToInt64(x.InnerText))
-                            orderedVariables.Add(v);
-
-                    }
-                }
-            }
-            return orderedVariables;
+            return Variables.OrderBy(v => v.OrderNo).ToList();
         }
 
         public string CreateTemplate(StructuredDataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            List<Variable> variables = getOrderedVariables(dataStructure);
+            //List<Variable> variables = getOrderedVariables(dataStructure);
 
             string rgxPattern = "[<>?\":|\\\\/*]";
             string rgxReplace = "-";
@@ -313,11 +417,12 @@ namespace BExIS.IO.Transform.Output
 
             string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
 
-            CreateTemplate(variables, path, filename);
+            CreateTemplate(dataStructure.Variables.Select(p=>p.Id).ToList(), path, filename);
 
             XmlDocument resources = new XmlDocument();
 
             resources.LoadXml("<Resources><Resource Type=\"Excel\" Edition=\"2010\" Path=\"" + Path.Combine(path, filename) + "\"></Resource></Resources>");
+            dataStructure = this.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(dataStructure.Id); //Javad: This line should not be here, but I could not find where oes the dataStructure come from!!
             dataStructure.TemplatePaths = resources;
             dataStructureManager.UpdateStructuredDataStructure(dataStructure);
 
@@ -341,9 +446,9 @@ namespace BExIS.IO.Transform.Output
 
             if (dataStructure != null)
             {
-                List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
-                variables = getOrderedVariables(dataStructureId, variables);
-                return CreateTemplate(variables, path, filename);
+                //List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
+                //variables = getOrderedVariables(variables);
+                return CreateTemplate(variableIds, path, filename);
             }
             else
             {
@@ -360,7 +465,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="path"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public SpreadsheetDocument CreateTemplate(List<Variable> variables, string path, string filename)
+        public SpreadsheetDocument CreateTemplate(List<long> variableIds, string path, string filename)
         {
             if (!Directory.Exists(Path.Combine(AppConfiguration.DataPath, path)))
             {
@@ -425,6 +530,10 @@ namespace BExIS.IO.Transform.Output
 
             List<Row> rows = GetRows(worksheet, 1, 11);
 
+            List<Variable> variables = this.GetUnitOfWork().GetReadOnlyRepository<Variable>()
+                                                            .Query(p => variableIds.Contains(p.Id))
+                                                            .OrderBy(p=> p.OrderNo)
+                                                            .ToList();
             foreach (Variable var in variables)
             {
                 DataContainerManager CM = new DataContainerManager();

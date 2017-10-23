@@ -1464,10 +1464,14 @@
 .fa-stack-exchange:before {
   content: "\f18d";
 }
-.fa-arrow-circle-o-right:before {
+.fa-arrow-circle-o-right:before,
+.bx-arrow-circle-o-right:before
+ {
   content: "\f18e";
 }
-.fa-arrow-circle-o-left:before {
+.fa-arrow-circle-o-left:before,
+.bx-arrow-circle-o-left:before
+{
   content: "\f190";
 }
 .fa-toggle-left:before,

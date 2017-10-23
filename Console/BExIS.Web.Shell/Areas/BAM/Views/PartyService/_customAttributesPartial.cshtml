@@ -1,0 +1,107 @@
+﻿@model List<BExIS.Dlm.Entities.Party.PartyCustomAttribute>
+@{
+    ViewBag.Title = "customAttributesPartial";
+    List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue> partyCustomAttributeValues = (List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue>)ViewBag.customAttrValues;
+    long partyId = 0;
+    long partyTypeId = 0;
+    if (Model != null && Model.Any())
+    { partyTypeId = Model.First().PartyType.Id; }
+    if (partyCustomAttributeValues != null && partyCustomAttributeValues.Any())
+    { partyId = partyCustomAttributeValues.First().Id; }
+    var readOnly = false;
+    if (!string.IsNullOrEmpty(Request.QueryString["readOnly"]) && Request.QueryString["readOnly"] == "true")
+    {
+        readOnly = true;
+    }
+}
+
+<table id="tblPartyCustomAttributes">
+
+    @foreach (var partyCustomAttr in Model.OrderBy(item => item.DisplayOrder))
+    {
+        string partyCustomAttributeValueStr = "";
+        if (partyCustomAttributeValues != null && partyCustomAttributeValues.Count() > 0)
+        {
+            var partyCustomAttributeValue = partyCustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttr.Id);
+            if (partyCustomAttributeValue != null)
+            { partyCustomAttributeValueStr = partyCustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttr.Id).Value; }
+        }
+        <tr>
+            <td style="width:40px;">@Html.Raw((!partyCustomAttr.IsValueOptional && !readOnly ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
+            <td style="width:300px;">
+                <label>
+                    @partyCustomAttr.DisplayName
+                </label>
+            </td>
+            <td>
+                @if (readOnly)
+                {
+                    <span>@partyCustomAttributeValueStr</span>
+                }
+                else
+                {
+
+                    if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
+                    {
+                        <select name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;">
+                            @foreach (var option in partyCustomAttr.ValidValues.Split(','))
+                            {
+                                <option value="@option" @(partyCustomAttributeValueStr == @option ? "selected='selected'" : "")>@option</option>
+                            }
+                        </select>
+                    }
+                    else if (partyCustomAttr.DataType == "bool" || partyCustomAttr.DataType == "boolean")
+                    {
+                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>True</label>
+                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" @(partyCustomAttributeValueStr == "false" ? "checked" : "") value="false" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>False</label>
+                    }
+                    else
+                    {
+                        <input type="text" id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" @(!partyCustomAttr.IsValueOptional ? Html.Raw("data-val=\"true\" data-val-required=\"This field is required.\"") : Html.Raw("")) @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") />
+                        @Html.ValidationMessage("partyCustomAttributeValues[" + @partyCustomAttr.Id + "]");
+                    }
+                    if (!string.IsNullOrEmpty(@partyCustomAttr.Description))
+                    {<img src="~/Content/Images/info.png" data-toggle="tooltip" title="@partyCustomAttr.Description" />}
+                }
+            </td>
+        </tr>
+    }
+</table>
+<script>
+    uniqenessPolicy = '';
+    function checkUniqeness(notShowAlert) {
+        hash = "";
+        $("#tblPartyCustomAttributes input[isUniqe]").each(
+            function (index) {
+                hash += $(this).val();
+            });
+        if (hash != "") {
+            $.get("/BAM/Party/CheckUniqeness?partyTypeId=" +@partyTypeId +"&partyId=" +@partyId +"&hash=" + hash, function (data) {
+
+                if (data == "False") {
+                    uniqenessPolicy = hash + " is existed.";
+                    if (notShowAlert!=true)
+                        alert(uniqenessPolicy+"!");
+                }
+                else
+                    uniqenessPolicy = undefined;
+            });
+        }
+    }
+    $(document).ready(function () {
+        $("#tblPartyCustomAttributes input").change(function () {
+            checkUniqeness();
+        });
+        $(document).on("submit", "form", function (e) {
+           if (uniqenessPolicy) {
+                alert(uniqenessPolicy);
+                e.preventDefault();
+                e.stopPropagation();
+                e.preventDefault(e);
+                return false;
+            }
+            else
+                return true;
+        });
+    });
+</script>

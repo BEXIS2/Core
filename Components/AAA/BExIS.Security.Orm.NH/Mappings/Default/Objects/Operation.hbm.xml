@@ -16,11 +16,6 @@
     <property name="Module" type="String" />
     <property name="Controller" type="String" />
     <property name="Action" type="String" />
-    <many-to-one name="Workflow" column="WorkflowRef" class="BExIS.Security.Entities.Objects.Workflow, BExIS.Security.Entities" />
-    <many-to-one name="Parent" column="ParentRef" class="BExIS.Security.Entities.Objects.Operation, BExIS.Security.Entities" />
-    <set name="Children" inverse="true" cascade="save-update" lazy="true">
-      <key column="ParentRef" />
-      <one-to-many class="BExIS.Security.Entities.Objects.Operation, BExIS.Security.Entities" />
-    </set>
+    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
   </class>
 </hibernate-mapping>

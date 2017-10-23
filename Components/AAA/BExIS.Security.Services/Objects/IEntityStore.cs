@@ -4,10 +4,10 @@ namespace BExIS.Security.Services.Objects
 {
     public interface IEntityStore
     {
-        List<EntityStoreItemModel> GetEntities();
+        List<EntityStoreItem> GetEntities();
     }
 
-    public class EntityStoreItemModel
+    public class EntityStoreItem
     {
         public long Id { get; set; }
         public string Title { get; set; }

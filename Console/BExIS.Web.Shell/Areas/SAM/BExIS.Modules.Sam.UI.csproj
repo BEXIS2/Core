@@ -55,6 +55,10 @@
       <HintPath>..\..\..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -139,11 +143,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
@@ -176,17 +175,17 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\Help\Help_img1.png" />
+    <Content Include="Content\Images\Help\create_group.png" />
+    <Content Include="Content\Images\Help\create_user.png" />
+    <Content Include="Content\Images\Help\edit_group.png" />
+    <Content Include="Content\Images\Help\edit_user.png" />
+    <Content Include="Content\Images\Help\features.png" />
+    <Content Include="Content\Images\Help\groups.png" />
     <Content Include="Content\Images\Help\Help_img10.png" />
     <Content Include="Content\Images\Help\Help_img11.png" />
-    <Content Include="Content\Images\Help\Help_img2.png" />
-    <Content Include="Content\Images\Help\Help_img3.png" />
-    <Content Include="Content\Images\Help\Help_img4.png" />
-    <Content Include="Content\Images\Help\Help_img5.png" />
-    <Content Include="Content\Images\Help\Help_img6.png" />
-    <Content Include="Content\Images\Help\Help_img7.png" />
-    <Content Include="Content\Images\Help\Help_img8.png" />
-    <Content Include="Content\Images\Help\Help_img9.png" />
+    <Content Include="Content\Images\Help\login.png" />
+    <Content Include="Content\Images\Help\register.png" />
+    <Content Include="Content\Images\Help\users.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Sam.Manifest.xml">
       <SubType>Designer</SubType>
@@ -195,8 +194,10 @@
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
     <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\SAM.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -218,13 +219,11 @@
     <Content Include="Views\Tenants\_Create.cshtml" />
     <Content Include="Views\Tenants\_Edit.cshtml" />
     <Content Include="Views\EntityPermissions\Index.cshtml" />
-    <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\EntityPermissions\_Entities.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
-    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Entities.cshtml" />
     <Content Include="Views\Requests\Index.cshtml" />
     <Content Include="Views\Requests\_Requests.cshtml" />
@@ -235,14 +234,17 @@
     <Content Include="Views\Datasets\Version.cshtml" />
     <Content Include="Views\Datasets\Versions.cshtml" />
     <Content Include="Views\Users\_Create.cshtml" />
-    <Content Include="Views\Users\_Membership.cshtml" />
+    <Content Include="Views\Users\_Groups.cshtml" />
     <Content Include="Views\Users\_Update.cshtml" />
     <Content Include="Views\Groups\_Create.cshtml" />
-    <Content Include="Views\Groups\_Membership.cshtml" />
+    <Content Include="Views\Groups\_Users.cshtml" />
     <Content Include="Views\Groups\_Update.cshtml" />
     <Content Include="Views\FeaturePermissions\_Features.cshtml" />
     <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
     <Content Include="Views\FeaturePermissions\Index.cshtml" />
+    <Content Include="Views\Groups\Index.cshtml" />
+    <Content Include="Views\EntityPermissions\_Instances.cshtml" />
+    <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

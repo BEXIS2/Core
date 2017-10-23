@@ -3,6 +3,13 @@
     var actionName = ViewContext.RouteData.GetRequiredString("action").ToLower();
     var readOnly = (actionName == "view" || actionName == "viewpartydetail");
 }
+@if (!readOnly)
+{
+    <div class="bx-rpm-buttons" style="text-align:left;padding-left:10px;">
+        <a class="t-button function" id="AddPartyRelation" title="Create a new party relation" style="cursor:pointer">Create</a>
+        <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
+    </div>
+}
 @(Html.Telerik().Grid(Model.PartyRelationships.AsEnumerable())
             .Name("PartyRelationshipsGrid")
             .Sortable()
@@ -29,27 +36,27 @@
                 </text>
 );
             }))
-@if (!readOnly)
-{
-    <div title="Create a new party relation" class="bx-rpm-buttons">
-        <a class="t-button function" id="AddPartyRelation" style="cursor:pointer">Create party relation</a>
-        <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
-    </div>
-}
+
 <div id="dialog"></div>
 @*<div style="position:absolute; left:calc(50% - 508px); top:10%;height: 50%; overflow: scroll; width: 40%;" >*@
 @{ Html.Telerik().Window().Name("PartyRelationWindow").HtmlAttributes(new { style = "min-width: 40%;" })
-                                                           .Title("New party relation").Resizable()
-                                                           .ClientEvents(events => events.OnLoad("closePartyRelationWindow"))
-                                                           .Draggable(true)
-                                                           .Modal(true)
-                                                           .Visible(true).Content("").Render();
+                                                                                       .Title("New party relation").Resizable()
+                                                                                       .ClientEvents(events => events.OnLoad("closePartyRelationWindow").OnClose("callRelationshipsValidator"))
+                                                                                       .Draggable(true)
+                                                                                       .Modal(true)
+                                                                                       .Visible(true).Content("").Render();
 }
 @*</div>*@
 <script>
+    var thisObject=this;
     function closePartyRelationWindow() {
         var partyWindow = $("#PartyRelationWindow").data("t-window");
         partyWindow.close();
+    }
+    function callRelationshipsValidator()
+    {
+        if(thisObject.parent.validateRelationships)
+            thisObject.parent.validateRelationships();
     }
 
     $(document).ready(function () {
@@ -57,15 +64,15 @@
         $("#AddPartyRelation").bind("click", function () {
             $("#imgPartyCustomeAttrLoading").show();
             var partyWindow = $("#PartyRelationWindow").data("t-window");
-            $.get( "/BAM/Party/LoadPartyRelationshipType/"+@Model.Party.PartyType.Id+"?partyId="+@Model.Party.Id, function( data ) {
+           
+            $.get("/BAM/Party/LoadPartyRelationshipType/" + @Model.PartyType.Id + "?partyId=" + @Model.Id, function(data) {
                 partyWindow.content(data);
                 partyWindow.center();
                 partyWindow.open();
                 partyWindow.center();
-                $("#PartyRelationWindowPartyId").val(@Model.Party.Id);
+                $("#PartyRelationWindowPartyId").val(@Model.Id);
                 $("#imgPartyCustomeAttrLoading").hide();
             });
-
         });
     });
 

@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
 
@@ -8,31 +9,12 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataPackageModel : AbstractMetadataStepModel
     {
+        private MetadataStructureUsageHelper metadataStructureUsageHelper;
 
         public MetadataPackageModel()
         {
             ErrorList = new List<Error>();
-
-        }
-
-        public static MetadataPackageModel Convert(BaseUsage mPUsage, int number)
-        {
-            MetadataPackageUsage metadataPackageUsage = (MetadataPackageUsage)mPUsage;
-            if (metadataPackageUsage != null)
-            {
-                return new MetadataPackageModel
-                {
-                    Source = metadataPackageUsage,
-                    Number = number,
-                    MetadataAttributeModels = new List<MetadataAttributeModel>(),
-                    DisplayName = metadataPackageUsage.Label,
-                    Discription = metadataPackageUsage.Description,
-                    MinCardinality = metadataPackageUsage.MinCardinality,
-                    MaxCardinality = metadataPackageUsage.MaxCardinality
-                };
-            }
-            else
-                return null;
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
         }
 
         public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, int stepId)
@@ -88,15 +70,15 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 MetadataPackageUsage mpu = (MetadataPackageUsage)Source;
                 if (mpu.MetadataPackage is MetadataPackage)
                 {
-                    MetadataPackage mp = (MetadataPackage)mpu.MetadataPackage;
+                    MetadataPackage mp = mpu.MetadataPackage;
 
                     if (mp != null)
                     {
                         foreach (MetadataAttributeUsage usage in mp.MetadataAttributeUsages)
                         {
-                            if (MetadataStructureUsageHelper.IsSimple(usage))
+                            if (metadataStructureUsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mpu, metadataStructureId, Number, stepId));
+                                MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mpu, metadataStructureId, Number, stepId));
                             }
                         }
                     }

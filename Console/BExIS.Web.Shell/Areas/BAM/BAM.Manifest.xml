@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="BAM" displayName="Business Administration Module" version="1.0.0" builtin="false">
   <Description>
-    <!--add proper description-->
+    All the packages related to the core of system belong to this module such as Party Package.
   </Description>
   <Assemblies>
     <Assembly fullName="" role=""/>
@@ -12,17 +12,21 @@
   <Exports>
     <!--add proper menu items-->
 
-    <Export tag="menubar" id="createDataset" order="1"
-            title="Party Manager" description="xx" icon=""
+    <Export tag="settings" id="createDataset" order="1"
+            title="Manage Parties" description="" icon=""
             controller="Party" action="index"
-            extends="./menubarRoot/bam" />
+            extends="./settingsRoot" />
 
     <!-- INTERNAL-->
 
     <Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
             title="Load From Party User Registeration Form" description="Load FromParty User Registeration Form" icon=""
-            controller="Party" action="UserRegisteration"
+            controller="PartyService" action="UserRegisteration"
             extends="" />
+    <Export tag="internalApi" id="GetPartyTypesForAccount"
+        title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""
+        controller="PartyService" action="GetPartyTypesForAccount"
+        extends="" />
 	<!-- Settings Example-->
     <!--<Export tag="settings" id="manageMetadata" order="1"
             title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""

@@ -13,6 +13,14 @@
 
 <script>
     $(document).ready(function () {
+        //Destroy the handsontable from the next step (happens when clicking the "prev" button) because it's causing performance problems
+        if (typeof hotActive != 'undefined') {
+            if (hotActive) {
+                hot.destroy();
+                hotActive = false;
+            }
+        }
+
         var selectedValue = "@(preselect)";
 
         if (selectedValue.length > 0) {
@@ -55,7 +63,7 @@
 
         <div class="uploadWizardStep_Description stepper">
             <p>
-                Your uploaded file has a specific structure, please select which one.
+                Your uploaded file has a specific structure, please select which one (red = variable names, green = data).
             </p>
         </div>
 
@@ -81,27 +89,14 @@
     </div>
 
     <div class="uploadWizardStep_Error stepper">
-        @if (Model != null)
+        @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
         {
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
+            <ul>
+                @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                 {
-
-
+                    <li>@s.ToString()</li>
                 }
-                else
-                {
-                    <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        {
-                            <li>@s.ToString()</li>
-                        }
-                    </ul>
-
-                }
-            }
-
+            </ul>
         }
     </div>
 </div>

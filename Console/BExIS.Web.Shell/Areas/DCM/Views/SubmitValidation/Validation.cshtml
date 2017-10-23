@@ -75,13 +75,12 @@
 
     $('#validationButton').click(function () {
 
-        $('#preloader').show();
+        $('.uploadWizardStep').preloader(16, "Validate data.");
 
         $.post('@Url.Action("ValidateFile", @Model.StepInfo.PostActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', function (response) {
 
             $('.uploadWizardStep_Error').empty();
-            $('#StepValidation').html(response);
-            $('#preloader').hide();
+            $('.uploadWizardStep').html(response);
             
         });
     });

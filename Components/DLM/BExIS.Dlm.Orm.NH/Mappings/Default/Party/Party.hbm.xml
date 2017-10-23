@@ -24,16 +24,20 @@
       <column name="Alias"  />
     </property>
 
-    <property name="Description" type="String" >
+    <property name="Description" type="String" not-null="false">
       <column name="Description"  />
     </property>
 
-    <property name="StartDate" type="DateTime" >
+    <property name="StartDate" type="DateTime" not-null="false" >
       <column name="StartDate"  />
     </property>
 
-    <property name="EndDate" type="DateTime" >
+    <property name="EndDate" type="DateTime" not-null="false" >
       <column name="EndDate"  />
+    </property>
+    
+    <property name="IsTemp" type="yes_no" >
+      <column name="IsTemp"  />
     </property>
 
     <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"  lazy="false" />

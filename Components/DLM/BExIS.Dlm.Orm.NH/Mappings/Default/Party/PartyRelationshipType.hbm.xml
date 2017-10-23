@@ -23,9 +23,9 @@
     <property name="DisplayName" type="String" >
       <column name="DisplayName"  />
     </property>
-    
-    <property name="Description" type="String" >
-      <column name="Description"  />
+
+    <property name="Description" type="StringClob" >
+      <column name="Description" sql-type="text"/>
     </property>
 
     <property name="IndicatesHierarchy" type="yes_no" >
@@ -40,7 +40,7 @@
       <column name="MaxCardinality"  />
     </property>
 
-    <set name="AssociatedPairs" table="PartyTypePairs" lazy="true">
+    <set name="AssociatedPairs" table="PartyTypePairs" lazy="false">
       <key column="PartyRelationshipTypeRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>

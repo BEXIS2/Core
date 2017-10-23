@@ -42,9 +42,14 @@
             controller="Data" action="ShowData"
             extends="" />
 
-    <Export tag="internalApi" id="SearchIndex"
+    <Export tag="internalApi" id="ReIndexSearch"
         title="Reindex Search" description="Reindex Search" icon=""
         controller="SearchIndex" action="ReIndex"
+        extends="" />
+
+    <Export tag="internalApi" id="ReIndexSingle"
+        title="Reindex a Single " description="Reindex single" icon=""
+        controller="SearchIndex" action="ReIndexSingle"
         extends="" />
     
     <Export tag="internalApi" id="freeTextSearch"

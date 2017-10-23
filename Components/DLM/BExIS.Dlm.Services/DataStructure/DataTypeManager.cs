@@ -3,16 +3,43 @@ using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 using System.Linq;
+using System;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class DataTypeManager
+    public class DataTypeManager : IDisposable
     {
+        private IUnitOfWork guow = null;
         public DataTypeManager() 
         {
             //// define aggregate paths
             ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
-            this.Repo = this.GetUnitOfWork().GetReadOnlyRepository<DataType>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.Repo = guow.GetReadOnlyRepository<DataType>();
+        }
+
+        private bool isDisposed = false;
+        ~DataTypeManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers

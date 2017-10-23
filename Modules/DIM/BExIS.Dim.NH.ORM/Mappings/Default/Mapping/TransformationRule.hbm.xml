@@ -20,7 +20,11 @@
     <property name="RegEx" type="string">
       <column name="RegEx" />
     </property>
-    
+
+
+    <property name="Mask" type="string">
+      <column name="Mask" />
+    </property>
 
   </class>
 </hibernate-mapping>

@@ -10,10 +10,11 @@ using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class UnitController : Controller
+    public class UnitController : BaseController
     {
         //
         // GET: /RPM/Unit/
@@ -37,6 +38,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Units", this.Session.GetTenant());
 
             UnitManager unitManager = new UnitManager();
+            this.Disposables.Add(unitManager);
+
 
             Model.Unit.Name = cutSpaces(Model.Unit.Name);
             Model.Unit.Abbreviation = cutSpaces(Model.Unit.Abbreviation);
@@ -124,6 +127,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             bool check = true;
             UnitManager unitManager = new UnitManager();
+            this.Disposables.Add(unitManager);
+
             List<Unit> unitList = unitManager.Repo.Get().ToList(); ;
 
             if (unit.Name == null || unit.Name == "")
@@ -208,8 +213,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (unit != null)
             {
                 DataTypeManager dataTypeManger = new DataTypeManager();
+                this.Disposables.Add(dataTypeManger);
 
                 UnitManager unitManager = new UnitManager();
+                this.Disposables.Add(unitManager);
+
 
                 unit = unitManager.Repo.Get(unit.Id);
                 List<DataType> existingDataTypes = unit.AssociatedDataTypes.ToList();
@@ -241,6 +249,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (!editUnitModel.inUse)
                     {
                         UnitManager unitManager = new UnitManager();
+                        this.Disposables.Add(unitManager);
+
                         unitManager.Delete(editUnitModel.Unit);
                     }
 
@@ -254,7 +264,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             
 
             UnitManager unitManager = new UnitManager();
+            this.Disposables.Add(unitManager);
             DataTypeManager dataTypeManager = new DataTypeManager();
+            this.Disposables.Add(dataTypeManager);
             UnitManagerModel Model;
 
             if (id != 0)

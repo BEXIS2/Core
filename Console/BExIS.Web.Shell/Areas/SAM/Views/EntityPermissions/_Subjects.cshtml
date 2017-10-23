@@ -1,0 +1,58 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using BExIS.Security.Entities.Authorization
+@using DocumentFormat.OpenXml.Wordprocessing
+@using Telerik.Web.Mvc.UI
+
+@model EntityInstanceModel
+
+<style>
+    i {
+        cursor: pointer;
+    }
+</style>
+
+@(Html.Telerik().Grid<EntityPermissionGridRowModel>()
+    .Name("grid_subjects")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(m => m.SubjectId);
+        columns.Bound(m => m.SubjectName);
+        columns.Bound(m => m.SubjectType);
+
+        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+        {
+            columns.Bound(m => m.Rights)
+                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> />")
+                               .Title(rightType.ToString())
+                               .Width(64)
+                               .Filterable(false)
+                               .Sortable(false)
+                               .HtmlAttributes(new { style = "text-align:center" });
+        }
+    })
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+          .OperationMode(GridOperationMode.Server)
+          .Select("Subjects_Select", "EntityPermissions", new { Model.EntityId, Model.InstanceId })
+      )
+      .Filterable()
+      .Pageable(pageable =>
+      {
+          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+          pageable.Position(GridPagerPosition.Bottom);
+      })
+      .Sortable(sortable => sortable
+          .OrderBy(orderby => orderby
+              .Add(m => m.SubjectName)
+              .Ascending()
+          )
+      )
+      .ClientEvents(events =>
+      {
+          events.OnDataBound("grid_subjects_onDataBound");
+      }))
