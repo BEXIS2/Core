@@ -129,7 +129,6 @@ function metadataAttributeOnLoad(e, hasErrors) {
         $('#' + e.id + "_input").AddClass("bx-input-error");
 }
 
-
 function OnKeyUpTextInput(e) {
     console.log("OnKeyDownTextInput");
     //console.log(e.id);

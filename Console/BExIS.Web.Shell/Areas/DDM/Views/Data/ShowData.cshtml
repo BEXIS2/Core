@@ -182,13 +182,27 @@
 
     function OnSelectShowDataTabStrip(e) {
         if (e.item.id == "metadata") {
+
             setTimeout(function () {
                 bindMinimap(true);
-            },120);
+
+                $(window).resize(function () {
+
+                        setTimeout(function () {
+                            //alert("r");
+                            bindMinimap();
+                        }, 120);
+                    });
+
+            }, 120);
+
+            
         }
         else {
             $(".miniregion").remove();
             $(".minimap").remove();
+
+            $(window).off('resize');
         }
     }
 

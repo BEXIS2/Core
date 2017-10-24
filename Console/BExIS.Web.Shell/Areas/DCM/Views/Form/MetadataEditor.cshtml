@@ -85,7 +85,7 @@
 }
 
 
-<div id="MetadataEditor" style="width: 89%">
+<div id="MetadataEditor" style="width: 89%" >
 <div>
     <table>
         <tr>
@@ -244,20 +244,16 @@
 
         });
 
-    $(window)
-        .resize(function() {
-            setTimeout(function() {
-                    //alert("r");
+    $(window).resize(function () {
 
-                    bindMinimap();
-                },
-                120);
-
+        setTimeout(function () {
+            //alert("r");
+            bindMinimap();
+        }, 120);
         });
 
     $("#showminimap")
         .click(function() {
-
             bindMinimap();
         });
 
