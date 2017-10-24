@@ -20,14 +20,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public async void AddUserToGroup(long userId, string groupName)
+        public async Task<bool> AddUserToGroup(long userId, string groupName)
         {
             var identityUserService = new IdentityUserService();
 
             try
             {
                 var user = identityUserService.FindByIdAsync(userId).Result;
-                await identityUserService.AddToRoleAsync(user.Id, groupName);
+                var result = await identityUserService.AddToRoleAsync(user.Id, groupName);
+                return result.Succeeded;
             }
             finally
             {
@@ -128,14 +129,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public async void RemoveUserFromGroup(long userId, string groupName)
+        public async Task<bool> RemoveUserFromGroup(long userId, string groupName)
         {
             var identityUserService = new IdentityUserService();
 
             try
             {
                 var user = identityUserService.FindByIdAsync(userId).Result;
-                await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
+                var result = await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
+                return result.Succeeded;
             }
             finally
             {

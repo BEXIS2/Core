@@ -261,7 +261,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             #endregion
             //Send back the table-data
-            return Json(jsonTable);
+            return Content(jsonTable, "application/json");
         }
 
         /*
