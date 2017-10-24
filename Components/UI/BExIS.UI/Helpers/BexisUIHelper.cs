@@ -104,23 +104,23 @@ namespace BExIS.UI.Helpers
             string temp = "";
 
             //create input container
-            
+
             _tagBuilder = new TagBuilder(BexisUITagType.input.ToString());
             _tagBuilder.MergeAttributes(_tagDictionary[BexisUITagType.input]);
 
             temp += _tagBuilder.ToString(TagRenderMode.Normal);
-    
+
             //create icon container
 
             _tagBuilder = new TagBuilder(BexisUITagType.span.ToString());
             _tagBuilder.MergeAttributes(_tagDictionary[BexisUITagType.span]);
 
             temp += _tagBuilder.ToString(TagRenderMode.Normal);
-            
+
             //create Container
             _tagBuilder = new TagBuilder(BexisUITagType.div.ToString());
             _tagBuilder.MergeAttributes(_tagDictionary[BexisUITagType.div]);
-            _tagBuilder.InnerHtml +=temp;
+            _tagBuilder.InnerHtml += temp;
 
 
             return MvcHtmlString.Create(_tagBuilder.ToString(TagRenderMode.Normal));
@@ -128,7 +128,7 @@ namespace BExIS.UI.Helpers
 
     }
 
-    public class Slider:BexisTag
+    public class Slider : BexisTag
     {
         public Slider()
         {
@@ -176,7 +176,7 @@ namespace BExIS.UI.Helpers
 
         public Slider ClientEvent(string eventName, string functionName)
         {
-            addAttribute(BexisUITagType.input, eventName.ToLower(), functionName+"(event)");
+            addAttribute(BexisUITagType.input, eventName.ToLower(), functionName + "(event)");
             return this;
         }
 
@@ -195,7 +195,7 @@ namespace BExIS.UI.Helpers
 
         public MvcHtmlString Render()
         {
-            if(TagDictionary.Count>0)
+            if (TagDictionary.Count > 0)
             {
                 string result = "";
 
@@ -224,7 +224,7 @@ namespace BExIS.UI.Helpers
 
         public List()
         {
-            _dataSource=null;
+            _dataSource = null;
 
             TagDictionary.Add(BexisUITagType.a, new Dictionary<string, object>());
 
@@ -270,20 +270,20 @@ namespace BExIS.UI.Helpers
 
         public MvcHtmlString Render()
         {
-            string temp="";
+            string temp = "";
 
-            foreach(var kvp in _dataSource)
+            foreach (var kvp in _dataSource)
             {
                 _tagBuilder = new TagBuilder(BexisUITagType.li.ToString());
-                _tagBuilder.MergeAttribute("name",kvp.Text);
-                _tagBuilder.MergeAttribute("id",kvp.Text);
-                _tagBuilder.MergeAttribute("text",kvp.Text);
+                _tagBuilder.MergeAttribute("name", kvp.Text);
+                _tagBuilder.MergeAttribute("id", kvp.Text);
+                _tagBuilder.MergeAttribute("text", kvp.Text);
                 if (string.IsNullOrEmpty(kvp.Value))
                 {
                     _tagBuilder.MergeAttribute("value", kvp.Text);
                     _tagBuilder.InnerHtml = kvp.Text;
-          
-                    _tagBuilder.InnerHtml += generateAction( 
+
+                    _tagBuilder.InnerHtml += generateAction(
                         TagDictionary[BexisUITagType.a]["actionName"].ToString(),
                         TagDictionary[BexisUITagType.a]["controllerName"].ToString(),
                         TagDictionary[BexisUITagType.a]["parameterName"].ToString(),
@@ -295,22 +295,22 @@ namespace BExIS.UI.Helpers
                 {
                     _tagBuilder.MergeAttribute("value", kvp.Value);
                     _tagBuilder.InnerHtml = kvp.Value;
-                     _tagBuilder.InnerHtml += generateAction(
-                        TagDictionary[BexisUITagType.a]["actionName"].ToString(),
-                        TagDictionary[BexisUITagType.a]["controllerName"].ToString(),
-                        TagDictionary[BexisUITagType.a]["parameterName"].ToString(),
-                        kvp.Value,
-                        (RouteValueDictionary)TagDictionary[BexisUITagType.a]["routeValues"]
-                        );
+                    _tagBuilder.InnerHtml += generateAction(
+                       TagDictionary[BexisUITagType.a]["actionName"].ToString(),
+                       TagDictionary[BexisUITagType.a]["controllerName"].ToString(),
+                       TagDictionary[BexisUITagType.a]["parameterName"].ToString(),
+                       kvp.Value,
+                       (RouteValueDictionary)TagDictionary[BexisUITagType.a]["routeValues"]
+                       );
 
                 }
 
-                if(kvp.Selected)
+                if (kvp.Selected)
                 {
                     _tagBuilder.MergeAttribute("selected", "selected");
                 }
 
-                temp+=_tagBuilder.ToString(TagRenderMode.Normal);
+                temp += _tagBuilder.ToString(TagRenderMode.Normal);
             }
 
             _tagBuilder = new TagBuilder(BexisUITagType.ul.ToString());
@@ -361,7 +361,7 @@ namespace BExIS.UI.Helpers
 
         }
 
-        protected void addAttributes(BexisUITagType tagType, Dictionary<string,object> htmlAttributes)
+        protected void addAttributes(BexisUITagType tagType, Dictionary<string, object> htmlAttributes)
         {
             //tag exist
             if (TagDictionary.ContainsKey(tagType))
@@ -369,7 +369,7 @@ namespace BExIS.UI.Helpers
                 // get HtmlAttributeDic
                 Dictionary<string, object> currentHtmlAttributeDic = TagDictionary[tagType];
 
-                foreach (KeyValuePair<string,object> kvp in htmlAttributes)
+                foreach (KeyValuePair<string, object> kvp in htmlAttributes)
                 {
                     // htmlAttribute exist
                     if (currentHtmlAttributeDic.ContainsKey(kvp.Key))
@@ -397,7 +397,7 @@ namespace BExIS.UI.Helpers
                 Dictionary<string, object> currentHtmlAttributeDic = TagDictionary[tagType];
                 // htmlAttribute exist
                 if (currentHtmlAttributeDic.ContainsKey(key))
-                    currentHtmlAttributeDic[key] += " "+value;
+                    currentHtmlAttributeDic[key] += " " + value;
                 // htmlAttribute not exist
                 else
                     currentHtmlAttributeDic.Add(key, value);
@@ -424,7 +424,7 @@ namespace BExIS.UI.Helpers
                 {
                     // htmlAttribute exist
                     if (currentHtmlAttributeDic.ContainsKey(kvp.Key))
-                        currentHtmlAttributeDic[kvp.Key] = " "+kvp.Value;
+                        currentHtmlAttributeDic[kvp.Key] = " " + kvp.Value;
                     // htmlAttribute not exist
                     else
                         currentHtmlAttributeDic.Add(kvp.Key, kvp.Value);
@@ -473,7 +473,7 @@ namespace BExIS.UI.Helpers
     }
 
     public enum BexisUITagType
-    { 
+    {
         a,
         button,
         div,

@@ -8,8 +8,8 @@
     <ProjectGuid>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BExIS.UI.Wizard</RootNamespace>
-    <AssemblyName>BExIS.UI.Wizard</AssemblyName>
+    <RootNamespace>BExIS.UI</RootNamespace>
+    <AssemblyName>BExIS.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
