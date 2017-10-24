@@ -77,9 +77,11 @@
 
                   tabs.Add()
                       .Text("Publish")
-                      .Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                      //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                        .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
                         .Enabled(false)
                         .HtmlAttributes(new { id = "prepare" });
+
 
               })
               .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
@@ -203,6 +205,12 @@
             $(".minimap").remove();
 
             $(window).off('resize');
+        }
+
+        if (e.item.id == "prepare") {
+
+            var tabStrip = $("#ShowDataTabStrip").data("tTabStrip");
+            tabStrip.reload($("#" + e.item.id));
         }
     }
 
