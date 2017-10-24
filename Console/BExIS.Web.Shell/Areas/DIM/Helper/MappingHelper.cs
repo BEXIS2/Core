@@ -1035,10 +1035,10 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     foreach (var cm in childMappings)
                     {
-                        mappingManager.DeleteMapping(cm);
+                        mappingManager.DeleteMapping(cm.Id);
                     }
                 }
-                mappingManager.DeleteMapping(mapping);
+                mappingManager.DeleteMapping(mapping.Id);
 
 
                 return true;
