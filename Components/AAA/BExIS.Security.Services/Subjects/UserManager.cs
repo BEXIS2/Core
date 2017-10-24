@@ -206,14 +206,22 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task AddLoginAsync(User user, UserLoginInfo login)
         {
-            user.Logins.Add(new Login()
+            using (var uow = this.GetUnitOfWork())
             {
-                ProviderKey = login.ProviderKey,
-                LoginProvider = login.LoginProvider
-            });
+                var userRepository = uow.GetRepository<User>();
 
-            UpdateAsync(user);
-            return Task.FromResult<int>(0);
+                user = userRepository.Get(user.Id);
+                user.Logins.Add(new Login()
+                {
+                    ProviderKey = login.ProviderKey,
+                    LoginProvider = login.LoginProvider
+                });
+
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
+            }
         }
 
         /// <summary>
@@ -250,14 +258,21 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task RemoveLoginAsync(User user, UserLoginInfo login)
         {
-            var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
-            if (info != null)
+            using (var uow = this.GetUnitOfWork())
             {
+                var userRepository = uow.GetRepository<User>();
+
+                user = userRepository.Get(user.Id);
+                var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+                if (info == null) return Task.FromResult(0);
+
                 user.Logins.Remove(info);
-                UpdateAsync(user);
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
             }
 
-            return Task.FromResult(0);
         }
 
         #endregion IUserLoginStore
@@ -440,7 +455,13 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<bool> IsInRoleAsync(User user, string roleName)
         {
-            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                user = userRepository.Get(user.Id);
+
+                return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
+            }
         }
 
         /// <summary>
@@ -459,8 +480,8 @@ namespace BExIS.Security.Services.Subjects
 
                 if (group == null) return Task.FromResult(0);
 
+                user = userRepository.Get(user.Id);
                 user.Groups.Remove(group);
-
                 userRepository.Put(user);
                 uow.Commit();
 
