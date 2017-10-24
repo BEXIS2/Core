@@ -126,7 +126,9 @@ namespace BExIS.Security.Services.Objects
             using (var uow = this.GetUnitOfWork())
             {
                 var featureRepository = uow.GetRepository<Feature>();
-                featureRepository.Put(feature);
+                featureRepository.Merge(feature);
+                var f = featureRepository.Get(feature.Id);
+                featureRepository.Put(f);
                 uow.Commit();
             }
         }

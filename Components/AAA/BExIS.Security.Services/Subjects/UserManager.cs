@@ -172,7 +172,9 @@ namespace BExIS.Security.Services.Subjects
             using (var uow = this.GetUnitOfWork())
             {
                 var userRepository = uow.GetRepository<User>();
-                userRepository.Put(user);
+                userRepository.Merge(user);
+                var u = userRepository.Get(user.Id);
+                userRepository.Put(u);
                 uow.Commit();
             }
 
@@ -394,24 +396,24 @@ namespace BExIS.Security.Services.Subjects
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetReadOnlyRepository<Group>();
-                var userRepository = uow.GetRepository<User>();
+                //var userRepository = uow.GetRepository<User>();
                 var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
 
-                // [Sven][Workaround][2017/10/09]
-                // It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
-                // In general, there is an issue with the sessions. The primary error message was
-                //  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
-                // but with "Load" or "Reload" it changed to
-                //  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
-                // At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
-                user = userRepository.Get(user.Id);
+                //// [Sven][Workaround][2017/10/09]
+                //// It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
+                //// In general, there is an issue with the sessions. The primary error message was
+                ////  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
+                //// but with "Load" or "Reload" it changed to
+                ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
+                //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
+                //user = userRepository.Get(user.Id);
 
-                if (group == null) return Task.FromResult(0);
+                //if (group == null) return Task.FromResult(0);
 
                 user.Groups.Add(group);
 
-                userRepository.Put(user);
-                uow.Commit();
+                //userRepository.Put(user);
+                //uow.Commit();
 
                 return Task.FromResult(0);
             }
