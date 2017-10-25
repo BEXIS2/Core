@@ -185,18 +185,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 }
 
-                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
-                {
-                    string titleXPath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                    string descriptionXpath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
+                //{
+                //    string titleXPath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                //    string descriptionXpath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
 
-                    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
-                        titleXPath, descriptionXpath);
+                //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
+                //        titleXPath, descriptionXpath);
 
-                }
+                //}
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {

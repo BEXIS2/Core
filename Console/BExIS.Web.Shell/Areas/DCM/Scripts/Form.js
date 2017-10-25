@@ -130,7 +130,7 @@ function metadataAttributeOnLoad(e, hasErrors) {
 }
 
 function OnKeyUpTextInput(e) {
-    console.log("OnKeyDownTextInput");
+    //console.log("OnKeyDownTextInput");
     //console.log(e.id);
     //console.log(e.value.length);
     //console.log(e.value);
