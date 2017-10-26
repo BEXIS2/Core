@@ -158,6 +158,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Metadata Managment Workflow
 
+                operationManager.Create("DCM", "ImportMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", MetadataManagementFeature);
