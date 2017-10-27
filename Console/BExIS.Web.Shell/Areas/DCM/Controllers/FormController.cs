@@ -40,6 +40,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private CreateTaskmanager TaskManager;
         private MetadataStructureUsageHelper metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         #region Load Metadata formular actions
 
@@ -1702,8 +1704,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 TaskManager.StepInfos = new List<StepInfo>();
 
-                foreach (var mpu in metadataPackageList)
+                foreach (var mpuId in metadataPackageList.Select(p => p.Id))
                 {
+                    MetadataPackageUsage mpu = metadataStructureManager.PackageUsageRepo.Get(mpuId);
+
                     //only add none optional usages
                     var si = new StepInfo(mpu.Label)
                     {
@@ -1858,7 +1862,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private bool IsImportAvavilable(long metadataStructureId)
         {
-            return XmlDatasetHelper.HasExportInformation(metadataStructureId);
+            return xmlDatasetHelper.HasExportInformation(metadataStructureId);
         }
 
         private BaseUsage loadUsage(long Id, Type type)
@@ -1976,11 +1980,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
-        public ActionResult _AutoCompleteAjaxLoading(string text, long id)
+        public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
+            var x = new List<string>();
+            switch (type)
+            {
+                case "MetadataNestedAttributeUsage":
+                    {
+                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        break;
+                    }
+                case "MetadataAttributeUsage":
+                    {
+                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        break;
+                    }
+            }
 
-            //ToDo Modularity dcm -> dim call
-            var x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex

@@ -2,7 +2,6 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
@@ -26,6 +25,7 @@ using System.Xml.Linq;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
@@ -36,6 +36,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DataController : BaseController
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         public ActionResult DatasetPermissions(long datasetId)
         {
             var entityManager = new EntityManager();
@@ -73,54 +76,63 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult ShowData(long id)
         {
             DatasetManager dm = new DatasetManager();
-
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            DatasetVersion dsv;
-            ShowDataModel model = new ShowDataModel();
 
-            string title = "";
-            long metadataStructureId = -1;
-            long dataStructureId = -1;
-            long researchPlanId = 1;
-            XmlDocument metadata = new XmlDocument();
 
-            if (dm.IsDatasetCheckedIn(id))
+            try
             {
-                long versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
-                dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+                DatasetVersion dsv;
+                ShowDataModel model = new ShowDataModel();
 
-                metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+                string title = "";
+                long metadataStructureId = -1;
+                long dataStructureId = -1;
+                long researchPlanId = 1;
+                XmlDocument metadata = new XmlDocument();
 
-                //MetadataStructureManager msm = new MetadataStructureManager();
-                //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                if (dm.IsDatasetCheckedIn(id))
+                {
+                    long versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
+                    dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
-                title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                dataStructureId = dsv.Dataset.DataStructure.Id;
-                researchPlanId = dsv.Dataset.ResearchPlan.Id;
-                metadata = dsv.Metadata;
+                    metadataStructureId = dsv.Dataset.MetadataStructure.Id;
 
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
+                    //MetadataStructureManager msm = new MetadataStructureManager();
+                    //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                    title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                    dataStructureId = dsv.Dataset.DataStructure.Id;
+                    researchPlanId = dsv.Dataset.ResearchPlan.Id;
+                    metadata = dsv.Metadata;
+
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                }
+
+                model = new ShowDataModel()
+                {
+                    Id = id,
+                    Title = title,
+                    MetadataStructureId = metadataStructureId,
+                    DataStructureId = dataStructureId,
+                    ResearchPlanId = researchPlanId,
+                    ViewAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
+                    GrantAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
+                };
+
+                //set metadata in session
+                Session["ShowDataMetadata"] = metadata;
+
+                return View(model);
             }
-            else
+            finally
             {
-                ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                dm.Dispose();
+                entityPermissionManager.Dispose();
             }
-
-            model = new ShowDataModel()
-            {
-                Id = id,
-                Title = title,
-                MetadataStructureId = metadataStructureId,
-                DataStructureId = dataStructureId,
-                ResearchPlanId = researchPlanId,
-                ViewAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                GrantAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
-            };
-
-            //set metadata in session
-            Session["ShowDataMetadata"] = metadata;
-
-            return View(model);
         }
 
         #region metadata
@@ -217,57 +229,62 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["DownloadOptions"] = null;
 
             DatasetManager dm = new DatasetManager();
+            DataStructureManager dsm = new DataStructureManager();
+            //permission download
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-            if (dm.IsDatasetCheckedIn(datasetID))
+            try
             {
-                //long versionId = dm.GetDatasetLatestVersionId(datasetID); // check for zero value
-                //DatasetVersion dsv = dm.DatasetVersionRepo.Get(versionId);
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-                DataStructureManager dsm = new DataStructureManager();
-                this.Disposables.Add(dsm);
-
-                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-
-                //permission download
-                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                this.Disposables.Add(entityPermissionManager);
-
-                // TODO: refactor Download Right not existing, so i set it to read
-                bool downloadAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name,
-                    "Dataset", typeof(Dataset), datasetID, RightType.Read);
-
-                //TITLE
-                string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-
-                if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                if (dm.IsDatasetCheckedIn(datasetID))
                 {
-                    //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
-                    //
-                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
-                    //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                    DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, 0, 100);
+                    //long versionId = dm.GetDatasetLatestVersionId(datasetID); // check for zero value
+                    //DatasetVersion dsv = dm.DatasetVersionRepo.Get(versionId);
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                    DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
-                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    // TODO: refactor Download Right not existing, so i set it to read
+                    bool downloadAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name,
+                        "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
-                    return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+                    //TITLE
+                    string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
 
-                    //return PartialView(new ShowPrimaryDataModel());
+                    if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                    {
+                        //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
+                        //
+                        //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
+                        //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, 0, 100);
+
+                        Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+
+                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+
+                        //return PartialView(new ShowPrimaryDataModel());
+                    }
+
+                    if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
+                    {
+                        return
+                            PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess));
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                 }
 
-                if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
-                {
-                    return
-                        PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
-                            SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess));
-                }
+                return PartialView(null);
             }
-            else
+            finally
             {
-                ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                dm.Dispose();
+                dsm.Dispose();
+                entityPermissionManager.Dispose();
             }
-
-            return PartialView(null);
         }
 
         #region server side
@@ -279,27 +296,36 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             GridModel model = new GridModel();
             Session["Filter"] = command;
             DatasetManager dm = new DatasetManager();
-            if (dm.IsDatasetCheckedIn(datasetID))
+
+
+            try
             {
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                if (dm.IsDatasetCheckedIn(datasetID))
+                {
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
-                // commented by Javad. Now the new API is called
-                //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
-                //    command.PageSize);
-                //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, command.Page - 1, command.PageSize);
+                    // commented by Javad. Now the new API is called
+                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
+                    //    command.PageSize);
+                    //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                    DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, command.Page - 1, command.PageSize);
 
-                Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
-                model = new GridModel(table);
-                model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
+                    model = new GridModel(table);
+                    model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
+                }
+                else
+                {
+                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
+                }
+
+                return View(model);
             }
-            else
+            finally
             {
-                ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
+                dm.Dispose();
             }
-
-            return View(model);
         }
 
         #endregion server side
@@ -311,10 +337,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (hasUserRights(id, RightType.Read))
             {
                 string ext = ".csv";
+                DatasetManager datasetManager = new DatasetManager();
 
                 try
                 {
-                    DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                     AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
@@ -352,6 +378,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     throw ex;
+                }
+                finally
+                {
+                    datasetManager.Dispose();
                 }
             }
             else
@@ -410,6 +440,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     throw ex;
                 }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
             }
             else
             {
@@ -422,10 +456,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (hasUserRights(id, RightType.Read))
             {
                 string ext = ".txt";
+                DatasetManager datasetManager = new DatasetManager();
 
                 try
                 {
-                    DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                     AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
@@ -465,6 +499,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     throw ex;
+                }
+                finally
+                {
+                    datasetManager.Dispose();
                 }
             }
             else
@@ -509,104 +547,113 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
         {
             DatasetManager datasetManager = new DatasetManager();
-            List<AbstractTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
 
-            if (Session["Filter"] != null)
+            try
             {
-                GridCommand command = (GridCommand)Session["Filter"];
 
-                List<AbstractTuple> dataTupleList = datatuples;
+                List<AbstractTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
 
-                if (command.FilterDescriptors.Count > 0)
+                if (Session["Filter"] != null)
                 {
-                    foreach (IFilterDescriptor filter in command.FilterDescriptors)
-                    {
-                        var test = filter;
+                    GridCommand command = (GridCommand)Session["Filter"];
 
-                        // one filter is set
-                        if (filter.GetType() == typeof(FilterDescriptor))
+                    List<AbstractTuple> dataTupleList = datatuples;
+
+                    if (command.FilterDescriptors.Count > 0)
+                    {
+                        foreach (IFilterDescriptor filter in command.FilterDescriptors)
                         {
-                            FilterDescriptor filterDescriptor = (FilterDescriptor)filter;
+                            var test = filter;
+
+                            // one filter is set
+                            if (filter.GetType() == typeof(FilterDescriptor))
+                            {
+                                FilterDescriptor filterDescriptor = (FilterDescriptor)filter;
+
+                                // get id as long from filtername
+                                Regex r = new Regex("(\\d+)");
+                                long id = Convert.ToInt64(r.Match(filterDescriptor.Member).Value);
+
+                                var list = from datatuple in dataTupleList
+                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                           where GridHelper.ValueComparion(val, filterDescriptor.Operator, filterDescriptor.Value)
+                                           select datatuple;
+
+                                dataTupleList = list.ToList();
+                            }
+                            else
+                            // more than one filter is set
+                            if (filter.GetType() == typeof(CompositeFilterDescriptor))
+                            {
+                                CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
+
+                                List<AbstractTuple> temp = new List<AbstractTuple>();
+
+                                foreach (IFilterDescriptor f in filterDescriptor.FilterDescriptors)
+                                {
+                                    if ((FilterDescriptor)f != null)
+                                    {
+                                        FilterDescriptor fd = (FilterDescriptor)f;
+                                        // get id as long from filtername
+                                        Regex r = new Regex("(\\d+)");
+                                        long id = Convert.ToInt64(r.Match(fd.Member).Value);
+
+                                        var list = from datatuple in dataTupleList
+                                                   let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                                   where GridHelper.ValueComparion(val, fd.Operator, fd.Value)
+                                                   select datatuple;
+
+                                        //temp  = list.Intersect<AbstractTuple>(temp as IEnumerable<AbstractTuple>).ToList();
+                                        dataTupleList = list.ToList();
+                                    }
+                                }
+
+                                //dataTupleList = temp;
+                            }
+                        }
+                    }
+
+                    if (command.SortDescriptors.Count > 0)
+                    {
+                        foreach (SortDescriptor sort in command.SortDescriptors)
+                        {
+                            string direction = sort.SortDirection.ToString();
 
                             // get id as long from filtername
                             Regex r = new Regex("(\\d+)");
-                            long id = Convert.ToInt64(r.Match(filterDescriptor.Member).Value);
+                            long id = Convert.ToInt64(r.Match(sort.Member).Value);
 
-                            var list = from datatuple in dataTupleList
-                                       let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                       where GridHelper.ValueComparion(val, filterDescriptor.Operator, filterDescriptor.Value)
-                                       select datatuple;
-
-                            dataTupleList = list.ToList();
-                        }
-                        else
-                        // more than one filter is set
-                        if (filter.GetType() == typeof(CompositeFilterDescriptor))
-                        {
-                            CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
-
-                            List<AbstractTuple> temp = new List<AbstractTuple>();
-
-                            foreach (IFilterDescriptor f in filterDescriptor.FilterDescriptors)
+                            if (direction.Equals("Ascending"))
                             {
-                                if ((FilterDescriptor)f != null)
-                                {
-                                    FilterDescriptor fd = (FilterDescriptor)f;
-                                    // get id as long from filtername
-                                    Regex r = new Regex("(\\d+)");
-                                    long id = Convert.ToInt64(r.Match(fd.Member).Value);
+                                var list = from datatuple in dataTupleList
+                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                           orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) ascending
+                                           select datatuple;
 
-                                    var list = from datatuple in dataTupleList
-                                               let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                               where GridHelper.ValueComparion(val, fd.Operator, fd.Value)
-                                               select datatuple;
-
-                                    //temp  = list.Intersect<AbstractTuple>(temp as IEnumerable<AbstractTuple>).ToList();
-                                    dataTupleList = list.ToList();
-                                }
+                                dataTupleList = list.ToList();
                             }
+                            else
+                            if (direction.Equals("Descending"))
+                            {
+                                var list = from datatuple in dataTupleList
+                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                           orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) descending
+                                           select datatuple;
 
-                            //dataTupleList = temp;
+                                dataTupleList = list.ToList();
+                            }
                         }
                     }
+
+                    return dataTupleList;
                 }
 
-                if (command.SortDescriptors.Count > 0)
-                {
-                    foreach (SortDescriptor sort in command.SortDescriptors)
-                    {
-                        string direction = sort.SortDirection.ToString();
-
-                        // get id as long from filtername
-                        Regex r = new Regex("(\\d+)");
-                        long id = Convert.ToInt64(r.Match(sort.Member).Value);
-
-                        if (direction.Equals("Ascending"))
-                        {
-                            var list = from datatuple in dataTupleList
-                                       let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                       orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) ascending
-                                       select datatuple;
-
-                            dataTupleList = list.ToList();
-                        }
-                        else
-                        if (direction.Equals("Descending"))
-                        {
-                            var list = from datatuple in dataTupleList
-                                       let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                       orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) descending
-                                       select datatuple;
-
-                            dataTupleList = list.ToList();
-                        }
-                    }
-                }
-
-                return dataTupleList;
+                return null;
             }
-
-            return null;
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         private string getTitle(string title)
@@ -633,16 +680,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
+                DatasetManager datasetManager = new DatasetManager();
+
                 try
                 {
-                    DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    datasetVersion.Dataset.MetadataStructure = msm.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
-
                     //TITLE
-                    string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                    string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
@@ -677,6 +722,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     throw ex;
                 }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
             }
 
             return Content("User has no rights.");
@@ -705,27 +754,37 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [GridAction]
         public ActionResult _CustomDataStructureBinding(GridCommand command, long datasetID)
         {
-            long id = datasetID;
+            DataStructureManager dsm = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
-            if (dm.IsDatasetCheckedIn(id))
+
+
+            try
             {
-                DatasetVersion ds = dm.GetDatasetLatestVersion(id);
-                if (ds != null)
+                long id = datasetID;
+                if (dm.IsDatasetCheckedIn(id))
                 {
-                    DataStructureManager dsm = new DataStructureManager();
-                    this.Disposables.Add(dsm);
+                    DatasetVersion ds = dm.GetDatasetLatestVersion(id);
+                    if (ds != null)
+                    {
 
-                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
-                    dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
-                    //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
-                    DataTable table = SearchUIHelper.ConvertStructuredDataStructureToDataTable(sds);
+                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+                        dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
+                        //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
+                        SearchUIHelper suh = new SearchUIHelper();
+                        DataTable table = suh.ConvertStructuredDataStructureToDataTable(sds);
 
-                    return View(new GridModel(table));
+                        return View(new GridModel(table));
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
                 }
             }
-            else
+            finally
             {
-                ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
+                dm.Dispose();
+                dsm.Dispose();
             }
 
             return View(new GridModel(new DataTable()));
@@ -734,22 +793,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult ShowPreviewDataStructure(long datasetID)
         {
             DatasetManager dm = new DatasetManager();
+            DataStructureManager dsm = new DataStructureManager();
+
             try
             {
-                DatasetVersion ds = dm.GetDatasetLatestVersion(datasetID);
-                DataStructureManager dsm = new DataStructureManager();
-                this.Disposables.Add(dsm);
+                using (var uow = this.GetUnitOfWork())
+                {
+                    long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
+                    DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    DataStructure dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
 
-                DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+                    long id = (long)datasetID;
 
-                long id = (long)datasetID;
+                    Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
+                        dataStructure,
+                        id
+                        );
 
-                Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
-                    dataStructure,
-                    id
-                    );
-
-                return PartialView("_previewDatastructure", m);
+                    return PartialView("_previewDatastructure", m);
+                }
             }
             catch (Exception ex)
             {
@@ -844,26 +906,34 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //};
 
             DatasetManager dm = new DatasetManager();
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-            {   // remove the one contentdesciptor
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                {
-                    if (cd.Name == name)
+
+            try
+            {
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                {   // remove the one contentdesciptor
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        cd.URI = dynamicPath;
-                        dm.UpdateContentDescriptor(cd);
+                        if (cd.Name == name)
+                        {
+                            cd.URI = dynamicPath;
+                            dm.UpdateContentDescriptor(cd);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
-                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
-            }
+                else
+                {
+                    // add current contentdesciptor to list
+                    //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                    dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+                }
 
-            //dm.EditDatasetVersion(datasetVersion, null, null, null);
-            return dynamicPath;
+                //dm.EditDatasetVersion(datasetVersion, null, null, null);
+                return dynamicPath;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         private bool hasUserRights(long entityId, RightType rightType)

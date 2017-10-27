@@ -53,8 +53,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
 
                 //Transforms the content of the file into a 2d-json-array
-                JsonTableGenerator EUEReader = new JsonTableGenerator();
-                EUEReader.Open(fis);
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
                 //If the active worksheet was never changed, we default to the first one
                 string activeWorksheet;
                 if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
@@ -177,8 +176,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
                     //Generate the Sheet-List and grab the active worksheet
-                    JsonTableGenerator EUEReader = new JsonTableGenerator();
-                    EUEReader.Open(fis);
+                    JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
                     //If the active worksheet was never changed, we default to the first one
                     string activeWorksheet;
                     if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
@@ -240,8 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
 
                 //Transforms the content of the file into a 2d-json-array
-                JsonTableGenerator EUEReader = new JsonTableGenerator();
-                EUEReader.Open(fis);
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
                 jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, sheetIdentifier);
 
                 if (!String.IsNullOrEmpty(jsonTable))
@@ -264,7 +261,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             #endregion
             //Send back the table-data
-            return Json(jsonTable);
+            return Content(jsonTable, "application/json");
         }
 
         /*
@@ -355,8 +352,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //FileStream for the users file
                 fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
-                JsonTableGenerator EUEReader = new JsonTableGenerator();
-                EUEReader.Open(fis);
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
 
                 //Get the worksheet uris and save them to the model
                 model.SheetUriDictionary = EUEReader.GetWorksheetUris();                

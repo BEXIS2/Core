@@ -202,7 +202,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             //#region ABCD BASIC
-            if (metadataStructures.Any(m => m.Name.ToLower().Equals("basic abcd")))
+            if (metadataStructures.Any(m => m.Name.ToLower().Equals("basic abcd") || m.Name.ToLower().Equals("full abcd")))
             {
                 MetadataStructure metadataStructure =
                     metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals("basic abcd"));

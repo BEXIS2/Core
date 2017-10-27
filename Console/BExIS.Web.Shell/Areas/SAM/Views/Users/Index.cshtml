@@ -213,11 +213,11 @@
             $("input[name='selectedGroups']:checkbox")
                 .click(function () {
                     if ($(this).is(':checked')) {
-                        $.post('@Url.Action("AddUserToGroup", "Users")', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function () {
+                        $.post('@Url.Action("AddUserToGroup", "Users", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
                             $("#grid_groups .t-refresh").trigger('click');
                         });
                     } else {
-                        $.post('@Url.Action("RemoveUserFromGroup", "Users")', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function () {
+                        $.post('@Url.Action("RemoveUserFromGroup", "Users", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
                             $("#grid_groups .t-refresh").trigger('click');
                         });
                     }

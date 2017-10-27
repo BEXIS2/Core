@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
@@ -16,17 +15,14 @@ using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
@@ -39,7 +35,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private EasyUploadTaskManager TaskManager;
         private FileStream Stream;
-
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        
         private static IDictionary<Guid, int> tasks = new Dictionary<Guid, int>();
 
         [HttpGet]
@@ -263,7 +260,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(EasyUploadTaskManager.DATASET_TITLE, title);
                         TaskManager.AddToBus(EasyUploadTaskManager.TITLE, title);
                     }
-                    
+
                     MetadataStructure metadataStructure = null;
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                     {
@@ -385,7 +382,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dsv.Metadata = metadataXml;
                         try
                         {
-                            dsv.Metadata = XmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
+                            dsv.Metadata = xmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
                         }
                         catch (NullReferenceException ex)
                         {
@@ -586,7 +583,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     return temp;
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 temp.Add(new Error(ErrorType.Other, "An error occured during the upload. " +
                     "Please try again later. If this problem keeps occuring, please contact your administrator."));

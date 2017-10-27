@@ -61,6 +61,7 @@ namespace BExIS.Xml.Helpers.Mapping
         private string location = "";
 
         public XmlNamespaceManager XmlNamespaceManager;
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
 
         public XmlSchemaManager()
@@ -742,7 +743,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         {
                             #region complexType
                             MetadataPackage package = getExistingMetadataPackage(element.Name);
-                            Debug.WriteLine("-->" + element.Name);
+                            //Debug.WriteLine("-->" + element.Name);
                             if (package == null)
                             {
                                 package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
@@ -812,7 +813,7 @@ namespace BExIS.Xml.Helpers.Mapping
                                     {
                                         List<string> parents = new List<string>();
                                         parents.Add(element.Name);
-                                        Debug.WriteLine("--->" + element.Name);
+                                        //Debug.WriteLine("--->" + element.Name);
 
                                         MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal, mamManager);
 
@@ -848,7 +849,7 @@ namespace BExIS.Xml.Helpers.Mapping
                                     // if mpu is a choice, add a info to extra
                                     MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
                                            element.Name, GetDescription(element.Annotation), min, max,
-                                           XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
+                                           xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
                                 }
 
                             }
@@ -974,7 +975,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     // simple element
                     if (XmlSchemaUtility.IsSimpleType(child))
                     {
-                        Debug.WriteLine(child.Name);
+                        //Debug.WriteLine(child.Name);
 
                         metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(
                             metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
@@ -993,7 +994,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                             if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
-                                Debug.WriteLine(child.Name);
+                                //Debug.WriteLine(child.Name);
                                 //--> create compountAttribute
                                 MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
                                     currentInternalXPath, currentExternalXPath, metadataAttributeManager);
@@ -1029,14 +1030,16 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (
                     metadataAttributeManager.MetadataCompoundAttributeRepo.Get()
                         .Where(m => m.Name.Equals(metadataCompountAttr.Name))
-                        .Count() > 0)
+                        .Count() > 0 && metadataCompountAttr.Id > 0)
                 {
+                    //Debug.WriteLine(metadataCompountAttr.Name);
+
                     metadataAttributeManager.Update(metadataCompountAttr);
 
                 }
                 else
                 {
-                    Debug.WriteLine(metadataCompountAttr.Name);
+                    //Debug.WriteLine(metadataCompountAttr.Name);
                     metadataCompountAttr = metadataAttributeManager.Create(metadataCompountAttr);
                     createdCompoundsDic.Add(metadataCompountAttr.Id, metadataCompountAttr.Name);
                 }
@@ -1242,7 +1245,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (XmlSchemaUtility.IsChoiceType(element))
                 {
                     min = 0;
-                    extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                    extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
                 }
 
                 MetadataNestedAttributeUsage usage = new MetadataNestedAttributeUsage()
@@ -1327,7 +1330,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (XmlSchemaUtility.IsChoiceType(element))
                     {
                         min = 0;
-                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                        extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
                     }
                     #endregion
 
@@ -1426,7 +1429,11 @@ namespace BExIS.Xml.Helpers.Mapping
                         //add to dic for reuse of created attributes
                         createdAttributesDic.Add(temp.Id, temp.Name);
 
-                        return metadataAttributeManager.Update(temp);
+                        //Debug.WriteLine(temp.Name);
+
+                        return temp;
+
+                        //return metadataAttributeManager.Update(temp);
                     }
 
                     //Debug.Writeline(temp.Name);
@@ -1480,7 +1487,10 @@ namespace BExIS.Xml.Helpers.Mapping
                             if (constraints != null && constraints.Count() > 0)
                                 temp.Constraints = constraints;
 
-                            return metadataAttributeManager.Update(temp);
+                            //Debug.WriteLine(temp.Name);
+
+                            return temp;
+                            //return metadataAttributeManager.Update(temp);
                         }
 
                         //Debug.Writeline(temp.Name);
@@ -2345,10 +2355,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
             string mappingFileDirectory = AppConfiguration.GetModuleWorkspacePath("DIM");
 
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
             // delete all mapping files
             // delete export mappings
             List<string> mappingFilPaths =
-                XmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
+                xmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
                     TransmissionType.mappingFileExport, AttributeNames.value).ToList();
 
             if (mappingFilPaths.Count > 0)
@@ -2358,11 +2370,10 @@ namespace BExIS.Xml.Helpers.Mapping
                     FileHelper.Delete(Path.Combine(mappingFileDirectory, file));
                 }
             }
-
             // delete import mappings
             mappingFilPaths =
-                XmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
-                    TransmissionType.mappingFileImport, AttributeNames.value).ToList();
+                    xmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
+                        TransmissionType.mappingFileImport, AttributeNames.value).ToList();
 
             if (mappingFilPaths.Count > 0)
             {

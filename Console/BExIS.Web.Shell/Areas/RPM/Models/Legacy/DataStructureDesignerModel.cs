@@ -272,9 +272,13 @@ namespace BExIS.Modules.Rpm.UI.Models
             DatasetListElement datasetListElement = new DatasetListElement();
             DatasetManager dm = new DatasetManager();
             datasets = new List<DatasetListElement>();
+
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
             foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
             {
-                datasetListElement = new DatasetListElement(item.Key, XmlDatasetHelper.GetInformation(item.Value, NameAttributeValues.title));
+                datasetListElement = new DatasetListElement(item.Key, xmlDatasetHelper.GetInformation(item.Value.Id, NameAttributeValues.title));
                 datasets.Add(datasetListElement);
             }
         }

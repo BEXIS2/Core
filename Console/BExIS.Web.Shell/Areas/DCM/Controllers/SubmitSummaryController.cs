@@ -17,6 +17,7 @@ using System.Web;
 using System.Web.Mvc;
 using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -485,6 +486,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     ds = dm.GetDataset(id);
                     // Javad: Please check if the dataset does exists!!
 
+                    //GetValues from the previus version
+                    // Status
+                    DatasetVersion latestVersion = dm.GetDatasetLatestVersion(ds);
+                    string status = DatasetStateInfo.NotValid.ToString();
+                    if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
+
+
                     #region Progress Informations
 
                     if (TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGESIZE))
@@ -541,7 +549,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
 
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                //workingCopy.ContentDescriptors = new List<ContentDescriptor>();
+
+                                //set StateInfo of the previus version
+                                if (workingCopy.StateInfo == null)
+                                {
+                                    workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                    {
+                                        State = status
+                                    };
+                                }
+                                else
+                                {
+                                    workingCopy.StateInfo.State = status;
+                                }
 
 
                                 do
@@ -617,7 +637,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                                TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                                    TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader();
@@ -635,6 +655,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
                                     //schleife
                                     int counter = 0;
+
+                                    //set StateInfo of the previus version
+                                    if (workingCopy.StateInfo == null)
+                                    {
+                                        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                        {
+                                            State = status
+                                        };
+                                    }
+                                    else
+                                    {
+                                        workingCopy.StateInfo.State = status;
+                                    }
 
                                     do
                                     {
@@ -764,13 +797,44 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         // checkout the dataset, apply the changes, and check it in.
                         if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                         {
-                            workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                            SaveFileInContentDiscriptor(workingCopy);
 
-                            dm.EditDatasetVersion(workingCopy, null, null, null);
+                            try
+                            {
+                                workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                            // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+
+
+                                using (var unitOfWork = this.GetUnitOfWork())
+                                {
+                                    workingCopy = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(workingCopy.Id);
+
+                                    //set StateInfo of the previus version
+                                    if (workingCopy.StateInfo == null)
+                                    {
+                                        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                        {
+                                            State = status
+                                        };
+                                    }
+                                    else
+                                    {
+                                        workingCopy.StateInfo.State = status;
+                                    }
+
+                                    unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
+
+                                    SaveFileInContentDiscriptor(workingCopy);
+
+                                }
+                                dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                                // ToDo: Get Comment from ui and users
+                                dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                            }
+                            catch (Exception ex)
+                            {
+                                throw ex;
+                            }
                         }
                     }
 

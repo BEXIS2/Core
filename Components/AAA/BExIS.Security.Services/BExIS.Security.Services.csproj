@@ -102,11 +102,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
     <Compile Include="Requests\RequestManager.cs" />
-    <Compile Include="Subjects\GroupManager.cs" />
-    <Compile Include="Subjects\IdentityGroupManager.cs" />
+    <Compile Include="Subjects\IdentityGroupService.cs" />
     <Compile Include="Subjects\IdentityUserService.cs" />
     <Compile Include="Subjects\IUserManager.cs" />
-    <Compile Include="Subjects\GroupStore.cs" />
+    <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserManager.cs" />
     <Compile Include="Utilities\Auth.cs" />

@@ -25,6 +25,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         public bool searchConfigFileInUse = false;
 
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         /// <summary>
         /// is called when the Search View is selected
         /// 
@@ -793,59 +796,71 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             UserManager userManager = new UserManager();
             EntityManager entityManager = new EntityManager();
 
-            var entity = entityManager.FindByName("Dataset");
-            var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
-            List<long> gridCommands = datasetManager.GetDatasetLatestIds();
-            gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
-
-            foreach (long datasetId in gridCommands)
+            try
             {
-                //get permissions
-                int rights = entityPermissionManager.GetRights(user, entity, datasetId);
 
-                if (rights > 0)
+                var entity = entityManager.FindByName("Dataset");
+                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+
+                List<long> gridCommands = datasetManager.GetDatasetLatestIds();
+                gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
+
+                foreach (long datasetId in gridCommands)
                 {
-                    DataRow dataRow = model.NewRow();
-                    Object[] rowArray = new Object[8];
+                    //get permissions
+                    int rights = entityPermissionManager.GetRights(user, entity, datasetId);
 
-                    if (datasetManager.IsDatasetCheckedIn(datasetId))
+                    if (rights > 0)
                     {
-                        //long versionId = datasetManager.GetDatasetLatestVersionId (datasetId); // check for zero value
-                        //DatasetVersion dsv = datasetManager.DatasetVersionRepo.Get(versionId);
+                        DataRow dataRow = model.NewRow();
+                        Object[] rowArray = new Object[8];
 
-                        DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
+                        if (datasetManager.IsDatasetCheckedIn(datasetId))
+                        {
+                            //long versionId = datasetManager.GetDatasetLatestVersionId (datasetId); // check for zero value
+                            //DatasetVersion dsv = datasetManager.DatasetVersionRepo.Get(versionId);
 
-                        //MetadataStructureManager msm = new MetadataStructureManager();
-                        //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                            DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-                        string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
+                            //MetadataStructureManager msm = new MetadataStructureManager();
+                            //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                        rowArray[0] = Convert.ToInt64(datasetId);
-                        rowArray[1] = title;
-                        rowArray[2] = description;
+                            string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
+                            string description = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.description);
+
+                            rowArray[0] = Convert.ToInt64(datasetId);
+                            rowArray[1] = title;
+                            rowArray[2] = description;
+                        }
+                        else
+                        {
+                            rowArray[0] = Convert.ToInt64(datasetId);
+                            rowArray[1] = "";
+                            rowArray[2] = "Dataset is just in processing.";
+                        }
+
+                        rowArray[3] = (rights & (int)RightType.Read) > 0 ? "✔" : "✘";
+                        rowArray[4] = (rights & (int)RightType.Write) > 0 ? "✔" : "✘";
+                        rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
+                        rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
+                        rowArray[7] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
+
+                        dataRow = model.NewRow();
+                        dataRow.ItemArray = rowArray;
+                        model.Rows.Add(dataRow);
                     }
-                    else
-                    {
-                        rowArray[0] = Convert.ToInt64(datasetId);
-                        rowArray[1] = "";
-                        rowArray[2] = "Dataset is just in processing.";
-                    }
-
-                    rowArray[3] = (rights & (int)RightType.Read) > 0 ? "✔" : "✘";
-                    rowArray[4] = (rights & (int)RightType.Write) > 0 ? "✔" : "✘";
-                    rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
-                    rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
-                    rowArray[7] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
-
-                    dataRow = model.NewRow();
-                    dataRow.ItemArray = rowArray;
-                    model.Rows.Add(dataRow);
                 }
-            }
 
-            return View(new GridModel(model));
+                return View(new GridModel(model));
+            }
+            finally
+            {
+                datasetManager.Dispose();
+                entityPermissionManager.Dispose();
+                entityManager.Dispose();
+                userManager.Dispose();
+            }
         }
 
 

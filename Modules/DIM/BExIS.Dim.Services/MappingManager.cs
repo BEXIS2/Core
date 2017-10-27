@@ -56,17 +56,17 @@ namespace BExIS.Dim.Services
 
         public IEnumerable<LinkElement> GetLinkElements()
         {
-            return LinkElementRepo.Get();
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get();
         }
 
         public LinkElement GetLinkElement(long id)
         {
-            return LinkElementRepo.Get().FirstOrDefault(le => le.Id.Equals(id));
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Id.Equals(id));
         }
 
         public LinkElement GetLinkElement(LinkElementType type)
         {
-            return LinkElementRepo.Get().FirstOrDefault(le => le.Type.Equals(type));
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Type.Equals(type));
         }
 
         //public LinkElement GetLinkElement(LinkElementType type, long parentid)
@@ -76,12 +76,12 @@ namespace BExIS.Dim.Services
 
         public LinkElement GetLinkElement(long elementid, LinkElementType type)
         {
-            return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
         public LinkElement GetLinkElement(long elementid, string name, LinkElementType type)
         {
-            return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type));
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type));
         }
 
         public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath, bool isSequence = false)
@@ -133,7 +133,7 @@ namespace BExIS.Dim.Services
 
         public LinkElement UpdateLinkElement(long id)
         {
-            var linkElement = this.LinkElementRepo.Get(id);
+            var linkElement = this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get(id);
 
             if (linkElement != null)
             {
@@ -154,17 +154,17 @@ namespace BExIS.Dim.Services
 
         public IEnumerable<Mapping> GetMappings()
         {
-            return MappingRepo.Get();
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get();
         }
 
         public Mapping GetMapping(long id)
         {
-            return MappingRepo.Get().FirstOrDefault(m => m.Id.Equals(id));
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().FirstOrDefault(m => m.Id.Equals(id));
         }
 
         public Mapping GetMapping(LinkElement source, LinkElement target)
         {
-            return MappingRepo.Get().FirstOrDefault(m => m.Source.Id.Equals(source.Id) &&
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().FirstOrDefault(m => m.Source.Id.Equals(source.Id) &&
                     m.Source.Type.Equals(source.Type) &&
                     m.Target.Id.Equals(target.Id) &&
                     m.Target.Type.Equals(target.Type));
@@ -174,34 +174,34 @@ namespace BExIS.Dim.Services
         {
             long parentMappingId = GetMapping(source, target).Id;
 
-            return MappingRepo.Query().Where(m => m.Parent != null && m.Parent.Id.Equals(parentMappingId));
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null && m.Parent.Id.Equals(parentMappingId));
         }
 
         public IEnumerable<Mapping> GetChildMapping(LinkElement source, LinkElement target, long level)
         {
             long parentMappingId = GetMapping(source, target).Id;
 
-            return MappingRepo.Query().Where(m => m.Parent != null &&
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(parentMappingId) &&
             m.Level.Equals(level));
         }
 
         public IEnumerable<Mapping> GetChildMapping(long id)
         {
-            return MappingRepo.Get().Where(m => m.Parent != null &&
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(id));
         }
 
         public IEnumerable<Mapping> GetChildMapping(long id, long level)
         {
-            return MappingRepo.Get().Where(m => m.Parent != null &&
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(id) &&
             m.Level.Equals(level));
         }
 
         public Mapping GetMappings(long id)
         {
-            return MappingRepo.Get().FirstOrDefault(m => m.Id.Equals(id));
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().FirstOrDefault(m => m.Id.Equals(id));
         }
 
         public Mapping CreateMapping(
@@ -249,7 +249,7 @@ namespace BExIS.Dim.Services
 
             if (parentMappingId > 0)
             {
-                mapping.Parent = MappingRepo.Get(parentMappingId);
+                mapping.Parent = this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get(parentMappingId);
             }
 
 
@@ -301,8 +301,8 @@ namespace BExIS.Dim.Services
             {
                 IRepository<Mapping> repo = uow.GetRepository<Mapping>();
                 repo.Merge(mapping);
-                var merged = repo.Get(mapping.Id);
-                repo.Put(merged);
+                var m = repo.Get(mapping.Id);
+                repo.Put(m);
                 uow.Commit();
             }
 
@@ -311,35 +311,21 @@ namespace BExIS.Dim.Services
         }
 
         //TODO add more complexity to the deleting function, also source and target need to delete if no mapping is using that link elements
-        public bool DeleteMapping(Mapping entity)
-        {
-            Contract.Requires(entity != null);
-            Contract.Requires(entity.Id >= 0);
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Mapping> repo = uow.GetRepository<Mapping>();
-
-                repo.Delete(entity);
-
-                uow.Commit();
-            }
-            // if any problem was detected during the commit, an exception will be thrown!
-            return (true);
-        }
-
         public bool DeleteMapping(long id)
         {
             Contract.Requires(id >= 0);
 
-            Mapping entity = MappingRepo.Get(id);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Mapping> repo = uow.GetRepository<Mapping>();
+                var entity = uow.GetRepository<Mapping>().Get(id);
+                if (entity != null)
+                {
+                    IRepository<Mapping> repo = uow.GetRepository<Mapping>();
 
-                repo.Delete(entity);
+                    repo.Delete(entity);
 
-                uow.Commit();
+                    uow.Commit();
+                }
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
@@ -369,24 +355,26 @@ namespace BExIS.Dim.Services
 
         public TransformationRule UpdateTransformationRule(long id, string regex, string mask)
         {
-            var transformationRule = this.TransformationRuleRepo.Get(id);
-
-            if (transformationRule == null)
-                transformationRule = CreateTransformationRule(regex, mask);
-            else
-            {
-                transformationRule.RegEx = regex;
-                transformationRule.Mask = mask;
-            }
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                var transformationRule = uow.GetRepository<TransformationRule>().Get(id);
+
+                if (transformationRule == null)
+                    transformationRule = CreateTransformationRule(regex, mask);
+                else
+                {
+                    transformationRule.RegEx = regex;
+                    transformationRule.Mask = mask;
+                }
+
+
                 IRepository<TransformationRule> repo = uow.GetRepository<TransformationRule>();
                 repo.Put(transformationRule);
                 uow.Commit();
-            }
 
-            return (transformationRule);
+                return (transformationRule);
+            }
         }
 
         #endregion

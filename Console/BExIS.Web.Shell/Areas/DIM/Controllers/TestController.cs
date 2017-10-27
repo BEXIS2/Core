@@ -22,33 +22,41 @@ namespace BExIS.Modules.Dim.UI.Controllers
         // GET: Test
         public ActionResult Index()
         {
-
-            //get all
-            var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
-            // get all where value = david
-            x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage, "David");
-
-
-            // get value from metadata over the system
-            // partytpe person - attr firstname
-
-            long partyCustomtAttr = 1;
-            LinkElementType type = LinkElementType.PartyCustomType;
-
-            long datasetId = 1;
-
             DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+            try
+            {
+
+                //get all
+                var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
+                // get all where value = david
+                x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage, "David");
 
 
-            List<string> tmp = MappingUtils.GetValuesFromMetadata(partyCustomtAttr, type,
-                datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+                // get value from metadata over the system
+                // partytpe person - attr firstname
 
-            tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key,
-               datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+                long partyCustomtAttr = 1;
+                LinkElementType type = LinkElementType.PartyCustomType;
+
+                long datasetId = 1;
+
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
 
-            return View("Index");
+                List<string> tmp = MappingUtils.GetValuesFromMetadata(partyCustomtAttr, type,
+                    datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+                tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key,
+                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+
+                return View("Index");
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
         }
 
         public async Task<ActionResult> GetStatus(long id)

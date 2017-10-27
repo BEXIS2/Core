@@ -20,14 +20,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public async void AddUserToGroup(long userId, string groupName)
+        public async Task<bool> AddUserToGroup(long userId, string groupName)
         {
             var identityUserService = new IdentityUserService();
 
             try
             {
                 var user = identityUserService.FindByIdAsync(userId).Result;
-                await identityUserService.AddToRoleAsync(user.Id, groupName);
+                var result = await identityUserService.AddToRoleAsync(user.Id, groupName);
+                return result.Succeeded;
             }
             finally
             {
@@ -52,7 +53,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreateGroupModel model)
         {
-            var groupManager = new GroupManager();
+            var identityGroupService = new IdentityGroupService();
 
             try
             {
@@ -64,7 +65,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     Description = model.Description
                 };
 
-                var result = await groupManager.CreateAsync(group);
+                var result = await identityGroupService.CreateAsync(group);
                 if (result.Succeeded)
                 {
                     return Json(new { success = true });
@@ -76,23 +77,24 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             finally
             {
-                groupManager.Dispose();
+                identityGroupService.Dispose();
             }
         }
 
         [HttpPost]
-        public void Delete(long groupId)
+        public async Task<bool> Delete(long groupId)
         {
-            var groupManager = new GroupManager();
+            var identityGroupService = new IdentityGroupService();
 
             try
             {
-                var group = groupManager.FindByIdAsync(groupId).Result;
-                groupManager.DeleteAsync(group);
+                var group = identityGroupService.FindByIdAsync(groupId).Result;
+                var result = await identityGroupService.DeleteAsync(group);
+                return result.Succeeded;
             }
             finally
             {
-                groupManager.Dispose();
+                identityGroupService.Dispose();
             }
         }
 
@@ -128,14 +130,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public async void RemoveUserFromGroup(long userId, string groupName)
+        public async Task<bool> RemoveUserFromGroup(long userId, string groupName)
         {
             var identityUserService = new IdentityUserService();
 
             try
             {
                 var user = identityUserService.FindByIdAsync(userId).Result;
-                await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
+                var result = await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
+                return result.Succeeded;
             }
             finally
             {

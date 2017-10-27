@@ -14,12 +14,15 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
-
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class DcmSeedDataGenerator : IDisposable
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         public void GenerateSeedData()
         {
 
@@ -155,6 +158,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Metadata Managment Workflow
 
+                operationManager.Create("DCM", "ImportMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", MetadataManagementFeature);
@@ -177,10 +181,23 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
 
-                    ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName,
+                    ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
                         titleXPath, descriptionXpath);
 
                 }
+
+                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
+                //{
+                //    string titleXPath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                //    string descriptionXpath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+
+
+                //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
+                //        titleXPath, descriptionXpath);
+
+                //}
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {
@@ -188,7 +205,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     string titleXPath = "Metadata/Basic/BasicType/title/titleType";
                     string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
 
-                    ImportSchema("GBIF", "eml.xsd", entity.Name, entity.Name, entity.EntityType.FullName, titleXPath,
+                    ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
                         descriptionXpath);
                 }
                 //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
@@ -236,33 +253,35 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             //generate
             try
             {
-                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
+                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
+
+                try
+                {
+                    //set parameters
+                    string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
+                    string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
+
+                    StoreParametersToMetadataStruture(
+                        metadataStructureid,
+                        titlePath,
+                        descriptionPath,
+                        entity,
+                        entityFullName,
+                        mappingFileImport,
+                        mappingFileExport);
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
             }
             catch (Exception ex)
             {
                 xmlSchemaManager.Delete(schemaName);
             }
 
-            try
-            {
-                //set parameters
-                string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
-                string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 
-                StoreParametersToMetadataStruture(
-                    metadataStructureid,
-                    titlePath,
-                    descriptionPath,
-                    entity,
-                    entityFullName,
-                    mappingFileImport,
-                    mappingFileExport);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
 
 
         }
@@ -280,40 +299,49 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string entityFullName, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(id);
             EntityManager entityManager = new EntityManager();
 
-            XmlDocument xmlDoc = new XmlDocument();
-            if(metadataStructure != null)
-            { 
-                if (metadataStructure.Extra != null)
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+
+                if (metadataStructure != null)
                 {
-                    xmlDoc = (XmlDocument)metadataStructure.Extra;
+                    if (metadataStructure.Extra != null)
+                    {
+                        xmlDoc = (XmlDocument)metadataStructure.Extra;
+                    }
+
+                    // add title Node
+                    xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+                    // add Description
+                    xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+
+                    xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
+                    // add mappingFilePath
+                    xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+                    xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+                    //set active
+                    xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+
+                    metadataStructure.Extra = xmlDoc;
+                    mdsManager.Update(metadataStructure);
                 }
-
-                // add title Node
-                xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-                // add Description
-                xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-
-                xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
-
-                // add mappingFilePath
-                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
-                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
-
-                //set active
-                xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
-
-                metadataStructure.Extra = xmlDoc;
-                mdsManager.Update(metadataStructure);
+            }
+            finally
+            {
+                mdsManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
 
-            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+            XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
             return doc;
 

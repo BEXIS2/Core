@@ -167,14 +167,14 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Task UpdateAsync(User entity)
+        public Task UpdateAsync(User user)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var repo = uow.GetRepository<User>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
+                var userRepository = uow.GetRepository<User>();
+                userRepository.Merge(user);
+                var u = userRepository.Get(user.Id);
+                userRepository.Put(u);
                 uow.Commit();
             }
 
@@ -206,14 +206,22 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task AddLoginAsync(User user, UserLoginInfo login)
         {
-            user.Logins.Add(new Login()
+            using (var uow = this.GetUnitOfWork())
             {
-                ProviderKey = login.ProviderKey,
-                LoginProvider = login.LoginProvider
-            });
+                var userRepository = uow.GetRepository<User>();
 
-            UpdateAsync(user);
-            return Task.FromResult<int>(0);
+                user = userRepository.Get(user.Id);
+                user.Logins.Add(new Login()
+                {
+                    ProviderKey = login.ProviderKey,
+                    LoginProvider = login.LoginProvider
+                });
+
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
+            }
         }
 
         /// <summary>
@@ -250,14 +258,21 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task RemoveLoginAsync(User user, UserLoginInfo login)
         {
-            var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
-            if (info != null)
+            using (var uow = this.GetUnitOfWork())
             {
+                var userRepository = uow.GetRepository<User>();
+
+                user = userRepository.Get(user.Id);
+                var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+                if (info == null) return Task.FromResult(0);
+
                 user.Logins.Remove(info);
-                UpdateAsync(user);
+                userRepository.Put(user);
+                uow.Commit();
+
+                return Task.FromResult(0);
             }
 
-            return Task.FromResult(0);
         }
 
         #endregion IUserLoginStore
@@ -399,17 +414,16 @@ namespace BExIS.Security.Services.Subjects
                 var userRepository = uow.GetRepository<User>();
                 var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
 
-                // [Sven][Workaround][2017/10/09]
-                // It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
-                // In general, there is an issue with the sessions. The primary error message was
-                //  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
-                // but with "Load" or "Reload" it changed to
-                //  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
-                // At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
+                //// [Sven][Workaround][2017/10/09]
+                //// It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
+                //// In general, there is an issue with the sessions. The primary error message was
+                ////  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
+                //// but with "Load" or "Reload" it changed to
+                ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
+                //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
+                /// 
                 user = userRepository.Get(user.Id);
-
                 if (group == null) return Task.FromResult(0);
-
                 user.Groups.Add(group);
 
                 userRepository.Put(user);
@@ -441,7 +455,13 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<bool> IsInRoleAsync(User user, string roleName)
         {
-            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetRepository<User>();
+                user = userRepository.Get(user.Id);
+
+                return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
+            }
         }
 
         /// <summary>
@@ -460,8 +480,8 @@ namespace BExIS.Security.Services.Subjects
 
                 if (group == null) return Task.FromResult(0);
 
+                user = userRepository.Get(user.Id);
                 user.Groups.Remove(group);
-
                 userRepository.Put(user);
                 uow.Commit();
 
