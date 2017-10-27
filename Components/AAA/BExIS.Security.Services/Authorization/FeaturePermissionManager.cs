@@ -275,12 +275,14 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Update(FeaturePermission featurePermission)
+        public void Update(FeaturePermission entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                featurePermissionRepository.Put(featurePermission);
+                var repo = uow.GetRepository<FeaturePermission>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }

@@ -200,7 +200,10 @@ namespace BExIS.Dlm.Services.MetadataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged); 
+
                 uow.Commit();
             }
             return (entity);

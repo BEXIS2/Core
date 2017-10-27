@@ -174,7 +174,9 @@ namespace BExIS.Dim.Services
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Publication> repo = uow.GetRepository<Publication>();
-                repo.Put(publication);
+                repo.Merge(publication);
+                var merged = repo.Get(publication.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (publication);
@@ -291,7 +293,9 @@ namespace BExIS.Dim.Services
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Broker> repo = uow.GetRepository<Broker>();
-                repo.Put(broker);
+                repo.Merge(broker);
+                var merged = repo.Get(broker.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (broker);
@@ -379,7 +383,9 @@ namespace BExIS.Dim.Services
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Repository> repo = uow.GetRepository<Repository>();
-                repo.Put(repository);
+                repo.Merge(repository);
+                var merged = repo.Get(repository.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (repository);

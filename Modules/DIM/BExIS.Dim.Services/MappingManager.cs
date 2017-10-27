@@ -300,7 +300,9 @@ namespace BExIS.Dim.Services
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Mapping> repo = uow.GetRepository<Mapping>();
-                repo.Put(mapping);
+                repo.Merge(mapping);
+                var merged = repo.Get(mapping.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
 

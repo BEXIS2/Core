@@ -75,12 +75,14 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public Task UpdateAsync(Group role)
+        public Task UpdateAsync(Group entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Put(role);
+                var repo = uow.GetRepository<Group>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
 

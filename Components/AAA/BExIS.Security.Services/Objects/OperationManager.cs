@@ -89,12 +89,14 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public void Update(Operation operation)
+        public void Update(Operation entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var operationRepository = uow.GetRepository<Operation>();
-                operationRepository.Put(operation);
+                var repo = uow.GetRepository<Operation>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }

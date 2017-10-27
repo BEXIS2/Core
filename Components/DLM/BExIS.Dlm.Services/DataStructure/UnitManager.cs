@@ -158,7 +158,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -237,7 +239,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dimension> repo = uow.GetRepository<Dimension>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -355,8 +359,10 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<ConversionMethod> repoCM = uow.GetRepository<ConversionMethod>();
-                repoCM.Put(entity); // Merge is required here!!!!
+                IRepository<ConversionMethod> repo = uow.GetRepository<ConversionMethod>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

@@ -210,11 +210,12 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
-                entity = repo.Reload(entity);
+                return (merged);
             }
-            return (entity);
         }
 
         public bool TempPartyToPermanent(int partyId)
@@ -226,7 +227,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 var party = repo.Get(partyId);
                 party.IsTemp = false;
-                repo.Put(party); // Merge is required here!!!!
+                repo.Put(party);
                 uow.Commit();
             }
             return true;
@@ -467,40 +468,42 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(partyCustomAttributeValue != null && partyCustomAttributeValue.Id != 0, "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
             // Check uniqeness policy is not possible in single updating 
-            var entity = new PartyCustomAttributeValue();
+            //var entity = new PartyCustomAttributeValue();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyCustomAttributeValue> repo = uow.GetRepository<PartyCustomAttributeValue>();
-                entity = repo.Get(item => item.Id == partyCustomAttributeValue.Id).FirstOrDefault();
-                entity.Value = newValue;
-                var partyCustomAttrVals = entity.Party.CustomAttributeValues.ToList();
-                partyCustomAttrVals.First(item => item.Id == entity.Id).Value = newValue;
-                repo.Put(entity); // Merge is required here!!!!
-                uow.Commit();
+                var entity = repo.Get(partyCustomAttributeValue.Id);
+                if (entity != null)
+                {
+                    entity.Value = newValue;
+                    var partyCustomAttrVals = entity.Party.CustomAttributeValues.ToList();
+                    partyCustomAttrVals.First(item => item.Id == entity.Id).Value = newValue;
+                    repo.Put(entity);
+                    uow.Commit();
+                }
+                return (entity);
             }
-            return (entity);
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
+        public void UpdatePartyCustomAttriuteValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
         {
             Contract.Requires(partyCustomAttributeValues != null && partyCustomAttributeValues.Any(), "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
             if (!CheckUniqueness(this.PartyRepository, partyCustomAttributeValues, partyCustomAttributeValues.First().Party))
                 BexisException.Throw(partyCustomAttributeValues.First(), String.Format("Due the party uniqueness policy for this party type this value couldn't save"), BexisException.ExceptionType.Edit, true);
-            var entity = new PartyCustomAttributeValue();
+            //var entity = new PartyCustomAttributeValue();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyCustomAttributeValue> repo = uow.GetRepository<PartyCustomAttributeValue>();
                 foreach (var partyCustomAttrVal in partyCustomAttributeValues)
                 {
-                    entity = repo.Get(partyCustomAttrVal.Id);
+                    var entity = repo.Get(partyCustomAttrVal.Id); //JAVAD: check if the entity is null! it may have ben deleted during this process.
                     entity.Value = partyCustomAttrVal.Value;
-                    repo.Put(entity); // Merge is required here!!!!                   
+                    repo.Put(entity);                   
                 }
                 uow.Commit();
 
             }
-            return (entity);
         }
 
         //public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute, PartyX party, string value)
