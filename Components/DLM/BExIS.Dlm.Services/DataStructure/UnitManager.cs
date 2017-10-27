@@ -61,25 +61,27 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<Unit>() != null && Contract.Result<Unit>().Id >= 0);
 
-            Unit u = new Unit()
-            {
-                Name = name,
-                Abbreviation = abbreviation,
-                Description = description,
-                Dimension = dimension,
-                MeasurementSystem = measurementSystem,
-            };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                if (repo.Query(p => p.Name.ToLower() == u.Name.ToLower()).Count() <= 0)
+                
+                if (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
                 {
-                    repo.Put(u);
+                    Unit unit = new Unit()
+                    {
+                        Name = name,
+                        Abbreviation = abbreviation,
+                        Description = description,
+                        Dimension = dimension,
+                        MeasurementSystem = measurementSystem,
+                    };
+                    repo.Put(unit);
                     uow.Commit();
+                    return (unit);
                 }
+                return null; // This should throw an exception instead.
             }
-            return (u);
         }
 
         public bool Delete(Unit entity)
