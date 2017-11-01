@@ -27,7 +27,9 @@ namespace BExIS.Web.Shell
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
+#if !DEBUG
             filters.Add(new BExIS.Web.Shell.Attributes.BExISAuthorizeAttribute());
+#endif
             //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
         }
