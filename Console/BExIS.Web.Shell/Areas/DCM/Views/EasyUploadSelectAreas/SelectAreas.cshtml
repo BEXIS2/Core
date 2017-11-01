@@ -253,6 +253,10 @@
                 //Show a spinner & disable the button - making sure the button is not resized by setting min-width and -height
                 var button = this;
                 $(button).prop('disabled', true);
+                $('#setSelectedHeaderArea').prop('disabled', true);
+                $('#setSelectDataArea').prop('disabled', true);
+                $('#expandSelection').prop('disabled', true);
+                $('#setSelectReset').prop('disabled', true);
                 var oldHtml = $(button).html();
                 var curWidth = $(button).outerWidth();
                 var curHeight = $(button).outerHeight();
@@ -267,6 +271,10 @@
                     //Restore old button content
                     $(button).html(oldHtml);
                     $(button).prop('disabled', false);
+                    $('#setSelectedHeaderArea').prop('disabled', false);
+                    $('#setSelectDataArea').prop('disabled', false);
+                    $('#expandSelection').prop('disabled', false);
+                    $('#setSelectReset').prop('disabled', false);
 
                     //Store the new active sheet
                     activeSheet = selVal;
@@ -278,7 +286,7 @@
 
                     //Get the container that
                     var container = document.getElementById('handsonExcelTable');
-                    if (isTableEmpty(JSON.parse(response))) {
+                    if (isTableEmpty(response)) {
                         if (typeof (hotActive) !== 'undefined') {
                             if (hotActive) {
                                 hot.destroy();
@@ -290,7 +298,7 @@
                     } else {
                         $('#handsonExcelTable').show();
                         $('#emptyTableMessage').hide();
-                        hot = createHandsontableForData(JSON.parse(response), container);
+                        hot = createHandsontableForData(response, container);
 
                         if (loadingInitialTable) {
                             //If there was a previous selection, parse it and mark the cells

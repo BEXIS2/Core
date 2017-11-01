@@ -987,6 +987,10 @@
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
+      <Name>BExIS.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>

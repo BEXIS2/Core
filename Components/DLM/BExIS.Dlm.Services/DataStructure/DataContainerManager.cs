@@ -168,7 +168,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    
@@ -251,7 +253,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<ExtendedProperty> repo = uow.GetRepository<ExtendedProperty>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

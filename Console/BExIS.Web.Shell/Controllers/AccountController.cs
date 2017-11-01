@@ -20,6 +20,7 @@ namespace BExIS.Web.Shell.Controllers
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
             var identityUserService = new IdentityUserService();
+            var signInManager = new SignInManager(AuthenticationManager);
 
             try
             {
@@ -29,18 +30,18 @@ namespace BExIS.Web.Shell.Controllers
                 }
 
                 var result = await identityUserService.ConfirmEmailAsync(userId, code);
-
                 if (!result.Succeeded) return View("Error");
+                var user = await identityUserService.FindByIdAsync(userId);
+                await signInManager.SignInAsync(user, false, false);
 
-                // [2017/09/14] [Sven] [BUG]
-                // Add check for party entity inside web.config, that is defined to be linked to a user!
                 return this.IsAccessibale("bam", "PartyService", "UserRegisteration")
-                    ? this.Run("bam", "PartyService", "UserRegisteration")
+                    ? RedirectToAction("UserRegisteration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
             }
             finally
             {
                 identityUserService.Dispose();
+                signInManager.Dispose();
             }
 
         }

@@ -47,7 +47,8 @@
     {
         if (Model.Item2 > 0)
         {
-            dt = SearchUIHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
+            SearchUIHelper suiHelper = new SearchUIHelper();
+            dt = suiHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
         }
     }
     

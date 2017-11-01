@@ -158,6 +158,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Metadata Managment Workflow
 
+                operationManager.Create("DCM", "ImportMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", MetadataManagementFeature);
@@ -185,18 +186,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 }
 
-                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
-                {
-                    string titleXPath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                    string descriptionXpath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
+                //{
+                //    string titleXPath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                //    string descriptionXpath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
 
-                    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
-                        titleXPath, descriptionXpath);
+                //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
+                //        titleXPath, descriptionXpath);
 
-                }
+                //}
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {
