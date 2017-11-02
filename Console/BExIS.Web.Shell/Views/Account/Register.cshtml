@@ -3,6 +3,11 @@
     ViewBag.Title = "Register";
 }
 
+@section Information
+{
+    Here you are able to register with the system.
+}
+
 @*<h2>@ViewBag.Title.</h2>*@
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
