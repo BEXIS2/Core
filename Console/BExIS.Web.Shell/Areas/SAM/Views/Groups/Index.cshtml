@@ -35,9 +35,9 @@
         <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
               .ClientTemplate(
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= GroupName #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit Group\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= GroupName #>\" title=\"Edit Membership(s)\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"DFelete Group\"></button>")
               .Width(110);
       })
       .ClientEvents(events =>
