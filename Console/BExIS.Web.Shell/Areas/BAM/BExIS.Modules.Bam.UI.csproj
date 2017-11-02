@@ -216,6 +216,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Images\help\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
