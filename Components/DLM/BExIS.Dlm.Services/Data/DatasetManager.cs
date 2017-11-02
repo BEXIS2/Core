@@ -25,7 +25,7 @@ namespace BExIS.Dlm.Services.Data
     ///         <item><description>There is an automatic and transparent authorization based result set trimming in place, that may reduce the matching entities based on the current user access rights.</description></item>
     ///     </list>
     /// </remarks>
-    public class DatasetManager : IDisposable
+    public class DatasetManager : IDisposable, IEntityStore
     {
         public int PreferedBatchSize { get; set; }
         private IUnitOfWork guow = null;
@@ -225,7 +225,7 @@ namespace BExIS.Dlm.Services.Data
                 var merged = repo.Get(entity.Id);
                 repo.Put(merged);
                 uow.Commit();
-                return(merged);
+                return (merged);
             }
         }
 
