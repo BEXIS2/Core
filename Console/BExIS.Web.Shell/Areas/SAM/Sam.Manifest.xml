@@ -54,6 +54,16 @@
         controller="EntityPermissions" action="Subjects"
         extends="" />
 
+    <Export tag="internalApi" id="entityPermissions_add"
+    title="Entity Permissions - Subjects" description="Entity Permissions - Add" icon=""
+    controller="EntityPermissions" action="AddRightToEntityPermission"
+    extends="" />
+
+    <Export tag="internalApi" id="entityPermissions_remove"
+title="Entity Permissions - Subjects" description="Entity Permissions - Remove" icon=""
+controller="EntityPermissions" action="RemoveRightFromEntityPermission"
+extends="" />
+
     <Export tag="api" id="tntList"
             title="List Tenants" description="List tenants and their status" icon=""
             controller="tenants" action="index"
