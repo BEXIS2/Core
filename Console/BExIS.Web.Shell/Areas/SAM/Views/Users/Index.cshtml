@@ -97,14 +97,18 @@
                         var window = $(windowElement).data('tWindow');
                         window.center().open();
 
-                        $('#button_createUser_cancel').click(function () {
-                            $('#window_createUser').data('tWindow').close();
-                        });
-
                         resetAllTelerikIconTitles();
                     }
                 });
             });
+
+        $(document).on("click", "#button_createUser_cancel", function () {
+            $('#window_createUser').data('tWindow').close();
+        });
+
+        $(document).on("click", "#button_updateUser_cancel", function () {
+            $('#window_updateUser').data('tWindow').close();
+        });
 
         function createUser_onSuccess(data) {
             if (data.success) {
@@ -150,10 +154,6 @@
                             windowElement.attr('id', 'window_updateUser');
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
-
-                            $('#button_updateUser_cancel').click(function () {
-                                $('#window_updateUser').data('tWindow').close();
-                            });
 
                             resetAllTelerikIconTitles();
                         }
