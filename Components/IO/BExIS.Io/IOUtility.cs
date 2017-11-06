@@ -64,6 +64,20 @@ namespace BExIS.IO
                 return dateTime.ToString(new CultureInfo("en-US"));
             }
 
+            //Date might still be in OA-Date-Format (happens for Libre-Office dates)
+            double valueAsDouble;
+            if(double.TryParse(dateAsString, out valueAsDouble))
+            {
+                try
+                {
+                    dateTime = DateTime.FromOADate(valueAsDouble);
+                    return dateTime.ToString(new CultureInfo("en-US"));
+                }
+                catch (ArgumentException e)
+                {
+                }
+            }
+
             return null;
         }
 
