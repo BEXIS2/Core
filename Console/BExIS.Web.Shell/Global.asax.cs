@@ -27,7 +27,9 @@ namespace BExIS.Web.Shell
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
+#if !DEBUG
             filters.Add(new BExIS.Web.Shell.Attributes.BExISAuthorizeAttribute());
+#endif
             //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
         }
@@ -203,7 +205,7 @@ namespace BExIS.Web.Shell
             }
 
             //set session culture using DefaultCulture key
-            IoCFactory.Container.StartSessionLevelContainer();
+            //IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
@@ -215,7 +217,7 @@ namespace BExIS.Web.Shell
         {
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
-            IoCFactory.Container.ShutdownSessionLevelContainer();
+            //IoCFactory.Container.ShutdownSessionLevelContainer();
         }
 
         protected virtual void Application_BeginRequest()

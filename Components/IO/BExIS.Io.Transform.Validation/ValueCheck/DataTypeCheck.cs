@@ -290,15 +290,27 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                     //TODO Boolean check
                     case "Boolean":
                         {
-
-                            Boolean converted;
-                            if (Boolean.TryParse(value, out converted))
+                            //Accept 0 and 1
+                            if(value == "0")
                             {
-                                return converted;
+                                return false;
+                            }
+                            else if(value == "1")
+                            {
+                                return true;
                             }
                             else
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                //Try to parse, e.g. "true", "True" or "TRUE"
+                                Boolean converted;
+                                if (Boolean.TryParse(value, out converted))
+                                {
+                                    return converted;
+                                }
+                                else
+                                {
+                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                }
                             }
                         }
 

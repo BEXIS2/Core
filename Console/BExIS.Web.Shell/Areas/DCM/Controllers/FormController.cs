@@ -1980,11 +1980,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
-        public ActionResult _AutoCompleteAjaxLoading(string text, long id)
+        public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
+            var x = new List<string>();
+            switch (type)
+            {
+                case "MetadataNestedAttributeUsage":
+                    {
+                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        break;
+                    }
+                case "MetadataAttributeUsage":
+                    {
+                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        break;
+                    }
+            }
 
-            //ToDo Modularity dcm -> dim call
-            var x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex

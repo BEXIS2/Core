@@ -106,11 +106,11 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(id > 0);
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Ensures((Contract.Result<PartyRelationshipType>() != null && Contract.Result<PartyRelationshipType>().Id >= 0));
-            var entity = new PartyRelationshipType();
+            //var entity = new PartyRelationshipType();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationshipType> repo = uow.GetRepository<PartyRelationshipType>();
-                entity = repo.Get(id);
+                var entity = repo.Get(id);
                 if (entity == null)
                     BexisException.Throw(null, "PartyRelationshipType not found", BexisException.ExceptionType.Edit);
                 entity.Title = title;
@@ -120,8 +120,8 @@ namespace BExIS.Dlm.Services.Party
                 entity.MinCardinality = minCardinality;
                 repo.Put(entity);
                 uow.Commit();
+                return entity;
             }
-            return entity;
         }
 
         public bool Delete(PartyRelationshipType partyRelationType)

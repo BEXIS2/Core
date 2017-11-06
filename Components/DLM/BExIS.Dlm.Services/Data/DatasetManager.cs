@@ -25,7 +25,7 @@ namespace BExIS.Dlm.Services.Data
     ///         <item><description>There is an automatic and transparent authorization based result set trimming in place, that may reduce the matching entities based on the current user access rights.</description></item>
     ///     </list>
     /// </remarks>
-    public class DatasetManager : IDisposable
+    public class DatasetManager : IDisposable, IEntityStore
     {
         public int PreferedBatchSize { get; set; }
         private IUnitOfWork guow = null;
@@ -211,20 +211,22 @@ namespace BExIS.Dlm.Services.Data
         /// <remarks>
         /// Do NOT use this method to change the status of the dataset
         /// </remarks>
-        public Dataset UpdateDataset(Dataset dataset)
+        public Dataset UpdateDataset(Dataset entity)
         {
-            Contract.Requires(dataset != null);
-            Contract.Requires(dataset.Id >= 0);
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
 
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dataset> repo = uow.GetRepository<Dataset>();
-                repo.Put(dataset);
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
+                return (merged);
             }
-            return (dataset);
         }
 
         /// <summary>
@@ -1677,7 +1679,9 @@ namespace BExIS.Dlm.Services.Data
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DatasetVersion> repo = uow.GetRepository<DatasetVersion>();
-                repo.Put(editedVersion); // must be updated in a tracked session
+                repo.Merge(editedVersion);
+                var merged = repo.Get(editedVersion.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (editedVersion);
@@ -2576,7 +2580,9 @@ namespace BExIS.Dlm.Services.Data
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DataTuple> repo = uow.GetRepository<DataTuple>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -2882,7 +2888,9 @@ namespace BExIS.Dlm.Services.Data
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<ContentDescriptor> repo = uow.GetRepository<ContentDescriptor>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

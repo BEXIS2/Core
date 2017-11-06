@@ -131,7 +131,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = entity.GetUnitOfWork())
             {
                 IRepository<DataType> repo = uow.GetRepository<DataType>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    

@@ -33,9 +33,9 @@
         <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
               .ClientTemplate(
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s)\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete User\"></button>")
               .Width(110);
       })
       .ClientEvents(events =>
@@ -131,7 +131,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update User (Id: " + $(this).attr("value") + ")",
+                                title: "Update User",
                                 html: "<div id='content_updateUser' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
@@ -169,7 +169,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update User (Id: " + $(this).attr("value") + ")",
+                                title: "Update Membership(s)",
                                 html: "<div id='content_groups' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],

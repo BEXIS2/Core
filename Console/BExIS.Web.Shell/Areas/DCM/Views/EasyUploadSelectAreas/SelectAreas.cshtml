@@ -89,6 +89,9 @@
                 </div>
             </div>
 
+            <div id="loadingSpinner">
+                <i class="fa fa-spinner fa-spin fa-fw fa-2x"></i>Worksheet is loading
+            </div>
             <div id="handsonExcelTable" style="margin-bottom: 2em">
             </div>
             <div style="display:none" id="emptyTableMessage">It seems like the worksheet you selected is empty. Please select a different worksheet.</div>
@@ -265,16 +268,19 @@
                     "min-height": curHeight.toString() + "px"
                 });
                 $(button).html('<i class="fa fa-spinner fa-spin fa-fw"></i><span class="sr-only">Loading...</span>');
+                $('#loadingSpinner').show();
+                $('#handsonExcelTable').hide();
 
                 //Request the new sheet
                 $.post('@Url.Action("ChangeWorksheet", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { sheetIdentifier: selVal }, function (response) {
-                    //Restore old button content
+                    //Restore old button content, re-enable buttons, hide spinner
                     $(button).html(oldHtml);
                     $(button).prop('disabled', false);
                     $('#setSelectedHeaderArea').prop('disabled', false);
                     $('#setSelectDataArea').prop('disabled', false);
                     $('#expandSelection').prop('disabled', false);
                     $('#setSelectReset').prop('disabled', false);
+                    $('#loadingSpinner').hide();
 
                     //Store the new active sheet
                     activeSheet = selVal;
@@ -296,9 +302,9 @@
                         $('#handsonExcelTable').hide();
                         $('#emptyTableMessage').show();
                     } else {
-                        $('#handsonExcelTable').show();
                         $('#emptyTableMessage').hide();
                         hot = createHandsontableForData(response, container);
+                        $('#handsonExcelTable').show();
 
                         if (loadingInitialTable) {
                             //If there was a previous selection, parse it and mark the cells

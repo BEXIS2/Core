@@ -301,8 +301,8 @@ namespace BExIS.Dim.Services
             {
                 IRepository<Mapping> repo = uow.GetRepository<Mapping>();
                 repo.Merge(mapping);
-                var m = repo.Get(mapping.Id);
-                repo.Put(m);
+                var merged = repo.Get(mapping.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
 
