@@ -265,6 +265,20 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 return dateTime;
                             }
 
+                            //Also accept OA-Dates - try to parse the value as double, then try to parse the double as OA-Date
+                            double valueAsDouble;
+                            if(double.TryParse(value, out valueAsDouble))
+                            {
+                                try
+                                {
+                                    dateTime = DateTime.FromOADate(valueAsDouble);
+                                    return dateTime;
+                                } catch(ArgumentException e)
+                                {
+                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                }
+                            }
+
                             return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
 
                         }
