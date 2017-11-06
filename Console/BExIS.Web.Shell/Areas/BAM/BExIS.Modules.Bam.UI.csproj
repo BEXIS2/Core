@@ -166,6 +166,13 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\help\create_party_1.jpg" />
+    <Content Include="Content\Images\help\create_party_2.jpg" />
+    <Content Include="Content\Images\help\manage_parties.jpg" />
+    <Content Include="Content\Images\help\new_party_relation.jpg" />
+    <Content Include="Content\Images\help\new_party_relation2.jpg" />
+    <Content Include="Content\Images\help\registration.jpg" />
+    <Content Include="Content\Images\help\schema.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Bam.Manifest.xml" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
@@ -216,7 +223,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Images\help\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
