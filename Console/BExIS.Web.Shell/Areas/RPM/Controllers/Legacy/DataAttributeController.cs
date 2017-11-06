@@ -47,149 +47,174 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult editAttribute(DataAttributeModel Model)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Data Attributes", this.Session.GetTenant());
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-            IList<DataAttribute> DataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
-            long tempUnitId = Convert.ToInt64(Model.Unit.Id);
-            long tempDataTypeId = Convert.ToInt64(Model.DataType.Id);
-
-            Model.Id = Model.Id;
-            Model.ShortName = cutSpaces(Model.ShortName);
-            Model.Name = cutSpaces(Model.Name);
-            Model.Description = cutSpaces(Model.Description);
-
-            //if (Model.DomainConstraints.Count > 0)
-            //{
-            //    if (Model.DomainConstraints. != null && Model.DomainItems.Count > 0)
-            //    {
-            //        Model.DomainConstraints.FirstOrDefault().DomainItems = clearEmptyItems(Model.DomainItems);
-            //    }
-            //}
-
-
-            if (Model.Name == "" | Model.Name == null)
+            DataContainerManager dataAttributeManager = null;
+            try
             {
-                Session["nameMsg"] = "invalid Name";
-                Session["Window"] = true;
-                return View("AttributeManager", new DataAttributeManagerModel(Model));
-            }
-            else
-            {
-                bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
 
-                if (Model.Id == 0)
+                dataAttributeManager = new DataContainerManager();
+                this.Disposables.Add(dataAttributeManager);
+                IList<DataAttribute> DataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
+                long tempUnitId = Convert.ToInt64(Model.Unit.Id);
+                long tempDataTypeId = Convert.ToInt64(Model.DataType.Id);
+
+                Model.Id = Model.Id;
+                Model.ShortName = cutSpaces(Model.ShortName);
+                Model.Name = cutSpaces(Model.Name);
+                Model.Description = cutSpaces(Model.Description);
+
+                //if (Model.DomainConstraints.Count > 0)
+                //{
+                //    if (Model.DomainConstraints. != null && Model.DomainItems.Count > 0)
+                //    {
+                //        Model.DomainConstraints.FirstOrDefault().DomainItems = clearEmptyItems(Model.DomainItems);
+                //    }
+                //}
+
+
+                if (Model.Name == "" | Model.Name == null)
                 {
-                    if (nameNotExist)
-                    {
-                        UnitManager um = new UnitManager();
-                        this.Disposables.Add(um);
-
-                        Unit unit = new Unit();
-                        DataTypeManager dtm = new DataTypeManager();
-                        this.Disposables.Add(dtm);
-
-                        DataType dataType = new DataType();
-                        DataContainerManager DAM = new DataContainerManager();
-
-                        DataAttribute temp = new DataAttribute();
-
-                        if(um.Repo.Get(tempUnitId)!= null)
-                            unit = um.Repo.Get(tempUnitId);
-                        else
-                            unit = um.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
-
-                        if (dtm.Repo.Get(tempDataTypeId) != null)
-                            dataType = dtm.Repo.Get(tempDataTypeId);
-                        else
-                            dataType = dtm.Repo.Get().ToList().FirstOrDefault();
-
-                        temp = DAM.CreateDataAttribute(Model.ShortName, Model.Name, Model.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
-
-                        #region store constraint
-
-                        if (Model.RangeConstraints.Count > 0 && (Model.RangeConstraints.FirstOrDefault().Min !=null || Model.RangeConstraints.FirstOrDefault().Max !=null)
-                            && (Model.RangeConstraints.FirstOrDefault().Min != 0.0 || Model.RangeConstraints.FirstOrDefault().Max != 0.0 ))
-                            temp = storeConstraint(Model.RangeConstraints.First(), temp);
-
-                        if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.PatternConstraints.FirstOrDefault().MatchingPhrase))
-                            temp = storeConstraint(Model.PatternConstraints.First(), temp);
-
-                        if (Model.DomainConstraints.Count > 0)
-                        {
-                            foreach (DomainConstraintModel d in Model.DomainConstraints)
-                            {
-                                temp = storeConstraint(d, temp);
-                            }
-                        }
-
-                        #endregion
-
-
-                        temp = DAM.UpdateDataAttribute(temp);
-                    }
-                    else
-                    {
-                        Session["nameMsg"] = "Name already exist";
-                        Session["Window"] = true;
-                        return View("AttributeManager", new DataAttributeManagerModel(Model));
-                    }
+                    Session["nameMsg"] = "invalid Name";
+                    Session["Window"] = true;
+                    return View("AttributeManager", new DataAttributeManagerModel(Model));
                 }
                 else
                 {
-                    if (nameNotExist || DataAttributeList.Where(p => p.Name.Equals(Model.Name)).ToList().First().Id == Model.Id)
+                    bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
+                    if (Model.Id == 0)
                     {
-                        DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(Model.Id)).ToList().First();
-                        if (!attributeInUse(dataAttribute))
+                        if (nameNotExist)
                         {
-                            DataContainerManager DAM = new DataContainerManager();
-                            dataAttribute.Name = cutSpaces(Model.Name);
-                            dataAttribute.ShortName = Model.ShortName;
-                            dataAttribute.Description = Model.Description;
-                            UnitManager unitManager = new UnitManager();
-                            this.Disposables.Add(unitManager);
+                            UnitManager um = null;
+                            DataTypeManager dtm = null;
+                            try
+                            {
+                                um = new UnitManager();
+                                dtm = new DataTypeManager();
+                                Unit unit = new Unit();
+                                DataType dataType = new DataType();
+                                DataAttribute temp = new DataAttribute();
 
-                            if (unitManager.Repo.Get(tempUnitId) != null)
-                                dataAttribute.Unit = unitManager.Repo.Get(tempUnitId);
-                            else
-                                dataAttribute.Unit = unitManager.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
+                                if (um.Repo.Get(tempUnitId) != null)
+                                    unit = um.Repo.Get(tempUnitId);
+                                else
+                                    unit = um.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
 
-                            DataTypeManager dtm = new DataTypeManager();
-                            this.Disposables.Add(dtm);
+                                if (dtm.Repo.Get(tempDataTypeId) != null)
+                                    dataType = dtm.Repo.Get(tempDataTypeId);
+                                else
+                                    dataType = dtm.Repo.Get().ToList().FirstOrDefault();
 
-                            if (dtm.Repo.Get(tempDataTypeId) != null)
-                                dataAttribute.DataType = dtm.Repo.Get(tempDataTypeId);
-                            else
-                                dataAttribute.DataType = dtm.Repo.Get().ToList().FirstOrDefault();
+                                temp = dataAttributeManager.CreateDataAttribute(Model.ShortName, Model.Name, Model.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
 
-                            #region store constraint
+                                #region store constraint
 
-                            if (Model.RangeConstraints.Count > 0 && (Model.RangeConstraints.FirstOrDefault().Min != null || Model.RangeConstraints.FirstOrDefault().Max != null)
-                                && (Model.RangeConstraints.FirstOrDefault().Min != 0.0 || Model.RangeConstraints.FirstOrDefault().Max != 0.0))
-                                dataAttribute = storeConstraint(Model.RangeConstraints.First(), dataAttribute);
-                            else
-                                dataAttribute = deletConstraint(Model.RangeConstraints.First().Id, dataAttribute);
+                                if (Model.RangeConstraints.Count > 0 && (Model.RangeConstraints.FirstOrDefault().Min != null || Model.RangeConstraints.FirstOrDefault().Max != null)
+                                    && (Model.RangeConstraints.FirstOrDefault().Min != 0.0 || Model.RangeConstraints.FirstOrDefault().Max != 0.0))
+                                    temp = storeConstraint(Model.RangeConstraints.First(), temp);
 
-                            if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.PatternConstraints.FirstOrDefault().MatchingPhrase))
-                                dataAttribute = storeConstraint(Model.PatternConstraints.First(), dataAttribute);
-                            else
-                                dataAttribute = deletConstraint(Model.PatternConstraints.First().Id, dataAttribute);
+                                if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.PatternConstraints.FirstOrDefault().MatchingPhrase))
+                                    temp = storeConstraint(Model.PatternConstraints.First(), temp);
 
-                            if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.DomainConstraints.FirstOrDefault().Terms))
-                                dataAttribute = storeConstraint(Model.DomainConstraints.First(), dataAttribute);
-                            else
-                                dataAttribute = deletConstraint(Model.DomainConstraints.First().Id, dataAttribute);
-
-
-                            #endregion
-                            DAM.UpdateDataAttribute(dataAttribute);
+                                if (Model.DomainConstraints.Count > 0)
+                                {
+                                    foreach (DomainConstraintModel d in Model.DomainConstraints)
+                                    {
+                                        temp = storeConstraint(d, temp);
+                                    }
+                                }
+                                temp = dataAttributeManager.UpdateDataAttribute(temp);
+                            }
+                            finally
+                            {
+                                um.Dispose();
+                                dtm.Dispose();
+                            }
+                            #endregion                            
+                        }
+                        else
+                        {
+                            Session["nameMsg"] = "Name already exist";
+                            Session["Window"] = true;
+                            return View("AttributeManager", new DataAttributeManagerModel(Model));
                         }
                     }
                     else
                     {
-                        Session["nameMsg"] = "Name already exist";
-                        Session["Window"] = true;
-                        return View("AttributeManager", new DataAttributeManagerModel(Model));
+                        if (nameNotExist || DataAttributeList.Where(p => p.Name.Equals(Model.Name)).ToList().First().Id == Model.Id)
+                        {
+                            DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(Model.Id)).ToList().First();
+                            if (!attributeInUse(dataAttribute))
+                            {
+                                dataAttributeManager = new DataContainerManager();
+                                dataAttribute.Name = cutSpaces(Model.Name);
+                                dataAttribute.ShortName = Model.ShortName;
+                                dataAttribute.Description = Model.Description;
+
+                                UnitManager unitManager = null;
+                                try
+                                {
+                                    unitManager = new UnitManager();
+
+                                    if (unitManager.Repo.Get(tempUnitId) != null)
+                                        dataAttribute.Unit = unitManager.Repo.Get(tempUnitId);
+                                    else
+                                        dataAttribute.Unit = unitManager.Repo.Get().Where(u => u.Name.ToLower() == "none").FirstOrDefault();
+                                }
+                                finally
+                                {
+                                    unitManager.Dispose();
+                                }
+                                DataTypeManager dtm = null;
+                                try
+                                {
+                                    dtm = new DataTypeManager();
+
+                                    if (dtm.Repo.Get(tempDataTypeId) != null)
+                                        dataAttribute.DataType = dtm.Repo.Get(tempDataTypeId);
+                                    else
+                                        dataAttribute.DataType = dtm.Repo.Get().ToList().FirstOrDefault();
+                                }
+                                finally
+                                {
+                                    dtm.Dispose();
+                                }
+
+                                #region store constraint
+
+                                if (Model.RangeConstraints.Count > 0 && (Model.RangeConstraints.FirstOrDefault().Min != null || Model.RangeConstraints.FirstOrDefault().Max != null)
+                                    && (Model.RangeConstraints.FirstOrDefault().Min != 0.0 || Model.RangeConstraints.FirstOrDefault().Max != 0.0))
+                                    dataAttribute = storeConstraint(Model.RangeConstraints.First(), dataAttribute);
+                                else
+                                    dataAttribute = deletConstraint(Model.RangeConstraints.First().Id, dataAttribute);
+
+                                if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.PatternConstraints.FirstOrDefault().MatchingPhrase))
+                                    dataAttribute = storeConstraint(Model.PatternConstraints.First(), dataAttribute);
+                                else
+                                    dataAttribute = deletConstraint(Model.PatternConstraints.First().Id, dataAttribute);
+
+                                if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.DomainConstraints.FirstOrDefault().Terms))
+                                    dataAttribute = storeConstraint(Model.DomainConstraints.First(), dataAttribute);
+                                else
+                                    dataAttribute = deletConstraint(Model.DomainConstraints.First().Id, dataAttribute);
+
+
+                                #endregion
+                                dataAttributeManager.UpdateDataAttribute(dataAttribute);
+                            }
+                        }
+                        else
+                        {
+                            Session["nameMsg"] = "Name already exist";
+                            Session["Window"] = true;
+                            return View("AttributeManager", new DataAttributeManagerModel(Model));
+                        }
                     }
                 }
+            }
+            finally
+            {
+                dataAttributeManager.Dispose();
             }
 
             Session["Window"] = false;
@@ -201,16 +226,24 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             if (id != 0)
             {
-                DataContainerManager DAM = new DataContainerManager();
-                DataAttribute dataAttribute = DAM.DataAttributeRepo.Get(id);
-                if (dataAttribute != null)
+                DataContainerManager DAM = null;
+                try
                 {
-                    if (!attributeInUse(dataAttribute))
+                    DAM = new DataContainerManager();
+                    DataAttribute dataAttribute = DAM.DataAttributeRepo.Get(id);
+                    if (dataAttribute != null)
                     {
+                        if (!attributeInUse(dataAttribute))
+                        {
 
-                        DAM.DeleteDataAttribute(dataAttribute);
+                            DAM.DeleteDataAttribute(dataAttribute);
+                        }
+
                     }
-
+                }
+                finally
+                {
+                    DAM.Dispose();
                 }
             }
             return RedirectToAction("AttributeManager");
@@ -236,24 +269,39 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public JsonResult getDatatypeList(string Id)
         {
             long tempId = Convert.ToInt64(Id);
-            UnitManager unitManager = new UnitManager();
-            this.Disposables.Add(unitManager);
-            Unit tempUnit = unitManager.Repo.Get(tempId);
-            List<DataType> dataTypeList = new List<DataType>();
-            if (tempUnit.Name.ToLower() == "none")
+            UnitManager unitManager = null;
+            try
             {
-                DataTypeManager dataTypeManager = new DataTypeManager();
-                this.Disposables.Add(dataTypeManager);
-                dataTypeList = dataTypeManager.Repo.Get().ToList();
-                dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
-            }
-            else
-            {
-                dataTypeList = unitManager.Repo.Get(tempId).AssociatedDataTypes.ToList();
-                dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
-            }
+                unitManager = new UnitManager();
+                Unit tempUnit = unitManager.Repo.Get(tempId);
+                List<DataType> dataTypeList = new List<DataType>();
+                if (tempUnit.Name.ToLower() == "none")
+                {
+                    DataTypeManager dataTypeManager = null;
+                    try
+                    {
+                        dataTypeManager = new DataTypeManager();
+                        this.Disposables.Add(dataTypeManager);
+                        dataTypeList = dataTypeManager.Repo.Get().ToList();
+                        dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
+                    }
+                    finally
+                    {
+                        dataTypeManager.Dispose();
+                    }
+                }
+                else
+                {
+                    dataTypeList = unitManager.Repo.Get(tempId).AssociatedDataTypes.ToList();
+                    dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
+                }
 
-            return Json(new SelectList(dataTypeList.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
+                return Json(new SelectList(dataTypeList.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
+            }
+            finally
+            {
+                unitManager.Dispose();
+            }
         }
 
         public JsonResult getRangeConstraintFormalDescription(bool invert, double min, double max, bool mininclude, bool maxinclude)
@@ -296,95 +344,103 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private DataAttribute storeConstraint(ConstraintModel constraintModel, DataAttribute dataAttribute)
         {
-            DataContainerManager dcManager = new DataContainerManager();
-           
-            if (constraintModel is RangeConstraintModel)
+            DataContainerManager dcManager = null;
+            try
             {
-                RangeConstraintModel rcm = (RangeConstraintModel)constraintModel;
-                
-                if (rcm.Id == 0)
+                dcManager = new DataContainerManager();
+
+                if (constraintModel is RangeConstraintModel)
                 {
-                    RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, rcm.Description, rcm.Negated, null, null, null, rcm.Min, rcm.MinInclude, rcm.Max, rcm.MaxInclude);
-                    dcManager.AddConstraint(constraint, dataAttribute);             
-                }
-                else
-                { 
-                    for(int i = 0; i < dataAttribute.Constraints.Count; i++)
+                    RangeConstraintModel rcm = (RangeConstraintModel)constraintModel;
+
+                    if (rcm.Id == 0)
                     {
-                        if (dataAttribute.Constraints.ElementAt(i).Id == rcm.Id)
-                        {
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Description = rcm.Description;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = rcm.Negated;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Lowerbound = rcm.Min;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).LowerboundIncluded = rcm.MinInclude;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Upperbound = rcm.Max;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).UpperboundIncluded = rcm.MaxInclude;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (constraintModel is PatternConstraintModel)
-            {
-                PatternConstraintModel pcm = (PatternConstraintModel)constraintModel;
-
-                if (pcm.Id == 0)
-                {
-                    PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, pcm.Description, pcm.Negated, null, null, null, pcm.MatchingPhrase, false);
-                    dcManager.AddConstraint(constraint, dataAttribute);
-                }
-                else
-                {
-                    for (int i = 0; i < dataAttribute.Constraints.Count; i++)
-                    {
-                        if (dataAttribute.Constraints.ElementAt(i).Id == pcm.Id)
-                        {
-                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Description = pcm.Description;
-                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = pcm.Negated;
-                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).MatchingPhrase = pcm.MatchingPhrase;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (constraintModel is DomainConstraintModel)
-            {
-                DomainConstraintModel dcm = (DomainConstraintModel)constraintModel;
-
-                List<DomainItem> items = createDomainItems(dcm.Terms);
-
-                dcm.Terms = cutSpaces(dcm.Terms);
-
-                if (items.Count > 0)
-                {
-                    if (dcm.Id == 0)
-                    {
-                        DomainConstraint constraint = new DomainConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, dcm.Description, dcm.Negated, null, null, null, items);
+                        RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, rcm.Description, rcm.Negated, null, null, null, rcm.Min, rcm.MinInclude, rcm.Max, rcm.MaxInclude);
                         dcManager.AddConstraint(constraint, dataAttribute);
                     }
                     else
                     {
-                        DomainConstraint temp = new DomainConstraint();
                         for (int i = 0; i < dataAttribute.Constraints.Count; i++)
                         {
-                            if (dataAttribute.Constraints.ElementAt(i).Id == dcm.Id)
+                            if (dataAttribute.Constraints.ElementAt(i).Id == rcm.Id)
                             {
-                                temp = (DomainConstraint)dataAttribute.Constraints.ElementAt(i);
-                                temp.Materialize();
-                                temp.Description = dcm.Description;
-                                temp.Negated = dcm.Negated;
-                                temp.Items = items;
-                                dcManager.AddConstraint(temp, dataAttribute);
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Description = rcm.Description;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = rcm.Negated;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Lowerbound = rcm.Min;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).LowerboundIncluded = rcm.MinInclude;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Upperbound = rcm.Max;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).UpperboundIncluded = rcm.MaxInclude;
                                 break;
                             }
                         }
                     }
-                }                
-            }
+                }
 
-            return dataAttribute;
+                if (constraintModel is PatternConstraintModel)
+                {
+                    PatternConstraintModel pcm = (PatternConstraintModel)constraintModel;
+
+                    if (pcm.Id == 0)
+                    {
+                        PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, pcm.Description, pcm.Negated, null, null, null, pcm.MatchingPhrase, false);
+                        dcManager.AddConstraint(constraint, dataAttribute);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                        {
+                            if (dataAttribute.Constraints.ElementAt(i).Id == pcm.Id)
+                            {
+                                ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Description = pcm.Description;
+                                ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = pcm.Negated;
+                                ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).MatchingPhrase = pcm.MatchingPhrase;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (constraintModel is DomainConstraintModel)
+                {
+                    DomainConstraintModel dcm = (DomainConstraintModel)constraintModel;
+
+                    List<DomainItem> items = createDomainItems(dcm.Terms);
+
+                    dcm.Terms = cutSpaces(dcm.Terms);
+
+                    if (items.Count > 0)
+                    {
+                        if (dcm.Id == 0)
+                        {
+                            DomainConstraint constraint = new DomainConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, dcm.Description, dcm.Negated, null, null, null, items);
+                            dcManager.AddConstraint(constraint, dataAttribute);
+                        }
+                        else
+                        {
+                            DomainConstraint temp = new DomainConstraint();
+                            for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                            {
+                                if (dataAttribute.Constraints.ElementAt(i).Id == dcm.Id)
+                                {
+                                    temp = (DomainConstraint)dataAttribute.Constraints.ElementAt(i);
+                                    temp.Materialize();
+                                    temp.Description = dcm.Description;
+                                    temp.Negated = dcm.Negated;
+                                    temp.Items = items;
+                                    dcManager.AddConstraint(temp, dataAttribute);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return dataAttribute;
+            }
+            finally
+            {
+                dcManager.Dispose();
+            }
         }
 
         private List<DomainItem> createDomainItems(string Terms)
@@ -469,48 +525,65 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public DataAttribute deletConstraint(long constraintId, DataAttribute attribute)
         {
-            DataContainerManager dam = new DataContainerManager();
+            DataContainerManager dam = null;
 
-            if (constraintId != 0 && attribute.Id != 0)
+            try
             {
+                dam = new DataContainerManager();
 
-                foreach (Constraint c in attribute.Constraints.ToList())
+                if (constraintId != 0 && attribute.Id != 0)
                 {
-                    if (c.Id == constraintId)
+
+                    foreach (Constraint c in attribute.Constraints.ToList())
                     {
-                        attribute.Constraints.Remove(c);
-                        if (c is RangeConstraint)
-                            dam.RemoveConstraint((RangeConstraint)c);
-                        if (c is PatternConstraint)
-                            dam.RemoveConstraint((PatternConstraint)c);
-                        if (c is DomainConstraint)
-                            dam.RemoveConstraint((DomainConstraint)c);
-                        break;
+                        if (c.Id == constraintId)
+                        {
+                            attribute.Constraints.Remove(c);
+                            if (c is RangeConstraint)
+                                dam.RemoveConstraint((RangeConstraint)c);
+                            if (c is PatternConstraint)
+                                dam.RemoveConstraint((PatternConstraint)c);
+                            if (c is DomainConstraint)
+                                dam.RemoveConstraint((DomainConstraint)c);
+                            break;
+                        }
                     }
                 }
+                return (attribute);
             }
-            return (attribute);
+            finally
+            {
+                dam.Dispose();
+            }
         }
 
         public ActionResult deletConstraint(long Id, long attributeId)
         {
             if (Id != 0 && attributeId != 0)
             {
-                DataContainerManager dam = new DataContainerManager();
-                DataAttribute dataattribute = dam.DataAttributeRepo.Get(attributeId);
-                Constraint constraint = dam.DataAttributeRepo.Get(attributeId).Constraints.Where(c => c.Id == Id).FirstOrDefault();
+                DataContainerManager dam = null;
 
-                foreach (Constraint c in dataattribute.Constraints.ToList())
+                try
                 {
-                    if (c.Id == constraint.Id)
+                    dam = new DataContainerManager();
+                    DataAttribute dataattribute = dam.DataAttributeRepo.Get(attributeId);
+                    Constraint constraint = dam.DataAttributeRepo.Get(attributeId).Constraints.Where(c => c.Id == Id).FirstOrDefault();
+
+                    foreach (Constraint c in dataattribute.Constraints.ToList())
                     {
-                        dataattribute.Constraints.Remove(c);
-                        break;
+                        if (c.Id == constraint.Id)
+                        {
+                            dataattribute.Constraints.Remove(c);
+                            break;
+                        }
                     }
+
+                    dataattribute = dam.UpdateDataAttribute(dataattribute);
                 }
-
-                dataattribute = dam.UpdateDataAttribute(dataattribute);
-
+                finally
+                {
+                    dam.Dispose();
+                }
                 //if (constraint is RangeConstraint)
                 //    dam.RemoveConstraint((RangeConstraint)constraint);
             }
