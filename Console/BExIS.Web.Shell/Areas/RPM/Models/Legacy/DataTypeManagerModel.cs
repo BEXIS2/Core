@@ -21,9 +21,17 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
         public DataTypeModel(long Id)
         {
-            DataTypeManager dtm = new DataTypeManager();
-            dataType = dtm.Repo.Get(Id);
-            pattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
+            DataTypeManager dtm = null;
+            try
+            {
+                dtm = new DataTypeManager();
+                dataType = dtm.Repo.Get(Id);
+                pattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
+            }
+            finally
+            {
+                dtm.Dispose();
+            }
         }
 
     }

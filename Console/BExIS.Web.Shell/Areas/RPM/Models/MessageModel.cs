@@ -39,23 +39,31 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
             else
             {
-                DataStructureManager dataStructureManager = new DataStructureManager();
-                List<DataStructure> dataStructures = dataStructureManager.AllTypesDataStructureRepo.Get().ToList();
-
-                foreach (DataStructure ds in dataStructures)
+                DataStructureManager dataStructureManager = null;
+                try
                 {
-                    if (Id != ds.Id)
+                    dataStructureManager = new DataStructureManager();
+                    List<DataStructure> dataStructures = dataStructureManager.AllTypesDataStructureRepo.Get().ToList();
+
+                    foreach (DataStructure ds in dataStructures)
                     {
-                        if (ds.Name.Trim().ToLower() == Name.Trim().ToLower())
+                        if (Id != ds.Id)
                         {
-                            return new MessageModel()
+                            if (ds.Name.Trim().ToLower() == Name.Trim().ToLower())
                             {
-                                hasMessage = true,
-                                Message = "A data structure with same name already exists.",
-                                CssId = cssId
-                            };
+                                return new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "A data structure with same name already exists.",
+                                    CssId = cssId
+                                };
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    dataStructureManager.Dispose();
                 }
             }
             return new MessageModel() { CssId = cssId };
@@ -63,9 +71,17 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public static MessageModel validateDataStructureDelete(long Id)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
-            return validateDataStructureDelete(Id, dataStructure);
+            DataStructureManager dataStructureManager = null;
+            try
+            {
+                dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
+                return validateDataStructureDelete(Id, dataStructure);
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
+            }
         }
 
         public static MessageModel validateDataStructureDelete(long Id , DataStructure dataStructure)
@@ -117,9 +133,17 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public static MessageModel validateDataStructureInUse(long Id)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
-            return validateDataStructureInUse(Id, dataStructure);
+            DataStructureManager dataStructureManager = null;
+            try
+            {
+                dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
+                return validateDataStructureInUse(Id, dataStructure);
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
+            }
         }
 
         public static MessageModel validateDataStructureInUse(long Id, DataStructure dataStructure)
@@ -173,8 +197,17 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public static MessageModel validateAttributeDelete(long Id)
         {
-            DataAttribute dataAttribute = new DataContainerManager().DataAttributeRepo.Get(Id);
-            return validateAttributeDelete(Id, dataAttribute);
+            DataContainerManager dataContainerManager = null;
+            try
+            {
+                dataContainerManager = new DataContainerManager();
+                DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(Id);
+                return validateAttributeDelete(Id, dataAttribute);
+            }
+            finally
+            {
+                dataContainerManager.Dispose();
+            }
         }
 
         public static MessageModel validateAttributeDelete(long Id, DataAttribute dataAttribute)
@@ -237,22 +270,31 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
             else
             {
-                List<DataAttribute> dataAttributes = new DataContainerManager().DataAttributeRepo.Get().ToList();
-  
-                foreach (DataAttribute da in dataAttributes)
+                DataContainerManager dataContainerManager = null;
+                dataContainerManager = new DataContainerManager();
+                try
                 {
-                    if (Id != da.Id)
+                    List<DataAttribute> dataAttributes = dataContainerManager.DataAttributeRepo.Get().ToList();
+
+                    foreach (DataAttribute da in dataAttributes)
                     {
-                        if (da.Name.Trim().ToLower() == Name.Trim().ToLower())
+                        if (Id != da.Id)
                         {
-                            return new MessageModel()
+                            if (da.Name.Trim().ToLower() == Name.Trim().ToLower())
                             {
-                                hasMessage = true,
-                                Message = "A variable template with same name already exists.",
-                                CssId = cssId
-                            };
+                                return new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "A variable template with same name already exists.",
+                                    CssId = cssId
+                                };
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    dataContainerManager.Dispose();
                 }
             }
             return new MessageModel() { CssId = cssId };
@@ -260,9 +302,17 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public static MessageModel validateAttributeInUse(long Id)
         {
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-            DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
-            return validateAttributeInUse(Id, dataAttribute);
+            DataContainerManager dataAttributeManager = null;
+            try
+            {
+                dataAttributeManager = new DataContainerManager();
+                DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
+                return validateAttributeInUse(Id, dataAttribute);
+            }
+            finally
+            {
+                dataAttributeManager.Dispose();
+            }
         }
 
         public static MessageModel validateAttributeInUse(long Id, DataAttribute dataAttribute)
