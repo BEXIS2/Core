@@ -14,10 +14,10 @@ namespace BExIS.Modules.Rpm.UI.Models
         public List<DataType> DataTypeList;
         public List<Dimension> DimensionList;
 
-        UnitManager unitManager = new UnitManager();
-        DataContainerManager dataAttributeManager = new DataContainerManager();
-        DataStructureManager dataStructureManager = new DataStructureManager();
-        DataTypeManager dataTypeManager = new DataTypeManager();
+        UnitManager unitManager = null;
+        DataContainerManager dataAttributeManager = null;
+        DataStructureManager dataStructureManager = null;
+        DataTypeManager dataTypeManager = null;
 
         public EditUnitModel()
         {
@@ -40,40 +40,68 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         private void setup()
         {
-            DataTypeList = dataTypeManager.Repo.Get().ToList();
-            DimensionList = unitManager.DimensionRepo.Get().ToList();
+            try
+            {
+                dataTypeManager = new DataTypeManager();
+                unitManager = new UnitManager();
+                DataTypeList = dataTypeManager.Repo.Get().ToList();
+                DimensionList = unitManager.DimensionRepo.Get().ToList();
+            }
+            finally
+            {
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
+            }
         }
 
         private void setup(long unitId)
         {
             setup();
-            Unit tempUnit = unitManager.Repo.Get().Where(u => u.Id.Equals(unitId) && u.AssociatedDataTypes.Count() != null).FirstOrDefault();
-            Unit = tempUnit;
-            if (tempUnit.AssociatedDataTypes.Count != 0)
-                Unit.AssociatedDataTypes = tempUnit.AssociatedDataTypes;
-            else
-                Unit.AssociatedDataTypes = new List<DataType>();
+            try
+            {
+                unitManager = new UnitManager();
+                Unit tempUnit = unitManager.Repo.Get().Where(u => u.Id.Equals(unitId) && u.AssociatedDataTypes.Count() != null).FirstOrDefault();
+                Unit = tempUnit;
+                if (tempUnit.AssociatedDataTypes.Count != 0)
+                    Unit.AssociatedDataTypes = tempUnit.AssociatedDataTypes;
+                else
+                    Unit.AssociatedDataTypes = new List<DataType>();
 
-            Unit.Dimension = unitManager.DimensionRepo.Get(tempUnit.Dimension.Id);
-            inUse = unitInUse(tempUnit);
+                Unit.Dimension = unitManager.DimensionRepo.Get(tempUnit.Dimension.Id);
+                inUse = unitInUse(tempUnit);
+            }
+            finally
+            {
+                unitManager.Dispose();
+            }
         }
 
         private bool unitInUse(Unit unit)
         {
-            bool inUse = false;
-            if (unit.Name.ToLower() == "none")
-                inUse = true;
-            else if (dataAttributeManager.DataAttributeRepo.Query(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
-                inUse = true;
-            else if (dataStructureManager.VariableRepo.Query(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
-                inUse = true;
-            return inUse;
+            try
+            {
+                dataAttributeManager = new DataContainerManager();
+                dataStructureManager = new DataStructureManager();
+                bool inUse = false;
+                if (unit.Name.ToLower() == "none")
+                    inUse = true;
+                else if (dataAttributeManager.DataAttributeRepo.Query(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
+                    inUse = true;
+                else if (dataStructureManager.VariableRepo.Query(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
+                    inUse = true;
+                return inUse;
+            }
+            finally
+            {
+                dataAttributeManager.Dispose();
+                dataStructureManager.Dispose();
+            }
         }
     }
 
     public class UnitManagerModel
     {
-        UnitManager unitManager = new UnitManager();
+        UnitManager unitManager = null;
         public List<EditUnitModel> editUnitModelList = new List<EditUnitModel>();
 
         public EditUnitModel editUnitModel;
@@ -93,10 +121,18 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         private void setup()
         {
-            List<Unit> tempUnitList = unitManager.Repo.Get().ToList();
-            foreach (Unit u in tempUnitList)
-            { 
-                editUnitModelList.Add(new EditUnitModel(u));
+            try
+            {
+                unitManager = new UnitManager();
+                List<Unit> tempUnitList = unitManager.Repo.Get().ToList();
+                foreach (Unit u in tempUnitList)
+                {
+                    editUnitModelList.Add(new EditUnitModel(u));
+                }
+            }
+            finally
+            {
+                unitManager.Dispose();
             }
         }
 

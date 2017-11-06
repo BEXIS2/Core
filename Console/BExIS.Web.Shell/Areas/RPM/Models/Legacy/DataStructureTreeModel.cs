@@ -176,14 +176,22 @@ namespace BExIS.Modules.Rpm.UI.Models
         public DataStructureTree()
         {
             dataStructureTreeList = new List<DataStructureTreeList>();
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructureTreeList treeList = new DataStructureTreeList();
-            if(dataStructureManager.StructuredDataStructureRepo.Get() != null)
-                treeList = new DataStructureTreeList(dataStructureManager.StructuredDataStructureRepo.Get());
-            dataStructureTreeList.Add(treeList);
-            if (dataStructureManager.UnStructuredDataStructureRepo.Get() !=null)
-                treeList = new DataStructureTreeList(dataStructureManager.UnStructuredDataStructureRepo.Get());
-            dataStructureTreeList.Add(treeList);
+            DataStructureManager dataStructureManager = null;
+            try
+            {
+                dataStructureManager = new DataStructureManager();
+                DataStructureTreeList treeList = new DataStructureTreeList();
+                if (dataStructureManager.StructuredDataStructureRepo.Get() != null)
+                    treeList = new DataStructureTreeList(dataStructureManager.StructuredDataStructureRepo.Get());
+                dataStructureTreeList.Add(treeList);
+                if (dataStructureManager.UnStructuredDataStructureRepo.Get() != null)
+                    treeList = new DataStructureTreeList(dataStructureManager.UnStructuredDataStructureRepo.Get());
+                dataStructureTreeList.Add(treeList);
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
+            }
         }
     }
 }
