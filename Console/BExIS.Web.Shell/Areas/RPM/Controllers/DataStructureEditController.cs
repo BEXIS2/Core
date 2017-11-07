@@ -173,22 +173,36 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             svs.Lable = "";
                         if (svs.Description == null)
                             svs.Description = "";
-                        dataContainerManager = new DataContainerManager();
-                        DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                        if (dataAttribute != null)
+                        try
                         {
-                            um = new UnitManager();
-                            variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
-                            svs.Id = variable.Id;
-                        }
-                        else
-                        {
-                            returnObject = new MessageModel()
+                            dataContainerManager = new DataContainerManager();
+                            DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                            if (dataAttribute != null)
                             {
-                                hasMessage = true,
-                                Message = "Not all Variables are stored.",
-                                CssId = "0"
-                            };
+                                try
+                                {
+                                    um = new UnitManager();
+                                    variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
+                                    svs.Id = variable.Id;
+                                }
+                                finally
+                                {
+                                    um.Dispose();
+                                }
+                            }
+                            else
+                            {
+                                returnObject = new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "Not all Variables are stored.",
+                                    CssId = "0"
+                                };
+                            }
+                        }
+                        finally
+                        {
+                            dataContainerManager.Dispose();
                         }
                     }
                     dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
@@ -207,14 +221,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         {
                             variable.Label = svs.Lable.Trim();
                             variable.Description = svs.Description.Trim();
-                            um = new UnitManager();
-                            this.Disposables.Add(um);
 
-                            variable.Unit = um.Repo.Get(svs.UnitId);
-                            dataContainerManager = new DataContainerManager();
-                            this.Disposables.Add(dataContainerManager);
-                            variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                            variable.IsValueOptional = svs.isOptional;
+                            try
+                            {
+                                um = new UnitManager();
+                                dataContainerManager = new DataContainerManager();
+
+                                variable.Unit = um.Repo.Get(svs.UnitId);
+                                variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                                variable.IsValueOptional = svs.isOptional;
+                            }
+                            finally
+                            {
+                                um.Dispose();
+                                dataContainerManager.Dispose();
+                            }
                         }
                     }
 
@@ -379,7 +400,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             List<ItemStruct> DataTypes = new List<ItemStruct>();
             UnitManager um = null;
-            DataTypeManager dtm = null;
 
             try
             {
@@ -400,23 +420,30 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    dtm = new DataTypeManager();
-                    this.Disposables.Add(dtm);
-                    foreach (DataType dt in dtm.Repo.Get())
+                    DataTypeManager dtm = null;
+                    try
                     {
-                        DataTypes.Add(new ItemStruct()
+                        dtm = new DataTypeManager();
+                        this.Disposables.Add(dtm);
+                        foreach (DataType dt in dtm.Repo.Get())
                         {
-                            Name = dt.Name,
-                            Id = dt.Id
-                        });
+                            DataTypes.Add(new ItemStruct()
+                            {
+                                Name = dt.Name,
+                                Id = dt.Id
+                            });
+                        }
+                        return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
                     }
-                    return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                    finally
+                    {
+                        dtm.Dispose();
+                    }
                 }
             }
             finally
             {
                 um.Dispose();
-                dtm.Dispose();
             }
         }
 
