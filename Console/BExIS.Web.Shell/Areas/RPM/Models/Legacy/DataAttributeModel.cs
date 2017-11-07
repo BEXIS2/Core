@@ -10,8 +10,8 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class DataAttributeManagerModel
     {
         private DataContainerManager dataContainerManager = null;
-        public DataAttributeModel DataAttributeModel = null;
-        public List<DataAttributeStruct> DataAttributeStructs = null;
+        public DataAttributeModel DataAttributeModel = new DataAttributeModel();
+        public List<DataAttributeStruct> DataAttributeStructs = new List<DataAttributeStruct>();
 
 
         public DataAttributeManagerModel()
