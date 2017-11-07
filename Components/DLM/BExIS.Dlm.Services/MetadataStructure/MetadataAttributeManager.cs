@@ -258,14 +258,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
             {
                 IRepository<MetadataAttribute> repo = uow.GetRepository<MetadataAttribute>();
                 //var localEntity = repo.Merge(entity);
-
                 repo.Merge(entity);
-                var localEntity = repo.Get(entity.Id);
-
-                repo.Put(localEntity); // Merge is required here!!!!
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
 
-                return (localEntity);
+                return (merged);
             }
 
         }

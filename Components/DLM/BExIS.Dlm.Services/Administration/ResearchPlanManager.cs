@@ -131,7 +131,9 @@ namespace BExIS.Dlm.Services.Administration
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    

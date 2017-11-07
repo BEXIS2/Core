@@ -61,25 +61,27 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<Unit>() != null && Contract.Result<Unit>().Id >= 0);
 
-            Unit u = new Unit()
-            {
-                Name = name,
-                Abbreviation = abbreviation,
-                Description = description,
-                Dimension = dimension,
-                MeasurementSystem = measurementSystem,
-            };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                if (repo.Query(p => p.Name.ToLower() == u.Name.ToLower()).Count() <= 0)
+                
+                if (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
                 {
-                    repo.Put(u);
+                    Unit unit = new Unit()
+                    {
+                        Name = name,
+                        Abbreviation = abbreviation,
+                        Description = description,
+                        Dimension = dimension,
+                        MeasurementSystem = measurementSystem,
+                    };
+                    repo.Put(unit);
                     uow.Commit();
+                    return (unit);
                 }
+                return null; // This should throw an exception instead.
             }
-            return (u);
         }
 
         public bool Delete(Unit entity)
@@ -158,7 +160,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -237,7 +241,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dimension> repo = uow.GetRepository<Dimension>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -355,8 +361,10 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<ConversionMethod> repoCM = uow.GetRepository<ConversionMethod>();
-                repoCM.Put(entity); // Merge is required here!!!!
+                IRepository<ConversionMethod> repo = uow.GetRepository<ConversionMethod>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

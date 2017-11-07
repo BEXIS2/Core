@@ -35,9 +35,9 @@
         <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
               .ClientTemplate(
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= GroupName #>\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit Group\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= GroupName #>\" title=\"Edit Membership(s)\"></button>" +
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"DFelete Group\"></button>")
               .Width(110);
       })
       .ClientEvents(events =>
@@ -111,14 +111,18 @@
                         var window = $(windowElement).data('tWindow');
                         window.center().open();
 
-                        $('#button_createGroup_cancel').click(function () {
-                            $('#window_createGroup').data('tWindow').close();
-                        });
-
                         resetAllTelerikIconTitles();
                     }
                 });
             });
+
+        $(document).on("click", "#button_createGroup_cancel", function () {
+            $('#window_createGroup').data('tWindow').close();
+        });
+
+        $(document).on("click", "#button_updateGroup_cancel", function () {
+            $('#window_updateGroup').data('tWindow').close();
+        });
 
         function createGroup_onSuccess(data) {
             if (data.success) {
@@ -153,7 +157,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update Group (Id: " + $(this).attr("value") + ")",
+                                title: "Update Group",
                                 html: "<div id='content_updateGroup' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
@@ -173,10 +177,6 @@
                             var window = $(windowElement).data('tWindow');
                             window.center().open();
 
-                            $('#button_updateGroup_cancel').click(function () {
-                                $('#window_updateGroup').data('tWindow').close();
-                            });
-
                             resetAllTelerikIconTitles();
                         }
                     });
@@ -191,7 +191,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update User (Id: " + $(this).attr("value") + ")",
+                                title: "Update Membership(s)",
                                 html: "<div id='content_users' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],

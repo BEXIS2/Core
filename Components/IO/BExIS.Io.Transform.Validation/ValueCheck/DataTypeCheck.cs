@@ -265,6 +265,20 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 return dateTime;
                             }
 
+                            //Also accept OA-Dates - try to parse the value as double, then try to parse the double as OA-Date
+                            double valueAsDouble;
+                            if(double.TryParse(value, out valueAsDouble))
+                            {
+                                try
+                                {
+                                    dateTime = DateTime.FromOADate(valueAsDouble);
+                                    return dateTime;
+                                } catch(ArgumentException e)
+                                {
+                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                }
+                            }
+
                             return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
 
                         }
@@ -290,15 +304,27 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                     //TODO Boolean check
                     case "Boolean":
                         {
-
-                            Boolean converted;
-                            if (Boolean.TryParse(value, out converted))
+                            //Accept 0 and 1
+                            if(value == "0")
                             {
-                                return converted;
+                                return false;
+                            }
+                            else if(value == "1")
+                            {
+                                return true;
                             }
                             else
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                //Try to parse, e.g. "true", "True" or "TRUE"
+                                Boolean converted;
+                                if (Boolean.TryParse(value, out converted))
+                                {
+                                    return converted;
+                                }
+                                else
+                                {
+                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                }
                             }
                         }
 

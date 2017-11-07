@@ -167,14 +167,14 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Task UpdateAsync(User user)
+        public Task UpdateAsync(User entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Merge(user);
-                var u = userRepository.Get(user.Id);
-                userRepository.Put(u);
+                var repo = uow.GetRepository<User>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
 

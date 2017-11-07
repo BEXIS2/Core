@@ -121,14 +121,14 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public void Update(Feature feature)
+        public void Update(Feature entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var featureRepository = uow.GetRepository<Feature>();
-                featureRepository.Merge(feature);
-                var f = featureRepository.Get(feature.Id);
-                featureRepository.Put(f);
+                var repo = uow.GetRepository<Feature>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }
