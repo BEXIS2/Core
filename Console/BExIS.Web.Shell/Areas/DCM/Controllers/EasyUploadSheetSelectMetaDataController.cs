@@ -21,8 +21,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             MetadataStructureManager msm = new MetadataStructureManager();
             try
             {
-                this.Disposables.Add(msm);
-
                 TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
                 //set current stepinfo based on index
@@ -123,7 +121,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     MetadataStructureManager msm = new MetadataStructureManager();
                     try
                     {
-                        this.Disposables.Add(msm);
                         foreach (MetadataStructure metadataStructure in msm.Repo.Get())
                         {
                             model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
