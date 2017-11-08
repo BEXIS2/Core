@@ -63,7 +63,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region load Model from metadataStructure
 
-        public static LinkElementRootModel LoadFromMetadataStructure(long id, LinkElementPostion rootModelType)
+        public static LinkElementRootModel LoadFromMetadataStructure(long id, LinkElementPostion rootModelType, MappingManager mappingManager)
         {
 
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
@@ -77,7 +77,6 @@ namespace BExIS.Modules.Dim.UI.Helper
                 if (metadataStructure != null)
                 {
 
-                    MappingManager mappingManager = new MappingManager();
                     LinkElement metadataStructureLinkElement = mappingManager.GetLinkElement(metadataStructure.Id,
                             LinkElementType.MetadataStructure);
 
@@ -260,73 +259,64 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region Load Model From System
 
-        public static LinkElementRootModel LoadfromSystem(LinkElementPostion rootModelType)
+        public static LinkElementRootModel LoadfromSystem(LinkElementPostion rootModelType, MappingManager mappingManager)
         {
-            MappingManager mappingManager = new MappingManager();
+            LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
 
-            try
+            LinkElement SystemRoot = mappingManager.GetLinkElement(0, LinkElementType.System);
+
+            long id = 0;
+            long elementId = 0;
+            if (SystemRoot != null)
             {
-                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
-
-                LinkElement SystemRoot = mappingManager.GetLinkElement(0,
-                        LinkElementType.System);
-
-                long id = 0;
-                long elementId = 0;
-                if (SystemRoot != null)
-                {
-                    id = SystemRoot.Id;
-                    elementId = SystemRoot.ElementId;
-                }
-
-
-                LinkElementModel LEParent = new LinkElementModel(
-                       id,
-                       elementId,
-                       LinkElementType.System,
-                       "System", "",
-                       rootModelType,
-                       LinkElementComplexity.Complex,
-                       "");
-
-                //get all parties - complex
-                PartyTypeManager partyTypeManager = new PartyTypeManager();
-                IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
-
-                foreach (var pt in partyTypes)
-                {
-                    LinkElementModel ptModel = createLinkElementModelType(pt, model, LEParent);
-                    model.LinkElements.Add(ptModel);
-                    //get all partyCustomTypeAttr -> simple
-                    model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel));
-                }
-
-                //get all keys -> simple
-                foreach (Key value in Key.GetValues(typeof(Key)))
-                {
-                    long linkElementId = GetId((int)value, LinkElementType.Key);
-                    //string mask = GetMask((int)value, LinkElementType.Key);
-
-                    LinkElementModel LEModel = new LinkElementModel(
-                            linkElementId,
-                            (int)value,
-                            LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
-
-                    LEModel.Parent = LEParent;
-
-                    model.LinkElements.Add(LEModel);
-
-                }
-
-                //create container
-                model = CreateLinkElementContainerModels(model);
-
-                return model;
+                id = SystemRoot.Id;
+                elementId = SystemRoot.ElementId;
             }
-            finally
+
+
+            LinkElementModel LEParent = new LinkElementModel(
+                   id,
+                   elementId,
+                   LinkElementType.System,
+                   "System", "",
+                   rootModelType,
+                   LinkElementComplexity.Complex,
+                   "");
+
+            //get all parties - complex
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
+
+            foreach (var pt in partyTypes)
             {
-                mappingManager.Dispose();
+                LinkElementModel ptModel = createLinkElementModelType(pt, model, LEParent);
+                model.LinkElements.Add(ptModel);
+                //get all partyCustomTypeAttr -> simple
+                model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel));
             }
+
+            //get all keys -> simple
+            foreach (Key value in Key.GetValues(typeof(Key)))
+            {
+                long linkElementId = GetId((int)value, LinkElementType.Key, mappingManager);
+                //string mask = GetMask((int)value, LinkElementType.Key);
+
+                LinkElementModel LEModel = new LinkElementModel(
+                        linkElementId,
+                        (int)value,
+                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
+
+                LEModel.Parent = LEParent;
+
+                model.LinkElements.Add(LEModel);
+
+            }
+
+            //create container
+            model = CreateLinkElementContainerModels(model);
+
+            return model;
+
         }
 
         private static LinkElementModel createLinkElementModelType(
@@ -336,7 +326,7 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
             MappingManager mappingManager = new MappingManager();
 
-            long linkElementId = GetId(partyType.Id, LinkElementType.PartyType);
+            long linkElementId = GetId(partyType.Id, LinkElementType.PartyType, mappingManager);
 
             LinkElementModel LEModel = new LinkElementModel(
                         linkElementId,
@@ -357,7 +347,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             foreach (var partyCustomType in partyType.CustomAttributes)
             {
-                long linkElementId = GetId(partyCustomType.Id, LinkElementType.PartyCustomType);
+                long linkElementId = GetId(partyCustomType.Id, LinkElementType.PartyCustomType, mappingManager);
 
                 LinkElementModel LEModel = new LinkElementModel(
                             linkElementId,
@@ -823,126 +813,97 @@ namespace BExIS.Modules.Dim.UI.Helper
             }
         }
 
-        public static LinkElement CreateIfNotExistLinkElement(LinkElementModel leModel)
+        public static LinkElement CreateIfNotExistLinkElement(LinkElementModel leModel, MappingManager mappingManager)
         {
-            MappingManager mappingManager = new MappingManager();
-            try
-            {
 
-                if (ExistLinkElement(leModel))
-                {
-                    return mappingManager.LinkElementRepo.Get()
-                        .FirstOrDefault(le => le.ElementId.Equals(leModel.ElementId) && le.Type.Equals(leModel.Type));
-                }
-                else
-                {
-                    return CreateLinkElement(leModel);
-                }
+            if (ExistLinkElement(leModel))
+            {
+                return mappingManager.LinkElementRepo.Get()
+                    .FirstOrDefault(le => le.ElementId.Equals(leModel.ElementId) && le.Type.Equals(leModel.Type));
             }
-            finally
+            else
             {
-                mappingManager.Dispose();
-            }
-
-        }
-
-        public static LinkElement CreateIfNotExistLinkElement(LinkElementModel leModel, long parentId)
-        {
-            MappingManager mappingManager = new MappingManager();
-
-            try
-            {
-
-                if (ExistLinkElement(leModel))
-                {
-                    return mappingManager.LinkElementRepo.Get()
-                        .FirstOrDefault(le =>
-                        le.ElementId.Equals(leModel.ElementId) &&
-                        le.Type.Equals(leModel.Type) &&
-                        le.Complexity.Equals(leModel.Complexity)
-                        //le.Parent.Id.Equals(parentId)
-                        );
-                }
-                else
-                {
-                    return CreateLinkElement(leModel, parentId);
-                }
-
-            }
-            finally
-            {
-                mappingManager.Dispose();
+                return CreateLinkElement(leModel);
             }
         }
 
-        public static Mapping CreateIfNotExistMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent)
+        public static LinkElement CreateIfNotExistLinkElement(LinkElementModel leModel, long parentId, MappingManager mappingManager)
+        {
+            if (ExistLinkElement(leModel))
+            {
+                return mappingManager.LinkElementRepo.Get()
+                    .FirstOrDefault(le =>
+                    le.ElementId.Equals(leModel.ElementId) &&
+                    le.Type.Equals(leModel.Type) &&
+                    le.Complexity.Equals(leModel.Complexity)
+                    //le.Parent.Id.Equals(parentId)
+                    );
+            }
+            else
+            {
+                return CreateLinkElement(leModel, parentId);
+            }
+        }
+
+        public static Mapping CreateIfNotExistMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent, MappingManager mappingManager)
         {
             object tmp = new object();
             IEnumerable<Mapping> mappings = tmp.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get();
 
-            MappingManager mappingManager = new MappingManager();
-            try
+            Mapping mapping = null;
+
+            if (parent != null)
             {
-                Mapping mapping = null;
-
-                if (parent != null)
-                {
-                    mapping = mappings.FirstOrDefault(
-                        m => m.Parent != null && m.Parent.Id.Equals(parent.Id)
-                             && m.Source.Id.Equals(source.Id)
-                             && m.Source.Type.Equals(source.Type)
-                             && m.Target.Id.Equals(target.Id)
-                             && m.Target.Type.Equals(target.Type)
-                             && m.Level.Equals(level));
-                }
-                else
-                {
-                    mapping = mappings.FirstOrDefault(
-                        m => m.Parent == null
-                             && m.Source.Id.Equals(source.Id)
-                             && m.Source.Type.Equals(source.Type)
-                             && m.Target.Id.Equals(target.Id)
-                             && m.Target.Type.Equals(target.Type)
-                             && m.Level.Equals(level));
-                }
-
-                if (mapping == null)
-                {
-                    if (rule != null && rule.Id == 0 && rule.RegEx != null)
-                    {
-                        rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask);
-                    }
-
-                    mapping = mappingManager.CreateMapping(source, target, level, rule, parent);
-                }
-                else
-                {
-                    if (rule != null)
-                    {
-                        rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask);
-
-                        mapping.TransformationRule = rule;
-                        mappingManager.UpdateMapping(mapping);
-                    }
-                }
-
-
-                return mapping;
+                mapping = mappings.FirstOrDefault(
+                    m => m.Parent != null && m.Parent.Id.Equals(parent.Id)
+                         && m.Source.Id.Equals(source.Id)
+                         && m.Source.Type.Equals(source.Type)
+                         && m.Target.Id.Equals(target.Id)
+                         && m.Target.Type.Equals(target.Type)
+                         && m.Level.Equals(level));
             }
-            finally
+            else
             {
-                mappingManager.Dispose();
+                mapping = mappings.FirstOrDefault(
+                    m => m.Parent == null
+                         && m.Source.Id.Equals(source.Id)
+                         && m.Source.Type.Equals(source.Type)
+                         && m.Target.Id.Equals(target.Id)
+                         && m.Target.Type.Equals(target.Type)
+                         && m.Level.Equals(level));
             }
+
+            if (mapping == null)
+            {
+                if (rule != null && rule.Id == 0 && rule.RegEx != null)
+                {
+                    rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask);
+                }
+
+                mapping = mappingManager.CreateMapping(source, target, level, rule, parent);
+            }
+            else
+            {
+                if (rule != null)
+                {
+                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask);
+
+                    mapping.TransformationRule = rule;
+                    mappingManager.UpdateMapping(mapping);
+                }
+            }
+
+
+            return mapping;
+
         }
 
         #endregion
 
         #region delete
 
-        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, Mapping parent)
+        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, Mapping parent, MappingManager mappingManager)
         {
-
-            MappingManager mappingManager = new MappingManager();
 
             List<Mapping> mappingsInDatabase = mappingManager.MappingRepo.Get()
                     .Where(m => m.Parent != null && m.Parent.Id.Equals(parent.Id)).ToList();
@@ -970,7 +931,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             foreach (var id in deleteMappings)
             {
-                DeleteMapping(id, false);
+                DeleteMapping(id, mappingManager, false);
             }
 
 
@@ -986,13 +947,13 @@ namespace BExIS.Modules.Dim.UI.Helper
                 LinkElement simpleMappingTarget = null;
 
                 //if its not a new parent mapping or its in the list, please select existing
-                simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId);
+                simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId, mappingManager);
 
 
                 //if its not a new parent mapping or its in the list, please select existing
                 ////if (ExistLinkElementModel(sm.Target, createdLinkELementModels))
 
-                simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId);
+                simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId, mappingManager);
 
 
                 //if (sm.TransformationRule. != null)
@@ -1002,7 +963,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx, sm.TransformationRule.Mask);
 
 
-                Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null, parent);
+                Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null, parent, mappingManager);
 
                 if (transformationRule != null)
                 {
@@ -1019,34 +980,24 @@ namespace BExIS.Modules.Dim.UI.Helper
             return false;
         }
 
-        public static bool DeleteMapping(long id, bool recursive = true)
+        public static bool DeleteMapping(long id, MappingManager mappingManager, bool recursive = true)
         {
+            Mapping mapping = mappingManager.GetMappings(id);
 
-            MappingManager mappingManager = new MappingManager();
-
-
-            try
+            if (recursive)
             {
-                Mapping mapping = mappingManager.GetMappings(id);
+                IEnumerable<Mapping> childMappings = mappingManager.GetChildMapping(id);
 
-                if (recursive)
+                foreach (var cm in childMappings)
                 {
-                    IEnumerable<Mapping> childMappings = mappingManager.GetChildMapping(id);
-
-                    foreach (var cm in childMappings)
-                    {
-                        mappingManager.DeleteMapping(cm.Id);
-                    }
+                    mappingManager.DeleteMapping(cm.Id);
                 }
-                mappingManager.DeleteMapping(mapping.Id);
+            }
+            mappingManager.DeleteMapping(mapping.Id);
 
 
-                return true;
-            }
-            finally
-            {
-                mappingManager.Dispose();
-            }
+            return true;
+
         }
 
 
@@ -1071,31 +1022,46 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
             MappingManager mappingManager = new MappingManager();
 
-            if (mappingManager.LinkElementRepo.Get()
-                .Any(le => le.ElementId.Equals(leModel.ElementId) &&
-                le.Type.Equals(leModel.Type) &&
-                le.Complexity.Equals(leModel.Complexity)))
+            try
             {
-                return true;
-            }
+                if (mappingManager.LinkElementRepo.Get()
+                    .Any(le => le.ElementId.Equals(leModel.ElementId) &&
+                    le.Type.Equals(leModel.Type) &&
+                    le.Complexity.Equals(leModel.Complexity)))
+                {
+                    return true;
+                }
 
-            return false;
+                return false;
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
         public static bool IsSimpleElement(long id)
         {
             MappingManager mappingManager = new MappingManager();
-            LinkElement le = mappingManager.GetLinkElement(id);
 
-            if (le.Complexity == LinkElementComplexity.Simple) return true;
 
-            return false;
+            try
+            {
+                LinkElement le = mappingManager.GetLinkElement(id);
+
+                if (le.Complexity == LinkElementComplexity.Simple) return true;
+
+                return false;
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
 
-        public static long GetId(long elementId, LinkElementType type)
+        public static long GetId(long elementId, LinkElementType type, MappingManager mappingManager)
         {
-            MappingManager mappingManager = new MappingManager();
 
             long linkElementId = 0;
 
