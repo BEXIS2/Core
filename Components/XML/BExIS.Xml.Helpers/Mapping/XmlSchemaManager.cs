@@ -1869,13 +1869,22 @@ namespace BExIS.Xml.Helpers.Mapping
                     TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
                     DataType dataType = null;
                     // if datatime - need to check typeCodeName for date, time , datetime
+
+                    string name = typeCode.ToString();
+
                     if (dataTypeAsString.Equals(TypeCode.DateTime.ToString()))
                     {
+                        name = typeCodeName;
+
                         dataType =
                             dataTypeManager.Repo.Query()
                                 .Where(
-                                    d => d.SystemType.Equals(typeCode.ToString()) && d.Name.ToLower().Equals(typeCodeName.ToLower()))
+                                    d => d.SystemType.Equals(typeCode.ToString()) &&
+                                    d.Name.ToLower().Equals(name.ToLower())
+                                    )
                                 .FirstOrDefault();
+
+
                     }
                     else
                         dataType =
@@ -1883,12 +1892,12 @@ namespace BExIS.Xml.Helpers.Mapping
                                 .Where(
                                     d =>
                                         d.SystemType.Equals(typeCode.ToString()) &&
-                                        d.Name.ToLower().Equals(typeCode.ToString().ToLower()))
+                                        d.Name.ToLower().Equals(name.ToString().ToLower()))
                                 .FirstOrDefault();
 
                     if (dataType == null)
                     {
-                        dataType = dataTypeManager.Create(typeCode.ToString().ToLower(), typeCode.ToString().ToLower(),
+                        dataType = dataTypeManager.Create(name.ToLower(), typeCode.ToString(),
                             typeCode);
                     }
 
