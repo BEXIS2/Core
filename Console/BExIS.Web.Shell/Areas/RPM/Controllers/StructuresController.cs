@@ -1,16 +1,11 @@
-﻿using System;
+﻿using BExIS.IO.Transform.Output;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using BExIS.Modules.Rpm.UI.Models;
-using System.Web.Mvc;
-using BExIS.IO.Transform.Output;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class StructuresController : Controller
+    public class StructuresController : ApiController
     {
         // GET: api/Structures
         public IEnumerable<string> Get()
