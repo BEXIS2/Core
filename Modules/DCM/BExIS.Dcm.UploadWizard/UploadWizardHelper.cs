@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Vaiona.Model.MTnt;
 using Vaiona.Persistence.Api;
 
 /// <summary>
@@ -746,8 +747,9 @@ namespace BExIS.Dcm.UploadWizard
         /// <seealso cref=""/>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static List<string> GetExtentionList(DataStructureType type)
+        public static List<string> GetExtentionList(DataStructureType type, Tenant tenant = null)
         {
+
             if (type.Equals(DataStructureType.Structured))
             {
                 return new List<string>()
@@ -760,31 +762,35 @@ namespace BExIS.Dcm.UploadWizard
 
             if (type.Equals(DataStructureType.Unstructured))
             {
+                if (tenant != null) return tenant.AllowedFileExtensions;
+
+                //Info
+                // is not used anymore: list came from the this.Session.GetTenant().AllowedFileExtensions
                 return new List<string>()
-                    {
-                        ".avi",
-                        ".bmp",
-                        ".csv",
-                        ".dbf",
-                        ".doc",
-                        ".docx",
-                        ".gif",
-                        ".jpg",
-                        ".jpeg",
-                        ".mp3",
-                        ".mp4",
-                        ".pdf",
-                        ".png",
-                        ".shp",
-                        ".shx",
-                        ".tif",
-                        ".txt",
-                        ".xls",
-                        ".xlsm",
-                        ".xlsx",
-                        ".xsd",
-                        ".zip"
-                    };
+                {
+                    //".avi",
+                    //".bmp",
+                    //".csv",
+                    //".dbf",
+                    //".doc",
+                    //".docx",
+                    //".gif",
+                    //".jpg",
+                    //".jpeg",
+                    //".mp3",
+                    //".mp4",
+                    //".pdf",
+                    //".png",
+                    //".shp",
+                    //".shx",
+                    //".tif",
+                    //".txt",
+                    //".xls",
+                    //".xlsm",
+                    //".xlsx",
+                    //".xsd",
+                    //".zip"
+                };
             }
 
             return new List<string>();
