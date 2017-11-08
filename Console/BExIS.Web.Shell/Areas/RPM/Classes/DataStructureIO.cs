@@ -62,12 +62,21 @@ namespace BExIS.Modules.Rpm.UI.Classes
         }
         public static StructuredDataStructure setVariableOrder(StructuredDataStructure structuredDataStructure, List<long> orderList)
         {
-            DataStructureManager dsm = new DataStructureManager();
-            foreach (Variable v in structuredDataStructure.Variables)
+            DataStructureManager dsm = null;
+            try
             {
-                v.OrderNo = orderList.IndexOf(v.Id) + 1;
+                dsm = new DataStructureManager();
+                foreach (Variable v in structuredDataStructure.Variables)
+                {
+                    v.OrderNo = orderList.IndexOf(v.Id) + 1;
+                }
+                structuredDataStructure = dsm.UpdateStructuredDataStructure(structuredDataStructure);
             }
-            return dsm.UpdateStructuredDataStructure(structuredDataStructure);
+            finally
+            {
+                dsm.Dispose();
+            }
+            return structuredDataStructure;
         }
 
         public static void convertOrder(StructuredDataStructure structuredDataStructure)
