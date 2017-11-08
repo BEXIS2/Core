@@ -91,7 +91,7 @@
         for (var i = 0; i < e.files.length; i = i + 1) {
 
             var file = e.files[i];
-            console.log(file.extension);
+            //console.log(file.extension);
             if (!IsExtentionValid(file.extension)) {
                 
                 alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
@@ -99,7 +99,10 @@
                 return false;
             } else {
 
-                if (file.size > (maxsize)) {
+                //alert(file.size);
+                //alert(maxsize);
+
+                if (file.size > (maxsize*1024)) {
 
                     alert("Max file : " +
                         maxsize +
