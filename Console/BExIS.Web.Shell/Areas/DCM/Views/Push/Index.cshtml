@@ -12,10 +12,7 @@
 @model BExIS.Modules.Dcm.UI.Models.Push.SendBigFilesToServerModel
 
 @{
-    
-    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
-    int int_MaxRequestLength = section.MaxRequestLength;
-    int mbMax = int_MaxRequestLength / 1024;
+    int mbMax = Model.FileSize;
 
     string fileExtListAsString = "";
 
@@ -26,10 +23,10 @@
             fileExtListAsString += "," + s;
         }
         else
-        { 
+        {
             fileExtListAsString = s;
         }
-    } 
+    }
 }
 
 <div id="push">
@@ -79,7 +76,9 @@
 <script type="text/javascript">
 
     function Push_OnSelect(e) {
-        var maxsize = '@int_MaxRequestLength';
+
+
+        var maxsize = '@mbMax';
 
         if (e.files.length == 0) {
             $('#push_submitBt').addClass("bx-disabled");
@@ -92,17 +91,18 @@
         for (var i = 0; i < e.files.length; i = i + 1) {
 
             var file = e.files[i];
-
+            console.log(file.extension);
             if (!IsExtentionValid(file.extension)) {
+                
                 alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
                 e.preventDefault();
                 return false;
             } else {
 
-                if (file.size > (maxsize * 1024)) {
+                if (file.size > (maxsize)) {
 
                     alert("Max file : " +
-                        maxsize / 1024 +
+                        maxsize +
                         " MB is supported. Please contact your administrator to upload bigger files.");
                     e.preventDefault();
                     return false;
