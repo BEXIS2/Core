@@ -446,8 +446,12 @@ namespace BExIS.Web.Shell.Controllers
 					tuples.Add(newDt);
 				}
 				dm.EditDatasetVersion(workingCopy, tuples, null, null);
-				dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
-				dm.DatasetVersionRepo.Evict();
+				dm.CheckInDataset(ds.Id, "for testing purposes", "Javad", ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh);
+                dm.SyncView(ds.Id, ViewCrerationBehavior.Create);                
+                dm.SyncView(ds.Id, ViewCrerationBehavior.Refresh);
+                dm.SyncView(ds.Id, ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh);
+
+                dm.DatasetVersionRepo.Evict();
 				dm.DataTupleRepo.Evict();
 				dm.DatasetRepo.Evict();
 				workingCopy.PriliminaryTuples.Clear();

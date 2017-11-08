@@ -54,7 +54,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             catch (Exception ex)
             {
-                return null;
+                throw new Exception(string.Format("Could not retrieve data from dataset {0}. Check whether the corresponding view exists and is populated with data.", datasetId), ex);
             }
 
         }
