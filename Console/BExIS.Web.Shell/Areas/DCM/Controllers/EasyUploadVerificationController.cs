@@ -1,29 +1,24 @@
-﻿using System;
-using System.Web.Mvc;
-using System.Web.Routing;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
+﻿using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Modules.Dcm.UI.Models;
-using System.IO;
-using OfficeOpenXml;
-using System.Web.UI.WebControls;
-using Vaiona.Logging;
-using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
-using System.Web.Script.Serialization;
 using BExIS.Dlm.Services.DataStructure;
-using System.Linq;
-using BExIS.IO.Transform.Validation.ValueCheck;
 using BExIS.IO;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Modules.Dcm.UI.Helpers;
-using System.Globalization;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.ValueCheck;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Utils.Models;
 using BExIS.Web.Shell.Areas.DCM.Helpers;
 using Newtonsoft.Json;
-using Vaiona.Web.Mvc;
+using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Routing;
+using System.Web.UI.WebControls;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -691,79 +686,88 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         private List<Tuple<int, Error>> ValidateRows(string JsonArray)
         {
-            const int maxErrorsPerColumn = 20;
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+            DataTypeManager dtm = new DataTypeManager();
 
-            string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
-
-            List<Tuple<int, Error>> ErrorList = new List<Tuple<int, Error>>();
-            List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
-            Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
-            DataTypeManager dtm = new DataTypeManager(); // Javad: Use the try/finally block and dispose the managers properly
-
-            List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
-            List<int[]> IntDataAreaList = new List<int[]>();
-            foreach (string area in DataArea)
+            try
             {
-                IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
-            }
+                const int maxErrorsPerColumn = 20;
+                TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-            foreach (int[] IntDataArea in IntDataAreaList)
-            {
-                string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+                string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
 
-                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
+                List<Tuple<int, Error>> ErrorList = new List<Tuple<int, Error>>();
+                List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+                Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
+
+
+                List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                List<int[]> IntDataAreaList = new List<int[]>();
+                foreach (string area in DataArea)
                 {
-                    int errorsInColumn = 0;
-                    for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
+                    IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
+                }
+
+                foreach (int[] IntDataArea in IntDataAreaList)
+                {
+                    string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+
+                    for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                     {
-                        int SelectedY = y - (IntDataArea[0]);
-                        int SelectedX = x - (IntDataArea[1]);
-                        string vv = DeserializedJsonArray[y][x];
-
-                        Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
-
-                        DataType datatype = null;
-                        datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                        string datatypeName = datatype.SystemType;
-
-                        #region DataTypeCheck
-                        DataTypeCheck dtc;
-                        double DummyValue = 0;
-                        if (Double.TryParse(vv, out DummyValue))
+                        int errorsInColumn = 0;
+                        for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
                         {
-                            if (vv.Contains("."))
+                            int SelectedY = y - (IntDataArea[0]);
+                            int SelectedX = x - (IntDataArea[1]);
+                            string vv = DeserializedJsonArray[y][x];
+
+                            Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
+
+                            DataType datatype = null;
+                            datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
+                            string datatypeName = datatype.SystemType;
+
+                            #region DataTypeCheck
+                            DataTypeCheck dtc;
+                            double DummyValue = 0;
+                            if (Double.TryParse(vv, out DummyValue))
                             {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                                if (vv.Contains("."))
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                                }
+                                else
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                                }
                             }
                             else
                             {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
                             }
-                        }
-                        else
-                        {
-                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                        }
-                        #endregion
+                            #endregion
 
-                        var ValidationResult = dtc.Execute(vv, y);
-                        if (ValidationResult is Error)
-                        {
-                            ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
-                            errorsInColumn++;
-                        }
+                            var ValidationResult = dtc.Execute(vv, y);
+                            if (ValidationResult is Error)
+                            {
+                                ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
+                                errorsInColumn++;
+                            }
 
-                        if (errorsInColumn >= maxErrorsPerColumn)
-                        {
-                            //Break inner (row) loop to jump to the next column
-                            break;
+                            if (errorsInColumn >= maxErrorsPerColumn)
+                            {
+                                //Break inner (row) loop to jump to the next column
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            return ErrorList;
+                return ErrorList;
+            }
+            finally
+            {
+                dtm.Dispose();
+            }
         }
 
         /// <summary>

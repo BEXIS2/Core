@@ -36,119 +36,49 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private EasyUploadTaskManager TaskManager;
         private FileStream Stream;
         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-        
+
         private static IDictionary<Guid, int> tasks = new Dictionary<Guid, int>();
 
         [HttpGet]
         public ActionResult Summary(int index)
         {
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+            MetadataStructureManager msm = new MetadataStructureManager();
 
-            //set current stepinfo based on index
-            if (TaskManager != null)
+            try
             {
-                TaskManager.SetCurrent(index);
-                // remove if existing
-                TaskManager.RemoveExecutedStep(TaskManager.Current());
-            }
+                TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-            EasyUploadSummaryModel model = new EasyUploadSummaryModel();
-            model.StepInfo = TaskManager.Current();
-
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
-            {
-                model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
-
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                //set current stepinfo based on index
+                if (TaskManager != null)
                 {
-                    string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
-                    if (!String.IsNullOrWhiteSpace(tmp))
-                    {
-                        model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
-                    }
-                }
-            }
-
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
-            {
-                MetadataStructureManager msm = new MetadataStructureManager(); // Javad: Use the try/finally block and dispose the managers properly
-                long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
-                model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
-                msm.Dispose(); // if something goes wrong before this line, the manager won't be properly disposed. use the try/finally...
-            }
-
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))
-            {
-                model.FileFormat = TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString();
-            }
-
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
-            {
-                string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-                int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
-
-                if (model.FileFormat.ToLower() == "topdown")
-                {
-                    model.NumberOfHeaders = (areaHeaderValues[3]) - (areaHeaderValues[1]) + 1;
+                    TaskManager.SetCurrent(index);
+                    // remove if existing
+                    TaskManager.RemoveExecutedStep(TaskManager.Current());
                 }
 
-                if (model.FileFormat.ToLower() == "leftright")
-                {
-                    model.NumberOfHeaders = (areaHeaderValues[2]) - (areaHeaderValues[0]) + 1;
-                }
-            }
+                EasyUploadSummaryModel model = new EasyUploadSummaryModel();
+                model.StepInfo = TaskManager.Current();
 
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
-            {
-                List<string> selectedDataAreaJsonArray = (List<String>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
-                List<int[]> areaDataValuesList = new List<int[]>();
-                model.NumberOfData = 0;
-                foreach (string jsonArray in selectedDataAreaJsonArray)
-                {
-                    areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(jsonArray));
-                }
-                foreach (int[] areaDataValues in areaDataValuesList)
-                {
-                    if (model.FileFormat.ToLower() == "leftright")
-                    {
-                        model.NumberOfData += (areaDataValues[3]) - (areaDataValues[1]) + 1;
-                    }
-
-                    if (model.FileFormat.ToLower() == "topdown")
-                    {
-                        model.NumberOfData += (areaDataValues[2]) - (areaDataValues[0]) + 1;
-                    }
-                }
-
-            }
-
-            return PartialView("EasyUploadSummary", model);
-        }
-
-        [HttpPost]
-        public ActionResult Summary(object[] data)
-        {
-
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-            EasyUploadSummaryModel model = new EasyUploadSummaryModel();
-
-            model.StepInfo = TaskManager.Current();
-            model.ErrorList = FinishUpload(TaskManager);
-
-
-            if (model.ErrorList.Count > 0)
-            {
-                #region Populate model with data from the TaskManager
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
                 {
                     model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                    {
+                        string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                        if (!String.IsNullOrWhiteSpace(tmp))
+                        {
+                            model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                        }
+                    }
                 }
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                 {
-                    MetadataStructureManager msm = new MetadataStructureManager(); // Javad: Use the try/finally block and dispose the managers properly
+
                     long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                     model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
+                    msm.Dispose();
                 }
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))
@@ -174,35 +104,122 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
                 {
-                    List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                    List<string> selectedDataAreaJsonArray = (List<String>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                     List<int[]> areaDataValuesList = new List<int[]>();
-                    foreach (string area in selectedDataAreaJsonArray)
+                    model.NumberOfData = 0;
+                    foreach (string jsonArray in selectedDataAreaJsonArray)
                     {
-                        areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
+                        areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(jsonArray));
                     }
-
                     foreach (int[] areaDataValues in areaDataValuesList)
                     {
                         if (model.FileFormat.ToLower() == "leftright")
                         {
-                            model.NumberOfData = (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                            model.NumberOfData += (areaDataValues[3]) - (areaDataValues[1]) + 1;
                         }
 
                         if (model.FileFormat.ToLower() == "topdown")
                         {
-                            model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                            model.NumberOfData += (areaDataValues[2]) - (areaDataValues[0]) + 1;
                         }
                     }
 
                 }
 
-                #endregion
                 return PartialView("EasyUploadSummary", model);
-
             }
-            else
+            finally
             {
-                return null;
+                msm.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Summary(object[] data)
+        {
+            MetadataStructureManager msm = new MetadataStructureManager();
+            try
+            {
+
+                TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+                EasyUploadSummaryModel model = new EasyUploadSummaryModel();
+
+                model.StepInfo = TaskManager.Current();
+                model.ErrorList = FinishUpload(TaskManager);
+
+
+                if (model.ErrorList.Count > 0)
+                {
+                    #region Populate model with data from the TaskManager
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
+                    {
+                        model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
+                    {
+
+                        long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
+                        model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))
+                    {
+                        model.FileFormat = TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString();
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
+                    {
+                        string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
+                        int[] areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
+
+                        if (model.FileFormat.ToLower() == "topdown")
+                        {
+                            model.NumberOfHeaders = (areaHeaderValues[3]) - (areaHeaderValues[1]) + 1;
+                        }
+
+                        if (model.FileFormat.ToLower() == "leftright")
+                        {
+                            model.NumberOfHeaders = (areaHeaderValues[2]) - (areaHeaderValues[0]) + 1;
+                        }
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
+                    {
+                        List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                        List<int[]> areaDataValuesList = new List<int[]>();
+                        foreach (string area in selectedDataAreaJsonArray)
+                        {
+                            areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
+                        }
+
+                        foreach (int[] areaDataValues in areaDataValuesList)
+                        {
+                            if (model.FileFormat.ToLower() == "leftright")
+                            {
+                                model.NumberOfData = (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                            }
+
+                            if (model.FileFormat.ToLower() == "topdown")
+                            {
+                                model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                            }
+                        }
+
+                    }
+
+                    #endregion
+                    return PartialView("EasyUploadSummary", model);
+
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            finally
+            {
+                msm.Dispose();
             }
         }
 
@@ -632,88 +649,98 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         private List<Error> ValidateRows(string JsonArray)
         {
-            const int maxErrorsPerColumn = 20;
+            DataTypeManager dtm = new DataTypeManager();
 
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-            string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
-
-            List<Error> ErrorList = new List<Error>();
-            List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
-            Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
-            DataTypeManager dtm = new DataTypeManager(); // Javad: Use the try/finally block and dispose the managers properly
-
-            List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
-            List<int[]> IntDataAreaList = new List<int[]>();
-            foreach (string area in DataArea)
+            try
             {
-                IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
-            }
+                const int maxErrorsPerColumn = 20;
 
-            foreach (int[] IntDataArea in IntDataAreaList)
-            {
-                string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+                TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
+                string[][] DeserializedJsonArray = JsonConvert.DeserializeObject<string[][]>(JsonArray);
+
+                List<Error> ErrorList = new List<Error>();
+                List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+                Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
+
+
+                List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                List<int[]> IntDataAreaList = new List<int[]>();
+                foreach (string area in DataArea)
                 {
-                    int errorsInColumn = 0;
-                    for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
+                    IntDataAreaList.Add(JsonConvert.DeserializeObject<int[]>(area));
+                }
+
+                foreach (int[] IntDataArea in IntDataAreaList)
+                {
+                    string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+
+                    for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                     {
-                        int SelectedY = y - (IntDataArea[0]);
-                        int SelectedX = x - (IntDataArea[1]);
-                        string vv = DeserializedJsonArray[y][x];
-
-                        Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
-
-                        DataType datatype = null;
-
-                        if (mappedHeader.Item3.SelectedDataTypeId == -1)
+                        int errorsInColumn = 0;
+                        for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
                         {
-                            datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
-                        }
-                        else
-                        {
-                            datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                        }
+                            int SelectedY = y - (IntDataArea[0]);
+                            int SelectedX = x - (IntDataArea[1]);
+                            string vv = DeserializedJsonArray[y][x];
 
-                        string datatypeName = datatype.SystemType;
+                            Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
 
+                            DataType datatype = null;
 
-                        DataTypeCheck dtc;
-                        double DummyValue = 0;
-                        if (Double.TryParse(vv, out DummyValue))
-                        {
-                            if (vv.Contains("."))
+                            if (mappedHeader.Item3.SelectedDataTypeId == -1)
                             {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                                datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
                             }
                             else
                             {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                                datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
                             }
-                        }
-                        else
-                        {
-                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                        }
 
-                        var ValidationResult = dtc.Execute(vv, y);
-                        if (ValidationResult is Error)
-                        {
-                            ErrorList.Add((Error)ValidationResult);
-                            errorsInColumn++;
-                        }
+                            string datatypeName = datatype.SystemType;
 
-                        if (errorsInColumn >= maxErrorsPerColumn)
-                        {
-                            //Break inner (row) loop to jump to the next column
-                            break;
+
+                            DataTypeCheck dtc;
+                            double DummyValue = 0;
+                            if (Double.TryParse(vv, out DummyValue))
+                            {
+                                if (vv.Contains("."))
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                                }
+                                else
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                                }
+                            }
+                            else
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            }
+
+                            var ValidationResult = dtc.Execute(vv, y);
+                            if (ValidationResult is Error)
+                            {
+                                ErrorList.Add((Error)ValidationResult);
+                                errorsInColumn++;
+                            }
+
+                            if (errorsInColumn >= maxErrorsPerColumn)
+                            {
+                                //Break inner (row) loop to jump to the next column
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            return ErrorList;
+                return ErrorList;
+            }
+            finally
+            {
+                dtm.Dispose();
+            }
         }
 
 
