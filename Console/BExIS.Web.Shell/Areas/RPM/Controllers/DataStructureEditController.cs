@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Persistence.Api;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc;
 
@@ -98,7 +99,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     dataStructureManager = new DataStructureManager();
 
-                    if (dataStructureManager.StructuredDataStructureRepo.Get(Id) != null)
+                    if (dataStructureManager.StructuredDataStructureRepo.Get(Id) != null) // Javad: This one retrieves the entity withough using it, and then the next line agian fetches the same! 
                     {
                         StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
                         DataStructureIO.deleteTemplate(dataStructure.Id);
@@ -139,8 +140,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             try
             {
                 dataStructureManager = new DataStructureManager();
+                var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
 
-                StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                StructuredDataStructure dataStructure = structureRepo.Get(Id);
                 MessageModel returnObject = new MessageModel();
                 MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
                 if (messageModel.hasMessage)
@@ -202,10 +204,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                         finally
                         {
+                            // Javad: would be better to conctruct and dispose this object outside of the loop
                             dataContainerManager.Dispose();
                         }
                     }
-                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                    dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
 
                     variables = variables.Where(v => v.Id != 0).ToArray();
 
@@ -233,7 +236,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             }
                             finally
                             {
-                                um.Dispose();
+                                um.Dispose(); // Javad: would be better to conctruct and dipose these objects outside of the loop
                                 dataContainerManager.Dispose();
                             }
                         }
@@ -424,7 +427,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     try
                     {
                         dtm = new DataTypeManager();
-                        this.Disposables.Add(dtm);
                         foreach (DataType dt in dtm.Repo.Get())
                         {
                             DataTypes.Add(new ItemStruct()

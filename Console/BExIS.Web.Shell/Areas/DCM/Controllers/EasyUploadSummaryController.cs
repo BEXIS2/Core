@@ -71,11 +71,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
             {
-                MetadataStructureManager msm = new MetadataStructureManager();
-                this.Disposables.Add(msm);
+                MetadataStructureManager msm = new MetadataStructureManager(); // Javad: Use the try/finally block and dispose the managers properly
                 long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                 model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
-                msm.Dispose();
+                msm.Dispose(); // if something goes wrong before this line, the manager won't be properly disposed. use the try/finally...
             }
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))
@@ -147,8 +146,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                 {
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    this.Disposables.Add(msm);
+                    MetadataStructureManager msm = new MetadataStructureManager(); // Javad: Use the try/finally block and dispose the managers properly
                     long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                     model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
                 }
@@ -643,9 +641,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<Error> ErrorList = new List<Error>();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
-            DataTypeManager dtm = new DataTypeManager();
-            this.Disposables.Add(dtm);
-
+            DataTypeManager dtm = new DataTypeManager(); // Javad: Use the try/finally block and dispose the managers properly
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();

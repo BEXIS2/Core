@@ -496,7 +496,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             if (dataStructure.Datasets.Count == 0)
                             {
                                 DataStructureManager DSM = new DataStructureManager();
-                                this.Disposables.Add(DSM);
                                 if (dataStructure.Variables.Count > 0)
                                 {
                                     foreach (Variable v in dataStructure.Variables)
@@ -573,14 +572,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult showVariables(long id)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            this.Disposables.Add(dataStructureManager);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             
             if (id != 0)
             {
                 DSDM.GetDataStructureByID(id);
                 DataContainerManager dataAttributeManager = new DataContainerManager();
-                this.Disposables.Add(dataAttributeManager);
                 DSDM.dataAttributeList = dataAttributeManager.DataAttributeRepo.Get().ToList();
 
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Add Variables to: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")", this.Session.GetTenant());
@@ -605,7 +602,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             long[][] selected = (long[][])Session["selected"];
 
             DataStructureManager dataStructureManager = new DataStructureManager();
-            this.Disposables.Add(dataStructureManager);
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             //StructuredDataStructure dataStructure = DSDM.GetDataStructureByID(id);
 
@@ -616,7 +612,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (selected != null)
                     {
                         DataContainerManager dataAttributeManager = new DataContainerManager();
-                        this.Disposables.Add(dataAttributeManager);
                         DataAttribute temp = new DataAttribute();
                         XmlDocument doc = (XmlDocument)dataStructure.Extra;
                         XmlNode order;
@@ -679,20 +674,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return RedirectToAction("showDataStructure", new { SelectedItem = id + ",True" });
         }
 
-        public ActionResult deleteVariable(long id, long dataStructureId)
+        public ActionResult deleteVariable(long id, long dataStructureId) // JAVAD: This and other functions that use managers must follow the try/finally pattern. If thease methods are not needed, just remove them!
         {
             if (dataStructureId != 0)
             {
                 DataStructureManager dsm = new DataStructureManager();
-                this.Disposables.Add(dsm);
                 StructuredDataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(dataStructureId);
                 DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
                 if (!(dataStructure.Datasets.Count > 0))
                 {
-                    Variable variable = dsm.VariableRepo.Get(id);
-
-                    if (variable != null)
+                    if (dsm.VariableRepo.Query(id).Count() > 0)
                     {
                         XmlDocument doc = (XmlDocument)dataStructure.Extra;
 
@@ -701,7 +693,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             XmlNode order = doc.GetElementsByTagName("order")[0];
                             foreach (XmlNode v in order)
                             {
-                                if (Convert.ToInt64(v.InnerText) == variable.Id)
+                                if (Convert.ToInt64(v.InnerText) == id)
                                 {
                                     order.RemoveChild(v);
                                     break;
@@ -709,7 +701,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             }
                         }
 
-                        dsm.RemoveVariableUsage(variable);
+                        dsm.RemoveVariableUsage(id);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         provider.CreateTemplate(dataStructure);
                     }
@@ -746,11 +738,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public string saveVariable(string name, long id,string description, long dataStructureId, bool optional, long unitId)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            this.Disposables.Add(dataStructureManager);
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             UnitManager unitManger = new UnitManager();
-            this.Disposables.Add(unitManger);
+            //this.Disposables.Add(unitManger); //Javad: This should be removed and the try/finally blck should be used.
 
             string errorMsg = null;
 
@@ -760,7 +751,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 if (id != 0)
                 {
-                    Variable var = dataStructureManager.VariableRepo.Get(id);
+                    Variable var = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<Variable>().Get(id);
 
                     if (var != null)
                     {
@@ -820,7 +811,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public void saveOrder(List<long> order, long dataStructureId)
         {
             DataStructureManager dsm = new DataStructureManager();
-            this.Disposables.Add(dsm);
             StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
             XmlDocument doc = (XmlDocument)ds.Extra;
             XmlNodeList xorder = doc.GetElementsByTagName("order");
@@ -839,7 +829,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult shiftVariableLeft(long id, long dataStructureId)
         {
             DataStructureManager dsm = new DataStructureManager();
-            this.Disposables.Add(dsm);
             StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
             XmlDocument doc = (XmlDocument)ds.Extra;
             XmlNodeList order = doc.GetElementsByTagName("order");
@@ -878,7 +867,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult shiftVariableRight(long id, long dataStructureId)
         {
             DataStructureManager dsm = new DataStructureManager();
-            this.Disposables.Add(dsm);
             StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
             XmlDocument doc = (XmlDocument)ds.Extra;
             XmlNodeList order = doc.GetElementsByTagName("order");
@@ -989,7 +977,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             try
             {
                 um = new UnitManager();
-                this.Disposables.Add(um);
 
                 // Javad: changed null comparison to ZERO comaprison. It may need the equal part too. >=
                 List<Unit> repo = um.Repo.Get().Where(u => u.DataContainers.Count > 0 && u.AssociatedDataTypes.Count > 0).ToList();
@@ -1107,7 +1094,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (id != 0)
             {
                 ClassifierManager CM = new ClassifierManager();
-                this.Disposables.Add(CM);
                 Classifier classifier = CM.Repo.Get(id);
                 if (classifier != null)
                 {
@@ -1251,7 +1237,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             if (!(dataType.DataContainers.Count() > 0))
                             {
                                 DataTypeManager dtm = new DataTypeManager();
-                                this.Disposables.Add(dtm);
                                 dataType.Name = Model.dataType.Name;
                                 dataType.Description = Model.dataType.Description;
                                 dataType.SystemType = typecode.ToString();
@@ -1355,7 +1340,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (dataType.DataContainers.Count == 0)
                         {
                             DataTypeManager dtm = new DataTypeManager();
-                            this.Disposables.Add(dtm);
                             dtm.Delete(dataType);
                         }
 

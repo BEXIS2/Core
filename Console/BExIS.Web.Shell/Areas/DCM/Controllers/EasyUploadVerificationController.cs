@@ -699,8 +699,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<Tuple<int, Error>> ErrorList = new List<Tuple<int, Error>>();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
-            DataTypeManager dtm = new DataTypeManager();
-            this.Disposables.Add(dtm);
+            DataTypeManager dtm = new DataTypeManager(); // Javad: Use the try/finally block and dispose the managers properly
 
             List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             List<int[]> IntDataAreaList = new List<int[]>();

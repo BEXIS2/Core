@@ -827,7 +827,6 @@ namespace BExIS.Web.Shell.Controllers
 			EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 			var entityPermissions = entityPermissionManager.EntityPermissionRepository.Get();
 
-			this.Disposables.Add(entityPermissionManager);
 			var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
 			for (int i = 0; i < 500; i++)
 			{
