@@ -261,70 +261,79 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         public static LinkElementRootModel LoadfromSystem(LinkElementPostion rootModelType, MappingManager mappingManager)
         {
-            LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
-
-            LinkElement SystemRoot = mappingManager.GetLinkElement(0, LinkElementType.System);
-
-            long id = 0;
-            long elementId = 0;
-            if (SystemRoot != null)
-            {
-                id = SystemRoot.Id;
-                elementId = SystemRoot.ElementId;
-            }
-
-
-            LinkElementModel LEParent = new LinkElementModel(
-                   id,
-                   elementId,
-                   LinkElementType.System,
-                   "System", "",
-                   rootModelType,
-                   LinkElementComplexity.Complex,
-                   "");
-
             //get all parties - complex
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
 
-            foreach (var pt in partyTypes)
+            try
             {
-                LinkElementModel ptModel = createLinkElementModelType(pt, model, LEParent);
-                model.LinkElements.Add(ptModel);
-                //get all partyCustomTypeAttr -> simple
-                model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel));
-            }
+                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
 
-            //get all keys -> simple
-            foreach (Key value in Key.GetValues(typeof(Key)))
+                LinkElement SystemRoot = mappingManager.GetLinkElement(0, LinkElementType.System);
+
+                long id = 0;
+                long elementId = 0;
+                if (SystemRoot != null)
+                {
+                    id = SystemRoot.Id;
+                    elementId = SystemRoot.ElementId;
+                }
+
+
+                LinkElementModel LEParent = new LinkElementModel(
+                       id,
+                       elementId,
+                       LinkElementType.System,
+                       "System", "",
+                       rootModelType,
+                       LinkElementComplexity.Complex,
+                       "");
+
+
+
+                IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
+
+                foreach (var pt in partyTypes)
+                {
+                    LinkElementModel ptModel = createLinkElementModelType(pt, model, LEParent, mappingManager);
+                    model.LinkElements.Add(ptModel);
+                    //get all partyCustomTypeAttr -> simple
+                    model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel, mappingManager));
+                }
+
+                //get all keys -> simple
+                foreach (Key value in Key.GetValues(typeof(Key)))
+                {
+                    long linkElementId = GetId((int)value, LinkElementType.Key, mappingManager);
+                    //string mask = GetMask((int)value, LinkElementType.Key);
+
+                    LinkElementModel LEModel = new LinkElementModel(
+                            linkElementId,
+                            (int)value,
+                            LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
+
+                    LEModel.Parent = LEParent;
+
+                    model.LinkElements.Add(LEModel);
+
+                }
+
+                //create container
+                model = CreateLinkElementContainerModels(model);
+
+                return model;
+            }
+            finally
             {
-                long linkElementId = GetId((int)value, LinkElementType.Key, mappingManager);
-                //string mask = GetMask((int)value, LinkElementType.Key);
-
-                LinkElementModel LEModel = new LinkElementModel(
-                        linkElementId,
-                        (int)value,
-                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
-
-                LEModel.Parent = LEParent;
-
-                model.LinkElements.Add(LEModel);
-
+                partyTypeManager.Dispose();
             }
-
-            //create container
-            model = CreateLinkElementContainerModels(model);
-
-            return model;
 
         }
 
         private static LinkElementModel createLinkElementModelType(
             PartyType partyType,
             LinkElementRootModel rootModel,
-            LinkElementModel parent)
+            LinkElementModel parent, MappingManager mappingManager)
         {
-            MappingManager mappingManager = new MappingManager();
 
             long linkElementId = GetId(partyType.Id, LinkElementType.PartyType, mappingManager);
 
@@ -338,28 +347,35 @@ namespace BExIS.Modules.Dim.UI.Helper
             return LEModel;
         }
 
-        private static List<LinkElementModel> createLinkElementModelPartyCustomType(PartyType partyType, LinkElementRootModel rootModel, LinkElementModel parent)
+        private static List<LinkElementModel> createLinkElementModelPartyCustomType(PartyType partyType, LinkElementRootModel rootModel, LinkElementModel parent, MappingManager mappingManager)
         {
             List<LinkElementModel> tmp = new List<LinkElementModel>();
-            MappingManager mappingManager = new MappingManager();
+
             PartyTypeManager partyTypeManager = new PartyTypeManager();
 
-
-            foreach (var partyCustomType in partyType.CustomAttributes)
+            try
             {
-                long linkElementId = GetId(partyCustomType.Id, LinkElementType.PartyCustomType, mappingManager);
 
-                LinkElementModel LEModel = new LinkElementModel(
-                            linkElementId,
-                            partyCustomType.Id,
-                            LinkElementType.PartyCustomType, partyCustomType.Name, partyType.Title + "/" + partyCustomType.Name, rootModel.Position, LinkElementComplexity.Simple, partyCustomType.Description);
-                LEModel.Parent = parent;
+                foreach (var partyCustomType in partyType.CustomAttributes)
+                {
+                    long linkElementId = GetId(partyCustomType.Id, LinkElementType.PartyCustomType, mappingManager);
 
-                tmp.Add(LEModel);
+                    LinkElementModel LEModel = new LinkElementModel(
+                                linkElementId,
+                                partyCustomType.Id,
+                                LinkElementType.PartyCustomType, partyCustomType.Name, partyType.Title + "/" + partyCustomType.Name, rootModel.Position, LinkElementComplexity.Simple, partyCustomType.Description);
+                    LEModel.Parent = parent;
+
+                    tmp.Add(LEModel);
+                }
+
+
+                return tmp;
             }
-
-
-            return tmp;
+            finally
+            {
+                partyTypeManager.Dispose();
+            }
         }
 
 
