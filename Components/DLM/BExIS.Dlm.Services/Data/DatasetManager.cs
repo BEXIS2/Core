@@ -19,17 +19,10 @@ namespace BExIS.Dlm.Services.Data
     /// <summary>
     /// Determines whether a mterialized view should be created at datasets' checkin time, and weather such a view should be refreshed.
     /// </summary>
-    public enum ViewCrerationBehavior2
-    {
-        NoCreateNoRefresh = 0,
-        NoCreateRefresh =   1,
-        CreateNoRefresh = 2,
-        CreateRefresh = 3,
-    }
-
     [FlagsAttribute]
-    public enum ViewCrerationBehavior : byte
+    public enum ViewCreationBehavior : byte
     {
+        None = 0,
         Create = 1,
         Refresh = 2,
     };
@@ -295,9 +288,9 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>      
         //[Diagnose]
-        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCrerationBehavior viewCrerationBehavior = ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh)
+        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            checkInDataset(datasetId, comment, username, false, viewCrerationBehavior);
+            checkInDataset(datasetId, comment, username, false, viewCreationBehavior);
         }
 
         /// <summary>
@@ -307,9 +300,9 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetId">The identifier of the dataset to be checked-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>        
-        public void UndoCheckoutDataset(Int64 datasetId, string username, ViewCrerationBehavior viewCrerationBehavior = ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh)
+        public void UndoCheckoutDataset(Int64 datasetId, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            undoCheckout(datasetId, username, false, true, viewCrerationBehavior);
+            undoCheckout(datasetId, username, false, true, viewCreationBehavior);
         }
 
         /// <summary>
@@ -362,7 +355,7 @@ namespace BExIS.Dlm.Services.Data
                     //This fetch and insert will be problematic on bigger datasets! try implement the logic without loading the tuples
                     var tupleIds = getWorkingCopyTupleIds(workingCopy);
                     workingCopy = editDatasetVersion(workingCopy, null, null, tupleIds, null); // deletes all the tuples from the active list and moves them to the history table
-                    checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh);
+                    checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
                     entity = datasetRepo.Get(datasetId); // maybe not needed!
                     entity.Status = DatasetStatus.Deleted;
@@ -375,7 +368,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     if (entity.Status == DatasetStatus.CheckedOut)
                     {
-                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh);
+                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
                     }
                     return false;
                 }
@@ -696,25 +689,25 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// Based on the values of <paramref name="viewCrerationBehavior"/> creates and/or refreshes the materialized view of the dataset identified by <paramref name="datasetId"/>.
+        /// Based on the values of <paramref name="viewCreationBehavior"/> creates and/or refreshes the materialized view of the dataset identified by <paramref name="datasetId"/>.
         /// </summary>
         /// <param name="datasetId">The Id of the designated dataset that its MV should be created/refreshed.</param>
-        /// <param name="viewCrerationBehavior">Detrmines which MV action should be taken: Create, Refresh, or both.</param>
+        /// <param name="viewCreationBehavior">Detrmines which MV action should be taken: Create, Refresh, or both.</param>
         /// <remarks>This method does not drop the MV if it already exists.</remarks>
-        public void SyncView(Int64 datasetId, ViewCrerationBehavior viewCrerationBehavior = ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh)
+        public void SyncView(Int64 datasetId, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            this.updateMaterializedView(datasetId, viewCrerationBehavior);
+            this.updateMaterializedView(datasetId, viewCreationBehavior);
         }
 
         /// <summary>
-        /// Based on the values of <paramref name="viewCrerationBehavior"/> creates and/or refreshes the materialized view of the dataset identified by <paramref name="datasetId"/>.
+        /// Based on the values of <paramref name="viewCreationBehavior"/> creates and/or refreshes the materialized view of the dataset identified by <paramref name="datasetId"/>.
         /// </summary>
         /// <param name="datasetIds">The lis of Ids of the designated datasets that their MVs should be created/refreshed.</param>
-        /// <param name="viewCrerationBehavior">Detrmines which MV action should be taken: Create, Refresh, or both.</param>
+        /// <param name="viewCreationBehavior">Detrmines which MV action should be taken: Create, Refresh, or both.</param>
         /// <remarks>This method does not drop the MVs if they already exist.</remarks>
-        public void SyncView(List<Int64> datasetIds, ViewCrerationBehavior viewCrerationBehavior = ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh)
+        public void SyncView(List<Int64> datasetIds, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCrerationBehavior));
+            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCreationBehavior));
         }
         
         #endregion
@@ -2123,7 +2116,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId"></param>
         /// <param name="comment"></param>
         /// <param name="adminMode">if true, the check for current user is bypassed</param>
-        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCrerationBehavior viewCrerationBehavior)
+        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -2152,19 +2145,19 @@ namespace BExIS.Dlm.Services.Data
                     // when everything is OK, check if a materialized view is created for the datsets, if yes: refresh it to the lateset changes
                     // if not: try creating a materialized view and refresh it
                     // This only works for the latest versions of datasets, so any function that returns the lateset versions' tuples, must use the materialized views
-                    updateMaterializedView(datasetId, viewCrerationBehavior);
+                    updateMaterializedView(datasetId, viewCreationBehavior);
                 }
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCrerationBehavior behavior)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior)
         {
-            if(behavior.HasFlag(ViewCrerationBehavior.Create)) // create MV
+            if(behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
             {
                 if (!existsMaterializedView(datasetId)) // check if the MV does not exist
                     createMaterializedView(datasetId); // creating an MV MUST NOT refresh the data. 
             }
-            if(behavior.HasFlag(ViewCrerationBehavior.Refresh)) // refresh MV
+            if(behavior.HasFlag(ViewCreationBehavior.Refresh)) // refresh MV
             {
                 if (existsMaterializedView(datasetId)) // check if the MV exists
                     refreshMaterializedView(datasetId);
@@ -2268,7 +2261,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="username"></param>
         /// <param name="adminMode"></param>
         /// <param name="commit">in some cases, rollback is called on a set of datasets. In  these cases its better to not commit at each rollback, but at the end</param>
-        private void undoCheckout(Int64 datasetId, string username, bool adminMode, bool commit = true, ViewCrerationBehavior viewCrerationBehavior = ViewCrerationBehavior.Create | ViewCrerationBehavior.Refresh)
+        private void undoCheckout(Int64 datasetId, string username, bool adminMode, bool commit = true, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
             // maybe its required to pass the caller's repo in order to the rollback changes to be visible to the caller function and be able to commit them
             // bring back the historical tuples. recover deleted ones/ editedVersion ones. throw away created ones.
@@ -2309,7 +2302,7 @@ namespace BExIS.Dlm.Services.Data
                         uow.Commit();
                     }
                 }
-                updateMaterializedView(datasetId, viewCrerationBehavior);
+                updateMaterializedView(datasetId, viewCreationBehavior);
             }
         }
 
