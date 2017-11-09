@@ -426,6 +426,17 @@
     <Content Include="Content\Images\help\Help_easy_upload_sheet_structure.png" />
     <Content Include="Content\Images\help\Help_easy_upload_summary.png" />
     <Content Include="Content\Images\help\Help_easy_upload_verification.png" />
+    <Content Include="Content\Images\help\Help_img12.jpeg" />
+    <Content Include="Content\Images\help\Help_img13.jpeg" />
+    <Content Include="Content\Images\help\Help_img14.jpeg" />
+    <Content Include="Content\Images\help\Help_img15.jpeg" />
+    <Content Include="Content\Images\help\Help_img16.jpeg" />
+    <Content Include="Content\Images\help\Help_img17.jpeg" />
+    <Content Include="Content\Images\help\Help_img22.png" />
+    <Content Include="Content\Images\help\Help_img23.png" />
+    <Content Include="Content\Images\help\Help_img24.png" />
+    <Content Include="Content\Images\help\Help_img27.png" />
+    <Content Include="Content\Images\help\Help_img3.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
