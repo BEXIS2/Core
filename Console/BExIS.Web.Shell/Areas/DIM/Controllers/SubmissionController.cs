@@ -109,7 +109,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     model.Publications.Add(new PublicationModel()
                     {
-                        Broker = new BrokerModel(broker.Name, repos),
+                        Broker = new BrokerModel(broker.Name, repos, broker.Link),
                         DataRepo = dataRepoName,
                         DatasetVersionId = pub.DatasetVersion.Id,
                         CreationDate = pub.Timestamp,

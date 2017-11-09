@@ -312,13 +312,15 @@ function OnSuccess() {
     $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function(response) {
 
-            if (response.length > 0) {
-                if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
-                    loadExternalXml();
-                }
-            } else {
-                loadExternalXml();
-            }
+            loadExternalXml();
+
+            //if (response.length > 0) {
+            //    if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
+            //        loadExternalXml();
+            //    }
+            //} else {
+            //    loadExternalXml();
+            //}
         });
 }
 

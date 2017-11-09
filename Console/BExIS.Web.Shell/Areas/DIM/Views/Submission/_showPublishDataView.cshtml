@@ -1,4 +1,5 @@
 ﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Utils.WebHelpers;
 
 @model BExIS.Modules.Dim.UI.Models.ShowPublishDataModel
 
@@ -243,6 +244,7 @@
                 <th>DataRepo</th>
                 <th>Creation Date</th>
                 <th>Status</th>
+                <th>Link</th>
                 <th style="width: 30px;"></th>
             </tr>
             @if (Model.Publications.Count > 0)
@@ -255,6 +257,7 @@
                         <td>@publication.DataRepo</td>
                         <td>@publication.CreationDate.ToLocalTime()</td>
                         <td>@publication.Status</td>
+                        <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
 
                         <td>
                             @foreach (var datarepo in publication.Broker.DataRepos)
