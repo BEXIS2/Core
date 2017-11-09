@@ -404,6 +404,22 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
+        public void RemoveVariableUsage(long id)
+        {
+            Contract.Requires(id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                var usage = repo.Get(id);
+
+                repo.Delete(usage);
+                paramRepo.Delete(usage.Parameters.ToList());
+                uow.Commit();
+            }
+        }
+
         /// <summary>
         /// The method functions in a similar way to the <see cref="AddVariableUsage"/> method, but operates on a <see cref="Parameter"/>
         /// </summary>

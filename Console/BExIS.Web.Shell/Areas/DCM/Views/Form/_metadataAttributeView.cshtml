@@ -306,6 +306,7 @@
                                 .Value(value)
                                 .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
+                                .InputHtmlAttributes(new { Title = @errorMessage, @class = @errorClass })
                             )
                         }
                         else

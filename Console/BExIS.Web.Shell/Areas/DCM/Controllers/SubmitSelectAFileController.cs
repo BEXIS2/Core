@@ -1,4 +1,5 @@
 ﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
@@ -10,8 +11,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Dcm.Wizard;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -39,9 +40,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.SelectedFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
             }
 
+
             //get datastuctureType
             model.DataStructureType = GetDataStructureType();
-            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType);
+            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType, this.Session.GetTenant());
 
             //Get StepInfo
             model.StepInfo = TaskManager.Current();
@@ -180,7 +182,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.serverFileList = GetServerFileList();
             //get datastuctureType
             model.DataStructureType = GetDataStructureType();
-            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType);
+            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType, this.Session.GetTenant());
 
             return PartialView(model);
         }
@@ -296,7 +298,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var ext = taskManager.Bus[TaskManager.EXTENTION].ToString();
                 var type = (DataStructureType)taskManager.Bus[TaskManager.DATASTRUCTURE_TYPE];
 
-                if (UploadWizardHelper.GetExtentionList(type).Contains(ext.ToLower())) return true;
+                if (UploadWizardHelper.GetExtentionList(type, this.Session.GetTenant()).Contains(ext.ToLower())) return true;
 
             }
 

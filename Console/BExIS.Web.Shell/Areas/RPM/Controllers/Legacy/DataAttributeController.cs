@@ -52,7 +52,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
 
                 dataAttributeManager = new DataContainerManager();
-                this.Disposables.Add(dataAttributeManager);
                 IList<DataAttribute> DataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
                 long tempUnitId = Convert.ToInt64(Model.Unit.Id);
                 long tempDataTypeId = Convert.ToInt64(Model.DataType.Id);
@@ -281,7 +280,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     try
                     {
                         dataTypeManager = new DataTypeManager();
-                        this.Disposables.Add(dataTypeManager);
                         dataTypeList = dataTypeManager.Repo.Get().ToList();
                         dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
                     }
