@@ -846,10 +846,31 @@ namespace BExIS.Xml.Helpers.Mapping
                                 }
                                 else
                                 {
+                                    Dictionary<string, string> additionalAttributes = new Dictionary<string, string>();
+
+                                    XmlSchemaComplexType ct = element.ElementSchemaType as XmlSchemaComplexType;
+
+                                    if (ct != null)
+                                    {
+                                        #region choice
+                                        // check if it is e choice
+                                        XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
+                                        if (choice != null)
+                                        {
+                                            additionalAttributes.Add("min", choice.MinOccurs.ToString());
+                                            if (choice.MaxOccurs > 10)
+                                                additionalAttributes.Add("max", "10");
+                                            else
+                                                additionalAttributes.Add("max", choice.MaxOccurs.ToString());
+                                        }
+                                        #endregion
+                                    }
+
+
                                     // if mpu is a choice, add a info to extra
                                     MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
-                                           element.Name, GetDescription(element.Annotation), min, max,
-                                           xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
+                                            element.Name, GetDescription(element.Annotation), min, max,
+                                            xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes));
                                 }
 
                             }
@@ -1245,7 +1266,27 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (XmlSchemaUtility.IsChoiceType(element))
                 {
                     min = 0;
-                    extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                    Dictionary<string, string> additionalAttributes = new Dictionary<string, string>();
+
+                    XmlSchemaComplexType ct = element.ElementSchemaType as XmlSchemaComplexType;
+
+                    if (ct != null)
+                    {
+                        #region choice
+                        // check if it is e choice
+                        XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
+                        if (choice != null)
+                        {
+                            additionalAttributes.Add("min", choice.MinOccurs.ToString());
+                            if (choice.MaxOccurs > 10)
+                                additionalAttributes.Add("max", "10");
+                            else
+                                additionalAttributes.Add("max", choice.MaxOccurs.ToString());
+                        }
+                        #endregion
+                    }
+
+                    extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes);
                 }
 
                 MetadataNestedAttributeUsage usage = new MetadataNestedAttributeUsage()
@@ -1330,7 +1371,28 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (XmlSchemaUtility.IsChoiceType(element))
                     {
                         min = 0;
-                        extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+
+                        Dictionary<string, string> additionalAttributes = new Dictionary<string, string>();
+
+                        XmlSchemaComplexType ct = element.ElementSchemaType as XmlSchemaComplexType;
+
+                        if (ct != null)
+                        {
+                            #region choice
+                            // check if it is e choice
+                            XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
+                            if (choice != null)
+                            {
+                                additionalAttributes.Add("min", choice.MinOccurs.ToString());
+                                if (choice.MaxOccurs > 10)
+                                    additionalAttributes.Add("max", "10");
+                                else
+                                    additionalAttributes.Add("max", choice.MaxOccurs.ToString());
+                            }
+                            #endregion
+                        }
+
+                        extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes);
                     }
                     #endregion
 
