@@ -137,12 +137,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     List<string> Types = mapUnitsRow["DataTypes"].ToString().Split(' ').Distinct().ToList();
 
                     // get existing unit or create
-                    Unit existU = unitManager.Repo.Get(u => u.Abbreviation.Equals(unit.Abbreviation)).FirstOrDefault();
+                    Unit existU = unitManager.Repo.Get(u => u.Name.Equals(unit.Name)).FirstOrDefault();
                     if (existU == null)
                     {
                         unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
-                        if(unit != null)
-                            addDataTypes(unit.Id, Types, unitManager, dataTypeManger);
+                        addDataTypes(unit.Id, Types, unitManager, dataTypeManger);
                     }
                     else
                     {
