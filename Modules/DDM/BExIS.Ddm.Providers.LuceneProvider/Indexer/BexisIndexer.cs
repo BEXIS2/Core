@@ -17,6 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Vaiona.Persistence.Api;
 
 /// <summary>
 ///
@@ -146,24 +147,33 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
             DatasetManager dm = new DatasetManager();
-            IList<long> ids = dm.GetDatasetLatestIds();
 
-            //ToDo only enitities from type dataset should be indexed in this index
-
-            foreach (var id in ids)
+            try
             {
-                //the values in the dictionary are already xml documents or null. Javad
-                writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
 
+                IList<long> ids = dm.GetDatasetLatestIds();
+
+                //ToDo only enitities from type dataset should be indexed in this index
+
+                foreach (var id in ids)
+                {
+                    //the values in the dictionary are already xml documents or null. Javad
+                    writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
+
+                }
+
+                indexWriter.Optimize();
+                autoCompleteIndexWriter.Optimize();
+
+                if (!reIndex)
+                {
+                    indexWriter.Dispose();
+                    autoCompleteIndexWriter.Dispose();
+                }
             }
-
-            indexWriter.Optimize();
-            autoCompleteIndexWriter.Optimize();
-
-            if (!reIndex)
+            finally
             {
-                indexWriter.Dispose();
-                autoCompleteIndexWriter.Dispose();
+                dm.Dispose();
             }
         }
 
@@ -178,50 +188,66 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <param name="dsVersionTuples"></param>
         /// <param name="sds"></param>
         /// <returns></returns>
-        private List<string> generateStringFromTuples(List<AbstractTuple> dsVersionTuples, StructuredDataStructure sds)
+        private List<string> generateStringFromTuples(IEnumerable<AbstractTuple> dsVersionTuples, StructuredDataStructure sds)
         {
-            if (dsVersionTuples.Count > 0)
+            using (var uow = this.GetUnitOfWork())
             {
-                List<string> generatedStrings = new List<string>();
-                foreach (var tuple in dsVersionTuples)
+
+                try
                 {
-                    foreach (var vv in tuple.VariableValues)
+                    if (dsVersionTuples.Count() > 0)
                     {
-                        if (vv.VariableId > 0)
+                        List<string> generatedStrings = new List<string>();
+                        foreach (var tuple in dsVersionTuples)
                         {
-                            Variable varr = sds.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
-                            switch (varr.DataAttribute.DataType.SystemType)
+                            tuple.Materialize();
+
+                            foreach (var vv in tuple.VariableValues)
                             {
-                                case "String":
+                                if (vv.VariableId > 0)
+                                {
+                                    Variable varr = sds.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
+                                    switch (varr.DataAttribute.DataType.SystemType)
                                     {
-                                        if (vv.Value != null)
-                                        {
-                                            generatedStrings.Add(vv.Value.ToString());
-                                        }
-                                        break;
+                                        case "String":
+                                            {
+                                                if (vv.Value != null && !String.IsNullOrEmpty(vv.Value.ToString()))
+                                                {
+                                                    generatedStrings.Add(vv.Value.ToString());
+                                                }
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                break;
+                                            }
                                     }
-                                default:
-                                    {
-                                        break;
-                                    }
+
+                                }
                             }
 
                         }
+
+                        foreach (var variableId in sds.Variables.Select(v => v.Id))
+                        {
+                            var variable = uow.GetReadOnlyRepository<Variable>().Get(variableId);
+
+                            generatedStrings.Add(variable.DataAttribute.Name);
+                            generatedStrings.Add(variable.Label);
+                            if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
+                                generatedStrings.Add(variable.DataAttribute.Description);
+                        }
+
+                        return generatedStrings;
                     }
 
+                    return null;
                 }
-                foreach (var variable in sds.Variables)
+                catch (Exception ex)
                 {
-                    generatedStrings.Add(variable.DataAttribute.Name);
-                    generatedStrings.Add(variable.Label);
-                    if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
-                        generatedStrings.Add(variable.DataAttribute.Description);
+                    throw ex;
                 }
-
-                return generatedStrings;
             }
-
-            return null;
         }
 
         /// <summary>
@@ -388,41 +414,54 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     }
 
                     DatasetManager dm = new DatasetManager();
-                    if (dm.IsDatasetCheckedIn(id))
+                    DataStructureManager dsm = new DataStructureManager();
+                    try
                     {
-                        DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
-                        DataStructureManager dsm = new DataStructureManager();
-                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                        // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
-                        // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
-                        // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
-                        int fetchSize = dm.PreferedBatchSize;
-                        long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
-                        long noOfFetchs = tupleSize / fetchSize + 1;
-                        for (int round = 0; round < noOfFetchs; round++)
+
+                        if (dm.IsDatasetCheckedIn(id))
                         {
-                            List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round,
-                                fetchSize);
-                            List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
-                            if (primaryDataStringToindex != null)
+                            DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+
+                            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                            // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
+                            // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
+                            // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
+                            int fetchSize = dm.PreferedBatchSize;
+                            long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                            long noOfFetchs = tupleSize / fetchSize + 1;
+                            for (int round = 0; round < noOfFetchs; round++)
                             {
-                                foreach (string pDataValue in primaryDataStringToindex)
-                                // Loop through List with foreach
+                                List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round, fetchSize);
+                                List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
+                                if (primaryDataStringToindex != null)
                                 {
-                                    Field a = new Field("category_" + lucene_name, pDataValue,
-                                        Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                                    a.Boost = boosting;
-                                    dataset.Add(a);
-                                    dataset.Add(new Field("ng_" + lucene_name, pDataValue,
-                                        Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                    dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
-                                        Lucene.Net.Documents.Field.Index.ANALYZED));
-                                    writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                                    writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                    foreach (string pDataValue in primaryDataStringToindex)
+                                    // Loop through List with foreach
+                                    {
+                                        Field a = new Field("category_" + lucene_name, pDataValue,
+                                            Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                                        a.Boost = boosting;
+                                        dataset.Add(a);
+                                        dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                                            Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                        dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                                            Lucene.Net.Documents.Field.Index.ANALYZED));
+                                        writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                                        writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                    }
                                 }
+                                GC.Collect();
                             }
-                            GC.Collect();
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                    finally
+                    {
+                        dm.Dispose();
+                        dsm.Dispose();
                     }
                 }
                 else
