@@ -419,6 +419,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\help\Create_Dataset.png" />
+    <Content Include="Content\Images\help\expand.png" />
     <Content Include="Content\Images\help\Help_easy_upload_end.png" />
     <Content Include="Content\Images\help\Help_easy_upload_metadata.png" />
     <Content Include="Content\Images\help\Help_easy_upload_select_areas.png" />
@@ -437,6 +439,10 @@
     <Content Include="Content\Images\help\Help_img24.png" />
     <Content Include="Content\Images\help\Help_img27.png" />
     <Content Include="Content\Images\help\Help_img3.png" />
+    <Content Include="Content\Images\help\mines.png" />
+    <Content Include="Content\Images\help\plus.png" />
+    <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\up_down.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
