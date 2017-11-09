@@ -217,9 +217,11 @@ namespace BExIS.Web.Shell
         {
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
-            try { 
+            try
+            {
                 IoCFactory.Container.ShutdownSessionLevelContainer();
-            } catch (Exception ex) { }
+            }
+            catch { }
         }
 
         protected virtual void Application_BeginRequest()

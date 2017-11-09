@@ -2658,9 +2658,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserEditAccessRights(long entityId)
         {
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-            this.Disposables.Add(featurePermissionManager);
 
-            return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
+
+            try
+            {
+                return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -2672,9 +2679,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            this.Disposables.Add(entityPermissionManager);
 
-            return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+
+            try
+            {
+                return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+            }
+            finally
+            {
+                entityPermissionManager.Dispose();
+            }
 
             #endregion security permissions and authorisations check
         }

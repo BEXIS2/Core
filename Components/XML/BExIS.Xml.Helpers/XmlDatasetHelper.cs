@@ -537,6 +537,79 @@ namespace BExIS.Xml.Helpers
 
         }
 
+        public XmlDocument AddReferenceToXml(XmlDocument Source, string nodeName, string nodeValue, string nodeType, string destinationPath, Dictionary<string, string> additionalAttributes)
+        {
+
+            //XmlDocument doc = new XmlDocument();
+            XmlNode extra;
+            if (Source != null)
+            {
+                if (Source.DocumentElement == null)
+                {
+                    extra = Source.CreateElement("extra", "");
+                    Source.AppendChild(extra);
+                }
+            }
+
+            XmlNode x = createMissingNodes(destinationPath, Source.DocumentElement, Source, nodeName);
+
+            //check attrviute of the xmlnode
+            if (x.Attributes.Count > 0)
+            {
+                foreach (XmlAttribute attr in x.Attributes)
+                {
+                    if (attr.Name == "name") attr.Value = nodeName;
+                    if (attr.Name == "value") attr.Value = nodeValue;
+                    if (attr.Name == "type") attr.Value = nodeType;
+                }
+            }
+            else
+            {
+                XmlAttribute name = Source.CreateAttribute("name");
+                name.Value = nodeName;
+                XmlAttribute value = Source.CreateAttribute("value");
+                value.Value = nodeValue;
+                XmlAttribute type = Source.CreateAttribute("type");
+                type.Value = nodeType;
+
+                x.Attributes.Append(name);
+                x.Attributes.Append(value);
+                x.Attributes.Append(type);
+
+            }
+
+            if (additionalAttributes.Keys.Count > 0)
+            {
+                foreach (KeyValuePair<string, string> kvp in additionalAttributes)
+                {
+                    bool exist = false;
+                    if (x.Attributes.Count > 0)
+                    {
+                        foreach (XmlAttribute attr in x.Attributes)
+                        {
+                            if (attr.Name.Equals(kvp.Key))
+                            {
+                                attr.Value = kvp.Value;
+                                exist = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!exist)
+                    {
+                        XmlAttribute attr = Source.CreateAttribute(kvp.Key);
+                        attr.Value = kvp.Value;
+                        x.Attributes.Append(attr);
+                    }
+                }
+            }
+
+
+            return Source;
+
+        }
+
         private XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc,
             string name)
         {

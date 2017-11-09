@@ -111,8 +111,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     try
                     {
                         long id = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-                        this.Disposables.Add(dsm);
-
                         long iddsd = (long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
                         StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                         dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);

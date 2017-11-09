@@ -54,7 +54,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             catch (Exception ex)
             {
-                return null;
+                throw new Exception(string.Format("Could not retrieve data from dataset {0}. Check whether the corresponding view exists and is populated with data.", datasetId), ex);
             }
 
         }
@@ -127,7 +127,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             selectBuilder
                 .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
-                .AppendLine(string.Format("WHERE v.datasetref = {0}", datasetId))
+                .AppendLine(string.Format("WHERE v.datasetref = {0} AND v.status = 2", datasetId))
                 .Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
 
@@ -243,7 +243,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
             string accessPath = string.Format(accessPathTemplate, Id);
 
-            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL ELSE cast(unnest({accessPath}::character varying[]) {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
+            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(unnest({accessPath}::character varying[]) {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
             //string fieldDef = string.Format(fieldTemplate, accessPath, fieldType, this.BuildColumnName(Id).ToLower());
             // guard the column mapping for NULL protection
             return fieldDef;
