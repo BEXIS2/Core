@@ -83,6 +83,9 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 if (!operationManager.Exists("RPM", "Home", "*"))
                     operationManager.Create("RPM", "Home", "*", dataTypeFeature);
+
+                if (!operationManager.Exists("RPM", "Help", "*"))
+                    operationManager.Create("RPM", "Help", "*");
             }
             finally
             {
