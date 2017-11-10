@@ -98,23 +98,25 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 try
                 {
                     dataStructureManager = new DataStructureManager();
+                    var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
+                    StructuredDataStructure structuredDataStructure = structureRepo.Get(Id);
 
-                    if (dataStructureManager.StructuredDataStructureRepo.Get(Id) != null) // Javad: This one retrieves the entity withough using it, and then the next line agian fetches the same! 
-                    {
-                        StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
-                        DataStructureIO.deleteTemplate(dataStructure.Id);
-                        foreach (Variable v in dataStructure.Variables)
+                    if (structuredDataStructure != null) // Javad: This one retrieves the entity withough using it, and then the next line agian fetches the same! 
+                    {                 
+                        DataStructureIO.deleteTemplate(structuredDataStructure.Id);
+                        foreach (Variable v in structuredDataStructure.Variables)
                         {
                             dataStructureManager.RemoveVariableUsage(v);
                         }
-                        dataStructureManager.DeleteStructuredDataStructure(dataStructure);
-                        LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                        dataStructureManager.DeleteStructuredDataStructure(structuredDataStructure);
+                        LoggerFactory.LogData(structuredDataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                     }
                     else
                     {
-                        UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
-                        dataStructureManager.DeleteUnStructuredDataStructure(dataStructure);
-                        LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                        var unStructureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>();
+                        UnStructuredDataStructure unStructuredDataStructure = unStructureRepo.Get(Id);
+                        dataStructureManager.DeleteUnStructuredDataStructure(unStructuredDataStructure);
+                        LoggerFactory.LogData(unStructuredDataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                     }
                     return PartialView("_message", new MessageModel()
                     {
