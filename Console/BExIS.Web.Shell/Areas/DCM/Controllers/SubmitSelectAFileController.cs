@@ -104,6 +104,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
                                     }
 
+                                    if (!ExcelReader.SUPPORTED_APPLICATIONS.Contains(reader.Application))
+                                    {
+                                        model.ErrorList.Add(new Error(ErrorType.Other, "The document was created in an application " + reader.Application + " that will currently not support"));
+                                    }
+
                                     Stream.Close();
                                 }
                                 else
@@ -152,7 +157,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
 
                         }
-                        catch
+                        catch (Exception ex)
                         {
                             model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                         }
