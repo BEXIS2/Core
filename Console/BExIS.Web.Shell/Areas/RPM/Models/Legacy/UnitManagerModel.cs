@@ -14,32 +14,29 @@ namespace BExIS.Modules.Rpm.UI.Models
         public List<DataType> DataTypeList;
         public List<Dimension> DimensionList;
 
-        UnitManager unitManager = null;
-        DataContainerManager dataAttributeManager = null;
-        DataStructureManager dataStructureManager = null;
-        DataTypeManager dataTypeManager = null;
-
         public EditUnitModel()
         {
             bool inUse = false;
             Unit = new Unit();
             Unit.Dimension = new Dimension();
-            setup();
-            
+            DataTypeList = new List<DataType>();
+            DimensionList = new List<Dimension>();
         }
 
-        public EditUnitModel(Unit unit)
+        public EditUnitModel(Unit unit, bool listView = false)
         {
-            setup(unit.Id);
+            setup(unit, listView);
         }
 
-        public EditUnitModel(long unitId)
+        public EditUnitModel(long unitId , bool listView = false)
         {
-            setup(unitId);
+            setup(unitId, listView);
         }
 
         private void setup()
         {
+            UnitManager unitManager = null;
+            DataTypeManager dataTypeManager = null;
             try
             {
                 dataTypeManager = new DataTypeManager();
@@ -54,13 +51,16 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
         }
 
-        private void setup(long unitId)
+        private void setup(long unitId, bool listView = false)
         {
-            setup();
+            if (!listView)
+                setup();
+
+            UnitManager unitManager = null;
             try
             {
                 unitManager = new UnitManager();
-                Unit tempUnit = unitManager.Repo.Get().Where(u => u.Id.Equals(unitId) && u.AssociatedDataTypes.Count() != null).FirstOrDefault();
+                Unit tempUnit = unitManager.Repo.Get(unitId);
                 Unit = tempUnit;
                 if (tempUnit.AssociatedDataTypes.Count != 0)
                     Unit.AssociatedDataTypes = tempUnit.AssociatedDataTypes;
@@ -76,8 +76,19 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
         }
 
+        private void setup(Unit unit, bool listView = false)
+        {
+            if (!listView)
+                setup();
+
+            this.Unit = unit;             
+            inUse = unitInUse(Unit);
+        }
+
         private bool unitInUse(Unit unit)
         {
+            DataStructureManager dataStructureManager = null;
+            DataContainerManager dataAttributeManager = null;
             try
             {
                 dataAttributeManager = new DataContainerManager();
@@ -125,9 +136,17 @@ namespace BExIS.Modules.Rpm.UI.Models
             {
                 unitManager = new UnitManager();
                 List<Unit> tempUnitList = unitManager.Repo.Get().ToList();
+                Unit tmpUnit = new Unit();
                 foreach (Unit u in tempUnitList)
                 {
-                    editUnitModelList.Add(new EditUnitModel(u));
+                    tmpUnit = u;
+                    if (tmpUnit.AssociatedDataTypes.Count != 0)
+                        u.AssociatedDataTypes = tmpUnit.AssociatedDataTypes;
+                    else
+                        u.AssociatedDataTypes = new List<DataType>();
+
+                    u.Dimension = unitManager.DimensionRepo.Get(tmpUnit.Dimension.Id);
+                    editUnitModelList.Add(new EditUnitModel(u, true));
                 }
             }
             finally
