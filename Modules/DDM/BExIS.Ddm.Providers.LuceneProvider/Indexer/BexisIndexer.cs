@@ -125,7 +125,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new BexisAnalyzer());
 
             indexWriter = new IndexWriter(pathIndex, analyzer, recreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
-            autoCompleteIndexWriter = new IndexWriter(autoCompleteIndex, new NGramAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+            autoCompleteIndexWriter = new IndexWriter(autoCompleteIndex, new NGramAnalyzer(), recreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
 
 
             foreach (XmlNode a in categoryXmlNodeList)
