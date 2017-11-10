@@ -11,6 +11,7 @@ using System.IO;
 using Vaiona.Utils.Cfg;
 using System.Collections.Generic;
 using Vaiona.Web.Mvc;
+using System.Web;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -31,29 +32,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (dataStructure != null)
                     {
                         ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
-                        provider.CreateTemplate(dataStructure);
-                        string path = "";
-
-                        XmlNode resources = dataStructure.TemplatePaths.FirstChild;
-
-                        XmlNodeList resource = resources.ChildNodes;
-
-                        foreach (XmlNode x in resource)
-                        {
-                            if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                                path = x.Attributes.GetNamedItem("Path").Value;
-
-                        }
-                        string rgxPattern = "[<>?\":|\\\\/*]";
-                        string rgxReplace = "-";
-                        Regex rgx = new Regex(rgxPattern);
-
-                        string filename = rgx.Replace(dataStructure.Name, rgxReplace);
-
-                        if (filename.Length > 50)
-                            filename = filename.Substring(0, 50);
-
-                        return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + dataStructure.Id + "_" + filename + ".xlsm");
+                        
+                        string path = Path.Combine(AppConfiguration.DataPath, provider.CreateTemplate(dataStructure));
+                        return File(path, MimeMapping.GetMimeMapping(path), Path.GetFileName(path));
                     }
                 }
                 finally
