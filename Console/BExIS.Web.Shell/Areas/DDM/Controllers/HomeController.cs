@@ -809,7 +809,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 foreach (long datasetId in gridCommands)
                 {
                     //get permissions
-                    int rights = entityPermissionManager.GetRights(user, entity, datasetId);
+                    int rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetId);
 
                     if (rights > 0)
                     {

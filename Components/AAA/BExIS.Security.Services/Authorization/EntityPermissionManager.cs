@@ -263,6 +263,28 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public int GetEffectiveRights(long? subjectId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+
+                var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+
+                if (subject is User)
+                {
+                    var user = subject as User;
+                    var subjectIds = new List<long>() { user.Id };
+                    subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
+                    var rights = entityPermissionRepository.Get(m => subjectIds.Contains(m.Subject.Id) && m.Entity.Id == entityId && m.Key == key).Select(e => e.Rights).ToList();
+                    return rights.Aggregate(0, (left, right) => left | right);
+                }
+
+                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entityId && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+            }
+        }
+
         public int GetRights(Subject subject, Entity entity, long key)
         {
             using (var uow = this.GetUnitOfWork())
