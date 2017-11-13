@@ -442,6 +442,8 @@
     <Content Include="Content\Images\help\mines.png" />
     <Content Include="Content\Images\help\plus.png" />
     <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\set_xsd_parameters.png" />
+    <Content Include="Content\Images\help\upload_data.png" />
     <Content Include="Content\Images\help\up_down.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
