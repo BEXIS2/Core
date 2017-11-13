@@ -7,6 +7,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
+using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 datasetManager.Dispose();
             }
+        }
+
+        public ActionResult GetDatastructureAsJSON(long id)
+        {
+            return Json(OutputDataStructureManager.GetDataStructureAsJson(id), JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> GetStatus(long id)
