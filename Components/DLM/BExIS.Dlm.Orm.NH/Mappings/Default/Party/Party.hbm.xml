@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Party" table="Parties">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Party" table="Parties" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
     <id name = "Id" type="Int64">
