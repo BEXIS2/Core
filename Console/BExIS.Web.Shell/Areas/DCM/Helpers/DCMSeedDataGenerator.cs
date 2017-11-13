@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Objects;
@@ -87,7 +86,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Entity entity = new Entity();
                 entity.Name = "Dataset";
                 entity.EntityType = typeof(Dataset);
-                entity.EntityStoreType = typeof(DatasetManager);
+                entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
                 entity.UseMetadata = true;
                 entity.Securable = true;
 
