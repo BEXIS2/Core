@@ -227,18 +227,6 @@
 
     $(document).ready(function () {
 
-        /*
-        //Is this function even needed?
-        $('select[name="DataType"]').each(function (index) {
-            var selectId = $(this).attr('headerfieldId');
-            var val = $('select[name="Unit"][headerfieldId="' + selectId + '"]').val();
-            if(val > 0)
-            {
-                $(this).prop("disabled", false);
-
-            }
-        });*/
-
         //Destroy the handsontable from the last step because it's causing performance problems
         if (hotActive) {
             hot.destroy();
