@@ -145,6 +145,8 @@
                     }
                     else
                     {
+                        if(Model.ChoiceMax <= 1)
+                        { 
                         <div class="metadata-choice-container">
                             @if (!locked)
                             {
@@ -175,6 +177,7 @@
                                 }
                             }
                         </div>
+                        }
                     }
 
                 }
@@ -204,7 +207,7 @@
         {
             <div id="@id_container" class="contentContainer">
 
-                @if (Model.Choice)
+                @if (Model.Choice && Model.ChoiceMax <= 1)
                 {
                     <div id="choiceContainer" class="complexAttributesContainer">
                         @foreach (var element in Model.Childrens)

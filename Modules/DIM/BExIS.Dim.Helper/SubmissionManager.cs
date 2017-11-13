@@ -72,6 +72,7 @@ namespace BExIS.Dim.Helpers
                 tmp.Server = XmlUtility.GetXmlNodeByName(node, "server").InnerText;
                 tmp.UserName = XmlUtility.GetXmlNodeByName(node, "user").InnerText;
                 tmp.Password = XmlUtility.GetXmlNodeByName(node, "password").InnerText;
+                tmp.Link = XmlUtility.GetXmlNodeByName(node, "link").InnerText;
                 tmp = publicationManager.CreateBroker(tmp);
             }
 

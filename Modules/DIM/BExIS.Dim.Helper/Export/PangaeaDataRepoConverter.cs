@@ -26,81 +26,91 @@ namespace BExIS.Dim.Helpers.Export
         //ToDO -> David <- do not store the files on the server
         public string Convert(long datasetVersionId)
         {
-            PublicationManager publicationManager = new PublicationManager();
-            _broker = publicationManager.GetBroker(_broker.Id);
-            _dataRepo = publicationManager.GetRepository(_dataRepo.Id);
-
-            /***
-             *  Generate a txt file for pangaea
-             *  1. json metadata
-             *  2. tabseperated primary Data
-             * 
-             * 
-             * if data only unstructred, then only metadata
-             */
-
-            string primaryDataFilePath = "";
-
-            #region create primary Data
-
-
-            primaryDataFilePath = generatePrimaryData(datasetVersionId);
-
-
-            #endregion
-
-
             DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-            long datasetId = datasetVersion.Dataset.Id;
-            long metadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
 
-            DataStructureDataList datastructureDataList = OutputDataStructureManager.GetVariableList(datasetId);
-
-            PanageaMetadata metadata = getMetadata(datasetVersion.Metadata, metadataStructureId);
-            metadata.ParameterIDs = datastructureDataList.Variables;
-
-            string json = JsonConvert.SerializeObject(metadata, Formatting.Indented);
-
-
-            SubmissionManager submissionManager = new SubmissionManager();
-
-
-
-            string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
-            string filename = submissionManager.GetFileNameForDataRepo(datasetVersionId, datasetId, _dataRepo.Name, "txt");
-
-            string filepath = Path.Combine(path, filename);
-
+            PublicationManager publicationManager = new PublicationManager();
             try
             {
-                if (File.Exists(filepath))
+
+                _broker = publicationManager.GetBroker(_broker.Id);
+                _dataRepo = publicationManager.GetRepository(_dataRepo.Id);
+
+                /***
+                 *  Generate a txt file for pangaea
+                 *  1. json metadata
+                 *  2. tabseperated primary Data
+                 * 
+                 * 
+                 * if data only unstructred, then only metadata
+                 */
+
+                string primaryDataFilePath = "";
+
+                #region create primary Data
+
+
+                primaryDataFilePath = generatePrimaryData(datasetVersionId);
+
+
+                #endregion
+
+
+                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                long datasetId = datasetVersion.Dataset.Id;
+                long metadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
+
+                DataStructureDataList datastructureDataList = OutputDataStructureManager.GetVariableList(datasetId);
+
+                PanageaMetadata metadata = getMetadata(datasetVersion.Metadata, metadataStructureId);
+                metadata.ParameterIDs = datastructureDataList.Variables;
+
+                string json = JsonConvert.SerializeObject(metadata, Formatting.Indented);
+
+
+                SubmissionManager submissionManager = new SubmissionManager();
+
+
+
+                string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
+                string filename = submissionManager.GetFileNameForDataRepo(datasetVersionId, datasetId, _dataRepo.Name, "txt");
+
+                string filepath = Path.Combine(path, filename);
+
+                try
                 {
-                    File.Delete(filepath);
+                    if (File.Exists(filepath))
+                    {
+                        File.Delete(filepath);
+                    }
+
+                    FileHelper.Create(filepath).Close();
+                    File.WriteAllText(filepath, json + Environment.NewLine + Environment.NewLine);
+
+                    if (!string.IsNullOrEmpty(primaryDataFilePath))
+                    {
+                        File.AppendAllText(filepath, File.ReadAllText(primaryDataFilePath));
+                    }
+
+                    return filepath;
+
+                }
+                catch (Exception exception)
+                {
+
+                    throw exception;
                 }
 
-                FileHelper.Create(filepath).Close();
-                File.WriteAllText(filepath, json + Environment.NewLine + Environment.NewLine);
 
-                if (!string.IsNullOrEmpty(primaryDataFilePath))
-                {
-                    File.AppendAllText(filepath, File.ReadAllText(primaryDataFilePath));
-                }
 
-                return filepath;
 
+
+                return "";
             }
-            catch (Exception exception)
+            finally
             {
-
-                throw exception;
+                datasetManager.Dispose();
+                publicationManager.Dispose();
             }
-
-
-
-
-
-            return "";
         }
 
         public bool Validate(long datasetVersionId)

@@ -123,6 +123,20 @@ namespace BExIS.Xml.Helpers
 
                     #endregion
 
+                    #region sequence
+                    /// Get the sequence particle of the complex type.
+                    XmlSchemaAll all = complexType.ContentTypeParticle as XmlSchemaAll;
+                    if (all != null)
+                    {
+                        // Iterate over each XmlSchemaElement in the Items collection.
+                        foreach (XmlSchemaObject childElement in all.Items)
+                        {
+                            elements = GetElements(childElement, elements, recursive, allElements);
+                        }
+                    }
+
+                    #endregion
+
                     #region choice
                     // check if it is e choice
                     XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;

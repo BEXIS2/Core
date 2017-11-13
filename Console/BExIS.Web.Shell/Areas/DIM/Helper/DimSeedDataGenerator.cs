@@ -219,9 +219,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region mapping ABCD BASIC to System Keys
 
                 Debug.WriteLine("abcd to root");
-                Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null);
+                Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null, mappingManager);
                 Debug.WriteLine("root to abcd");
-                Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null);
+                Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null, mappingManager);
                 Debug.WriteLine("Title");
                 createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
                 createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
@@ -327,8 +327,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                         simpleType, LinkElementComplexity.Simple);
 
-                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, le, 1, new TransformationRule(), root);
-                    MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, tmpMapping);
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, le, 1, new TransformationRule(), root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, tmpMapping, mappingManager);
                 }
             }
             else
@@ -342,7 +342,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
                         complexType, LinkElementComplexity.Complex);
 
-                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root);
+                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
 
 
                     IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
@@ -354,7 +354,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                             simpleType, LinkElementComplexity.Simple);
 
-                        MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping);
+                        MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping, mappingManager);
                     }
                 }
 
@@ -397,8 +397,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                         simpleType, LinkElementComplexity.Simple);
 
-                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root);
-                    MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping);
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping, mappingManager);
                 }
             }
             else
@@ -412,7 +412,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
                         complexType, LinkElementComplexity.Complex);
 
-                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root);
+                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root, mappingManager);
 
 
                     IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
@@ -424,7 +424,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                             simpleType, LinkElementComplexity.Simple);
 
-                        MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping);
+                        MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping, mappingManager);
                     }
                 }
 
@@ -472,8 +472,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     #region mapping ABCD BASIC to System Keys
 
-                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null);
-                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null);
+                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null, mappingManager);
+                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null, mappingManager);
 
                     // create mapping for paryttypes
 
@@ -610,7 +610,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex);
 
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root);
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
 
             IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
 
@@ -624,7 +624,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple);
 
-                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping);
+                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
             }
 
         }
@@ -652,7 +652,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex);
 
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root);
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
 
             IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
 
@@ -666,7 +666,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple);
 
-                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping);
+                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
             }
 
         }

@@ -21,20 +21,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 MappingMainModel model = new MappingMainModel();
                 // load from mds example
-                model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source);
+                model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source, mappingManager);
 
 
                 switch (type)
                 {
                     case LinkElementType.System:
                         {
-                            model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+                            model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target, mappingManager);
                             model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
                     case LinkElementType.MetadataStructure:
                         {
-                            model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+                            model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target, mappingManager);
                             model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
@@ -89,13 +89,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     case LinkElementType.System:
                         {
-                            model.Source = MappingHelper.LoadfromSystem(LinkElementPostion.Source);
+                            model.Source = MappingHelper.LoadfromSystem(LinkElementPostion.Source, mappingManager);
                             if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
                     case LinkElementType.MetadataStructure:
                         {
-                            model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source);
+                            model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source, mappingManager);
                             if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
@@ -108,13 +108,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     case LinkElementType.System:
                         {
-                            model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+                            model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target, mappingManager);
                             if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
                     case LinkElementType.MetadataStructure:
                         {
-                            model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+                            model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target, mappingManager);
                             if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
@@ -166,28 +166,37 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult ReloadTarget(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
         {
-            LinkElementRootModel model = null;
+            MappingManager mappingManager = new MappingManager();
 
-            long id = position.Equals(LinkElementPostion.Source) ? sourceId : targetId;
-            LinkElementType type = position.Equals(LinkElementPostion.Source) ? sourceType : targetType;
-
-
-            switch (type)
+            try
             {
-                case LinkElementType.System:
-                    {
-                        model = MappingHelper.LoadfromSystem(position);
+                LinkElementRootModel model = null;
 
-                        break;
-                    }
-                case LinkElementType.MetadataStructure:
-                    {
-                        model = MappingHelper.LoadFromMetadataStructure(id, position);
-                        break;
-                    }
+                long id = position.Equals(LinkElementPostion.Source) ? sourceId : targetId;
+                LinkElementType type = position.Equals(LinkElementPostion.Source) ? sourceType : targetType;
+
+
+                switch (type)
+                {
+                    case LinkElementType.System:
+                        {
+                            model = MappingHelper.LoadfromSystem(position, mappingManager);
+
+                            break;
+                        }
+                    case LinkElementType.MetadataStructure:
+                        {
+                            model = MappingHelper.LoadFromMetadataStructure(id, position, mappingManager);
+                            break;
+                        }
+                }
+
+                return PartialView("LinkElemenRoot", model);
             }
-
-            return PartialView("LinkElemenRoot", model);
+            finally
+            {
+                mappingManager.Dispose();
+            }
         }
 
         public ActionResult ReloadMapping(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
@@ -206,13 +215,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     case LinkElementType.System:
                         {
-                            source = MappingHelper.LoadfromSystem(LinkElementPostion.Source);
+                            source = MappingHelper.LoadfromSystem(LinkElementPostion.Source, mappingManager);
 
                             break;
                         }
                     case LinkElementType.MetadataStructure:
                         {
-                            source = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Source);
+                            source = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Source, mappingManager);
                             break;
                         }
                 }
@@ -222,13 +231,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     case LinkElementType.System:
                         {
-                            target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+                            target = MappingHelper.LoadfromSystem(LinkElementPostion.Target, mappingManager);
 
                             break;
                         }
                     case LinkElementType.MetadataStructure:
                         {
-                            target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+                            target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target, mappingManager);
                             break;
                         }
                 }
@@ -282,13 +291,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 #region save or update RootMapping
 
                 //create source Parents if not exist
-                LinkElement sourceParent = MappingHelper.CreateIfNotExistLinkElement(model.Source.Parent);
+                LinkElement sourceParent = MappingHelper.CreateIfNotExistLinkElement(model.Source.Parent, mappingManager);
 
                 //create source Parents if not exist
-                LinkElement targetParent = MappingHelper.CreateIfNotExistLinkElement(model.Target.Parent);
+                LinkElement targetParent = MappingHelper.CreateIfNotExistLinkElement(model.Target.Parent, mappingManager);
 
                 //create root mapping if not exist
-                Mapping rootMapping = MappingHelper.CreateIfNotExistMapping(sourceParent, targetParent, 0, null, null);
+                Mapping rootMapping = MappingHelper.CreateIfNotExistMapping(sourceParent, targetParent, 0, null, null, mappingManager);
 
                 #endregion
 
@@ -297,26 +306,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 LinkElement target;
 
                 //create source
-                source = MappingHelper.CreateIfNotExistLinkElement(model.Source, sourceParent.Id);
+                source = MappingHelper.CreateIfNotExistLinkElement(model.Source, sourceParent.Id, mappingManager);
 
                 model.Source.Id = source.Id;
                 model.Source = MappingHelper.LoadChildren(model.Source);
 
                 //create target
-                target = MappingHelper.CreateIfNotExistLinkElement(model.Target, targetParent.Id);
+                target = MappingHelper.CreateIfNotExistLinkElement(model.Target, targetParent.Id, mappingManager);
 
                 model.Target.Id = target.Id;
                 model.Target = MappingHelper.LoadChildren(model.Target);
 
                 //save mapping
-                Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, 1, null, rootMapping);
+                Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, 1, null, rootMapping, mappingManager);
                 model.Id = mapping.Id;
                 model.ParentId = mapping.Parent.Id;
                 #endregion
 
                 #region create or update simple mapping
 
-                MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping);
+                MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping, mappingManager);
 
                 #endregion
 
@@ -338,7 +347,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             try
             {
-                MappingHelper.DeleteMapping(id);
+                MappingManager mappingManager = new MappingManager();
+
+                MappingHelper.DeleteMapping(id, mappingManager);
 
                 //ToDo delete also all simple mappings that are belonging to the complex mapping
 

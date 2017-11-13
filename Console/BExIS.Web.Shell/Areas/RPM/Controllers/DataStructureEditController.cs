@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Persistence.Api;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc;
 
@@ -97,23 +98,25 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 try
                 {
                     dataStructureManager = new DataStructureManager();
+                    var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
+                    StructuredDataStructure structuredDataStructure = structureRepo.Get(Id);
 
-                    if (dataStructureManager.StructuredDataStructureRepo.Get(Id) != null)
-                    {
-                        StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
-                        DataStructureIO.deleteTemplate(dataStructure.Id);
-                        foreach (Variable v in dataStructure.Variables)
+                    if (structuredDataStructure != null) // Javad: This one retrieves the entity withough using it, and then the next line agian fetches the same! 
+                    {                 
+                        DataStructureIO.deleteTemplate(structuredDataStructure.Id);
+                        foreach (Variable v in structuredDataStructure.Variables)
                         {
                             dataStructureManager.RemoveVariableUsage(v);
                         }
-                        dataStructureManager.DeleteStructuredDataStructure(dataStructure);
-                        LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                        dataStructureManager.DeleteStructuredDataStructure(structuredDataStructure);
+                        LoggerFactory.LogData(structuredDataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                     }
                     else
                     {
-                        UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
-                        dataStructureManager.DeleteUnStructuredDataStructure(dataStructure);
-                        LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                        var unStructureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>();
+                        UnStructuredDataStructure unStructuredDataStructure = unStructureRepo.Get(Id);
+                        dataStructureManager.DeleteUnStructuredDataStructure(unStructuredDataStructure);
+                        LoggerFactory.LogData(unStructuredDataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                     }
                     return PartialView("_message", new MessageModel()
                     {
@@ -139,8 +142,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             try
             {
                 dataStructureManager = new DataStructureManager();
+                var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
 
-                StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                StructuredDataStructure dataStructure = structureRepo.Get(Id);
                 MessageModel returnObject = new MessageModel();
                 MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
                 if (messageModel.hasMessage)
@@ -173,25 +177,40 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             svs.Lable = "";
                         if (svs.Description == null)
                             svs.Description = "";
-                        dataContainerManager = new DataContainerManager();
-                        DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                        if (dataAttribute != null)
+                        try
                         {
-                            um = new UnitManager();
-                            variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
-                            svs.Id = variable.Id;
-                        }
-                        else
-                        {
-                            returnObject = new MessageModel()
+                            dataContainerManager = new DataContainerManager();
+                            DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                            if (dataAttribute != null)
                             {
-                                hasMessage = true,
-                                Message = "Not all Variables are stored.",
-                                CssId = "0"
-                            };
+                                try
+                                {
+                                    um = new UnitManager();
+                                    variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
+                                    svs.Id = variable.Id;
+                                }
+                                finally
+                                {
+                                    um.Dispose();
+                                }
+                            }
+                            else
+                            {
+                                returnObject = new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "Not all Variables are stored.",
+                                    CssId = "0"
+                                };
+                            }
+                        }
+                        finally
+                        {
+                            // Javad: would be better to conctruct and dispose this object outside of the loop
+                            dataContainerManager.Dispose();
                         }
                     }
-                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                    dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
 
                     variables = variables.Where(v => v.Id != 0).ToArray();
 
@@ -207,14 +226,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         {
                             variable.Label = svs.Lable.Trim();
                             variable.Description = svs.Description.Trim();
-                            um = new UnitManager();
-                            this.Disposables.Add(um);
 
-                            variable.Unit = um.Repo.Get(svs.UnitId);
-                            dataContainerManager = new DataContainerManager();
-                            this.Disposables.Add(dataContainerManager);
-                            variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                            variable.IsValueOptional = svs.isOptional;
+                            try
+                            {
+                                um = new UnitManager();
+                                dataContainerManager = new DataContainerManager();
+
+                                variable.Unit = um.Repo.Get(svs.UnitId);
+                                variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                                variable.IsValueOptional = svs.isOptional;
+                            }
+                            finally
+                            {
+                                um.Dispose(); // Javad: would be better to conctruct and dipose these objects outside of the loop
+                                dataContainerManager.Dispose();
+                            }
                         }
                     }
 
@@ -379,7 +405,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             List<ItemStruct> DataTypes = new List<ItemStruct>();
             UnitManager um = null;
-            DataTypeManager dtm = null;
 
             try
             {
@@ -400,23 +425,29 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    dtm = new DataTypeManager();
-                    this.Disposables.Add(dtm);
-                    foreach (DataType dt in dtm.Repo.Get())
+                    DataTypeManager dtm = null;
+                    try
                     {
-                        DataTypes.Add(new ItemStruct()
+                        dtm = new DataTypeManager();
+                        foreach (DataType dt in dtm.Repo.Get())
                         {
-                            Name = dt.Name,
-                            Id = dt.Id
-                        });
+                            DataTypes.Add(new ItemStruct()
+                            {
+                                Name = dt.Name,
+                                Id = dt.Id
+                            });
+                        }
+                        return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
                     }
-                    return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                    finally
+                    {
+                        dtm.Dispose();
+                    }
                 }
             }
             finally
             {
                 um.Dispose();
-                dtm.Dispose();
             }
         }
 

@@ -23,6 +23,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
         public bool Activated { get; set; }
         public bool Choice { get; set; }
+        public long ChoiceMax { get; set; }
 
         private AbstractMetadataStepModel _model;
 
@@ -58,6 +59,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             Childrens = new List<StepModelHelper>();
             Parent = parent;
             Choice = IsChoice(extra);
+
+            if (Choice) ChoiceMax = GetChoiceMax(extra);
 
             if (parent != null)
                 Level = parent.Level + 1;
@@ -167,6 +170,28 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
                 if (element != null) return true;
             }
             return false;
+
+        }
+
+        private long GetChoiceMax(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                XmlNode element = XmlUtility.GetXmlNodeByAttribute(xmlNode, "type", "name", "choice");
+                if (element == null) return 0;
+                else
+                {
+                    if (element.Attributes.Count > 0)
+                    {
+                        foreach (XmlAttribute attr in element.Attributes)
+                        {
+                            if (attr.Name.ToLower().Equals("max")) return Convert.ToInt64(attr.Value);
+                        }
+                    }
+                }
+
+            }
+            return 0;
 
         }
 

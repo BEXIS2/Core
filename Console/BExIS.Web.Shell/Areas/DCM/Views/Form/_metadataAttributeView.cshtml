@@ -306,11 +306,12 @@
                                 .Value(value)
                                 .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
+                                .InputHtmlAttributes(new { Title = @errorMessage, @class = @errorClass })
                             )
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id,  @class = "bx-input bx-metadataFormTextInput " + lockedClass })
                         }
                     }
                 </td>

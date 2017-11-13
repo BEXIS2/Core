@@ -205,7 +205,7 @@ namespace BExIS.Web.Shell
             }
 
             //set session culture using DefaultCulture key
-            //IoCFactory.Container.StartSessionLevelContainer();
+            IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
@@ -217,7 +217,11 @@ namespace BExIS.Web.Shell
         {
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
-            //IoCFactory.Container.ShutdownSessionLevelContainer();
+            try
+            {
+                IoCFactory.Container.ShutdownSessionLevelContainer();
+            }
+            catch { }
         }
 
         protected virtual void Application_BeginRequest()
