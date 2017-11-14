@@ -119,8 +119,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     MetadataStructureId = metadataStructureId,
                     DataStructureId = dataStructureId,
                     ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
+                    ViewAccess = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
+                    GrantAccess = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
                 };
 
                 //set metadata in session
@@ -244,7 +244,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
                     // TODO: refactor Download Right not existing, so i set it to read
-                    bool downloadAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name,
+                    bool downloadAccess = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name,
                         "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                     //TITLE
@@ -941,7 +941,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
+            return entityPermissionManager.HasEffectiveRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
         }

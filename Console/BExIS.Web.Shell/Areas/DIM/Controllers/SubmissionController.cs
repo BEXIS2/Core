@@ -71,9 +71,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 model.DatasetId = datasetId;
 
                 //Todo Download Rigths -> currently set read rigths for this case
-                model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
+                model.DownloadRights = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name, "Dataset",
                     typeof(Dataset), datasetId, RightType.Read);
-                model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset",
+                model.EditRights = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name, "Dataset",
                     typeof(Dataset), datasetId, RightType.Write);
 
 

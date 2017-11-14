@@ -421,7 +421,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
 
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                            dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
+                            dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
                         }
                         finally
                         {
@@ -442,7 +442,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
 
                         // ToDo: Get Comment from ui and users
-                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault(), ViewCreationBehavior.None);
                     }
 
                     #endregion
@@ -835,7 +835,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
 
                                 // ToDo: Get Comment from ui and users
-                                dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                                dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault(), ViewCreationBehavior.None);
                             }
                             catch (Exception ex)
                             {
@@ -856,7 +856,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (temp.Count <= 0)
                 {
-                    dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
+                    dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
                 else
                 {

@@ -169,7 +169,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 foreach (var subject in subjectManager.Subjects)
                 {
                     var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
-                    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights));
+                    var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+
+                    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                 }
 
                 return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });

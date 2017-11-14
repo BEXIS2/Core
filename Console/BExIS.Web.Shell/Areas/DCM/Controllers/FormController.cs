@@ -2683,7 +2683,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
