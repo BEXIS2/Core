@@ -231,9 +231,10 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                repo.Put(party); // Merge is required here!!!!
-                uow.Commit();
-                party = repo.Reload(party);
+                repo.Merge(party);
+                var merged = repo.Get(party.Id);
+                repo.Put(merged);
+                uow.Commit();               
             }
             return (party);
 
@@ -887,7 +888,9 @@ namespace BExIS.Dlm.Services.Party
                 if (mainValues.Length > 0)
                     name = string.Join(" ", mainValues);
                 party.Name = name;
-                repo.Put(party);
+                repo.Merge(party);
+                var merged = repo.Get(party.Id);
+                repo.Put(merged);               
                 uow.Commit();
                 return party;
             }
