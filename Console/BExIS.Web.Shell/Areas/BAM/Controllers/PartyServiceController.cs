@@ -54,7 +54,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         {
                             //filter AssociatedPairs to allowed pairs
                             partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.AllowedSource.Id && item.AllowedTarget.Parties.Any()).ToList();
-                            //try to find first type pair witch has PartyRelationShipTypeDefault otherwise the first one 
+                            //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one 
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
                             if (defaultPartyTypePair == null)
                                 defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
@@ -108,14 +108,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                 //Create party
-                party = partyManager.Create(partyType, party.Description, party.StartDate, party.EndDate, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
-
+                party = partyManager.Create(partyType, party.Description, null,null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                 if (partyRelationships != null)
                     foreach (var partyRelationship in partyRelationships)
                     {
+                        //the duration is from current datetime up to the end of target party date
                         var secondParty = partyManager.PartyRepository.Get(partyRelationship.SecondParty.Id);
                         var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
-                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
                     }
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();

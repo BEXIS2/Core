@@ -45,6 +45,7 @@ namespace BExIS.Dlm.Services.Party
                 }
             }
         }
+        
         #region PartyRelationshipType
         /// <summary>
         /// Creating PartyRelationshipType
@@ -62,7 +63,7 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         public PartyRelationshipType Create(string title, string displayName, string description, bool indicatesHierarchy, int maxCardinality,
             int minCardinality, bool partyRelationShipTypeDefault, PartyType partyTypePairAlowedSource, PartyType partyTypePairAlowedTarget,
-            string partyTypePairTitle, string partyTypePairDescription)
+            string partyTypePairTitle, string partyTypePairDescription,string conditionSource,string conditionTarget)
         {
 
             Contract.Requires(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(partyTypePairTitle));
@@ -87,7 +88,9 @@ namespace BExIS.Dlm.Services.Party
                 Description = partyTypePairDescription,
                 PartyRelationshipType = entity,
                 Title = partyTypePairTitle,
-                PartyRelationShipTypeDefault = partyRelationShipTypeDefault
+                PartyRelationShipTypeDefault = partyRelationShipTypeDefault,
+                ConditionSource=conditionSource,
+                ConditionTarget=conditionTarget
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -198,9 +201,10 @@ namespace BExIS.Dlm.Services.Party
 
 
         #endregion
+
         #region PartyTypePair
         public PartyTypePair AddPartyTypePair(string title, PartyType allowedSource, PartyType allowedTarget, string description, bool partyRelationShipTypeDefault,
-            PartyRelationshipType partyRelationshipType)
+            PartyRelationshipType partyRelationshipType,string conditionSource,string conditionTarget)
         {
             Contract.Requires(!string.IsNullOrEmpty(title));
             Contract.Requires(allowedSource != null && allowedSource.Id > 0);
@@ -214,7 +218,9 @@ namespace BExIS.Dlm.Services.Party
                 Description = description,
                 PartyRelationshipType = partyRelationshipType,
                 Title = title,
-                PartyRelationShipTypeDefault = partyRelationShipTypeDefault
+                PartyRelationShipTypeDefault = partyRelationShipTypeDefault,
+                ConditionSource=conditionSource,
+                ConditionTarget=conditionTarget
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -296,7 +302,17 @@ namespace BExIS.Dlm.Services.Party
             }
         }
         #endregion
+
         #region additional_methods
+        public IEnumerable<PartyTypePair> GetPartyTypePairs(PartyRelationshipType partyRelationshipType,PartyType sourcePartyType, PartyType targetPartyType)
+        {
+             using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
+                var partyTypePairs=repoPartyTypePair.Get(cc =>cc.PartyRelationshipType.Id==partyRelationshipType.Id && cc.AllowedSource.Id == sourcePartyType.Id && cc.AllowedTarget.Id == targetPartyType.Id);
+                return partyTypePairs;
+            }
+        }
         public IEnumerable<PartyType> GetRootPartyTypes()
         {
             var partyTypes = new List<PartyType>();
@@ -331,16 +347,16 @@ namespace BExIS.Dlm.Services.Party
                 foreach (PartyTypePair partyTypePair in parentPartyTypePairs)
                 {
                     List<string> res = new List<string>();
-                    res.Add(partyTypePair.AllowedTarget.Title);
+                    res.Add(partyTypePair.AllowedTarget.DisplayName);
                     res.AddRange(getAllchildrens(partyTypePair.AllowedTarget, inheritencePartyTypepairs));
-                    if (rootPartiesDic.ContainsKey(partyTypePair.AllowedSource.Title))
+                    if (rootPartiesDic.ContainsKey(partyTypePair.AllowedSource.DisplayName))
                     {
-                        var combinedChild = rootPartiesDic[partyTypePair.AllowedSource.Title];
+                        var combinedChild = rootPartiesDic[partyTypePair.AllowedSource.DisplayName];
                         combinedChild.AddRange(res);
-                        rootPartiesDic[partyTypePair.AllowedSource.Title] = combinedChild.Distinct().ToList();
+                        rootPartiesDic[partyTypePair.AllowedSource.DisplayName] = combinedChild.Distinct().ToList();
                     }
                     else
-                        rootPartiesDic.Add(partyTypePair.AllowedSource.Title, res.Distinct().ToList());
+                        rootPartiesDic.Add(partyTypePair.AllowedSource.DisplayName, res.Distinct().ToList());
                 }
 
             }
