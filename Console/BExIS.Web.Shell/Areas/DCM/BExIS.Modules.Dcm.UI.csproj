@@ -451,6 +451,7 @@
     <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
     <None Include="Properties\PublishProfiles\DCM211.pubxml" />
     <None Include="Properties\PublishProfiles\DCM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\DCM21108.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />

@@ -194,6 +194,7 @@
     <None Include="Properties\PublishProfiles\BAM-Pub.pubxml" />
     <None Include="Properties\PublishProfiles\BAM.pubxml" />
     <None Include="Properties\PublishProfiles\BAM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM21108.pubxml" />
     <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
     <None Include="Properties\PublishProfiles\BPP211_bam.pubxml" />
     <None Include="Properties\PublishProfiles\FileSystem.pubxml" />

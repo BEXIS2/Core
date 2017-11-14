@@ -423,6 +423,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
+    <None Include="Properties\PublishProfiles\DDM21108.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
