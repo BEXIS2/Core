@@ -13,8 +13,8 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string Name { get; set; }
         public virtual string Alias { get; set; }
         public virtual string Description { get; set; }
-        public virtual DateTime? StartDate { get; set; }
-        public virtual DateTime? EndDate { get; set; }
+        public virtual DateTime StartDate { get; set; }
+        public virtual DateTime EndDate { get; set; }
         public virtual bool IsTemp { get; set; }
 
         public Party()

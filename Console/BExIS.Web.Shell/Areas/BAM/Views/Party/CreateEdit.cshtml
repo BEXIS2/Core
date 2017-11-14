@@ -140,7 +140,8 @@
     //if it is in create mode and the first tab is activate;it opens the next tab
     function submitClick()
     {
-        checkDateRange();
+        if(!checkDateRange())
+            return;
         if(!validateRelationships())
         {
             return false;
@@ -188,10 +189,13 @@
         endDate = new Date($parentElement.find("[id*='EndDate']").val());
         $warningElement = $parentElement.find("#divDatesError");
         if ((startDate > endDate))
-            //first span should be there for the class and is not usable because of automatic changing by validation
+        {  //first span should be there for the class and is not usable because of automatic changing by validation
             $warningElement.html("<span class='input-validation-error' ></span><span id='endDateValidation-error' style='background-color: #ffeeee;border: 1px solid #ff0000;'>End date should be equal or greater than start date.</span>");
+            return false;
+        }
         else
             $warningElement.html("");
+        return true;
     }
 
     function OnChangePartyType(e) {

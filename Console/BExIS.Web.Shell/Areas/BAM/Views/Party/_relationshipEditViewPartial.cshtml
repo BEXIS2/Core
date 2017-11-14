@@ -30,7 +30,7 @@
             }
             else
             {
-                @Html.Telerik().DatePicker().Name("StartDate").HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
+                @Html.Telerik().DatePickerFor(m=>m.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
 
             }
         </td>
@@ -44,7 +44,7 @@
             }
             else
             {
-                @Html.Telerik().DatePicker().Name("EndDate").HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
+                @Html.Telerik().DatePickerFor(m => m.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
             }
         </td>
     </tr>
@@ -62,14 +62,15 @@
     </div>
 }
 <script>
+    var thisObject=$("#tblRelationship");
     $("#savePartyRelationship").bind("click", function () {
         var partyRelationshipData={partyRelationship:{
-            description:$("#tblRelationship #Description").val(),
+            description:thisObject.find("#Description").val(),
             id: @Model.Id,
-            scope:$("#Scope").val() ,
-            startDate:new Date($("#StartDate").val()),
-            endDate:new Date($("#EndDate").val()),
-            title:$("#Title").val()
+            scope:thisObject.find("#Scope").val() ,
+            startDate:new Date(thisObject.find("#StartDate").val()),
+            endDate:new Date(thisObject.find("#EndDate").val()),
+            title:thisObject.find("#Title").val()
         }};
 
         $.ajax({
