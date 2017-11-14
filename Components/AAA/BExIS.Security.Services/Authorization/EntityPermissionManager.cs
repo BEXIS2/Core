@@ -328,6 +328,20 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public bool HasEffectiveRight<T>(string subjectName, string entityName, Type entityType, long key, RightType rightType) where T : Subject
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+
+                var subject = subjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+
+                return entity != null && (subject != null && (GetEffectiveRights(subject.Id, entity.Id, key) & (int)rightType) > 0);
+            }
+        }
+
         public bool HasRight(long? subjectId, long entityId, long key, RightType rightType)
         {
             using (var uow = this.GetUnitOfWork())
