@@ -189,7 +189,10 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                     case "Decimal":
                         {
-                            //Same idea as for double
+                            /*
+                             * Same idea as for double but for decimal you have to explicitly allow 
+                             * scientific notation with the flags NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint
+                             **/
                             try
                             {
                                 if (decimalCharacter.Equals(DecimalCharacter.point))
@@ -199,7 +202,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains(','))
                                         {
-                                            return Convert.ToDecimal(value, new CultureInfo("en-US"));
+                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
                                         }
                                         else
                                         {
@@ -219,7 +222,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
-                                            return Convert.ToDecimal(value, new CultureInfo("de-DE"));
+                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("de-DE"));
                                         }
                                         else
                                         {
@@ -232,7 +235,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                     }
                                 }
-                                return Convert.ToDecimal(value);
+                                return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
                             }
                             catch (Exception ex)
                             {

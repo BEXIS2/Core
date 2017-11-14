@@ -227,18 +227,6 @@
 
     $(document).ready(function () {
 
-        /*
-        //Is this function even needed?
-        $('select[name="DataType"]').each(function (index) {
-            var selectId = $(this).attr('headerfieldId');
-            var val = $('select[name="Unit"][headerfieldId="' + selectId + '"]').val();
-            if(val > 0)
-            {
-                $(this).prop("disabled", false);
-
-            }
-        });*/
-
         //Destroy the handsontable from the last step because it's causing performance problems
         if (hotActive) {
             hot.destroy();
@@ -252,7 +240,7 @@
 
                 // send to bus
                 $.post('@Url.Action("SaveUnitSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { selectFieldId: selectId, selectOptionId: selectOptionId }, function (response) {
-                    $("#Step3").html(response);
+                    $('#StepView > div').first().html(response);
                 });
             }
         });
@@ -263,7 +251,7 @@
 
             // send to bus
             $.post('@Url.Action("SaveDataTypeSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { headerfieldId: headerfieldId, selectedDataTypeId: selectedDataTypeId }, function (response) {
-                $("#Step3").html(response);
+                $('#StepView > div').first().html(response);
             });
         });
     });
@@ -287,8 +275,8 @@
                 selectedUnitId: unitID,
                 selectedDataTypeId: datatypeID
             }, function (response) {
-            $("#Step3").html(response);
-        });
+                $('#StepView > div').first().html(response);
+            });
     }
 
     //Necessary to trigger onChange even when the same option is selected again
