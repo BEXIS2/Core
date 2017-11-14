@@ -342,6 +342,11 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public bool HasEffectiveRight(long? subjectId, long entityId, long key, RightType rightType)
+        {
+            return (GetEffectiveRights(subjectId, entityId, key) & (int)rightType) > 0;
+        }
+
         public void Update(EntityPermission entity)
         {
             using (var uow = this.GetUnitOfWork())
