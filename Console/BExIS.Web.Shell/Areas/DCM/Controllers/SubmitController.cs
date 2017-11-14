@@ -33,6 +33,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private FileStream Stream;
         private TaskManager TaskManager;
 
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
@@ -191,83 +194,97 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<ListViewItem> LoadDatasetVersionViewList(DataStructureType dataStructureType)
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            ICollection<long> datasetIDs = new List<long>();
-            datasetIDs = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset),
-                RightType.Write).ToList();
-
             DataStructureManager dataStructureManager = new DataStructureManager();
-            this.Disposables.Add(dataStructureManager);
-
             DatasetManager dm = new DatasetManager();
-            this.Disposables.Add(dm);
 
-            Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
-            dmtemp = dm.GetDatasetLatestMetadataVersions();
 
-            List<ListViewItem> temp = new List<ListViewItem>();
-
-            if (dataStructureType.Equals(DataStructureType.Structured))
+            try
             {
-                List<StructuredDataStructure> list = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
+                ICollection<long> datasetIDs = new List<long>();
+                datasetIDs = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset),
+                    RightType.Write).ToList();
 
-                foreach (StructuredDataStructure sds in list)
+
+
+                Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
+                dmtemp = dm.GetDatasetLatestMetadataVersions();
+
+                List<ListViewItem> temp = new List<ListViewItem>();
+
+                if (dataStructureType.Equals(DataStructureType.Structured))
                 {
-                    sds.Materialize();
+                    List<StructuredDataStructure> list = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
 
-                    foreach (Dataset d in sds.Datasets)
+                    foreach (StructuredDataStructure sds in list)
                     {
-                        if (dm.IsDatasetCheckedIn(d.Id))
-                        {
-                            if (datasetIDs.Contains(d.Id))
-                            {
-                                temp.Add(new ListViewItem(d.Id,
-                                    XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d),
-                                        NameAttributeValues.title)));
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                List<UnStructuredDataStructure> list = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
+                        sds.Materialize();
 
-                foreach (UnStructuredDataStructure sds in list)
-                {
-                    foreach (Dataset d in sds.Datasets)
-                    {
-                        if (datasetIDs.Contains(d.Id))
+                        foreach (Dataset d in sds.Datasets)
                         {
                             if (dm.IsDatasetCheckedIn(d.Id))
                             {
-                                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                temp.Add(new ListViewItem(d.Id,
-                                    XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title)));
+                                if (datasetIDs.Contains(d.Id))
+                                {
+                                    temp.Add(new ListViewItem(d.Id,
+                                        xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(d).Id,
+                                            NameAttributeValues.title)));
+                                }
                             }
                         }
                     }
                 }
-            }
+                else
+                {
+                    List<UnStructuredDataStructure> list = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
 
-            return temp.OrderBy(p => p.Title).ToList();
+                    foreach (UnStructuredDataStructure sds in list)
+                    {
+                        foreach (Dataset d in sds.Datasets)
+                        {
+                            if (datasetIDs.Contains(d.Id))
+                            {
+                                if (dm.IsDatasetCheckedIn(d.Id))
+                                {
+                                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
+                                    temp.Add(new ListViewItem(d.Id,
+                                        xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title)));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return temp.OrderBy(p => p.Title).ToList();
+            }
+            finally
+            {
+                entityPermissionManager.Dispose();
+                dataStructureManager.Dispose();
+                dm.Dispose();
+            }
         }
 
         public List<ListViewItem> LoadDataStructureViewList(DataStructureType dataStructureType)
         {
             DataStructureManager dsm = new DataStructureManager();
-            this.Disposables.Add(dsm);
 
-            List<ListViewItem> temp = new List<ListViewItem>();
-
-            foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
+            try
             {
-                string title = datasStructure.Name;
+                List<ListViewItem> temp = new List<ListViewItem>();
 
-                temp.Add(new ListViewItem(datasStructure.Id, title));
+                foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
+                {
+                    string title = datasStructure.Name;
+
+                    temp.Add(new ListViewItem(datasStructure.Id, title));
+                }
+
+                return temp.OrderBy(p => p.Title).ToList();
             }
-
-            return temp.OrderBy(p => p.Title).ToList();
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         public List<ListViewItem> LoadResearchPlanViewList()
@@ -307,7 +324,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // is checkedIn?
                     if (dm.IsDatasetCheckedIn(datasetid))
                     {
-                        title = XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(datasetid),
+                        title = xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(datasetid).Id,
                             NameAttributeValues.title);
                     }
 

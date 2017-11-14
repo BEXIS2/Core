@@ -158,7 +158,7 @@ namespace BExIS.IO.Transform.Output
 
             Cell cell = new Cell();
             cell.CellReference = cellRef;
-            // cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndexArray);
+            cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndexArray);
             //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
             //cell.CellValue = new CellValue(variableValue.Value.ToString());
 

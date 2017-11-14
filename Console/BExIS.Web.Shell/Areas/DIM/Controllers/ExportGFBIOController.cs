@@ -15,9 +15,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
-            var datasetIds = dm.GetDatasetLatestIds();
+            try
+            {
+                var datasetIds = dm.GetDatasetLatestIds();
 
-            return datasetIds;
+                return datasetIds;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         // GET: api/Export/5

@@ -446,7 +446,12 @@ namespace BExIS.Web.Shell.Controllers
                     tuples.Add(newDt);
                 }
                 dm.EditDatasetVersion(workingCopy, tuples, null, null);
-                dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
+				dm.CheckInDataset(ds.Id, "for testing purposes 1", "Javad", ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                dm.CheckInDataset(ds.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.SyncView(ds.Id, ViewCreationBehavior.Create);                
+                dm.SyncView(ds.Id, ViewCreationBehavior.Refresh);
+                dm.SyncView(ds.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
@@ -827,7 +832,6 @@ namespace BExIS.Web.Shell.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             var entityPermissions = entityPermissionManager.EntityPermissionRepository.Get();
 
-            this.Disposables.Add(entityPermissionManager);
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
             for (int i = 0; i < 500; i++)
             {

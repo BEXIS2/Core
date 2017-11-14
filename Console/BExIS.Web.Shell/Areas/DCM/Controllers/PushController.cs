@@ -124,10 +124,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private SendBigFilesToServerModel LoadDefaultModel()
         {
+
+
             var model = new SendBigFilesToServerModel
             {
                 ServerFileList = GetServerFileList(),
-                SupportedFileExtentions = UploadWizardHelper.GetExtentionList(DataStructureType.Unstructured)
+                SupportedFileExtentions = UploadWizardHelper.GetExtentionList(DataStructureType.Unstructured, this.Session.GetTenant()),
+                FileSize = this.Session.GetTenant().MaximumUploadSize
             };
 
             return model;

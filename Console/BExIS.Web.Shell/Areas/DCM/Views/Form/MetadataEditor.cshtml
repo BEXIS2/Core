@@ -85,13 +85,13 @@
 }
 
 
-<div id="MetadataEditor" style="width: 89%">
+<div id="MetadataEditor" style="width: 89%" >
 <div>
     <table>
         <tr>
             @if (locked)
             {
-                <td>
+                <td style="width:300px;">
                     @if (Model.EditRight && Model.EditAccessRight)
                     {
                         <button onclick="edit()" class="bx-button function">Edit</button>
@@ -244,20 +244,16 @@
 
         });
 
-    $(window)
-        .resize(function() {
-            setTimeout(function() {
-                    //alert("r");
+    $(window).resize(function () {
 
-                    bindMinimap();
-                },
-                120);
-
+        setTimeout(function () {
+            //alert("r");
+            bindMinimap();
+        }, 120);
         });
 
     $("#showminimap")
         .click(function() {
-
             bindMinimap();
         });
 
@@ -316,13 +312,15 @@ function OnSuccess() {
     $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function(response) {
 
-            if (response.length > 0) {
-                if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
-                    loadExternalXml();
-                }
-            } else {
-                loadExternalXml();
-            }
+            loadExternalXml();
+
+            //if (response.length > 0) {
+            //    if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
+            //        loadExternalXml();
+            //    }
+            //} else {
+            //    loadExternalXml();
+            //}
         });
 }
 

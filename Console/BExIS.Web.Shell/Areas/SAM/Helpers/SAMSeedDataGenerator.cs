@@ -50,10 +50,17 @@ namespace BExIS.Modules.Sam.UI.Helpers
             var entityPermissionFeature = featureManager.FindByName("Entity Permissions") ?? featureManager.Create("Entity Permissions", "", administrationFeature);
             var entityPermissionOperation = operationManager.Find("SAM", "EntityPermissions", "*") ?? operationManager.Create("SAM", "EntityPermissions", "*", entityPermissionFeature);
 
+            // Dataset Management
+            var datasetManagementFeature = featureManager.FindByName("Dataset Management") ?? featureManager.Create("Dataset Management", "", administrationFeature);
+            var datasetManagementOperation = operationManager.Find("SAM", "Datasets", "*") ?? operationManager.Create("SAM", "Datasets", "*", datasetManagementFeature);
+
+            // Help
+            var helpOperation = operationManager.Find("SAM", "Help", "*") ?? operationManager.Create("SAM", "Help", "*");
+
             var featurePermissionManager = new FeaturePermissionManager();
 
-            if (!featurePermissionManager.Exists(null, featurePermissionFeature, PermissionType.Grant))
-                featurePermissionManager.Create(null, featurePermissionFeature);
+            if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
+                featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);
         }
     }
 }

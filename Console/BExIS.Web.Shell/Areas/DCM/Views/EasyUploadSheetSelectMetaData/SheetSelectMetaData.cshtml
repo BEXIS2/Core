@@ -29,16 +29,12 @@
                                     <option selected value="-1" title="Please select...">Please select...</option>
                                 }
 
-                                @{
-                                    Tuple<long, string> tuple = Model.AvailableMetadata.Where(t => t.Item1 == Model.SelectedMetaDataId).FirstOrDefault();
-                                };
-
                                 @foreach (Tuple<long, string> metadata in Model.AvailableMetadata)
                                 {
 
                                     string selected = "";
-
-                                    if (tuple != null && tuple.Item1 == metadata.Item1)
+                                    
+                                    if (metadata.Item1 == Model.SelectedMetaDataId)
                                     {
                                         selected = "selected";
                                     }
@@ -79,14 +75,11 @@
 
             // send to bus
             $.post('@Url.Action("SaveMetaDataSelection", "EasyUploadSheetSelectMetaData", new RouteValueDictionary { { "area", "DCM" } })', { metadataId: selectedMetaDataTypeId }, function (response) {
-                //$("#Step3").html(response);
             });
         });
 
         $('.asciiFormularField').change(function () {
             $.post('@Url.Action("SaveMetaDescription", "EasyUploadSheetSelectMetaData", new RouteValueDictionary { { "area", "DCM" } })', { DescriptionTitle: $(this).val() }, function (response) {
-
-
             })
 
         })

@@ -487,6 +487,7 @@
     <None Include="Properties\PublishProfiles\BPP21105.pubxml" />
     <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\SITE.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\handsontable\handsontable.full.js" />
     <Content Include="Scripts\handsontable\handsontable.full.min.js" />
@@ -986,6 +987,10 @@
     <ProjectReference Include="..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
+      <Name>BExIS.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>

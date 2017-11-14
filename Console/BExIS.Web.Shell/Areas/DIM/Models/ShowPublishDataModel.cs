@@ -42,17 +42,20 @@ namespace BExIS.Modules.Dim.UI.Models
     {
         public string Name { get; set; }
         public List<string> DataRepos { get; set; }
+        public string Link { get; set; }
 
         public BrokerModel()
         {
             Name = "";
             DataRepos = new List<string>();
+            Link = "";
         }
 
-        public BrokerModel(string name, List<string> datarepos)
+        public BrokerModel(string name, List<string> datarepos, string link)
         {
             Name = name;
             DataRepos = datarepos;
+            Link = link;
         }
     }
 

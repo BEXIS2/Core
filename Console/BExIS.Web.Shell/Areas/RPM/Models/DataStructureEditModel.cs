@@ -120,10 +120,18 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public AttributePreviewStruct fill(long attributeId, bool getConstraints)
         {
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-            DataAttribute DataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
+            DataContainerManager dataAttributeManager = null;
+            try
+            {
+                dataAttributeManager = new DataContainerManager();
+                DataAttribute DataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
 
-            return this.fill(DataAttribute, getConstraints);
+                return this.fill(DataAttribute, getConstraints);
+            }
+            finally
+            {
+                dataAttributeManager.Dispose();
+            }
         }
 
         public AttributePreviewStruct fill(DataAttribute dataAttribute)
@@ -188,17 +196,25 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public new VariablePreviewStruct fill(long attributeId, bool getConstraints)
         {
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-            DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
-            Variable variable = new Variable()
+            DataContainerManager dataAttributeManager = null;
+            try
             {
-                Label = dataAttribute.Name,
-                Description = dataAttribute.Description,
-                Unit = dataAttribute.Unit,
-                DataAttribute = dataAttribute
-            };
+                dataAttributeManager = new DataContainerManager();
+                DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
+                Variable variable = new Variable()
+                {
+                    Label = dataAttribute.Name,
+                    Description = dataAttribute.Description,
+                    Unit = dataAttribute.Unit,
+                    DataAttribute = dataAttribute
+                };
 
-            return this.fill(variable, getConstraints);
+                return this.fill(variable, getConstraints);
+            }
+            finally
+            {
+                dataAttributeManager.Dispose();
+            }
         }
 
         public VariablePreviewStruct fill(Variable variable)
@@ -242,39 +258,47 @@ namespace BExIS.Modules.Rpm.UI.Models
         public List<ItemStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
         {
             List<ItemStruct> UnitStructs = new List<ItemStruct>();
-            UnitManager unitmanager = new UnitManager();
-            List<Unit> units = new List<Unit>();
-            if (unitmanager.DimensionRepo.Get(dimensionId) != null)
-                units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
-
-            foreach (Unit u in units)
+            UnitManager unitmanager = null;
+            try
             {
-                if (u.Name.ToLower() != "none")
+                unitmanager = new UnitManager();
+                List<Unit> units = new List<Unit>();
+                if (unitmanager.DimensionRepo.Get(dimensionId) != null)
+                    units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+
+                foreach (Unit u in units)
                 {
-                    foreach (DataType dt in u.AssociatedDataTypes)
+                    if (u.Name.ToLower() != "none")
                     {
-                        if (dt.Id == dataTypeId)
+                        foreach (DataType dt in u.AssociatedDataTypes)
                         {
-                            UnitStructs.Add(new ItemStruct()
+                            if (dt.Id == dataTypeId)
                             {
-                                Name = u.Name,
-                                Id = u.Id
-                            });
-                            break;
+                                UnitStructs.Add(new ItemStruct()
+                                {
+                                    Name = u.Name,
+                                    Id = u.Id
+                                });
+                                break;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    UnitStructs.Add(new ItemStruct()
+                    else
                     {
-                        Name = u.Name,
-                        Id = u.Id
-                    });
+                        UnitStructs.Add(new ItemStruct()
+                        {
+                            Name = u.Name,
+                            Id = u.Id
+                        });
+                    }
                 }
-            }
 
-            return UnitStructs;
+                return UnitStructs;
+            }
+            finally
+            {
+                unitmanager.Dispose();
+            }
         }
     }
 
@@ -296,15 +320,24 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Units = new List<ItemStruct>();
             this.DataTypes = new List<ItemStruct>();
 
-            foreach (Unit u in new UnitManager().Repo.Get())
-            {
-                this.Units.Add(new ItemStruct()
-                {
-                    Name = u.Name,
-                    Id = u.Id
-                });
-            }
+            UnitManager unitManager = null;
 
+            try
+            {
+                unitManager = new UnitManager();
+                foreach (Unit u in unitManager.Repo.Get())
+                {
+                    this.Units.Add(new ItemStruct()
+                    {
+                        Name = u.Name,
+                        Id = u.Id
+                    });
+                }
+            }
+            finally
+            {
+                unitManager.Dispose();
+            }
             this.Units = this.Units.OrderBy(u => u.Name).ToList();
         }
     }
@@ -327,13 +360,21 @@ namespace BExIS.Modules.Rpm.UI.Models
         public AttributePreviewModel fill(bool getConstraints)
         {
             this.AttributePreviews = new List<AttributePreviewStruct>();
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-
-            foreach (DataAttribute da in dataAttributeManager.DataAttributeRepo.Get().ToList())
+            DataContainerManager dataAttributeManager = null;
+            try
             {
-                this.AttributePreviews.Add(new AttributePreviewStruct().fill(da, getConstraints));
+                dataAttributeManager = new DataContainerManager();
+
+                foreach (DataAttribute da in dataAttributeManager.DataAttributeRepo.Get().ToList())
+                {
+                    this.AttributePreviews.Add(new AttributePreviewStruct().fill(da, getConstraints));
+                }
+                return this;
             }
-            return this;
+            finally
+            {
+                dataAttributeManager.Dispose();
+            }
         }
     }
 
@@ -363,42 +404,50 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             if (dataStructureId > 0)
             {
-                DataStructureManager dataStructureManager = new DataStructureManager();
-                if (dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId) != null)
+                DataStructureManager dataStructureManager = null;
+                try
                 {
-                    StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-                    VariablePreviewStruct variablePreview;
-
-                    this.Id = dataStructure.Id;
-                    this.Name = dataStructure.Name;
-                    this.Description = dataStructure.Description;
-
-                    if (dataStructure.Datasets.Count > 0)
+                    dataStructureManager = new DataStructureManager();
+                    if (dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId) != null)
                     {
-                        this.inUse = true;
-                    }
+                        StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                        VariablePreviewStruct variablePreview;
 
-                    foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
-                    {
-                        variablePreview = new VariablePreviewStruct().fill(v);
-                        this.VariablePreviews.Add(variablePreview);
+                        this.Id = dataStructure.Id;
+                        this.Name = dataStructure.Name;
+                        this.Description = dataStructure.Description;
+
+                        if (dataStructure.Datasets.Count > 0)
+                        {
+                            this.inUse = true;
+                        }
+
+                        foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
+                        {
+                            variablePreview = new VariablePreviewStruct().fill(v);
+                            this.VariablePreviews.Add(variablePreview);
+                        }
                     }
+                    else if (dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId) != null)
+                    {
+                        UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId);
+
+                        this.Id = dataStructure.Id;
+                        this.Name = dataStructure.Name;
+                        this.Description = dataStructure.Description;
+                        this.VariablePreviews = null;
+
+                        if (dataStructure.Datasets.Count > 0)
+                        {
+                            this.inUse = true;
+                        }
+                    }
+                    return this;
                 }
-                else if (dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId) != null)
+                finally
                 {
-                    UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId);
-
-                    this.Id = dataStructure.Id;
-                    this.Name = dataStructure.Name;
-                    this.Description = dataStructure.Description;
-                    this.VariablePreviews = null;
-
-                    if (dataStructure.Datasets.Count > 0)
-                    {
-                        this.inUse = true;
-                    }
+                    dataStructureManager.Dispose();
                 }
-                return this;
             }
             else
             {
@@ -450,24 +499,39 @@ namespace BExIS.Modules.Rpm.UI.Models
 
             this.DataTypeList = new List<ItemStruct>();
 
-            foreach (DataType dt in new DataTypeManager().Repo.Get())
+            DataTypeManager dataTypeManager = null;
+            UnitManager unitManager = null;
+
+            try
             {
-                this.DataTypeList.Add(new ItemStruct()
+                dataTypeManager = new DataTypeManager();
+
+                foreach (DataType dt in dataTypeManager.Repo.Get())
                 {
-                    Name = dt.Name,
-                    Id = dt.Id
-                });
+                    this.DataTypeList.Add(new ItemStruct()
+                    {
+                        Name = dt.Name,
+                        Id = dt.Id
+                    });
+                }
+
+                this.DimensionList = new List<ItemStruct>();
+
+                unitManager = new UnitManager();
+
+                foreach (Dimension dim in unitManager.DimensionRepo.Get())
+                {
+                    this.DimensionList.Add(new ItemStruct()
+                    {
+                        Name = dim.Name,
+                        Id = dim.Id
+                    });
+                }
             }
-
-            this.DimensionList = new List<ItemStruct>();
-
-            foreach (Dimension dim in new UnitManager().DimensionRepo.Get())
+            finally
             {
-                this.DimensionList.Add(new ItemStruct()
-                {
-                    Name = dim.Name,
-                    Id = dim.Id
-                });
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
             }
         }
     }

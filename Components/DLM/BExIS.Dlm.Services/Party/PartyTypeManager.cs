@@ -280,10 +280,12 @@ namespace BExIS.Dlm.Services.Party
                 if (partyCustomAttribute.PartyType.CustomAttributes.FirstOrDefault(item => item.DisplayOrder == partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id) != null)
                     partyCustomAttribute.PartyType.CustomAttributes.Where(item => item.DisplayOrder >= partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id)
                         .ToList().ForEach(item => item.DisplayOrder = item.DisplayOrder + 1);
-                repo.Put(partyCustomAttribute);
+                repo.Merge(partyCustomAttribute);
+                var merged = repo.Get(partyCustomAttribute.Id);
+                repo.Put(merged);
                 uow.Commit();
+                return (merged);
             }
-            return (partyCustomAttribute);
         }
 
         public bool DeletePartyCustomAttribute(PartyCustomAttribute entity)

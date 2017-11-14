@@ -216,6 +216,7 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(party != null, "Provided entity can not be null");
             Contract.Requires(party.Id >= 0, "Provided entity must have a permanent ID");
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0, "No entity is persisted!");
+
             if (party.StartDate == null)
                 party.StartDate = DateTime.MinValue;
             if (party.EndDate == null || party.EndDate == DateTime.MinValue)
@@ -226,25 +227,35 @@ namespace BExIS.Dlm.Services.Party
                 party.IsTemp = false;
             else
                 party.IsTemp = true;
+      
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                var newParty = repo.Reload(party);
-                newParty.Alias = party.Alias;
-                newParty.CurrentStatus = party.CurrentStatus;
-                newParty.Description = party.Description;
-                newParty.EndDate = party.EndDate;
-                newParty.Extra = party.Extra;
-                newParty.IsTemp = party.IsTemp;
-                newParty.Name = party.Name;
-                newParty.PartyType = party.PartyType;
-                newParty.StartDate = party.StartDate;
-                //TODO:What to do ????
-                repo.Put(newParty); // Merge is required here!!!!
+                repo.Put(party); // Merge is required here!!!!
                 uow.Commit();
                 party = repo.Reload(party);
             }
             return (party);
+
+            //using (IUnitOfWork uow = this.GetUnitOfWork())
+            //{
+            //    IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+            //    var newParty = repo.Reload(party);
+            //    newParty.Alias = party.Alias;
+            //    newParty.CurrentStatus = party.CurrentStatus;
+            //    newParty.Description = party.Description;
+            //    newParty.EndDate = party.EndDate;
+            //    newParty.Extra = party.Extra;
+            //    newParty.IsTemp = party.IsTemp;
+            //    newParty.Name = party.Name;
+            //    newParty.PartyType = party.PartyType;
+            //    newParty.StartDate = party.StartDate;
+            //    //TODO:What to do ????
+            //    repo.Put(newParty); // Merge is required here!!!!
+            //    uow.Commit();
+            //    party = repo.Reload(party);
+            //}
+            //return (party);
         }
 
         public bool TempPartyToPermanent(int partyId)
@@ -435,7 +446,7 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-            party=UpdatePartyName(party);
+            party = UpdatePartyName(party);
             return (entity);
         }
 
@@ -481,7 +492,7 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
-           party= UpdatePartyName(party);
+            party = UpdatePartyName(party);
             return party.CustomAttributeValues;
         }
         public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
@@ -514,7 +525,7 @@ namespace BExIS.Dlm.Services.Party
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            entity.Party=UpdatePartyName(entity.Party);
+            entity.Party = UpdatePartyName(entity.Party);
             return (entity);
         }
 
@@ -537,7 +548,7 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
-            entity.Party=UpdatePartyName(entity.Party);
+            entity.Party = UpdatePartyName(entity.Party);
             return (entity);
         }
 
@@ -575,7 +586,7 @@ namespace BExIS.Dlm.Services.Party
                 repo.Delete(entity);
                 uow.Commit();
             }
-            partyCustomAttributeValue.Party=UpdatePartyName(partyCustomAttributeValue.Party);
+            partyCustomAttributeValue.Party = UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
         }
 

@@ -55,6 +55,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 FeatureName = feature.Name,
                 Description = feature.Description,
                 Children = new List<FeatureTreeViewModel>(),
+                ParentId = parentId,
                 IsPublic = isPublic
             };
         }

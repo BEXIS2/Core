@@ -22,6 +22,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ManageMetadataStructureController : Controller
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
         public ActionResult Delete(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
@@ -184,13 +186,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //get all informaions from xml
                 metadataStructureModel.EntityClasses = GetEntityModelList();
-                string EntityClassPath = XmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id, metadataStructureManager);
+                string EntityClassPath = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id, metadataStructureManager);
                 var entityModel =
                     metadataStructureModel.EntityClasses.Where(e => e.ClassPath.Equals(EntityClassPath))
                         .FirstOrDefault();
                 if (entityModel != null) metadataStructureModel.Entity = entityModel;
 
-                string xpath = XmlDatasetHelper.GetInformationPath(metadataStructure, NameAttributeValues.title);
+                string xpath = xmlDatasetHelper.GetInformationPath(metadataStructure.Id, NameAttributeValues.title);
 
                 var searchMetadataNode =
                     metadataStructureModel.MetadataNodes.Where(e => e.XPath.Equals(xpath)).FirstOrDefault();
@@ -198,7 +200,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     metadataStructureModel.TitleNode =
                         searchMetadataNode.DisplayName;
 
-                xpath = XmlDatasetHelper.GetInformationPath(metadataStructure,
+                xpath = xmlDatasetHelper.GetInformationPath(metadataStructure.Id,
                     NameAttributeValues.description);
 
                 //check if xsd exist
@@ -216,7 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructureModel.Id);
 
-                metadataStructureModel.Active = XmlDatasetHelper.IsActive(metadataStructure.Id);
+                metadataStructureModel.Active = xmlDatasetHelper.IsActive(metadataStructure.Id);
             }
             catch (Exception exception)
             {
@@ -236,7 +238,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<SearchMetadataNode> GetAllXPath(long metadatastructureId)
         {
             //XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
-            return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+            XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
+
+            return xmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
         // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.  
@@ -301,7 +305,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Entity.ClassPath;
                     else
                     {
-                        xmlDocument = XmlDatasetHelper.AddReferenceToXml(xmlDocument, nodeNames.entity.ToString(),
+                        xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument, nodeNames.entity.ToString(),
                             metadataStructureModel.Entity.ClassPath, AttributeType.entity.ToString(), "extra/entity");
                     }
 
@@ -312,7 +316,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Active.ToString();
                     else
                     {
-                        xmlDocument = XmlDatasetHelper.AddReferenceToXml(xmlDocument,
+                        xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument,
                             NameAttributeValues.active.ToString(),
                             metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(),
                             "extra/parameters/parameter");

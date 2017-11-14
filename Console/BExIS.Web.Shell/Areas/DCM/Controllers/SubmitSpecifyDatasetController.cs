@@ -12,14 +12,17 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitSpecifyDatasetController : Controller
+    public class SubmitSpecifyDatasetController : BaseController
     {
         private TaskManager TaskManager;
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        //
+
         // GET: /DCM/SpecifyDataset/
 
         [HttpGet]
@@ -63,11 +66,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult SpecifyDataset(object[] data)
         {
-            DatasetManager dm = new DatasetManager();
 
-            try
+            using (var unitOfWork = this.GetUnitOfWork())
             {
-
                 TaskManager = (TaskManager)Session["TaskManager"];
                 ChooseDatasetViewModel model = new ChooseDatasetViewModel();
                 model.StepInfo = TaskManager.Current();
@@ -81,8 +82,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         Dataset ds = new Dataset();
                         try
                         {
-                            dm = new DatasetManager();
-                            ds = dm.GetDataset((long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]));
+                            ds = unitOfWork.GetReadOnlyRepository<Dataset>().Get((long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]));
 
                             TaskManager.AddToBus(TaskManager.DATASTRUCTURE_ID, ((DataStructure)(ds.DataStructure.Self)).Id);
                             TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TITLE, ((DataStructure)(ds.DataStructure.Self)).Name);
@@ -118,11 +118,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
 
+
                 return PartialView(model);
-            }
-            finally
-            {
-                dm.Dispose();
             }
         }
 
@@ -210,7 +207,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //Add Metadata to Bus
                 //TITLE
-                TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
+                TaskManager.AddToBus(TaskManager.DATASET_TITLE, xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
 
                 ResearchPlanManager rpm = new ResearchPlanManager();
                 ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);

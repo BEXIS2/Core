@@ -1,18 +1,12 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using OfficeOpenXml;
 using System.IO;
 using System.Linq;
-using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml.Spreadsheet;
 using BExIS.Utils.Models;
 using Newtonsoft.Json;
@@ -28,9 +22,8 @@ namespace BExIS.Utils.Helpers
         private Stylesheet _stylesheet;
         private int maxCellCount = -1;
         private List<List<String>> table = new List<List<string>>();
-        private List<Uri> worksheetUris;
 
-        public void Open(FileStream fileStream)
+        public JsonTableGenerator(FileStream fileStream)
         {
             this.fileStream = fileStream;
         }
@@ -44,8 +37,7 @@ namespace BExIS.Utils.Helpers
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
             _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
             _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
-
-            string sheetId = "";
+            
             WorksheetPart worksheetPart = null;
             foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
             {
@@ -60,6 +52,7 @@ namespace BExIS.Utils.Helpers
 
             OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
 
+            int expectedRowIndex = 1;
             while (reader.Read())
             {
                 if (reader.ElementType == typeof(DocumentFormat.OpenXml.Spreadsheet.Row))
@@ -70,6 +63,16 @@ namespace BExIS.Utils.Helpers
                         DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
 
                         List<String> rowAsStringList = new List<string>();
+
+                        //Since this library will ignore empty rows, check if we skipped some and add empty rows if necessary
+                        //This will still ignore empty rows at the end of the file but those wouldn't have any influence on the indices of data & header anyway
+                        while(row.RowIndex > expectedRowIndex)
+                        {
+                            List<String> dummyRow = new List<string>();
+                            dummyRow.Add("");
+                            table.Add(dummyRow);
+                            expectedRowIndex++;
+                        }
 
                         // create a new cell
                         Cell c = new Cell();
@@ -109,6 +112,18 @@ namespace BExIS.Utils.Helpers
                                         int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                         SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                         value = sharedStringItem.InnerText;
+                                    }
+                                    //If cell contains boolean (doesn't always work for files saved with libre office)
+                                    else if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.Boolean)
+                                    {
+                                        if(c.InnerText == "1")
+                                        {
+                                            value = "true";
+                                        }
+                                        else
+                                        {
+                                            value = "false";
+                                        }
                                     }
                                     // not a text
                                     else if (c.StyleIndex != null && c.StyleIndex.HasValue)
@@ -169,7 +184,7 @@ namespace BExIS.Utils.Helpers
 
                                     rowAsStringList.Add(value);
 
-                                }//end if cell value
+                                }//end if cell value null
                                 else
                                 {
                                     rowAsStringList.Add("");
@@ -179,7 +194,12 @@ namespace BExIS.Utils.Helpers
                             expectedIndex++;
                         }//for children of row
 
+                        //Check if there's a new max length for the length of a row
                         maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
+
+                        //Just read a row, so increase the expected index for the next one
+                        expectedRowIndex++;
+
                         table.Add(rowAsStringList);
                     } while (reader.ReadNextSibling()); // Skip to the next row
 
