@@ -522,7 +522,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
                         dm.EditDatasetVersion(workingCopy, null, null, null);
-                        dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault());
+                        dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
                         //add to index
                         // ToDo check which SearchProvider it is, default luceneprovider
