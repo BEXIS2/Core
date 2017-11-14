@@ -254,7 +254,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "bool", "bool" },
                 { "boolean", "bool" },
                 { "date", "date" },
-                { "datetime", "date" },
+                { "datetime", "timestamp without time zone" },
                 { "time", "time" },
                 { "decimal", "numeric" },
                 { "double", "float8" },
