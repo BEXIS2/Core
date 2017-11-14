@@ -61,7 +61,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 //if (workflow == null) workflow = workflowManager.Create("Search Help", "", DataDiscovery);
 
                 //operationManager.Create("DDM", "Help", "*", null, workflow);
-                operationManager.Create("DDM", "Help", "*", DataDiscovery);
+                operationManager.Create("DDM", "Help", "*");
 
                 #endregion
 
