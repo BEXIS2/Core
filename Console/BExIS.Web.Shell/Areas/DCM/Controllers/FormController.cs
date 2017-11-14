@@ -61,6 +61,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var stepInfoModelHelpers = new List<StepModelHelper>();
             var Model = new MetadataEditorModel();
 
+
             TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
 
             AdvanceTaskManagerBasedOnExistingMetadata(metadataStructureId);
@@ -98,15 +99,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Model.FromEditMode = edit;
             Model.Created = created;
 
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
+            {
+                if (TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE] != null)
+                    Model.DatasetTitle = TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE].ToString();
+            }
+            else
+                Model.DatasetTitle = "No Title available.";
+
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
                 var entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                 Model.EditRight = hasUserEditRights(entityId);
                 Model.EditAccessRight = hasUserEditAccessRights(entityId);
                 Model.DatasetId = entityId;
+
+
             }
             else
             {
+                Model.DatasetTitle = "No Title available.";
                 Model.EditRight = false;
                 Model.EditAccessRight = false;
                 Model.DatasetId = -1;
@@ -127,7 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["ShowOptional"] = false;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            if (TaskManager == null)
+            if (TaskManager == null || resetTaskManager)
             {
                 TaskManager = new CreateTaskmanager();
                 loadFromExternal = true;
@@ -2683,7 +2695,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasEffectiveRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
@@ -2795,7 +2807,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
                 }
 
-                return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = true, locked = true });
+                return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = false, locked = true });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
