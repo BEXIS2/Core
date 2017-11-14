@@ -54,7 +54,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #region Help Workflow
 
-                operationManager.Create("DIM", "Help", "*", DataDissemination);
+                operationManager.Create("DIM", "Help", "*");
 
                 #endregion
 

@@ -119,7 +119,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Help Workflow
 
-                operationManager.Create("DCM", "Help", "*", DataCollectionFeature);
+                operationManager.Create("DCM", "Help", "*");
 
                 #endregion
 
