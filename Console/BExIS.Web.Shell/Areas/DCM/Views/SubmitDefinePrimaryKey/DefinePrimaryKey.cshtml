@@ -16,20 +16,21 @@
 
         <div id="variableCheckBoxList" class="uploadWizardStep_Content stepper">
 
-
+            <div style="height:400px; overflow:auto">
                 @foreach (ListViewItem s in Model.VariableLableList)
                 {
-                
+
 
                     if (Model.PK_Id_List != null)
                     {
                         if (Model.PK_Id_List.Contains(s.Id))
                         {
-                             @Html.CheckBox(@s.Title,true)  <b>@s.Title</b> <br />
+                            @Html.CheckBox(@s.Title, true)  <b>@s.Title</b> <br />
                         }
-                        else { 
-                        
-                         @Html.CheckBox(@s.Title,false)  <b>@s.Title</b> <br />
+                        else
+                        {
+
+                            @Html.CheckBox(@s.Title, false)  <b>@s.Title</b> <br />
                         }
                     }
                     else
@@ -39,6 +40,7 @@
 
 
                 }
+            </div>
 
              <br />
             <p>
