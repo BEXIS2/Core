@@ -355,7 +355,7 @@ namespace BExIS.Security.Services.Authorization
                 var subject = subjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
                 var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
 
-                return entity != null && (subject != null && (GetEffectiveRights(subject.Id, entity.Id, key) & (int)rightType) > 0);
+                return HasEffectiveRight(subject, entity, key, rightType);
             }
         }
 
