@@ -11,9 +11,13 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Index()
         {
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant(Request.IsAuthenticated ? "Dashboard" : "Home", this.Session.GetTenant());
+            if (Request.IsAuthenticated)
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Request.IsAuthenticated ? "Dashboard" : "Home", this.Session.GetTenant());
+                return View();
+            }
 
-            return View();
+            return RedirectToAction("Index", "Home", new { area = "ddm" });
         }
 
         [DoesNotNeedDataAccess]
