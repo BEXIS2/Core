@@ -240,11 +240,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 }
 
                 if (Exist("FullName", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("PersonName", LinkElementType.MetadataNestedAttributeUsage))
+                    Exist("PersonName", LinkElementType.ComplexMetadataAttribute))
                 {
                     Debug.WriteLine("FullName");
-                    createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.MetadataNestedAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager);
+                    createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootTo, metadataRef, mappingManager);
+                    createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootFrom, metadataRef, mappingManager);
                 }
 
                 if (Exist("Text", LinkElementType.MetadataNestedAttributeUsage) &&
