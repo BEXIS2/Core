@@ -111,9 +111,18 @@ namespace BExIS.IO.Transform.Input
             // open excel file
             spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
 
-            Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
-            ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
-
+            if(spreadsheetDocument != null)
+            {
+                if(spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
+                {
+                    Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
+                }
+                
+                if(spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+                {
+                    ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
+                }
+            }
         }
 
         /// <summary>
