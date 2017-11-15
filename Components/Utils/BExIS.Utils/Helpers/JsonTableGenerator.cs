@@ -286,6 +286,9 @@ namespace BExIS.Utils.Helpers
             return columnIndex;
         }
 
+        /*
+         * Returns a dictionary, containing the Uris of all worksheets as keys and their names (displaynames) as values
+         * */
         public Dictionary<Uri, String> GetWorksheetUris()
         {
             if (this.fileStream != null)
