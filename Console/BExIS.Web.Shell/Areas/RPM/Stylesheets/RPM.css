@@ -219,9 +219,11 @@ max-height:200px;
 width:330px;
 }
 .t-arrow-down.bx-rpm-dropdownArrow {
-margin-left:-23px;
-z-index:1;
-position:relative;
+    left: -15px;
+    top: -25px;
+    z-index: 1;
+    float: right;
+    position: relative;
 }
 
 .bx-dropdown, .bx-input{
