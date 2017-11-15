@@ -7,7 +7,6 @@ using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
@@ -119,8 +118,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     MetadataStructureId = metadataStructureId,
                     DataStructureId = dataStructureId,
                     ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
+                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
+                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
                 };
 
                 //set metadata in session
@@ -147,8 +146,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
             var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
-            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
-            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
+            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "Form" }, { "area", "Form" }, { "type", "reset" } });
+            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "Form" }, { "area", "DCM" }, { "type", "cancel" } });
             result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
 
             var view = this.Render("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
@@ -244,7 +243,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
                     // TODO: refactor Download Right not existing, so i set it to read
-                    bool downloadAccess = entityPermissionManager.HasEffectiveRight<User>(HttpContext.User.Identity.Name,
+                    bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                         "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                     //TITLE
@@ -941,7 +940,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasEffectiveRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
+            return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
         }

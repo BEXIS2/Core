@@ -597,6 +597,7 @@
     <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\DIM.pubxml" />
     <None Include="Properties\PublishProfiles\DIM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\DIM21108.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
     <Content Include="Scripts\DIM\isotope.pkgd.min.js" />

@@ -571,32 +571,33 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
 
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            if (TaskManager != null)
-            {
-                DatasetManager dm = new DatasetManager();
-                long datasetid = -1;
-                bool resetTaskManager = true;
-                XmlDocument metadata = null;
-                bool editmode = false;
-                bool created = false;
+            //TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            //if (TaskManager != null)
+            //{
+            //    DatasetManager dm = new DatasetManager();
+            //    long datasetid = -1;
+            //    bool resetTaskManager = true;
+            //    XmlDocument metadata = null;
+            //    bool editmode = false;
+            //    bool created = false;
 
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-                {
-                    datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-                }
+            //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+            //    {
+            //        datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+            //    }
 
-                if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
-                {
-                    metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
-                    editmode = true;
-                    created = true;
-                }
+            //    if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
+            //    {
+            //        metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
+            //        editmode = true;
+            //        created = true;
+            //    }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
-            }
+            //    return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+            //}
 
-            return RedirectToAction("StartMetadataEditor", "Form");
+            //return RedirectToAction("StartMetadataEditor", "Form");
+            return null;
         }
 
         public ActionResult Copy()

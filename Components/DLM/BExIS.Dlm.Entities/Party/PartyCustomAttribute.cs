@@ -19,7 +19,7 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string Name { get; set; }
         private string displayName;
         public virtual string DisplayName { get { return string.IsNullOrEmpty(displayName) ? Name : displayName; } set { displayName = value; } }
-
+        public virtual string Condition { get; set; }
         public virtual string Description { get; set; }
         public virtual bool IsValueOptional { get; set; }
         public virtual bool IsUnique { get; set; }

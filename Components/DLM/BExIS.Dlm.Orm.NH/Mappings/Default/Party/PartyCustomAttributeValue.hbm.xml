@@ -25,6 +25,7 @@
     <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" cascade="all" column="PartyRef" />
 
   </class>
+  <!--
   <database-object>
     <create>
       CREATE OR REPLACE FUNCTION public.updatepartyname()
@@ -52,5 +53,5 @@
       DROP TRIGGER updatepartyname ON public.partycustomattributevalues;
       DROP FUNCTION public.updatepartyname();
     </drop>
-  </database-object>
+  </database-object>-->
 </hibernate-mapping>

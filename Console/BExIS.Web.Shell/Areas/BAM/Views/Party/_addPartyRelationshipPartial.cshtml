@@ -16,7 +16,6 @@
             else
             {
                 hasParty = true;
-
             }
             var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
             <table>
@@ -35,26 +34,41 @@
                 </tr>
                 @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
                 {
-                    <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
-                        <td>
-                            <label>
-                                <b> @partyTypePair.Title</b>
-                            </label>
-                        </td>
-                        <td style="min-width:300px;">
-                            <table>
-                                @foreach (var party in partyTypePair.AllowedTarget.Parties)
-                                {
-                                    <tr>
-                                        <td class="partyRelationship">
-                                            <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@party.StartDate" endDate="@party.EndDate" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
-                                            <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
-                                        </td>
-                                    </tr>
-                                }
-                            </table>
-                        </td>
-                    </tr>
+                    if (@BExIS.Modules.Bam.UI.Helpers.Helper.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
+                    {
+                        <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                            <td>
+                                <label>
+                                    <b> @partyTypePair.Title</b>
+                                </label>
+                            </td>
+                            <td style="min-width:300px;">
+                                <table>
+                                    @foreach (var party in partyTypePair.AllowedTarget.Parties)
+                                    {
+                                        <tr>
+                                            <td class="partyRelationship">
+                                                <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@party.StartDate" endDate="@party.EndDate" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
+                                                <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                            <td>
+                                <label style="color:red;">
+                                    Some conditions are required to have this relationship type!<br />
+                                    If you changed some attributes please save it and reopen this section.
+                                </label>
+                            </td>
+                            <td style="min-width:300px;"></td>
+                        </tr>
+                    }
                 }
             </table>
         }
@@ -99,7 +113,6 @@
 
     $(".chkPartyRelationType").on("click", function () {
         val = $(this).val();
-        alert("here");
         $(".PartyRelationTypeDetails_" + val).show();
     });
     $(".chkPartyRelationship").on("click", function () {
