@@ -2186,19 +2186,19 @@ namespace BExIS.Dlm.Services.Data
                     }
                     if (columnDefinitionList.Count() <= 0)
                         return;
+                    try
+                    {
+                        MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+                        mvHelper.Create(datasetId, columnDefinitionList);
+                    }
+                    catch (Exception ex)
+                    {
+                        // could not create and/or install the materialized view
+                        // the logic will try to build the MV on the next data set version commit operation.
+                    }
                 }
             }
 
-            try
-            {
-                MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-                mvHelper.Create(datasetId, columnDefinitionList);
-            }
-            catch (Exception ex)
-            {
-                // could not create and/or install the materialized view
-                // the logic will try to build the MV on the next data set version commit operation.
-            }
 
         }
 
@@ -2403,6 +2403,9 @@ namespace BExIS.Dlm.Services.Data
                                     DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
                                 };
+                                // the tuple version as a history record to the list of history records to be added later when the edit and delete loops are finished.
+                                // the actual record persitence happens in the caller of this method.
+                                tupleVersionsTobeAdded.Add(tupleVersion);
                                 //DataTuple merged = 
                                 //orginalTuple.History.Add(tupleVersion);
                             }

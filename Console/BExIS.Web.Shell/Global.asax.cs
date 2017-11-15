@@ -138,7 +138,7 @@ namespace BExIS.Web.Shell
                     {
                         string message = string.Format("Unable to install module '{0}' while in pending state. Details: {1}.", moduleId, ex.Message);
                         LoggerFactory.GetFileLogger().LogCustom(message);
-                        throw new Exception(message);
+                        //throw new Exception(message);
                     }
 
                     // For security reasons, pending modules go to the "inactive" status after schema export.
@@ -149,9 +149,9 @@ namespace BExIS.Web.Shell
                     }
                     catch (Exception ex)
                     {
-                        string message = string.Format("Unable to diable module '{0}' after recovering from pending state. Details: {1}.", moduleId, ex.Message);
+                        string message = string.Format("Unable to disable module '{0}' after recovering from pending state. Details: {1}.", moduleId, ex.Message);
                         LoggerFactory.GetFileLogger().LogCustom(message);
-                        throw new Exception(message);
+                        //throw new Exception(message);
                     }
                 }
             }
@@ -171,7 +171,7 @@ namespace BExIS.Web.Shell
                     {
                         string message = string.Format("Unable to install module '{0}'. Details: {1}.", module.Id, ex.Message);
                         LoggerFactory.GetFileLogger().LogCustom(message);
-                        throw new Exception(message);
+                        //throw new Exception(message);
                     }
                 }
             }
