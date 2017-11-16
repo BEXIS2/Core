@@ -253,7 +253,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         return temp;
                     }
 
-                    string timestamp = DateTime.Now.ToString("r");
+                    string timestamp = DateTime.UtcNow.ToString("r");
                     string title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
 
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))

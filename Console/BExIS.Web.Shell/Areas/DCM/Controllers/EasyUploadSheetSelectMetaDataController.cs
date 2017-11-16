@@ -40,6 +40,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
                 }
+                //Sort the metadata structures
+                model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
 
                 //If there's already a selected Metadata schema, load its id into the model
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
@@ -125,6 +127,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
                         }
+                        //Sort the metadata structures
+                        model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
 
                         //reload model
                         model.StepInfo = TaskManager.Current();
@@ -170,6 +174,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
                     }
+                    //Sort the metadata structures
+                    model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
 
                     TaskManager.Current().SetValid(false);
 

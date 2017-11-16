@@ -77,7 +77,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-
             if (searchType == "new")
             {
                 Session["FilterAC"] = null;
