@@ -11,6 +11,7 @@ using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -194,7 +195,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                 if (!isStructured)
                 {
-                    UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
+                    UnStructuredDataStructure dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>().Get(Id);
                     if (dataStructure != null)
                     {
                         if (Name == "")
@@ -212,7 +213,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                    StructuredDataStructure dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Id);
                     if (dataStructure != null)
                     {
                         if (Name == "")
@@ -231,7 +232,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                         if (!messageModel.hasMessage)
                         {
-                            StructuredDataStructure dataStructureCopy = dataStructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(messageModel.Message));
+                            StructuredDataStructure dataStructureCopy = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Convert.ToInt64(messageModel.Message));
+                            dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().LoadIfNot(dataStructureCopy.Variables);
                             foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
                             {
                                 variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label.Trim(), v.DefaultValue, v.MissingValue, v.Description.Trim(), v.Unit);
