@@ -82,10 +82,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region create entities
 
                 // Entities
+                Entity entity = null;
 
                 if (!entityManager.Entities.Select(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).Any())
                 {
-                    Entity entity = new Entity();
+                    entity = new Entity();
                     entity.Name = "Dataset";
                     entity.EntityType = typeof(Dataset);
                     entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
