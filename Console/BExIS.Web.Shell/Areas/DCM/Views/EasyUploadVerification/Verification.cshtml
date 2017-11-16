@@ -38,7 +38,7 @@
                                 <select  style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
 
                                     <!--The default option is the name of the column in the submitted table-->
-                                    <option data-unit="1" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
+                                    <option data-unit="@ViewData["defaultUnitID"]" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
 
                                     <!--Create an option for each variable in the respective suggestions
                                         make sure that the one that is registered as selected is actually shown as selected in the list-->
