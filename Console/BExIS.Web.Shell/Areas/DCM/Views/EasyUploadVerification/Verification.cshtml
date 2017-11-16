@@ -24,6 +24,7 @@
                         <th>Variable name</th>
                         <th>Unit</th>
                         <th>Datatype</th>
+                        <th>Datatype description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,6 +94,7 @@
                                     @{
 
                                         Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
+                                        string datatypeDescription = "";
 
                                         if (tupleBla != null && tupleBla.Item3.UnitId >= 0)
                                         {
@@ -103,6 +105,7 @@
                                                 if (tupleBla.Item3.SelectedDataTypeId == dataTypeInfo.DataTypeId)
                                                 {
                                                     selected = "selected";
+                                                    datatypeDescription = dataTypeInfo.Description;
                                                 }
 
                                                 <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
@@ -110,16 +113,16 @@
                                         }
                                         else
                                         {
-                                            <option value="none" tilte="">Please select an unit</option>
+                                            <option value="none" title="Please select a unit">Please select an unit</option>
                                         }
-
-                                    }
-
                                     }
                                 </select>
                             </td>
+                            <td class="datatypeinfo">
+                                @Html.Raw(datatypeDescription)
+                            </td>
                         </tr>
-                                        }
+                    }
                 </tbody>
             </table>
         </div>
