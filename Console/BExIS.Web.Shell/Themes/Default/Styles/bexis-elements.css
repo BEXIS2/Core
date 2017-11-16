@@ -19,23 +19,23 @@ Green 05  #eff7f6   brigth
 
 /*Helpers*/
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
 }
 
 /**LINK im Content*/
 .nav a
 {
-    /*text-transform:uppercase;*/
+	/*text-transform:uppercase;*/
 
 }
 
 .nav a:hover
 {
-    /*text-transform:uppercase;*/
-    color:#ff9700 !important;
-    cursor: pointer;
+	/*text-transform:uppercase;*/
+	color:#ff9700 !important;
+	cursor: pointer;
 }
 
 
@@ -44,8 +44,8 @@ Green 05  #eff7f6   brigth
 .t-link,
 .t-in
 {
-    color:#388670;
-    cursor: pointer;
+	color:#388670;
+	cursor: pointer;
 }
 
 
@@ -57,8 +57,8 @@ Green 05  #eff7f6   brigth
 .content .t-in:hover,
 .content .t-in::selection
 {
-    font-weight:bold;
-    cursor: pointer;
+	font-weight:bold;
+	cursor: pointer;
 }
 
 .bx-selection {
@@ -83,15 +83,15 @@ button,
 	border: none;
 	padding: 10px 20px 10px 20px;
 	font-size: inherit;
-    cursor: pointer;
+	cursor: pointer;
 }
 
 a.bx-button {
-    text-decoration:none;
+	text-decoration:none;
 }
 
 a.bx-button:hover {
-    color: white;
+	color: white;
 }
 
 button.small, 
@@ -104,14 +104,14 @@ button.small,
 .ui-dialog .ui-dialog-buttonpane button 
 {
 	padding: 6px 12px 6px 12px;
-    font-size:94%;
+	font-size:94%;
 }
 
 button.smaller,
 .bx-button.smaller
 {
-    padding: 3px 12px 3px 12px;
-    font-size:80%;
+	padding: 3px 12px 3px 12px;
+	font-size:80%;
 }
 
 button.action,
@@ -146,17 +146,17 @@ button.t-state-disabled,
 	background-color:white;
 	border: 1px #afb0b1 solid;
 	color:#afb0b1;
-    cursor:not-allowed;
+	cursor:not-allowed;
 }
 
 a.bx-grid-function {
-    margin-left:2px;
-    margin-right:2px;
-    cursor: pointer;
+	margin-left:2px;
+	margin-right:2px;
+	cursor: pointer;
 }
 
 .t-grid-filter {
-     cursor: pointer;
+	 cursor: pointer;
 }
 
 input[type=radio].css-checkbox {
@@ -169,11 +169,11 @@ input[type=radio].css-checkbox {
 li.t-state-disabled .t-link
 {
 	background-color:white;
-    border-top:4px solid #afb0b1;
-    border-left:2px solid #afb0b1;
-    border-right:2px solid #afb0b1;
-    border-top-left-radius:8px;
-    border-top-right-radius:8px;
+	border-top:4px solid #afb0b1;
+	border-left:2px solid #afb0b1;
+	border-right:2px solid #afb0b1;
+	border-top-left-radius:8px;
+	border-top-right-radius:8px;
 }
 
 .bx-tab-active,
@@ -181,20 +181,20 @@ li.t-state-disabled .t-link
 {
 	background-color:#f5f5f5;
 	color:white;
-    font-weight:bold;
-    margin-bottom:0;
-    border-bottom:none;
-    vertical-align:bottom;
-    height:36px;
-    border-bottom-left-radius:0;
-    border-bottom-right-radius:0;
+	font-weight:bold;
+	margin-bottom:0;
+	border-bottom:none;
+	vertical-align:bottom;
+	height:36px;
+	border-bottom-left-radius:0;
+	border-bottom-right-radius:0;
 }
 
 .bx-tab-disabled,
 li.t-state-disabled .t-link
 {
-    color:#bbbbbb;
-    cursor:not-allowed;
+	color:#bbbbbb;
+	cursor:not-allowed;
 }
 
 /**Input**/
@@ -245,12 +245,12 @@ li.t-state-disabled .t-link
 input,
 textarea,
 select {
-    border: 1px solid #000000;    
+	border: 1px solid #000000;    
 }
 
 input,
 textarea{
-    padding-left:3px;
+	padding-left:3px;
 }
 
 input:disabled,
@@ -259,9 +259,9 @@ textarea:disabled,
 .bx-textarea.bx-disabled,
 .t-autocomplete.bx-disabled
 {
-    border-color: #565655;
-    background-color:#f5f5f5;
-    color: #565655;
+	border-color: #565655;
+	background-color:#f5f5f5;
+	color: #565655;
 }
 
 .bx-dropdown
@@ -278,13 +278,13 @@ textarea:disabled,
 
 .bx-input-icon
 {
-    height:36px;
-    margin-left:-15px;
+	height:36px;
+	margin-left:-15px;
 }
 
 .bx-input-error
 {
-    border-color: #f24c24!important;
+	border-color: #f24c24!important;
 }
 
 /*Lists*/
@@ -361,19 +361,19 @@ ul.bx-list-multi
 .overlayContent li a,
 .overlayContent li span
 {
-    color:black;
+	color:black;
 }
 
 .overlayContent .bx-more
 {
-    color:#afb0b1;
+	color:#afb0b1;
 }
 
 
 .overlay .overlayHeader i:hover
 {
 	color:white;
-    cursor:pointer;
+	cursor:pointer;
 }
 
 /*Slider*/
@@ -386,8 +386,8 @@ ul.bx-list-multi
 .slider .slider-track-high,
 .slider .slider-track-low
 {
-    background: white;
-    border: 1px solid #72b1a0;
+	background: white;
+	border: 1px solid #72b1a0;
 }
 
 .overlay .slider .slider-selection,
@@ -399,8 +399,8 @@ ul.bx-list-multi
 .overlay .slider .slider-track-high,
 .overlay .slider .slider-track-low
 {
-    background: white;
-    border: 1px solid #72b1a0;
+	background: white;
+	border: 1px solid #72b1a0;
 }
 
 
@@ -409,77 +409,77 @@ ul.bx-list-multi
 .t-window,
 .t-window-content
 {
-    background-color:#ebebeb;
-    max-width: 95vm;
+	background-color:#ebebeb;
+	max-width: 95vm;
 }
 
 .bx-window .bx-title
 {
-    padding:4px 0;
-    font-size:13pt;
+	padding:4px 0;
+	font-size:13pt;
 }
 
 .bx-window .bx-content
 {
-    background-color:white;
-    padding: 10px;
+	background-color:white;
+	padding: 10px;
 }
 
 .bx-footer
 {
-    padding: 10px 5px;
+	padding: 10px 5px;
 }
 .bx-window .bx-footer, .bx-window .bx-title
 {
-    padding: 10px 0px;
+	padding: 10px 0px;
 }
 
 .bx-footer.left,
 .bx-window .bx-footer.left
 {
-    text-align:left;
+	text-align:left;
 }
 .bx-footer.right,
 .bx-window .bx-footer.right
 {
-    text-align:right;
+	text-align:right;
 }
 .bx-footer.center,
 .bx-window .bx-footer.center
 {
-    text-align:center;
+	text-align:center;
 }
 
 /*Required and Error*/
 
 .bx-errorMsg,
 .bx-required {
-    color:#f24c24;
+	color:#f24c24;
 }
 
 .bx-required {
-    font-size:6pt;
-    vertical-align:top;
+	font-size:6pt;
+	vertical-align:top;
 }
 
 /*information section*/
 
 .bx-informationLink {
-    color:#ff9700;
-    font-weight:bold;
+	color:#ff9700;
+	font-weight:bold;
 }
 
 /*GRID*/
 .bx-selection-grid tr {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .bx-selection-grid tr:hover {
-    background-color: #eff7f6;
+	background-color: #eff7f6;
 }
 
 /**GENERAL*/
 
 .bx-mouse-pointer:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
