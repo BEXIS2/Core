@@ -272,6 +272,9 @@ namespace BExIS.Security.Services.Authorization
 
                 var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
 
+                if (subject == null)
+                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entityId && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+
                 if (subject is User)
                 {
                     var user = subject as User;
