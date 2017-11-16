@@ -177,6 +177,7 @@
     <Compile Include="Controllers\SubmitSpecifyDatasetController.cs" />
     <Compile Include="Controllers\SubmitSummaryController.cs" />
     <Compile Include="Controllers\SubmitValidationController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
@@ -523,6 +524,7 @@
   <ItemGroup>
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
+    <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
