@@ -38,6 +38,7 @@ namespace BExIS.Dlm.Services.Data
     /// </remarks>
     public class DatasetManager : IDisposable, IEntityStore
     {
+        public const long BIG_DATASET_SIZE_THRESHOLD = 5000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
         public int PreferedBatchSize { get; set; }
         private IUnitOfWork guow = null;
         public DatasetManager()
@@ -91,6 +92,7 @@ namespace BExIS.Dlm.Services.Data
         /// Provides read-only querying and access to the tuples of dataset versions
         /// </summary>
         public IReadOnlyRepository<DataTuple> DataTupleRepo { get; private set; }
+
 
         /// <summary>
         /// Provides read-only querying and access to the previously archived versions of data tuples
@@ -210,6 +212,9 @@ namespace BExIS.Dlm.Services.Data
 
                 repo.Put(dataset);
                 uow.Commit();
+                // This creates the MV when there is no data tuples attached to the dataset, hence faster.
+                // However, it asks for REFRESH to tell the underlying database to mark the MV as queryable.
+                //updateMaterializedView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
                 return (dataset);
             }
         }
@@ -696,7 +701,7 @@ namespace BExIS.Dlm.Services.Data
         /// <remarks>This method does not drop the MV if it already exists.</remarks>
         public void SyncView(Int64 datasetId, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            this.updateMaterializedView(datasetId, viewCreationBehavior);
+            this.updateMaterializedView(datasetId, viewCreationBehavior, false);
         }
 
         /// <summary>
@@ -707,7 +712,7 @@ namespace BExIS.Dlm.Services.Data
         /// <remarks>This method does not drop the MVs if they already exist.</remarks>
         public void SyncView(List<Int64> datasetIds, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCreationBehavior));
+            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCreationBehavior, false));
         }
         
         #endregion
@@ -807,6 +812,11 @@ namespace BExIS.Dlm.Services.Data
         public Int64 GetDatasetVersionEffectiveTupleCount(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleCount(datasetVersion);
+        }
+
+        public int GetDatasetLatestVersionEffectiveTupleCount(Int64 datasetId)
+        {
+            return getPrimaryTupleCountForLatestVersion(datasetId);
         }
 
         /// <summary>
@@ -1928,6 +1938,21 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        private Int32 getPrimaryTupleCountForLatestVersion(Int64 datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
+                Int32 tuplesCount = DataTupleRepo
+                    .Query(p => 
+                            (p.DatasetVersion.Status == DatasetVersionStatus.CheckedIn || p.DatasetVersion.Status == DatasetVersionStatus.Old) 
+                            && p.DatasetVersion.Dataset.Id == datasetId)
+                    .Count();
+
+                return (tuplesCount);
+            }
+        }
+
         private List<Int64> getPreviousVersionIdsOrdered(DatasetVersion datasetVersion)
         {
             List<Int64> versionIds = datasetVersion.Dataset.Versions
@@ -2150,19 +2175,35 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true)
         {
-            if(behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
+            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
+            if (dataset == null)
+                throw new Exception($"Dataset '{datasetId}' does not exist.");
+            if (!(dataset.DataStructure.Self is StructuredDataStructure))
+                throw new Exception($"Dataset '{datasetId}' is not structured.");
+
+            if (enforceSizeCheck)
+            {
+                // check the size and threshold            
+                int numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
+                int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
+                long size = numberOfTuples * numberOfVariables;
+                if (size > BIG_DATASET_SIZE_THRESHOLD)
+                    return;
+            }
+            
+            if (behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
             {
                 if (!existsMaterializedView(datasetId)) // check if the MV does not exist
                     createMaterializedView(datasetId); // creating an MV MUST NOT refresh the data. 
             }
-            if(behavior.HasFlag(ViewCreationBehavior.Refresh)) // refresh MV
+            if (behavior.HasFlag(ViewCreationBehavior.Refresh)) // refresh MV
             {
                 if (existsMaterializedView(datasetId)) // check if the MV exists
                     refreshMaterializedView(datasetId);
             }
-                
+            
         }
 
         private void createMaterializedView(long datasetId)

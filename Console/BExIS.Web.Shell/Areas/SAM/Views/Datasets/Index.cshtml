@@ -1,5 +1,5 @@
 ﻿@using BExIS.Dlm.Entities.Data;
-@model System.Collections.Generic.List<Dataset>
+@model List<Tuple<long, DatasetStatus, long, long>>
 @section Information
 {
     This maintenance tool is meant for administrators only. All datasets are
@@ -22,39 +22,49 @@
     <tr>
         <td>ID</td>
         <td>Status</td>
+        <td>Rows</td>
+        <td>Variables</td>
         <td>Actions</td>
     </tr>
-    @foreach (var item in Model)
+    @foreach (var entity in Model)
     {
         <tr>
-            <td>@(item.Id)</td>
-            @if (DatasetIds.Contains(item.Id))
+            <td>@(entity.Item1)</td>
+            @if (DatasetIds.Contains(entity.Item1))
             {
-                if (item.Status == DatasetStatus.CheckedIn)
+                if (entity.Item2 == DatasetStatus.CheckedIn)
                 {
-                    <td style="color: darkgreen">@(item.Status.ToString())</td>
+                    <td style="color: darkgreen">@(entity.Item2.ToString())</td>
+                    <td>@(entity.Item3)</td>
+                    <td>@(entity.Item4)</td>
                     <td>
-                        @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Delete", "Delete", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" })
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Versions", "Versions", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Delete", "Delete", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = entity.Item1, area = "Sam" })
                     </td>
                 }
-                else if (item.Status == DatasetStatus.CheckedOut)
+                else if (entity.Item2 == DatasetStatus.CheckedOut)
                 {
-                    <td style="color: darkblue">@(item.Status.ToString())</td>
+                    <td style="color: darkblue">@(entity.Item2.ToString())</td>
+                    <td>@(entity.Item3)</td>
+                    <td>@(entity.Item4)</td>
                     <td>
-                        @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = item.Id })
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Versions", "Versions", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = entity.Item1 })
                     </td>
                 }
-                else if (item.Status == DatasetStatus.Deleted)
+                else if (entity.Item2 == DatasetStatus.Deleted)
                 {
-                    <td style="color: red">@(item.Status.ToString())</td>
+                    <td>@(entity.Item3)</td>
+                    <td>@(entity.Item4)</td>
+                    <td style="color: red">@(entity.Item2.ToString())</td>
                     <td>
-                        @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" })
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Versions", "Versions", new { id = entity.Item1, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = entity.Item1, area = "Sam" })
                     </td>
                 }
             }
             else
             {
-                <td style="color: red">@(item.Status.ToString())</td>
+                <td style="color: red">@(entity.Item2.ToString())</td>
+                <td>@(entity.Item3)</td>
+                <td>@(entity.Item4)</td>
                 <td>
                     No Permissions!
                 </td>
