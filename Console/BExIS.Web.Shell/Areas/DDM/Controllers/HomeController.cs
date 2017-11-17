@@ -77,7 +77,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-
             if (searchType == "new")
             {
                 Session["FilterAC"] = null;
@@ -506,6 +505,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion
 
+        
         #region mydatasets
 
         /// <summary>
@@ -558,23 +558,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             headerItem = new HeaderItem()
             {
                 Name = "View",
-                DisplayName = "View",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Update",
-                DisplayName = "Update",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
+                DisplayName = "Read",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
@@ -587,6 +571,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
+            headerItem = new HeaderItem()
+            {
+                Name = "Update",
+                DisplayName = "Write",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            
             headerItem = new HeaderItem()
             {
                 Name = "Grant",

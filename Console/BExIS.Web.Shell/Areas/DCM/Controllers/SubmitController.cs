@@ -7,7 +7,6 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Xml.Helpers;
 using System;
@@ -201,8 +200,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             try
             {
                 ICollection<long> datasetIDs = new List<long>();
-                datasetIDs = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset),
-                    RightType.Write).ToList();
+                datasetIDs = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).ToList();
 
 
 

@@ -720,7 +720,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             try
             {
 
-                List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
+                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
                 foreach (long id in datasetIds)

@@ -2,7 +2,6 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
@@ -93,7 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             List<long> datasetIds = new List<long>();
             if (HttpContext.User.Identity.Name != null)
             {
-                datasetIds.AddRange(entityPermissionManager.GetKeys<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
+                datasetIds.AddRange(entityPermissionManager.GetKeys(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
             }
 
             // dataset id, dataset status, number of data tuples of the latest version, number of variables in the dataset's structure
