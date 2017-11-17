@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Xml.Linq;
@@ -108,6 +109,22 @@ namespace BExIS.Utils.WebHelpers
                     sb.Append("'>").Append(menuBarItem.Attribute("title").Value).Append("</a></li>");
                 }
             }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        [Obsolete("", true)]
+        public static MvcHtmlString AccountBar(this HtmlHelper htmlHelper)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Account<span class='caret'></span></a><ul class='dropdown-menu'>");
+
+            sb.Append($"<li><a href=''></a>Details</li>");
+            sb.Append($"<li><a href=''></a>Profile</li>");
+            sb.Append($"<li><a href=''></a>Sign Out</li>");
+
+            sb.Append($"</ul></li>");
 
             return new MvcHtmlString(sb.ToString());
         }
