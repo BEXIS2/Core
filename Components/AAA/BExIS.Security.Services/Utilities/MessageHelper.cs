@@ -72,5 +72,25 @@
 
             return message + ".";
         }
+
+        public static string GetRegisterUserHeader()
+        {
+            return $"User has registered";
+        }
+
+        public static string GetRegisterUserMessage(long userId, string userName, string email)
+        {
+            return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> has registered.";
+        }
+
+        public static string GetUpdateProfileHeader()
+        {
+            return $"User has modified profile";
+        }
+
+        public static string GetUpdaterProfileMessage(long userId, string userName)
+        {
+            return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
+        }
     }
 }

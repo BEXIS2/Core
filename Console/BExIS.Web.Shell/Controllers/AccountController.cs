@@ -1,10 +1,12 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -307,6 +309,12 @@ namespace BExIS.Web.Shell.Controllers
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
                     await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetRegisterUserHeader(),
+                        MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
 
                     ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
 
