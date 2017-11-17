@@ -33,7 +33,23 @@ namespace BExIS.Dlm.Services.Helpers
             if (tupleIds != null && tupleIds.Count > 0 && sds != null)
             {
                 buildTheHeader(sds, useLabelsAsColumnNames, dt);
-                buildTheBody(datasetManager, tupleIds, dt, sds);
+                buildTheBody(datasetManager, tupleIds, dt, sds, useLabelsAsColumnNames);
+            }
+
+            return dt;
+        }
+
+        public DataTable ConvertDatasetVersion(List<AbstractTuple> tuples, DatasetVersion datasetVersion, StructuredDataStructure sds, string tableName = "", bool useLabelsAsColumnNames = false)
+        {
+            DataTable dt = new DataTable();
+            if (string.IsNullOrEmpty(tableName))
+                dt.TableName = "Primary data table";
+            else
+                dt.TableName = tableName;
+            if (tuples != null && tuples.Count > 0 && sds != null)
+            {
+                buildTheHeader(sds, useLabelsAsColumnNames, dt);
+                buildTheBody(tuples, dt, sds, useLabelsAsColumnNames);
             }
 
             return dt;
@@ -50,7 +66,7 @@ namespace BExIS.Dlm.Services.Helpers
             if (dataStructure != null)
             {
                 buildTheHeader(dataStructure, useLabelsAsColumnNames, dt);
-                buildTheBody(tupleIterator, dt, dataStructure);
+                buildTheBody(tupleIterator, dt, dataStructure, useLabelsAsColumnNames);
             }
 
             return dt;
@@ -135,20 +151,20 @@ namespace BExIS.Dlm.Services.Helpers
             }
         }
 
-        private void buildTheBody(IEnumerable<AbstractTuple> tupleIterator, DataTable dt, StructuredDataStructure sds)
+        private void buildTheBody(IEnumerable<AbstractTuple> tupleIterator, DataTable dt, StructuredDataStructure sds, bool useLabelsAsColumnNames)
         {
             foreach (var tuple in tupleIterator)
             {
-                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, true));
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, useLabelsAsColumnNames));
             }
         }
 
-        private void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds)
+        private void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds, bool useLabelsAsColumnNames)
         {
             DataTupleIterator tupleIterator = new DataTupleIterator(tupleIds, datasetManager);
             foreach (var tuple in tupleIterator)
             {
-                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, true));
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, useLabelsAsColumnNames));
             }
         }
 
@@ -185,9 +201,9 @@ namespace BExIS.Dlm.Services.Helpers
                                 {
                                     double value;
                                     if (double.TryParse(valueAsString, out value))
-                                        dr[columnName] = Convert.ToDouble(valueAsString);
+                                        dr[columnName] = value;
                                     else
-                                        dr[columnName] = -99999;//double.MaxValue;
+                                        dr[columnName] = double.MaxValue;
                                     break;
                                 }
 
@@ -195,7 +211,7 @@ namespace BExIS.Dlm.Services.Helpers
                                 {
                                     Int16 value;
                                     if (Int16.TryParse(valueAsString, out value))
-                                        dr[columnName] = Convert.ToInt16(valueAsString);
+                                        dr[columnName] = value;
                                     else
                                         dr[columnName] = Int16.MaxValue;
                                     break;
@@ -205,7 +221,7 @@ namespace BExIS.Dlm.Services.Helpers
                                 {
                                     Int32 value;
                                     if (Int32.TryParse(valueAsString, out value))
-                                        dr[columnName] = Convert.ToInt32(valueAsString);
+                                        dr[columnName] = value;
                                     else
                                         dr[columnName] = Int32.MaxValue;
                                     break;
@@ -215,7 +231,7 @@ namespace BExIS.Dlm.Services.Helpers
                                 {
                                     Int64 value;
                                     if (Int64.TryParse(valueAsString, out value))
-                                        dr[columnName] = Convert.ToInt64(valueAsString);
+                                        dr[columnName] = value;
                                     else
                                         dr[columnName] = Int64.MaxValue;
                                     break;
@@ -225,9 +241,9 @@ namespace BExIS.Dlm.Services.Helpers
                                 {
                                     decimal value;
                                     if (decimal.TryParse(valueAsString, out value))
-                                        dr[columnName] = Convert.ToDecimal(valueAsString);
+                                        dr[columnName] = value;
                                     else
-                                        dr[columnName] = -99999;//decimal.MaxValue;
+                                        dr[columnName] = decimal.MaxValue;
                                     break;
                                 }
 
@@ -235,9 +251,9 @@ namespace BExIS.Dlm.Services.Helpers
                                 {
                                     decimal value;
                                     if (decimal.TryParse(valueAsString, out value))
-                                        dr[columnName] = Convert.ToDecimal(valueAsString);
+                                        dr[columnName] = value;
                                     else
-                                        dr[columnName] = -99999;
+                                        dr[columnName] = decimal.MaxValue;
                                     break;
                                 }
 

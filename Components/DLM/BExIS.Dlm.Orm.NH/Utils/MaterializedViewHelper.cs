@@ -190,7 +190,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // execute the statement
             try
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                 {
                     uow.ExecuteNonQuery(mvBuilder.ToString());
                 }
