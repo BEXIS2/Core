@@ -8,8 +8,11 @@ using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Security.Services.Utilities;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -525,6 +528,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Structured))
                     {
+                        string title = "";
+                        long datasetid = ds.Id;
+                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                        title = xmlDatasetHelper.GetInformation(ds.Id, NameAttributeValues.title);
                         try
                         {
                             //Stopwatch fullTime = Stopwatch.StartNew();
@@ -782,11 +789,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
                             dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
+
+                            //send email
+                            var es = new EmailService();
+                            es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, GetUsernameOrDefault()),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+
                         }
                         catch (Exception e)
                         {
 
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
+                            var es = new EmailService();
+                            es.Send(MessageHelper.GetErrorHeader(),
+                                "Can not upload. : " + e.Message,
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+
                         }
                         finally
                         {

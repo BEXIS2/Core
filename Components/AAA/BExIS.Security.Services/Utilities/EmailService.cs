@@ -25,6 +25,35 @@ namespace BExIS.Security.Services.Utilities
             };
         }
 
+        public void Send(string subject, string body, string destination)
+        {
+            IdentityMessage message = new IdentityMessage()
+            {
+                Subject = subject,
+                Body = body,
+                Destination = destination
+            };
+
+            var from = new MailAddress("bexis2@uni-jena.de");
+
+            var to = new MailAddress(message.Destination);
+            var mail = new MailMessage(from, to)
+            {
+                Body = message.Body,
+                IsBodyHtml = true,
+                Subject = message.Subject
+            };
+
+            try
+            {
+                _smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
+            }
+        }
+
         public void Send(IdentityMessage message)
         {
             var from = new MailAddress("bexis2@uni-jena.de");
@@ -67,6 +96,11 @@ namespace BExIS.Security.Services.Utilities
             {
                 Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
             }
+        }
+
+        public void Send(string v1, string v2, object p)
+        {
+            throw new NotImplementedException();
         }
     }
 }
