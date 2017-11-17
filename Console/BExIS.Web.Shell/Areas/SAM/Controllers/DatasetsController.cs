@@ -2,7 +2,6 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
@@ -77,7 +76,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             List<long> datasetIds = new List<long>();
             if (HttpContext.User.Identity.Name != null)
             {
-                datasetIds.AddRange(entityPermissionManager.GetKeys<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
+                datasetIds.AddRange(entityPermissionManager.GetKeys(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
             }
 
             ViewData["DatasetIds"] = datasetIds;
