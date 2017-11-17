@@ -15,11 +15,11 @@
 
         public static string GetCreateDatasetMessage(long datasetid, string title, string userName)
         {
-            string message = $"Dataset \"{title}\" with id ({datasetid}) was created";
+            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was created";
 
             if (!string.IsNullOrEmpty(userName))
 
-                return message += $" by {userName}";
+                return message += $" by <b>{userName}</b>";
 
             return message + ".";
         }
@@ -32,11 +32,11 @@
 
         public static string GetUpdateDatasetMessage(long datasetid, string title, string userName)
         {
-            string message = $"Dataset \"{title}\" with id ({datasetid}) was updated";
+            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was updated";
 
             if (!string.IsNullOrEmpty(userName))
 
-                return message += $" by {userName}";
+                return message += $" by <b>{userName}</b>";
 
             return message + ".";
         }
@@ -48,11 +48,11 @@
 
         public static string GetDownloadDatasetMessage(long datasetid, string title, string userName)
         {
-            string message = $"Dataset \"{title}\" with id ({datasetid}) was downloaded";
+            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was downloaded";
 
             if (!string.IsNullOrEmpty(userName))
 
-                return message += $" by {userName}";
+                return message += $" by <b>{userName}</b>";
 
             return message + ".";
         }
@@ -64,11 +64,11 @@
 
         public static string GetDeleteDatasetMessage(long datasetid, string title, string userName)
         {
-            string message = $"Dataset \"{title}\" with id ({datasetid}) was deleted";
+            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was deleted";
 
             if (!string.IsNullOrEmpty(userName))
 
-                return message += $" by {userName}";
+                return message += $" by <b>{userName}</b>";
 
             return message + ".";
         }
