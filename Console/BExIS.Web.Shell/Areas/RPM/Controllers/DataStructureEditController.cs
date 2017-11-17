@@ -418,7 +418,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         DataTypes.Add(new ItemStruct()
                         {
                             Name = dt.Name,
-                            Id = dt.Id
+                            Id = dt.Id,
+                            Description = dt.Description
                         });
                     }
                     return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
@@ -434,7 +435,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             DataTypes.Add(new ItemStruct()
                             {
                                 Name = dt.Name,
-                                Id = dt.Id
+                                Id = dt.Id,
+                                Description = dt.Description
                             });
                         }
                         return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
