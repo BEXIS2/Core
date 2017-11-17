@@ -5,13 +5,17 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Classes;
 
+using Vaiona.Persistence.Api;
+
 namespace BExIS.Modules.Rpm.UI.Models
 {
     public struct ItemStruct
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
     }
+
     public class FilterValueStruct
     {
         public string Name { get; set; }
@@ -304,7 +308,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class AttributeEditStruct : AttributePreviewStruct
     {
-        public new ItemStruct DataType { get; set; }
+        //public ItemStruct DataType { get; set; }
         public List<ItemStruct> Units { get; set; }
         public List<ItemStruct> DataTypes { get; set; }
 
@@ -314,7 +318,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Name = "";
             this.Description = "";
             this.Unit = new ItemStruct();
-            this.DataType = new ItemStruct();
+            //this.DataType = new ItemStruct();
             this.Constraints = new Dictionary<long, string>();
             this.inUse = false;
             this.Units = new List<ItemStruct>();
@@ -325,12 +329,14 @@ namespace BExIS.Modules.Rpm.UI.Models
             try
             {
                 unitManager = new UnitManager();
-                foreach (Unit u in unitManager.Repo.Get())
+                var unitRepo = unitManager.GetUnitOfWork().GetReadOnlyRepository<Unit>();
+                foreach (Unit u in unitRepo.Get().Where(u => u.Description != null))
                 {
                     this.Units.Add(new ItemStruct()
                     {
                         Name = u.Name,
-                        Id = u.Id
+                        Id = u.Id,
+                        Description = u.Description
                     });
                 }
             }
