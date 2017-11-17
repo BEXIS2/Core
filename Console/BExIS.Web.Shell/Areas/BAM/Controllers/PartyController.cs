@@ -3,10 +3,8 @@ using BExIS.Dlm.Services.Party;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
-using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
@@ -107,12 +105,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                 ViewBag.RelationTabAsDefault = false;
                 ViewBag.Title = "Edit party";
-
-                var es = new EmailService();
-                es.Send(MessageHelper.GetUpdateProfileHeader(),
-                    MessageHelper.GetUpdaterProfileMessage(user.Id, user.Name),
-                    ConfigurationManager.AppSettings["SystemEmail"]
-                    );
 
                 return View("CreateEdit", model);
             }
