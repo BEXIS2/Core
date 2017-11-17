@@ -961,7 +961,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var thisCustomAtrval = pcavs_list.Last();
                 thisCustomAtrval.Value = "mas";
-                pm.UpdatePartyCustomAttriuteValues(pcavs_list);
+                pm.UpdatePartyCustomAttributeValues(pcavs_list);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
             }
             catch (Exception ex)
@@ -1092,7 +1092,7 @@ namespace BExIS.Web.Shell.Controllers
         private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
+            return pm.RemovePartyCustomAttributeValue(partyCustomAttrVal);
         }
 
         #endregion PartyCustomAttributeValue

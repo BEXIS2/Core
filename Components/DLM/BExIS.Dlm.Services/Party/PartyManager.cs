@@ -475,7 +475,7 @@ namespace BExIS.Dlm.Services.Party
             return party.CustomAttributeValues;
         }
 
-        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttributeValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
         {
             return AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
         }
@@ -489,7 +489,7 @@ namespace BExIS.Dlm.Services.Party
             }
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue, string newValue)
+        public PartyCustomAttributeValue UpdatePartyCustomAttributeValue(PartyCustomAttributeValue partyCustomAttributeValue, string newValue)
         {
             Contract.Requires(partyCustomAttributeValue != null && partyCustomAttributeValue.Id != 0, "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
@@ -509,7 +509,7 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
+        public PartyCustomAttributeValue UpdatePartyCustomAttributeValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
         {
             Contract.Requires(partyCustomAttributeValues != null && partyCustomAttributeValues.Any(), "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
@@ -554,7 +554,7 @@ namespace BExIS.Dlm.Services.Party
         //    return (entity);
 
         //}
-        public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
+        public bool RemovePartyCustomAttributeValue(PartyCustomAttributeValue partyCustomAttributeValue)
         {
             Contract.Requires(partyCustomAttributeValue != null);
             Contract.Requires(partyCustomAttributeValue.Id >= 0, "Provided entity must have a permanent ID");
@@ -570,7 +570,7 @@ namespace BExIS.Dlm.Services.Party
             return (true);
         }
 
-        public bool RemovePartyCustomAttriuteValues(IEnumerable<PartyCustomAttributeValue> entities)
+        public bool RemovePartyCustomAttributeValues(IEnumerable<PartyCustomAttributeValue> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (PartyCustomAttributeValue e) => e != null));
