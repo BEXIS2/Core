@@ -16,12 +16,12 @@ namespace BExIS.Security.Services.Utilities
         {
             _smtp = new SmtpClient()
             {
-                Host = "smtp.uni-jena.de",
-                Port = 587,
-                EnableSsl = true,
+                Host = ConfigurationManager.AppSettings["Email_Host"], //"smtp.uni-jena.de",
+                Port = int.Parse(ConfigurationManager.AppSettings["Email_Port"]), //587,
+                EnableSsl = bool.Parse(ConfigurationManager.AppSettings["Email_Ssl"]), //true,
                 Credentials =
-                    new NetworkCredential(ConfigurationManager.AppSettings["EmailAccount"],
-                        ConfigurationManager.AppSettings["EmailPassword"])
+                    new NetworkCredential(ConfigurationManager.AppSettings["Email_Account"],
+                        ConfigurationManager.AppSettings["Email_Password"])
             };
         }
 
