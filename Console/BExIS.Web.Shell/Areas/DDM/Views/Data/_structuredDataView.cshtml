@@ -1,9 +1,9 @@
 ﻿@model ShowPrimaryDataModel
-@using System.ComponentModel.DataAnnotations
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 @using BExIS.Modules.Ddm.UI.Models
 @using Telerik.Web.Mvc.UI;
+@using System.Linq.Dynamic;
 
 @{
     ViewBag.Title = "Primary Data";
@@ -128,28 +128,29 @@
                     {
                         visible = true;
                     }
-                
 
-                DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(o => o.Column.Equals(title));
-                        string format = "";
 
-                        if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
-                        {
-                            //string unit = "";
-                            //if (dfo.Unit != "None") unit = dfo.Unit;
+                    DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title)); 
 
-                            format = "{0:" + dfo.Format +"}";
+                    string format = "";
 
-                            columns.Bound(column.DataType, column.ColumnName)
-                               .Title(title).Format(format).Hidden(!visible);
-                        }
-                        else
-                        {
-                            columns.Bound(column.DataType, column.ColumnName)
-                               .Title(title).Hidden(!visible);
-                        }
+                    if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+                    {
+                        //string unit = "";
+                        //if (dfo.Unit != "None") unit = dfo.Unit;
+
+                        format = "{0:" + dfo.Format +"}";
+
+                        columns.Bound(column.DataType, column.ColumnName)
+                           .Title(title).Format(format).Hidden(!visible);
                     }
-                })
+                    else
+                    {
+                        columns.Bound(column.DataType, column.ColumnName)
+                           .Title(title).Hidden(!visible);
+                    }
+                }
+            })
 
 
             .Pageable(paging =>
@@ -259,7 +260,7 @@
 
     function downloadExcel(id) {
 
-        $("#preloaderContainer").preloader(20, "Download excel file...");
+        $("#preloaderContainer").preloader(20, "Preparing excel file...");
         //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
         $.ajax({
             url: '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })',
@@ -275,7 +276,7 @@
 
     function downloadCsv(id) {
 
-        $("#preloaderContainer").preloader(20, "Download csv file...");
+        $("#preloaderContainer").preloader(20, "Preparing csv file...");
         //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
         $.ajax({
             url: '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })',
@@ -292,7 +293,7 @@
 
     function downloadText(id) {
 
-        $("#preloaderContainer").preloader(20, "Download txt file...");
+        $("#preloaderContainer").preloader(20, "Preparing txt file...");
         //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
         $.ajax({
             url: '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })',
