@@ -128,7 +128,7 @@ namespace BExIS.Dlm.Services.Party
         {
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
-            AddPartyCustomAttriuteValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
+            AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
             return party;
         }
         /// <summary>
@@ -144,7 +144,7 @@ namespace BExIS.Dlm.Services.Party
         {
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
-            AddPartyCustomAttriuteValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
+            AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
             return party;
         }
 
@@ -403,52 +403,29 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region Associations
-        //It's not checking uniqeness when it is not for a single custom attribute because it couldn't predict other values--> it should have all values to make a hash
-        public PartyCustomAttributeValue AddPartyCustomAttriuteValue(PartyX party, PartyCustomAttribute partyCustomAttribute, string value)
+
+        /// <summary>
+        /// add a single custom attribute value to a party object
+        /// 
+        /// It's not checking uniqeness when it is not for a single custom attribute because it couldn't predict other values--> it should have all values to make a hash
+        /// </summary>
+        /// <param name="party"></param>
+        /// <param name="partyCustomAttribute"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public PartyCustomAttributeValue AddPartyCustomAttributeValue(ref PartyX party, PartyCustomAttribute partyCustomAttribute, string value)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(value));
-            Contract.Requires(partyCustomAttribute != null);
-            Contract.Requires(partyCustomAttribute.Id >= 0, "Provided Custom Attribute entity must have a permanent identifier.");
-            Contract.Requires(party != null);
-            Contract.Requires(party.Id >= 0, "Provided party entity must have a permanent ID");
-
-            Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0);
-
-            var entity = new PartyCustomAttributeValue()
+            // create a dictionary to pass along
+            var dic = new Dictionary<PartyCustomAttribute, string>
             {
-                CustomAttribute = partyCustomAttribute,
-                Value = value
+                { partyCustomAttribute, value }
             };
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                IRepository<PartyCustomAttributeValue> repoCAV = uow.GetRepository<PartyCustomAttributeValue>();
-                IRepository<PartyCustomAttribute> repoCA = uow.GetRepository<PartyCustomAttribute>();
-                var partyEntity = repo.Reload(party);
-                //check uniqeness if there is just one uniqe custome attribute
-                if (partyCustomAttribute.IsUnique)
-                {
-                    var customAttributes = repoCA.Get(item => item.PartyType == partyEntity.PartyType);
-                    if (customAttributes.Where(item => item.IsUnique).Count() == 1)
-                        if (!CheckUniqueness(repo, party.PartyType, value, party))
-                            BexisException.Throw(party, String.Format("Due the party uniqueness policy for this party type this value couldn't save"), BexisException.ExceptionType.Add, true);
-                }
-                //check if there is the same custom attribute for this party update it
-                var similarPartyCustomAttr = partyEntity.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttribute.Id);
-                if (similarPartyCustomAttr != null)
-                {
-                    similarPartyCustomAttr.Value = value;
-                    entity = similarPartyCustomAttr;
-                }
-                else
-                {
-                    partyEntity.CustomAttributeValues.Add(entity);
-                    repoCAV.Put(entity);
-                }
-                uow.Commit();
-            }
-            party = UpdatePartyName(party);
-            return (entity);
+
+            // pass along
+            var result = AddPartyCustomAttributeValues(ref party, dic);
+
+            // find the corresponding attribute in the result
+            return result.Where((item) => (item.CustomAttribute == partyCustomAttribute) && (item.Value == value)).FirstOrDefault();
         }
 
 
@@ -460,7 +437,7 @@ namespace BExIS.Dlm.Services.Party
         /// <param name="party"></param>
         /// <param name="partyCustomAttributeValues"></param>
         /// <returns></returns>
-        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(ref PartyX party, Dictionary<PartyCustomAttribute, string> partyCustomAttributeValues)
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttributeValues(ref PartyX party, Dictionary<PartyCustomAttribute, string> partyCustomAttributeValues)
         {
             Contract.Requires(partyCustomAttributeValues != null);
             Contract.Requires(party != null);
@@ -488,6 +465,7 @@ namespace BExIS.Dlm.Services.Party
                             Party = party,
                             Value = partyCustomAttributeValue.Value
                         };
+                        party.CustomAttributeValues.Add(entity);
                     }
                     repoCAV.Put(entity);
                 }
@@ -496,9 +474,10 @@ namespace BExIS.Dlm.Services.Party
             party = UpdatePartyName(party);
             return party.CustomAttributeValues;
         }
-        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
+
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttributeValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
         {
-            return AddPartyCustomAttriuteValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
+            return AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
         }
 
         public PartyX GetParty(long id)
@@ -510,7 +489,7 @@ namespace BExIS.Dlm.Services.Party
             }
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue, string newValue)
+        public PartyCustomAttributeValue UpdatePartyCustomAttributeValue(PartyCustomAttributeValue partyCustomAttributeValue, string newValue)
         {
             Contract.Requires(partyCustomAttributeValue != null && partyCustomAttributeValue.Id != 0, "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
@@ -530,7 +509,7 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
+        public PartyCustomAttributeValue UpdatePartyCustomAttributeValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
         {
             Contract.Requires(partyCustomAttributeValues != null && partyCustomAttributeValues.Any(), "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
@@ -575,7 +554,7 @@ namespace BExIS.Dlm.Services.Party
         //    return (entity);
 
         //}
-        public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
+        public bool RemovePartyCustomAttributeValue(PartyCustomAttributeValue partyCustomAttributeValue)
         {
             Contract.Requires(partyCustomAttributeValue != null);
             Contract.Requires(partyCustomAttributeValue.Id >= 0, "Provided entity must have a permanent ID");
@@ -591,7 +570,7 @@ namespace BExIS.Dlm.Services.Party
             return (true);
         }
 
-        public bool RemovePartyCustomAttriuteValues(IEnumerable<PartyCustomAttributeValue> entities)
+        public bool RemovePartyCustomAttributeValues(IEnumerable<PartyCustomAttributeValue> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (PartyCustomAttributeValue e) => e != null));
@@ -882,16 +861,16 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                party = repo.Reload(party);
+                //party = repo.Reload(party);
                 var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
-                string name = "";
                 if (mainValues.Length > 0)
-                    name = string.Join(" ", mainValues);
-                party.Name = name;
-                repo.Merge(party);
-                var merged = repo.Get(party.Id);
-                repo.Put(merged);               
-                uow.Commit();
+                {
+                    party.Name = string.Join(" ", mainValues); // what should happen when no custom attribute is there!?
+                    repo.Merge(party);
+                    var merged = repo.Get(party.Id);
+                    repo.Put(merged);
+                    uow.Commit();
+                }
                 return party;
             }
         }
