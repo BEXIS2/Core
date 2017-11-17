@@ -1,4 +1,6 @@
-﻿using BExIS.Utils.Helpers;
+﻿using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Helpers;
+using System.Configuration;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -8,6 +10,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Test
         public ActionResult Index()
         {
+
+            var es = new EmailService();
+            var datasetId = 1;
+            var title = "my cool dataset";
+            es.Send(MessageHelper.GetCreateDatasetHeader(),
+                MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne"),
+                ConfigurationManager.AppSettings["SystemEmail"]
+                );
+
+
             string name = "test";
             var x = RegExHelper.IsFilenameValid(name);
 

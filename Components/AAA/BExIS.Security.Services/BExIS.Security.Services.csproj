@@ -79,6 +79,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
@@ -106,6 +107,7 @@
     <Compile Include="Subjects\UserManager.cs" />
     <Compile Include="Utilities\Auth.cs" />
     <Compile Include="Utilities\EmailService.cs" />
+    <Compile Include="Utilities\MessageHelper.cs" />
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
   <ItemGroup>
