@@ -164,6 +164,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <returns></returns>
         public static SearchResult search(Query query, List<XmlNode> headerItemXmlNodeList)
         {
+
             TopDocs docs = searcher.Search(query, 1000);
             SearchResult sro = new SearchResult();
             sro.PageSize = 10;

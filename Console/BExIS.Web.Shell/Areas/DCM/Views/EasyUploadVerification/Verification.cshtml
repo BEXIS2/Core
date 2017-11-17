@@ -24,6 +24,7 @@
                         <th>Variable name</th>
                         <th>Unit</th>
                         <th>Datatype</th>
+                        <th>Datatype description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,7 +38,7 @@
                                 <select  style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
 
                                     <!--The default option is the name of the column in the submitted table-->
-                                    <option data-unit="1" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
+                                    <option data-unit="@ViewData["defaultUnitID"]" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
 
                                     <!--Create an option for each variable in the respective suggestions
                                         make sure that the one that is registered as selected is actually shown as selected in the list-->
@@ -93,6 +94,7 @@
                                     @{
 
                                         Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
+                                        string datatypeDescription = "";
 
                                         if (tupleBla != null && tupleBla.Item3.UnitId >= 0)
                                         {
@@ -103,6 +105,7 @@
                                                 if (tupleBla.Item3.SelectedDataTypeId == dataTypeInfo.DataTypeId)
                                                 {
                                                     selected = "selected";
+                                                    datatypeDescription = dataTypeInfo.Description;
                                                 }
 
                                                 <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
@@ -110,16 +113,16 @@
                                         }
                                         else
                                         {
-                                            <option value="none" tilte="">Please select an unit</option>
+                                            <option value="none" title="Please select a unit">Please select an unit</option>
                                         }
-
-                                    }
-
                                     }
                                 </select>
                             </td>
+                            <td class="datatypeinfo">
+                                @Html.Raw(datatypeDescription)
+                            </td>
                         </tr>
-                                        }
+                    }
                 </tbody>
             </table>
         </div>

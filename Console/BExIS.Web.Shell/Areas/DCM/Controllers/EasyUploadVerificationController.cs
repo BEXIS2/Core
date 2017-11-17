@@ -177,6 +177,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
                     currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
+                    ViewData["defaultUnitID"] = currentUnitInfo.UnitId;
                     ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
                     if (model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault() == null)
@@ -279,8 +280,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            UnitInfo currentUnitInfo = (UnitInfo)model.AvailableUnits.First().Clone();
-            DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.First();
+            //Default unit should be "none" if it exists, otherwise just take the first unit
+            UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+            if (currentUnitInfo != null)
+            {
+                currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+            }
+            else
+            {
+                currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            }
+
+            DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
+            currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
+            ViewData["defaultUnitID"] = currentUnitInfo.UnitId;
             ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
             return PartialView(model);
@@ -381,8 +394,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.StepInfo = TaskManager.Current();
 
             //Submit default datatype id
-            UnitInfo currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            //Default unit should be "none" if it exists, otherwise just take the first unit
+            UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+            if (currentUnitInfo != null)
+            {
+                currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+            }
+            else
+            {
+                currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            }
+
             DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
+            currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
+            ViewData["defaultUnitID"] = currentUnitInfo.UnitId;
             ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
             return PartialView("Verification", model);
@@ -466,9 +491,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model.StepInfo = TaskManager.Current();
 
-            //Submit default datatype id
-            UnitInfo currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            //Default unit should be "none" if it exists, otherwise just take the first unit
+            UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+            if (currentUnitInfo != null)
+            {
+                currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+            }
+            else
+            {
+                currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            }
+
             DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
+            currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
+            ViewData["defaultUnitID"] = currentUnitInfo.UnitId;
             ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
             return PartialView("Verification", model);
@@ -567,8 +603,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.StepInfo = TaskManager.Current();
 
             //Submit default datatype id
-            UnitInfo currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            //Default unit should be "none" if it exists, otherwise just take the first unit
+            UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
+            if (currentUnitInfo != null)
+            {
+                currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
+            }
+            else
+            {
+                currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
+            }
+
             DataTypeInfo dtinfo = currentUnitInfo.DataTypeInfos.FirstOrDefault();
+            currentUnitInfo.SelectedDataTypeId = dtinfo.DataTypeId;
+            ViewData["defaultUnitID"] = currentUnitInfo.UnitId;
             ViewData["defaultDatatypeID"] = dtinfo.DataTypeId;
 
             return PartialView("Verification", model);

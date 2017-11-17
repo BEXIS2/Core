@@ -82,15 +82,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region create entities
 
                 // Entities
+                Entity entity = null;
 
-                Entity entity = new Entity();
-                entity.Name = "Dataset";
-                entity.EntityType = typeof(Dataset);
-                entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
-                entity.UseMetadata = true;
-                entity.Securable = true;
+                if (!entityManager.Entities.Select(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).Any())
+                {
+                    entity = new Entity();
+                    entity.Name = "Dataset";
+                    entity.EntityType = typeof(Dataset);
+                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity.UseMetadata = true;
+                    entity.Securable = true;
 
-                entityManager.Create(entity);
+                    entityManager.Create(entity);
+                }
+
 
 
                 #endregion
