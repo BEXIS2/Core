@@ -152,6 +152,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\VisualizationController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
@@ -422,6 +423,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
+    <Content Include="Views\Visualization\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
