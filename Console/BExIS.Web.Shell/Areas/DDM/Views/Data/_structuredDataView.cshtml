@@ -3,7 +3,8 @@
 @using BExIS.Dlm.Entities.DataStructure;
 @using BExIS.Modules.Ddm.UI.Models
 @using Telerik.Web.Mvc.UI;
-@using System.Linq.Dynamic;
+@using System.Linq;
+
 
 @{
     ViewBag.Title = "Primary Data";
@@ -111,7 +112,7 @@
                     DataColumn column = Model.Data.Columns[i];
 
                     string title;
-                    bool visible = false;
+                    bool visible = true;
 
 
 
@@ -126,7 +127,7 @@
 
                     if (column.ColumnName.ToLower().StartsWith("var"))
                     {
-                        visible = true;
+                        //visible = true;
                     }
 
 
