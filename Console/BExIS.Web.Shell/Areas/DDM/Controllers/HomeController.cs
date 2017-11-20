@@ -505,7 +505,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion
 
-        
+
         #region mydatasets
 
         /// <summary>
@@ -557,7 +557,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             headerItem = new HeaderItem()
             {
-                Name = "View",
+                Name = "Read",
                 DisplayName = "Read",
                 DataType = "String"
             };
@@ -573,7 +573,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             headerItem = new HeaderItem()
             {
-                Name = "Update",
+                Name = "Write",
                 DisplayName = "Write",
                 DataType = "String"
             };
@@ -587,7 +587,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
-            
+
             headerItem = new HeaderItem()
             {
                 Name = "Grant",
@@ -747,16 +747,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             headerItem = new HeaderItem()
             {
-                Name = "View",
-                DisplayName = "View",
+                Name = "Read",
+                DisplayName = "Read",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
 
             headerItem = new HeaderItem()
             {
-                Name = "Update",
-                DisplayName = "Update",
+                Name = "Download",
+                DisplayName = "Download",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Write",
+                DisplayName = "Write",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
@@ -769,13 +777,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
 
             headerItem = new HeaderItem()
             {
