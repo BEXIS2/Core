@@ -94,14 +94,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
-            var userManager = new UserManager();
+            //var userManager = new UserManager();
 
             try
             {
                 var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-                var user = userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
-                var keys = entityPermissionManager.GetKeys(user?.Id, entityId, RightType.Grant);
-                var instances = instanceStore.GetEntities().Where(i => keys.Contains(i.Id)).Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                //var user = userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
+                //var keys = entityPermissionManager.GetKeys(user?.Id, entityId, RightType.Grant);
+                //var instances = instanceStore.GetEntities().Where(i => keys.Contains(i.Id)).Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
                 return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
             }
             finally
