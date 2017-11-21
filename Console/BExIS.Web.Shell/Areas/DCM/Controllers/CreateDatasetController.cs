@@ -458,6 +458,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             string title = "";
             long datasetId = 0;
+            bool newDataset = true;
+
             try
             {
                 TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -496,6 +498,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     else
                     {
                         datasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                        newDataset = false;
                     }
 
                     TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -551,7 +554,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
 
-                        if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+                        if (newDataset)
                         {
                             var es = new EmailService();
                             es.Send(MessageHelper.GetCreateDatasetHeader(),
