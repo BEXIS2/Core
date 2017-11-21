@@ -7,19 +7,17 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Dlm.Services.Helpers
 {
     public class DatasetConvertor
     {
-        public DataTable ConvertDatasetVersion(IEnumerable<AbstractTuple> tupleIterator, StructuredDataStructure dataStructure, string tableName = "", bool useLabelsAsColumnNames = false)
+        public DataTable ConvertDatasetVersion(IEnumerable<AbstractTuple> tupleIterator, StructuredDataStructure dataStructure, string tableName = "")
         {
-            return ConvertPrimaryDataToDatatable(tupleIterator, dataStructure, tableName, useLabelsAsColumnNames);
+            return ConvertPrimaryDataToDatatable(tupleIterator, dataStructure, tableName);
         }
 
-        public DataTable ConvertDatasetVersion(DatasetManager datasetManager, DatasetVersion datasetVersion, string tableName = "", bool useLabelsAsColumnNames = false)
+        public DataTable ConvertDatasetVersion(DatasetManager datasetManager, DatasetVersion datasetVersion, string tableName = "")
         {
             DataTable dt = new DataTable();
             if (string.IsNullOrEmpty(tableName))
@@ -32,14 +30,14 @@ namespace BExIS.Dlm.Services.Helpers
 
             if (tupleIds != null && tupleIds.Count > 0 && sds != null)
             {
-                buildTheHeader(sds, useLabelsAsColumnNames, dt);
-                buildTheBody(datasetManager, tupleIds, dt, sds, useLabelsAsColumnNames);
+                buildTheHeader(sds, dt);
+                buildTheBody(datasetManager, tupleIds, dt, sds);
             }
 
             return dt;
         }
 
-        public DataTable ConvertDatasetVersion(List<AbstractTuple> tuples, DatasetVersion datasetVersion, StructuredDataStructure sds, string tableName = "", bool useLabelsAsColumnNames = false)
+        public DataTable ConvertDatasetVersion(List<AbstractTuple> tuples, DatasetVersion datasetVersion, StructuredDataStructure sds, string tableName = "")
         {
             DataTable dt = new DataTable();
             if (string.IsNullOrEmpty(tableName))
@@ -48,14 +46,14 @@ namespace BExIS.Dlm.Services.Helpers
                 dt.TableName = tableName;
             if (tuples != null && tuples.Count > 0 && sds != null)
             {
-                buildTheHeader(sds, useLabelsAsColumnNames, dt);
-                buildTheBody(tuples, dt, sds, useLabelsAsColumnNames);
+                buildTheHeader(sds, dt);
+                buildTheBody(tuples, dt, sds);
             }
 
             return dt;
         }
 
-        private DataTable ConvertPrimaryDataToDatatable(IEnumerable<AbstractTuple> tupleIterator, StructuredDataStructure dataStructure, string tableName = "", bool useLabelsAsColumnNames = false)
+        private DataTable ConvertPrimaryDataToDatatable(IEnumerable<AbstractTuple> tupleIterator, StructuredDataStructure dataStructure, string tableName = "")
         {
             DataTable dt = new DataTable();
             if (string.IsNullOrEmpty(tableName))
@@ -65,28 +63,24 @@ namespace BExIS.Dlm.Services.Helpers
 
             if (dataStructure != null)
             {
-                buildTheHeader(dataStructure, useLabelsAsColumnNames, dt);
-                buildTheBody(tupleIterator, dt, dataStructure, useLabelsAsColumnNames);
+                buildTheHeader(dataStructure, dt);
+                buildTheBody(tupleIterator, dt, dataStructure);
             }
 
             return dt;
         }
 
-        private void buildTheHeader(StructuredDataStructure sds, bool useLabelsAsColumnNames, DataTable dt)
+        private void buildTheHeader(StructuredDataStructure sds, DataTable dt)
         {
             foreach (var vu in sds.Variables)
             {
                 DataColumn col = null;
-                if (useLabelsAsColumnNames)
-                {
-                    col = dt.Columns.Add(vu.Label);
-                }
-                else
-                {
-                    col = dt.Columns.Add("ID" + vu.Id.ToString()); // or DisplayName also
-                }
 
-                col.Caption = vu.Label;
+                string columnName = "var" + vu.Id.ToString();
+
+                col = dt.Columns.Add(columnName); // or DisplayName also
+
+                col.Caption = string.IsNullOrEmpty(vu.Label) ? columnName : vu.Label;
 
                 switch (vu.DataAttribute.DataType.SystemType)
                 {
@@ -151,30 +145,30 @@ namespace BExIS.Dlm.Services.Helpers
             }
         }
 
-        private void buildTheBody(IEnumerable<AbstractTuple> tupleIterator, DataTable dt, StructuredDataStructure sds, bool useLabelsAsColumnNames)
+        private void buildTheBody(IEnumerable<AbstractTuple> tupleIterator, DataTable dt, StructuredDataStructure sds)
         {
             foreach (var tuple in tupleIterator)
             {
-                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, useLabelsAsColumnNames));
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds));
             }
         }
 
-        private void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds, bool useLabelsAsColumnNames)
+        private void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds)
         {
             DataTupleIterator tupleIterator = new DataTupleIterator(tupleIds, datasetManager);
             foreach (var tuple in tupleIterator)
             {
-                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, useLabelsAsColumnNames));
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds));
             }
         }
 
-        private DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts, bool useLabelsAsColumnName = false)
+        private DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts)
         {
             DataRow dr = dt.NewRow();
             string columnName = "";
             foreach (var vv in t.VariableValues)
             {
-                columnName = useLabelsAsColumnName == true ? vv.Variable.Label : "ID" + vv.VariableId.ToString();
+                columnName = "var" + vv.VariableId.ToString();
 
                 if (vv.VariableId > 0)
                 {
@@ -278,16 +272,6 @@ namespace BExIS.Dlm.Services.Helpers
                                 }
                         }
                     }
-
-
-
-                    /*if (vv.ParameterValues.Count > 0)
-                    {
-                        foreach (var pu in vv.ParameterValues)
-                        {
-                            dr[pu.Parameter.Label.Replace(" ", "")] = pu.Value;
-                        }
-                    }*/
                 }
             }
 
