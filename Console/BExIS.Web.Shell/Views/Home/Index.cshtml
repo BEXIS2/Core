@@ -21,19 +21,4 @@
 
 }
 
-@if (Request.IsAuthenticated)
-{
-    @Html.Render("ddm", "home", "ShowMyDatasets");
-}
-else
-{
-    @*<div style="text-align: center;">
-        @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
-    </div>
-    <div style="text-align: center; margin-top: 24pt">
-        @Html.ActionLink("Login", "Login", "Account", new { Area = "" }, new { @class = "t-button function", style = "width: 80pt;" })
-        @Html.ActionLink("Register", "Register", "Account", new { Area = "" }, new { @class = "t-button function", style = "width: 80pt;" })
-    </div>*@
-
-    @Html.Render("ddm", "home", "Index");
-}
+hallo

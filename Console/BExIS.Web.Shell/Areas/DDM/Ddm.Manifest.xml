@@ -22,12 +22,15 @@
             controller="home" action="index"
             extends="./menubarRoot" />
 
+    <Export tag="menubar" id="dashboard" order="1"
+        title="Dashboard" description="Quick Access to User Area" icon=""
+        controller="dashboard" action="ShowMyDatasetsInFullPage"
+        extends="./menubarRoot" />
+
     <Export tag="lunchbar" id="helpDdm" order="1"
             title="Search" description="Search Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
-    
-    
     
     <Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""

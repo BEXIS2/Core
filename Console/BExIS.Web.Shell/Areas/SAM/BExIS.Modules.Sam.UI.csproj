@@ -247,7 +247,7 @@
     <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\EntityPermissions\_Instances.cshtml" />
     <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
-    <Content Include="Views\UserPermissions\Subjects.cshtml" />
+    <Content Include="Views\UserPermissions\_Subjects.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
