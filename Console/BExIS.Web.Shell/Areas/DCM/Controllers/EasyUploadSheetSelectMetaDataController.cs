@@ -4,7 +4,9 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Xml.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.Web.Mvc;
@@ -14,6 +16,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class EasyUploadSheetSelectMetaDataController : BaseController
     {
         private EasyUploadTaskManager TaskManager;
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [HttpGet]
         public ActionResult SheetSelectMetaData(int index)
@@ -35,10 +38,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 SelectMetaDataModel model = new SelectMetaDataModel();
 
                 //Load available metadata structures
+                IEnumerable<MetadataStructure> metadataStructureList = msm.Repo.Get();
 
-                foreach (MetadataStructure metadataStructure in msm.Repo.Get())
+                foreach (MetadataStructure metadataStructure in metadataStructureList)
                 {
-                    model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                    if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                        xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                    {
+                        model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                    }                        
                 }
                 //Sort the metadata structures
                 model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
@@ -123,9 +131,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     MetadataStructureManager msm = new MetadataStructureManager();
                     try
                     {
-                        foreach (MetadataStructure metadataStructure in msm.Repo.Get())
+                        IEnumerable<MetadataStructure> metadataStructureList = msm.Repo.Get();
+
+                        foreach (MetadataStructure metadataStructure in metadataStructureList)
                         {
-                            model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                            if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                                xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                            {
+                                model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                            }
                         }
                         //Sort the metadata structures
                         model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
@@ -169,10 +183,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (TaskManager != null)
                 {
                     //Load available metadata structures and store them in the model
+                    IEnumerable<MetadataStructure> metadataStructureList = msm.Repo.Get();
 
-                    foreach (MetadataStructure metadataStructure in msm.Repo.Get())
+                    foreach (MetadataStructure metadataStructure in metadataStructureList)
                     {
-                        model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                        if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                            xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                        {
+                            model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                        }
                     }
                     //Sort the metadata structures
                     model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
