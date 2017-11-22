@@ -332,6 +332,62 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
+        public JsonResult PrepareCsvData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".csv";
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
+                        datasetVersion.Id);
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        String[] visibleColumns = null;
+
+                        if (Session["Columns"] != null)
+                            visibleColumns = (String[])Session["Columns"];
+
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv", visibleColumns);
+
+                        LoggerFactory.LogCustom(message);
+
+                        #endregion generate a subset of a dataset
+                    }
+                    else
+                    {
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+
+                        LoggerFactory.LogCustom(message);
+                    }
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult DownloadAsCsvData(long id)
         {
             if (hasUserRights(id, RightType.Read))
@@ -400,6 +456,66 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             else
             {
                 return Content("User has no rights.");
+            }
+        }
+
+        public JsonResult PrepareExcelData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".xlsm";
+
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    ExcelWriter writer = new ExcelWriter();
+
+                    string title = getTitle(writer.GetTitle(id));
+
+                    string path = "";
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                        datasetVersion.Id);
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        //ToDo filter datatuples
+
+                        LoggerFactory.LogCustom(message);
+
+
+                        #endregion generate a subset of a dataset
+                    }
+
+                    //filter not in use
+                    else
+                    {
+                        OutputDataManager outputDataManager = new OutputDataManager();
+                        path = outputDataManager.GenerateExcelFile(id, title);
+                        LoggerFactory.LogCustom(message);
+                    }
+
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -474,6 +590,65 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             else
             {
                 return Content("User has no rights.");
+            }
+        }
+
+        public JsonResult PrepareTxtData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".txt";
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
+                                                    datasetVersion.Id);
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        String[] visibleColumns = null;
+
+                        if (Session["Columns"] != null)
+                            visibleColumns = (String[])Session["Columns"];
+
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain", visibleColumns);
+
+                        LoggerFactory.LogCustom(message);
+
+
+                        #endregion generate a subset of a dataset
+                    }
+                    else
+                    {
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
+
+                        LoggerFactory.LogCustom(message);
+                    }
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
 

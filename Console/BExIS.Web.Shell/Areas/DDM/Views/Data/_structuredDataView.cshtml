@@ -261,17 +261,22 @@
 
 	function downloadExcel(id) {
 
+
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
-			url: '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })',
+			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })',
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function(e) {
-				window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })';
 
-				$("#preloaderContainer").removePreloader();
+			    if (e) {
+			        window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })';
+			    }
+			    else {
+			        alert(e);
+			    }
 			}
 		})}
 
@@ -280,12 +285,19 @@
 		$("#preloaderContainer").preloader(20, "Preparing csv file...");
 		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
-			url: '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })',
+			url: '@Url.Action("PrepareCsvData", "Data", new { id = @Model.DatasetId })',
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function (e) {
-				window.location = '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })';
+
+			    if (e) {
+			        window.location = '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })';
+			    }
+			    else {
+			        alert(e);
+			    }
+
 
 				$("#preloaderContainer").removePreloader();
 			}
@@ -297,14 +309,18 @@
 		$("#preloaderContainer").preloader(20, "Preparing txt file...");
 		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
-			url: '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })',
+			url: '@Url.Action("PrepareTxtData", "Data", new { id = @Model.DatasetId })',
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function (e) {
-				window.location = '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })';
 
-				$("#preloaderContainer").removePreloader();
+			    if (e) {
+			        window.location = '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })';
+			    }
+			    else {
+			        alert(e);
+			    }
 			}
 		})
 	}
