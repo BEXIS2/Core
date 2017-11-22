@@ -90,8 +90,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Content("");
         }
 
-        public ActionResult SetSchemaName(string name)
+        public JsonResult SetSchemaName(string name)
         {
+
+            if (String.IsNullOrEmpty(name))
+            {
+                return Json("A Metadata structure must have a name.", JsonRequestBehavior.AllowGet);
+            }
+
+            if (!RegExHelper.IsFilenameValid(name))
+            {
+                return Json("Name : \" " + name + " \" is invalid. These special characters are not allowed : \\/:*?\"<>|", JsonRequestBehavior.AllowGet);
+            }
+
+            if (SchemaNameExist(name))
+            {
+                return Json("A Metadata structure with this name already exist. Please choose a other name.", JsonRequestBehavior.AllowGet);
+            }
+
+
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
@@ -99,20 +116,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.SCHEMA_NAME, name);
 
-            return Content("");
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         public bool SchemaNameExist(string SchemaName)
         {
+
             MetadataStructureManager msm = new MetadataStructureManager();
 
-            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() == 0)
+            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() > 0)
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 

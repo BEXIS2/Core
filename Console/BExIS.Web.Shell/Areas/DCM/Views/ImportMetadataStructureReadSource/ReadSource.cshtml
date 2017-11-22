@@ -99,29 +99,31 @@
 
         @Html.ValidationSummary(true)
 
-        @if (Model != null)
-        {
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
-                {
+         <ul class="error-list">
+             @if (Model != null)
+             {
+                 if (Model.ErrorList != null)
+                 {
+                     if (Model.ErrorList.Count == 0)
+                     {
 
 
-                }
-                else
-                { 
-                   <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
+                     }
+                     else
+                     {
+              
+                        foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        {
                             <li>@s.ToString()</li>
                         }
-                   </ul>
+         
 
-                }
-            }
+                     }
+                 }
 
-        }
-    </div>     
+             }
+         </ul>
+</div>     
 
 </div>
 
@@ -129,6 +131,7 @@
 
     function generateOnBegin()
     {
+        //$(".wizardStep_Error").Empty();
         $('.preloader').preloader(16, "Generate Metadata Structure.",40);
     }
 
@@ -153,6 +156,14 @@
         var name = $('#SchemaName').val();
 
         $.post('@Url.Action("SetSchemaName", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
+
+            $(".error-list").empty();
+            if (response != true)
+            {
+               
+                $(".error-list").append("<li>" + response + "</li>");
+            }
+
         })
 
     })
