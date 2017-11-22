@@ -163,6 +163,7 @@
     <Compile Include="Models\ShowDataModel.cs" />
     <Compile Include="Models\ShowMetadataModel.cs" />
     <Compile Include="Models\ShowPrimaryDataModel.cs" />
+    <Compile Include="Models\VisualizationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -384,6 +385,7 @@
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Properties\PublishProfiles\BPP211_ddm.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="Scripts\ddm.js" />
@@ -493,6 +495,10 @@
     <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SAM\BExIS.Modules.Sam.UI.csproj">
+      <Project>{DEC22F9C-47BE-4146-94BE-1C9AA969AFC3}</Project>
+      <Name>BExIS.Modules.Sam.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
