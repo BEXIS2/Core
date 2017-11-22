@@ -671,6 +671,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 indexWriter.Commit();
                 autoCompleteIndexWriter.Commit();
                 BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+                BexisIndexSearcher._Reader = indexWriter.GetReader();
+                BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
 
 
             }
@@ -683,7 +685,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 indexWriter.Dispose();
                 autoCompleteIndexWriter.Dispose();
 
-                BexisIndexSearcher._Reader = indexWriter.GetReader();
+                BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
                 BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
             }
 
