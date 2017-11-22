@@ -39,16 +39,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         public ActionResult DatasetPermissions(long datasetId)
         {
             var entityManager = new EntityManager();
 
             try
             {
-                if (this.IsAccessibale("SAM", "EntityPermissions", "Subjects"))
+                if (this.IsAccessibale("SAM", "UserPermissions", "Subjects"))
                 {
-                    var result = this.Render("SAM", "EntityPermissions", "Subjects",
+                    var result = this.Render("SAM", "UserPermissions", "Subjects",
                         new RouteValueDictionary() { { "EntityId", entityManager.FindByName("Dataset").Id }, { "InstanceId", datasetId } });
 
                     return Content(result.ToHtmlString(), "text/html");
