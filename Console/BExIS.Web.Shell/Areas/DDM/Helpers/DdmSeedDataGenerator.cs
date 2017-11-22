@@ -45,7 +45,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     f.Parent != null &&
                     f.Parent.Id.Equals(DataDiscovery.Id));
 
-                if (Dashboard == null) SearchManagementFeature = featureManager.Create("Dashboard", "Dashboard", DataDiscovery);
+                if (Dashboard == null) Dashboard = featureManager.Create("Dashboard", "Dashboard", DataDiscovery);
 
 
 
