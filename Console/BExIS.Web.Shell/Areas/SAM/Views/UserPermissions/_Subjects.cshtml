@@ -36,7 +36,7 @@
       .DataBinding(dataBinding => dataBinding
           .Ajax()
           .OperationMode(GridOperationMode.Server)
-          .Select("Subjects_Select", "EntityPermissions", new { Model.EntityId, Model.InstanceId })
+          .Select("Subjects_Select", "UserPermissions", new { Model.EntityId, Model.InstanceId })
       )
       .Filterable()
       .Pageable(pageable =>
