@@ -54,7 +54,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 return new MessageModel()
                                 {
                                     hasMessage = true,
-                                    Message = "A data structure with same name already exists.",
+                                    Message = "A data structure with the same name already exists.",
                                     CssId = cssId
                                 };
                             }
@@ -105,7 +105,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't delete the data structure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                            Message = "Cannot delete the data structure " + dataStructure.Name + " (" + dataStructure.Id + ").",
                             CssId = dataStructure.Id.ToString()
                         };
                     }

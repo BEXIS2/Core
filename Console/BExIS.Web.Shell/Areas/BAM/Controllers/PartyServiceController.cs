@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -108,7 +109,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                 //Create party
-                party = partyManager.Create(partyType, party.Description, null,null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
+                party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                 if (partyRelationships != null)
                     foreach (var partyRelationship in partyRelationships)
                     {
@@ -129,6 +130,68 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager?.Dispose();
                 partyRelationshipManager?.Dispose();
             }
+        }
+
+        public ActionResult Edit(bool relationTabAsDefault = false)
+        {
+            PartyManager partyManager = null;
+            PartyTypeManager partyTypeManager = null;
+            UserManager userManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                partyTypeManager = new PartyTypeManager();
+                userManager = new UserManager();
+
+                var user = userManager.FindByNameAsync(HttpContext.User?.Identity?.Name).Result;
+
+                if (user == null)
+                    return RedirectToAction("Index", "Home", new { area = "" });
+
+                ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
+                var model = new PartyModel();
+                model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
+                Party party = partyManager.GetPartyByUser(user.Id);
+
+                if (party == null)
+                    return RedirectToAction("UserRegisteration", "PartyService", new { area = "bam" });
+
+
+                model.Description = party.Description;
+                model.Id = party.Id;
+                model.PartyType = party.PartyType;
+                //Set dates to null to not showing the minimum and maximum dates in UI
+                if (party.StartDate == DateTime.MinValue)
+                    model.StartDate = null;
+                else
+                    model.StartDate = party.StartDate;
+                if (party.EndDate.Date == DateTime.MaxValue.Date)
+                    model.EndDate = null;
+                else
+                    model.EndDate = party.EndDate;
+
+                ViewBag.RelationTabAsDefault = false;
+                ViewBag.Title = "Edit party";
+
+                return View(model);
+            }
+            finally
+            {
+                partyManager?.Dispose();
+                partyTypeManager?.Dispose();
+                userManager?.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
+        {
+            var party = new Party();
+            if (partyModel.Id == 0)
+                return RedirectToAction("Index", "Home");
+            else
+                party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
+            return RedirectToAction("Index", "Home",new { area=""});
         }
 
         /// <summary>

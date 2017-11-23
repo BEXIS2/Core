@@ -1,12 +1,13 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
 @{
     var actionName = ViewContext.RouteData.GetRequiredString("action").ToLower();
-    var readOnly = (actionName == "view" || actionName == "viewpartydetail");
+    var readOnly = (actionName == "view" || actionName == "edit");
 }
 @if (!readOnly)
 {
     <div class="bx-rpm-buttons" style="text-align:left;padding-left:10px;">
-        <a class="t-button function" id="AddPartyRelation" title="Create a new party relation" style="cursor:pointer">Create</a>
+        
+        <a class="bx-button action" id="AddPartyRelation" title="Add a new party relation" style="cursor:pointer">Add</a>
         <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
     </div>
 }
@@ -17,7 +18,6 @@
             .Columns(columns =>
             {
             columns.Bound(c => c.Title);
-
             columns.Bound(c => c.FirstParty.Name).Title("First Party");
             columns.Bound(c => c.SecondParty.Name).Title("Second Party");
             columns.Bound(c => c.StartDate);
@@ -27,11 +27,12 @@
             columns.Template(
                 @<text>
                     <div>
+                        <a class="bx bx-grid-function bx-show " style="cursor:pointer" onclick="viewPartyRelationship(@item.Id)" title="View Party &quot;@item.Title&quot;"> </a>
                         @if (!readOnly)
                         {
-                            <a class="bx bx-grid-function bx-trash " style="cursor:pointer" onclick="deletePartyRelationship(@item.Id)" title="Delete Party &quot;@item.Title&quot;"> </a>
                             <a class="bx bx-grid-function bx-edit " style="cursor:pointer" onclick="editPartyRelationship(@item.Id)" title="Edit Party &quot;@item.Title&quot;"> </a>
-                        }<a class="bx bx-grid-function bx-show " style="cursor:pointer" onclick="viewPartyRelationship(@item.Id)" title="View Party &quot;@item.Title&quot;"> </a>
+                            <a class="bx bx-grid-function bx-trash " style="cursor:pointer" onclick="deletePartyRelationship(@item.Id)" title="Delete Party &quot;@item.Title&quot;"> </a>
+                        }
                     </div>
                 </text>
 );
@@ -63,8 +64,7 @@
 
         $("#AddPartyRelation").bind("click", function () {
             $("#imgPartyCustomeAttrLoading").show();
-            var partyWindow = $("#PartyRelationWindow").data("t-window");
-           
+            var partyWindow = $("#PartyRelationWindow").data("t-window");           
             $.get("/BAM/Party/LoadPartyRelationshipType/" + @Model.PartyType.Id + "?partyId=" + @Model.Id, function(data) {
                 partyWindow.content(data);
                 partyWindow.center();

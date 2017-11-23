@@ -1,6 +1,7 @@
 ﻿@model List<BExIS.Dlm.Entities.Party.PartyRelationshipType>
 @{ var hasParty = false;
     var sourceParty = (BExIS.Dlm.Entities.Party.Party)ViewBag.sourceParty;
+    var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
 }
 <h2>Relationships:</h2>
 <div style="max-height:420px;overflow:auto;">
@@ -34,7 +35,7 @@
                 </tr>
                 @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
                 {
-                    if (@BExIS.Modules.Bam.UI.Helpers.Helper.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
+                    if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
                     {
                         <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
                             <td>
@@ -74,8 +75,9 @@
         }
         @if (hasParty)
         {
-            <div class="bx-footer right" style="text-align:left;">
+            <div class="bx-footer right" >
                 <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Save</button>
+                <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
             </div>
         }
         else

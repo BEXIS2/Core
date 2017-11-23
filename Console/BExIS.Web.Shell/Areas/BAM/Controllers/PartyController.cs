@@ -65,57 +65,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
         }
 
-        public ActionResult Edit(bool relationTabAsDefault = false)
-        {
-            PartyManager partyManager = null;
-            PartyTypeManager partyTypeManager = null;
-            UserManager userManager = null;
-            try
-            {
-                partyManager = new PartyManager();
-                partyTypeManager = new PartyTypeManager();
-                userManager = new UserManager();
-
-                var user = userManager.FindByNameAsync(HttpContext.User?.Identity?.Name).Result;
-
-                if (user == null)
-                    return RedirectToAction("Index", "Home", new { area = "" });
-
-                ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
-                var model = new PartyModel();
-                model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
-                Party party = partyManager.GetPartyByUser(user.Id);
-
-                if (party == null)
-                    return RedirectToAction("UserRegisteration", "PartyService", new { area = "bam" });
-
-
-                model.Description = party.Description;
-                model.Id = party.Id;
-                model.PartyType = party.PartyType;
-                //Set dates to null to not showing the minimum and maximum dates in UI
-                if (party.StartDate == DateTime.MinValue)
-                    model.StartDate = null;
-                else
-                    model.StartDate = party.StartDate;
-                if (party.EndDate.Date == DateTime.MaxValue.Date)
-                    model.EndDate = null;
-                else
-                    model.EndDate = party.EndDate;
-
-                ViewBag.RelationTabAsDefault = false;
-                ViewBag.Title = "Edit party";
-
-                return View("CreateEdit", model);
-            }
-            finally
-            {
-                partyManager?.Dispose();
-                partyTypeManager?.Dispose();
-                userManager?.Dispose();
-            }
-        }
-
         public ActionResult CreateEdit(int id, bool relationTabAsDefault = false)
         {
             PartyManager partyManager = null;
@@ -154,78 +103,15 @@ namespace BExIS.Modules.Bam.UI.Controllers
         [HttpPost]
         public ActionResult CreateEdit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
         {
-            PartyTypeManager partyTypeManager = null;
-            PartyManager partyManager = null;
-            var redirectAction = RedirectToAction("Index");
-            try
-            {
-                partyTypeManager = new PartyTypeManager();
-                partyManager = new PartyManager();
-                validateAttribute(partyModel);
-                if (partyModel.Errors.Count > 0)
-                    return View(partyModel);
-                var newAddPartyCustomAttrValues = new Dictionary<PartyCustomAttribute, string>();
-                var party = new Party();
-                if (partyModel.Id != 0)
-                {
-                    party = partyManager.Find(partyModel.Id);
-                    //Update some fields
-                    party.Description = partyModel.Description;
-                    party.StartDate = partyModel.StartDate.HasValue ? partyModel.StartDate.Value : DateTime.MinValue;
-                    party.EndDate = partyModel.EndDate.HasValue ? partyModel.EndDate.Value : DateTime.MaxValue;
-                    ////if relationship rules are satisfied, it is not temp
-                    //if (string.IsNullOrWhiteSpace(Helpers.Helper.ValidateRelationships(party.Id)))
-                    //    party.IsTemp = false;
-                    //else
-                    //    party.IsTemp = true;      
-                    party = partyManager.Update(party);
-                    foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
-                    {
-                        PartyCustomAttribute partyCustomAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(int.Parse(partyCustomAttributeValueString.Key));
-                        string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value;
-                        newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
-                    }
-                }
-                else
-                {
-                    PartyType partyType = partyTypeManager.PartyTypeRepository.Get(partyModel.PartyType.Id);
-                    var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
-                    // save party as temp if the reationships are required
-                    var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(partyType.Id).Where(cc => cc.MinCardinality > 0);
-                    //Create party
-                    party = partyManager.Create(partyType, "", partyModel.Description, partyModel.StartDate, partyModel.EndDate, partyStatusType, requiredPartyRelationTypes.Any());
-
-                    if (requiredPartyRelationTypes.Any())
-                        redirectAction = RedirectToAction("CreateEdit", new { id = party.Id, relationTabAsDefault = true });
-                }
-                try
-                {
-
-                    partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
-                }
-                catch (Exception ex)
-                {
-                    //If there is error , it deletes the party and goes to create step again
-                    partyManager.Delete(party);
-                    ViewBag.Title = PresentationModel.GetGenericViewTitle("Create Party");
-                    var model = new PartyModel();
-                    model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
-                    ViewBag.RelationTabAsDefault = false;
-                    ViewBag.Title = "Create party";
-                    if (ex.Message.Contains("uniqueness"))
-                        model.Errors.Add(new Error(ErrorType.Value, "Error: There was another party with the same main attributes.\r\n Please try again and use different values!"));
-                    else
-                        model.Errors.Add(new Error(ErrorType.Value, ex.Message));
-                    return View("CreateEdit", model);
-                }
-
-                return redirectAction;
-            }
-            finally
-            {
-                partyTypeManager?.Dispose();
-                partyManager?.Dispose();
-            }
+            var party = new Party();
+            if (partyModel.Id==0)
+                party = Helpers.Helper.CreateParty(partyModel, partyCustomAttributeValues);
+            else
+                party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
+            if(party.IsTemp)
+                return RedirectToAction("CreateEdit", new { id = party.Id, relationTabAsDefault = true });
+            else
+                return RedirectToAction("Index");            
         }
 
 
@@ -312,9 +198,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager?.Dispose();
             }
         }
-
-
-
 
         private void validateAttribute(PartyModel partyModel)
         {
@@ -415,7 +298,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 model.Id = party.Id;
                 model.PartyType = party.PartyType;
                 model.StartDate = party.StartDate;
-                return PartialView("_partyRelationshipsPartial", model);
+                return PartialView("~/Areas/BAM/Views/PartyService/_partyRelationshipsPartial.cshtml", model);
             }
             finally { partyManager?.Dispose(); }
         }
