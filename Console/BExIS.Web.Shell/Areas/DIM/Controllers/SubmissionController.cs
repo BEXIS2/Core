@@ -447,7 +447,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //Store ro in db
                             string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id,
                                 NameAttributeValues.title);
-                            publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "", "");
+                            publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "", "no status available");
 
                             //sendToGFBIO(broker, datasetId, datasetVersion, zipfilepath);
 
