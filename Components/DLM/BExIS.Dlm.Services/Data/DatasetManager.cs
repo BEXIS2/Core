@@ -38,6 +38,7 @@ namespace BExIS.Dlm.Services.Data
     /// </remarks>
     public class DatasetManager : IDisposable, IEntityStore
     {
+        public const long BIG_DATASET_SIZE_THRESHOLD = 5000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
         public int PreferedBatchSize { get; set; }
         private IUnitOfWork guow = null;
         public DatasetManager()
@@ -91,6 +92,7 @@ namespace BExIS.Dlm.Services.Data
         /// Provides read-only querying and access to the tuples of dataset versions
         /// </summary>
         public IReadOnlyRepository<DataTuple> DataTupleRepo { get; private set; }
+
 
         /// <summary>
         /// Provides read-only querying and access to the previously archived versions of data tuples
@@ -210,6 +212,9 @@ namespace BExIS.Dlm.Services.Data
 
                 repo.Put(dataset);
                 uow.Commit();
+                // This creates the MV when there is no data tuples attached to the dataset, hence faster.
+                // However, it asks for REFRESH to tell the underlying database to mark the MV as queryable.
+                //updateMaterializedView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
                 return (dataset);
             }
         }
@@ -696,7 +701,7 @@ namespace BExIS.Dlm.Services.Data
         /// <remarks>This method does not drop the MV if it already exists.</remarks>
         public void SyncView(Int64 datasetId, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            this.updateMaterializedView(datasetId, viewCreationBehavior);
+            this.updateMaterializedView(datasetId, viewCreationBehavior, false);
         }
 
         /// <summary>
@@ -707,7 +712,7 @@ namespace BExIS.Dlm.Services.Data
         /// <remarks>This method does not drop the MVs if they already exist.</remarks>
         public void SyncView(List<Int64> datasetIds, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCreationBehavior));
+            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCreationBehavior, false));
         }
         
         #endregion
@@ -765,12 +770,16 @@ namespace BExIS.Dlm.Services.Data
             }
             catch (Exception ex) // fallback to the traditional method
             {
-                // shaould use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
-                //var tuples = getDatasetVersionEffectiveTuples(this.GetDatasetLatestVersion(datasetId), pageNumber, pageSize);
-                //DataTable table = convertDataTuplesToDataTable(dsv, tuples);
-                //return table;
-                return null;
+                // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
+                var version = this.GetDatasetLatestVersion(datasetId);
+                var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
+                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                {
+                    DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
+                    return table;
+                }
             }
+            return null;
         }
 
         /// <summary>
@@ -784,7 +793,7 @@ namespace BExIS.Dlm.Services.Data
         //[MeasurePerformance]
         public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
-            return getDatasetVersionEffectiveTuples(datasetVersion, pageNumber, pageSize);
+            return getDatasetVersionEffectiveTuples(datasetVersion, pageNumber, pageSize, false);
         }
 
         /// <summary>
@@ -807,6 +816,11 @@ namespace BExIS.Dlm.Services.Data
         public Int64 GetDatasetVersionEffectiveTupleCount(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleCount(datasetVersion);
+        }
+
+        public int GetDatasetLatestVersionEffectiveTupleCount(Int64 datasetId)
+        {
+            return getPrimaryTupleCountForLatestVersion(datasetId);
         }
 
         /// <summary>
@@ -1384,36 +1398,39 @@ namespace BExIS.Dlm.Services.Data
 
         private DatasetVersion getDatasetLatestVersion(Int64 datasetId)
         {
-            var datasetRepo = guow.GetReadOnlyRepository<Dataset>();
-            var datasetVersionRepo = guow.GetReadOnlyRepository<DatasetVersion>();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
 
-            DatasetVersion dsVersion = datasetVersionRepo.Query(p =>
-                p.Dataset.Id == datasetId
-                && p.Dataset.Status == DatasetStatus.CheckedIn
-                && p.Status == DatasetVersionStatus.CheckedIn)
-                .FirstOrDefault();//DatasetVersionRepo.Query(p => p.Dataset.Id == datasetId && p.Dataset.Status == DatasetStatus.CheckedIn).OrderByDescending(p => p.Timestamp).FirstOrDefault();
-            if (dsVersion != null)
-            {
-                //dsVersion.Materialize();
-                return (dsVersion);
-            }
-            try
-            {
-                Dataset dataset = datasetRepo.Get(datasetId);
-                if (dataset == null)
-                    throw new Exception(string.Format("Dataset {0} does not exist!", datasetId));
-                if (dataset.Status == DatasetStatus.Deleted)
-                    throw new Exception(string.Format("Dataset {0} is deleted", datasetId));
-                if (dataset.Status == DatasetStatus.CheckedOut)
+                DatasetVersion dsVersion = datasetVersionRepo.Query(p =>
+                    p.Dataset.Id == datasetId
+                    && p.Dataset.Status == DatasetStatus.CheckedIn
+                    && p.Status == DatasetVersionStatus.CheckedIn)
+                    .FirstOrDefault();//DatasetVersionRepo.Query(p => p.Dataset.Id == datasetId && p.Dataset.Status == DatasetStatus.CheckedIn).OrderByDescending(p => p.Timestamp).FirstOrDefault();
+                if (dsVersion != null)
                 {
-                    throw new Exception(string.Format("Dataset {0} is checked out.", datasetId));
+                    //dsVersion.Materialize();
+                    return (dsVersion);
                 }
+                try
+                {
+                    Dataset dataset = datasetRepo.Get(datasetId);
+                    if (dataset == null)
+                        throw new Exception(string.Format("Dataset {0} does not exist!", datasetId));
+                    if (dataset.Status == DatasetStatus.Deleted)
+                        throw new Exception(string.Format("Dataset {0} is deleted", datasetId));
+                    if (dataset.Status == DatasetStatus.CheckedOut)
+                    {
+                        throw new Exception(string.Format("Dataset {0} is checked out.", datasetId));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
+                }
+                return (null);
             }
-            catch (Exception ex)
-            {
-                throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
-            }
-            return (null);
         }
 
         private Int64 getDatasetLatestVersionId(Int64 datasetId)
@@ -1508,7 +1525,7 @@ namespace BExIS.Dlm.Services.Data
             return (tuples);
         }
 
-        private List<AbstractTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        private List<AbstractTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize, bool isolated)
         {
             List<AbstractTuple> tuples = new List<AbstractTuple>();
             Dataset dataset = datasetVersion.Dataset;
@@ -1524,7 +1541,7 @@ namespace BExIS.Dlm.Services.Data
             }
             else if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedIn) // its a request for the latest checked-in version that should be served from the Tuples table
             {
-                tuples = getPrimaryTuples(datasetVersion, pageNumber, pageSize).Cast<AbstractTuple>().ToList();
+                tuples = getPrimaryTuples(datasetVersion, pageNumber, pageSize, isolated).Cast<AbstractTuple>().ToList();
             }
             else
             {
@@ -1864,14 +1881,15 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private List<DataTuple> getPrimaryTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        private List<DataTuple> getPrimaryTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize, bool isolated)
         {
             // effective tuples of the latest checked in version are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
             List<DataTuple> tuples;
             try
             {
-                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                IUnitOfWork uow = isolated ? this.GetBulkUnitOfWork() : this.GetUnitOfWork();
+                using (uow)
                 {
                     IReadOnlyRepository<DataTuple> tuplesRepoTemp = uow.GetReadOnlyRepository<DataTuple>();
                     tuples = (versionIds == null || versionIds.Count() <= 0) ?
@@ -1924,6 +1942,21 @@ namespace BExIS.Dlm.Services.Data
                                             0
                                             : dataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id)
                                                            .Count();
+                return (tuplesCount);
+            }
+        }
+
+        private Int32 getPrimaryTupleCountForLatestVersion(Int64 datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
+                Int32 tuplesCount = DataTupleRepo
+                    .Query(p => 
+                            (p.DatasetVersion.Status == DatasetVersionStatus.CheckedIn || p.DatasetVersion.Status == DatasetVersionStatus.Old) 
+                            && p.DatasetVersion.Dataset.Id == datasetId)
+                    .Count();
+
                 return (tuplesCount);
             }
         }
@@ -2150,19 +2183,39 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true)
         {
-            if(behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
+            if (behavior == ViewCreationBehavior.None) // do not use this one! (behavior.HasFlag(ViewCreationBehavior.None))
+                return;
+
+            if (enforceSizeCheck)
+            {
+                var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
+                if (dataset == null)
+                    throw new Exception($"Dataset '{datasetId}' does not exist.");
+                if (!(dataset.DataStructure.Self is StructuredDataStructure))
+                    throw new Exception($"Dataset '{datasetId}' is not structured.");
+
+                // check the size and threshold            
+                int numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
+                int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
+                long size = numberOfTuples * numberOfVariables;
+                if (size > BIG_DATASET_SIZE_THRESHOLD)
+                    return;
+            }
+            
+            if (behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
             {
                 if (!existsMaterializedView(datasetId)) // check if the MV does not exist
                     createMaterializedView(datasetId); // creating an MV MUST NOT refresh the data. 
             }
-            if(behavior.HasFlag(ViewCreationBehavior.Refresh)) // refresh MV
+
+            if (behavior.HasFlag(ViewCreationBehavior.Refresh)) // refresh MV
             {
                 if (existsMaterializedView(datasetId)) // check if the MV exists
                     refreshMaterializedView(datasetId);
             }
-                
+            
         }
 
         private void createMaterializedView(long datasetId)
@@ -2186,19 +2239,19 @@ namespace BExIS.Dlm.Services.Data
                     }
                     if (columnDefinitionList.Count() <= 0)
                         return;
+                    try
+                    {
+                        MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+                        mvHelper.Create(datasetId, columnDefinitionList);
+                    }
+                    catch (Exception ex)
+                    {
+                        // could not create and/or install the materialized view
+                        // the logic will try to build the MV on the next data set version commit operation.
+                    }
                 }
             }
 
-            try
-            {
-                MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-                mvHelper.Create(datasetId, columnDefinitionList);
-            }
-            catch (Exception ex)
-            {
-                // could not create and/or install the materialized view
-                // the logic will try to build the MV on the next data set version commit operation.
-            }
 
         }
 
@@ -2230,6 +2283,13 @@ namespace BExIS.Dlm.Services.Data
         {
             DatasetConvertor dsConvertor = new DatasetConvertor();
             DataTable table = dsConvertor.ConvertDatasetVersion(this, dsVersion);
+            return table;
+        }
+
+        private DataTable convertDataTuplesToDataTable(List<AbstractTuple> tuples, DatasetVersion datasetVersion, StructuredDataStructure sds)
+        {
+            DatasetConvertor dsConvertor = new DatasetConvertor();
+            DataTable table = dsConvertor.ConvertDatasetVersion(tuples, datasetVersion, sds);
             return table;
         }
 
@@ -2403,6 +2463,9 @@ namespace BExIS.Dlm.Services.Data
                                     DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
                                 };
+                                // the tuple version as a history record to the list of history records to be added later when the edit and delete loops are finished.
+                                // the actual record persitence happens in the caller of this method.
+                                tupleVersionsTobeAdded.Add(tupleVersion);
                                 //DataTuple merged = 
                                 //orginalTuple.History.Add(tupleVersion);
                             }

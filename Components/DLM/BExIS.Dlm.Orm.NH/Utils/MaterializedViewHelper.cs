@@ -127,8 +127,9 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             selectBuilder
                 .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
-                .AppendLine(string.Format("WHERE v.datasetref = {0} AND v.status = 2", datasetId))
-                .Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
+                .AppendLine(string.Format("WHERE (v.datasetref = {0} AND v.status = 2) OR (v.datasetref = {0} AND v.status = 0)", datasetId))
+                .Append("WITH NO DATA") //avoids refreshing the MV at the creation time, the view will not be queryable until explicitly refreshed.
+                //.Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
 
             // build the satetment
@@ -189,7 +190,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // execute the statement
             try
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                 {
                     uow.ExecuteNonQuery(mvBuilder.ToString());
                 }

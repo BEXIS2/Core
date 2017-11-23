@@ -55,7 +55,7 @@ namespace BExIS.Dim.Helpers.Export
 
 
                 string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
-                string filename = submissionManager.GetFileNameForDataRepo(datasetVersionId, datasetId, _dataRepo.Name, "xml");
+                string filename = submissionManager.GetFileNameForDataRepo(datasetId, datasetVersionId, _dataRepo.Name, "xml");
 
                 string filepath = Path.Combine(path, filename);
 

@@ -82,15 +82,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region create entities
 
                 // Entities
+                Entity entity = null;
 
-                Entity entity = new Entity();
-                entity.Name = "Dataset";
-                entity.EntityType = typeof(Dataset);
-                entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
-                entity.UseMetadata = true;
-                entity.Securable = true;
+                if (!entityManager.Entities.Select(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).Any())
+                {
+                    entity = new Entity();
+                    entity.Name = "Dataset";
+                    entity.EntityType = typeof(Dataset);
+                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity.UseMetadata = true;
+                    entity.Securable = true;
 
-                entityManager.Create(entity);
+                    entityManager.Create(entity);
+                }
+
 
 
                 #endregion
@@ -108,7 +113,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (DataCollectionFeature == null) DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
 
                 Feature DatasetCreationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Creation"));
-                if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation");
+                if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation", DataCollectionFeature);
 
                 Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
                 if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
@@ -126,7 +131,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region Create Dataset Workflow
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
-                operationManager.Create("DCM", "Form", "*", DatasetCreationFeature);
+                operationManager.Create("DCM", "Form", "*");
 
                 #endregion
 
@@ -164,6 +169,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "ImportMetadataStructureSummary", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ManageMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", MetadataManagementFeature);
+
+                #endregion
+
+                #region public available
+
+                operationManager.Create("DCM", "Form", "*");
 
                 #endregion
 

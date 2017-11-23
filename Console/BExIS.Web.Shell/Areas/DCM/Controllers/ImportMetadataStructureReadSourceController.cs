@@ -3,6 +3,7 @@ using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
+using BExIS.Utils.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using System;
 using System.Linq;
@@ -89,8 +90,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Content("");
         }
 
-        public ActionResult SetSchemaName(string name)
+        public JsonResult SetSchemaName(string name)
         {
+
+            if (String.IsNullOrEmpty(name))
+            {
+                return Json("A Metadata structure must have a name.", JsonRequestBehavior.AllowGet);
+            }
+
+            if (!RegExHelper.IsFilenameValid(name))
+            {
+                return Json("Name : \" " + name + " \" is invalid. These special characters are not allowed : \\/:*?\"<>|", JsonRequestBehavior.AllowGet);
+            }
+
+            if (SchemaNameExist(name))
+            {
+                return Json("A Metadata structure with this name already exist. Please choose a other name.", JsonRequestBehavior.AllowGet);
+            }
+
+
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
@@ -98,20 +116,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.SCHEMA_NAME, name);
 
-            return Content("");
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         public bool SchemaNameExist(string SchemaName)
         {
+
             MetadataStructureManager msm = new MetadataStructureManager();
 
-            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() == 0)
+            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() > 0)
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
@@ -140,72 +160,81 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.SchemaName = schemaName;
             model.RootNode = root;
 
-            try
+            if (!RegExHelper.IsFilenameValid(schemaName))
             {
-                //file.WriteLine("check schema exist");
-                if (SchemaNameExist(schemaName))
-                {
-                    model.ErrorList.Add(new Error(ErrorType.Other,
-                        "A Metadata structure with this name already exist. Please choose a other name."));
-                }
-                else
-                if (String.IsNullOrEmpty(schemaName))
-                {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
-                }
-                else
-                    xmlSchemaManager.Load(path, GetUserNameOrDefault());
-
-                if (!String.IsNullOrEmpty(model.RootNode) && !xmlSchemaManager.Elements.Any(e => e.Name.Equals(model.RootNode)))
-                {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Root node not exist"));
-                }
-
+                model.ErrorList.Add(new Error(ErrorType.Other,
+                        "Name : \" " + schemaName + " \" is invalid. These special characters are not allowed : \\/:*?\"<>|"));
             }
-            catch (Exception ex)
+            else
             {
-                ModelState.AddModelError("", ex.Message);
-                model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
-                throw ex;
-            }
 
-            if (model.ErrorList.Count == 0)
-            {
+
                 try
                 {
-                    metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
+                    //file.WriteLine("check schema exist");
+                    if (SchemaNameExist(schemaName))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other,
+                            "A Metadata structure with this name already exist. Please choose a other name."));
+                    }
+                    else
+                    if (String.IsNullOrEmpty(schemaName))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
+                    }
+                    else
+                        xmlSchemaManager.Load(path, GetUserNameOrDefault());
+
+                    if (!String.IsNullOrEmpty(model.RootNode) && !xmlSchemaManager.Elements.Any(e => e.Name.Equals(model.RootNode)))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Root node not exist"));
+                    }
+
                 }
                 catch (Exception ex)
                 {
-                    xmlSchemaManager.Delete(schemaName);
                     ModelState.AddModelError("", ex.Message);
                     model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
+                    throw ex;
+                }
+
+                if (model.ErrorList.Count == 0)
+                {
+                    try
+                    {
+                        metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
+                    }
+                    catch (Exception ex)
+                    {
+                        xmlSchemaManager.Delete(schemaName);
+                        ModelState.AddModelError("", ex.Message);
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
+                    }
+                }
+
+                TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT,
+                    xmlSchemaManager.mappingFileNameImport);
+                TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT,
+                    xmlSchemaManager.mappingFileNameExport);
+
+
+                model.StepInfo.notExecuted = false;
+
+                if (model.ErrorList.Count == 0)
+                {
+                    model.IsGenerated = true;
+
+                    if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
+                        TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE] = true;
+                    else
+                        TaskManager.Bus.Add(ImportMetadataStructureTaskManager.IS_GENERATE, true);
+
+                    if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
+                        TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID] = metadataStructureid;
+                    else
+                        TaskManager.Bus.Add(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID, metadataStructureid);
                 }
             }
-
-            TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT,
-                xmlSchemaManager.mappingFileNameImport);
-            TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT,
-                xmlSchemaManager.mappingFileNameExport);
-
-
-            model.StepInfo.notExecuted = false;
-
-            if (model.ErrorList.Count == 0)
-            {
-                model.IsGenerated = true;
-
-                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
-                    TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE] = true;
-                else
-                    TaskManager.Bus.Add(ImportMetadataStructureTaskManager.IS_GENERATE, true);
-
-                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
-                    TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID] = metadataStructureid;
-                else
-                    TaskManager.Bus.Add(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID, metadataStructureid);
-            }
-
 
             return PartialView("ReadSource", model);
 

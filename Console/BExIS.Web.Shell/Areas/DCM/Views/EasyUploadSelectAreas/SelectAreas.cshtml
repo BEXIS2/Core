@@ -46,6 +46,20 @@
     #Step4 .uploadWizardStep_Content{
         height: auto;
     }
+
+    #showKnownErrorsButton {
+        padding: 0px;
+        margin-bottom: 5px;
+        color: black;
+        background: none;
+        border: none;
+    }
+
+    #knownDisplayErrors {
+        display: none;
+        border: 1px solid black;
+        padding: 2px;
+    }
 </style>
 
 <div id="Step4" class="uploadWizardStep">
@@ -57,6 +71,33 @@
 
         <div class="uploadWizardStep_Description stepper">
             <p>Please mark your header (the names of the variables) and data area.</p>
+        </div>
+
+        <button id="showKnownErrorsButton" onclick="showKnownDisplayErrors()">
+            Why is my data not displayed correctly? 
+            <i class="fa fa-caret-square-o-down" aria-hidden="true"></i>
+        </button>
+        <div id="knownDisplayErrors">
+            <p>The representation of the data you are seeing in the table below might differ from what you see in Microsoft Excel or similar programs.</p>
+            <p>Don't worry, your data will be uploaded correctly if you choose the correct datatypes during the next step.</p>
+            <figure>
+                <figcaption>The following differences are known:</figcaption>
+                <ul>
+                    <li>Dates and times</li>
+                    <ul>
+                        <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
+                        <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
+                    </ul>
+                    <li>Boolean values</li>
+                    <ul>
+                        <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
+                    </ul>
+                    <li>Real Numbers</li>
+                    <ul>
+                        <li>Real numbers might be displayed with scientific notation.</li>
+                    </ul>
+                </ul>
+            </figure>
         </div>
 
         <div class="uploadWizardStep_Content stepper">
@@ -492,5 +533,9 @@
         }
 
         return selection;
+    }
+
+    function showKnownDisplayErrors() {
+        $('#knownDisplayErrors').fadeToggle('slow');
     }
 </script>

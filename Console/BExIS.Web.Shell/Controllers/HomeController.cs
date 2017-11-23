@@ -1,7 +1,6 @@
 ﻿using System.Web.Mvc;
-using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Data;
-using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -10,10 +9,10 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
+            if (!this.IsAccessibale("DDM", "Home", "Index")) return View();
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant(Request.IsAuthenticated ? "Dashboard" : "Home", this.Session.GetTenant());
-
-            return View();
+            var result = this.Render("DDM", "Home", "Index");
+            return Content(result.ToHtmlString(), "text/html");
         }
 
         [DoesNotNeedDataAccess]

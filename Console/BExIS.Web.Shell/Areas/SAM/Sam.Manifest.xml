@@ -49,9 +49,9 @@
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 
-    <Export tag="internalApi" id="entityPermissions_subjects"
-        title="Entity Permissions - Subjects" description="Entity Permissions - Subjects" icon=""
-        controller="EntityPermissions" action="Subjects"
+    <Export tag="internalApi" id="userPermissions_subjects"
+        title="User Permissions - Subjects" description="User Permissions - Subjects" icon=""
+        controller="UserPermissions" action="Subjects"
         extends="" />
 
     <Export tag="internalApi" id="entityPermissions_add"

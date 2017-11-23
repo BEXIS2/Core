@@ -279,8 +279,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
-    //Check duplicate and add edit 
 }

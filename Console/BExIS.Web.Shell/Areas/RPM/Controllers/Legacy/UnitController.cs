@@ -10,6 +10,7 @@ using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -69,13 +70,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                         Model.Unit = unitManager.Create(Model.Unit.Name, Model.Unit.Abbreviation, Model.Unit.Description, Model.Unit.Dimension, Model.Unit.MeasurementSystem);
 
-                        updataAssociatedDataType(Model.Unit, checkedRecords);
+                        updataAssociatedDataType(Model.Unit, checkedRecords, unitManager);
                     }
                     else
                     {
                         Session["Window"] = true;
 
-                        return View("UnitManager", new UnitManagerModel());
+                        return View("UnitManager", new UnitManagerModel(0));
                     }
                 }
                 else
@@ -108,7 +109,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             unit = unitManager.Update(unit);
                             List<long> DataTypelIdList = new List<long>();
 
-                            updataAssociatedDataType(unit, checkedRecords);
+                            updataAssociatedDataType(unit, checkedRecords, unitManager);
                         }
                     }
                     else
@@ -219,7 +220,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return check;
         }
 
-        private List<DataType> updataAssociatedDataType(Unit unit, long[] newDataTypeIds)
+        private List<DataType> updataAssociatedDataType(Unit unit, long[] newDataTypeIds, UnitManager unitManager)
         {
             if (unit != null)
             {
@@ -227,34 +228,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 try
                 {
                     dataTypeManger = new DataTypeManager();
+                       
+                    List<DataType> existingDataTypes = unit.AssociatedDataTypes.ToList();
+                    List<DataType> newDataTypes = newDataTypeIds == null ? new List<DataType>() : dataTypeManger.GetUnitOfWork().GetReadOnlyRepository<DataType>().Query().Where(p => newDataTypeIds.Contains(p.Id)).ToList();
+                    List<DataType> tobeAddedDataTypes = newDataTypes.Except(existingDataTypes).ToList();
 
-                    UnitManager unitManager = null;
-                    try
-                    {
-                        unitManager = new UnitManager();
+                    if (tobeAddedDataTypes != null && tobeAddedDataTypes.Count > 0)
+                        unitManager.AddAssociatedDataType(unit, tobeAddedDataTypes);
 
+                        
+                    existingDataTypes = unit.AssociatedDataTypes.ToList();
+                    List<DataType> toBeRemoved = existingDataTypes.Except(newDataTypes).ToList();
+                    if (toBeRemoved != null && toBeRemoved.Count() > 0)
+                        unitManager.RemoveAssociatedDataType(unit, toBeRemoved);
 
-                        unit = unitManager.Repo.Get(unit.Id);
-                        List<DataType> existingDataTypes = unit.AssociatedDataTypes.ToList();
-                        List<DataType> newDataTypes = newDataTypeIds == null ? new List<DataType>() : dataTypeManger.Repo.Query().Where(p => newDataTypeIds.Contains(p.Id)).ToList();
-                        List<DataType> tobeAddedDataTypes = newDataTypes.Except(existingDataTypes).ToList();
-
-                        if (tobeAddedDataTypes != null && tobeAddedDataTypes.Count > 0)
-                            unitManager.AddAssociatedDataType(unit, tobeAddedDataTypes);
-
-                        unit = unitManager.Repo.Get(unit.Id);
-                        existingDataTypes = unit.AssociatedDataTypes.ToList();
-                        List<DataType> toBeRemoved = existingDataTypes.Except(newDataTypes).ToList();
-                        if (toBeRemoved != null && toBeRemoved.Count() > 0)
-                            unitManager.RemoveAssociatedDataType(unit, toBeRemoved);
-
-                        unit = unitManager.Repo.Get(unit.Id);
-                        return unit.AssociatedDataTypes.ToList();
-                    }
-                    finally
-                    {
-                        unitManager.Dispose();
-                    }
+                    return unit.AssociatedDataTypes.ToList();
+                                     
                 }
                 finally
                 {
@@ -322,7 +311,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 else
                 {
                     ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Unit", this.Session.GetTenant());
-                    Model = new UnitManagerModel();
+                    Model = new UnitManagerModel(0);
                     Session["nameMsg"] = null;
                     Session["abbrMsg"] = null;
                     Session["dataTypeMsg"] = null;

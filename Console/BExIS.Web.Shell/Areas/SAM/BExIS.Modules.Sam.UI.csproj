@@ -153,6 +153,7 @@
     <Compile Include="Controllers\ModulesController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
+    <Compile Include="Controllers\UserPermissionsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
@@ -198,6 +199,7 @@
     <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\SAM.pubxml" />
     <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM21108.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -245,6 +247,7 @@
     <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\EntityPermissions\_Instances.cshtml" />
     <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
+    <Content Include="Views\UserPermissions\_Subjects.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

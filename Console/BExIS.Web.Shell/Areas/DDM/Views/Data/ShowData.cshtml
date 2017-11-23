@@ -100,13 +100,13 @@
 
         $("#grid_subjects tbody input:checkbox").click(function () {
             if ($(this).is(':checked')) {
-                $.post('@Url.Action("AddRightToEntityPermission", "EntityPermissions", new { area = "sam"})',
+                $.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
                     { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
                     function () {
                         $("#grid_subjects .t-refresh").trigger('click');
                     });
             } else {
-                $.post('@Url.Action("RemoveRightFromEntityPermission", "EntityPermissions", new { area = "sam" })',
+                $.post('@Url.Action("RemoveRightFromEntityPermission", "UserPermissions", new { area = "sam" })',
                     { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
                     function () {
                         $("#grid_subjects .t-refresh").trigger('click');
@@ -165,20 +165,6 @@
         }
         else {
             return false;
-        }
-    }
-
-    function setDataPermission(value, rightType, subjectId, dataId, entityId) {
-        if (value) {
-            $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
-                $("#Grid_Subjects .t-refresh").trigger('click');
-            });
-        } else {
-            $.post('@Url.Action("DeleteDataPermission", "Data")',
-                { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType },
-                function(e) {
-                    $("#Grid_Subjects .t-refresh").trigger('click');
-                });
         }
     }
 

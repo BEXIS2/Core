@@ -30,11 +30,20 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public EditUnitModel(long unitId , bool listView = false)
         {
-            setup(unitId, listView);
+            if (unitId > 0)
+                setup(unitId, listView);
+            else
+                setup();
         }
 
         private void setup()
         {
+            bool inUse = false;
+            Unit = new Unit();
+            Unit.Dimension = new Dimension();
+            DataTypeList = new List<DataType>();
+            DimensionList = new List<Dimension>();
+
             UnitManager unitManager = null;
             DataTypeManager dataTypeManager = null;
             try
