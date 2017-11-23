@@ -23,29 +23,36 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             var visModel = new VisualizationModel();
 
             #region read csv
-            //var reader = new StreamReader(@"C:\test.csv");                        
-            ////List<string> listA = new List<string>();
-            ////List<string> listB = new List<string>();
-            
-            //var line = reader.ReadLine(); //first line: Title
-            //visModel.title = line;
-            //line = reader.ReadLine();  // second line: title of Y-Axis
-            //visModel.yAxis = line;
+            try
+            {
+                var reader = new StreamReader(@"C:\test.csv");
+                //List<string> listA = new List<string>();
+                //List<string> listB = new List<string>();
 
-            //while (!reader.EndOfStream)
-            //{
-            //    line = reader.ReadLine();
-            //    var values = line.Split(';');
+                var line = reader.ReadLine(); //first line: Title
+                visModel.title = line;
+                line = reader.ReadLine();  // second line: title of Y-Axis
+                visModel.yAxis = line;
 
-            //    visModel.values.Add(values[0], Convert.ToInt32(values[1]));
-            //    //listA.Add(values[0]);
-            //    //listB.Add(values[1]);
-            //}
+                Dictionary<string, int> xyList = new Dictionary<string, int>();
+                while (!reader.EndOfStream)
+                {
+                    line = reader.ReadLine();
+                    var values = line.Split(';');
+
+                    xyList.Add(values[0], Convert.ToInt32(values[1]));
+                    //listA.Add(values[0]);
+                    //listB.Add(values[1]);
+                }
+                visModel.values = xyList;
+            }
+            catch
+            {
+                visModel.title = "OOps!";// "Population from 1978 until 2017";
+                visModel.type = "Line Chart";
+            }
+
             #endregion
-
-            //visModel.title = "Population from 1978 until 2017";
-            //visModel.type = "Line Chart";
-
             //var entityManager = new EntityManager();
 
             //try
