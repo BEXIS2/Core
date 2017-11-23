@@ -707,8 +707,10 @@ namespace BExIS.Dlm.Services.Party
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-                return repo.Get(c => c.UserId == userId).Select(c => c.Party).FirstOrDefault();
+                IReadOnlyRepository<PartyUser> repo = uow.GetReadOnlyRepository<PartyUser>();
+                return repo.Query(c => c.UserId == userId)
+                           .Select(c => c.Party)
+                           .FirstOrDefault();
             }
         }
 
@@ -716,8 +718,10 @@ namespace BExIS.Dlm.Services.Party
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-                return repo.Get(c => c.PartyId == partyId).Select(c => c.UserId).FirstOrDefault();
+                IReadOnlyRepository<PartyUser> repo = uow.GetReadOnlyRepository<PartyUser>();
+                return repo.Query(c => c.PartyId == partyId)
+                           .Select(c => c.UserId)
+                           .FirstOrDefault();
             }
         }
         #endregion 

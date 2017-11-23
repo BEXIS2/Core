@@ -15,8 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Vaiona.Utils.Cfg;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -286,7 +286,7 @@ namespace BExIS.IO.Transform.Output
 
         public static string GetVariableListAsJson(long datasetId)
         {
-            return JsonConvert.SerializeObject(new DataStructureDataList(datasetId));
+            return JsonConvert.SerializeObject(new DataStructureDataList(datasetId), Newtonsoft.Json.Formatting.Indented);
         }
 
         public static DataStructureDataList GetVariableList(long datasetId)
@@ -604,7 +604,7 @@ namespace BExIS.IO.Transform.Output
 
             List<Variable> variables = this.GetUnitOfWork().GetReadOnlyRepository<Variable>()
                                                             .Query(p => variableIds.Contains(p.Id))
-                                                            .OrderBy(p=> p.OrderNo)
+                                                            .OrderBy(p => p.OrderNo)
                                                             .ToList();
             foreach (Variable var in variables)
             {

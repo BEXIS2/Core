@@ -9,10 +9,12 @@ using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -37,16 +39,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         public ActionResult DatasetPermissions(long datasetId)
         {
             var entityManager = new EntityManager();
 
             try
             {
-                if (this.IsAccessibale("SAM", "EntityPermissions", "Subjects"))
+                if (this.IsAccessibale("SAM", "UserPermissions", "Subjects"))
                 {
-                    var result = this.Render("SAM", "EntityPermissions", "Subjects",
+                    var result = this.Render("SAM", "UserPermissions", "Subjects",
                         new RouteValueDictionary() { { "EntityId", entityManager.FindByName("Dataset").Id }, { "InstanceId", datasetId } });
 
                     return Content(result.ToHtmlString(), "text/html");
@@ -331,6 +332,62 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
+        public JsonResult PrepareCsvData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".csv";
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
+                        datasetVersion.Id);
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        String[] visibleColumns = null;
+
+                        if (Session["Columns"] != null)
+                            visibleColumns = (String[])Session["Columns"];
+
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv", visibleColumns);
+
+                        LoggerFactory.LogCustom(message);
+
+                        #endregion generate a subset of a dataset
+                    }
+                    else
+                    {
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+
+                        LoggerFactory.LogCustom(message);
+                    }
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult DownloadAsCsvData(long id)
         {
             if (hasUserRights(id, RightType.Read))
@@ -371,11 +428,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         LoggerFactory.LogCustom(message);
 
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+
+
                         return File(path, "text/csv", title + ".csv");
                     }
                 }
                 catch (Exception ex)
                 {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        ex.Message,
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                     throw ex;
                 }
                 finally
@@ -386,6 +456,66 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             else
             {
                 return Content("User has no rights.");
+            }
+        }
+
+        public JsonResult PrepareExcelData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".xlsm";
+
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    ExcelWriter writer = new ExcelWriter();
+
+                    string title = getTitle(writer.GetTitle(id));
+
+                    string path = "";
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                        datasetVersion.Id);
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        //ToDo filter datatuples
+
+                        LoggerFactory.LogCustom(message);
+
+
+                        #endregion generate a subset of a dataset
+                    }
+
+                    //filter not in use
+                    else
+                    {
+                        OutputDataManager outputDataManager = new OutputDataManager();
+                        path = outputDataManager.GenerateExcelFile(id, title);
+                        LoggerFactory.LogCustom(message);
+                    }
+
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -432,11 +562,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         path = outputDataManager.GenerateExcelFile(id, title);
                         LoggerFactory.LogCustom(message);
 
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+
+
                         return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
                     }
                 }
                 catch (Exception ex)
                 {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        ex.Message,
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                     throw ex;
                 }
                 finally
@@ -447,6 +590,65 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             else
             {
                 return Content("User has no rights.");
+            }
+        }
+
+        public JsonResult PrepareTxtData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".txt";
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
+                                                    datasetVersion.Id);
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        String[] visibleColumns = null;
+
+                        if (Session["Columns"] != null)
+                            visibleColumns = (String[])Session["Columns"];
+
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain", visibleColumns);
+
+                        LoggerFactory.LogCustom(message);
+
+
+                        #endregion generate a subset of a dataset
+                    }
+                    else
+                    {
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
+
+                        LoggerFactory.LogCustom(message);
+                    }
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -492,11 +694,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         LoggerFactory.LogCustom(message);
 
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+
+
                         return File(path, "text/plain", title + ".txt");
                     }
                 }
                 catch (Exception ex)
                 {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        ex.Message,
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                     throw ex;
                 }
                 finally
@@ -680,13 +895,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (hasUserRights(id, RightType.Read))
             {
                 DatasetManager datasetManager = new DatasetManager();
-
+                string title = "";
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                     //TITLE
-                    string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                    title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
@@ -715,10 +930,22 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             datasetVersion.Id);
                     LoggerFactory.LogCustom(message);
 
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                     return File(zipPath, "application/zip", title + ".zip");
                 }
                 catch (Exception ex)
                 {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        ex.Message,
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                     throw ex;
                 }
                 finally
@@ -737,6 +964,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 string title = path.Split('\\').Last();
                 string message = string.Format("file was downloaded");
                 LoggerFactory.LogCustom(message);
+
+                var es = new EmailService();
+                es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                    MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                    ConfigurationManager.AppSettings["SystemEmail"]
+                    );
 
                 return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
             }

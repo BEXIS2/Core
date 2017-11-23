@@ -263,67 +263,88 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (metadataStructure.Id.Equals(metadataStructureModel.Id))
             {
                 metadataStructure.Name = metadataStructureModel.Name;
-
+                XmlDocument xmlDocument = new XmlDocument();
                 if (metadataStructure.Extra != null)
                 {
-                    XmlDocument xmlDocument = new XmlDocument();
+
                     if (metadataStructure.Extra as XmlDocument != null)
                         xmlDocument = metadataStructure.Extra as XmlDocument;
                     else
                     {
                         xmlDocument.AppendChild(metadataStructure.Extra);
                     }
-
-                    metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructure.Id);
-
-                    //set title & description
-                    string titleXPath =
-                        metadataStructureModel.MetadataNodes
-                            .Where(e => e.DisplayName.Equals(metadataStructureModel.TitleNode))
-                            .FirstOrDefault()
-                            .XPath;
-
-                    XmlNode tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement,
-                        nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(),
-                        NameAttributeValues.title.ToString());
-
-                    tmp.Attributes[AttributeNames.value.ToString()].Value = titleXPath;
-
-                    string descriptionXPath =
-                        metadataStructureModel.MetadataNodes
-                            .Where(e => e.DisplayName.Equals(metadataStructureModel.DescriptionNode))
-                            .FirstOrDefault()
-                            .XPath;
-
-                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(),
-                        AttributeNames.name.ToString(), NameAttributeValues.description.ToString());
-                    tmp.Attributes[AttributeNames.value.ToString()].Value = descriptionXPath;
-
-                    //set entity
-                    tmp = XmlUtility.GetXmlNodeByName(xmlDocument.DocumentElement, nodeNames.entity.ToString());
-                    if (tmp != null)
-                        tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Entity.ClassPath;
-                    else
-                    {
-                        xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument, nodeNames.entity.ToString(),
-                            metadataStructureModel.Entity.ClassPath, AttributeType.entity.ToString(), "extra/entity");
-                    }
-
-                    //set active
-                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.parameter.ToString(),
-                        AttributeNames.name.ToString(), NameAttributeValues.active.ToString());
-                    if (tmp != null)
-                        tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Active.ToString();
-                    else
-                    {
-                        xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument,
-                            NameAttributeValues.active.ToString(),
-                            metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(),
-                            "extra/parameters/parameter");
-                    }
-
-                    metadataStructure.Extra = xmlDocument;
                 }
+                else
+                {
+                    xmlDocument = new XmlDocument();
+                }
+
+                metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructure.Id);
+
+                //set title & description
+                string titleXPath =
+                    metadataStructureModel.MetadataNodes
+                        .Where(e => e.DisplayName.Equals(metadataStructureModel.TitleNode))
+                        .FirstOrDefault()
+                        .XPath;
+
+                XmlNode tmp = null;
+                try
+                {
+                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement,
+                    nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(),
+                    NameAttributeValues.title.ToString());
+                    tmp.Attributes[AttributeNames.value.ToString()].Value = titleXPath;
+                }
+                catch
+                {
+                    xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument, NameAttributeValues.title.ToString(),
+                        titleXPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef");
+                }
+
+                string descriptionXPath =
+                    metadataStructureModel.MetadataNodes
+                        .Where(e => e.DisplayName.Equals(metadataStructureModel.DescriptionNode))
+                        .FirstOrDefault()
+                        .XPath;
+
+                try
+                {
+                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(),
+                    AttributeNames.name.ToString(), NameAttributeValues.description.ToString());
+                    tmp.Attributes[AttributeNames.value.ToString()].Value = descriptionXPath;
+                }
+                catch
+                {
+                    xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument, NameAttributeValues.description.ToString(),
+                        descriptionXPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef");
+                }
+
+                //set entity
+                tmp = XmlUtility.GetXmlNodeByName(xmlDocument.DocumentElement, nodeNames.entity.ToString());
+                if (tmp != null)
+                    tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Entity.ClassPath;
+                else
+                {
+                    xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument, nodeNames.entity.ToString(),
+                        metadataStructureModel.Entity.ClassPath, AttributeType.entity.ToString(), "extra/entity");
+                }
+
+                //set active
+                tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.parameter.ToString(),
+                    AttributeNames.name.ToString(), NameAttributeValues.active.ToString());
+                if (tmp != null)
+                    tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Active.ToString();
+                else
+                {
+                    xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument,
+                        NameAttributeValues.active.ToString(),
+                        metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(),
+                        "extra/parameters/parameter");
+                }
+
+                metadataStructure.Extra = xmlDocument;
+
             }
             return metadataStructure;
         }

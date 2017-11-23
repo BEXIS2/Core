@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="ddm" displayName="Data Discovery Module" version="1.0.0" builtin="true">
   <Description>
-    ddm provides a sophisticated search facility over registered data sets.
+    DDM provides a sophisticated search facility over registered data sets.
   </Description>
   <Assemblies>
     <Assembly fullName="BExIS.Ddm.Api" role="" />
@@ -22,12 +22,15 @@
             controller="home" action="index"
             extends="./menubarRoot" />
 
+    <Export tag="menubar" id="dashboard" order="1"
+        title="Dashboard" description="Quick Access to User Area" icon=""
+        controller="dashboard" action="ShowMyDatasetsInFullPage"
+        extends="./menubarRoot" />
+
     <Export tag="lunchbar" id="helpDdm" order="1"
             title="Search" description="Search Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
-    
-    
     
     <Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""

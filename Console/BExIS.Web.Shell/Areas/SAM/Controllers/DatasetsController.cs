@@ -28,6 +28,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult Sync(long id)
+        {
+            var datasetManager = new DatasetManager();
+
+            try
+            {
+                datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+            }
+            catch (Exception e)
+            {
+                ViewData.ModelState.AddModelError("", $@"Dataset {id} could not be synced.");
+            }
+            //return View();
+            return RedirectToAction("Index", new { area = "Sam" });
+        }
+
         /// <summary>
         /// Deletes a dataset, which means the dataset is marked as deleted, but is not physically removed from the database.
         /// </summary>
@@ -79,8 +95,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 datasetIds.AddRange(entityPermissionManager.GetKeys(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
             }
 
+            // dataset id, dataset status, number of data tuples of the latest version, number of variables in the dataset's structure
+            List<Tuple<long, DatasetStatus, long, long>> datasetStat = new List<Tuple<long, DatasetStatus, long, long>>();
+            foreach(Dataset ds in datasets)
+            {
+                long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
+                long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds.Id) : 0;
+                datasetStat.Add(new Tuple<long, DatasetStatus, long, long>(ds.Id, ds.Status, noRows, noColumns));
+            }
             ViewData["DatasetIds"] = datasetIds;
-            return View(datasets);
+            return View(datasetStat);
         }
 
         /// <summary>
