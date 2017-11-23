@@ -75,8 +75,9 @@
         }
         @if (hasParty)
         {
-            <div class="bx-footer right" style="text-align:left;">
+            <div class="bx-footer right" >
                 <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Save</button>
+                <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
             </div>
         }
         else
