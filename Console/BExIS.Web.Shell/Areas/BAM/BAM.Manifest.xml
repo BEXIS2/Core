@@ -21,7 +21,7 @@
 
 		<Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
 						title="Load From Party User Registration Form" description="Load FromParty User Registration Form" icon=""
-						controller="PartyService" action="UserRegisteration"
+						controller="PartyService" action="UserRegistration"
 						extends="" />
 		<Export tag="internalApi" id="GetPartyTypesForAccount"
 				title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""

@@ -40,7 +40,7 @@
         <td>
             @if (viewMode)
             {
-                @Html.ValueFor(m => m.EndDate);
+                @Html.ValueFor(m => (m.EndDate.Date==DateTime.MaxValue.Date?"":m.EndDate.ToString()));
             }
             else
             {

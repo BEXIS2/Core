@@ -247,19 +247,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager?.Dispose();
             }
         }
-        [HttpGet]
-        public Boolean CheckUniqeness(int partyTypeId, int partyId, string hash)
-        {
-            PartyManager partyManager = null;
-            try
-            {
-                partyManager = new PartyManager();
-                PartyType partyType = new PartyTypeManager().PartyTypeRepository.Get(partyTypeId);
-                Party party = partyManager.PartyRepository.Get(partyId);
-                return partyManager.CheckUniqueness(partyManager.PartyRepository, partyType, hash, party);
-            }
-            finally { partyManager?.Dispose(); }
-        }
+       
         [HttpPost]
         public string DeletePartyRelationship(int id)
         {

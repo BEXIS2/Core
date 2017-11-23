@@ -20,7 +20,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
-        public ActionResult UserRegisteration()
+        public ActionResult UserRegistration()
         {
             PartyManager partyManager = null;
             PartyTypeManager partyTypeManager = null;
@@ -40,7 +40,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 userManager = new UserManager();
                 var allowedAccountPartyTypes = GetPartyTypesForAccount();
                 if (allowedAccountPartyTypes == null)
-                    throw new Exception("Allowed party types for registeration in setting.xml are not exist!");
+                    throw new Exception("Allowed party types for registration in setting.xml are not exist!");
                 //Split them by "," and split each one by ":"
                 foreach (var allowedAccountPartyType in allowedAccountPartyTypes)
                 {
@@ -72,7 +72,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyTypeAccountModel.Party = partyManager.GetPartyByUser(user.Id);
                 //TODO: Discuss . Current soloution is to navigate the user to edit party
                 if (partyTypeAccountModel.Party != null)
-                    return RedirectToAction("CreateEdit", "Party", new { id = partyTypeAccountModel.Party.Id });
+                    return RedirectToAction("Edit");
                 return View("_userRegisterationPartial", partyTypeAccountModel);
 
             }
@@ -154,7 +154,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 Party party = partyManager.GetPartyByUser(user.Id);
 
                 if (party == null)
-                    return RedirectToAction("UserRegisteration", "PartyService", new { area = "bam" });
+                    return RedirectToAction("UserRegistration", "PartyService", new { area = "bam" });
 
 
                 model.Description = party.Description;
@@ -224,6 +224,19 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
         }
 
+        [HttpGet]
+        public Boolean CheckUniqeness(int partyTypeId, int partyId, string hash)
+        {
+            PartyManager partyManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                PartyType partyType = new PartyTypeManager().PartyTypeRepository.Get(partyTypeId);
+                Party party = partyManager.PartyRepository.Get(partyId);
+                return partyManager.CheckUniqueness(partyManager.PartyRepository, partyType, hash, party);
+            }
+            finally { partyManager?.Dispose(); }
+        }
 
         public Dictionary<string, string[]> GetPartyTypesForAccount()
         {
