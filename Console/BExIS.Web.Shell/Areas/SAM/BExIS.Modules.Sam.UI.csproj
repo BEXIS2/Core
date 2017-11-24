@@ -158,6 +158,7 @@
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Models\DatasetModels.cs" />
+    <Compile Include="Models\DatasetStatModel.cs" />
     <Compile Include="Models\DecisionModels.cs" />
     <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
