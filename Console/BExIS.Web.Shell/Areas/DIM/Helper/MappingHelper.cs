@@ -769,7 +769,8 @@ namespace BExIS.Modules.Dim.UI.Helper
                 Name = le.Name,
                 Position = position,
                 Type = le.Type,
-                Complexity = le.Complexity,
+                Complexity = le.Complexity
+
             };
 
         }
