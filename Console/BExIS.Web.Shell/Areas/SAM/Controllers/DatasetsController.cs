@@ -8,9 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -63,11 +65,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
                 {
-                    entityPermissionManager.Delete(typeof(Dataset), id);
+                    //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
-                    // ToDo: refactor the indexing after "delete dataset" process
-                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    //provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    {
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                    }
                 }
             }
             catch (Exception e)
@@ -135,9 +138,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     entityPermissionManager.Delete(typeof(Dataset), id);
 
-                    // ToDo: refactor the indexing after "delete dataset" process
-                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    //provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    {
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                    }
                 }
             }
             catch (Exception e)
