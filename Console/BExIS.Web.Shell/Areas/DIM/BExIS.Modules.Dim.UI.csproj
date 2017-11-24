@@ -564,6 +564,7 @@
     <Content Include="Content\Images\help\one_to_many.png" />
     <Content Include="Content\Images\help\one_to_one.png" />
     <Content Include="Content\Images\help\pangaea1.png" />
+    <Content Include="Content\Images\help\pangaea2.png" />
     <Content Include="Content\Images\help\publish.png" />
     <Content Include="Content\Images\help\source.png" />
     <Content Include="Content\Images\help\target.png" />
