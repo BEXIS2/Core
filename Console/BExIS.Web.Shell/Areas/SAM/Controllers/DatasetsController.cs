@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System;
@@ -13,6 +14,8 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
+
+
     /// <summary>
     /// Manages all funactions an authorized user can do with datasets and their versions
     /// </summary>
@@ -96,12 +99,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
 
             // dataset id, dataset status, number of data tuples of the latest version, number of variables in the dataset's structure
-            List<Tuple<long, DatasetStatus, long, long>> datasetStat = new List<Tuple<long, DatasetStatus, long, long>>();
+            List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
             foreach(Dataset ds in datasets)
             {
                 long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
                 long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds.Id) : 0;
-                datasetStat.Add(new Tuple<long, DatasetStatus, long, long>(ds.Id, ds.Status, noRows, noColumns));
+                bool synced = false;
+                if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0 
+                        && ds.StateInfo?.Timestamp != null 
+                        && ds.StateInfo?.Timestamp > DateTime.MinValue 
+                        && ds.StateInfo?.Timestamp < DateTime.MaxValue)
+                    synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
+                datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced });
             }
             ViewData["DatasetIds"] = datasetIds;
             return View(datasetStat);

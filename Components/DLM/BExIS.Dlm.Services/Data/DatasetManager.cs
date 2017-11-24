@@ -2172,7 +2172,6 @@ namespace BExIS.Dlm.Services.Data
                     ds.Status = DatasetStatus.CheckedIn;
                     ds.LastCheckIOTimestamp = DateTime.UtcNow;
                     ds.CheckOutUser = string.Empty;
-
                     repo.Put(ds);
                     uow.Commit();
                     // when everything is OK, check if a materialized view is created for the datsets, if yes: refresh it to the lateset changes
@@ -2213,7 +2212,23 @@ namespace BExIS.Dlm.Services.Data
             if (behavior.HasFlag(ViewCreationBehavior.Refresh)) // refresh MV
             {
                 if (existsMaterializedView(datasetId)) // check if the MV exists
+                {
                     refreshMaterializedView(datasetId);
+                    // update the the last synced information on the data set. It is used in the dataset maintenance UI logic
+                    using (var uow = this.GetUnitOfWork())
+                    {
+                        var repo = uow.GetRepository<Dataset>();
+                        // it is fetched again, because it is possible the the first if block is not executed
+                        Dataset dataset = repo.Get(datasetId);
+                        if (dataset.StateInfo == null)
+                            dataset.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+                        dataset.StateInfo.State = "Synced";
+                        dataset.StateInfo.Timestamp = DateTime.UtcNow;
+                        repo.Put(dataset);
+                        uow.Commit();
+                    }
+
+                }
             }
             
         }
