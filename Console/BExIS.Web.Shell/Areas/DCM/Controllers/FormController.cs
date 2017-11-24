@@ -389,6 +389,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
+
+            //set title
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
+            {
+                if (TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE] != null)
+                    Model.DatasetTitle = TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE].ToString();
+            }
+            else
+                Model.DatasetTitle = "No Title available.";
+
             return PartialView("MetadataEditor", Model);
         }
 

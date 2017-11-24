@@ -7,8 +7,15 @@
     </p>
 }
 <div class="bx-rpm-buttons">
-    @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button function" })
+    @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button action" })
 </div>
+@if (Model == null || !Model.Any())
+{
+    <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
+    </div>
+}
+else
+{
 <div id="tabs" class="t-widget t-tabstrip t-header">
     <ul class="t-reset t-tabstrip-items" style="background-color:none !important;">
         <li id="" class="t-item t-state-default t-state-active">
@@ -32,7 +39,7 @@
     <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
     </div>
 </div>
-
+}
 <script type="text/javascript">
 
     $("#tabs li").on("click", function () {

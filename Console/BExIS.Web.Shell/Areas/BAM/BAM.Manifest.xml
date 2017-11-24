@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="BAM" displayName="Business Administration Module" version="1.0.0" builtin="false">
 	<Description>
-		All the packages related to the core of system belong to this module such as Party Package.
-	</Description>
+    BAM provides the ability to work with objects such as Party Package. All the packages related to the core of system belong to this module.
+  </Description>
 	<Assemblies>
 		<Assembly fullName="" role=""/>
 	</Assemblies>
@@ -21,7 +21,7 @@
 
 		<Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
 						title="Load From Party User Registration Form" description="Load FromParty User Registration Form" icon=""
-						controller="PartyService" action="UserRegisteration"
+						controller="PartyService" action="UserRegistration"
 						extends="" />
 		<Export tag="internalApi" id="GetPartyTypesForAccount"
 				title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""

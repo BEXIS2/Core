@@ -197,6 +197,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_dataRepositoryRequirementsView", model);
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             finally
             {
                 publicationManager.Dispose();
@@ -228,7 +232,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 Publication publication =
                     publicationManager.PublicationRepo.Get()
-                        .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
+                        .Where(p => p.Broker != null && p.Broker.Id.Equals(broker.Id) && p.DatasetVersion != null && p.DatasetVersion.Id.Equals(version))
                         .FirstOrDefault();
 
 
@@ -443,7 +447,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //Store ro in db
                             string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id,
                                 NameAttributeValues.title);
-                            publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "", "");
+                            publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "", "no status available");
 
                             //sendToGFBIO(broker, datasetId, datasetVersion, zipfilepath);
 

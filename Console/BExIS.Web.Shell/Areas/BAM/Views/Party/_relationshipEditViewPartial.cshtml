@@ -9,7 +9,7 @@
         <td style="width:200px">Title</td>
         <td>
             @Html.HiddenFor(item => item.Id)
-            @(viewMode ? Html.ValueFor(m => m.Title) : Html.TextBoxFor(m => m.Title,new {@class= "t-input bx-input" }))
+            @(viewMode ? Html.ValueFor(m => m.Title) : Html.TextBoxFor(m => m.Title, new { @class = "t-input bx-input" }))
             @Html.ValidationMessageFor(m => m.Title)
 
         </td>
@@ -30,7 +30,7 @@
             }
             else
             {
-                @Html.Telerik().DatePickerFor(m=>m.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
+                @Html.Telerik().DatePickerFor(m => m.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
 
             }
         </td>
@@ -40,7 +40,7 @@
         <td>
             @if (viewMode)
             {
-                @Html.ValueFor(m => m.EndDate);
+                @Html.ValueFor(m => (m.EndDate.Date==DateTime.MaxValue.Date?"":m.EndDate.ToString()));
             }
             else
             {
@@ -55,12 +55,21 @@
         </td>
     </tr>
 </table>
-@if (!viewMode)
-{
-    <div id="" class="bx-footer right" style="text-align:left;">
-        <button type="button" value="Save" id="savePartyRelationship" class="bx-button action" style="border:0px;" >Save</button>
-    </div>
-}
+<div id="" class="bx-footer right" >
+    @if (!viewMode)
+    {
+
+        <button type="button" value="Save" id="savePartyRelationship" class="bx-button action" style="border:0px;">Save</button>
+        <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
+
+    }
+    else
+    {
+        <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
+
+    }
+</div>
+
 <script>
     var thisObject=$("#tblRelationship");
     $("#savePartyRelationship").bind("click", function () {
@@ -91,5 +100,5 @@
     $(document).ready(function(){
         resetAllTelerikIconTitles();
     });
-   
+
 </script>

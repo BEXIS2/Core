@@ -6,6 +6,8 @@ using System.Linq;
 using BExIS.Ext.Model;
 using Vaiona.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
+using System.Text.RegularExpressions;
+using NCalc;
 
 namespace BExIS.Dlm.Services.Party
 {
@@ -804,6 +806,38 @@ namespace BExIS.Dlm.Services.Party
                     requiredPartyRelationTypeCount.Add(requiredPartyRelationType, requiredPartyRelationType.MinCardinality - partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count());
             }
             return requiredPartyRelationTypeCount;
+        }
+
+        public bool CheckCondition(String condition, long partyId)
+        {
+            if (string.IsNullOrEmpty(condition))
+                return true;
+
+            var party = PartyRepository.Get(partyId);
+            if (party == null)
+                return false;
+            var newCondition = condition;
+            //if text is sourounded with [] means the value comes from an element
+            //Extract such text and replace them by the value of the related element
+
+            MatchCollection matches = Regex.Matches(condition, @"\[(.*?)\]");
+            foreach (Match match in matches)
+            {
+                var customAttributeName = match.Groups[1].Value;
+                var customAttributeValue = party.CustomAttributeValues.FirstOrDefault(cc => cc.CustomAttribute.Name == customAttributeName);
+                if (customAttributeValue == null)
+                    throw new Exception(string.Format("There is not any custom attribute name which has {0} name.", customAttributeName));
+                newCondition = newCondition.Replace(match.Groups[0].Value, string.Format("'{0}'", customAttributeValue.Value));
+            }
+            try
+            {
+                Expression e = new Expression(newCondition);
+                return ((bool)e.Evaluate());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         #region privateMethod

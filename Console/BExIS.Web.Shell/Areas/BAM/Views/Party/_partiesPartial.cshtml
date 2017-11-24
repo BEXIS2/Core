@@ -13,8 +13,8 @@
                 columns.Bound(c => c.Id);
                 columns.Bound(c => c.Name);
                 columns.Bound(c => c.PartyTypeTitle).Title("Type");
-                columns.Bound(c => c.StartDate);
-                columns.Bound(c => c.EndDate);
+                columns.Bound(c => c.StartDate).Title("Start date");
+                columns.Bound(c => c.EndDate).Title("End date");
                 columns.Template(
                     @<text>
                         <div>
@@ -24,10 +24,17 @@
                         </div>
                     </text>
                         ).ClientTemplate("<div><a title=\"View Party\" style=\"color: white; \" href=\"/BAM/Party/View/<#= Id #>\" class=\"bx bx-grid-function bx-show\"> </a><a title=\"Edit Party\" style=\"color:white;\" href=\"/BAM/Party/CreateEdit/<#= Id #>\" class=\"bx bx-grid-function bx-edit\"> </a><a title=\"Delete Party\" style=\"color:white;\" href=\"/BAM/Party/DeleteConfirm/<#= Id #>\" class=\"bx bx-grid-function bx-trash \"> </a></div>");
-columns.Template(
-    @<text>
-        @(item.IsTemp ? Html.Raw("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' />") : Html.Raw(""))
-    </text>).ClientTemplate("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' <#= IsTemp==false ? \"style='display:none;'\" :\"''\" #>  />")
+                columns.Template(
+                    @<text>
+                        @(item.IsTemp ? Html.Raw("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' />") : Html.Raw(""))
+                    </text>).ClientTemplate("<img src='/Content/Images/Bad.png' data-toggle='tooltip' title='Some relationships are required! ' <#= IsTemp==false ? \"style='display:none;'\" :\"''\" #>  />")
                      .Title("Actions required!");
-            }))
+            }).Filterable()
+      .Pageable(pageable =>
+      {
+          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+          pageable.Position(GridPagerPosition.Bottom);
+      })
+)
 

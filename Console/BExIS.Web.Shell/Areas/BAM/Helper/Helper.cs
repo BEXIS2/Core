@@ -1,9 +1,10 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using NCalc;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using BExIS.Modules.Bam.UI.Models;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {
@@ -37,35 +38,56 @@ namespace BExIS.Modules.Bam.UI.Helpers
             return messages;
         }
 
-        public static bool CheckCondition(String condition, long partyId)
+        internal static Party EditParty(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
         {
-            if (string.IsNullOrEmpty(condition))
-                return true;
-            var partyManager = new PartyManager();
-            var party = partyManager.PartyRepository.Get(partyId);
-            if (party == null)
-                return false;
-            var newCondition = condition;
-            //if text is sourounded with [] means the value comes from an element
-            //Extract such text and replace them by the value of the related element
-            MatchCollection matches = Regex.Matches(condition, @"\[(.*?)\]");
-            foreach (Match match in matches)
-            {
-                var customAttributeName = match.Groups[1].Value;
-                var customAttributeValue = party.CustomAttributeValues.FirstOrDefault(cc => cc.CustomAttribute.Name == customAttributeName);
-                if (customAttributeValue == null)
-                    throw new Exception(string.Format("There is not any custom attribute name which has {0} name.", customAttributeName));
-                newCondition = newCondition.Replace(match.Groups[0].Value, string.Format("'{0}'",customAttributeValue.Value));
-            }
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyManager partyManager = new PartyManager();
+            var party = new Party();
             try
             {
-                Expression e = new Expression(newCondition);
-                return ((bool)e.Evaluate());
+                var newAddPartyCustomAttrValues = new Dictionary<PartyCustomAttribute, string>();
+                party = partyManager.Find(partyModel.Id);
+                //Update some fields
+                party.Description = partyModel.Description;
+                party.StartDate = partyModel.StartDate.HasValue ? partyModel.StartDate.Value : DateTime.MinValue;
+                party.EndDate = partyModel.EndDate.HasValue ? partyModel.EndDate.Value : DateTime.MaxValue;
+                party = partyManager.Update(party);
+                foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
+                {
+                    PartyCustomAttribute partyCustomAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(int.Parse(partyCustomAttributeValueString.Key));
+                    string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value;
+                    newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
+                }
+                partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
             }
-            catch(Exception ex)
+            finally
             {
-                throw ex;
+                partyTypeManager?.Dispose();
+                partyManager?.Dispose();
             }
+            return party;
+        }
+        internal static Party CreateParty(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
+        {
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyManager partyManager = new PartyManager();
+            var party = new Party();
+            try
+            {
+                PartyType partyType = partyTypeManager.PartyTypeRepository.Get(partyModel.PartyType.Id);
+                var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+                // save party as temp if the reationships are required
+                var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(partyType.Id).Where(cc => cc.MinCardinality > 0);
+                //Create party
+                party = partyManager.Create(partyType, "", partyModel.Description, partyModel.StartDate, partyModel.EndDate, partyStatusType, requiredPartyRelationTypes.Any());
+                partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
+            }
+            finally
+            {
+                partyTypeManager?.Dispose();
+                partyManager?.Dispose();
+            }
+            return party;
         }
     }
 }

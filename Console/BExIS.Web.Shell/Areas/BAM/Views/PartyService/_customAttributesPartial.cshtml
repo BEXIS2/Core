@@ -96,7 +96,7 @@
                 hash += $(this).val();
             });
         if (hash != "") {
-            $.get("/BAM/Party/CheckUniqeness?partyTypeId=" +@partyTypeId +"&partyId=" +@partyId +"&hash=" + hash, function (data) {
+            $.get("/BAM/PartyService/CheckUniqeness?partyTypeId=" +@partyTypeId +"&partyId=" +@partyId +"&hash=" + hash, function (data) {
 
                 if (data == "False") {
                     uniqenessPolicy = hash + " is existed.";
@@ -117,6 +117,7 @@
 
         });
         $(document).on("submit", "form", function (e) {
+            checkUniqeness();
             if (uniqenessPolicy) {
                 alert(uniqenessPolicy);
                 e.preventDefault();

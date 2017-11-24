@@ -2,6 +2,10 @@
 @using Telerik.Web.Mvc
 @using Telerik.Web.Mvc.UI
 
+@{
+    ViewBag.Title = "Manage Groups";
+}
+
 @section Information
 {
     With this interface you are able to manage groups. New groups can be added with the "Create" button. Existing groups can be edited (properties, members, delete) using the "Edit" button.
@@ -37,7 +41,7 @@
               .ClientTemplate(
                   "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit Group\"></button>" +
                   "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= GroupName #>\" title=\"Edit Membership(s)\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"DFelete Group\"></button>")
+                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete Group\"></button>")
               .Width(110);
       })
       .ClientEvents(events =>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="ddm" displayName="Data Discovery Module" version="1.0.0" builtin="true">
   <Description>
-    ddm provides a sophisticated search facility over registered data sets.
+    DDM provides a sophisticated search facility over registered data sets.
   </Description>
   <Assemblies>
     <Assembly fullName="BExIS.Ddm.Api" role="" />
