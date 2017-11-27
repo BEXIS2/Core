@@ -7,116 +7,38 @@
     In this page you can see visual informations.
 }
 
-<!DOCTYPE HTML>
-<html>
-<head>
-    <script>
+    
+        <b>Title: @Model.title</b>
 
-    </script>
-</head>
-<body>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <p>Number of Values: @Model.values.Count</p>        
 
-    <div id="showDiagram" class="" style="border:0px; background-color:gainsboro; height: 300px; width: 40%; text-align:center;">
-        <b>@Model.title</b>        
-    </div>
+@foreach (var item in Model.values)
+{
+    <ul typeof="circle">
+        <li>@item.Key: @item.Value</li>       
+    </ul>
+}
 
-    <div>
-        
-        <b>@Model.title</b>
-        @*<b>@Model.yAxis</b>
-        <b>@Model.values</b>*@
-    </div>
+<div>
+    <p>LIST:</p>
+    <p id="demo"></p>
+</div>
 
     <div id="" class="bx-footer right" style="text-align:left;">
-        <button type="button" value="Open" id="handleFile" class="bx-button action" title="Open C:\myFile.csv" style="border:0px;">Open</button>
         <button type="button" value="Save" id="saveDiagram" class="bx-button action" title="Save diagram as SVG" style="border:0px;">Save</button>
     </div>
 
-</body>
-</html>
 
 <script>
+
     $("#saveDiagram").bind("click", function () {
-        alert("ggggggg");
+        alert();
     });
 
-    $("#handleFile").bind("click", function () {
 
-        $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "C:\myFile.csv",
-                dataType: "csv",
-                success: function (data) { processData(data); }
-            });
-        });
-        //alert("ENDE!");
-    });
-
-    function processData(allText) {
-        var allTextLines = allText.split(',');
-        var headers = allTextLines[0]; //.split(',');
-        alert(headers);
-        var yTitle = allTextLines[1];
-        var lines = [];
-
-        for (var i = 2; i < allTextLines.length; i++) {
-            var data = allTextLines[i].split(';');
-            //if (data.length == headers.length) {
-
-            //    var tarr = [];
-            //    for (var j = 0; j < headers.length; j++) {
-            //        tarr.push(headers[j] + ":" + data[j]);
-            //    }
-            //    lines.push(tarr);
-            //}
-        }
-        //console.log(lines);
-        //drawOutput(lines);
+    function blabla(t) {
+     
+        return (t);
     }
-
-    window.onload = function ($Model) {
-        var chart = new CanvasJS.Chart("showDiagram", {
-            animationEnabled: true,
-            title: {
-                text: "Dataset by Data Tuple and Year of Upload"
-            },
-            axisY: {
-                title: "Data Tuple",
-                valueFormatString: "#0,,.",
-                suffix: "mn",
-                //stripLines: [{ 
-                //    value: 3366500,
-                //    label: "Average"
-                //}]
-            },
-            data: [{
-                yValueFormatString: "#,### Units",
-                xValueFormatString: "YYYY",
-                type: "spline",
-                dataPoints: [
-                    { x: new Date(2002, 0), y: 2506000 },
-                    { x: new Date(2003, 0), y: 2798000 },
-                    { x: new Date(2004, 0), y: 3386000 },
-                    { x: new Date(2005, 0), y: 6944000 },
-                    { x: new Date(2006, 0), y: 6026000 },
-                    { x: new Date(2007, 0), y: 2394000 },
-                    { x: new Date(2008, 0), y: 1872000 },
-                    { x: new Date(2009, 0), y: 2140000 },
-                    { x: new Date(2010, 0), y: 7289000 },
-                    { x: new Date(2011, 0), y: 4830000 },
-                    { x: new Date(2012, 0), y: 2009000 },
-                    { x: new Date(2013, 0), y: 2840000 },
-                    { x: new Date(2014, 0), y: 2396000 },
-                    { x: new Date(2015, 0), y: 1613000 },
-                    { x: new Date(2016, 0), y: 2821000 },
-                    { x: new Date(2017, 0), y: 2000000 }
-                ]
-            }]
-        });
-        chart.render();
-
-    }
-
+    document.getElementById("demo").innerHTML = blabla(Model.title);
 </script>
