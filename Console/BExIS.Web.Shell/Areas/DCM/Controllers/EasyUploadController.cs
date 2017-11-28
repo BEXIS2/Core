@@ -14,6 +14,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EasyUploadController : Controller
     {
+        //This is a test-comment
         List<string> ids = new List<string>();
         private EasyUploadTaskManager TaskManager;
 
