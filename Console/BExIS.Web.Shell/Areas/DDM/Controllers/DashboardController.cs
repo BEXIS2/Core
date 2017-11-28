@@ -37,75 +37,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["CurrentPage"] = 1;
 
             #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Read",
-                DisplayName = "Read",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Write",
-                DisplayName = "Write",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
+            List<HeaderItem> headerItems = CreateHeaderItems();
             ViewData["DefaultHeaderList"] = headerItems;
 
             #endregion
@@ -303,8 +235,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
             #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
+            List<HeaderItem> headerItems = CreateHeaderItems();
 
+            ViewData["DefaultHeaderList"] = headerItems;
+
+            #endregion
+
+            model = CreateDataTable(headerItems);
+
+            return View("_myDatasetGridView", model);
+        }
+
+        private List<HeaderItem> CreateHeaderItems()
+        {
+            List<HeaderItem> headerItems = new List<HeaderItem>();
 
             HeaderItem headerItem = new HeaderItem()
             {
@@ -334,24 +278,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             headerItem = new HeaderItem()
             {
-                Name = "View",
-                DisplayName = "View",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Update",
-                DisplayName = "Update",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
+                Name = "Read",
+                DisplayName = "Read",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
@@ -366,19 +294,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             headerItem = new HeaderItem()
             {
+                Name = "Write",
+                DisplayName = "Write",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+
+            headerItem = new HeaderItem()
+            {
                 Name = "Grant",
                 DisplayName = "Grant",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
 
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion
-
-            model = CreateDataTable(headerItems);
-
-            return View("_myDatasetGridView", model);
+            return headerItems;
         }
 
         private DataTable CreateDataTable(List<HeaderItem> items)

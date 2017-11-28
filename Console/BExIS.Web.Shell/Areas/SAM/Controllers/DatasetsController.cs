@@ -67,9 +67,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {
-                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                     }
                 }
             }
@@ -103,14 +103,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             // dataset id, dataset status, number of data tuples of the latest version, number of variables in the dataset's structure
             List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
-            foreach(Dataset ds in datasets)
+            foreach (Dataset ds in datasets)
             {
                 long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
                 long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds.Id) : 0;
                 bool synced = false;
-                if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0 
-                        && ds.StateInfo?.Timestamp != null 
-                        && ds.StateInfo?.Timestamp > DateTime.MinValue 
+                if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
+                        && ds.StateInfo?.Timestamp != null
+                        && ds.StateInfo?.Timestamp > DateTime.MinValue
                         && ds.StateInfo?.Timestamp < DateTime.MaxValue)
                     synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
                 datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced });
@@ -138,9 +138,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     entityPermissionManager.Delete(typeof(Dataset), id);
 
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {
-                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                     }
                 }
             }

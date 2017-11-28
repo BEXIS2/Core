@@ -27,7 +27,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return null;
         }
 
-        public IEnumerable<string> ReIndexSingle(long id = 0, string actionType = "CREATE")
+        public IEnumerable<string> ReIndexSingle(long id = 0)
+        {
+            return ReIndexUpdateSingle(id, "CREATE");
+        }
+
+        public IEnumerable<string> ReIndexUpdateSingle(long id = 0, string actionType = "CREATE")
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
