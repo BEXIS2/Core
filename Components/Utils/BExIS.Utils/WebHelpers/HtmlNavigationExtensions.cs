@@ -137,11 +137,22 @@ namespace BExIS.Utils.WebHelpers
             var children = settingsRoot.Elements()
                 .OrderBy(x => x.Attribute("area").Value).ThenBy(x => x.Attribute("order").Value);
 
+            var currentArea = "";
+
             foreach (var child in children)
             {
+                var area = child.Attribute("area").Value;
+
+                if (currentArea != "" && area != currentArea)
+                {
+                    sb.Append($"<li role=\"separator\" class=\"divider\"></li>");
+                }
+
+                currentArea = area;
+
                 sb.Append($"<li><a href='");
-                if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
-                    sb.Append(@"/").Append(child.Attribute("area").Value);
+                if (!string.IsNullOrWhiteSpace(area))
+                    sb.Append(@"/").Append(area);
 
                 if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
                     sb.Append(@"/").Append(child.Attribute("controller").Value);

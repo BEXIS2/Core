@@ -17,7 +17,7 @@
             controller="admin" action="searchDesigner" argument=""
             extends="./settingsRoot" />
 
-    <Export tag="menubar" id="menuSearch" order="1"
+    <Export tag="menubar" id="menuSearch" order="2"
             title="Search" description="Search datasets" icon=""
             controller="home" action="index"
             extends="./menubarRoot" />
@@ -54,7 +54,12 @@
         title="Reindex a Single " description="Reindex single" icon=""
         controller="SearchIndex" action="ReIndexSingle"
         extends="" />
-    
+
+    <Export tag="internalApi" id="ReIndexUpdateSingle"
+        title="Reindex a Single " description="Reindex single" icon=""
+        controller="SearchIndex" action="ReIndexUpdateSingle"
+        extends="" />
+
     <Export tag="internalApi" id="freeTextSearch"
             title="Free Text Search" description="free Text Search" icon=""
             controller="SearchIndex" action="Get"

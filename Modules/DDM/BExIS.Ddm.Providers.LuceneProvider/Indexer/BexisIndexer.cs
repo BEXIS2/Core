@@ -682,11 +682,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
             finally
             {
-                indexWriter.Dispose();
-                autoCompleteIndexWriter.Dispose();
-
                 BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
                 BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+
+                indexWriter.Dispose();
+                autoCompleteIndexWriter.Dispose();
             }
 
         }
