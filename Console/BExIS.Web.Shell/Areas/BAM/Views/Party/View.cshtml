@@ -15,14 +15,14 @@
     @Html.HiddenFor(m => m.PartyType.Id)
     @(Html.Telerik().TabStrip()
             .Name("ShowDataTabStrip")
-            .ClientEvents(events => events.OnSelect("tabSelected")).SelectedIndex(0)
+            .SelectedIndex(0)
             .Items(tabs =>
             {
             tabs.Add()
                     .Text("Party").Content(@<text>
                     <table>                        <tr>
-                            <td></td>
-                            <td style="width:300px;">
+                            <td style="width:40px;"></td>
+                            <td style="width:200px;">
                                 @Html.LabelFor(m => m.PartyType)
                             </td>
                             <td>
@@ -32,7 +32,7 @@
                         <tr>
                             <td></td>
                             <td>
-                                @Html.LabelFor(m => m.StartDate)
+                                <label for="StartDate">Start Date</label>
                             </td>
                             <td>
                                 <span>@Model.StartDate</span>
@@ -41,7 +41,7 @@
                         <tr>
                             <td></td>
                             <td>
-                                @Html.LabelFor(m => m.EndDate)
+                                <label for="EndDate">End Date</label>
                             </td>
                             <td>
                                 <span>@Model.EndDate</span>
@@ -88,14 +88,7 @@
                 $('#divPartyCustomAttr').html("");
         });
     }
-    function tabSelected(tab)
-    {
-        if(tab.item.innerText=="Relationships")
-            $("#divSubmitButtons").hide();
-        else
-            $("#divSubmitButtons").show();
-
-    }
+  
     @if (Model.PartyType.Id != 0)
     {
        @Html.Raw("loadPartyType( {value: " + Model.PartyType.Id + "});");

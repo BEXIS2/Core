@@ -38,6 +38,8 @@
 
     <many-to-one name="PartyRelationshipType" class="BExIS.Dlm.Entities.Party.PartyRelationshipType"  not-null="true" column="PartyRelationshipTypeRef"/>
 
+    <many-to-one name="PartyTypePair" class="BExIS.Dlm.Entities.Party.PartyTypePair"  not-null="false" column="PartyRelationshipTypePairRef"/>
+
     <many-to-one name="FirstParty" class="BExIS.Dlm.Entities.Party.Party"  not-null="true" column="FirstPartyRef"/>
 
     <many-to-one name="SecondParty" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="SecondPartyRef"/>

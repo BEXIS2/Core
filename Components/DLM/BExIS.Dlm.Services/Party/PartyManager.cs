@@ -226,9 +226,9 @@ namespace BExIS.Dlm.Services.Party
             if (party.StartDate > party.EndDate)
                 BexisException.Throw(null, "End date should be greater than start date.");
             if ((ValidateRelationships(party.Id)).Any())
-                party.IsTemp = false;
-            else
                 party.IsTemp = true;
+            else
+                party.IsTemp = false;
       
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -281,7 +281,7 @@ namespace BExIS.Dlm.Services.Party
         #region PartyRelationship
 
         public PartyRelationship AddPartyRelationship(PartyX firstParty, PartyX secondParty, PartyRelationshipType partyRelationshipType,
-                                    string title, string description, DateTime? startDate = null, DateTime? endDate = null, string scope = "")
+                                    string title, string description, PartyTypePair partyTypePair, DateTime? startDate = null, DateTime? endDate = null, string scope = "")
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(firstParty != null);
@@ -307,6 +307,8 @@ namespace BExIS.Dlm.Services.Party
                 StartDate = startDate.Value,
                 Title = title
             };
+            if (partyTypePair != null)
+                entity.PartyTypePair = partyTypePair;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repoParty = uow.GetRepository<PartyX>();

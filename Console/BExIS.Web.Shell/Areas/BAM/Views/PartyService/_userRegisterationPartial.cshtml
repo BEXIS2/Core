@@ -12,7 +12,7 @@
     <table>
         <tr>
             <td style="width:40px;"><b title="Required" style="color: red;">*</b></td>
-            <td style="width:300px;">
+            <td style="width:200px;">
                 <label>
                     Account type:
                 </label>
@@ -88,10 +88,10 @@
             {
                 relations.push({SecondParty:{Id:secondPartyId},
                     PartyRelationshipType:{Id:parseInt($(item).attr("partyrelationshipid"))},
+                    PartyTypePair:{Id:parseInt($(item).attr("partyTypePairId"))},
                     Title:$(this).find("label").text(),
                     Description:'',
-                    // StartDate:  new Date().toJSON(),
-                    //EndDate:endDate,
+                    
                     Scope:''});
             }
         });
@@ -163,7 +163,7 @@
         $("#divPartyRelationships").html("");
         $.each(data, function(i, item) {
             $.each(item.partyTypePairs, function(i, partyTypePair) {
-                elements +="<div style='border-bottom:thin solid #ebebeb' conditionSource='"+partyTypePair.conditionSource+"' class='partyTypeRelation' PartyRelationshipId='"+partyTypePair.PartyRelationshipId+"'><div style='display: inline-block; width: 340px; padding-left: 50px; padding-bottom: 20px; padding-top: 10px;'><label>"+partyTypePair.Title+": </label></div><div style='display:inline-block;padding-left: 7px;'><select name='typeid' id='ddl_PartyTypePairId'  class='comboboxBootstrap' style='width: 372px; border: 2px solid black; height: 30px;'>";
+                elements +="<div style='border-bottom:thin solid #ebebeb' conditionSource='"+partyTypePair.conditionSource+"' class='partyTypeRelation' PartyRelationshipId='"+partyTypePair.PartyRelationshipId+"' partyTypePairId='"+partyTypePair.Id+"'><div style='display: inline-block; width: 240px; padding-left: 50px; padding-bottom: 20px; padding-top: 10px;'><label>"+partyTypePair.Title+": </label></div><div style='display:inline-block;padding-left: 7px;'><select name='typeid' id='ddl_PartyTypePairId'  class='comboboxBootstrap' style='width: 372px; border: 2px solid black; height: 30px;'>";
                 elements +="<option value='-1'>---</option>";
                 $.each(partyTypePair.parties, function(i, Party) {
                     elements +="<option value='"+Party.Id+"'>"+Party.Name+"</option>";

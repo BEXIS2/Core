@@ -1,10 +1,10 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
 @{
-    var actionName = ViewContext.RouteData.GetRequiredString("action").ToLower();
-    var readOnly = (actionName == "view" || actionName == "edit");
+            var actionName = ViewContext.RouteData.GetRequiredString("action").ToLower();
+            var readOnly = (actionName == "view" || actionName == "deleteconfirm" || actionName== "viewpartydetail" || actionName == "edit");
 }
 @if (!readOnly)
-{
+        {
     <div class="bx-rpm-buttons" style="text-align:left;padding-left:10px;">
 
         <a class="bx-button action" id="AddPartyRelation" title="Add a new party relation" style="cursor:pointer">Add</a>
@@ -17,14 +17,14 @@
             .Filterable()
             .Columns(columns =>
             {
-            columns.Bound(c => c.Title);
-            columns.Bound(c => c.FirstParty.Name).Title("First Party");
-            columns.Bound(c => c.SecondParty.Name).Title("Second Party");
-            columns.Bound(c => c.StartDate).Title("Start date");
-            columns.Bound(c => c.EndDate).Title("End date");
-            columns.Bound(c => c.Description);
-            columns.Bound(c => c.PartyRelationshipType.DisplayName).Title("Type"); //(String.IsNullOrWhiteSpace(c.PartyRelationshipType.DisplayName) ? c.PartyRelationshipType.DisplayName : c.PartyRelationshipType.Title)).Title("Realtionship Type Title");
-            columns.Template(
+        columns.Bound(c => c.Title);
+        columns.Bound(c => c.FirstParty.Name).Title("First Party");
+        columns.Bound(c => c.SecondParty.Name).Title("Second Party");
+        columns.Bound(c => c.StartDate).Title("Start date");
+        columns.Bound(c => c.EndDate).Title("End date");
+        columns.Bound(c => c.Description);
+        columns.Bound(c => c.PartyRelationshipType.DisplayName).Title("Type"); //(String.IsNullOrWhiteSpace(c.PartyRelationshipType.DisplayName) ? c.PartyRelationshipType.DisplayName : c.PartyRelationshipType.Title)).Title("Realtionship Type Title");
+        columns.Template(
                 @<text>
                     <div>
                         @if (actionName != "edit")
@@ -44,9 +44,9 @@
 <div id="dialog"></div>
 @*<div style="position:absolute; left:calc(50% - 508px); top:10%;height: 50%; overflow: scroll; width: 40%;" >*@
 @{ Html.Telerik().Window().Name("PartyRelationWindow").HtmlAttributes(new { style = "min-width: 40%;" })
-                                                                                                     .Title("New party relation").Resizable()
+                                                                                                     .Title("New party relation("+Model.Name+")").Resizable()
                                                                                                      .ClientEvents(events => events.OnLoad("closePartyRelationWindow").OnClose("callRelationshipsValidator"))
-                                                                                                     .Draggable(true)
+                                                                                                     .Draggable(true).Resizable()
                                                                                                      .Modal(true)
                                                                                                      .Visible(true).Content("").Render();
 }

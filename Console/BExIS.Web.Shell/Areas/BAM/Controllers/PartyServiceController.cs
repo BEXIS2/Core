@@ -30,7 +30,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             {
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
-                //Select all the parties which are defined in web.config
                 //Defined AccountPartyTypes vallue in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2
                 var accountPartyTypes = new List<string>();
                 var partyTypeAccountModel = new PartyTypeAccountModel();
@@ -102,6 +101,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
             UserManager userManager = null;
             try
             {
+                //check if the party blongs to the user
+                //Bind party if there is already a user associated to this party
+               
                 userManager = new UserManager();
                 partyTypeManager = new PartyTypeManager();
                 partyManager = new PartyManager();
@@ -116,7 +118,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         //the duration is from current datetime up to the end of target party date
                         var secondParty = partyManager.PartyRepository.Get(partyRelationship.SecondParty.Id);
                         var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
-                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
+                        var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
+                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
                     }
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
@@ -142,21 +145,15 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager = new PartyManager();
                 partyTypeManager = new PartyTypeManager();
                 userManager = new UserManager();
-
                 var user = userManager.FindByNameAsync(HttpContext.User?.Identity?.Name).Result;
-
                 if (user == null)
                     return RedirectToAction("Index", "Home", new { area = "" });
-
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
                 var model = new PartyModel();
                 model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
                 Party party = partyManager.GetPartyByUser(user.Id);
-
                 if (party == null)
                     return RedirectToAction("UserRegistration", "PartyService", new { area = "bam" });
-
-
                 model.Description = party.Description;
                 model.Id = party.Id;
                 model.PartyType = party.PartyType;
@@ -169,7 +166,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     model.EndDate = null;
                 else
                     model.EndDate = party.EndDate;
-
+                model.Name = party.Name;
                 ViewBag.RelationTabAsDefault = false;
                 ViewBag.Title = "Edit party";
 
@@ -187,11 +184,33 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult Edit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
         {
             var party = new Party();
-            if (partyModel.Id == 0)
-                return RedirectToAction("Index", "Home");
-            else
-                party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
-            return RedirectToAction("Index", "Home",new { area=""});
+            PartyManager partyManager = null;
+            UserManager userManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                userManager = new UserManager();
+                if (!HttpContext.User.Identity.IsAuthenticated)
+                    return RedirectToAction("Index", "Home");
+                
+
+                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+                var userParty = partyManager.GetPartyByUser(user.Id);
+                if (userParty.Id != partyModel.Id)
+                    throw new Exception("Permission denide.");
+                if (partyModel.Id == 0)
+                    return RedirectToAction("Index", "Home");
+                else
+                    party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
+            finally
+            {
+                partyManager?.Dispose();
+                userManager?.Dispose();
+            }
         }
 
         /// <summary>
