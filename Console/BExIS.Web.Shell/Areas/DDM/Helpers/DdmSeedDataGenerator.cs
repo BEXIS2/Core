@@ -40,6 +40,13 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 if (SearchManagementFeature == null) SearchManagementFeature = featureManager.Create("Search Management", "Search Management", DataDiscovery);
 
+                Feature Dashboard = features.FirstOrDefault(f =>
+                    f.Name.Equals("Dashboard") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(DataDiscovery.Id));
+
+                if (Dashboard == null) Dashboard = featureManager.Create("Dashboard", "Dashboard", DataDiscovery);
+
 
 
                 //worklfows -> create dataset ->
@@ -61,7 +68,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 //if (workflow == null) workflow = workflowManager.Create("Search Help", "", DataDiscovery);
 
                 //operationManager.Create("DDM", "Help", "*", null, workflow);
-                operationManager.Create("DDM", "Help", "*", DataDiscovery);
+                operationManager.Create("DDM", "Help", "*");
 
                 #endregion
 
@@ -83,6 +90,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion
 
+
+
+                #region  Dashboard
+                operationManager.Create("DDM", "Dashboard", "*", Dashboard);
+
+                #endregion
 
                 #endregion
             }

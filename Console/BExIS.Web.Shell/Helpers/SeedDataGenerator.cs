@@ -8,13 +8,16 @@ namespace BExIS.Web.Shell.Helpers
         {
             // Features
             var featureManager = new FeatureManager();
-            featureManager.Create("BExIS", "This is the root!");
+            var bexisFeature = featureManager.FindByName("BExIS") ?? featureManager.Create("BExIS", "This is the root!");
 
             // Operations
             var operationManager = new OperationManager();
-            operationManager.Create("Shell", "Account", "*");
-            operationManager.Create("Shell", "Home", "*");
-            operationManager.Create("Shell", "Error", "*");
+
+            var o1 = operationManager.Find("Shell", "Account", "*") ?? operationManager.Create("Shell", "Account", "*");
+            var o2 = operationManager.Find("Shell", "Home", "*") ?? operationManager.Create("Shell", "Home", "*");
+            var o3 = operationManager.Find("Shell", "Error", "*") ?? operationManager.Create("Shell", "Error", "*");
+            var o4 = operationManager.Find("Shell", "Terms", "*") ?? operationManager.Create("Shell", "Terms", "*");
+            var o5 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
         }
     }
 }

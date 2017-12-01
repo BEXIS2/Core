@@ -208,8 +208,8 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 repo.Merge(entity);
-                var localEntity = repo.Get(entity.Id);
-                repo.Put(localEntity); // Merge is required here!!!!
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -309,7 +309,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -395,6 +397,22 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<Variable> repo = uow.GetRepository<Variable>();
                 IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
                 usage = repo.Get(usage.Id);
+
+                repo.Delete(usage);
+                paramRepo.Delete(usage.Parameters.ToList());
+                uow.Commit();
+            }
+        }
+
+        public void RemoveVariableUsage(long id)
+        {
+            Contract.Requires(id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                var usage = repo.Get(id);
 
                 repo.Delete(usage);
                 paramRepo.Delete(usage.Parameters.ToList());

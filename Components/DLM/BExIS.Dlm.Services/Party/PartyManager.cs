@@ -6,6 +6,8 @@ using System.Linq;
 using BExIS.Ext.Model;
 using Vaiona.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
+using System.Text.RegularExpressions;
+using NCalc;
 
 namespace BExIS.Dlm.Services.Party
 {
@@ -53,7 +55,14 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region Methods
-
+        public PartyX Find(long partyId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetReadOnlyRepository<PartyX>();
+                return repo.Query(item => item.Id == partyId).FirstOrDefault();
+            }
+        }
         //Currently there is no need to use name due to the conversation in a project meeting on December</param>
         /// <summary>
         /// Create a party
@@ -121,7 +130,7 @@ namespace BExIS.Dlm.Services.Party
         {
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
-            AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
+            AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
             return party;
         }
         /// <summary>
@@ -137,7 +146,7 @@ namespace BExIS.Dlm.Services.Party
         {
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
-            AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
+            AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
             return party;
         }
 
@@ -148,8 +157,8 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationship> repoRel = uow.GetRepository<PartyRelationship>();
-
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+                IRepository<PartyUser> repoPartyUser = uow.GetRepository<PartyUser>();
                 IRepository<PartyStatus> repoCM = uow.GetRepository<PartyStatus>();
                 IRepository<PartyCustomAttributeValue> repoCustomeAttrVal = uow.GetRepository<PartyCustomAttributeValue>();
 
@@ -158,6 +167,9 @@ namespace BExIS.Dlm.Services.Party
                 //remove all relations
                 var relations = repoRel.Get(item => item.FirstParty.Id == entity.Id || item.SecondParty.Id == entity.Id);
                 repoRel.Delete(relations);
+                //Remove from user if there is
+                repoPartyUser.Delete(repoPartyUser.Get(cc => cc.PartyId == entity.Id));
+                //Remove all the histories
                 repoCM.Delete(latest.History);
                 if (latest.History.Count() > 0)
                 {
@@ -201,20 +213,52 @@ namespace BExIS.Dlm.Services.Party
             return (true);
         }
 
-        public PartyX Update(PartyX entity)
+        public PartyX Update(PartyX party)
         {
-            Contract.Requires(entity != null, "Provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "Provided entity must have a permanent ID");
+            Contract.Requires(party != null, "Provided entity can not be null");
+            Contract.Requires(party.Id >= 0, "Provided entity must have a permanent ID");
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0, "No entity is persisted!");
 
+            if (party.StartDate == null)
+                party.StartDate = DateTime.MinValue;
+            if (party.EndDate == null || party.EndDate == DateTime.MinValue)
+                party.EndDate = DateTime.MaxValue;
+            if (party.StartDate > party.EndDate)
+                BexisException.Throw(null, "End date should be greater than start date.");
+            if ((ValidateRelationships(party.Id)).Any())
+                party.IsTemp = true;
+            else
+                party.IsTemp = false;
+      
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                repo.Put(entity); // Merge is required here!!!!
-                uow.Commit();
-                entity = repo.Reload(entity);
+                repo.Merge(party);
+                var merged = repo.Get(party.Id);
+                repo.Put(merged);
+                uow.Commit();               
             }
-            return (entity);
+            return (party);
+
+            //using (IUnitOfWork uow = this.GetUnitOfWork())
+            //{
+            //    IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+            //    var newParty = repo.Reload(party);
+            //    newParty.Alias = party.Alias;
+            //    newParty.CurrentStatus = party.CurrentStatus;
+            //    newParty.Description = party.Description;
+            //    newParty.EndDate = party.EndDate;
+            //    newParty.Extra = party.Extra;
+            //    newParty.IsTemp = party.IsTemp;
+            //    newParty.Name = party.Name;
+            //    newParty.PartyType = party.PartyType;
+            //    newParty.StartDate = party.StartDate;
+            //    //TODO:What to do ????
+            //    repo.Put(newParty); // Merge is required here!!!!
+            //    uow.Commit();
+            //    party = repo.Reload(party);
+            //}
+            //return (party);
         }
 
         public bool TempPartyToPermanent(int partyId)
@@ -237,7 +281,7 @@ namespace BExIS.Dlm.Services.Party
         #region PartyRelationship
 
         public PartyRelationship AddPartyRelationship(PartyX firstParty, PartyX secondParty, PartyRelationshipType partyRelationshipType,
-                                    string title, string description, DateTime? startDate = null, DateTime? endDate = null, string scope = "")
+                                    string title, string description, PartyTypePair partyTypePair, DateTime? startDate = null, DateTime? endDate = null, string scope = "")
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(firstParty != null);
@@ -263,8 +307,11 @@ namespace BExIS.Dlm.Services.Party
                 StartDate = startDate.Value,
                 Title = title
             };
+            if (partyTypePair != null)
+                entity.PartyTypePair = partyTypePair;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                IRepository<PartyX> repoParty = uow.GetRepository<PartyX>();
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
                 IRepository<PartyRelationshipType> repoRelType = uow.GetRepository<PartyRelationshipType>();
                 partyRelationshipType = repoRelType.Reload(partyRelationshipType);
@@ -283,6 +330,8 @@ namespace BExIS.Dlm.Services.Party
                 partyRelationshipType.PartyRelationships.Add(entity);
                 repoPR.Put(entity);
                 uow.Commit();
+                //update the source party to check if relationship rules are satisfied and changed the istemp field
+                Update(entity.FirstParty);
             }
             return (entity);
         }
@@ -326,6 +375,7 @@ namespace BExIS.Dlm.Services.Party
                 var entity = repoPR.Reload(partyRelationship);
                 repoPR.Delete(entity);
                 uow.Commit();
+                //Here we don't need to change temp status of party because minimum cardinality will be presereved in any way.
             }
             return (true);
         }
@@ -348,6 +398,7 @@ namespace BExIS.Dlm.Services.Party
                     repoPR.Delete(latest);
                 }
                 uow.Commit();
+                //Here we don't need to change temp status of party because minimum cardinality will be presereved in any way.
             }
             return (true);
         }
@@ -356,52 +407,29 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region Associations
-        //It's not checking uniqeness when it is not for a single custom attribute because it couldn't predict other values--> it should have all values to make a hash
-        public PartyCustomAttributeValue AddPartyCustomAttriuteValue(PartyX party, PartyCustomAttribute partyCustomAttribute, string value)
+
+        /// <summary>
+        /// add a single custom attribute value to a party object
+        /// 
+        /// It's not checking uniqeness when it is not for a single custom attribute because it couldn't predict other values--> it should have all values to make a hash
+        /// </summary>
+        /// <param name="party"></param>
+        /// <param name="partyCustomAttribute"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public PartyCustomAttributeValue AddPartyCustomAttributeValue(ref PartyX party, PartyCustomAttribute partyCustomAttribute, string value)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(value));
-            Contract.Requires(partyCustomAttribute != null);
-            Contract.Requires(partyCustomAttribute.Id >= 0, "Provided Custom Attribute entity must have a permanent identifier.");
-            Contract.Requires(party != null);
-            Contract.Requires(party.Id >= 0, "Provided party entity must have a permanent ID");
-
-            Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0);
-
-            var entity = new PartyCustomAttributeValue()
+            // create a dictionary to pass along
+            var dic = new Dictionary<PartyCustomAttribute, string>
             {
-                CustomAttribute = partyCustomAttribute,
-                Value = value
+                { partyCustomAttribute, value }
             };
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                IRepository<PartyCustomAttributeValue> repoCAV = uow.GetRepository<PartyCustomAttributeValue>();
-                IRepository<PartyCustomAttribute> repoCA = uow.GetRepository<PartyCustomAttribute>();
-                var partyEntity = repo.Reload(party);
-                //check uniqeness if there is just one uniqe custome attribute
-                if (partyCustomAttribute.IsUnique)
-                {
-                    var customAttributes = repoCA.Get(item => item.PartyType == partyEntity.PartyType);
-                    if (customAttributes.Where(item => item.IsUnique).Count() == 1)
-                        if (!CheckUniqueness(repo, party.PartyType, value, party))
-                            BexisException.Throw(party, String.Format("Due the party uniqueness policy for this party type this value couldn't save"), BexisException.ExceptionType.Add, true);
-                }
-                //check if there is the same custom attribute for this party update it
-                var similarPartyCustomAttr = partyEntity.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttribute.Id);
-                if (similarPartyCustomAttr != null)
-                {
-                    similarPartyCustomAttr.Value = value;
-                    entity = similarPartyCustomAttr;
-                }
-                else
-                {
-                    partyEntity.CustomAttributeValues.Add(entity);
-                    repoCAV.Put(entity);
-                }
-                uow.Commit();
 
-            }
-            return (entity);
+            // pass along
+            var result = AddPartyCustomAttributeValues(ref party, dic);
+
+            // find the corresponding attribute in the result
+            return result.Where((item) => (item.CustomAttribute == partyCustomAttribute) && (item.Value == value)).FirstOrDefault();
         }
 
 
@@ -413,7 +441,7 @@ namespace BExIS.Dlm.Services.Party
         /// <param name="party"></param>
         /// <param name="partyCustomAttributeValues"></param>
         /// <returns></returns>
-        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<PartyCustomAttribute, string> partyCustomAttributeValues)
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttributeValues(ref PartyX party, Dictionary<PartyCustomAttribute, string> partyCustomAttributeValues)
         {
             Contract.Requires(partyCustomAttributeValues != null);
             Contract.Requires(party != null);
@@ -441,16 +469,19 @@ namespace BExIS.Dlm.Services.Party
                             Party = party,
                             Value = partyCustomAttributeValue.Value
                         };
+                        party.CustomAttributeValues.Add(entity);
                     }
                     repoCAV.Put(entity);
                 }
                 uow.Commit();
             }
+            party = UpdatePartyName(party);
             return party.CustomAttributeValues;
         }
-        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
+
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttributeValues(PartyX party, Dictionary<long, string> partyCustomAttributeValues)
         {
-            return AddPartyCustomAttriuteValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
+            return AddPartyCustomAttributeValues(ref party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
         }
 
         public PartyX GetParty(long id)
@@ -462,7 +493,7 @@ namespace BExIS.Dlm.Services.Party
             }
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue, string newValue)
+        public PartyCustomAttributeValue UpdatePartyCustomAttributeValue(PartyCustomAttributeValue partyCustomAttributeValue, string newValue)
         {
             Contract.Requires(partyCustomAttributeValue != null && partyCustomAttributeValue.Id != 0, "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
@@ -478,10 +509,11 @@ namespace BExIS.Dlm.Services.Party
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
+            entity.Party = UpdatePartyName(entity.Party);
             return (entity);
         }
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
+        public PartyCustomAttributeValue UpdatePartyCustomAttributeValues(List<PartyCustomAttributeValue> partyCustomAttributeValues)
         {
             Contract.Requires(partyCustomAttributeValues != null && partyCustomAttributeValues.Any(), "Provided entities can not be null");
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
@@ -500,6 +532,7 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
 
             }
+            entity.Party = UpdatePartyName(entity.Party);
             return (entity);
         }
 
@@ -525,7 +558,7 @@ namespace BExIS.Dlm.Services.Party
         //    return (entity);
 
         //}
-        public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
+        public bool RemovePartyCustomAttributeValue(PartyCustomAttributeValue partyCustomAttributeValue)
         {
             Contract.Requires(partyCustomAttributeValue != null);
             Contract.Requires(partyCustomAttributeValue.Id >= 0, "Provided entity must have a permanent ID");
@@ -536,12 +569,12 @@ namespace BExIS.Dlm.Services.Party
                 //Uniqeness policy
                 repo.Delete(entity);
                 uow.Commit();
-
             }
+            partyCustomAttributeValue.Party = UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
         }
 
-        public bool RemovePartyCustomAttriuteValues(IEnumerable<PartyCustomAttributeValue> entities)
+        public bool RemovePartyCustomAttributeValues(IEnumerable<PartyCustomAttributeValue> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (PartyCustomAttributeValue e) => e != null));
@@ -556,6 +589,8 @@ namespace BExIS.Dlm.Services.Party
                 }
                 uow.Commit();
             }
+            if (entities.Any())
+                UpdatePartyName(entities.First().Party);
             return (true);
         }
 
@@ -659,6 +694,7 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
         }
+
         public void RemovePartyUser(PartyX party, long userId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -675,8 +711,10 @@ namespace BExIS.Dlm.Services.Party
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-                return repo.Get(c => c.UserId == userId).Select(c => c.Party).FirstOrDefault();
+                IReadOnlyRepository<PartyUser> repo = uow.GetReadOnlyRepository<PartyUser>();
+                return repo.Query(c => c.UserId == userId)
+                           .Select(c => c.Party)
+                           .FirstOrDefault();
             }
         }
 
@@ -684,8 +722,10 @@ namespace BExIS.Dlm.Services.Party
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<PartyUser> repo = uow.GetRepository<PartyUser>();
-                return repo.Get(c => c.PartyId == partyId).Select(c => c.UserId).FirstOrDefault();
+                IReadOnlyRepository<PartyUser> repo = uow.GetReadOnlyRepository<PartyUser>();
+                return repo.Query(c => c.PartyId == partyId)
+                           .Select(c => c.UserId)
+                           .FirstOrDefault();
             }
         }
         #endregion 
@@ -755,6 +795,52 @@ namespace BExIS.Dlm.Services.Party
             return true;
         }
 
+        public Dictionary<PartyRelationshipType, int> ValidateRelationships(long partyId)
+        {
+            var partyManager = new PartyManager();
+            var party = partyManager.PartyRepository.Get(partyId);
+            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(party.PartyType.Id).Where(cc => cc.MinCardinality > 0);
+            var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == party.Id);
+            var requiredPartyRelationTypeCount = new Dictionary<PartyRelationshipType, int>();
+            foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
+            {
+                if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
+                    requiredPartyRelationTypeCount.Add(requiredPartyRelationType, requiredPartyRelationType.MinCardinality - partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count());
+            }
+            return requiredPartyRelationTypeCount;
+        }
+
+        public bool CheckCondition(String condition, long partyId)
+        {
+            if (string.IsNullOrEmpty(condition))
+                return true;
+
+            var party = PartyRepository.Get(partyId);
+            if (party == null)
+                return false;
+            var newCondition = condition;
+            //if text is sourounded with [] means the value comes from an element
+            //Extract such text and replace them by the value of the related element
+
+            MatchCollection matches = Regex.Matches(condition, @"\[(.*?)\]");
+            foreach (Match match in matches)
+            {
+                var customAttributeName = match.Groups[1].Value;
+                var customAttributeValue = party.CustomAttributeValues.FirstOrDefault(cc => cc.CustomAttribute.Name == customAttributeName);
+                if (customAttributeValue == null)
+                    throw new Exception(string.Format("There is not any custom attribute name which has {0} name.", customAttributeName));
+                newCondition = newCondition.Replace(match.Groups[0].Value, string.Format("'{0}'", customAttributeValue.Value));
+            }
+            try
+            {
+                Expression e = new Expression(newCondition);
+                return ((bool)e.Evaluate());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         #region privateMethod
         private string GetHash(Dictionary<PartyCustomAttribute, string> partyCustomAttrVals)
@@ -810,8 +896,24 @@ namespace BExIS.Dlm.Services.Party
             }
             return result;
         }
-
-
+        private PartyX UpdatePartyName(PartyX party)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+                //party = repo.Reload(party);
+                var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
+                if (mainValues.Length > 0)
+                {
+                    party.Name = string.Join(" ", mainValues); // what should happen when no custom attribute is there!?
+                    repo.Merge(party);
+                    var merged = repo.Get(party.Id);
+                    repo.Put(merged);
+                    uow.Commit();
+                }
+                return party;
+            }
+        }
         #endregion privateMethod
     }
 }

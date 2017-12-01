@@ -26,24 +26,24 @@
             if (partyCustomAttributeValue != null)
             { partyCustomAttributeValueStr = partyCustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttr.Id).Value; }
         }
-        <tr>
+        <tr condition="@partyCustomAttr.Condition" name="condition">
             <td style="width:40px;">@Html.Raw((!partyCustomAttr.IsValueOptional && !readOnly ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
-            <td style="width:300px;">
+            <td style="width:200px;">
                 <label>
                     @partyCustomAttr.DisplayName
                 </label>
             </td>
             <td>
+
                 @if (readOnly)
                 {
                     <span>@partyCustomAttributeValueStr</span>
                 }
                 else
                 {
-
                     if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
                     {
-                        <select name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;">
+                        <select onchange="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") AttributeName="@partyCustomAttr.Name.ToLower()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;" id="partyCustomAttributeValues[@partyCustomAttr.Id]">
                             @foreach (var option in partyCustomAttr.ValidValues.Split(','))
                             {
                                 <option value="@option" @(partyCustomAttributeValueStr == @option ? "selected='selected'" : "")>@option</option>
@@ -52,12 +52,12 @@
                     }
                     else if (partyCustomAttr.DataType == "bool" || partyCustomAttr.DataType == "boolean")
                     {
-                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>True</label>
-                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" @(partyCustomAttributeValueStr == "false" ? "checked" : "") value="false" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>False</label>
+                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()"  @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>True</label>
+                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @(partyCustomAttributeValueStr == "false" ? "checked" : "") value="false" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>False</label>
                     }
                     else
                     {
-                        <input type="text" id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" @(!partyCustomAttr.IsValueOptional ? Html.Raw("data-val=\"true\" data-val-required=\"This field is required.\"") : Html.Raw("")) @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") />
+                        <input type="text" onKeyUp="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" @(!partyCustomAttr.IsValueOptional ? Html.Raw("data-val=\"true\" data-val-required=\"This field is required.\"") : Html.Raw("")) @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") />
                         @Html.ValidationMessage("partyCustomAttributeValues[" + @partyCustomAttr.Id + "]");
                     }
                     if (!string.IsNullOrEmpty(@partyCustomAttr.Description))
@@ -69,6 +69,26 @@
 </table>
 <script>
     uniqenessPolicy = '';
+
+    $('#tblPartyCustomAttributes').on('partyCustomAttributesChanged',
+                          function (objectEvent, args) {
+                              checkPartyConditions();
+                          });
+
+    
+    function checkPartyConditions() {
+        $("[name='condition']").each(function (index, element) {
+            condition = $(this).attr("condition");
+            if (condition.length) {
+                var cond = parsePartyCondition(condition);
+                if (eval(cond))
+                    $(element).show();
+                else
+                    $(element).hide();
+            }
+        });
+        
+    }
     function checkUniqeness(notShowAlert) {
         hash = "";
         $("#tblPartyCustomAttributes input[isUniqe]").each(
@@ -76,24 +96,29 @@
                 hash += $(this).val();
             });
         if (hash != "") {
-            $.get("/BAM/Party/CheckUniqeness?partyTypeId=" +@partyTypeId +"&partyId=" +@partyId +"&hash=" + hash, function (data) {
+            $.get("/BAM/PartyService/CheckUniqeness?partyTypeId=" +@partyTypeId +"&partyId=" +@partyId +"&hash=" + hash, function (data) {
 
                 if (data == "False") {
                     uniqenessPolicy = hash + " is existed.";
-                    if (notShowAlert!=true)
-                        alert(uniqenessPolicy+"!");
+                    if (notShowAlert != true)
+                        alert(uniqenessPolicy + "!");
                 }
                 else
                     uniqenessPolicy = undefined;
+
             });
         }
+
     }
     $(document).ready(function () {
+        checkPartyConditions();
         $("#tblPartyCustomAttributes input").change(function () {
             checkUniqeness();
+
         });
         $(document).on("submit", "form", function (e) {
-           if (uniqenessPolicy) {
+            checkUniqeness();
+            if (uniqenessPolicy) {
                 alert(uniqenessPolicy);
                 e.preventDefault();
                 e.stopPropagation();

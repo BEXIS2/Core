@@ -551,10 +551,23 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\DIM\bexis-dim.css" />
+    <Content Include="Content\Images\help\collections.png" />
     <Content Include="Content\Images\help\help_img1.png" />
     <Content Include="Content\Images\help\help_img2.png" />
     <Content Include="Content\Images\help\help_img3.png" />
     <Content Include="Content\Images\help\help_img4.png" />
+    <Content Include="Content\Images\help\many_to_one.png" />
+    <Content Include="Content\Images\help\mapping.png" />
+    <Content Include="Content\Images\help\mapping_tool.png" />
+    <Content Include="Content\Images\help\mapping_tool2.png" />
+    <Content Include="Content\Images\help\mapping_tool3.png" />
+    <Content Include="Content\Images\help\one_to_many.png" />
+    <Content Include="Content\Images\help\one_to_one.png" />
+    <Content Include="Content\Images\help\pangaea1.png" />
+    <Content Include="Content\Images\help\pangaea2.png" />
+    <Content Include="Content\Images\help\publish.png" />
+    <Content Include="Content\Images\help\source.png" />
+    <Content Include="Content\Images\help\target.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Dim.Manifest.xml">
       <SubType>Designer</SubType>
@@ -597,6 +610,7 @@
     <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\DIM.pubxml" />
     <None Include="Properties\PublishProfiles\DIM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\DIM21108.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
     <Content Include="Scripts\DIM\isotope.pkgd.min.js" />

@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Vaiona.Logging.Aspects;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 /// <summary>
 ///
@@ -27,8 +25,10 @@ namespace BExIS.IO.Transform.Input
     /// this class is used to read and validate excel files
     /// </summary>
     /// <remarks></remarks>     
-    public class ExcelReader:DataReader
+    public class ExcelReader : DataReader
     {
+        public static List<string> SUPPORTED_APPLICATIONS = new List<string>() { "Microsoft Excel" };
+
         protected SharedStringItem[] _sharedStrings;
         protected Stylesheet _stylesheet = new Stylesheet();
         protected SpreadsheetDocument spreadsheetDocument;
@@ -44,7 +44,12 @@ namespace BExIS.IO.Transform.Input
 
         protected int rows = 0;
 
-        private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+        protected char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
+
+        //Properties from File
+        public string Application = "";
+        public string ApplicationVersion = "";
 
         public ExcelReader()
         {
@@ -52,8 +57,15 @@ namespace BExIS.IO.Transform.Input
             NumberOfRows = 0;
         }
 
-        #region read file
+        public override FileStream Open(string fileName)
+        {
+            FileStream tmp = base.Open(fileName);
+            loadProperties(tmp);
 
+            return tmp;
+        }
+
+        #region read file
 
         /// <summary>
         /// return true if the Excel file based on a template
@@ -62,16 +74,16 @@ namespace BExIS.IO.Transform.Input
         /// <seealso cref=""/>
         /// <param name="file"> file as stream</param>       
         public bool IsTemplate(Stream file)
-        { 
+        {
             this.FileStream = file;
 
             // open excel file
             spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
-        
+
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
-            
+
             try
             {
                 // get all the defined area 
@@ -87,11 +99,31 @@ namespace BExIS.IO.Transform.Input
             {
                 return false;
             }
-            
+
 
             return false;
         }
 
+        private void loadProperties(Stream file)
+        {
+            this.FileStream = file;
+
+            // open excel file
+            spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
+
+            if(spreadsheetDocument != null)
+            {
+                if(spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
+                {
+                    Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
+                }
+                
+                if(spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+                {
+                    ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
+                }
+            }
+        }
 
         /// <summary>
         /// Read a Excel Template file
@@ -114,7 +146,7 @@ namespace BExIS.IO.Transform.Input
             this.StructuredDataStructure = sds;
             //this.info = efri;
             this.DatasetId = datasetId;
-                        
+
             // open excel file
             spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
 
@@ -148,7 +180,7 @@ namespace BExIS.IO.Transform.Input
             // Get shared strings
             _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
-            if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow)!=null)
+            if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
             {
                 ReadRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow);
             }
@@ -168,7 +200,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId,int packageSize)
+        public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, int packageSize)
         {
 
             this.FileStream = file;
@@ -220,21 +252,21 @@ namespace BExIS.IO.Transform.Input
             else
                 Position++;
 
-            int endPosition =  Position + packageSize;
+            int endPosition = Position + packageSize;
 
             if (endPosition > this._areaOfData.EndRow)
                 endPosition = this._areaOfData.EndRow;
 
             if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
             {
-  
+
                 ReadRows(worksheetPart, Position, endPosition);
                 Position += packageSize;
 
             }
 
             return this.DataTuples;
-        }  
+        }
 
 
         /// <summary>
@@ -259,7 +291,7 @@ namespace BExIS.IO.Transform.Input
             this.Info = fri;
             this.DatasetId = datasetId;
 
-             // Check params
+            // Check params
             if (this.FileStream == null)
             {
                 this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
@@ -287,10 +319,10 @@ namespace BExIS.IO.Transform.Input
 
                 SheetDimension dimension = workbookPart.WorksheetParts.First().Worksheet.GetFirstChild<SheetDimension>();
 
-               string s =  dimension.Reference.Value;
+                string s = dimension.Reference.Value;
 
-               string[] references = s.Split(':'); 
-                 
+                string[] references = s.Split(':');
+
 
                 // get all the defined area 
                 //List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
@@ -299,12 +331,12 @@ namespace BExIS.IO.Transform.Input
                 // Get intergers for reading data
                 startColumn = GetColumnNumber(GetColumnName(references[0]));
                 endColumn = GetColumnNumber(GetColumnName(references[1]));
-                
+
                 numOfColumns = (endColumn - startColumn) + 1;
                 offset = this.Info.Offset;
 
                 int endRowData = GetRowNumber(references[1]);
-                
+
                 // select worksheetpart by selected defined name area like data in sheet
                 // sheet where data area is inside
                 WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
@@ -392,8 +424,8 @@ namespace BExIS.IO.Transform.Input
 
             if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
             {
-                listOfSelectedvalues= GetValuesFromRows(worksheetPart,variableList, Position, Position + packageSize);
-                Position += packageSize; 
+                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, Position + packageSize);
+                Position += packageSize;
             }
 
 
@@ -445,7 +477,7 @@ namespace BExIS.IO.Transform.Input
                                 Row row = (Row)reader.LoadCurrentElement();
 
 
-                               temp.Add(RowToList(row, variableList));
+                                temp.Add(RowToList(row, variableList));
                                 count++;
 
                             }
@@ -503,7 +535,7 @@ namespace BExIS.IO.Transform.Input
                                 Row row = (Row)reader.LoadCurrentElement();
 
                                 if (!IsEmpty(row))
-                                { 
+                                {
                                     this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
                                 }
 
@@ -554,11 +586,11 @@ namespace BExIS.IO.Transform.Input
 
             // select data area
             this._areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
-            if(this._areaOfData == null) this.ErrorMessages.Add(new Error(ErrorType.Other,"Data area is not defined in the excel template."));
+            if (this._areaOfData == null) this.ErrorMessages.Add(new Error(ErrorType.Other, "Data area is not defined in the excel template."));
 
             // Select variable area
             this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
-            if(this._areaOfVariables == null) this.ErrorMessages.Add(new Error(ErrorType.Other,"VariableIdentifiers area is not defined in the excel template."));
+            if (this._areaOfVariables == null) this.ErrorMessages.Add(new Error(ErrorType.Other, "VariableIdentifiers area is not defined in the excel template."));
 
             // Get intergers for reading data
             startColumn = GetColumnNumber(this._areaOfData.StartColumn);
@@ -797,11 +829,11 @@ namespace BExIS.IO.Transform.Input
         private List<string> RowToList(Row r, List<long> varIds)
         {
             List<int> columns = new List<int>();
-            foreach(long id in varIds)
+            foreach (long id in varIds)
             {
                 //get the index of the variableintifier where id euqls id from varids
 
-                int columnPosition = GetColumnNumber(this._areaOfData.StartColumn)+this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
+                int columnPosition = GetColumnNumber(this._areaOfData.StartColumn) + this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
 
                 columns.Add(columnPosition);
             }
@@ -907,7 +939,7 @@ namespace BExIS.IO.Transform.Input
                         {
                             rowAsStringArray.Add(value);
                         }
-                        
+
                     }
                 }//end if cell null
 
@@ -915,7 +947,7 @@ namespace BExIS.IO.Transform.Input
 
             return rowAsStringArray;
         }
-       
+
 
         /// <summary>
         /// Generate a list of VariableIdentifiers from the excel file
@@ -1043,14 +1075,14 @@ namespace BExIS.IO.Transform.Input
         /// <returns>Worksheet where the area is inside</returns>
         private static WorksheetPart GetWorkSheetPart(WorkbookPart workbookPart, DefinedNameVal definedName)
         {
-                //get worksheet based on defined name
-                string relId = workbookPart.Workbook.Descendants<Sheet>()
-                .Where(s => definedName.SheetName.Equals(s.Name))
-                .First()
-                .Id;
-                return (WorksheetPart)workbookPart.GetPartById(relId);
+            //get worksheet based on defined name
+            string relId = workbookPart.Workbook.Descendants<Sheet>()
+            .Where(s => definedName.SheetName.Equals(s.Name))
+            .First()
+            .Id;
+            return (WorksheetPart)workbookPart.GetPartById(relId);
         }
-       
+
         /// <summary>
         /// Get the cloumn name from a cell
         /// </summary>
@@ -1146,12 +1178,12 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>        
     public class DefinedNameVal
     {
-        public string Key ="";
-        public string SheetName="";
-        public string StartColumn="";
-        public int StartRow=0;
-        public string EndColumn="";
-        public int EndRow=0;
+        public string Key = "";
+        public string SheetName = "";
+        public string StartColumn = "";
+        public int StartRow = 0;
+        public string EndColumn = "";
+        public int EndRow = 0;
     }
 
 }

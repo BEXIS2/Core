@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -19,7 +20,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
-        public ActionResult UserRegisteration()
+        public ActionResult UserRegistration()
         {
             PartyManager partyManager = null;
             PartyTypeManager partyTypeManager = null;
@@ -29,7 +30,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             {
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
-                //Select all the parties which are defined in web.config
                 //Defined AccountPartyTypes vallue in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2
                 var accountPartyTypes = new List<string>();
                 var partyTypeAccountModel = new PartyTypeAccountModel();
@@ -39,7 +39,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 userManager = new UserManager();
                 var allowedAccountPartyTypes = GetPartyTypesForAccount();
                 if (allowedAccountPartyTypes == null)
-                    throw new Exception("Allowed party types for registeration in setting.xml are not exist!");
+                    throw new Exception("Allowed party types for registration in setting.xml are not exist!");
                 //Split them by "," and split each one by ":"
                 foreach (var allowedAccountPartyType in allowedAccountPartyTypes)
                 {
@@ -54,7 +54,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         {
                             //filter AssociatedPairs to allowed pairs
                             partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.AllowedSource.Id && item.AllowedTarget.Parties.Any()).ToList();
-                            //try to find first type pair witch has PartyRelationShipTypeDefault otherwise the first one 
+                            //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one 
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
                             if (defaultPartyTypePair == null)
                                 defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
@@ -71,7 +71,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyTypeAccountModel.Party = partyManager.GetPartyByUser(user.Id);
                 //TODO: Discuss . Current soloution is to navigate the user to edit party
                 if (partyTypeAccountModel.Party != null)
-                    return RedirectToAction("CreateEdit", "Party", new { id = partyTypeAccountModel.Party.Id });
+                    return RedirectToAction("Edit");
                 return View("_userRegisterationPartial", partyTypeAccountModel);
 
             }
@@ -101,6 +101,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
             UserManager userManager = null;
             try
             {
+                //check if the party blongs to the user
+                //Bind party if there is already a user associated to this party
+               
                 userManager = new UserManager();
                 partyTypeManager = new PartyTypeManager();
                 partyManager = new PartyManager();
@@ -108,14 +111,15 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                 //Create party
-                party = partyManager.Create(partyType, party.Description, party.StartDate, party.EndDate, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
-
+                party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                 if (partyRelationships != null)
                     foreach (var partyRelationship in partyRelationships)
                     {
+                        //the duration is from current datetime up to the end of target party date
                         var secondParty = partyManager.PartyRepository.Get(partyRelationship.SecondParty.Id);
                         var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
-                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                        var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
+                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
                     }
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
@@ -128,6 +132,84 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyTypeManager?.Dispose();
                 partyManager?.Dispose();
                 partyRelationshipManager?.Dispose();
+            }
+        }
+
+        public ActionResult Edit(bool relationTabAsDefault = false)
+        {
+            PartyManager partyManager = null;
+            PartyTypeManager partyTypeManager = null;
+            UserManager userManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                partyTypeManager = new PartyTypeManager();
+                userManager = new UserManager();
+                var user = userManager.FindByNameAsync(HttpContext.User?.Identity?.Name).Result;
+                if (user == null)
+                    return RedirectToAction("Index", "Home", new { area = "" });
+                ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
+                var model = new PartyModel();
+                model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
+                Party party = partyManager.GetPartyByUser(user.Id);
+                if (party == null)
+                    return RedirectToAction("UserRegistration", "PartyService", new { area = "bam" });
+                model.Description = party.Description;
+                model.Id = party.Id;
+                model.PartyType = party.PartyType;
+                //Set dates to null to not showing the minimum and maximum dates in UI
+                if (party.StartDate == DateTime.MinValue)
+                    model.StartDate = null;
+                else
+                    model.StartDate = party.StartDate;
+                if (party.EndDate.Date == DateTime.MaxValue.Date)
+                    model.EndDate = null;
+                else
+                    model.EndDate = party.EndDate;
+                model.Name = party.Name;
+                ViewBag.RelationTabAsDefault = false;
+                ViewBag.Title = "Edit party";
+
+                return View(model);
+            }
+            finally
+            {
+                partyManager?.Dispose();
+                partyTypeManager?.Dispose();
+                userManager?.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
+        {
+            var party = new Party();
+            PartyManager partyManager = null;
+            UserManager userManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                userManager = new UserManager();
+                if (!HttpContext.User.Identity.IsAuthenticated)
+                    return RedirectToAction("Index", "Home");
+                
+
+                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+                var userParty = partyManager.GetPartyByUser(user.Id);
+                if (userParty.Id != partyModel.Id)
+                    throw new Exception("Permission denide.");
+                if (partyModel.Id == 0)
+                    return RedirectToAction("Index", "Home");
+                else
+                    party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
+            finally
+            {
+                partyManager?.Dispose();
+                userManager?.Dispose();
             }
         }
 
@@ -161,6 +243,19 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
         }
 
+        [HttpGet]
+        public Boolean CheckUniqeness(int partyTypeId, int partyId, string hash)
+        {
+            PartyManager partyManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                PartyType partyType = new PartyTypeManager().PartyTypeRepository.Get(partyTypeId);
+                Party party = partyManager.PartyRepository.Get(partyId);
+                return partyManager.CheckUniqueness(partyManager.PartyRepository, partyType, hash, party);
+            }
+            finally { partyManager?.Dispose(); }
+        }
 
         public Dictionary<string, string[]> GetPartyTypesForAccount()
         {

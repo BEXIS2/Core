@@ -1,5 +1,6 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Utils.Models;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Vaiona.IoC;
@@ -28,6 +29,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public IEnumerable<string> ReIndexSingle(long id = 0)
         {
+            return ReIndexUpdateSingle(id, "CREATE");
+        }
+
+        public IEnumerable<string> ReIndexUpdateSingle(long id = 0, string actionType = "CREATE")
+        {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             if (id == 0)
@@ -36,7 +42,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
             else
             {
-                provider?.UpdateSingleDatasetIndex(id, IndexingAction.CREATE);
+                var enumAction = (IndexingAction)Enum.Parse(typeof(IndexingAction), actionType);
+                provider?.UpdateSingleDatasetIndex(id, enumAction);
 
             }
             return null;

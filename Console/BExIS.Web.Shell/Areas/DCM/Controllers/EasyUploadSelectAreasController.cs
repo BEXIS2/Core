@@ -33,9 +33,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.RemoveExecutedStep(TaskManager.Current());
             }
 
-            /*
-             * Use the given file and the given sheet format to create a json-table
-             * */
+            
+            //Use the given file and the given sheet format to create a json-table
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
             string jsonTable = "[]";
@@ -90,7 +89,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     fis.Close();
                 }
             }
-
+            
             // Check if the areas have already been selected, if yes, use them (Important when jumping back to this step)
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
             {
@@ -261,7 +260,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             #endregion
             //Send back the table-data
-            return Json(jsonTable);
+            return Content(jsonTable, "application/json");
         }
 
         /*

@@ -189,7 +189,10 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                     case "Decimal":
                         {
-                            //Same idea as for double
+                            /*
+                             * Same idea as for double but for decimal you have to explicitly allow 
+                             * scientific notation with the flags NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint
+                             **/
                             try
                             {
                                 if (decimalCharacter.Equals(DecimalCharacter.point))
@@ -199,7 +202,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains(','))
                                         {
-                                            return Convert.ToDecimal(value, new CultureInfo("en-US"));
+                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
                                         }
                                         else
                                         {
@@ -219,7 +222,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
-                                            return Convert.ToDecimal(value, new CultureInfo("de-DE"));
+                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("de-DE"));
                                         }
                                         else
                                         {
@@ -232,7 +235,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                     }
                                 }
-                                return Convert.ToDecimal(value);
+                                return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
                             }
                             catch (Exception ex)
                             {
@@ -265,6 +268,20 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 return dateTime;
                             }
 
+                            //Also accept OA-Dates - try to parse the value as double, then try to parse the double as OA-Date
+                            double valueAsDouble;
+                            if(double.TryParse(value, out valueAsDouble))
+                            {
+                                try
+                                {
+                                    dateTime = DateTime.FromOADate(valueAsDouble);
+                                    return dateTime;
+                                } catch(ArgumentException e)
+                                {
+                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                }
+                            }
+
                             return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
 
                         }
@@ -290,15 +307,27 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                     //TODO Boolean check
                     case "Boolean":
                         {
-
-                            Boolean converted;
-                            if (Boolean.TryParse(value, out converted))
+                            //Accept 0 and 1
+                            if(value == "0")
                             {
-                                return converted;
+                                return false;
+                            }
+                            else if(value == "1")
+                            {
+                                return true;
                             }
                             else
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                //Try to parse, e.g. "true", "True" or "TRUE"
+                                Boolean converted;
+                                if (Boolean.TryParse(value, out converted))
+                                {
+                                    return converted;
+                                }
+                                else
+                                {
+                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                }
                             }
                         }
 

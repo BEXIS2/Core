@@ -16,9 +16,82 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 {
     public class RPMSeedDataGenerator: IDisposable
     {
-
         public void GenerateSeedData()
         {
+
+            FeatureManager featureManager = null;
+            try
+            {
+                featureManager = new FeatureManager();
+                List<Feature> features = featureManager.FeatureRepository.Get().ToList();
+
+                OperationManager operationManager = new OperationManager();
+
+                Feature dataPlanning = features.FirstOrDefault(f => f.Name.Equals("Data Planning"));
+                if (dataPlanning == null)
+                    dataPlanning = featureManager.Create("Data Planning", "Data Planning Management");
+
+                Feature datastructureFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Datastructure Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (datastructureFeature == null)
+                    datastructureFeature = featureManager.Create("Datastructure Management", "Datastructure Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "DataStructureSearch", "*"))
+                    operationManager.Create("RPM", "DataStructureSearch", "*", datastructureFeature);
+
+                if (!operationManager.Exists("RPM", "DataStructureEdit", "*"))
+                    operationManager.Create("RPM", "DataStructureEdit", "*", datastructureFeature);
+
+                if (!operationManager.Exists("RPM", "Structures", "*"))
+                    operationManager.Create("RPM", "Structures", "*", datastructureFeature);
+
+                if (!operationManager.Exists("RPM", "DataStructureIO", "*"))
+                    operationManager.Create("RPM", "DataStructureIO", "*", datastructureFeature);
+
+                Feature atributeFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Variable Template Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (atributeFeature == null)
+                    atributeFeature = featureManager.Create("Variable Template Management", "Variable Template Management", dataPlanning); ;
+
+                if (!operationManager.Exists("RPM", "DataAttribute", "*"))
+                    operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
+
+                Feature unitFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Unit Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (unitFeature == null)
+                    unitFeature = featureManager.Create("Unit Management", "Unit Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "Unit", "*"))
+                    operationManager.Create("RPM", "Unit", "*", unitFeature);
+
+                Feature dataTypeFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Data Type Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (dataTypeFeature == null)
+                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "Home", "*"))
+                    operationManager.Create("RPM", "Home", "*", dataTypeFeature);
+
+                if (!operationManager.Exists("RPM", "Help", "*"))
+                    operationManager.Create("RPM", "Help", "*");
+            }
+            finally
+            {
+                featureManager.Dispose();
+            }
+
             //create seed data from csv files
             MappingReader mappingReader = new MappingReader();
             AttributeCreator attributeCreator = new AttributeCreator();
@@ -57,82 +130,35 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             //ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
             //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
 
-            DataStructureManager dsm = new DataStructureManager();
-            foreach (StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
+            DataStructureManager dsm = null;
+            try
             {
-                DataStructureIO.convertOrder(sds);
+                dsm = new DataStructureManager();
+                foreach (StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
+                {
+                    DataStructureIO.convertOrder(sds);
+                }
             }
-
-            FeatureManager featureManager = new FeatureManager();
-            List<Feature> features = featureManager.FeatureRepository.Get().ToList();
-
-            OperationManager operationManager = new OperationManager();
-
-            Feature dataPlanning = features.FirstOrDefault(f => f.Name.Equals("Data Planning"));
-            if (dataPlanning == null)
-                dataPlanning = featureManager.Create("Data Planning", "Data Planning Management");
-
-            Feature datastructureFeature = features.FirstOrDefault(f =>
-                f.Name.Equals("Datastructure Management") &&
-                f.Parent != null &&
-                f.Parent.Id.Equals(dataPlanning.Id));
-
-            if (datastructureFeature == null)
-                datastructureFeature = featureManager.Create("Datastructure Management", "Datastructure Management", dataPlanning);
-
-            if (!operationManager.Exists("RPM", "DataStructureSearch", "*"))
-                operationManager.Create("RPM", "DataStructureSearch", "*", datastructureFeature);
-
-            if (!operationManager.Exists("RPM", "DataStructureEdit", "*"))
-                operationManager.Create("RPM", "DataStructureEdit", "*", datastructureFeature);
-
-            if (!operationManager.Exists("RPM", "Structures", "*"))
-                operationManager.Create("RPM", "Structures", "*", datastructureFeature);
-
-            if (!operationManager.Exists("RPM", "DataStructureIO", "*"))
-                operationManager.Create("RPM", "DataStructureIO", "*", datastructureFeature);
-
-            Feature atributeFeature = features.FirstOrDefault(f =>
-                f.Name.Equals("Variable Template Management") &&
-                f.Parent != null &&
-                f.Parent.Id.Equals(dataPlanning.Id));
-
-            if (atributeFeature == null)
-                atributeFeature = featureManager.Create("Variable Template Management", "Variable Template Management", dataPlanning); ;
-
-            if (!operationManager.Exists("RPM", "DataAttribute", "*"))
-                operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
-
-            Feature unitFeature = features.FirstOrDefault(f =>
-                f.Name.Equals("Unit Management") &&
-                f.Parent != null &&
-                f.Parent.Id.Equals(dataPlanning.Id));
-
-            if (unitFeature == null)
-                unitFeature = featureManager.Create("Unit Management", "Unit Management", dataPlanning);
-
-            if (!operationManager.Exists("RPM", "Unit", "*"))
-                operationManager.Create("RPM", "Unit", "*", unitFeature);
-
-            Feature dataTypeFeature = features.FirstOrDefault(f =>
-                f.Name.Equals("Data Type Management") &&
-                f.Parent != null &&
-                f.Parent.Id.Equals(dataPlanning.Id));
-
-            if (dataTypeFeature == null)
-                dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);
-
-            if (!operationManager.Exists("RPM", "Home", "*"))
-                operationManager.Create("RPM", "Home", "*", dataTypeFeature);
-
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         private static void createResearchPlan()
         {
             //ResearchPlan
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            ResearchPlan researchPlan = rpm.Repo.Get(r => r.Title.Equals("Research plan")).FirstOrDefault();
-            if (researchPlan == null) rpm.Create("Research plan", "");
+            ResearchPlanManager rpm = null;
+            try
+            {
+                rpm = new ResearchPlanManager();
+                ResearchPlan researchPlan = rpm.Repo.Get(r => r.Title.Equals("Research plan")).FirstOrDefault();
+                if (researchPlan == null) rpm.Create("Research plan", "");
+            }
+            finally
+            {
+                rpm.Dispose();
+            }
 
         }
 

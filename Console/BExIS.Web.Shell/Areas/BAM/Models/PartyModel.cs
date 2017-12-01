@@ -21,6 +21,7 @@ namespace BExIS.Modules.Bam.UI.Models
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public PartyType PartyType { get; set; }
+        public String Name { get; set; }
         public List<Error> Errors { get; set; }
 
         public bool ViewMode { get; set; }

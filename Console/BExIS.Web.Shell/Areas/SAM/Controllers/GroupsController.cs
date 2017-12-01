@@ -53,7 +53,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreateGroupModel model)
         {
-            var groupManager = new GroupManager();
+            var identityGroupService = new IdentityGroupService();
 
             try
             {
@@ -65,7 +65,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     Description = model.Description
                 };
 
-                var result = await groupManager.CreateAsync(group);
+                var result = await identityGroupService.CreateAsync(group);
                 if (result.Succeeded)
                 {
                     return Json(new { success = true });
@@ -77,23 +77,24 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             finally
             {
-                groupManager.Dispose();
+                identityGroupService.Dispose();
             }
         }
 
         [HttpPost]
-        public void Delete(long groupId)
+        public async Task<bool> Delete(long groupId)
         {
-            var groupManager = new GroupManager();
+            var identityGroupService = new IdentityGroupService();
 
             try
             {
-                var group = groupManager.FindByIdAsync(groupId).Result;
-                groupManager.DeleteAsync(group);
+                var group = identityGroupService.FindByIdAsync(groupId).Result;
+                var result = await identityGroupService.DeleteAsync(group);
+                return result.Succeeded;
             }
             finally
             {
-                groupManager.Dispose();
+                identityGroupService.Dispose();
             }
         }
 

@@ -1,10 +1,12 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -20,6 +22,7 @@ namespace BExIS.Web.Shell.Controllers
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
             var identityUserService = new IdentityUserService();
+            var signInManager = new SignInManager(AuthenticationManager);
 
             try
             {
@@ -29,18 +32,18 @@ namespace BExIS.Web.Shell.Controllers
                 }
 
                 var result = await identityUserService.ConfirmEmailAsync(userId, code);
-
                 if (!result.Succeeded) return View("Error");
+                var user = await identityUserService.FindByIdAsync(userId);
+                await signInManager.SignInAsync(user, false, false);
 
-                // [2017/09/14] [Sven] [BUG]
-                // Add check for party entity inside web.config, that is defined to be linked to a user!
-                return this.IsAccessibale("bam", "PartyService", "UserRegisteration")
-                    ? this.Run("bam", "PartyService", "UserRegisteration")
+                return this.IsAccessibale("bam", "PartyService", "UserRegistration")
+                    ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
             }
             finally
             {
                 identityUserService.Dispose();
+                signInManager.Dispose();
             }
 
         }
@@ -306,6 +309,12 @@ namespace BExIS.Web.Shell.Controllers
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
                     await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
+                    //var es = new EmailService();
+                    //es.Send(MessageHelper.GetRegisterUserHeader(),
+                    //    MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
+                    //    ConfigurationManager.AppSettings["SystemEmail"]
+                    //    );
 
                     ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
 

@@ -446,7 +446,12 @@ namespace BExIS.Web.Shell.Controllers
                     tuples.Add(newDt);
                 }
                 dm.EditDatasetVersion(workingCopy, tuples, null, null);
-                dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
+				dm.CheckInDataset(ds.Id, "for testing purposes 1", "Javad", ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                dm.CheckInDataset(ds.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.SyncView(ds.Id, ViewCreationBehavior.Create);                
+                dm.SyncView(ds.Id, ViewCreationBehavior.Refresh);
+                dm.SyncView(ds.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
@@ -827,7 +832,6 @@ namespace BExIS.Web.Shell.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             var entityPermissions = entityPermissionManager.EntityPermissionRepository.Get();
 
-            this.Disposables.Add(entityPermissionManager);
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
             for (int i = 0; i < 500; i++)
             {
@@ -888,38 +892,38 @@ namespace BExIS.Web.Shell.Controllers
             var pt = ptm.Create("test", "", "", partyStatusTypes);
             Console.WriteLine("Party type PartyUniqenessTest_Type created.");
 
-            var pca = ptm.CreatePartyCustomAttribute(pt, "", "email", "", "", false, true);
+            var pca = ptm.CreatePartyCustomAttribute(pt, "", "email", "", "","", false, true);
 
             Console.WriteLine("one custom attribute email created.");
             var party = pm.Create(pt, "", "", null, null, partyStatusTypes.First());
             var party2 = pm.Create(pt, "", "", null, null, partyStatusTypes.First());
             Console.WriteLine("two party with the same party type created.");
-            pm.AddPartyCustomAttriuteValue(party, pca, "a@2.com");
+            pm.AddPartyCustomAttributeValue(ref party, pca, "a@2.com");
             try
             {
-                pm.AddPartyCustomAttriuteValue(party2, pca, "a@2.com");
+                pm.AddPartyCustomAttributeValue(ref party2, pca, "a@2.com");
                 System.Diagnostics.Debug.WriteLine("Failed single uniqeness test. add the same pcv .");
             }
             catch
             {
                 System.Diagnostics.Debug.WriteLine("Success single uniqeness  test. add the same pcv .");
             }
-            var pca2 = ptm.CreatePartyCustomAttribute(pt, "", "name", "", "", false, true);
+            var pca2 = ptm.CreatePartyCustomAttribute(pt, "", "name", "", "", "",false, true);
             try
             {
-                pm.AddPartyCustomAttriuteValue(party2, pca, "a@2.com");
+                pm.AddPartyCustomAttributeValue(ref party2, pca, "a@2.com");
                 System.Diagnostics.Debug.WriteLine("Success multiple uniqeness test. add the same pcv .");
             }
             catch
             {
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness  test. add the same pcv .");
             }
-            var pcav1 = pm.AddPartyCustomAttriuteValue(party2, pca2, "mas");
+            var pcav1 = pm.AddPartyCustomAttributeValue(ref party2, pca2, "mas");
             var party3 = pm.Create(pt, "", "", null, null, partyStatusTypes.First());
             try
             {
-                pm.AddPartyCustomAttriuteValue(party3, pca, "a@2.com");
-                pm.AddPartyCustomAttriuteValue(party3, pca2, "mas");
+                pm.AddPartyCustomAttributeValue(ref party3, pca, "a@2.com");
+                pm.AddPartyCustomAttributeValue(ref party3, pca2, "mas");
                 System.Diagnostics.Debug.WriteLine("Success multiple uniqeness test for new party. add the same pcv .");
             }
             catch
@@ -933,7 +937,7 @@ namespace BExIS.Web.Shell.Controllers
             pcavs.Add(pca2, "mas");
             try
             {
-                pm.AddPartyCustomAttriuteValues(party4, pcavs);
+                pm.AddPartyCustomAttributeValues(ref party4, pcavs);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness test doesnt have any error . add the same pcv .");
             }
             catch
@@ -946,7 +950,7 @@ namespace BExIS.Web.Shell.Controllers
             var pcavs_list = new List<PartyCustomAttributeValue>();
             try
             {
-                pcavs_list = pm.AddPartyCustomAttriuteValues(party4, pcavs).ToList();
+                pcavs_list = pm.AddPartyCustomAttributeValues(ref party4, pcavs).ToList();
                 System.Diagnostics.Debug.WriteLine("success multiple uniqeness add test doesnt have any error . add the same pcv .");
             }
             catch
@@ -957,7 +961,7 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var thisCustomAtrval = pcavs_list.Last();
                 thisCustomAtrval.Value = "mas";
-                pm.UpdatePartyCustomAttriuteValues(pcavs_list);
+                pm.UpdatePartyCustomAttributeValues(pcavs_list);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
             }
             catch (Exception ex)
@@ -970,7 +974,7 @@ namespace BExIS.Web.Shell.Controllers
             try
             {
                 pcavs[pca2] = "mas";
-                pm.AddPartyCustomAttriuteValues(party4, pcavs);
+                pm.AddPartyCustomAttributeValues(ref party4, pcavs);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
             }
             catch
@@ -1078,17 +1082,17 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+            pm.AddPartyCustomAttributeValue(ref party, partyCustomAttr, "TestName");
             Dictionary<PartyCustomAttribute, string> customAtts = new Dictionary<PartyCustomAttribute, string>();
             customAtts.Add(partyCustomAttr, "Dic");
-            pm.AddPartyCustomAttriuteValues(party, customAtts);
-            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName updated");
+            pm.AddPartyCustomAttributeValues(ref party, customAtts);
+            return pm.AddPartyCustomAttributeValue(ref party, partyCustomAttr, "TestName updated");
         }
 
         private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
+            return pm.RemovePartyCustomAttributeValue(partyCustomAttrVal);
         }
 
         #endregion PartyCustomAttributeValue
@@ -1135,7 +1139,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
-            return ptm.CreatePartyCustomAttribute(partyType, "string", "Namen", "Name for test", "", true, true);
+            return ptm.CreatePartyCustomAttribute(partyType, "string", "Namen", "Name for test", "","", true, true);
         }
 
         private bool removeTestPartyCustomAttribute(Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
@@ -1155,7 +1159,7 @@ namespace BExIS.Web.Shell.Controllers
         private PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.Create("test", "", "", false, 3, 2, false, alowedSource, alowedTarget, "", "");
+            return pmr.Create("test", "", "", false, 3, 2, false, alowedSource, alowedTarget, "", "","","");
         }
 
         private bool removeTestPartyRelationshipType(PartyRelationshipType partyRelationshipType)
@@ -1177,7 +1181,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyTypePair addTestPartyTypePair(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", false, null);
+            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", false, null,"","");
         }
 
         private bool removeTestPartyTypePair(PartyTypePair partyTypePair)

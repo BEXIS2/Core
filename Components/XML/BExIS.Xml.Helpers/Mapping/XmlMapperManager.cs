@@ -172,9 +172,12 @@ namespace BExIS.Xml.Helpers.Mapping
             newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
             XmlNode root = newMetadata.DocumentElement;
 
-            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
-            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
-            root.Attributes.Append(rootAttr);
+            //FROM DS Comment  it out because of:
+            //by generate the namespaces should not added, otherwise single node function by xmldocument is not getting any node
+            //XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
+            //rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
+            //root.Attributes.Append(rootAttr);
+
 
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);

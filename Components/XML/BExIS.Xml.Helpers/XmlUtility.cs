@@ -595,11 +595,16 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XDocument ToXDocument(XmlDocument xmlDocument)
         {
-            using (var nodeReader = new XmlNodeReader(xmlDocument))
+            if (xmlDocument != null)
             {
-                nodeReader.MoveToContent();
-                return XDocument.Load(nodeReader);
+                using (var nodeReader = new XmlNodeReader(xmlDocument))
+                {
+                    nodeReader.MoveToContent();
+                    return XDocument.Load(nodeReader);
+                }
             }
+
+            return null;
         }
 
 

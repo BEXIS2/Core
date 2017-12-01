@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Xml.Linq;
@@ -112,6 +113,22 @@ namespace BExIS.Utils.WebHelpers
             return new MvcHtmlString(sb.ToString());
         }
 
+        [Obsolete("", true)]
+        public static MvcHtmlString AccountBar(this HtmlHelper htmlHelper)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Account<span class='caret'></span></a><ul class='dropdown-menu'>");
+
+            sb.Append($"<li><a href=''></a>Details</li>");
+            sb.Append($"<li><a href=''></a>Profile</li>");
+            sb.Append($"<li><a href=''></a>Sign Out</li>");
+
+            sb.Append($"</ul></li>");
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
         public static MvcHtmlString Settings(this HtmlHelper htmlHelper)
         {
             StringBuilder sb = new StringBuilder();
@@ -120,11 +137,22 @@ namespace BExIS.Utils.WebHelpers
             var children = settingsRoot.Elements()
                 .OrderBy(x => x.Attribute("area").Value).ThenBy(x => x.Attribute("order").Value);
 
+            var currentArea = "";
+
             foreach (var child in children)
             {
+                var area = child.Attribute("area").Value;
+
+                if (currentArea != "" && area != currentArea)
+                {
+                    sb.Append($"<li role=\"separator\" class=\"divider\"></li>");
+                }
+
+                currentArea = area;
+
                 sb.Append($"<li><a href='");
-                if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
-                    sb.Append(@"/").Append(child.Attribute("area").Value);
+                if (!string.IsNullOrWhiteSpace(area))
+                    sb.Append(@"/").Append(area);
 
                 if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
                     sb.Append(@"/").Append(child.Attribute("controller").Value);

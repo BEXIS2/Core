@@ -76,13 +76,10 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Owin.Security.Providers.Orcid, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1328b8c16b108c43, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Owin.Security.Providers.Orcid.2.15.1\lib\net45\Owin.Security.Providers.Orcid.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
@@ -102,15 +99,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
     <Compile Include="Requests\RequestManager.cs" />
-    <Compile Include="Subjects\GroupManager.cs" />
-    <Compile Include="Subjects\IdentityGroupManager.cs" />
+    <Compile Include="Subjects\IdentityGroupService.cs" />
     <Compile Include="Subjects\IdentityUserService.cs" />
     <Compile Include="Subjects\IUserManager.cs" />
-    <Compile Include="Subjects\GroupStore.cs" />
+    <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserManager.cs" />
     <Compile Include="Utilities\Auth.cs" />
     <Compile Include="Utilities\EmailService.cs" />
+    <Compile Include="Utilities\MessageHelper.cs" />
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
   <ItemGroup>

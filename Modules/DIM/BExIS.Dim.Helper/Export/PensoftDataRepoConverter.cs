@@ -30,39 +30,48 @@ namespace BExIS.Dim.Helpers.Export
             PublicationManager publicationManager = new PublicationManager();
 
 
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+            try
+            {
+                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-            _broker = publicationManager.GetBroker(_broker.Id);
-            _dataRepo = publicationManager.GetRepository(_dataRepo.Id);
-
-
-            long datasetId = datasetVersion.Dataset.Id;
-            string name = datasetManager.GetDatasetVersion(datasetVersionId).Dataset.MetadataStructure.Name;
-
-            XmlDocument metadata = OutputMetadataManager.GetConvertedMetadata(datasetVersionId,
-                TransmissionType.mappingFileExport, name, false);
-
-            // create links to the api calls of the primary data?
+                _broker = publicationManager.GetBroker(_broker.Id);
+                _dataRepo = publicationManager.GetRepository(_dataRepo.Id);
 
 
+                long datasetId = datasetVersion.Dataset.Id;
+                string name = datasetManager.GetDatasetVersion(datasetVersionId).Dataset.MetadataStructure.Name;
 
-            //add all to a zip
+                XmlDocument metadata = OutputMetadataManager.GetConvertedMetadata(datasetId,
+                    TransmissionType.mappingFileExport, name, false);
 
-
-            //save document  and return filepath for download
-
-
-            string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
-            string filename = submissionManager.GetFileNameForDataRepo(datasetVersionId, datasetId, _dataRepo.Name, "xml");
-
-            string filepath = Path.Combine(path, filename);
-
-            FileHelper.CreateDicrectoriesIfNotExist(path);
-
-            metadata.Save(filepath);
+                // create links to the api calls of the primary data?
 
 
-            return filepath;
+
+                //add all to a zip
+
+
+                //save document  and return filepath for download
+
+
+                string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
+                string filename = submissionManager.GetFileNameForDataRepo(datasetId, datasetVersionId, _dataRepo.Name, "xml");
+
+                string filepath = Path.Combine(path, filename);
+
+                FileHelper.CreateDicrectoriesIfNotExist(path);
+
+                metadata.Save(filepath);
+
+
+                return filepath;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+                metadataStructureManager.Dispose();
+                publicationManager.Dispose();
+            }
         }
 
         public bool Validate(long datasetVersionId)

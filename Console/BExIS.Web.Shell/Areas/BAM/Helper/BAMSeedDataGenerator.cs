@@ -1,69 +1,19 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {
-    public class Helper
+    public class BAMSeedDataGenerator : IDisposable
     {
-        public static int CountRelations(long sourcePartyId, PartyRelationshipType partyRelationshipType)
-        {
-            PartyManager partyManager = new PartyManager();
-            var cnt = partyManager.PartyRelationshipRepository.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
-                                      && (item.FirstParty != null && (item.FirstParty.Id == sourcePartyId) || (item.SecondParty.Id == sourcePartyId))
-                                       && (item.EndDate >= DateTime.Now)).Count();
-            return cnt;
-        }
-
-        public static string GetDisplayName(PartyRelationshipType partyRelatinshipType)
-        {
-            return (string.IsNullOrWhiteSpace(partyRelatinshipType.DisplayName) ? partyRelatinshipType.Title : partyRelatinshipType.DisplayName);
-        }
-
-        public static String ValidateRelationships(IEnumerable<PartyRelationshipType> requiredPartyRelationTypes, long partyId)
-        {
-            var partyManager = new PartyManager();
-            var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == partyId);
-            String messages = "";
-            foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
-            {
-                if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
-                    messages += (String.Format("<br/>{0} relationship type '{1}'.", requiredPartyRelationType.MinCardinality, requiredPartyRelationType.DisplayName));
-            }
-            if (!string.IsNullOrEmpty(messages))
-                messages = "these relationship types are required : " + messages;
-            return messages;
-        }
-        public static String ValidateRelationships(long partyId)
-        {
-            var partyManager = new PartyManager();
-            var party = partyManager.PartyRepository.Get(partyId);
-            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(party.PartyType.Id).Where(cc => cc.MinCardinality > 0);
-            var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == party.Id);
-            String messages = "";
-            foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
-            {
-                if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
-                    messages += (String.Format("<li>{0} more relationship type of '{1}'.</li>", requiredPartyRelationType.MinCardinality - partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count(), requiredPartyRelationType.DisplayName));
-            }
-            if (!string.IsNullOrEmpty(messages))
-                messages = "These relationship types are required : <ul>" + messages + "</ul>";
-            return messages;
-        }
-    }
-
-    public class BAMSeedDataGenerator: IDisposable
-    {
-        public  void GenerateSeedData()
+        public void GenerateSeedData()
         {
             createSecuritySeedData();
             ImportPartyTypes();
@@ -91,7 +41,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             var partyFeature = featureManager.Create("Party", "", bamFeature);
             var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
             var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
-            //var partyHelp = operationManager.Create("BAM", "Help", "*");
+            var partyHelp = operationManager.Create("BAM", "Help", "*");
         }
 
         /// <summary>
@@ -146,7 +96,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                 Name = partyCustomAttr.Name,
                                 PartyType = partyType,
                                 ValidValues = partyCustomAttr.ValidValues,
-                                DisplayName=partyCustomAttr.DisplayName
+                                DisplayName = partyCustomAttr.DisplayName,
+                                Condition = partyCustomAttr.Condition
                             });
                         }
                         if (!customAttrs.Any(c => c.IsMain))
@@ -164,8 +115,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             {
                                 attributesList.Add(att);
                             }
-                          
-                            var customAttrName =GetAttributeValue(attributesList,"Name", true);
+
+                            var customAttrName = GetAttributeValue(attributesList, "Name", true);
                             //create new custom attribute if there is not such a name
                             if (!partyType.CustomAttributes.Any(item => item.Name == customAttrName))
                             {
@@ -186,7 +137,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                     Name = customAttrName,
                                     PartyType = partyType,
                                     ValidValues = partyCustomAttr.ValidValues,
-                                    DisplayName=partyCustomAttr.DisplayName
+                                    DisplayName = partyCustomAttr.DisplayName,
+                                    Condition = partyCustomAttr.Condition
                                 });
                             }
                         }
@@ -236,15 +188,17 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         var typePairTitle = GetAttributeValue(partyTypesPairNodeAttributes, "Title", true);
                         var typePairDescription = GetAttributeValue(partyTypesPairNodeAttributes, "Description", false);
                         var typePairDefault = GetAttributeValue(partyTypesPairNodeAttributes, "Default", true);
-
+                        var conditionSource = GetAttributeValue(partyTypesPairNodeAttributes, "conditionSource", false);
+                        var conditionTarget = GetAttributeValue(partyTypesPairNodeAttributes, "conditionTarget", false);
                         partyTypePairs.Add(new PartyTypePair()
                         {
                             AllowedSource = allowedSource,
                             AllowedTarget = allowedTarget,
                             Description = typePairDescription,
                             Title = typePairTitle,
-                            PartyRelationShipTypeDefault = typePairDefault == null ? true : Convert.ToBoolean(typePairDefault)
-
+                            PartyRelationShipTypeDefault = typePairDefault == null ? true : Convert.ToBoolean(typePairDefault),
+                            ConditionSource = conditionSource,
+                            ConditionTarget = conditionTarget
                         });
                     }
 
@@ -254,7 +208,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     //
                     if (partyRelationshipType == null)
                         partyRelationshipType = partyRelationshipTypeManager.Create(title, displayName, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality), partyTypePairs.First().PartyRelationShipTypeDefault, partyTypePairs.First().AllowedSource, partyTypePairs.First().AllowedTarget,
-        partyTypePairs.First().Title, partyTypePairs.First().Description);
+        partyTypePairs.First().Title, partyTypePairs.First().Description, partyTypePairs.First().ConditionSource, partyTypePairs.First().ConditionTarget);
                     else
                     {
                         partyRelationshipType = partyRelationshipTypeManager.Update(partyRelationshipType.Id, title, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality));
@@ -277,7 +231,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             var isUnique = GetAttributeValue(attributes, "isUnique", true);
             var isMain = GetAttributeValue(attributes, "isMain", true);
             var displayName = GetAttributeValue(attributes, "DisplayName", false);
-
+            var condition = GetAttributeValue(attributes, "Condition", false);
             return new PartyCustomAttribute()
             {
                 DataType = customAttrType,
@@ -287,7 +241,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 IsValueOptional = isValueOptional == null ? true : Convert.ToBoolean(isValueOptional),
                 Name = GetAttributeValue(attributes, "Name", true),
                 ValidValues = validValues,
-                DisplayName=displayName
+                DisplayName = displayName,
+                Condition = condition
             };
         }
 
@@ -319,13 +274,12 @@ namespace BExIS.Modules.Bam.UI.Helpers
             if (entity != null)
                 partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType);
             else
-                partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType);
+                partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType, partyTypePair.ConditionSource, partyTypePair.ConditionTarget);
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
-    //Check duplicate and add edit 
 }

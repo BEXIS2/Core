@@ -71,7 +71,15 @@
       <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -142,15 +150,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helper\BAMSeedDataGenerator.cs" />
+    <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\Settings.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
@@ -162,8 +166,16 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\help\create_party_1.jpg" />
+    <Content Include="Content\Images\help\create_party_2.jpg" />
+    <Content Include="Content\Images\help\manage_parties.jpg" />
+    <Content Include="Content\Images\help\new_party_relation.jpg" />
+    <Content Include="Content\Images\help\new_party_relation2.jpg" />
+    <Content Include="Content\Images\help\registration.jpg" />
+    <Content Include="Content\Images\help\schema.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Bam.Manifest.xml" />
+    <Content Include="Scripts\PartyHelper.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
@@ -173,6 +185,7 @@
     <None Include="Properties\PublishProfiles\BAM-Pub.pubxml" />
     <None Include="Properties\PublishProfiles\BAM.pubxml" />
     <None Include="Properties\PublishProfiles\BAM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM21108.pubxml" />
     <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
     <None Include="Properties\PublishProfiles\BPP211_bam.pubxml" />
     <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
@@ -198,12 +211,13 @@
     <Content Include="Views\Party\DeleteConfirm.cshtml" />
     <Content Include="Views\Party\View.cshtml" />
     <Content Include="Views\Party\_partiesPartial.cshtml" />
-    <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />
+    <Content Include="Views\PartyService\_partyRelationshipsPartial.cshtml" />
     <Content Include="Views\Party\_relationshipEditViewPartial.cshtml" />
     <Content Include="Views\Party\_addPartyRelationshipPartial.cshtml" />
     <Content Include="Views\PartyService\_userRegisterationPartial.cshtml" />
     <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\PartyService\_customAttributesPartial.cshtml" />
+    <Content Include="Views\PartyService\Edit.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

@@ -3,6 +3,7 @@ using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -30,35 +31,41 @@ namespace BExIS.Dim.Helpers.Mapping
         public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType,
             string value = "")
         {
-
-            //get all mapppings where target is mapped
-            // LinkElementType.PartyCustomType is set because of the function name
-            // all mapped attributes are LinkElementType.PartyCustomType in this case
-            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+            try
             {
-                List<string> tmp = new List<string>();
-                var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
-                    .Where(m =>
-                        m.Target.ElementId.Equals(targetElementId) &&
-                        m.Target.Type.Equals(targetType) &&
-                        m.Source.Type.Equals(LinkElementType.PartyCustomType)
-                    ).ToList();
-                tmp = getAllValuesFromSystem(mappings, value);
-                return tmp;
+                //get all mapppings where target is mapped
+                // LinkElementType.PartyCustomType is set because of the function name
+                // all mapped attributes are LinkElementType.PartyCustomType in this case
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    List<string> tmp = new List<string>();
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetElementId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                        ).ToList();
+                    tmp = getAllValuesFromSystem(mappings, value);
+                    return tmp;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
 
             /*
-         *e.g. 
-         * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
-         * 
-         * linkt to 
-         * 
-         * Person/FirstName     David
-         * Person/SecondName    Blaa
-         * 
-         * 
-         * => all mappings know must be only the Person/FirstName & Person/SecondName
-         */
+            *e.g. 
+            * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
+            * 
+            * linkt to 
+            * 
+            * Person/FirstName     David
+            * Person/SecondName    Blaa
+            * 
+            * 
+            * => all mappings know must be only the Person/FirstName & Person/SecondName
+            */
 
 
         }
@@ -109,7 +116,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 else
                 {
                     partyType = partyTypeManager.PartyTypeRepository.Get(parentTypeId);
-                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Id.Equals(parentTypeId)).ToList();
                 }
 
                 if (parties != null)
@@ -232,7 +239,7 @@ namespace BExIS.Dim.Helpers.Mapping
         private static List<string> transform(string value, TransformationRule transformationRule)
         {
             List<string> tmp = new List<string>();
-            if (transformationRule.RegEx != null)
+            if (!string.IsNullOrEmpty(transformationRule.RegEx))
             {
                 Regex r = new Regex(transformationRule.RegEx, RegexOptions.IgnoreCase);
 
