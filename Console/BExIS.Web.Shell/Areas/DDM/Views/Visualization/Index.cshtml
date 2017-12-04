@@ -1,4 +1,5 @@
-﻿@model BExIS.Modules.Ddm.UI.Models.VisualizationModel
+﻿
+@model BExIS.Modules.Ddm.UI.Models.VisualizationModel
 
 @using Telerik.Web.Mvc.UI;
 
@@ -7,38 +8,88 @@
     In this page you can see visual informations.
 }
 
-    
-        <b>Title: @Model.title</b>
-
-        <p>Number of Values: @Model.values.Count</p>        
+<p onclick="alertMe('@Model.title')"><b>Title: @Model.title</b></p>
 
 @foreach (var item in Model.values)
 {
     <ul typeof="circle">
-        <li>@item.Key: @item.Value</li>       
+        <li>@item.Key: @item.Value</li>                
     </ul>
 }
 
 <div>
     <p>LIST:</p>
     <p id="demo"></p>
+    <p id="message"></p>
+    
+
 </div>
 
     <div id="" class="bx-footer right" style="text-align:left;">
-        <button type="button" value="Save" id="saveDiagram" class="bx-button action" title="Save diagram as SVG" style="border:0px;">Save</button>
+        <button type="button" value="Save" id="saveDiagram" class="bx-button action" title="Save diagram as SVG" style="border:0px;">Save</button>        
     </div>
 
+<div id="chartContainer" style="height: 300px; width: 60%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 <script>
 
     $("#saveDiagram").bind("click", function () {
-        alert();
+        alert("ggggg");
+        alertMe("kkkk");
     });
 
+    function alertMe(ttt){
+        alert(ttt);
+        console.log(ttt);
+    };
 
-    function blabla(t) {
-     
-        return (t);
+    function myFunction(a, b) {
+        return a*b;
     }
-    document.getElementById("demo").innerHTML = blabla(Model.title);
+
+    //document.getElementById("message").innerHTML = myAlert("hahahaha");
+    document.getElementById("demo").innerHTML = myFunction(@Model.values.Count, 3);
+
+    function addStr(a,b) {
+        return("{ y: "+ a + ", label: "+ b+ " }");
+    }
+
+    window.onload = function () {
+
+        console.log('@Model.title');
+        var text = "";
+        var i = 0;
+        var item ;
+
+        for (i=0; i< @Model.values.Count; ++i)
+        {
+            text = i;
+            console.log(text);
+
+        }
+
+
+        var aaa= [{ y: 300878, label: "Venezuela" }, { y: 266455,  label: "Saudi" }];
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            title:{
+                text: "Top Oil Reserves"
+            },
+            axisY: {
+                title: "Reserves(MMbbl)"
+            },
+            data: [{
+                type: "column",
+                showInLegend: true,
+                legendMarkerColor: "grey",
+                legendText: "MMbbl = one million barrels",
+                dataPoints: aaa
+            }]
+        });
+        chart.render();
+
+    }
+
 </script>

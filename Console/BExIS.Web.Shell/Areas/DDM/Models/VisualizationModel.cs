@@ -10,6 +10,9 @@ namespace BExIS.Modules.Ddm.UI.Models
     {
         public string title { get; set; }  // Title of a diagram
 
+        public string[] axisX { get; set; }
+        public int[] axisY { get; set; }
+
         public Dictionary<string, int> values {get; set;} 
 
     }

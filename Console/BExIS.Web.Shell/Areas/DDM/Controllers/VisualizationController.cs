@@ -26,9 +26,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             visModel.title = "Diagram";
 
             Dictionary<string, int> dic = new Dictionary<string, int>();
-            dic.Add("a", 1);
-            dic.Add("b", 2);
+            dic.Add("a", 100);
+            dic.Add("b", 200);
             visModel.values = dic;
+
+            string[] xArray = { "a", "b" };
+            int[] yArray = { 100, 200 };
+            visModel.axisX = xArray;
+            visModel.axisY = yArray;
 
             return View (visModel);
         }
