@@ -180,7 +180,7 @@ namespace BExIS.IO.Transform.Output
                 {
                     Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
 
-                    VariableValue vv = tuple.VariableValues.Where(v => v.Variable.Id.Equals(vi.id)).FirstOrDefault();
+                    VariableValue vv = tuple.VariableValues.Where(v => v.VariableId.Equals(vi.id)).FirstOrDefault();
 
                     if (vv != null && vv.Value != null)
                     {
