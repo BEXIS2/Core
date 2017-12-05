@@ -63,16 +63,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 Dimension dimension = null;
 
-                if (!unitManager.DimensionRepo.Get().Any(d => d.Name.Equals("none")))
+                if (!unitManager.DimensionRepo.Get().Any(d => d.Name.ToLower().Equals("none")))
                 {
                     dimension = unitManager.Create("none", "none", "If no unit is used."); // the null dimension should be replaced bz a proper valid one. Javad 11.06
                 }
                 else
                 {
-                    dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.Equals("none")).FirstOrDefault();
+                    dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals("none")).FirstOrDefault();
                 }
 
-                if (!unitManager.Repo.Get().Any(u => u.Name.Equals("none")))
+                if (!unitManager.Repo.Get().Any(u => u.Name.ToLower().Equals("none")))
                 {
                     unitManager.Create("none", "none", "If no unit is used.", dimension, MeasurementSystem.Unknown);
                 }
@@ -82,9 +82,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region create entities
 
                 // Entities
-                Entity entity = null;
+                Entity entity = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).FirstOrDefault();
 
-                if (!entityManager.Entities.Select(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).Any())
+                if (entity == null)
                 {
                     entity = new Entity();
                     entity.Name = "Dataset";

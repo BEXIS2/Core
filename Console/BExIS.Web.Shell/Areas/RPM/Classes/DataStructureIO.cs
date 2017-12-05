@@ -3,14 +3,8 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Mvc;
 using System.Xml;
-using Vaiona.Utils.Cfg;
-using BExIS.Modules.Rpm.UI.Models;
 
 namespace BExIS.Modules.Rpm.UI.Classes
 {
@@ -103,7 +97,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
                         }
                     }
                     setVariableOrder(structuredDataStructure, orderedVariableIDs);
-                    doc.RemoveChild(order);
+                    order.ParentNode.RemoveChild(order);
                 }
             }
         }
