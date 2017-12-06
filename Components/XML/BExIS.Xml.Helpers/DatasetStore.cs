@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Services.Data;
 using BExIS.Security.Services.Objects;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +12,20 @@ namespace BExIS.Xml.Helpers
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var datasetRepository = uow.GetReadOnlyRepository<Dataset>();
-                var datasetHelper = new XmlDatasetHelper();
+                DatasetManager dm = new DatasetManager();
 
-                var entities = datasetRepository.Query().Select(x => new EntityStoreItem() { Id = x.Id, Title = datasetHelper.GetInformation(x.Id, NameAttributeValues.title) });
-                return entities.ToList();
+                try
+                {
+                    var datasetIds = dm.GetDatasetLatestIds();
+                    var datasetHelper = new XmlDatasetHelper();
+
+                    var entities = datasetIds.Select(id => new EntityStoreItem() { Id = id, Title = datasetHelper.GetInformation(id, NameAttributeValues.title) });
+                    return entities.ToList();
+                }
+                finally
+                {
+                    dm.Dispose();
+                }
             }
         }
     }
