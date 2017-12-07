@@ -1,38 +1,25 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public static class EntityPermissionExtensions
-    {
-    }
-
-    public class CreateEntityPermissionModel
-    {
-    }
-
     public class EntityPermissionGridRowModel
     {
-        public long Id { get; set; }
-        public long EntityId { get; set; }
-        public long Key { get; set; }
+        public int EffectiveRights { get; set; }
+        public int Rights { get; set; }
         public long SubjectId { get; set; }
         public string SubjectName { get; set; }
         public string SubjectType { get; set; }
-        public int Rights { get; set; }
-        public int PermissionType { get; set; }
 
-        public static EntityPermissionGridRowModel Convert(EntityPermission entityPermission)
+        public static EntityPermissionGridRowModel Convert(Subject subject, int rights, int effectiveRights)
         {
             return new EntityPermissionGridRowModel()
             {
-                Id = entityPermission.Id,
-                EntityId = entityPermission.Entity.Id,
-                Key = entityPermission.Key,
-                Rights = entityPermission.Rights,
-                SubjectType = entityPermission.Subject.GetType().FullName,
-                SubjectName = entityPermission.Subject.Name,
-                SubjectId = entityPermission.Subject.Id,
-                PermissionType = (int)entityPermission.PermissionType
+                EffectiveRights = effectiveRights,
+                SubjectId = subject.Id,
+                SubjectName = subject.Name,
+                SubjectType = subject is User ? "User" : "Group",
+
+                Rights = rights
             };
         }
     }

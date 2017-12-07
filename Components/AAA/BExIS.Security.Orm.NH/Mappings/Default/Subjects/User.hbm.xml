@@ -3,7 +3,6 @@
     <property name="AccessFailedCount" type="Int32" />
     <property name="Email" type="String" />
     <property name="IsEmailConfirmed" type="yes_no" />
-    <property name="IsAdministrator" type="yes_no" />
     <set name="Groups" table="Users_Groups" cascade="all" lazy="true">
       <key column="UserRef" />
       <many-to-many column="GroupRef" class="BExIS.Security.Entities.Subjects.Group, BExIS.Security.Entities" />

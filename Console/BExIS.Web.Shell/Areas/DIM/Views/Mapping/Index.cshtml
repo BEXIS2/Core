@@ -6,12 +6,23 @@
 
 <div id="DIM_MappingContainer">
 
+@{
+    ViewBag.Title = "Metadata Structure Mapping";
+}
+    @section Information
+    {
+        Here you are able to create/edit mappings between two metadata structures or a metadata structure and system information defined in other modules (e.g. party package).
+        <p><a href="/DIM/Help/Index/#_mapping" class="bx-informationLink" title="go to help" target="_blank">More</a></p>
+    }
+
+
     @section Scripts{
 
-        <link href="@Url.Content(Themes.GetResourcePath("Styles/DIM","bexis-dim.css"))" rel="stylesheet" type="text/css" />
-        <script src="@Url.Content("~/Scripts/DIM/bexis.dim.mapping.js")"></script>
-        <script src="@Url.Content("~/Scripts/DIM/isotope.pkgd.min.js")"></script>
-        <script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
+        <link href="@Url.Content("~/Areas/DIM/Content/DIM/bexis-dim.css")" rel="stylesheet" type="text/css" />
+        
+        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/bexis.dim.mapping.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/isotope.pkgd.min.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
     }
 
     @section LeftPane
@@ -23,7 +34,6 @@
                                 .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
                                 .ClientEvents(events => events.OnChange("onChangeSourceDropDown"))
                                 .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))
-
         </span>*@
 
         @if (Model.Source != null)
@@ -34,7 +44,7 @@
 
     @Html.ActionLink(" ", "Switch", "Mapping", new 
     {
-        soureId =   Model.Source.Id,
+        sourceId =   Model.Source.Id,
         targetId =  Model.Target.Id,
         sourceType =Model.Source.Type,
         targetType =Model.Target.Type,

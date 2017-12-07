@@ -1,16 +1,14 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Vaiona.Entities.Common;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Entities.Common;
-using System.Xml.Schema;
-using System.Diagnostics;
+using Vaiona.Persistence.Api;
 
 /// <summary>
 ///
@@ -21,7 +19,7 @@ namespace BExIS.Xml.Helpers
     /// 
     /// </summary>
     public enum XmlNodeType
-    { 
+    {
         MetadataPackage,
         MetadataPackageUsage,
         MetadataAttribute,
@@ -35,12 +33,8 @@ namespace BExIS.Xml.Helpers
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class XmlMetadataWriter:XmlWriter
+    public class XmlMetadataWriter : XmlWriter
     {
-        MetadataStructureManager metadataStructureManager;
-        MetadataStructure metadataStructure;
-        MetadataPackageManager metadataPackageManager;
-        MetadataAttributeManager metadataAttributeManager;
         /// <summary>
         /// 
         /// </summary>
@@ -49,10 +43,6 @@ namespace BExIS.Xml.Helpers
         /// <param name="mode"></param>
         public XmlMetadataWriter(XmlNodeMode mode)
         {
-            metadataStructureManager = new MetadataStructureManager();
-            metadataPackageManager = new MetadataPackageManager();
-            metadataAttributeManager = new MetadataAttributeManager();
-
             _mode = mode;
         }
 
@@ -63,73 +53,78 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>
         /// <param name="metadataStructureId"></param>
         /// <returns></returns>
-        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml=null)
+        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
         {
-            metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
-            List<MetadataPackageUsage> packages = metadataStructureManager.GetEffectivePackages(metadataStructureId).ToList();
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
+            List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
 
             // Create xml Document
             // Create the xml document containe
             XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
-            //XDeclaration dec = new XDeclaration("1.0", null, null);
-            //doc.Add(dec);// Create the root element
-            XElement root =new XElement("Metadata");
+                                            //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                            //doc.Add(dec);// Create the root element
+            XElement root = new XElement("Metadata");
             root.SetAttributeValue("id", metadataStructure.Id.ToString());
             doc.Add(root);
 
-            
-            List<MetadataAttributeUsage> attributes;
-            foreach (MetadataPackageUsage mpu in packages)
+            using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                XElement package;
-
-                // create the role
-                XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
-                if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
-
-                role.SetAttributeValue("id", mpu.Id.ToString());
-                root.Add(role);
-
-                // create the package
-                package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
-                if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
-                package.SetAttributeValue("roleId", mpu.Id.ToString());
-                package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
-                package.SetAttributeValue("number", "1");
-                role.Add(package);
-
-
-                attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
-
-                foreach (MetadataAttributeUsage mau in attributes)
+                IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
+                List<MetadataAttributeUsage> attributes;
+                foreach (MetadataPackageUsage mpu in packages)
                 {
-                    XElement attribute;
+                    XElement package;
 
-                    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
-                    if (_mode.Equals(XmlNodeMode.xPath))
+                    // create the role
+                    XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
+
+                    role.SetAttributeValue("id", mpu.Id.ToString());
+                    root.Add(role);
+
+                    // create the package
+                    package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
+                    package.SetAttributeValue("roleId", mpu.Id.ToString());
+                    package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
+                    package.SetAttributeValue("number", "1");
+                    role.Add(package);
+
+
+                    attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
+
+                    foreach (MetadataAttributeUsage mau in attributes)
                     {
-                        attributeRole.SetAttributeValue("name", mau.Label);
-                        attributeRole.SetAttributeValue("id", mau.Id.ToString());
+                        XElement attribute;
+
+                        XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
+                        if (_mode.Equals(XmlNodeMode.xPath))
+                        {
+                            attributeRole.SetAttributeValue("name", mau.Label);
+                            attributeRole.SetAttributeValue("id", mau.Id.ToString());
+                        }
+                        package.Add(attributeRole);
+
+                        attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
+                        if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
+
+                        attribute.SetAttributeValue("roleId", mau.Id.ToString());
+                        attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
+                        attribute.SetAttributeValue("number", "1");
+
+                        string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
+
+                        attributeRole.Add(attribute);
+
+                        setChildren(attribute, mau, importXml);
+
                     }
-                    package.Add(attributeRole);
-
-                    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
-                    if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
-
-                    attribute.SetAttributeValue("roleId", mau.Id.ToString());
-                    attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
-                    attribute.SetAttributeValue("number", "1");
-
-                    string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
-
-                    attributeRole.Add(attribute);
-
-                    setChildren(attribute,  mau, importXml);
-                   
                 }
-            }
 
-            return doc;
+                return doc;
+            }
         }
 
         private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
@@ -151,7 +146,9 @@ namespace BExIS.Xml.Helpers
 
             if (metadataAttribute.Self is MetadataCompoundAttribute)
             {
-                MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttribute.Self;
+                //MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttribute.Self;
+
+                MetadataCompoundAttribute mca = this.GetUnitOfWork().GetReadOnlyRepository<MetadataCompoundAttribute>().Get(metadataAttribute.Self.Id);
 
                 foreach (MetadataNestedAttributeUsage nestedUsage in mca.MetadataNestedAttributeUsages)
                 {
@@ -163,8 +160,8 @@ namespace BExIS.Xml.Helpers
                     {
                         string parentPath = element.GetAbsoluteXPathWithIndex();
 
-                        string usagePath = parentPath + "/" + nestedUsage.Label; 
-                            //+"/"+ nestedUsage.Member.Name;
+                        string usagePath = parentPath + "/" + nestedUsage.Label;
+                        //+"/"+ nestedUsage.Member.Name;
 
                         XElement usageElement = importDocument.XPathSelectElement(usagePath);
                         List<XElement> typeList = new List<XElement>();
@@ -185,12 +182,12 @@ namespace BExIS.Xml.Helpers
                                 typeList = AddAndReturnAttribute(element, nestedUsage, 1, num);
                             }
 
-                            
+
                         }
                         else
                         {
-                            Debug.WriteLine("NULL OR EMPTY:------> "+ usagePath);
-                            
+                            Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
+
                             typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
                         }
 
@@ -204,10 +201,10 @@ namespace BExIS.Xml.Helpers
                     {
                         List<XElement> typeList = new List<XElement>();
 
-                            typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
-                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
+                        typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
+                        setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
                     }
-                    
+
                 }
             }
 
@@ -215,20 +212,20 @@ namespace BExIS.Xml.Helpers
         }
 
         #region package
-            
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="metadataXml"></param>
-            /// <param name="packageUsage"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="metadataXml"></param>
+        /// <param name="packageUsage"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
         public XDocument AddPackage(XDocument metadataXml, BaseUsage usage, int number, string typeName, long typeId, List<BaseUsage> children, XmlNodeType xmlType, XmlNodeType xmlUsageType, string xpath)
         {
             this._tempXDoc = metadataXml;
-            XElement role; 
+            XElement role;
             //check if role exist
             if (Exist(xpath))
             {
@@ -256,7 +253,7 @@ namespace BExIS.Xml.Helpers
             package.SetAttributeValue("number", number);
 
             //if (!Exist(xPathForNewElement))
-            if(!Exist(typeName,number,role))
+            if (!Exist(typeName, number, role))
             {
                 role.Add(package);
                 foreach (BaseUsage attribute in children)
@@ -325,7 +322,7 @@ namespace BExIS.Xml.Helpers
         /// <param name="packageUsage"></param>
         /// <param name="number"></param>
         /// <returns></returns>
-        public XDocument RemovePackage(XDocument metadataXml,BaseUsage packageUsage, int number, string typeName)
+        public XDocument RemovePackage(XDocument metadataXml, BaseUsage packageUsage, int number, string typeName)
         {
             this._tempXDoc = metadataXml;
             XElement role;
@@ -335,7 +332,7 @@ namespace BExIS.Xml.Helpers
                 role = Get(packageUsage.Label, packageUsage.Id);
 
                 XElement package = Get(typeName, number, role);
-                List<XElement> listOfPackagesAfter = GetChildren(typeName, role).Where(p=>p.Attribute("number")!=null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
+                List<XElement> listOfPackagesAfter = GetChildren(typeName, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
                 if (package != null)
                 {
                     package.Remove();
@@ -350,315 +347,334 @@ namespace BExIS.Xml.Helpers
         #endregion
 
         #region attribute
-            //Add Attribute to a package return a apackage
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="package"></param>
-            /// <param name="attributeUsage"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            private XElement AddAttribute(XElement current, BaseUsage attributeUsage, int number)
+        //Add Attribute to a package return a apackage
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="package"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private XElement AddAttribute(XElement current, BaseUsage attributeUsage, int number)
+        {
+            string typeName = "";
+            string id = "";
+            string roleId = "";
+            List<MetadataNestedAttributeUsage> children = new List<MetadataNestedAttributeUsage>();
+
+            if (attributeUsage is MetadataAttributeUsage)
             {
-                string typeName = "";
-                string id = "";
-                string roleId = "";
-                List<MetadataNestedAttributeUsage> children = new List<MetadataNestedAttributeUsage>();
+                MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
+                typeName = metadataAttributeUsage.MetadataAttribute.Name;
+                id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+            }
+            else
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
+                typeName = mnau.Member.Name;
+                id = mnau.Member.Id.ToString();
+                roleId = mnau.Id.ToString();
 
-                if (attributeUsage is MetadataAttributeUsage)
+                if (mnau.Member.Self is MetadataCompoundAttribute)
                 {
-                    MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
-                    typeName = metadataAttributeUsage.MetadataAttribute.Name;
-                    id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                    roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
+                    children = mca.MetadataNestedAttributeUsages.ToList();
                 }
-                else
-                {
-                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
-                    typeName = mnau.Member.Name;
-                    id = mnau.Member.Id.ToString();
-                    roleId = mnau.Id.ToString();
+            }
 
-                    if (mnau.Member.Self is MetadataCompoundAttribute)
+
+            if (!Exist(typeName, number, current))
+            {
+                XElement role = Get(attributeUsage.Label, current);
+                if (role == null)
+                {
+                    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
+                    role.SetAttributeValue("id", attributeUsage.Id.ToString());
+                }
+
+                XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
+
+                if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
+                element.SetAttributeValue("roleId", roleId);
+                element.SetAttributeValue("id", id);
+                element.SetAttributeValue("number", number);
+
+                if (children.Count > 0)
+                {
+                    foreach (BaseUsage baseUsage in children)
                     {
-                        MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
-                        children = mca.MetadataNestedAttributeUsages.ToList();
+                        element = AddAttribute(element, baseUsage, 1);
                     }
                 }
-               
 
-                if (!Exist(typeName, number, current))
+                role.Add(element);
+                current.Add(role);
+
+            }
+            else
+            {
+                throw new Exception("attribute exist");
+            }
+
+            return current;
+        }
+
+        //Add Attribute to a package return a apackage
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="package"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private List<XElement> AddAndReturnAttribute(XElement current, BaseUsage attributeUsage, int number, int countOfTypes)
+        {
+            List<XElement> tmp = new List<XElement>();
+
+            string typeName = "";
+            string id = "";
+            string roleId = "";
+
+
+            if (attributeUsage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
+                typeName = metadataAttributeUsage.MetadataAttribute.Name;
+                id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+            }
+            else
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
+                typeName = mnau.Member.Name;
+                id = mnau.Member.Id.ToString();
+                roleId = mnau.Id.ToString();
+            }
+
+
+            if (!Exist(typeName, number, current))
+            {
+                XElement role = Get(attributeUsage.Label, current);
+                if (role == null)
                 {
-                    XElement role = Get(attributeUsage.Label, current);
-                    if (role == null)
-                    {
-                        role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
-                        if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
-                        role.SetAttributeValue("id", attributeUsage.Id.ToString());
-                    }
+                    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
+                    role.SetAttributeValue("id", attributeUsage.Id.ToString());
+                }
 
+                for (int i = 0; i < countOfTypes; i++)
+                {
                     XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
 
                     if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
                     element.SetAttributeValue("roleId", roleId);
                     element.SetAttributeValue("id", id);
-                    element.SetAttributeValue("number", number);
-
-                    if (children.Count > 0)
-                    {
-                        foreach (BaseUsage baseUsage in children)
-                        {
-                            element = AddAttribute(element, baseUsage, 1);
-                        }
-                    }
-        
+                    element.SetAttributeValue("number", i + 1);
                     role.Add(element);
-                    current.Add(role);
-                
-                }
-                else
-                {
-                    throw new Exception("attribute exist");
-                }
 
-                return current;
-            }
-
-            //Add Attribute to a package return a apackage
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="package"></param>
-            /// <param name="attributeUsage"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            private List<XElement> AddAndReturnAttribute(XElement current, BaseUsage attributeUsage, int number, int countOfTypes)
-            {
-                List<XElement> tmp = new List<XElement>();
-
-                string typeName = "";
-                string id = "";
-                string roleId = "";
-
-
-                if (attributeUsage is MetadataAttributeUsage)
-                {
-                    MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
-                    typeName = metadataAttributeUsage.MetadataAttribute.Name;
-                    id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                    roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                }
-                else
-                {
-                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
-                    typeName = mnau.Member.Name;
-                    id = mnau.Member.Id.ToString();
-                    roleId = mnau.Id.ToString();
+                    tmp.Add(element);
                 }
 
 
-                if (!Exist(typeName, number, current))
-                {
-                    XElement role = Get(attributeUsage.Label, current);
-                    if (role == null)
-                    {
-                        role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
-                        if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
-                        role.SetAttributeValue("id", attributeUsage.Id.ToString());
-                    }
-
-                    for (int i = 0; i < countOfTypes; i++)
-                    {
-                        XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
-
-                        if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
-                        element.SetAttributeValue("roleId", roleId);
-                        element.SetAttributeValue("id", id);
-                        element.SetAttributeValue("number", i+1);
-                        role.Add(element);
-
-                        tmp.Add(element);
-                    }
-
-                   
-                    current.Add(role);
+                current.Add(role);
                 //Debug.WriteLine("Element:            " + element.Name);
 
                 return tmp;
 
-                }
-                else
-                {
-                    throw new Exception("attribute exist");
-                }
-
-                
+            }
+            else
+            {
+                throw new Exception("attribute exist");
             }
 
-            //Add Attribute to a package return a apackage
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="package"></param>
-            /// <param name="attributeUsage"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            private XElement AddAttributeReturnType(XElement current, BaseUsage attributeUsage, int number)
+
+        }
+
+        //Add Attribute to a package return a apackage
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="package"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private XElement AddAttributeReturnType(XElement current, BaseUsage attributeUsage, int number)
+        {
+            string typeName = "";
+            string id = "";
+            string roleId = "";
+
+
+            if (attributeUsage is MetadataAttributeUsage)
             {
-                string typeName = "";
-                string id = "";
-                string roleId = "";
-
-
-                if (attributeUsage is MetadataAttributeUsage)
-                {
-                    MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
-                    typeName = metadataAttributeUsage.MetadataAttribute.Name;
-                    id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                    roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                }
-                else
-                {
-                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
-                    typeName = mnau.Member.Name;
-                    id = mnau.Member.Id.ToString();
-                    roleId = mnau.Member.Id.ToString();
-                }
-
-
-                if (!Exist(typeName, number, current))
-                {
-                    XElement role = Get(attributeUsage.Label, current);
-                    if (role == null)
-                    {
-                        role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
-                        if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
-                        role.SetAttributeValue("id", attributeUsage.Id.ToString());
-                    }
-
-                    XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
-
-                    if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
-                    element.SetAttributeValue("roleId", roleId);
-                    element.SetAttributeValue("id", id);
-                    element.SetAttributeValue("number", number);
-                    role.Add(element);
-                    current.Add(role);
-
-                    return current;
-                }
-                else
-                {
-                    throw new Exception("attribute exist");
-                }
-
-                return null;
+                MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
+                typeName = metadataAttributeUsage.MetadataAttribute.Name;
+                id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+            }
+            else
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
+                typeName = mnau.Member.Name;
+                id = mnau.Member.Id.ToString();
+                roleId = mnau.Member.Id.ToString();
             }
 
-            //Add Attribute to a package return a apackage
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="metadataXml"></param>
-            /// <param name="packageUsage"></param>
-            /// <param name="packageNumber"></param>
-            /// <param name="attributeUsage"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            public XDocument AddAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeTypeName, string attributeId, string parentXPath)
+
+            if (!Exist(typeName, number, current))
             {
-                _tempXDoc = metadataXml;
+                XElement role = Get(attributeUsage.Label, current);
+                if (role == null)
+                {
+                    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
+                    role.SetAttributeValue("id", attributeUsage.Id.ToString());
+                }
 
-                XElement role = Get(parentXPath);
+                XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
 
-                //XElement packageRole = Get(parentUsage.Label, parentUsage.Id);
-                //if (packageNumber == 0)
-                //{ 
-                //    packageNumber = 1;
-                //}
-                //XElement package = Get(parentTypeName, packageNumber, packageRole);
-
-                //XElement role = Get(attributeUsage.Label, package);
-                //if (role == null)
-                //{
-                //    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
-                //    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
-                //    role.SetAttributeValue("id", attributeUsage.Id.ToString());
-                //}
-
-                XElement element = CreateXElement(attributeTypeName, XmlNodeType.MetadataAttribute);
-
-                if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", attributeTypeName);
-                element.SetAttributeValue("roleId", attributeUsage.Id.ToString());
-                element.SetAttributeValue("id", attributeId);
+                if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
+                element.SetAttributeValue("roleId", roleId);
+                element.SetAttributeValue("id", id);
                 element.SetAttributeValue("number", number);
+                role.Add(element);
+                current.Add(role);
 
-                if (!Exist(attributeTypeName, number, role))
-                {
-                    role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
-                }
-                else
-                {
-                    role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
-                }
-
-                return _tempXDoc;
+                return current;
             }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="metadataXml"></param>
-            /// <param name="packageUsage"></param>
-            /// <param name="packageNumber"></param>
-            /// <param name="attributeUsage"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            public XDocument RemoveAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeName, string parentXPath)
+            else
             {
-                _tempXDoc = metadataXml;
-
-                XElement role = Get(parentXPath);
-                if (role != null)
-                {
-                    if (Exist(attributeName, number, role))
-                    {
-
-                        XElement attribute = Get(attributeName, number, role);
-                        List<XElement> listOfPackagesAfter = GetChildren(attributeName, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
-
-                        if (attribute != null)
-                        {
-                            attribute.Remove();
-                        }
-
-                        listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
-                    }
-                }
-                else
-                {
-                    throw new Exception("attribute exist");
-                }
-
-                return _tempXDoc;
+                throw new Exception("attribute exist");
             }
+
+            return null;
+        }
+
+        //Add Attribute to a package return a apackage
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="metadataXml"></param>
+        /// <param name="packageUsage"></param>
+        /// <param name="packageNumber"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public XDocument AddAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeTypeName, string attributeId, string parentXPath)
+        {
+            _tempXDoc = metadataXml;
+
+            /*
+             * In the xml the structure is everytime usage/type
+             * 
+             * e.g. personUsage/PersonType/name/NameType
+             * 
+             * has a attribute has cardinality more then one
+             * the usage is the sequence node
+             * 
+             * personUsage/PersonType/name/NameType[1] 
+             * personUsage/PersonType/name/NameType[2]
+             * 
+             * in this function the parent is e.g PersonType
+             * so we need to add the usage name to the xpath to select the right node to add the attribute
+             */
+
+
+            string usageXPath = parentXPath + "/" + attributeUsage.Label;
+            XElement role = Get(usageXPath);
+
+
+            XElement element = CreateXElement(attributeTypeName, XmlNodeType.MetadataAttribute);
+
+            if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", attributeTypeName);
+            element.SetAttributeValue("roleId", attributeUsage.Id.ToString());
+            element.SetAttributeValue("id", attributeId);
+            element.SetAttributeValue("number", number);
+
+            if (!Exist(attributeTypeName, number, role))
+            {
+                role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
+            }
+            else
+            {
+                role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
+            }
+
+            return _tempXDoc;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="metadataXml"></param>
+        /// <param name="packageUsage"></param>
+        /// <param name="packageNumber"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public XDocument RemoveAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeName, string parentXPath)
+        {
+            _tempXDoc = metadataXml;
+
+            /*
+            * In the xml the structure is everytime usage/type
+            * 
+            * e.g. personUsage/PersonType/name/NameType
+            * 
+            * has a attribute has cardinality more then one
+            * the usage is the sequence node
+            * 
+            * personUsage/PersonType/name/NameType[1] 
+            * personUsage/PersonType/name/NameType[2]
+            * 
+            * in this function the parent is e.g PersonType
+            * so we need to add the usage name to the xpath to select the right node to remove the attribute
+            */
+
+            string usageXPath = parentXPath + "/" + attributeUsage.Label;
+            XElement role = Get(usageXPath);
+            if (role != null)
+            {
+                if (Exist(attributeName, number, role))
+                {
+
+                    XElement attribute = Get(attributeName, number, role);
+                    List<XElement> listOfPackagesAfter = GetChildren(attributeName, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
+
+                    if (attribute != null)
+                    {
+                        attribute.Remove();
+                    }
+
+                    listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
+                }
+            }
+            else
+            {
+                throw new Exception("attribute exist");
+            }
+
+            return _tempXDoc;
+        }
         #endregion
 
 
         public XDocument Change(XDocument metadataXml, string firstXPath, string secondXPath)
         {
             this._tempXDoc = metadataXml;
-            
+
 
             if (this._tempXDoc.XPathSelectElement(firstXPath) != null &&
                 this._tempXDoc.XPathSelectElement(secondXPath) != null)
@@ -684,38 +700,38 @@ namespace BExIS.Xml.Helpers
 
         #region update
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="metadataXml"></param>
-            /// <param name="packageUsage"></param>
-            /// <param name="packageNumber"></param>
-            /// <param name="attributeUsage"></param>
-            /// <param name="number"></param>
-            /// <param name="value"></param>
-            /// <returns></returns>
-            public XDocument Update(XDocument metadataXml, BaseUsage attributeUsage, int number, object value, string attributeTypeName, string parentXpath )
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="metadataXml"></param>
+        /// <param name="packageUsage"></param>
+        /// <param name="packageNumber"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public XDocument Update(XDocument metadataXml, BaseUsage attributeUsage, int number, object value, string attributeTypeName, string parentXpath)
+        {
+            _tempXDoc = metadataXml;
+
+
+            XElement parent = Get(parentXpath);
+
+            if (parent != null)
             {
-                _tempXDoc = metadataXml;
-
-
-                XElement parent = Get(parentXpath);
-
-                if (parent != null)
+                //attribute role exist
+                if (Exist(attributeUsage.Label, parent))
                 {
-                    //attribute role exist
-                    if (Exist(attributeUsage.Label, parent))
+                    XElement attributeRole = Get(attributeUsage.Label, parent);
+                    if (attributeRole != null)
                     {
-                        XElement attributeRole = Get(attributeUsage.Label, parent);
-                        if (attributeRole != null)
-                        {
-                            XElement attribute = Get(attributeTypeName, number, attributeRole);
-                            attribute.SetValue(value.ToString());
-                        }
+                        XElement attribute = Get(attributeTypeName, number, attributeRole);
+                        attribute.SetValue(value.ToString());
                     }
                 }
+            }
 
             //exist packageRole
             //if (Exist(packageUsage.Label, packageUsage.Id))
@@ -742,35 +758,35 @@ namespace BExIS.Xml.Helpers
 
 
             return _tempXDoc;
-            }
-            
-            /// <summary>
-            /// Updating the number of all childrens after the number was selected
-            /// and adding the element to the parent on the specific plave
-            /// </summary>
-            /// <param name="parent"></param>
-            /// <param name="element"></param>
-            /// <param name="typeName"></param>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            private XElement UpdateNumberOfSameElements(XElement parent, XElement element, string typeName, int number)
+        }
+
+        /// <summary>
+        /// Updating the number of all childrens after the number was selected
+        /// and adding the element to the parent on the specific plave
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="element"></param>
+        /// <param name="typeName"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private XElement UpdateNumberOfSameElements(XElement parent, XElement element, string typeName, int number)
+        {
+            List<XElement> listOfPackagesAfter = GetChildren(typeName, parent).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) >= number).ToList();
+            listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) + 1));
+
+            //after element
+            XElement afterElement = Get(typeName, number + 1, parent);
+            if (afterElement != null)
             {
-                List<XElement> listOfPackagesAfter = GetChildren(typeName, parent).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) >= number).ToList();
-                listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) + 1));
-
-                //after element
-                XElement afterElement = Get(typeName, number + 1, parent);
-                if (afterElement != null)
-                {
-                    afterElement.AddBeforeSelf(element);
-                }
-                else
-                {
-                    parent.Add(element);
-                }
-
-                return parent;
+                afterElement.AddBeforeSelf(element);
             }
+            else
+            {
+                parent.Add(element);
+            }
+
+            return parent;
+        }
 
         #endregion
 

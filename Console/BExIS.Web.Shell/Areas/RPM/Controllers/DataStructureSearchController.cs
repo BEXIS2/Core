@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Logging;
+using Vaiona.Web.Mvc;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class DataStructureSearchController : Controller
+    public class DataStructureSearchController : BaseController
     {
         public ActionResult Index()
         {
@@ -103,63 +105,72 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    DataStructureManager dataStructureManager = new DataStructureManager();
-                    DataStructure dataStructure;
-                    if (isStructured)
+                    DataStructureManager dataStructureManager = null;
+                    try
                     {
-                        if (Id == 0)
+                        dataStructureManager = new DataStructureManager();
+
+                        DataStructure dataStructure;
+                        if (isStructured)
                         {
-                            dataStructure = dataStructureManager.CreateStructuredDataStructure(Name.Trim(), Description.Trim(), null, null, DataStructureCategory.Generic);
-                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
-                            return new MessageModel()
+                            if (Id == 0)
                             {
-                                Message = dataStructure.Id.ToString(),
-                                hasMessage = false,
-                                CssId = "redirect"
-                            };
+                                dataStructure = dataStructureManager.CreateStructuredDataStructure(Name.Trim(), Description.Trim(), null, null, DataStructureCategory.Generic);
+                                LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
+                                return new MessageModel()
+                                {
+                                    Message = dataStructure.Id.ToString(),
+                                    hasMessage = false,
+                                    CssId = "redirect"
+                                };
+                            }
+                            else
+                            {
+                                StructuredDataStructure StructuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                                StructuredDataStructure.Name = Name;
+                                StructuredDataStructure.Description = Description;
+                                dataStructure = dataStructureManager.UpdateStructuredDataStructure(StructuredDataStructure);
+                                LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
+                                return new MessageModel()
+                                {
+                                    Message = Id.ToString(),
+                                    hasMessage = false,
+                                    CssId = "redirect"
+                                };
+                            }
                         }
                         else
                         {
-                            StructuredDataStructure StructuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
-                            StructuredDataStructure.Name = Name;
-                            StructuredDataStructure.Description = Description;
-                            dataStructure = dataStructureManager.UpdateStructuredDataStructure(StructuredDataStructure);
-                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
-                            return new MessageModel()
+                            if (Id == 0)
                             {
-                                Message = Id.ToString(),
-                                hasMessage = false,
-                                CssId = "redirect"
-                            };
+                                dataStructure = dataStructureManager.CreateUnStructuredDataStructure(Name.Trim(), Description.Trim());
+                                LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
+                                return new MessageModel()
+                                {
+                                    Message = "refresh DataStructureResultGrid",
+                                    hasMessage = false,
+                                    CssId = "refresh"
+                                };
+                            }
+                            else
+                            {
+                                UnStructuredDataStructure unStructuredDataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
+                                unStructuredDataStructure.Name = Name;
+                                unStructuredDataStructure.Description = Description;
+                                dataStructure = dataStructureManager.UpdateUnStructuredDataStructure(unStructuredDataStructure);
+                                LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
+                                return new MessageModel()
+                                {
+                                    Message = "refresh DataStructureResultGrid",
+                                    hasMessage = false,
+                                    CssId = "refresh"
+                                };
+                            }
                         }
                     }
-                    else
+                    finally
                     {
-                        if (Id == 0)
-                        {
-                            dataStructure = dataStructureManager.CreateUnStructuredDataStructure(Name.Trim(), Description.Trim());
-                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
-                            return new MessageModel()
-                            {
-                                Message = "refresh DataStructureResultGrid",
-                                hasMessage = false,
-                                CssId = "refresh"
-                            };
-                        }
-                        else
-                        {
-                            UnStructuredDataStructure unStructuredDataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
-                            unStructuredDataStructure.Name = Name;
-                            unStructuredDataStructure.Description = Description;
-                            dataStructure = dataStructureManager.UpdateUnStructuredDataStructure(unStructuredDataStructure);
-                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
-                            return new MessageModel()
-                            {
-                                Message = "refresh DataStructureResultGrid",
-                                hasMessage = false,
-                                CssId = "refresh"
-                            };
-                        }
+                        dataStructureManager.Dispose();
                     }
                 }
             }
@@ -171,64 +182,75 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return PartialView("_message", MessageModel.validateDataStructureName(Id, Name, cssId));
         }
 
-        public ActionResult copyDataStructure(long Id, bool isStructured, string Name = "" , string Description = "", string cssId = "")
+        public ActionResult copyDataStructure(long Id, bool isStructured, string Name = "", string Description = "", string cssId = "")
         {
             Name = Server.UrlDecode(Name);
             Description = Server.UrlDecode(Description);
-            DataStructureManager dataStructureManager = new DataStructureManager();
-
-            if (!isStructured)
+            DataStructureManager dataStructureManager = null;
+            try
             {
-                UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
-                if (dataStructure != null)
+
+                dataStructureManager = new DataStructureManager();
+
+
+                if (!isStructured)
                 {
-                    if (Name == "")
+                    UnStructuredDataStructure dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>().Get(Id);
+                    if (dataStructure != null)
                     {
-                        Name = dataStructure.Name + " - Copy";
-                    }
-
-                    if (Description == "" && dataStructure.Description != null)
-                    {
-                        Description = dataStructure.Description;
-                    }
-                    LoggerFactory.LogCustom("Copy Data Structure" + Id);
-                    return createDataStructure(0, Name.Trim(), isStructured, Description.Trim(), cssId);
-                }
-            }
-            else
-            {
-                StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
-                if (dataStructure != null)
-                {
-                    if (Name == "")
-                    {
-                        Name = dataStructure.Name + " - Copy";
-                    }
-
-                    if (Description == "" && dataStructure.Description != null)
-                    {
-                        Description = dataStructure.Description;
-                    }
-
-                    MessageModel messageModel = storeDataStructure(0, Name.Trim(), isStructured, Description.Trim(), cssId);
-                    List<long> order = new List<long>();
-                    Variable variable = new Variable();
-
-                    if (!messageModel.hasMessage)
-                    {
-                        StructuredDataStructure dataStructureCopy = dataStructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(messageModel.Message));
-                        foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
+                        if (Name == "")
                         {
-                            variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label.Trim(), v.DefaultValue, v.MissingValue, v.Description.Trim(), v.Unit);
-                            order.Add(variable.Id);
+                            Name = dataStructure.Name + " - Copy";
                         }
-                        DataStructureIO.setVariableOrder(dataStructureCopy, order);
+
+                        if (Description == "" && dataStructure.Description != null)
+                        {
+                            Description = dataStructure.Description;
+                        }
+                        LoggerFactory.LogCustom("Copy Data Structure" + Id);
+                        return createDataStructure(0, Name.Trim(), isStructured, Description.Trim(), cssId);
                     }
-                    LoggerFactory.LogCustom("Copy Data Structure" + Id);
-                    return PartialView("_message", messageModel);
                 }
+                else
+                {
+                    StructuredDataStructure dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Id);
+                    if (dataStructure != null)
+                    {
+                        if (Name == "")
+                        {
+                            Name = dataStructure.Name + " - Copy";
+                        }
+
+                        if (Description == "" && dataStructure.Description != null)
+                        {
+                            Description = dataStructure.Description;
+                        }
+
+                        MessageModel messageModel = storeDataStructure(0, Name.Trim(), isStructured, Description.Trim(), cssId);
+                        List<long> order = new List<long>();
+                        Variable variable = new Variable();
+
+                        if (!messageModel.hasMessage)
+                        {
+                            StructuredDataStructure dataStructureCopy = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Convert.ToInt64(messageModel.Message));
+                            dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().LoadIfNot(dataStructureCopy.Variables);
+                            foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
+                            {
+                                variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label.Trim(), v.DefaultValue, v.MissingValue, v.Description.Trim(), v.Unit);
+                                order.Add(variable.Id);
+                            }
+                            DataStructureIO.setVariableOrder(dataStructureCopy, order);
+                        }
+                        LoggerFactory.LogCustom("Copy Data Structure" + Id);
+                        return PartialView("_message", messageModel);
+                    }
+                }
+                return PartialView("_message", new MessageModel());
             }
-            return PartialView("_message", new MessageModel());
+            finally
+            {
+                dataStructureManager.Dispose();
+            }
         }
     }
 }

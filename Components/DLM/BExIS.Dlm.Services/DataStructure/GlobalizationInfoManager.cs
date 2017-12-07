@@ -5,19 +5,13 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class GlobalizationInfoManager
+    public class GlobalizationInfoManager
     {
         public GlobalizationInfoManager() 
         {
-            //// define aggregate paths
-            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
-            this.Repo = this.GetUnitOfWork().GetReadOnlyRepository<GlobalizationInfo>();
         }
 
         #region Data Readers
-
-        // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<GlobalizationInfo> Repo { get; private set; }
 
         #endregion
 
@@ -93,7 +87,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = entity.GetUnitOfWork())
             {
                 IRepository<GlobalizationInfo> repo = uow.GetRepository<GlobalizationInfo>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    

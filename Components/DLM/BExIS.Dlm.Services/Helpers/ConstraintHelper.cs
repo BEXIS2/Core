@@ -90,7 +90,9 @@ namespace BExIS.Dlm.Services.Helpers
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -169,7 +171,9 @@ namespace BExIS.Dlm.Services.Helpers
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -247,7 +251,9 @@ namespace BExIS.Dlm.Services.Helpers
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -325,7 +331,9 @@ namespace BExIS.Dlm.Services.Helpers
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<ComparisonConstraint> repo = uow.GetRepository<ComparisonConstraint>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

@@ -5,19 +5,16 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class AggregateFunctionManager
+    public class AggregateFunctionManager
     {
+        private IUnitOfWork guow = null;
         public AggregateFunctionManager() 
         {
             //// define aggregate paths
             ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
-            this.Repo = this.GetUnitOfWork().GetReadOnlyRepository<AggregateFunction>();
         }
 
         #region Data Readers
-
-        // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<AggregateFunction> Repo { get; private set; }
 
         #endregion
 
@@ -92,7 +89,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = entity.GetUnitOfWork())
             {
                 IRepository<AggregateFunction> repo = uow.GetRepository<AggregateFunction>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    

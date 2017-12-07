@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace BExIS.IO
 {
@@ -32,20 +29,19 @@ namespace BExIS.IO
 
         }
 
-        public static FileStream Create(string path)
+        public static FileStream Create(string filepath)
         {
-            if (Directory.Exists(path))
+
+            string path = Path.GetDirectoryName(filepath);
+            // if folder not exist
+            if (!Directory.Exists(path))
             {
-                // if folder not exist
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+                Directory.CreateDirectory(path);
             }
 
-            if (!File.Exists(path))
+            if (!File.Exists(filepath))
             {
-                return File.Create(path);
+                return File.Create(filepath);
             }
 
             return null;
@@ -75,7 +71,7 @@ namespace BExIS.IO
 
         public static bool WaitForFile(string fullPath)
         {
-           
+
 
             int numTries = 0;
             while (true)
@@ -85,7 +81,7 @@ namespace BExIS.IO
                 {
                     // Attempt to open the file exclusively.
                     using (FileStream fs = new FileStream(fullPath,
-                        FileMode.Open, FileAccess.ReadWrite, 
+                        FileMode.Open, FileAccess.ReadWrite,
                         FileShare.None, 100))
                     {
                         fs.ReadByte();
@@ -103,8 +99,36 @@ namespace BExIS.IO
 
                     // Wait for the lock to be released
                     System.Threading.Thread.Sleep(300);
-                    Console.WriteLine("Waiting : "+ex.Message);
+                    Console.WriteLine("Waiting : " + ex.Message);
                 }
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// remove all files and folders from the given folder
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        public static bool ClearFolder( string fullPath )
+        {
+            // https://stackoverflow.com/a/1288747/1169798
+
+            // get file/folder listing
+            System.IO.DirectoryInfo di = new DirectoryInfo( fullPath );
+
+            // delete all files
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+
+            // delete all folders (including their content)
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                Directory.Delete(dir.FullName, true);
             }
 
             return true;

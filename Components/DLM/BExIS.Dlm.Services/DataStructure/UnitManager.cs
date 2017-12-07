@@ -7,26 +7,48 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class UnitManager
+    public class UnitManager : IDisposable
     {
-        // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<Unit> Repo { get; private set; }
-        public IReadOnlyRepository<ConversionMethod> ConversionMethodRepo { get; private set; }
-        public IReadOnlyRepository<Dimension> DimensionRepo { get; private set; }
-
+        private IUnitOfWork guow = null;
         public UnitManager() //: base(false, true, true)
         {
             //// define aggregate paths
             ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<Unit>();
-            this.ConversionMethodRepo = uow.GetReadOnlyRepository<ConversionMethod>();
-            this.DimensionRepo = uow.GetReadOnlyRepository<Dimension>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.Repo = guow.GetReadOnlyRepository<Unit>();
+            //this.ConversionMethodRepo = uow.GetReadOnlyRepository<ConversionMethod>();
+            this.DimensionRepo = guow.GetReadOnlyRepository<Dimension>();
+        }
+
+        private bool isDisposed = false;
+        ~UnitManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers
-
-
+        // provide read only repos for the whole aggregate area
+        public IReadOnlyRepository<Unit> Repo { get; private set; }
+        //public IReadOnlyRepository<ConversionMethod> ConversionMethodRepo { get; private set; }
+        public IReadOnlyRepository<Dimension> DimensionRepo { get; private set; }
         #endregion
 
         #region Unit
@@ -39,22 +61,27 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<Unit>() != null && Contract.Result<Unit>().Id >= 0);
 
-            Unit u = new Unit()
-            {
-                Name = name,
-                Abbreviation = abbreviation,
-                Description = description,
-                Dimension = dimension,
-                MeasurementSystem = measurementSystem,
-            };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                repo.Put(u);
-                uow.Commit();
+                
+                if (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
+                {
+                    Unit unit = new Unit()
+                    {
+                        Name = name,
+                        Abbreviation = abbreviation,
+                        Description = description,
+                        Dimension = dimension,
+                        MeasurementSystem = measurementSystem,
+                    };
+                    repo.Put(unit);
+                    uow.Commit();
+                    return (unit);
+                }
+                return null; // This should throw an exception instead.
             }
-            return (u);
         }
 
         public bool Delete(Unit entity)
@@ -133,7 +160,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -212,7 +241,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dimension> repo = uow.GetRepository<Dimension>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -330,8 +361,10 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<ConversionMethod> repoCM = uow.GetRepository<ConversionMethod>();
-                repoCM.Put(entity); // Merge is required here!!!!
+                IRepository<ConversionMethod> repo = uow.GetRepository<ConversionMethod>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

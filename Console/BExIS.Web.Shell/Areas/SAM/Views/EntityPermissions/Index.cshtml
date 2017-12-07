@@ -2,30 +2,90 @@
 {
     @Html.Partial("_Entities")
 }
-<div id="permissions"></div>
+<div class="row">
+    <div id="content_instances" class="col-md-6"></div>
+    <div id="content_subjects" class="col-md-6"></div>
+</div>
 
-@section Scripts
-{
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        $(document).ready(function() {
-            function createUser() {
+    $("#treeView_entities li div").click(function (e) {
+        $(e.target).find(".t-in").trigger("click");
+    });
 
-            }
+    function getTreeView() {
+        return $('#treeView_entities').data('tTreeView');
+    }
 
-            function editUser(id) {
+    function treeView_entities_onSelect(e) {
+        var entityId = getTreeView().getItemValue(e.item);
+        var prevSelectedDiv = $(".bx-selected");
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
 
-            }
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
 
-            function deleteUser(id) {
+        $('#content_instances').empty();
 
-            }
+        $.get('@Url.Action("Instances", "EntityPermissions")',
+            { EntityId: entityId },
+            function (contentData) {
 
-            function onDataBound() {
-                addTooltips();
-                resetAllTelerikIconTitles();
+                $('#content_instances').html(contentData);
+
+                truncateTitle();
+            });
+    }
+
+    function grid_instances_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("#grid_instances")
+            .on("change",
+                "input[name='selectedInstances']:checkbox",
+                function (e) {
+                    if ($(this).is(':checked')) {
+                        $.post('@Url.Action("AddInstanceToPublic", "EntityPermissions")',
+                            { EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid') },
+                            function () {
+                                $("#grid_groups .t-refresh").trigger('click');
+                            });
+                    } else {
+                        $.post('@Url.Action("RemoveInstanceFromPublic", "EntityPermissions")',
+                            { EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid') },
+                            function () {
+                                $("#grid_groups .t-refresh").trigger('click');
+                            });
+                    }
+                });
+    }
+
+    function grid_subjects_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("#grid_subjects tbody input:checkbox").click(function () {
+            if ($(this).is(':checked')) {
+                $.post('@Url.Action("AddRightToEntityPermission", "EntityPermissions")',
+                    { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                    function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+            } else {
+                $.post('@Url.Action("RemoveRightFromEntityPermission", "EntityPermissions")',
+                    { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                    function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
             }
         });
+    }
 
-    </script>
-}
+    function grid_instances_onRowSelect(e) {
+        $.get('@Url.Action("Subjects", "EntityPermissions")', { EntityId: $("input[name='selectedInstances']:checkbox", e.row).data('entityid'), InstanceId: $("input[name='selectedInstances']:checkbox", e.row).data('instanceid') }, function (data) {
+            $('#content_subjects').empty();
+            $('#content_subjects').html(data);
+        });
+    }
+</script>

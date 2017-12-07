@@ -5,6 +5,8 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
     public abstract class MappingModel
     {
         public long Id { get; set; }
+        public long ParentId { get; set; }
+
         public LinkElementModel Source { get; set; }
         public LinkElementModel Target { get; set; }
     }

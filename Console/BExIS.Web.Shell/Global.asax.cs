@@ -1,4 +1,5 @@
 ﻿using BExIS.Ext.Services;
+using BExIS.Web.Shell.Helpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,6 @@ using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell
@@ -26,10 +26,11 @@ namespace BExIS.Web.Shell
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new PersistenceContextProviderFilterAttribute());
+            //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
 #if !DEBUG
-            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+            filters.Add(new BExIS.Web.Shell.Attributes.BExISAuthorizeAttribute());
 #endif
+            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
         }
 
@@ -49,16 +50,25 @@ namespace BExIS.Web.Shell
         {
             MvcHandler.DisableMvcResponseHeader = true;
 
+            // This line registers an assembly resolver for the dynamically loaded modules. It also takes care of modules' statuses, so that inactive modules are not resolved.
+            // This MUST be before IoC initialization.
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
+            // This method initializes the registered modules. It MUST be before initializing the persistence! 
             initModules();
+            // The persistnce service starts up the ORM, binds the mapping files to the database and the entities and depndeing on the modules' statuses upgrades the database schema.
+            // Also, it generates the seed data of the modules by calling their install methods.
             initPersistence();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            // This method builds a tree of the actions and apis exposed by each module. It tries to put them in a proper order and resolves name conflicts by some resolution rules.
             ModuleManager.BuildExportTree();
+            //This method identifies and loads the current tenant of the application. Many other methods and layout sections depends upon the tenant identified here.
             initTenancy();
+            // At application start, each modules obtains a chance to perform some initialization and warmup tasks. They are coded in each module's Start method.
+            // This call starts them. 
             ModuleManager.StartModules();
         }
 
@@ -76,10 +86,8 @@ namespace BExIS.Web.Shell
 
         private void initModules()
         {
-            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
-            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
-            //ModuleBootstrapper.Initialize();
+            ModuleManager.InitModules(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml"), GlobalConfiguration.Configuration); // this should be called before RegisterAllAreas
+                                                                                                                                        //AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); 
         }
 
         private void initPersistence()
@@ -96,13 +104,19 @@ namespace BExIS.Web.Shell
             // Installation means, the modules' Install method is called, which usually generates the seed data
             if (AppConfiguration.CreateDatabase)
             {
-                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
-                {
-                    ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
-                }
+                SeedDataGenerator.Init();
+                installModuleOnFreshDatabase();
             }
             // if there are pending modules, their schema (if exists) must be applied.
             else if (ModuleManager.HasPendingInstallation())
+            {
+                insatllPendingModules(pManager);
+            }
+        }
+
+        private void insatllPendingModules(IPersistenceManager pManager)
+        {
+            if (!AppConfiguration.CreateDatabase && ModuleManager.HasPendingInstallation())
             {
                 try
                 {
@@ -119,13 +133,45 @@ namespace BExIS.Web.Shell
                     try
                     {
                         ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
-                        // For security reasons, pending modules go to the "inactive" status after schema export.
-                        // An administrator can endable them via the management console
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to install module '{0}' while in pending state. Details: {1}.", moduleId, ex.Message);
+                        LoggerFactory.GetFileLogger().LogCustom(message);
+                        //throw new Exception(message);
+                    }
+
+                    // For security reasons, pending modules go to the "inactive" status after schema export.
+                    // An administrator can endable them via the management console
+                    try
+                    {
                         ModuleManager.Disable(moduleId);
                     }
                     catch (Exception ex)
                     {
-                        LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                        string message = string.Format("Unable to disable module '{0}' after recovering from pending state. Details: {1}.", moduleId, ex.Message);
+                        LoggerFactory.GetFileLogger().LogCustom(message);
+                        //throw new Exception(message);
+                    }
+                }
+            }
+        }
+
+        private void installModuleOnFreshDatabase()
+        {
+            if (AppConfiguration.CreateDatabase)
+            {
+                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+                {
+                    try
+                    {
+                        ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to install module '{0}'. Details: {1}.", module.Id, ex.Message);
+                        LoggerFactory.GetFileLogger().LogCustom(message);
+                        //throw new Exception(message);
                     }
                 }
             }
@@ -169,9 +215,13 @@ namespace BExIS.Web.Shell
 
         protected void Session_End()
         {
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            pManager.ShutdownConversation();
-            IoCFactory.Container.ShutdownSessionLevelContainer();
+            //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            //pManager.ShutdownConversation();
+            try
+            {
+                IoCFactory.Container.ShutdownSessionLevelContainer();
+            }
+            catch { }
         }
 
         protected virtual void Application_BeginRequest()
@@ -184,7 +234,7 @@ namespace BExIS.Web.Shell
         /// </summary>
         protected virtual void Application_EndRequest()
         {
-            //var entityContext = HttpContext.Current.Items["NHibernateCurrentSessionFactory"] as IDictionary<ISessionFactory, Lazy<ISession>>;
+            //var entityContext = HttpContext.Current.Items[NHibernateCurrentSessionProvider.CURRENT_SESSION_CONTEXT_KEY];
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
         }

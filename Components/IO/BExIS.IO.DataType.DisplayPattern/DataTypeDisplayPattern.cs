@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BExIS.Dlm.Services.TypeSystem;
-using System.Xml;
+﻿using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Xml.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace BExIS.IO.DataType.DisplayPattern
 {
@@ -18,7 +15,10 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUs",        StringPattern = "MM/dd/yyyy",               RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUk",        StringPattern = "dd/MM/yyyy",               RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateEu",        StringPattern = "dd.MM.yyyy",               RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",          StringPattern = "hh:mm:ss",                 RegexPattern = null}
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",          StringPattern = "HH:mm:ss",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h",      StringPattern = "hh:mm:ss tt",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",          StringPattern = "yyyy",                     RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",         StringPattern = "MMMMMM",                   RegexPattern = null}
         };
 
         public DataTypeCode Systemtype { get; set; }
@@ -47,8 +47,8 @@ namespace BExIS.IO.DataType.DisplayPattern
                 RegexPattern = dataTypeDisplayPattern.RegexPattern;
 
             XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml( "<DisplayPattern>" +
-                            "   <Systemtype>"+ dataTypeDisplayPattern.Systemtype.ToString() + "</Systemtype>" +
+            xmlDoc.LoadXml("<DisplayPattern>" +
+                            "   <Systemtype>" + dataTypeDisplayPattern.Systemtype.ToString() + "</Systemtype>" +
                             "   <Name>" + dataTypeDisplayPattern.Name + "</Name>" +
                             "   <StringPattern>" + StringPattern + "</StringPattern>" +
                             "   <RegexPattern>" + RegexPattern + "</RegexPattern>" +
@@ -83,7 +83,7 @@ namespace BExIS.IO.DataType.DisplayPattern
                         return null;
                     }
                     xmlNode = XmlUtility.GetXmlNodeByName(xmlDoc.GetElementsByTagName("DisplayPattern").Item(0), "Name");
-                    if(xmlNode != null && xmlNode.InnerText != "null")
+                    if (xmlNode != null && xmlNode.InnerText != "null")
                         displayPattern.Name = xmlNode.InnerText;
                     else
                         displayPattern.Name = null;

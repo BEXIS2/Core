@@ -111,6 +111,7 @@
             });
 
 
+        console.log($('#Active'));
         console.log(SystemNodes);
 
         var metadataStructureModel = {
@@ -122,10 +123,10 @@
             },
             TitleNode: $('#TitleNode').val(),
             DescriptionNode: $('#DescriptionNode').val(),
-            Active: $('#Active').val(),
+            Active: $('#Active').is(':checked'),
             SystemNodes: SystemNodes
         }
-
+        
         console.log(SystemNodes);
         console.log(metadataStructureModel);
         

@@ -2,8 +2,11 @@
 {
     public enum Key
     {
-        Title = 1,
-        Description = 2
+        Author,
+        Description,
+        License,
+        ProjectTitle,
+        Title
     }
 
     public enum LinkElementComplexity
@@ -15,19 +18,19 @@
 
     public enum LinkElementType
     {
-        MetadataStructure,
-        XSD,
-        System,
-        SimpleMetadataAttribute,
-        ComplexMetadataAttribute,
-        MetadataAttributeUsage,
-        MetadataNestedAttributeUsage,
-        MetadataPackage,
-        MetadataPackageUsage,
-        PartyType,
-        PartyCustomType,
-        Key,
-        Role
+        MetadataStructure = 0,
+        XSD = 1,
+        System = 2,
+        SimpleMetadataAttribute = 3,
+        ComplexMetadataAttribute = 4,
+        MetadataAttributeUsage = 5,
+        MetadataNestedAttributeUsage = 6,
+        MetadataPackage = 7,
+        MetadataPackageUsage = 8,
+        PartyType = 9,
+        PartyCustomType = 10,
+        Key = 11,
+        Role = 12
     }
 
 

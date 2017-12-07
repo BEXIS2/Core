@@ -34,6 +34,9 @@ namespace BExIS.Web.Shell
                 "~/Scripts/bexis_default.js",
                 "~/Scripts/bexis-jquery-ui.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/handsontable").Include(
+                "~/Scripts/handsontable/handsontable.full.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/autosize").Include(
                 "~/Scripts/autosize/autosize.js"));
 
@@ -54,6 +57,7 @@ namespace BExIS.Web.Shell
                 "~/Scripts/switchery/switchery.css",
                 "~/Content/bootstrap-slider.min.css",
                 "~/Scripts/minimap/minimap.min.css",
+                "~/Content/handsontable/handsontable.full.css",
                 "~/Content/Site.css"));
 
             BundleTable.EnableOptimizations = true;

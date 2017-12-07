@@ -2,10 +2,10 @@
 <Manifest moduleId="dcm" displayName="Data Collection Module" version="1.0.0" builtin="true">
   <Description>
     <!--add proper description-->
-    ddm provides a sophisticated search facility over registered data sets.
+    DCM provides functions to create, edit uploading of datasets and metadata strutcures
   </Description>
   <Assemblies>
-    <!--<Assembly fullName="BExIS.Dcm.Wizard" role=""/>-->
+    <Assembly fullName="BExIS.Dcm.Wizard" role=""/>
     <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role=""/>
     <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role=""/>
     <Assembly fullName="BExIS.Dcm.UploadWizard" role=""/>
@@ -29,7 +29,11 @@
             title="Upload Data" description="Upload data to a dataset" icon=""
             controller="Submit" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="createDataset" order="3"
+    <Export tag="menubar" id="importdata" order="3"
+            title="Import Data" description="Import datastructure and data from an excel file" icon=""
+            controller="EasyUpload" action="index"
+            extends="./menubarRoot/collect" />
+    <Export tag="menubar" id="createDataset" order="4"
             title="Push Big File" description="Push big file to the server to use it later" icon=""
             controller="Push" action="index"
             extends="./menubarRoot/collect" />
