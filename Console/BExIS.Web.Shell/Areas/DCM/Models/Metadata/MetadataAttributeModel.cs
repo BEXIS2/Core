@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.Exceptions;
-using DocumentFormat.OpenXml.Office2010.Excel;
+using System;
+using System.Collections.Generic;
+using Vaiona.Persistence.Api;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataAttributeModel
     {
@@ -45,124 +37,45 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         private object _value;
 
-        public object Value {
-                get { return _value; }
-                set
-                {
-                    _value = value;
-                    IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString());
-                }
-        }
-
-        
-
-        public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
+        public object Value
         {
-            MetadataAttribute metadataAttribute;
-            List<object> domainConstraintList = new List<object>();
-            string constraintsDescription="";
-
-            if (current is MetadataNestedAttributeUsage)
+            get { return _value; }
+            set
             {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)current;
-                metadataAttribute = mnau.Member;
+                _value = value;
+                IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString());
             }
-            else
-            { 
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)current;
-                metadataAttribute = mau.MetadataAttribute;
-            }
-
-            if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
-                domainConstraintList = createDomainContraintList(metadataAttribute);
-
-            if (metadataAttribute.Constraints.Count > 0)
-            {
-                foreach (Constraint c in metadataAttribute.Constraints)
-                {
-                    if (string.IsNullOrEmpty(constraintsDescription)) constraintsDescription = c.FormalDescription;
-                    else constraintsDescription = String.Format("{0}\n{1}", constraintsDescription, c.FormalDescription);
-                }
-            }
-            //load displayPattern
-            DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(metadataAttribute.DataType.Extra);
-            string displayPattern="";
-            if(dtdp !=null) displayPattern = dtdp.StringPattern;
-
-            return new MetadataAttributeModel
-            {
-                Id = current.Id,
-                Number = 1,
-                ParentModelNumber = packageModelNumber,
-                MetadataStructureId = metadataStructureId,
-                Parent = parent,
-                Source = current,
-                DisplayName = current.Label,
-                Discription = current.Description,
-                ConstraintDescription = constraintsDescription,
-                DataType = metadataAttribute.DataType.Name,
-                SystemType = metadataAttribute.DataType.SystemType,
-                DisplayPattern = displayPattern,
-                MinCardinality = current.MinCardinality,
-                MaxCardinality = current.MaxCardinality,
-                NumberOfSourceInPackage = 1,
-                first = true,
-                DomainList = domainConstraintList,
-                last = true,
-                MetadataAttributeId = metadataAttribute.Id,
-                ParentStepId = parentStepId,
-                Errors = null
-            };
-        }
-
-        private static List<object> createDomainContraintList(MetadataAttribute attribute)
-        {
-            List<object> list = new List<object>();
-
-            foreach (Constraint constraint in attribute.Constraints)
-            {
-                if (constraint is DomainConstraint)
-                {
-                    DomainConstraint domainConstraint = (DomainConstraint)constraint;
-                    domainConstraint.Materialize();
-                    domainConstraint.Items.ForEach(i => list.Add(i.Value));
-                }
-            }
-
-            return list;
         }
 
         public MetadataAttribute GetMetadataAttribute()
         {
-            MetadataAttributeManager mam = new MetadataAttributeManager();
-            return mam.MetadataAttributeRepo.Get().Where(m => m.Id.Equals(MetadataAttributeId)).FirstOrDefault();
-
+            return this.GetUnitOfWork().GetReadOnlyRepository<MetadataAttribute>().Get(MetadataAttributeId);
         }
 
         public MetadataAttributeModel Kopie(long number, int numberOfSourceInPackage)
         {
             return new MetadataAttributeModel
             {
-                    Id = this.Id,
-                    Number = number,
-                    ParentModelNumber = this.ParentModelNumber,
-                    MetadataStructureId = this.MetadataStructureId,
-                    Parent = this.Parent,
-                    Source = this.Source,
-                    DisplayName = this.DisplayName,
-                    Discription = this.Discription,
-                    ConstraintDescription = this.ConstraintDescription,
-                    DataType = this.DataType,
-                    SystemType = this.SystemType,
-                    MinCardinality = this.MinCardinality,
-                    MaxCardinality = this.MaxCardinality,
-                    NumberOfSourceInPackage = numberOfSourceInPackage,
-                    first = false,
-                    DomainList = this.DomainList,
-                    last = false,
-                    MetadataAttributeId = this.MetadataAttributeId,
-                    ParentStepId = this.ParentStepId,
-                    Errors = null
+                Id = this.Id,
+                Number = number,
+                ParentModelNumber = this.ParentModelNumber,
+                MetadataStructureId = this.MetadataStructureId,
+                Parent = this.Parent,
+                Source = this.Source,
+                DisplayName = this.DisplayName,
+                Discription = this.Discription,
+                ConstraintDescription = this.ConstraintDescription,
+                DataType = this.DataType,
+                SystemType = this.SystemType,
+                MinCardinality = this.MinCardinality,
+                MaxCardinality = this.MaxCardinality,
+                NumberOfSourceInPackage = numberOfSourceInPackage,
+                first = false,
+                DomainList = this.DomainList,
+                last = false,
+                MetadataAttributeId = this.MetadataAttributeId,
+                ParentStepId = this.ParentStepId,
+                Errors = null
             };
         }
 

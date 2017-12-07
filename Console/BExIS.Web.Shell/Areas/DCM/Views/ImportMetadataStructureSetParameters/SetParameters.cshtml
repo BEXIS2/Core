@@ -1,8 +1,8 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata.ParametersModel
+﻿@model BExIS.Modules.Dcm.UI.Models.ImportMetadata.ParametersModel
 @using Telerik.Web.Mvc.UI;
 @using System;
 @using System.Web.Configuration;
-@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Modules.Dcm.UI.Models;
 
 @{
     int index = 0;
@@ -59,7 +59,7 @@
                     </td>
                     <td>
                         <div id="titleSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
@@ -80,7 +80,7 @@
                     </td>
                     <td>
                         <div id="descriptionSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
@@ -95,6 +95,33 @@
                         @Model.DescriptionNode
                     </td>
                 </tr>
+                @*@foreach (KeyValuePair<string,string> systemNode in @Model.SystemNodes)
+                {
+                    var selectionContainer = @systemNode.Key + "SelectionContainer";
+                    var selectionContainerWindow = @systemNode.Key + "SelectionContainerWindow";
+
+                    <tr>
+                        <td class="labelColumn">
+                            @systemNode.Key
+                        </td>
+                        <td>
+                            <div id="@selectionContainer">
+                                @Ajax.ActionLink("Select", "ShowListOfMetadataNodes", "ImportMetadataStructureSetParameters", new {area = "DCM", key = @systemNode.Key },
+                                    new AjaxOptions
+                                    {
+                                        HttpMethod = "GET",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = selectionContainerWindow
+                                    },
+                                    new {@class = "bx-button function"})
+                            </div>
+                            <div id="@selectionContainerWindow"></div>
+                        </td>
+                        <td>
+                           @systemNode.Value
+                        </td>
+                    </tr>
+                }*@
             </table>
             @*<br />
                 <button type="submit" value="Save" name="submit"  class="t-button " >save</button>*@

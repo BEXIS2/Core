@@ -1,4 +1,5 @@
-﻿@model BExIS.Web.Shell.Areas.DIM.Models.AdminModel
+﻿@model BExIS.Modules.Dim.UI.Models.AdminModel
+
 @using Telerik.Web.Mvc.UI;
 
 @section Information
@@ -11,6 +12,7 @@
         <li>Click the export button to create XML files</li>
     </ul>
 <p>
+    @* change this to an action link. Javad *@
     <a href="/DIM/Help/Index" class="bx-informationLink" title="go to help" target="_blank">More</a>
 </p>
 }
@@ -26,7 +28,7 @@
 				{
 					tabs.Add()
 						.Text(metadataStructure.Value)
-						.LoadContentFrom("LoadMetadataStructureTab", "Admin", new { area = "DIM", Id = metadataStructure.Key });
+						.LoadContentFrom("LoadMetadataStructureTab", "Admin", new {Id = metadataStructure.Key });
 				}
 
 			})

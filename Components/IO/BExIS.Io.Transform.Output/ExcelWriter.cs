@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using BExIS.Dlm.Entities.Data;
-using BExIS.IO.Transform.Validation.Exceptions;
-using DocumentFormat.OpenXml.Packaging;
-using Vaiona.Utils.Cfg;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.Text.RegularExpressions;
-using BExIS.Dlm.Services.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using DocumentFormat.OpenXml;
-using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
-using System.Globalization;
-
-using BExIS.RPM.Output;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
-using BExIS.Xml.Helpers;
-using System.Xml;
-using System.Xml.Linq;
-
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Vaiona.Persistence.Api;
 /// <summary>
 ///
 /// </summary>        
@@ -32,8 +24,18 @@ namespace BExIS.IO.Transform.Output
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class ExcelWriter:DataWriter
+    public class ExcelWriter : DataWriter
     {
+
+        #region constants
+        // number types in datatable
+        private static System.TypeCode[] numberTypes = new[] {
+                          TypeCode.Decimal, TypeCode.Double, TypeCode.Single,
+                          TypeCode.Int16, TypeCode.Int32, TypeCode.Int64,
+                          TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64,
+                        };
+        #endregion
+
         #region private
 
         private SpreadsheetDocument spreadsheetDocument;
@@ -43,7 +45,7 @@ namespace BExIS.IO.Transform.Output
         private DefinedNameVal areaOfData = new DefinedNameVal();
         private DefinedNameVal areaOfVariables = new DefinedNameVal();
 
-        private char[] alphabet = { ' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+        private char[] alphabet = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 
         private int startColumn = 0;
@@ -53,293 +55,14 @@ namespace BExIS.IO.Transform.Output
         private int numOfDataRows = 0;
 
         private List<DataTuple> dataTuples = new List<DataTuple>();
-        private StructuredDataStructure dataStructure = new StructuredDataStructure();
 
-        private uint[] styleIndexArray = new uint[4];
+        private uint[] styleIndexArray = new uint[6];
+
+        private WorkbookPart workbookPart;
+        private WorksheetPart worksheetPart;
+        private SheetData sheetData;
 
         #endregion
-
-        /// <summary>
-        /// Add Datatuples to a Excel Template file
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="dataTuples"> Datatuples to add</param>
-        /// <param name="filePath">Path of the excel template file</param>
-        /// <param name="dataStructureId">Id of datastructure</param>
-        /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuplesToTemplate(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId )
-        {
-            if (File.Exists(filePath))
-            {
-
-                //Stream file = Open(filePath);
-
-                //_dataTuples = dataTuples;
-                // loading datastructure
-                dataStructure = GetDataStructure(dataStructureId);
-
-                // open excel file
-                spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
-
-                // get workbookpart
-                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-
-                // get all the defined area 
-                List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
-
-                // select data area
-                this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
-
-                // Select variable area
-                this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
-
-                // Get intergers for reading data
-                startColumn = getColumnNumber(this.areaOfData.StartColumn);
-                endColumn = getColumnNumber(this.areaOfData.EndColumn);
-                
-                numOfColumns = (endColumn - startColumn) + 1;
-                offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
-
-                // gerneat Style for cell types
-                generateStyle(spreadsheetDocument);
-
-                // get styleSheet
-                stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
-
-                // Get shared strings
-                sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
-
-                // select worksheetpart by selected defined name area like data in sheet
-                // sheet where data area is inside
-                WorksheetPart worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
-
-                // Get VarioableIndentifiers
-                this.VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
-
-
-                AddRows(worksheetPart, this.areaOfData.StartRow, this.areaOfData.EndRow, dataTuplesIds, datasetManager);
-
-                // set data area
-
-                foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
-                {
-                    if (name.Name == "Data")
-                    {
-                        string[] tempArr = name.InnerText.Split('$');
-                        string temp = "";
-                        //$A$10:$C$15
-
-                        tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
-
-                        foreach (string t in tempArr)
-                        {
-                            if (t == tempArr.First())
-                            {
-                                temp = temp + t;
-                            }
-                            else
-                            {
-                                temp = temp + "$" + t;
-                            }
-                        }
-
-                        name.Text = temp;
-                    }
-                }
-            
-
-                spreadsheetDocument.WorkbookPart.Workbook.Save();
-                spreadsheetDocument.Close();
-
-            }
-
-            return ErrorMessages;
-        }
-
-        /// <summary>
-        /// Add Datatuples to a Excel Template file
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="dataTuples"> Datatuples to add</param>
-        /// <param name="filePath">Path of the excel template file</param>
-        /// <param name="dataStructureId">Id of datastructure</param>
-        /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuplesToTemplate(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
-        {
-            if (File.Exists(filePath))
-            {
-
-                //Stream file = Open(filePath);
-
-                //_dataTuples = dataTuples;
-                // loading datastructure
-                dataStructure = GetDataStructure(dataStructureId);
-
-                // open excel file
-                spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
-
-                // get workbookpart
-                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-
-                // get all the defined area 
-                List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
-
-                // select data area
-                this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
-
-                // Select variable area
-                this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
-
-                // Get intergers for reading data
-                startColumn = getColumnNumber(this.areaOfData.StartColumn);
-                endColumn = getColumnNumber(this.areaOfData.EndColumn);
-
-                numOfColumns = (endColumn - startColumn) + 1;
-                offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
-
-                // gerneat Style for cell types
-                generateStyle(spreadsheetDocument);
-
-                // get styleSheet
-                stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
-
-                // Get shared strings
-                sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
-
-                // select worksheetpart by selected defined name area like data in sheet
-                // sheet where data area is inside
-                WorksheetPart worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
-
-                // Get VarioableIndentifiers
-                this.VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
-
-
-                AddRows(worksheetPart, this.areaOfData.StartRow, this.areaOfData.EndRow, dataTuples);
-
-                // set data area
-
-                foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
-                {
-                    if (name.Name == "Data")
-                    {
-                        string[] tempArr = name.InnerText.Split('$');
-                        string temp = "";
-                        //$A$10:$C$15
-
-                        tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
-
-                        foreach (string t in tempArr)
-                        {
-                            if (t == tempArr.First())
-                            {
-                                temp = temp + t;
-                            }
-                            else
-                            {
-                                temp = temp + "$" + t;
-                            }
-                        }
-
-                        name.Text = temp;
-                    }
-                }
-
-
-                spreadsheetDocument.WorkbookPart.Workbook.Save();
-                spreadsheetDocument.Close();
-
-            }
-
-            return ErrorMessages;
-        }
-
-        /// <summary>
-        /// Add Rows to a WorksheetPart
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="worksheetPart"></param>
-        /// <param name="startRow"></param>
-        /// <param name="endRow"></param>
-        /// <param name="dataTuplesIds"></param>
-        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<long> dataTuplesIds, DatasetManager datasetManager)
-        {
-            Worksheet worksheet = worksheetPart.Worksheet;
-            SheetData sheetData = worksheet.GetFirstChild<SheetData>();
-
-            int rowIndex = endRow;
-            DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
-            foreach (var tuple in tupleIterator)
-            {
-                // convert datatuple to row and add it to sheetdata
-                Row row = DatatupleToRow(tuple, rowIndex);
-
-                bool empty = true;
-                foreach (Cell c in row.Elements<Cell>().ToList())
-                {
-                    if (!String.IsNullOrEmpty(c.InnerText))
-                    {
-                        empty = false;
-                        break;
-                    }
-                }
-
-                if (!empty)
-                {
-                    sheetData.Append(row);
-                    if (!tuple.Id.Equals(dataTuplesIds.Last()))
-                        rowIndex++;
-                }
-            }
-            numOfDataRows = rowIndex;
-
-        }
-
-        /// <summary>
-        ///  Add Rows to a WorksheetPart
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="worksheetPart"></param>
-        /// <param name="startRow"></param>
-        /// <param name="endRow"></param>
-        /// <param name="dataTuples"></param>
-        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<AbstractTuple> dataTuples)
-        {
-            Worksheet worksheet = worksheetPart.Worksheet;
-            SheetData sheetData = worksheet.GetFirstChild<SheetData>();
-
-            int rowIndex = endRow;
-            //add row
-            foreach (DataTuple dataTuple in dataTuples)
-            {
-
-                // convert datatuple to row and add it to sheetdata
-                Row row = DatatupleToRow(dataTuple, rowIndex);
-
-                bool empty = true;
-                foreach (Cell c in row.Elements<Cell>().ToList())
-                {
-                    if (!String.IsNullOrEmpty(c.InnerText))
-                    {
-                        empty = false;
-                        break;
-                    }
-                }
-
-                if (!empty)
-                {
-                    sheetData.Append(row);
-                    if (!dataTuple.Equals(dataTuples.Last()))
-                        rowIndex++;
-                }
-            }
-
-            numOfDataRows = rowIndex;
-
-        }
 
         /// <summary>
         /// Convert a Datatuple to a Row
@@ -350,29 +73,12 @@ namespace BExIS.IO.Transform.Output
         /// <param name="rowIndex">Position of the Row</param>
         /// <returns></returns>
         protected Row DatatupleToRow(long dataTupleId, int rowIndex)
-        { 
-            Row row = new Row();
-            row.RowIndex = Convert.ToUInt32(rowIndex);
+        {
 
-
-            DataTuple dataTuple = DatasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dataTupleId)).FirstOrDefault();
+            DataTuple dataTuple = DatasetManager.DataTupleRepo.Query(d => d.Id.Equals(dataTupleId)).FirstOrDefault();
             dataTuple.Materialize();
-            
 
-            int columnIndex = 0;
-            columnIndex += offset;
-
-            // need to add this empty cell to add cells to the right place
-            row.AppendChild(GetEmptyCell(rowIndex, 0));    
-
-            foreach (VariableIdentifier variableIdentifier in VariableIdentifiers)
-            {
-                VariableValue variableValue = dataTuple.VariableValues.Where(p => p.VariableId.Equals(variableIdentifier.id)).First();
-                Cell cell = VariableValueToCell(variableValue, rowIndex, columnIndex);
-                row.AppendChild(cell);
-            }
-
-            return row;
+            return DatatupleToRow(dataTuple, rowIndex);
         }
 
         /// <summary>
@@ -400,7 +106,34 @@ namespace BExIS.IO.Transform.Output
                 Cell cell = VariableValueToCell(variableValue, rowIndex, columnIndex);
                 row.AppendChild(cell);
             }
-         
+
+            return row;
+        }
+
+        /// <summary>
+        /// convert a DataRow to a Row
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        protected Row DatarowToRow(DataRow src, int rowIndex)
+        {
+            Row row = new Row();
+            row.RowIndex = Convert.ToUInt32(rowIndex);
+
+            int columnIndex = 0;
+            columnIndex += offset;
+
+            // need to add this empty cell to add cells to the right place
+            row.AppendChild(GetEmptyCell(rowIndex, 0));
+
+            foreach (object variable in src.ItemArray)
+            {
+                Cell cell = VariableValueToCell(variable, rowIndex, columnIndex);
+                row.AppendChild(cell);
+                columnIndex += 1;
+            }
+
             return row;
         }
 
@@ -415,39 +148,107 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
-            string message = "row :" + rowIndex + "column:" + columnIndex;
-            Debug.WriteLine(message);
 
-            DataContainerManager CM = new DataContainerManager();
-            DataAttribute dataAttribute = CM.DataAttributeRepo.Get(variableValue.DataAttribute.Id);
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
+
+                string message = "row :" + rowIndex + "column:" + columnIndex;
+                Debug.WriteLine(message);
+
+                string cellRef = getColumnIndex(columnIndex);
+
+                Cell cell = new Cell();
+                cell.CellReference = cellRef;
+                cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType, styleIndexArray);
+                //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
+                //cell.CellValue = new CellValue(variableValue.Value.ToString());
+
+                CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
+                object value = variableValue.Value;
+
+                if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
+                {
+                    cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+
+                    try
+                    {
+                        if (value.ToString() != "")
+                        {
+                            double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+                            cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message + "\n|" + message);
+                    }
+
+                    return cell;
+                }
+                else
+                {
+                    if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+                    {
+
+                        cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                        //CultureInfo provider = CultureInfo.InvariantCulture;
+                        try
+                        {
+                            if (value.ToString() != "")
+                            {
+                                DateTime dt = Convert.ToDateTime(value.ToString());
+                                cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message + "|" + message);
+                        }
+                    }
+                    else
+                    {
+                        cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                        if (value == null)
+                            cell.CellValue = new CellValue("");
+                        else
+                            cell.CellValue = new CellValue(value.ToString());
+                    }
+                }
+
+                return cell;
+            }
+        }
+
+        /// <summary>
+        /// convert any given value to a Cell
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
+        protected Cell VariableValueToCell(object value, int rowIndex, int columnIndex)
+        {
 
             string cellRef = getColumnIndex(columnIndex);
+            string type = value.GetType().Name;
 
             Cell cell = new Cell();
-            cell.CellReference = cellRef;
-            cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndexArray);
-            //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
-            //cell.CellValue = new CellValue(variableValue.Value.ToString());
+            cell.StyleIndex = getExcelStyleIndex(type, styleIndexArray);
 
-            CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
-            object value = variableValue.Value;
+            CellValues cellValueType = getExcelType(type);
 
             if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
             {
                 cell.DataType = new EnumValue<CellValues>(CellValues.Number);
 
-                try
+                if (value.ToString() != "")
                 {
-                    if (value != "")
-                    {
-                        double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-                        cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                    }
+                    double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+                    cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message + "\n|"+message);
-                }
+
 
                 return cell;
             }
@@ -458,29 +259,24 @@ namespace BExIS.IO.Transform.Output
 
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
                     //CultureInfo provider = CultureInfo.InvariantCulture;
-                    try
+
+                    if (value.ToString() != "")
                     {
-                        if (value != "")
-                        {
-                            DateTime dt = Convert.ToDateTime(value.ToString());
-                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                        }
+                        DateTime dt = Convert.ToDateTime(value.ToString());
+                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
                     }
-                    catch(Exception ex)
-                    {
-                        throw new Exception(ex.Message + "|" + message);
-                    }
+
                 }
                 else
                 {
                     cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    if(value==null)
+                    if (value == null)
                         cell.CellValue = new CellValue("");
                     else
                         cell.CellValue = new CellValue(value.ToString());
                 }
             }
-           
+
             return cell;
         }
 
@@ -502,13 +298,13 @@ namespace BExIS.IO.Transform.Output
 
             //Sty
 
-            return  new Cell()
-                    {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
-                        DataType = CellValues.String,
-                        CellValue = new CellValue("")
-                    };
+            return new Cell()
+            {
+                CellReference = cellRef,
+                StyleIndex = (UInt32Value)5U,
+                DataType = CellValues.String,
+                CellValue = new CellValue("")
+            };
         }
 
         /// <summary>
@@ -531,37 +327,37 @@ namespace BExIS.IO.Transform.Output
             {
                 #region generate file with full datastructure
 
-                    string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
-                    //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
+                string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
+                //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-                    try
+                try
+                {
+
+                    SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
+                    SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
+                        dataStructureFile.DocumentType);
+
+                    foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
                     {
-
-                        SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
-                        SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
-                            dataStructureFile.DocumentType);
-
-                        foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
-                        {
-                            OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
-                        }
-
-                        dataFile.WorkbookPart.Workbook.Save();
-                        dataStructureFile.Dispose();
-                        dataFile.Dispose();
-            
+                        OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message.ToString());
-                    }
+
+                    dataFile.WorkbookPart.Workbook.Save();
+                    dataStructureFile.Dispose();
+                    dataFile.Dispose();
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message.ToString());
+                }
 
                 #endregion
             }
 
             // create a file with a subset of variables
             if (this.VisibleColumns != null)
-            { 
+            {
                 /// call templateprovider from rpm
                 ExcelTemplateProvider provider = new ExcelTemplateProvider();
 
@@ -571,6 +367,53 @@ namespace BExIS.IO.Transform.Output
 
                 provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
 
+            }
+
+            return dataPath;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ns"></param>
+        /// <param name="table"></param>
+        /// <param name="title"></param>
+        /// <param name="extention"></param>
+        /// <returns></returns>
+        public string CreateFile(string ns, long dataStructureId, string title, string extension)
+        {
+            string dataPath = GetFullStorePath(ns, title, extension);
+
+            //Template will not be filtered by columns
+            if (this.VisibleColumns == null)
+            {
+                #region generate file with full datastructure
+
+                string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extension);
+
+                try
+                {
+
+                    SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
+                    SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
+                        dataStructureFile.DocumentType);
+
+                    foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
+                    {
+                        OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
+                    }
+
+                    dataFile.WorkbookPart.Workbook.Save();
+                    dataStructureFile.Dispose();
+                    dataFile.Dispose();
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message.ToString());
+                }
+
+                #endregion
             }
 
             return dataPath;
@@ -775,7 +618,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="index"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        private string getColumnIndex(int index, int offset=1)
+        private string getColumnIndex(int index, int offset = 1)
         {
             int residual = 0;
             string column = "";
@@ -801,7 +644,37 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        ///
+        /// 1 0
+        /// 2 0.00
+        /// 3 #,##0
+        /// 4 #,##0.00
+        /// 5 $#,##0_);($#,##0)
+        /// 6 $#,##0_);[Red]($#,##0)
+        /// 7 $#,##0.00_);($#,##0.00)
+        /// 8 $#,##0.00_);[Red]($#,##0.00)
+        /// 9 0%
+        /// 10 0.00%
+        /// 11 0.00E+00
+        /// 12 # ?/?
+        /// 13 # ??/??
+        /// 14 m/d/yyyy
+        /// 15 d-mmm-yy
+        /// 16 d-mmm
+        /// 17 mmm-yy
+        /// 18 h:mm AM/PM
+        /// 19 h:mm:ss AM/PM
+        /// 20 h:mm
+        /// 21 h:mm:ss
+        /// 22 m/d/yyyy h:mm
+        /// 37 #,##0_);(#,##0)
+        /// 38 #,##0_);[Red](#,##0)
+        /// 39 #,##0.00_);(#,##0.00)
+        /// 40 #,##0.00_);[Red](#,##0.00)
+        /// 45 mm:ss
+        /// 46 [h]:mm:ss
+        /// 47 mm:ss.0
+        /// 48 ##0.0E+0
+        /// 49 @
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -827,22 +700,29 @@ namespace BExIS.IO.Transform.Output
             cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndexArray[2] = (uint)cellFormats.Count++;
+
+            //datetime
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)22U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
+            cellFormats.Append(cellFormat);
+            styleIndexArray[3] = (uint)cellFormats.Count++;
+
             //date
             cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
             cellFormat.Protection = new Protection();
             cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
-            styleIndexArray[3] = (uint)cellFormats.Count++;
+            styleIndexArray[4] = (uint)cellFormats.Count++;
+
+            //time
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)19U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
+            cellFormats.Append(cellFormat);
+            styleIndexArray[5] = (uint)cellFormats.Count++;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="styleIndex"></param>
-        /// <param name="systemType"></param>
-        /// <returns></returns>
         private uint getExcelStyleIndex(string systemType, uint[] styleIndex)
         {
             if (systemType == "Double" || systemType == "Decimal")
@@ -855,6 +735,52 @@ namespace BExIS.IO.Transform.Output
                 return styleIndex[3];
             if (systemType == "Boolean")
                 return styleIndex[2];
+
+            return styleIndex[2];
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="styleIndex"></param>
+        /// <param name="systemType"></param>
+        /// <returns></returns>
+        private uint getExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, uint[] styleIndex)
+        {
+
+            string systemType = dataType.SystemType;
+
+            if (systemType == "Double" || systemType == "Decimal")
+                return styleIndex[0];
+            if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64")
+                return styleIndex[1];
+            if (systemType == "Char" || systemType == "String")
+                return styleIndex[2];
+
+            if (systemType == "Boolean")
+                return styleIndex[2];
+
+            //for time and date only
+            if (dataType.Extra != null)
+            {
+                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
+
+                //date
+                if (systemType == "DateTime" && displayPattern.Name.ToLower().Contains("date"))
+                    return styleIndex[4];
+
+                //time
+                if (systemType == "DateTime" &&
+                (displayPattern.Name.ToLower().Equals("time") ||
+                displayPattern.Name.ToLower().Equals("time 12h")))
+                    return styleIndex[5];
+            }
+
+            if (systemType == "DateTime")
+                return styleIndex[3];
+
             return styleIndex[2];
         }
 
@@ -1071,9 +997,9 @@ namespace BExIS.IO.Transform.Output
         {
             List<long> list = new List<long>();
 
-            if(stringlist != null)
+            if (stringlist != null)
             {
-                foreach(string id in stringlist)
+                foreach (string id in stringlist)
                 {
                     list.Add(Convert.ToInt64(id));
                 }
@@ -1082,6 +1008,183 @@ namespace BExIS.IO.Transform.Output
             return list;
         }
 
+        #endregion
+
+        #region setup / close actions
+
+        /// <summary>
+        /// prepare existing excel file to append data
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="dataStructureId"></param>
+        protected override void Init(string filePath, long dataStructureId)
+        {
+
+            // loading datastructure
+            dataStructure = GetDataStructure(dataStructureId);
+
+            // open excel file
+            spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
+
+            // get workbookpart
+            workbookPart = spreadsheetDocument.WorkbookPart;
+
+            // get all the defined area 
+            List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
+
+            // select data area
+            this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+
+            // set starting row number
+            rowIndex = areaOfData.EndRow;
+
+            // Select variable area
+            this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+
+            // Get integers for reading data
+            startColumn = getColumnNumber(this.areaOfData.StartColumn);
+            endColumn = getColumnNumber(this.areaOfData.EndColumn);
+
+            numOfColumns = (endColumn - startColumn) + 1;
+            offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
+
+            // generate Style for cell types
+            generateStyle(spreadsheetDocument);
+
+            // get styleSheet
+            stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+            // Get shared strings
+            sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+
+            // select worksheetpart by selected defined name area like data in sheet
+            // sheet where data area is inside
+            worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
+
+            // Get VariableIndentifiers
+            VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
+
+            // get sheetData object for adding data to
+            sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+        }
+
+        /// <summary>
+        /// finish up and close the Excel file
+        /// </summary>
+        /// <param name="workbookPart"></param>
+        protected override void Close()
+        {
+            // adjust count of data rows
+            numOfDataRows = rowIndex;
+
+            // set data area
+            foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
+            {
+                if (name.Name == "Data")
+                {
+                    string[] tempArr = name.InnerText.Split('$');
+                    string temp = "";
+                    //$A$10:$C$15
+
+                    tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
+
+                    foreach (string t in tempArr)
+                    {
+                        if (t == tempArr.First())
+                        {
+                            temp = temp + t;
+                        }
+                        else
+                        {
+                            temp = temp + "$" + t;
+                        }
+                    }
+
+                    name.Text = temp;
+                }
+            }
+
+
+            spreadsheetDocument.WorkbookPart.Workbook.Save();
+            spreadsheetDocument.Close();
+        }
+
+        #endregion
+
+        #region addRow
+
+        /// <summary>
+        /// add a row to the excel sheet
+        /// </summary>
+        /// <param name="tuple"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        protected override bool AddRow(AbstractTuple tuple, long rowIndex)
+        {
+
+            // convert datatuple to row
+            Row row = DatatupleToRow(tuple, (int)rowIndex);
+
+            // skip rows with only empty cells
+            var hasNonEmptyCell = row.Elements<Cell>()
+                                       .Any<Cell>(cell => !String.IsNullOrEmpty(cell.InnerText));
+            if (!hasNonEmptyCell)
+            {
+                return false;
+            }
+
+            // add row
+            sheetData.Append(row);
+
+            return true;
+        }
+
+        /// <summary>
+        /// add a row to the excel sheet
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        protected override bool AddRow(DataRow row, long rowIndex)
+        {
+            // column count
+            int colCount = row.Table.Columns.Count;
+
+            // skip rows with only empty cells
+            bool empty = true;
+            for (int i = 0; i < colCount; i++)
+            {
+                if (!String.IsNullOrEmpty(row[i].ToString()))
+                {
+                    empty = false;
+                    break;
+                }
+            }
+            if (empty)
+            {
+                return false;
+            }
+
+            // create excel row
+            Row excelRow = DatarowToRow(row, (int)rowIndex);
+
+            // add row
+            sheetData.Append(excelRow);
+
+            return true;
+        }
+
+        #endregion
+
+        #region addHeader
+        protected override bool AddHeader(StructuredDataStructure header)
+        {
+            return false;
+        }
+        protected override bool AddHeader(DataColumnCollection header)
+        {
+            return false;
+        }
         #endregion
 
     }

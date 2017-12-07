@@ -3,8 +3,9 @@ $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
-	//console.log("on document ready");
-
+    //console.log("on document ready");
+    //Bootstrat tooltip
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 function resetAllTelerikIconTitles()
@@ -296,6 +297,11 @@ $(".bx-list-multi >li").click(function ()
 $.fn.extend({
     preloader: function(fontsize, text, height) {
 
+        var h = $(this).height();
+        if (height != null && height > 0) {
+            h = height;
+        }
+
         //console.log(text);
         //console.log(height);
         //console.log(fontsize);
@@ -334,7 +340,7 @@ $.fn.extend({
         $(div).addClass("preloader");
 
         $(div).css("font-size", fontsize);
-        $(div).css("height", height);
+        $(div).css("height", h);
         $(div).css("padding", 2);
 
         console.log(div);

@@ -1,37 +1,101 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.Dlm.Entities.Administration;
+﻿using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
-using Vaiona.Utils.Cfg;
+using BExIS.Modules.Rpm.UI.Classes;
+using BExIS.Modules.Rpm.UI.Helpers.SeedData;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using BExIS.Web.Shell.Areas.DCM.Controllers;
-using BExIS.Xml.Helpers.Mapping;
-using BExISMigration;
-using Remotion.Linq.Parsing;
+using System.Linq;
+using Vaiona.Utils.Cfg;
 
-namespace BExIS.Web.Shell.Areas.RPM.Helpers
+namespace BExIS.Modules.Rpm.UI.Helpers
 {
-    public class RPMSeedDataGenerator
+    public class RPMSeedDataGenerator: IDisposable
     {
-
-        public static void GenerateSeedData()
+        public void GenerateSeedData()
         {
+
+            FeatureManager featureManager = null;
+            try
+            {
+                featureManager = new FeatureManager();
+                List<Feature> features = featureManager.FeatureRepository.Get().ToList();
+
+                OperationManager operationManager = new OperationManager();
+
+                Feature dataPlanning = features.FirstOrDefault(f => f.Name.Equals("Data Planning"));
+                if (dataPlanning == null)
+                    dataPlanning = featureManager.Create("Data Planning", "Data Planning Management");
+
+                Feature datastructureFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Datastructure Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (datastructureFeature == null)
+                    datastructureFeature = featureManager.Create("Datastructure Management", "Datastructure Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "DataStructureSearch", "*"))
+                    operationManager.Create("RPM", "DataStructureSearch", "*", datastructureFeature);
+
+                if (!operationManager.Exists("RPM", "DataStructureEdit", "*"))
+                    operationManager.Create("RPM", "DataStructureEdit", "*", datastructureFeature);
+
+                if (!operationManager.Exists("RPM", "Structures", "*"))
+                    operationManager.Create("RPM", "Structures", "*", datastructureFeature);
+
+                if (!operationManager.Exists("RPM", "DataStructureIO", "*"))
+                    operationManager.Create("RPM", "DataStructureIO", "*", datastructureFeature);
+
+                Feature atributeFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Variable Template Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (atributeFeature == null)
+                    atributeFeature = featureManager.Create("Variable Template Management", "Variable Template Management", dataPlanning); ;
+
+                if (!operationManager.Exists("RPM", "DataAttribute", "*"))
+                    operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
+
+                Feature unitFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Unit Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (unitFeature == null)
+                    unitFeature = featureManager.Create("Unit Management", "Unit Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "Unit", "*"))
+                    operationManager.Create("RPM", "Unit", "*", unitFeature);
+
+                Feature dataTypeFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("Data Type Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (dataTypeFeature == null)
+                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "Home", "*"))
+                    operationManager.Create("RPM", "Home", "*", dataTypeFeature);
+
+                if (!operationManager.Exists("RPM", "Help", "*"))
+                    operationManager.Create("RPM", "Help", "*");
+            }
+            finally
+            {
+                featureManager.Dispose();
+            }
+
             //create seed data from csv files
             MappingReader mappingReader = new MappingReader();
             AttributeCreator attributeCreator = new AttributeCreator();
-            string filePath = AppConfiguration.GetModuleWorkspacePath("BMM");
+            string filePath = AppConfiguration.GetModuleWorkspacePath("RPM");
 
             // read data types from csv file
             DataTable mappedDataTypes = mappingReader.readDataTypes(filePath);
@@ -63,17 +127,44 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             //createABCD();
 
 
-            ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
+            //ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
             //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
+
+            DataStructureManager dsm = null;
+            try
+            {
+                dsm = new DataStructureManager();
+                foreach (StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
+                {
+                    DataStructureIO.convertOrder(sds);
+                }
+            }
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         private static void createResearchPlan()
         {
             //ResearchPlan
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            ResearchPlan researchPlan = rpm.Repo.Get(r => r.Title.Equals("Research plan")).FirstOrDefault();
-            if (researchPlan == null) rpm.Create("Research plan", "");
+            ResearchPlanManager rpm = null;
+            try
+            {
+                rpm = new ResearchPlanManager();
+                ResearchPlan researchPlan = rpm.Repo.Get(r => r.Title.Equals("Research plan")).FirstOrDefault();
+                if (researchPlan == null) rpm.Create("Research plan", "");
+            }
+            finally
+            {
+                rpm.Dispose();
+            }
 
+        }
+
+        public void Dispose()
+        {
+            // release all the resources
         }
 
         #region old seed data
@@ -209,864 +300,865 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         //}
         #endregion
 
-        #region METADATA
-
-        private static void ImportSchema(string name, string filename, string root, string entity)
-        {
-            long metadataStructureid = 0;
-            string schemaName = name;
-
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", name,
-                filename);
-
-            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
-
-            //load
-            try
-            {
-                xmlSchemaManager.Load(filepath, "application");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            //generate
-            try
-            {
-                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
-            }
-            catch (Exception ex)
-            {
-                xmlSchemaManager.Delete(schemaName);
-            }
+        //#region METADATA
+
+        //private static void ImportSchema(string name, string filename, string root, string entity)
+        //{
+        //    long metadataStructureid = 0;
+        //    string schemaName = name;
+
+        //    string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", name,
+        //        filename);
+
+        //    XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+
+        //    //load
+        //    try
+        //    {
+        //        xmlSchemaManager.Load(filepath, "application");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
 
-            try
-            {
-                //set parameters
-                string titleXPath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                string descriptionXpath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
-                string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
-                string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
+        //    //generate
+        //    try
+        //    {
+        //        metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        xmlSchemaManager.Delete(schemaName);
+        //    }
 
-                StoreParametersToMetadataStruture(
-                    metadataStructureid,
-                    titleXPath,
-                    descriptionXpath,
-                    entity,
-                    mappingFileImport,
-                    mappingFileExport);
-            }
-            catch(Exception ex)
-            {
-
-                throw ex;
-            }
-            
+        //    try
+        //    {
+        //        //set parameters
+        //        string titleXPath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+        //        string descriptionXpath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+        //        string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
+        //        string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 
-        }
+        //        StoreParametersToMetadataStruture(
+        //            metadataStructureid,
+        //            titleXPath,
+        //            descriptionXpath,
+        //            entity,
+        //            mappingFileImport,
+        //            mappingFileExport);
+        //    }
+        //    catch(Exception ex)
+        //    {
 
-
-        private static void createEmlDatasetAdv()
-        {
+        //        throw ex;
+        //    }
 
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataAttributeManager mdaManager = new MetadataAttributeManager();
 
-            DataTypeManager dataTypeManager = new DataTypeManager();
-            UnitManager unitManager = new UnitManager();
-
-            MetadataStructure eml = mdsManager.Repo.Get(p => p.Name == "eml-dataset basic").FirstOrDefault();
-
-            if (eml == null) eml = mdsManager.Create("eml-dataset basic", "The eml-dataset module contains general information that describes dataset resources. It provides an overview about the dataset attributes such as title, abstract, keywords, contacts, and distribution of the data themselves.", "", "", null);
-
-            XmlDocument xmlDoc = new XmlDocument();
-
-            if (eml.Extra != null)
-            {
-                xmlDoc = (XmlDocument)eml.Extra;
-            }
-
-            // add title Node
-            xmlDoc = AddReferenceToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
-            // add description
-            xmlDoc = AddReferenceToMetadatStructure(eml, "description", "Metadata/Description/DescriptionEML/AdditionalInformation/Information","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
-
-            // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(eml, "eml", "mapping_eml.xml", TransmissionType.mappingFileExport.ToString(), "extra/convertReferences/convertRef", xmlDoc);
-
-            eml.Extra = xmlDoc;
-            mdsManager.Update(eml);
-
-            #region create packages
-
-            //package Description for title
-            MetadataPackage DescEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "DescriptionEML").FirstOrDefault();
-            if (DescEml == null) DescEml = mdpManager.Create("DescriptionEML", "DescriptionEML", true);
-
-            //package PersonEML ( Creator / Contact)
-            MetadataPackage personEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "PersonEML").FirstOrDefault();
-            if (personEml == null) personEml = mdpManager.Create("PersonEML", "PersonEML", true);
+        //}
 
-            //package PersonEML ( Creator / Contact)
-            MetadataPackage party = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Party").FirstOrDefault();
-            if (party == null) party = mdpManager.Create("Party", "Person or Organization", true);
 
-            //package PersonEML ( Creator / Contact)
-            MetadataPackage projectEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "ProjectEML").FirstOrDefault();
-            if (projectEml == null) projectEml = mdpManager.Create("ProjectEML", "ProjectEML", true);
+        //private static void createEmlDatasetAdv()
+        //{
 
-            //package PersonEML ( Creator / Contact)
-            MetadataPackage coverage = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Coverage").FirstOrDefault();
-            if (coverage == null) coverage = mdpManager.Create("Coverage", "Coverage", true);
+        //    MetadataStructureManager mdsManager = new MetadataStructureManager();
+        //    MetadataPackageManager mdpManager = new MetadataPackageManager();
+        //    MetadataAttributeManager mdaManager = new MetadataAttributeManager();
 
-            #endregion
+        //    DataTypeManager dataTypeManager = new DataTypeManager();
+        //    UnitManager unitManager = new UnitManager();
 
-            #region add packages
+        //    MetadataStructure eml = mdsManager.Repo.Get(p => p.Name == "eml-dataset basic").FirstOrDefault();
+
+        //    if (eml == null) eml = mdsManager.Create("eml-dataset basic", "The eml-dataset module contains general information that describes dataset resources. It provides an overview about the dataset attributes such as title, abstract, keywords, contacts, and distribution of the data themselves.", "", "", null);
 
+        //    XmlDocument xmlDoc = new XmlDocument();
+
+        //    if (eml.Extra != null)
+        //    {
+        //        xmlDoc = (XmlDocument)eml.Extra;
+        //    }
+
+        //    // add title Node
+        //    xmlDoc = AddReferenceToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
+        //    // add description
+        //    xmlDoc = AddReferenceToMetadatStructure(eml, "description", "Metadata/Description/DescriptionEML/AdditionalInformation/Information","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
+
+        //    // add ConvertReference Mapping file node
+        //    xmlDoc = AddReferenceToMetadatStructure(eml, "eml", "mapping_eml.xml", TransmissionType.mappingFileExport.ToString(), "extra/convertReferences/convertRef", xmlDoc);
+
+        //    eml.Extra = xmlDoc;
+        //    mdsManager.Update(eml);
+
+        //    #region create packages
+
+        //    //package Description for title
+        //    MetadataPackage DescEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "DescriptionEML").FirstOrDefault();
+        //    if (DescEml == null) DescEml = mdpManager.Create("DescriptionEML", "DescriptionEML", true);
 
-            // add package to structure
-            if (eml.MetadataPackageUsages != null && eml.MetadataPackageUsages.Count > 0)
-            {
-                if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == DescEml).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(eml, DescEml, "Description", "A text description of the maintenance of this data resource.", 1, 1);
+        //    //package PersonEML ( Creator / Contact)
+        //    MetadataPackage personEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "PersonEML").FirstOrDefault();
+        //    if (personEml == null) personEml = mdpManager.Create("PersonEML", "PersonEML", true);
 
-                if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == personEml).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(eml, personEml, "Creator", "The 'creator' element provides the full name of the person, organization, or position who created the resource.", 1, 5);
-
-                if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == party).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(eml, party, "Associated Party ", "The responsible party is used to describe a person, organization, or position within an organization.", 1, 10);
+        //    //package PersonEML ( Creator / Contact)
+        //    MetadataPackage party = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Party").FirstOrDefault();
+        //    if (party == null) party = mdpManager.Create("Party", "Person or Organization", true);
 
-                if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == personEml).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(eml, personEml, "Contact", "The contact contains contact information for this dataset. This is the person or institution to contact with questions about the use, interpretation of a data set.", 1, 5);
+        //    //package PersonEML ( Creator / Contact)
+        //    MetadataPackage projectEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "ProjectEML").FirstOrDefault();
+        //    if (projectEml == null) projectEml = mdpManager.Create("ProjectEML", "ProjectEML", true);
 
-                if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == projectEml).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(eml, projectEml, "Project", "The project contains information on the project in which this dataset was collected.", 1, 1);
+        //    //package PersonEML ( Creator / Contact)
+        //    MetadataPackage coverage = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Coverage").FirstOrDefault();
+        //    if (coverage == null) coverage = mdpManager.Create("Coverage", "Coverage", true);
 
-                //if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == coverage).Count() <= 0)
-                //    mdsManager.AddMetadataPackageUsage(eml, coverage, "Coverage", 1, 1);
-            }
-            else
-            {
-                mdsManager.AddMetadataPackageUsage(eml, DescEml, "Description", "A text description of the maintenance of this data resource.", 1, 1);
-                mdsManager.AddMetadataPackageUsage(eml, personEml, "Creator", "The 'creator' element provides the full name of the person, organization, or position who created the resource.", 1, 5);
-                mdsManager.AddMetadataPackageUsage(eml, party, "Associated Parties ", "The responsible party is used to describe a person, organization, or position within an organization.", 1, 10);
-                mdsManager.AddMetadataPackageUsage(eml, personEml, "Contact", "The contact contains contact information for this dataset. This is the person or institution to contact with questions about the use, interpretation of a data set.", 1, 5);
-                mdsManager.AddMetadataPackageUsage(eml, projectEml, "Project", "The project contains information on the project in which this dataset was collected.", 1, 1);
-                //mdsManager.AddMetadataPackageUsage(eml, coverage, "Coverage", 1, 1);
-            }
+        //    #endregion
 
-            #endregion
+        //    #region add packages
 
-            #region Description EML
 
-            #region create attr
+        //    // add package to structure
+        //    if (eml.MetadataPackageUsages != null && eml.MetadataPackageUsages.Count > 0)
+        //    {
+        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == DescEml).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(eml, DescEml, "Description", "A text description of the maintenance of this data resource.", 1, 1);
 
-            MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
-            if (Name == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == personEml).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(eml, personEml, "Creator", "The 'creator' element provides the full name of the person, organization, or position who created the resource.", 1, 5);
+
+        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == party).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(eml, party, "Associated Party ", "The responsible party is used to describe a person, organization, or position within an organization.", 1, 10);
 
-                Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == personEml).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(eml, personEml, "Contact", "The contact contains contact information for this dataset. This is the person or institution to contact with questions about the use, interpretation of a data set.", 1, 5);
 
-            MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
-            if (Title == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == projectEml).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(eml, projectEml, "Project", "The project contains information on the project in which this dataset was collected.", 1, 1);
 
-                Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        //if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == coverage).Count() <= 0)
+        //        //    mdsManager.AddMetadataPackageUsage(eml, coverage, "Coverage", 1, 1);
+        //    }
+        //    else
+        //    {
+        //        mdsManager.AddMetadataPackageUsage(eml, DescEml, "Description", "A text description of the maintenance of this data resource.", 1, 1);
+        //        mdsManager.AddMetadataPackageUsage(eml, personEml, "Creator", "The 'creator' element provides the full name of the person, organization, or position who created the resource.", 1, 5);
+        //        mdsManager.AddMetadataPackageUsage(eml, party, "Associated Parties ", "The responsible party is used to describe a person, organization, or position within an organization.", 1, 10);
+        //        mdsManager.AddMetadataPackageUsage(eml, personEml, "Contact", "The contact contains contact information for this dataset. This is the person or institution to contact with questions about the use, interpretation of a data set.", 1, 5);
+        //        mdsManager.AddMetadataPackageUsage(eml, projectEml, "Project", "The project contains information on the project in which this dataset was collected.", 1, 1);
+        //        //mdsManager.AddMetadataPackageUsage(eml, coverage, "Coverage", 1, 1);
+        //    }
 
-            MetadataAttribute Date = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Date")).FirstOrDefault();
-            if (Date == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("DateTime")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #endregion
 
-                Date = mdaManager.Create("Date", "Date", "Date", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    #region Description EML
 
-            MetadataAttribute Info = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Information")).FirstOrDefault();
-            if (Info == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #region create attr
 
-                Info = mdaManager.Create("Information", "Information", "Information", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
+        //    if (Name == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
+        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            #endregion
+        //    MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
+        //    if (Title == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            #region add attr
+        //        Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            if (DescEml.MetadataAttributeUsages != null & DescEml.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                {
-                    mdpManager.AddMetadataAtributeUsage(DescEml, Name, "Short Name", "The 'shortName' provides a concise name that describes the resource that is being documented.", 0, 1);
-                }
+        //    MetadataAttribute Date = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Date")).FirstOrDefault();
+        //    if (Date == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("DateTime")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(DescEml, Title, "Title", "The 'title' provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources.", 1, 1);
+        //        Date = mdaManager.Create("Date", "Date", "Date", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Date).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(DescEml, Date, "Publish Date", "The 'Publish Date' represents the date that the resource was published.", 0, 1);
+        //    MetadataAttribute Info = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Information")).FirstOrDefault();
+        //    if (Info == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Info).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(DescEml, Info, "Additional Information", "This field provides any information that is not characterized by the other resource metadata fields.", 0, 1);
+        //        Info = mdaManager.Create("Information", "Information", "Information", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(DescEml, Name, "Short Name", "The 'shortName' provides a concise name that describes the resource that is being documented.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(DescEml, Title, "Title", "The 'title' provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(DescEml, Date, "Publish Date", "The 'Publish Date' represents the date that the resource was published.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(DescEml, Info, "Additional Information", "This field provides any information that is not characterized by the other resource metadata fields.", 0, 1);
-            }
+        //    #endregion
 
+        //    #region add attr
 
-            #endregion
+        //    if (DescEml.MetadataAttributeUsages != null & DescEml.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //        {
+        //            mdpManager.AddMetadataAtributeUsage(DescEml, Name, "Short Name", "The 'shortName' provides a concise name that describes the resource that is being documented.", 0, 1);
+        //        }
 
-            #endregion
+        //        if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(DescEml, Title, "Title", "The 'title' provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources.", 1, 1);
 
-            #region Peronal EML
+        //        if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Date).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(DescEml, Date, "Publish Date", "The 'Publish Date' represents the date that the resource was published.", 0, 1);
 
-            #region create attr
+        //        if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Info).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(DescEml, Info, "Additional Information", "This field provides any information that is not characterized by the other resource metadata fields.", 0, 1);
 
-            Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
-            if (Name == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-                    MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(DescEml, Name, "Short Name", "The 'shortName' provides a concise name that describes the resource that is being documented.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(DescEml, Title, "Title", "The 'title' provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(DescEml, Date, "Publish Date", "The 'Publish Date' represents the date that the resource was published.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(DescEml, Info, "Additional Information", "This field provides any information that is not characterized by the other resource metadata fields.", 0, 1);
+        //    }
 
-            #endregion
 
-            #region add attr
+        //    #endregion
 
-            if (Name == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #endregion
 
-                Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    #region Peronal EML
 
-            if (personEml.MetadataAttributeUsages != null & personEml.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(personEml, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
+        //    #region create attr
 
-                if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(personEml, Name, "Sur name", "The Sur name is used for the last name of the individual associated with the resource.", 1, 1);
+        //    Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
+        //    if (Name == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(personEml, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
+        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
+        //            MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(personEml, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(personEml, Name, "Sur name", "The Sur name is used for the last name of the individual associated with the resource.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(personEml, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
-            }
+        //    #endregion
 
-            #endregion
+        //    #region add attr
 
-            #endregion
+        //    if (Name == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            #region Peronal with role EML
+        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            #region create attr
+        //    if (personEml.MetadataAttributeUsages != null & personEml.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(personEml, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
 
-            Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
-            if (Name == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(personEml, Name, "Sur name", "The Sur name is used for the last name of the individual associated with the resource.", 1, 1);
 
-                Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(personEml, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
 
-            MetadataAttribute RoleType = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RoleType")).FirstOrDefault();
-            if (RoleType == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(personEml, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(personEml, Name, "Sur name", "The Sur name is used for the last name of the individual associated with the resource.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(personEml, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
+        //    }
 
-                RoleType = mdaManager.Create("Role", "RoleType", "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    #endregion
 
+        //    #endregion
 
-            #endregion
+        //    #region Peronal with role EML
 
-            #region add attr
+        //    #region create attr
 
-            if (party.MetadataAttributeUsages != null & party.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(party, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
+        //    Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
+        //    if (Name == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(party, Name, "Surname", "The Surname is used for the last name of the individual associated with the resource.", 1, 1);
+        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(party, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
+        //    MetadataAttribute RoleType = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RoleType")).FirstOrDefault();
+        //    if (RoleType == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(party, RoleType, "Role", "Use to describe the role the party played with respect to the resource.", 1, 1);
+        //        RoleType = mdaManager.Create("Role", "RoleType", "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(party, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(party, Name, "Sur name", "The Sur name is used for the last name of the individual associated with the resource.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(party, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(party, RoleType, "Role", "Use to describe the role the party played with respect to the resource.", 1, 1);
-            }
 
-            #endregion
+        //    #endregion
 
-            #endregion
+        //    #region add attr
 
-            #region Project Eml
+        //    if (party.MetadataAttributeUsages != null & party.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(party, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
 
-            #region create attr
+        //        if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(party, Name, "Surname", "The Surname is used for the last name of the individual associated with the resource.", 1, 1);
 
-            MetadataAttribute DescriptionAttr = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Description")).FirstOrDefault();
-            if (DescriptionAttr == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(party, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
 
-                DescriptionAttr = mdaManager.Create("Description", "Description", "Description", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (party.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(party, RoleType, "Role", "Use to describe the role the party played with respect to the resource.", 1, 1);
 
-            #endregion
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(party, Name, "Given name", "The given name is used for the first name of the individual associated with the resource.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(party, Name, "Sur name", "The Sur name is used for the last name of the individual associated with the resource.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(party, Name, "Organization", "This field is intended to describe which institution or overall organization is associated with the resource being described.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(party, RoleType, "Role", "Use to describe the role the party played with respect to the resource.", 1, 1);
+        //    }
 
-            #region add attr
-            if (projectEml.MetadataAttributeUsages != null & projectEml.MetadataAttributeUsages.Count > 0)
-            {
-                if (Title == null)
-                {
-                    DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                    Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #endregion
 
-                    Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
-                            MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-                }
+        //    #endregion
 
-                RoleType = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RoleType")).FirstOrDefault();
-                if (RoleType == null)
-                {
-                    DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                    Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #region Project Eml
 
-                    RoleType = mdaManager.Create("Role", "RoleType", "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-                }
+        //    #region create attr
 
-                // add metadataAttributes to packages
-                if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(projectEml, Title, "Title", "A descriptive title for the research project.", 0, 1);
+        //    MetadataAttribute DescriptionAttr = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Description")).FirstOrDefault();
+        //    if (DescriptionAttr == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel given name", "The given name is used for the first name of the individual associated with the resource.", 0, 1);
+        //        DescriptionAttr = mdaManager.Create("Description", "Description", "Description", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel surname", "The Sur name is used for the last name of the individual associated with the resource.", 0, 1);
+        //    #endregion
 
-                if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RoleType).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(projectEml, RoleType, "Role", "", 0, 1);
+        //    #region add attr
+        //    if (projectEml.MetadataAttributeUsages != null & projectEml.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        if (Title == null)
+        //        {
+        //            DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == DescriptionAttr).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", "Contains general textual descriptions of research design.", 0, 1);
+        //            Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
+        //                    MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //        }
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(projectEml, Title, "Title", "A descriptive title for the research project.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel given name", "The given name is used for the first name of the individual associated with the resource.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel surname", "The Sur name is used for the last name of the individual associated with the resource.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(projectEml, RoleType, "Role", "", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", "Contains general textual descriptions of research design.", 0, 1);
-            }
+        //        RoleType = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RoleType")).FirstOrDefault();
+        //        if (RoleType == null)
+        //        {
+        //            DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            #endregion
+        //            RoleType = mdaManager.Create("Role", "RoleType", "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //        }
 
-            #endregion
+        //        // add metadataAttributes to packages
+        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(projectEml, Title, "Title", "A descriptive title for the research project.", 0, 1);
 
+        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel given name", "The given name is used for the first name of the individual associated with the resource.", 0, 1);
 
-        }
+        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel surname", "The Sur name is used for the last name of the individual associated with the resource.", 0, 1);
 
-        private static void createABCD()
-        {
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataAttributeManager mdaManager = new MetadataAttributeManager();
+        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RoleType).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(projectEml, RoleType, "Role", "", 0, 1);
 
-            DataTypeManager dataTypeManager = new DataTypeManager();
-            UnitManager unitManager = new UnitManager();
+        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == DescriptionAttr).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", "Contains general textual descriptions of research design.", 0, 1);
 
-            #region ABCD
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(projectEml, Title, "Title", "A descriptive title for the research project.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel given name", "The given name is used for the first name of the individual associated with the resource.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel surname", "The Sur name is used for the last name of the individual associated with the resource.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(projectEml, RoleType, "Role", "", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", "Contains general textual descriptions of research design.", 0, 1);
+        //    }
 
-            MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD Basic").FirstOrDefault();
-            if (abcd == null) abcd = mdsManager.Create("ABCD Basic", "Access to Biological Collections Data - Schema is a common data specification for biological collection units, including living and preserved specimens, along with field observations that did not produce voucher specimens.", "", "", null);
+        //    #endregion
 
-            XmlDocument xmlDoc = new XmlDocument();
+        //    #endregion
 
-            if (abcd.Extra != null)
-            {
-                xmlDoc = (XmlDocument)abcd.Extra;
-            }
 
-            // add title Node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
-            // add Description
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "description", "Metadata/Description/Description/Details/Details","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
+        //}
 
+        //private static void createABCD()
+        //{
+        //    MetadataStructureManager mdsManager = new MetadataStructureManager();
+        //    MetadataPackageManager mdpManager = new MetadataPackageManager();
+        //    MetadataAttributeManager mdaManager = new MetadataAttributeManager();
 
-            // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "abcd", "mapping_abcd.xml", TransmissionType.mappingFileExport.ToString(), "extra/convertReferences/convertRef", xmlDoc);
+        //    DataTypeManager dataTypeManager = new DataTypeManager();
+        //    UnitManager unitManager = new UnitManager();
 
-            abcd.Extra = xmlDoc;
-            mdsManager.Update(abcd);
+        //    #region ABCD
 
-            //package Person ( Tecnical contact /ContentContact)
-            MetadataPackage person = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Person").FirstOrDefault();
-            if (person == null) person = mdpManager.Create("Person", "Person", true);
+        //    MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD Basic").FirstOrDefault();
+        //    if (abcd == null) abcd = mdsManager.Create("ABCD Basic", "Access to Biological Collections Data - Schema is a common data specification for biological collection units, including living and preserved specimens, along with field observations that did not produce voucher specimens.", "", "", null);
 
-            //package Description
-            MetadataPackage Description = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Description").FirstOrDefault();
-            if (Description == null) Description = mdpManager.Create("Description", "Description about a dataset", true);
+        //    XmlDocument xmlDoc = new XmlDocument();
 
-            //package Owner
-            MetadataPackage Owner = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Owner").FirstOrDefault();
-            if (Owner == null) Owner = mdpManager.Create("Owner", "Owner/s of the dataset", true);
+        //    if (abcd.Extra != null)
+        //    {
+        //        xmlDoc = (XmlDocument)abcd.Extra;
+        //    }
 
-            // Package Scope
-            MetadataPackage Scope = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Scope").FirstOrDefault();
-            if (Scope == null) Scope = mdpManager.Create("Scope", "Scope of the dataset", true);
+        //    // add title Node
+        //    xmlDoc = AddReferenceToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
+        //    // add Description
+        //    xmlDoc = AddReferenceToMetadatStructure(abcd, "description", "Metadata/Description/Description/Details/Details","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
 
 
-            // add package to structure
-            if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
-            {
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == person).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "A container element for several administrative contacts for the dataset.", 0, 3);
+        //    // add ConvertReference Mapping file node
+        //    xmlDoc = AddReferenceToMetadatStructure(abcd, "abcd", "mapping_abcd.xml", TransmissionType.mappingFileExport.ToString(), "extra/convertReferences/convertRef", xmlDoc);
 
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Description).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "Description of the data source queried.", 0, 1);
+        //    abcd.Extra = xmlDoc;
+        //    mdsManager.Update(abcd);
 
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Owner).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "A container element for several owners of the data source.", 1, 5);
+        //    //package Person ( Tecnical contact /ContentContact)
+        //    MetadataPackage person = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Person").FirstOrDefault();
+        //    if (person == null) person = mdpManager.Create("Person", "Person", true);
 
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Scope).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "Keyword list describing the scope of the data source.", 0, 1);
-            }
-            else
-            {
+        //    //package Description
+        //    MetadataPackage Description = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Description").FirstOrDefault();
+        //    if (Description == null) Description = mdpManager.Create("Description", "Description about a dataset", true);
 
-                mdsManager.AddMetadataPackageUsage(abcd, person, "Technical Contact", "A technical contact normally representing the agent acting as the publisher of the dataset in the network.", 1, 1);
-                mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "A container element for several administrative contacts for the dataset.", 1, 10);
-                mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "Description of the data source queried.", 1, 1);
-                mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "A container element for several owners of the data source.", 1, 10);
-                mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "Keyword list describing the scope of the data source.", 0, 1);
+        //    //package Owner
+        //    MetadataPackage Owner = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Owner").FirstOrDefault();
+        //    if (Owner == null) Owner = mdpManager.Create("Owner", "Owner/s of the dataset", true);
 
-            }
+        //    // Package Scope
+        //    MetadataPackage Scope = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Scope").FirstOrDefault();
+        //    if (Scope == null) Scope = mdpManager.Create("Scope", "Scope of the dataset", true);
 
 
-            #region person
+        //    // add package to structure
+        //    if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
+        //    {
+        //        if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == person).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "A container element for several administrative contacts for the dataset.", 0, 3);
 
-            MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
-            if (Name == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Description).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "Description of the data source queried.", 0, 1);
 
-                Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Owner).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "A container element for several owners of the data source.", 1, 5);
 
-            MetadataAttribute Email = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Email")).FirstOrDefault();
-            if (Email == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Scope).Count() <= 0)
+        //            mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "Keyword list describing the scope of the data source.", 0, 1);
+        //    }
+        //    else
+        //    {
 
-                Email = mdaManager.Create("Email", "Email", "Email address", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        mdsManager.AddMetadataPackageUsage(abcd, person, "Technical Contact", "A technical contact normally representing the agent acting as the publisher of the dataset in the network.", 1, 1);
+        //        mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "A container element for several administrative contacts for the dataset.", 1, 10);
+        //        mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "Description of the data source queried.", 1, 1);
+        //        mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "A container element for several owners of the data source.", 1, 10);
+        //        mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "Keyword list describing the scope of the data source.", 0, 1);
 
-            MetadataAttribute Address = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Address")).FirstOrDefault();
-            if (Address == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    }
 
-                Address = mdaManager.Create("Address", "Address", "Address", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
 
-            MetadataAttribute Phone = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Phone")).FirstOrDefault();
-            if (Phone == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #region person
 
-                Phone = mdaManager.Create("Phone", "Phone", "Phone", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
+        //    if (Name == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
+        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            if (person.MetadataAttributeUsages != null & person.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Name, "Name", "Administrative contact person, Technical contact person, person team, or role for the dataset.", 1, 1);
+        //    MetadataAttribute Email = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Email")).FirstOrDefault();
+        //    if (Email == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Email, "Email", "Email address for the administrative, or technical contact for the dataset.", 0, 1);
+        //        Email = mdaManager.Create("Email", "Email", "Email address", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Address, "Address", "An address for the administrative, or technical contact for the dataset.", 0, 1);
+        //    MetadataAttribute Address = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Address")).FirstOrDefault();
+        //    if (Address == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Phone, "Phone", "Voice phone number for the administrative, or technical contact for the dataset.", 0, 1);
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(person, Name, "Name", "Administrative contact person, Technical contact person, person team, or role for the dataset.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(person, Email, "Email", "Email address for the administrative, or technical contact for the dataset.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(person, Address, "Address", "An address for the administrative, or technical contact for the dataset.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(person, Phone, "Phone", "Voice phone number for the administrative, or technical contact for the dataset.", 0, 1);
-            }
+        //        Address = mdaManager.Create("Address", "Address", "Address", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            #endregion
+        //    MetadataAttribute Phone = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Phone")).FirstOrDefault();
+        //    if (Phone == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            #region metadata
+        //        Phone = mdaManager.Create("Phone", "Phone", "Phone", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
-            if (Title == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    if (person.MetadataAttributeUsages != null & person.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(person, Name, "Name", "Administrative contact person, Technical contact person, person team, or role for the dataset.", 1, 1);
 
-            MetadataAttribute RevisionData = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RevisionData")).FirstOrDefault();
-            if (RevisionData == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("DateTime")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(person, Email, "Email", "Email address for the administrative, or technical contact for the dataset.", 0, 1);
 
-                RevisionData = mdaManager.Create("RevisionData", "RevisionData", "RevisionData", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(person, Address, "Address", "An address for the administrative, or technical contact for the dataset.", 0, 1);
 
-            MetadataAttribute Details = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Details")).FirstOrDefault();
-            if (Details == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(person, Phone, "Phone", "Voice phone number for the administrative, or technical contact for the dataset.", 0, 1);
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(person, Name, "Name", "Administrative contact person, Technical contact person, person team, or role for the dataset.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(person, Email, "Email", "Email address for the administrative, or technical contact for the dataset.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(person, Address, "Address", "An address for the administrative, or technical contact for the dataset.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(person, Phone, "Phone", "Voice phone number for the administrative, or technical contact for the dataset.", 0, 1);
+        //    }
 
-                Details = mdaManager.Create("Details", "Details", "Details", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    #endregion
 
-            MetadataAttribute Coverage = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Coverage")).FirstOrDefault();
-            if (Coverage == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //    #region metadata
 
-                Coverage = mdaManager.Create("Coverage", "Coverage", "Coverage", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
+        //    if (Title == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            MetadataAttribute URI = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("URI")).FirstOrDefault();
-            if (URI == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                URI = mdaManager.Create("URI", "URI", "URI", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    MetadataAttribute RevisionData = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RevisionData")).FirstOrDefault();
+        //    if (RevisionData == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("DateTime")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            if (Description.MetadataAttributeUsages != null & Description.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", "A short concise title for the dataset.", 1, 1);
+        //        RevisionData = mdaManager.Create("RevisionData", "RevisionData", "RevisionData", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RevisionData).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified", "The last modification date for the data source.", 0, 1);
+        //    MetadataAttribute Details = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Details")).FirstOrDefault();
+        //    if (Details == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Details).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", "Free-form text containing a longer description of the data source.", 0, 1);
+        //        Details = mdaManager.Create("Details", "Details", "Details", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Coverage).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", "Free-form text terminology or descriptions available in the data source (geographic, taxonomic, etc.).", 0, 1);
+        //    MetadataAttribute Coverage = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Coverage")).FirstOrDefault();
+        //    if (Coverage == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == URI).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, URI, "URI", "URL that points to an online source related to the data source, which may or may not serve as an updated version of the description data.", 0, 1);
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", "A short concise title for the dataset.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified", "The last modification date for the data source.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", "Free-form text containing a longer description of the data source.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", "Free-form text terminology or descriptions available in the data source (geographic, taxonomic, etc.).", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, URI, "URI", "URL that points to an online source related to the data source, which may or may not serve as an updated version of the description data.", 0, 1);
-            }
+        //        Coverage = mdaManager.Create("Coverage", "Coverage", "Coverage", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
+        //    MetadataAttribute URI = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("URI")).FirstOrDefault();
+        //    if (URI == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
+        //        URI = mdaManager.Create("URI", "URI", "URI", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            #endregion
+        //    if (Description.MetadataAttributeUsages != null & Description.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", "A short concise title for the dataset.", 1, 1);
 
-            #region Owner package
+        //        if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RevisionData).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified", "The last modification date for the data source.", 0, 1);
 
-            MetadataAttribute Role = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Role")).FirstOrDefault();
-            if (Role == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Details).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", "Free-form text containing a longer description of the data source.", 0, 1);
 
-                Role = mdaManager.Create("Role", "Role", "Role", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Coverage).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", "Free-form text terminology or descriptions available in the data source (geographic, taxonomic, etc.).", 0, 1);
 
-            if (Owner.MetadataAttributeUsages != null & Owner.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", "String of the preferred form of personal name for display representing the data collection's legal owner.", 1, 1);
+        //        if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == URI).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Description, URI, "URI", "URL that points to an online source related to the data source, which may or may not serve as an updated version of the description data.", 0, 1);
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", "A short concise title for the dataset.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified", "The last modification date for the data source.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", "Free-form text containing a longer description of the data source.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", "Free-form text terminology or descriptions available in the data source (geographic, taxonomic, etc.).", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Description, URI, "URI", "URL that points to an online source related to the data source, which may or may not serve as an updated version of the description data.", 0, 1);
+        //    }
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", "The full name of the data collection owner in a form appropriate for sorting alphabetically.", 0, 1);
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", "Container element for several language-specific representations of the full organisation or corporate name for the data source owner.", 0, 1);
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Role).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", "Title for the role of the person or organisation owner of the data collection.", 0, 1);
+        //    #endregion
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", "A string representing the address of the data collection owner.", 0, 1);
+        //    #region Owner package
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", "A valid contact e-mail address for the owner of the data collection.", 0, 1);
+        //    MetadataAttribute Role = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Role")).FirstOrDefault();
+        //    if (Role == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", "Telephone number for the legal owner of the data collection.", 0, 1);
+        //        Role = mdaManager.Create("Role", "Role", "Role", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == URI).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, URI, "URI", "Publicly available URL for the person or organisation representing the legal owner of the data collection.", 0, 1);
+        //    if (Owner.MetadataAttributeUsages != null & Owner.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", "String of the preferred form of personal name for display representing the data collection's legal owner.", 1, 1);
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", "String of the preferred form of personal name for display representing the data collection's legal owner.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", "The full name of the data collection owner in a form appropriate for sorting alphabetically.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", "Container element for several language-specific representations of the full organisation or corporate name for the data source owner.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", "A string representing the address of the data collection owner.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", "A valid contact e-mail address for the owner of the data collection.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", "Title for the role of the person or organisation owner of the data collection.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", "Telephone number for the legal owner of the data collection.", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, URI, "URI", "Publicly available URL for the person or organisation representing the legal owner of the data collection.", 0, 1);
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", "The full name of the data collection owner in a form appropriate for sorting alphabetically.", 0, 1);
 
-            }
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", "Container element for several language-specific representations of the full organisation or corporate name for the data source owner.", 0, 1);
 
-            #endregion
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Role).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", "Title for the role of the person or organisation owner of the data collection.", 0, 1);
 
-            #region Scope package
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", "A string representing the address of the data collection owner.", 0, 1);
 
-            MetadataAttribute TaxonomicTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("TaxonomicTerm")).FirstOrDefault();
-            if (TaxonomicTerm == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", "A valid contact e-mail address for the owner of the data collection.", 0, 1);
 
-                TaxonomicTerm = mdaManager.Create("TaxonomicTerm", "TaxonomicTerm", "TaxonomicTerm", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", "Telephone number for the legal owner of the data collection.", 0, 1);
 
-            MetadataAttribute GeoEcologicalTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("GeoEcologicalTerm")).FirstOrDefault();
-            if (GeoEcologicalTerm == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+        //        if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == URI).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Owner, URI, "URI", "Publicly available URL for the person or organisation representing the legal owner of the data collection.", 0, 1);
 
-                GeoEcologicalTerm = mdaManager.Create("GeoEcologicalTerm", "GeoEcologicalTerm", "GeoEcologicalTerm", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", "String of the preferred form of personal name for display representing the data collection's legal owner.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", "The full name of the data collection owner in a form appropriate for sorting alphabetically.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", "Container element for several language-specific representations of the full organisation or corporate name for the data source owner.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", "A string representing the address of the data collection owner.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", "A valid contact e-mail address for the owner of the data collection.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", "Title for the role of the person or organisation owner of the data collection.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", "Telephone number for the legal owner of the data collection.", 0, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Owner, URI, "URI", "Publicly available URL for the person or organisation representing the legal owner of the data collection.", 0, 1);
 
-            if (Scope.MetadataAttributeUsages != null & Scope.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == TaxonomicTerm).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Scope, TaxonomicTerm, "TaxonomicTerm", "A container for taxonomic terms describing the data source.", 0, 10);
+        //    }
 
-                if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == GeoEcologicalTerm).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Scope, GeoEcologicalTerm, "GeoEcologicalTerm", "A container for geoecological terms describing the data source.", 0, 10);
+        //    #endregion
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Scope, TaxonomicTerm, "TaxonomicTerm", "A container for taxonomic terms describing the data source.", 0, 10);
-                mdpManager.AddMetadataAtributeUsage(Scope, GeoEcologicalTerm, "GeoEcologicalTerm", "A container for geoecological terms describing the data source.", 0, 10);
-            }
+        //    #region Scope package
 
+        //    MetadataAttribute TaxonomicTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("TaxonomicTerm")).FirstOrDefault();
+        //    if (TaxonomicTerm == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            #endregion
+        //        TaxonomicTerm = mdaManager.Create("TaxonomicTerm", "TaxonomicTerm", "TaxonomicTerm", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            #region Unit (ABCD Part)
+        //    MetadataAttribute GeoEcologicalTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("GeoEcologicalTerm")).FirstOrDefault();
+        //    if (GeoEcologicalTerm == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            MetadataPackage Unit = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Unit").FirstOrDefault();
-            if (Unit == null) Unit = mdpManager.Create("Unit", "A container for all data referring to a unit (specimen or observation record).", true);
+        //        GeoEcologicalTerm = mdaManager.Create("GeoEcologicalTerm", "GeoEcologicalTerm", "GeoEcologicalTerm", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
-            {
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Unit).Count() <= 0)
-                {
-                    mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "A container for one or more unit data records from the gathering project.", 1, 5);
-                }
+        //    if (Scope.MetadataAttributeUsages != null & Scope.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == TaxonomicTerm).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Scope, TaxonomicTerm, "TaxonomicTerm", "A container for taxonomic terms describing the data source.", 0, 10);
 
-            }
-            else
-            {
+        //        if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == GeoEcologicalTerm).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Scope, GeoEcologicalTerm, "GeoEcologicalTerm", "A container for geoecological terms describing the data source.", 0, 10);
 
-                mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "A container for one or more unit data records from the gathering project.", 1, 5);
-            }
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(Scope, TaxonomicTerm, "TaxonomicTerm", "A container for taxonomic terms describing the data source.", 0, 10);
+        //        mdpManager.AddMetadataAtributeUsage(Scope, GeoEcologicalTerm, "GeoEcologicalTerm", "A container for geoecological terms describing the data source.", 0, 10);
+        //    }
 
-            // metadata attributes for Unit
-            MetadataAttribute Id = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Id")).FirstOrDefault();
-            if (Id == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                Id = mdaManager.Create("Id", "Id", "Name or code of the data source", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
+        //    #endregion
 
-            // MetadataAttribute Usage
-            if (Unit.MetadataAttributeUsages != null & Unit.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
-                {
+        //    #region Unit (ABCD Part)
 
-                    MetadataAttributeUsage mau = mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceInstitutionID", "The unique identifier (code or name) of the institution holding the original data source.", 1, 1);
-                }
+        //    MetadataPackage Unit = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Unit").FirstOrDefault();
+        //    if (Unit == null) Unit = mdpManager.Create("Unit", "A container for all data referring to a unit (specimen or observation record).", true);
 
-                if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceID", "The name or code of the data source.", 1, 1);
+        //    if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
+        //    {
+        //        if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Unit).Count() <= 0)
+        //        {
+        //            mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "A container for one or more unit data records from the gathering project.", 1, 5);
+        //        }
 
-                if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Unit, Id, "UnitID", "A unique identifier for the unit record within the data source.", 1, 1);
+        //    }
+        //    else
+        //    {
 
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceInstitutionID", "The unique identifier (code or name) of the institution holding the original data source.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceID", "The name or code of the data source.", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Unit, Id, "UnitID", "A unique identifier for the unit record within the data source.", 1, 1);
-            }
+        //        mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "A container for one or more unit data records from the gathering project.", 1, 5);
+        //    }
 
+        //    // metadata attributes for Unit
+        //    MetadataAttribute Id = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Id")).FirstOrDefault();
+        //    if (Id == null)
+        //    {
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
+        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-            #endregion
+        //        Id = mdaManager.Create("Id", "Id", "Name or code of the data source", false, false, "David Blaa",
+        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+        //    }
 
-            #endregion
-        }
+        //    // MetadataAttribute Usage
+        //    if (Unit.MetadataAttributeUsages != null & Unit.MetadataAttributeUsages.Count > 0)
+        //    {
+        //        // add metadataAttributes to packages
+        //        if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
+        //        {
 
-        #region helper
+        //            MetadataAttributeUsage mau = mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceInstitutionID", "The unique identifier (code or name) of the institution holding the original data source.", 1, 1);
+        //        }
 
-        private static XmlDocument AddReferenceToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath,string nodeType, string destinationPath, XmlDocument xmlDoc)
-        {
+        //        if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceID", "The name or code of the data source.", 1, 1);
 
-            xmlDoc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+        //        if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
+        //            mdpManager.AddMetadataAtributeUsage(Unit, Id, "UnitID", "A unique identifier for the unit record within the data source.", 1, 1);
 
-            return xmlDoc;
+        //    }
+        //    else
+        //    {
+        //        mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceInstitutionID", "The unique identifier (code or name) of the institution holding the original data source.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceID", "The name or code of the data source.", 1, 1);
+        //        mdpManager.AddMetadataAtributeUsage(Unit, Id, "UnitID", "A unique identifier for the unit record within the data source.", 1, 1);
+        //    }
 
-        }
 
-        #region extra xdoc
-        /// <summary>
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="titlePath"></param>
-        /// <param name="descriptionPath"></param>
-        /// <param name="mappingFilePath"></param>
-        /// <param name="direction"></param>
-        private static void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
-        {
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+        //    #endregion
 
-            XmlDocument xmlDoc = new XmlDocument();
+        //    #endregion
+        //}
 
-            if (metadataStructure.Extra != null)
-            {
-                xmlDoc = (XmlDocument)metadataStructure.Extra;
-            }
+        //#region helper
 
-            // add title Node
-            xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-            // add Description
-            xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+        //private static XmlDocument AddReferenceToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath,string nodeType, string destinationPath, XmlDocument xmlDoc)
+        //{
 
-            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+        //    xmlDoc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
-            // add mappingFilePath
-            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
-            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+        //    return xmlDoc;
 
-            //set active
-            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+        //}
 
-            metadataStructure.Extra = xmlDoc;
-            mdsManager.Update(metadataStructure);
+        //#region extra xdoc
+        ///// <summary>
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <param name="titlePath"></param>
+        ///// <param name="descriptionPath"></param>
+        ///// <param name="mappingFilePath"></param>
+        ///// <param name="direction"></param>
+        //private static void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
+        //{
+        //    MetadataStructureManager mdsManager = new MetadataStructureManager();
+        //    MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
 
-        }
+        //    XmlDocument xmlDoc = new XmlDocument();
 
-        private static XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
-        {
+        //    if (metadataStructure.Extra != null)
+        //    {
+        //        xmlDoc = (XmlDocument)metadataStructure.Extra;
+        //    }
 
-            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+        //    // add title Node
+        //    xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+        //    // add Description
+        //    xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
 
-            return doc;
+        //    xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
 
-        }
+        //    // add mappingFilePath
+        //    xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+        //    xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
 
-        #endregion
+        //    //set active
+        //    xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
 
-        #endregion
+        //    metadataStructure.Extra = xmlDoc;
+        //    mdsManager.Update(metadataStructure);
 
-        #endregion
+        //}
+
+        //private static XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
+        //{
+
+        //    XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+
+        //    return doc;
+
+        //}
+
+        //#endregion
+
+        //#endregion
+
+        //#endregion
+
 
 
     }

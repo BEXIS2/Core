@@ -1,24 +1,51 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Xml;
-using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
-    public sealed class MetadataStructureManager
+    public class MetadataStructureManager : IDisposable
     {
 
+        private IUnitOfWork guow = null;
         public MetadataStructureManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
-            this.PackageUsageRepo = uow.GetReadOnlyRepository<MDS.MetadataPackageUsage>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.Repo = guow.GetReadOnlyRepository<MDS.MetadataStructure>();
+            this.PackageUsageRepo = guow.GetReadOnlyRepository<MDS.MetadataPackageUsage>();
         }
+
+        private bool isDisposed = false;
+        ~MetadataStructureManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
+        }
+
 
         #region Data Readers
 
@@ -32,39 +59,69 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         public List<MetadataPackageUsage> GetEffectivePackages(MDS.MetadataStructure structure)
         {
-            return GetEffectivePackages(structure.Id);            
+            return GetEffectivePackages(structure.Id);
         }
 
         public List<MetadataPackageUsage> GetEffectivePackages(Int64 structureId)
         {
-            /*PostgreSQL82Dialect, DB2Dialect*/
-            if (AppConfiguration.DatabaseDialect.Equals("DB2Dialect"))
+            using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                return GetPackages(structureId);
-            }
-            else //if (AppConfiguration.DatabaseDialect.Equals("PostgreSQL82Dialect"))
-            {
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("metadataStructureId", structureId);
-                List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
-                return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+                IReadOnlyRepository<MDS.MetadataPackageUsage> repo = uow.GetReadOnlyRepository<MDS.MetadataPackageUsage>();
+
+                /*PostgreSQL82Dialect, DB2Dialect*/
+                if (AppConfiguration.DatabaseDialect.Equals("DB2Dialect"))
+                {
+                    return GetPackages(structureId);
+                }
+                else //if (AppConfiguration.DatabaseDialect.Equals("PostgreSQL82Dialect"))
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    parameters.Add("metadataStructureId", structureId);
+                    List<MetadataPackageUsage> usages = repo.Get("GetEffectivePackageUsages", parameters).ToList();
+                    return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+                }
             }
         }
 
-        private List<MetadataPackageUsage> GetPackages(Int64 structureId)
+        public List<Int64> GetEffectivePackageIds(Int64 structureId)
         {
-            List<MetadataPackageUsage> list = new List<MetadataPackageUsage>();
-            MDS.MetadataStructure metadataStructure = this.Repo.Get(structureId);
-
-
-            if (metadataStructure.Parent != null)
+            using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                list.AddRange(GetPackages(metadataStructure.Parent.Id));
+                IReadOnlyRepository<MDS.MetadataPackageUsage> repo = uow.GetReadOnlyRepository<MDS.MetadataPackageUsage>();
+
+                /*PostgreSQL82Dialect, DB2Dialect*/
+                if (AppConfiguration.DatabaseDialect.Equals("DB2Dialect"))
+                {
+                    return GetPackages(structureId).Select(p=>p.Id).ToList();
+                }
+                else //if (AppConfiguration.DatabaseDialect.Equals("PostgreSQL82Dialect"))
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    parameters.Add("metadataStructureId", structureId);
+                    List<Int64> usages = uow.ExecuteList<Int64>("GetEffectivePackageUsageIds", parameters);
+                    return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+                }
+            }
+        }
+
+        private List<MetadataPackageUsage> GetPackages(Int64 structureId) 
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IReadOnlyRepository<MDS.MetadataStructure> repo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
+                List<MetadataPackageUsage> list = new List<MetadataPackageUsage>();
+                MDS.MetadataStructure metadataStructure = repo.Get(structureId);
+
+                if (metadataStructure.Parent != null)
+                {
+                    list.AddRange(GetPackages(metadataStructure.Parent.Id));
+                }
+
+                list.AddRange(metadataStructure.MetadataPackageUsages);
+
+                return list;
             }
 
-            list.AddRange(metadataStructure.MetadataPackageUsages);
-
-            return list;
         }
 
         public MDS.MetadataStructure Create(string name, string description, string xsdFileName, string xslFileName, MDS.MetadataStructure parent)
@@ -94,11 +151,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
-
+            IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
+            if (datasetRepo.Query(p => p.MetadataStructure.Id == entity.Id).Count() > 0)
+                throw new Exception(string.Format("Metadata structure {0} is used by datasets. Deletion Failed", entity.Id));
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
-
                 entity = repo.Reload(entity);
                 repo.Delete(entity);
 
@@ -116,9 +174,14 @@ namespace BExIS.Dlm.Services.MetadataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
-
+                IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
                 foreach (var entity in entities)
                 {
+                    if (datasetRepo.Query(p => p.MetadataStructure.Id == entity.Id).Count() > 0)
+                    {
+                        uow.Ignore();
+                        throw new Exception(string.Format("Metadata structure {0} is used by datasets. Deletion Failed", entity.Id));
+                    }
                     var latest = repo.Reload(entity);
                     repo.Delete(latest);
                 }
@@ -137,10 +200,13 @@ namespace BExIS.Dlm.Services.MetadataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged); 
+
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
@@ -217,40 +283,41 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
             Contract.Ensures(Contract.Result<MetadataPackageUsage>() != null && Contract.Result<MetadataPackageUsage>().Id >= 0);
 
-            Repo.Reload(structure);
-            Repo.LoadIfNot(structure.MetadataPackageUsages);
-            int count = 0;
-            try
-            {
-                count = (from v in structure.MetadataPackageUsages
-                         where v.MetadataPackage.Id.Equals(package.Id)
-                         select v
-                         )
-                         .Count();
-            }
-            catch { }
-
-            MetadataPackageUsage usage = new MetadataPackageUsage()
-            {
-                MetadataPackage = package,
-                MetadataStructure = structure,
-                // if no label is provided, use the package name and a sequence number calculated by the number of occurrences of that package in the current structure
-                Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? package.Name : string.Format("{0} ({1})", package.Name, count)),
-                Description = description,
-                MinCardinality = minCardinality,
-                MaxCardinality = maxCardinality,
-                Extra = extra
-            };
-            structure.MetadataPackageUsages.Add(usage);
-            package.UsedIn.Add(usage);
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MetadataPackageUsage> repo = uow.GetRepository<MetadataPackageUsage>();
+                IRepository<MDS.MetadataStructure> repo2 = uow.GetRepository<MDS.MetadataStructure>();
+                repo2.Reload(structure);
+                repo2.LoadIfNot(structure.MetadataPackageUsages);
+                int count = 0;
+                try
+                {
+                    count = (from v in structure.MetadataPackageUsages
+                             where v.MetadataPackage.Id.Equals(package.Id)
+                             select v
+                             )
+                             .Count();
+                }
+                catch { }
+
+                MetadataPackageUsage usage = new MetadataPackageUsage()
+                {
+                    MetadataPackage = package,
+                    MetadataStructure = structure,
+                    // if no label is provided, use the package name and a sequence number calculated by the number of occurrences of that package in the current structure
+                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? package.Name : string.Format("{0} ({1})", package.Name, count)),
+                    Description = description,
+                    MinCardinality = minCardinality,
+                    MaxCardinality = maxCardinality,
+                    Extra = extra
+                };
+                structure.MetadataPackageUsages.Add(usage);
+                package.UsedIn.Add(usage);
+
                 repo.Put(usage);
                 uow.Commit();
+                return (usage);
             }
-            return (usage);
         }
 
         public void RemoveMetadataPackageUsage(MetadataPackageUsage usage)

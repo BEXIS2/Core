@@ -1,21 +1,20 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Models;
+using BExIS.Xml.Helpers;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Linq.Dynamic;
+//using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using BExIS.IO.Transform.Output;
-using System.Data;
-using BExIS.Xml.Services;
-using BExIS.Web.Shell.Areas.DIM.Models;
-using BExIS.Web.Shell.Areas.DIM.Models.Formatters;
+using Vaiona.Persistence.Api;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
@@ -27,12 +26,23 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
     /// </summary>
     public class DataController : ApiController
     {
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
         // GET: api/data
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
-            var datasetIds = dm.GetDatasetLatestIds();
-            return datasetIds;
+            try
+            {
+                var datasetIds = dm.GetDatasetLatestIds();
+                return datasetIds;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         // GET: api/data/5
@@ -49,48 +59,57 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         public HttpResponseMessage Get(int id)
         {
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
 
-            OutputDataManager ioOutputDataManager = new OutputDataManager();
-
-            DatasetManager dm = new DatasetManager();
-            DatasetVersion version = dm.GetDatasetLatestVersion(id);
-
-            string title = XmlDatasetHelper.GetInformation(version, NameAttributeValues.title);
-
-            // check the data sturcture type ...
-            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            DatasetManager datasetManager = new DatasetManager();
+            try
             {
-                // apply selection and projection
-                //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
-                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(dm, version, title, true);
 
-                if (!string.IsNullOrEmpty(selection))
+                OutputDataManager ioOutputDataManager = new OutputDataManager();
+
+                DatasetVersion version = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(id);
+
+                string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
+
+                // check the data sturcture type ...
+                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                }
+                    // apply selection and projection
+                    //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
+                    DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(datasetManager, version, title, true);
 
-                if (!string.IsNullOrEmpty(projection))
+                    if (!string.IsNullOrEmpty(selection))
+                    {
+                        dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                    }
+
+                    if (!string.IsNullOrEmpty(projection))
+                    {
+                        // make the header names upper case to make them case insensitive
+                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                    }
+
+                    DatasetModel model = new DatasetModel();
+                    model.DataTable = dt;
+
+                    var response = Request.CreateResponse();
+                    response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+
+
+                    //set headers on the "response"
+                    return response;
+
+                    //return model;
+
+                }
+                else
                 {
-                    // make the header names upper case to make them case insensitive
-                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                    return Request.CreateResponse();
                 }
-
-                DatasetModel model = new DatasetModel();
-                model.DataTable = dt;
-
-                var response = Request.CreateResponse();
-                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                
-                
-                //set headers on the "response"
-                return response;
-
-                //return model;
-
-            } else
+            }
+            finally
             {
-                return Request.CreateResponse();
+                datasetManager.Dispose();
             }
         }
 

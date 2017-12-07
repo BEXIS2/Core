@@ -155,8 +155,21 @@ table, tr {
     text-align:left;
 }
 
+#bx-rpm-dataAttributeGrid .t-grid-header, #bx-rpm-selectDataTypeGrid .t-grid-header {
+    margin-right:14px;
+}
 #bx-rpm-dataAttributeGrid .t-grid-content, #bx-rpm-selectDataTypeGrid .t-grid-content{
-    overflow-y:scroll;
+    overflow-y:scroll !important;
+}
+
+#bx-rpm-selectDataTypeGrid {
+    height:250px;
+}
+
+#bx-rpm-selectDataTypeGrid .t-grid-pager,
+#bx-rpm-selectDataTypeGrid .t-grid-bottom{
+    display:none !important;
+    height:0px !important;
 }
 
 /* input {
@@ -206,9 +219,11 @@ max-height:200px;
 width:330px;
 }
 .t-arrow-down.bx-rpm-dropdownArrow {
-margin-left:-23px;
-z-index:1;
-position:relative;
+    left: -15px;
+    top: -25px;
+    z-index: 1;
+    float: right;
+    position: relative;
 }
 
 .bx-dropdown, .bx-input{

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
+﻿using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-     
+using System;
+
 namespace BExIS.Ext.Services
-{    
+{
     public static class AuthorizationDelegationImplementor
     {
         public static void CheckAuthorization(string areaName, string controllerName, string actionName, string username, bool isAuthenticated)
@@ -20,36 +15,23 @@ namespace BExIS.Ext.Services
 
             // Ask for specific URLs (LogOn, Register, ...)
 
-            TaskManager taskManager = new TaskManager();
+            var operationManager = new OperationManager();
 
-            Task task = taskManager.GetTask(areaName, controllerName, "*");
-
-            if (task != null)
+            var operation = operationManager.Find(areaName, controllerName, "*");
+            if (operation == null)
             {
-                if (task.Feature != null)
-                {
-                    PermissionManager permissionManager = new PermissionManager();
-                    SubjectManager subjectManager = new SubjectManager();
-
-                    if (!permissionManager.ExistsFeaturePermission(subjectManager.GetGroupByName("everyone").Id, task.Feature.Id))
-                    {
-                        User user = subjectManager.GetUserByName(username);
-
-                        if (user != null)
-                        {
-                            if (!permissionManager.HasSubjectFeatureAccess(user.Id, task.Feature.Id))
-                            {
-                                throw new UnauthorizedAccessException();
-                            }
-                        }
-                        else
-                        {
-                            throw new UnauthorizedAccessException();
-                        }
-                    }
-                }
+                throw new UnauthorizedAccessException();
             }
-            else
+
+            var feature = operation.Feature;
+
+            if (feature == null) return;
+
+            var userManager = new UserManager();
+            var result = userManager.FindByNameAsync(username);
+
+            var featurePermissionManager = new FeaturePermissionManager();
+            if (!featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
             {
                 throw new UnauthorizedAccessException();
             }

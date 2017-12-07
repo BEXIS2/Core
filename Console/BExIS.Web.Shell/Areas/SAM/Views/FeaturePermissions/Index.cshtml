@@ -1,0 +1,97 @@
+﻿@model System.Collections.Generic.IEnumerable<BExIS.Modules.Sam.UI.Models.FeatureTreeViewModel>
+<style>
+    #Grid_Subjects .t-grid-content {
+        height: auto !important;
+        max-height: 475px !important;
+    }
+</style>
+
+@section Information
+{
+    Here you are able to manage how users (or groups) have access to individual system features or entire modules.
+    Please click on the name in the tree structure on left to view individual permissions.
+    Ticking the checkboxes in the navigation tree will make a feature accessible without authentification (public access).
+    Please use with care!
+    By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module).
+    Individual grants on features rule out higher level settings. Effective permissions are shown in the first column of the table.
+    Please note that any change will take effect immediately without further confirmation or save/submit action.
+    <p>
+        <a href="/SAM/Help/Index/#_Toc451422051" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+@section LeftPane
+{
+    @Html.Partial("_Features", Model)
+}
+
+<div id="content_subjects"></div>
+
+<script>
+    $("#treeView_features li div")
+        .click(function(e) {
+            $(e.target).find(".t-in").trigger("click");
+        });
+
+    function getTreeView() {
+        return $('#treeView_features').data('tTreeView');
+    }
+
+    function treeView_features_onChecked(e) {
+        if (e.checked) {
+            $.post('@Url.Action("AddFeatureToPublic", "FeaturePermissions")',
+                { FeatureId: getTreeView().getItemValue(e.item) }, function() {
+                    $("#grid_subjects .t-refresh").trigger('click');
+                });
+        } else {
+            $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")',
+                { FeatureId: getTreeView().getItemValue(e.item)}, function() {
+                    $("#grid_subjects .t-refresh").trigger('click');
+                });          
+        }
+    }
+
+    function treeView_features_onSelect(e) {
+        var featureId = getTreeView().getItemValue(e.item);
+
+        var prevSelectedDiv = $(".bx-selected");
+
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
+
+        $('#content_subjects').empty();
+
+        $.get('@Url.Action("Subjects", "FeaturePermissions")', { FeatureId: featureId }, function (contentData) {
+            $('#content_subjects').html(contentData);
+            truncateTitle();
+        });
+    }
+
+    $(":checkbox").attr("title", "Checked \t -> \t public feature \nUnchecked \t -> \t NOT public feature");
+
+    function grid_subjects_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("input[name^='permissionType']:radio").click(function () {
+            switch ($(this).data('permissiontype')) {
+                case 2:
+                    $("input[name^='permissionType']:radio").attr('disabled', true);
+                    $.post('@Url.Action("DeleteFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid') }, function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                        $("input[name^='permissionType']:radio").attr('disabled', false);
+                    });
+
+                    break;
+                default:
+                    $("input[name^='permissionType']:radio").attr('disabled', true);
+                    $.post('@Url.Action("CreateOrUpdateFeaturePermission", "FeaturePermissions")', { SubjectId: $(this).data('subjectid'), FeatureId: $(this).data('featureid'), PermissionType: $(this).data('permissiontype') }, function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                        $("input[name^='permissionType']:radio").attr('disabled', false);
+                    });
+            }
+        });
+    }
+</script>

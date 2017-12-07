@@ -95,6 +95,15 @@ Green 05  #eff7f6
     max-width: 490px;
 }
 
+.bx-metadataForm-textArea-display {
+        border:2px solid #afb0b1;
+        background-color:#f5f5f5;
+        color: #565655;
+        width: 490px;
+        max-width: 490px;
+        padding: 5px 4px;
+}
+
 .metadataAttributeInput
 {
     width: 500px;

@@ -1,22 +1,18 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
-using System.Xml.Linq;
-using BExIS.Xml.Services;
-
-using BExIS.Web.Shell.Areas.RPM.Models;
+using XmlNodeType = System.Xml.XmlNodeType;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     /// <summary>
     ///
@@ -44,7 +40,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         /// <seealso cref=""/>
         /// <param name="Id"></param>
         /// <param name="Title"></param>
-        public DatasetListElement(long Id,string Title)
+        public DatasetListElement(long Id, string Title)
         {
             this.Id = Id;
             this.Title = Title;
@@ -115,7 +111,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public DataStructureTree dataStructureTree { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -125,7 +121,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             this.dataStructure = new StructuredDataStructure();
             this.dataStructureTable = new DataTable();
-            this.dataStructureTree = getDataStructureTree(); 
+            this.dataStructureTree = getDataStructureTree();
             structured = true;
             show = true;
             inUse = false;
@@ -143,9 +139,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         /// <returns></returns>
         public DataStructureTree getDataStructureTree()
         {
-            
+
             DataStructureTree tree = new DataStructureTree();
-            
+
             return (tree);
         }
 
@@ -153,120 +149,144 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             List<VariableStruct> variableStructs = new List<VariableStruct>();
             List<Variable> variables = getOrderedVariables(structuredDataStructure);
-            DataContainerManager dataAttributeManager = new DataContainerManager();
+            DataContainerManager dataAttributeManager = null;
             VariableStruct temp = new VariableStruct();
             List<BExIS.Dlm.Entities.DataStructure.Constraint> tempconstraints;
             UnitDimenstionModel unitDimenstionModel = new UnitDimenstionModel();
             foreach (Variable v in variables)
             {
-                unitDimenstionModel = new UnitDimenstionModel();
-                temp.variable = v;
-                temp.unitStructs = unitDimenstionModel.getUnitListByDimenstionAndDataType(v.DataAttribute.Unit.Dimension.Id, v.DataAttribute.DataType.Id);
-                tempconstraints = dataAttributeManager.DataAttributeRepo.Get(v.DataAttribute.Id).Constraints.ToList();
-                temp.rangeConstraints = new List<RangeConstraint>();
-                temp.domainConstraints = new List<DomainConstraint>();
-                temp.patternConstraints = new List<PatternConstraint>();
-                foreach(BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints) 
+                try
                 {
-                    if (c is DomainConstraint)
+                    unitDimenstionModel = new UnitDimenstionModel();
+                    temp.variable = v;
+                    temp.unitStructs = unitDimenstionModel.getUnitListByDimenstionAndDataType(v.DataAttribute.Unit.Dimension.Id, v.DataAttribute.DataType.Id);
+                    dataAttributeManager = new DataContainerManager();
+                    tempconstraints = dataAttributeManager.DataAttributeRepo.Get(v.DataAttribute.Id).Constraints.ToList();
+                    temp.rangeConstraints = new List<RangeConstraint>();
+                    temp.domainConstraints = new List<DomainConstraint>();
+                    temp.patternConstraints = new List<PatternConstraint>();
+                    foreach (BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints)
                     {
-                        DomainConstraint tempDomainConstraint = (DomainConstraint)c;
-                        tempDomainConstraint.Materialize();
-                        temp.domainConstraints.Add(tempDomainConstraint);
-                    }
-                    if (c is PatternConstraint)
-                        temp.patternConstraints.Add((PatternConstraint)c);
-                    if (c is RangeConstraint)
-                        temp.rangeConstraints.Add((RangeConstraint)c);
+                        if (c is DomainConstraint)
+                        {
+                            DomainConstraint tempDomainConstraint = (DomainConstraint)c;
+                            tempDomainConstraint.Materialize();
+                            temp.domainConstraints.Add(tempDomainConstraint);
+                        }
+                        if (c is PatternConstraint)
+                            temp.patternConstraints.Add((PatternConstraint)c);
+                        if (c is RangeConstraint)
+                            temp.rangeConstraints.Add((RangeConstraint)c);
 
+                    }
+                    variableStructs.Add(temp);
                 }
-                variableStructs.Add(temp);
+                finally
+                {
+                    dataAttributeManager.Dispose();
+                }
             }
             return variableStructs;
         }
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
-            DataStructureManager dsm = new DataStructureManager();
-            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
-            XmlNode order;
-
-            if (doc == null)
+            DataStructureManager dsm = null;
+            try
             {
-                doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
-                doc.AppendChild(root);
-            }
-            if (doc.GetElementsByTagName("order").Count == 0)
-                    {
+                dsm = new DataStructureManager();
+                XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
+                XmlNode order;
 
-                if (structuredDataStructure.Variables.Count > 0)
+                if (doc == null)
                 {
-                    order = doc.CreateNode(XmlNodeType.Element, "order", null);
-
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order.AppendChild(variable);
-                    }
-
-                    doc.FirstChild.AppendChild(order);
-                    structuredDataStructure.Extra = doc;
-                    dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    doc = new XmlDocument();
+                    XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
+                    doc.AppendChild(root);
                 }
-            }
-
-            order = doc.GetElementsByTagName("order")[0];
-            List<Variable> orderedVariables = new List<Variable>();
-            if (structuredDataStructure.Variables.Count != 0)
+                if (doc.GetElementsByTagName("order").Count == 0)
                 {
-                foreach (XmlNode x in order)
+
+                    if (structuredDataStructure.Variables.Count > 0)
                     {
-                    foreach (Variable v in structuredDataStructure.Variables)
+                        order = doc.CreateNode(XmlNodeType.Element, "order", null);
+
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
+
+                            XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                            variable.InnerText = v.Id.ToString();
+                            order.AppendChild(variable);
+                        }
+
+                        doc.FirstChild.AppendChild(order);
+                        structuredDataStructure.Extra = doc;
+                        dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    }
+                }
+
+                order = doc.GetElementsByTagName("order")[0];
+                List<Variable> orderedVariables = new List<Variable>();
+                if (structuredDataStructure.Variables.Count != 0)
+                {
+                    foreach (XmlNode x in order)
+                    {
+                        foreach (Variable v in structuredDataStructure.Variables)
                         {
                             if (v.Id == Convert.ToInt64(x.InnerText))
-                            orderedVariables.Add(v);
+                                orderedVariables.Add(v);
 
                         }
                     }
+                }
+                return orderedVariables;
             }
-            return orderedVariables; 
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
         {
 
-            DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure structuredDataStructure = dsm.StructuredDataStructureRepo.Get(ID);
-            this.dataStructure = structuredDataStructure;
-
-            if (this.dataStructure != null)
+            DataStructureManager dsm = null;
+            try
             {
-                this.variableStructs = getOrderedVariableStructs(structuredDataStructure);
+                dsm = new DataStructureManager();
+                StructuredDataStructure structuredDataStructure = dsm.StructuredDataStructureRepo.Get(ID);
+                this.dataStructure = structuredDataStructure;
 
-                if (this.dataStructure.Datasets == null)
+                if (this.dataStructure != null)
                 {
-                    inUse = false;
-                }
-                else
-                {
-                    if (this.dataStructure.Datasets.Count > 0)
-                    {
-                        inUse = true;
-                    }
-                    else
+                    this.variableStructs = getOrderedVariableStructs(structuredDataStructure);
+
+                    if (this.dataStructure.Datasets == null)
                     {
                         inUse = false;
                     }
+                    else
+                    {
+                        if (this.dataStructure.Datasets.Count > 0)
+                        {
+                            inUse = true;
+                        }
+                        else
+                        {
+                            inUse = false;
+                        }
+                    }
+                    this.BuildDataTable();
+                    return (structuredDataStructure);
                 }
-                this.BuildDataTable();
-                return (structuredDataStructure);
+                else
+                {
+                    this.dataStructure = new StructuredDataStructure();
+                    return (structuredDataStructure);
+                }
             }
-            else
+            finally
             {
-                this.dataStructure = new StructuredDataStructure();
-                return (structuredDataStructure);
+                dsm.Dispose();
             }
 
         }
@@ -274,12 +294,24 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public void fillDatasetList()
         {
             DatasetListElement datasetListElement = new DatasetListElement();
-            DatasetManager dm = new DatasetManager();
+            DatasetManager dm = null;
             datasets = new List<DatasetListElement>();
-            foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
+
+            try
             {
-                datasetListElement = new DatasetListElement(item.Key, XmlDatasetHelper.GetInformation(item.Value, NameAttributeValues.title));
-                datasets.Add(datasetListElement);
+                dm = new DatasetManager();
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
+                foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
+                {
+                    datasetListElement = new DatasetListElement(item.Key, xmlDatasetHelper.GetInformation(item.Value.Id, NameAttributeValues.title));
+                    datasets.Add(datasetListElement);
+                }
+            }
+            finally
+            {
+                dm.Dispose();
             }
         }
 
@@ -300,41 +332,49 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             }
             else
             {
-                DataStructureManager dsm = new DataStructureManager();
-                UnStructuredDataStructure unStructuredDataStructure = dsm.UnStructuredDataStructureRepo.Get(ID);
-                this.dataStructure = unStructuredDataStructure;
-               
-                if (this.dataStructure != null)
+                DataStructureManager dsm = null;
+                try
                 {
-                    this.variableStructs = null;
-                    if (this.dataStructure.Datasets == null)
+                    dsm = new DataStructureManager();
+                    UnStructuredDataStructure unStructuredDataStructure = dsm.UnStructuredDataStructureRepo.Get(ID);
+                    this.dataStructure = unStructuredDataStructure;
+
+                    if (this.dataStructure != null)
                     {
-                        inUse = false;
-                    }
-                    else
-                    {
-                        if (this.dataStructure.Datasets.Count > 0)
-                        {
-                            inUse = true;
-                            //DatasetListElement datasetListElement = new DatasetListElement();
-                            //DatasetManager dm = new DatasetManager();
-                            //foreach (Dataset d in unStructuredDataStructure.Datasets)
-                            //{
-                            //    datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
-                            //    datasets.Add(datasetListElement);
-                            //}
-                        }
-                        else
+                        this.variableStructs = null;
+                        if (this.dataStructure.Datasets == null)
                         {
                             inUse = false;
                         }
+                        else
+                        {
+                            if (this.dataStructure.Datasets.Count > 0)
+                            {
+                                inUse = true;
+                                //DatasetListElement datasetListElement = new DatasetListElement();
+                                //DatasetManager dm = new DatasetManager();
+                                //foreach (Dataset d in unStructuredDataStructure.Datasets)
+                                //{
+                                //    datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
+                                //    datasets.Add(datasetListElement);
+                                //}
+                            }
+                            else
+                            {
+                                inUse = false;
+                            }
+                        }
+                        return (unStructuredDataStructure);
                     }
-                    return (unStructuredDataStructure);
+                    else
+                    {
+                        this.dataStructure = new StructuredDataStructure();
+                        return (unStructuredDataStructure);
+                    }
                 }
-                else
+                finally
                 {
-                    this.dataStructure = new StructuredDataStructure();
-                    return (unStructuredDataStructure);
+                    dsm.Dispose();
                 }
             }
         }
@@ -347,149 +387,149 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public void BuildDataTable()
         {
             this.dataStructureTable = new DataTable();
-                List<string> row = new List<string>();
+            List<string> row = new List<string>();
 
-                for (int i = 0; i <= this.variableStructs.Count; i++)
+            for (int i = 0; i <= this.variableStructs.Count; i++)
+            {
+                this.dataStructureTable.Columns.Add(new DataColumn());
+            }
+
+            DataRow Row = this.dataStructureTable.NewRow();
+
+            List<string> Functions = new List<string>();
+            foreach (VariableStruct v in this.variableStructs)
+            {
+                Functions.Add(v.variable.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
+            }
+
+            row = Functions;
+            row.Insert(0, "Functions");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var Names = from p in this.variableStructs
+                        select p.variable.Label;
+            row = Names.ToList();
+            row.Insert(0, "Name");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var IsValueOptionals = from p in this.variableStructs
+                                   select p.variable.IsValueOptional;
+            List<bool> tmpIOs = IsValueOptionals.ToList();
+            row = tmpIOs.ConvertAll<string>(p => p.ToString());
+            row.Insert(0, "Optional");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var VariableIDs = from p in this.variableStructs
+                              select p.variable.Id;
+            List<long> tmpVIDs = VariableIDs.ToList();
+            row = tmpVIDs.ConvertAll<string>(p => p.ToString());
+            row.Insert(0, "Variable Id");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var ShortNames = from p in this.variableStructs
+                             select p.variable.DataAttribute.ShortName;
+            row = ShortNames.ToList();
+            row.Insert(0, "Short Name");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var Descriptions = from p in this.variableStructs
+                               select getDescription(p.variable);
+            row = Descriptions.ToList();
+            row.Insert(0, "Description");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            //var Classifications = from p in this.dataStructure.Variables
+            //                      select p.DataAttribute.Classification;
+
+            //row = new List<string>();
+
+            //foreach(Classifier p in Classifications)
+            //{
+            //    if (p == null)
+            //    {
+            //        row.Add("");
+            //    }
+            //    else
+            //    {
+            //        row.Add(p.Name);
+            //    }
+            //}
+            //row.Insert(0, "Classification");
+
+            //Row = this.DataStructureTable.NewRow();    
+            //Row.ItemArray = row.ToArray();
+
+            //this.DataStructureTable.Rows.Add(Row);
+
+            var Units = from p in this.variableStructs
+                        select p.variable.Unit;
+
+            row = new List<string>();
+
+            foreach (Unit p in Units)
+            {
+                if (p == null)
                 {
-                    this.dataStructureTable.Columns.Add(new DataColumn());
+                    row.Add("");
                 }
-
-                DataRow Row = this.dataStructureTable.NewRow();
-
-                List<string> Functions = new List<string>();
-                foreach (VariableStruct v in this.variableStructs)
+                else
                 {
-                    Functions.Add(v.variable.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
+                    row.Add(p.Name);
                 }
-              
-                row = Functions;
-                row.Insert(0, "Functions");
+            }
+            row.Insert(0, "Unit");
 
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
 
-                this.dataStructureTable.Rows.Add(Row);
+            this.dataStructureTable.Rows.Add(Row);
 
-                var Names = from p in this.variableStructs
-                            select p.variable.Label;
-                row = Names.ToList();
-                row.Insert(0,"Name");
+            var DataTypes = from p in this.variableStructs
+                            select p.variable.DataAttribute.DataType;
 
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
+            row = new List<string>();
 
-                this.dataStructureTable.Rows.Add(Row);
-
-                var IsValueOptionals = from p in this.variableStructs
-                                       select p.variable.IsValueOptional;
-                List<bool> tmpIOs = IsValueOptionals.ToList();
-                row = tmpIOs.ConvertAll<string>(p => p.ToString());
-                row.Insert(0, "Optional");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var VariableIDs = from p in this.variableStructs
-                                  select p.variable.Id;
-                List<long> tmpVIDs = VariableIDs.ToList();
-                row = tmpVIDs.ConvertAll<string>(p => p.ToString());
-                row.Insert(0, "Variable Id");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var ShortNames = from p in this.variableStructs
-                                 select p.variable.DataAttribute.ShortName;
-                row = ShortNames.ToList();
-                row.Insert(0, "Short Name");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var Descriptions = from p in this.variableStructs
-                                   select getDescription(p.variable);
-                row = Descriptions.ToList();
-                row.Insert(0, "Description");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                //var Classifications = from p in this.dataStructure.Variables
-                //                      select p.DataAttribute.Classification;
-
-                //row = new List<string>();
-
-                //foreach(Classifier p in Classifications)
-                //{
-                //    if (p == null)
-                //    {
-                //        row.Add("");
-                //    }
-                //    else
-                //    {
-                //        row.Add(p.Name);
-                //    }
-                //}
-                //row.Insert(0, "Classification");
-
-                //Row = this.DataStructureTable.NewRow();    
-                //Row.ItemArray = row.ToArray();
-
-                //this.DataStructureTable.Rows.Add(Row);
-
-                var Units = from p in this.variableStructs
-                            select p.variable.Unit;
-
-                row = new List<string>();
-                
-                foreach (Unit p in Units)
+            foreach (DataType p in DataTypes)
+            {
+                if (p == null)
                 {
-                    if (p == null)
-                    {
-                        row.Add("");
-                    }
-                    else
-                    {
-                        row.Add(p.Name);
-                    }
+                    row.Add("");
                 }
-                row.Insert(0, "Unit");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var DataTypes = from p in this.variableStructs
-                               select p.variable.DataAttribute.DataType;
-                
-                row = new List<string>();
-                
-                foreach (DataType p in DataTypes)
+                else
                 {
-                    if (p == null)
-                    {
-                        row.Add("");
-                    }
-                    else
-                    {
-                        row.Add(p.Name);
-                    }
+                    row.Add(p.Name);
                 }
-                row.Insert(0, "Data Type");
+            }
+            row.Insert(0, "Data Type");
 
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
 
-                this.dataStructureTable.Rows.Add(Row);      
+            this.dataStructureTable.Rows.Add(Row);
         }
 
         /// <summary>
@@ -499,20 +539,28 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         /// <seealso cref=""/>        
         public void GetDataAttributeList()
         {
-            DataContainerManager DataAttributeManager = new DataContainerManager();
-            this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
+            DataContainerManager DataAttributeManager = null;
+            try
+            {
+                DataAttributeManager = new DataContainerManager();
+                this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
+            }
+            finally
+            {
+                DataAttributeManager.Dispose();
+            }
         }
 
-    #region helper
+        #region helper
 
-    private string getDescription(Variable v)
-    {
-        if (v.Description != null && v.Description != "")
-            return v.Description;
-        else
-            return v.DataAttribute.Description;
-    }
+        private string getDescription(Variable v)
+        {
+            if (v.Description != null && v.Description != "")
+                return v.Description;
+            else
+                return v.DataAttribute.Description;
+        }
 
-    #endregion
+        #endregion
     }
 }

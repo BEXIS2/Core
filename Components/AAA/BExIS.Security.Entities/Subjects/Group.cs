@@ -1,31 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BExIS.Security.Entities.Subjects
 {
-    public class Group : Subject
+    public class Group : Subject, IRole<long>
     {
-        #region Attributes
-
-        public virtual string Description { get; set; }
-
-        #endregion
-
-        #region Associations
-
-        public virtual ICollection<User> Users { get; set; }
-
-        #endregion
-
-        #region Methods
-
         public Group()
         {
             Users = new List<User>();
         }
 
-        #endregion
+        public virtual string Description { get; set; }
+        public virtual bool IsValid { get; set; }
+        public virtual bool IsSystemGroup { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

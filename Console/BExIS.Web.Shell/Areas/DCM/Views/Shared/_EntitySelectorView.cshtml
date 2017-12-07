@@ -1,0 +1,220 @@
+﻿@model BExIS.Web.Shell.Models.EntitySelectorModel
+@using System.Data;
+@using Newtonsoft.Json
+@using Telerik.Web.Mvc.UI
+
+@{
+    ViewBag.Title = "";
+    int idIndex = -1;
+
+    if (!String.IsNullOrEmpty(Model.IDKey))
+    {
+        idIndex = Model.Data.Columns.IndexOf(Model.Data.Columns[Model.IDKey]);
+    }
+
+    string targetId = "";
+
+    if (!String.IsNullOrEmpty(Model.TargetId))
+    {
+        targetId = Model.TargetId;
+    }
+
+    object idX = null;
+
+    string submitId = "submitTo";
+    string cancelId = "cancel";
+    string idAsString = Model.Title.Replace(" ", string.Empty);
+    if (!String.IsNullOrEmpty(Model.Title))
+    {
+        submitId += idAsString;
+        cancelId += idAsString;
+    }
+
+
+    int width = 600;
+
+    if (Model.Data.Columns.Count > 1 && Model.Data.Columns.Count < 4)
+    {
+        width = Model.Data.Columns.Count*300;
+    }
+
+    if (Model.Data.Columns.Count > 4)
+    {
+        width = Model.Data.Columns.Count*200;
+    }
+
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
+
+
+    string parameters = "test";
+    if (Model.Parameters != null)
+    {
+        parameters = JsonConvert.SerializeObject(@Model.Parameters);
+    }
+}
+
+
+<div>
+    @if (String.IsNullOrEmpty(Model.IDKey))
+    {
+        <table>
+            <tr class="header">
+                @foreach (DataColumn c in Model.Data.Columns)
+                {
+                    <th>@c.ColumnName</th>
+                }
+            </tr>
+            @foreach (DataRow r in Model.Data.Rows)
+            {
+                <tr>
+                    @foreach (object o in r.ItemArray)
+                    {
+                        <td>@o</td>
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+
+        @(Html.Telerik().Grid(Model.Data).Name(@idAsString).HtmlAttributes(new {@class = "bx-selection-grid"}).DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client)).DataKeys(keys => keys
+              .Add(Model.IDKey)
+              ).Selectable().Pageable().Columns(columns =>
+              {
+                  foreach (DataColumn dc in Model.Data.Columns)
+                  {
+                      if (dc.DataType == typeof(int)
+                          || dc.DataType == typeof(Int32)
+                          || dc.DataType == typeof(Int64)
+                          || dc.DataType == typeof(Int16)
+                          || dc.DataType == typeof(long))
+                      {
+                          columns.Bound(dc.DataType, dc.ColumnName)
+                              .Width(70);
+                      }
+                      else
+                      {
+                          columns.Bound(dc.DataType, dc.ColumnName);
+                      }
+                  }
+              }).Filterable().Sortable().TableHtmlAttributes(new
+              {
+                  idIndex = @idIndex,
+                  submitId = @submitId,
+                  link = "/" + @Model.Reciever.Area + "/" + @Model.Reciever.Controller + "/" + @Model.Reciever.Action,
+                  style = "width:" + @width + "px;"
+              }).Pageable(paging =>
+                  paging.PageSize(10, new int[] {5, 10, 50})
+                      .Total(Model.Data.Rows.Count)
+                      .Style(pagerStyles)
+              ).ClientEvents(events =>
+              {
+                  events.OnRowSelect("OnRowSelection");
+                  events.OnDataBound("OnDataBound");
+              })
+        )
+    }
+</div>
+<div class="bx-footer right">
+    @if (!String.IsNullOrEmpty(Model.Reciever.Action) &&
+                        !String.IsNullOrEmpty(Model.Reciever.Controller) &&
+                        !String.IsNullOrEmpty(Model.Reciever.Area))
+    {
+        if (String.IsNullOrEmpty(targetId))
+        {
+            <a id="@submitId" class="bx-button action bx-disabled submitEntitySelection">Select</a>
+        }
+        else
+        {
+ 
+            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new {parameters = @parameters},
+                new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = targetId,
+                    OnSuccess = "OnSucess()"
+                },
+                new
+                {
+                    @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
+                });
+        }
+
+        <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
+    }
+</div>
+<script type="text/javascript">
+
+    $(document)
+        .ready(function() {
+            resetAllTelerikIconTitles();
+            addTooltips();
+        });
+
+
+    function OnRowSelection(e) {
+
+        // get the DOM element which represents the clicked row
+        var row = e.row;
+        var table = $(row).closest("table");
+        var idIndex = table.attr("idindex");
+        var submitId = table.attr("submitid");
+        var link = table.attr("link");
+        var dataid = $(e.row).find("td")[idIndex].innerHTML;
+
+
+        var submitEntitySelection = link;
+        console.log("-->" + submitEntitySelection);
+
+        submitEntitySelection += "?id="+dataid;
+
+        console.log(submitEntitySelection);
+
+        $('#' + submitId).attr("href", submitEntitySelection);
+        $('#' + submitId).removeClass("bx-disabled");
+    }
+
+    function OnDataBound()
+    {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+    function cancel(e) {
+        var window = $(e).closest(".t-window").data('tWindow');
+        if (window != null)
+        {
+            window.close();
+            $(e).closest(".t-window").remove();
+        }
+    }
+
+    function OnSucess() {
+        var window = $(".entityWindow").data('tWindow');
+        if (window != null)
+        {
+            window.close();
+            $(".entityWindow").remove();
+        }
+    }
+
+</script>
+<style type="text/css">
+
+#TestGrid table > tbody > tr:hover
+{
+    background-color: #eff7f6;
+}
+
+.t-state-selected
+{
+    background-color: #eff7f6;
+}
+
+</style>
+
+

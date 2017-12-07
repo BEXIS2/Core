@@ -3,7 +3,7 @@
 }
 
 @model BExIS.Dcm.UploadWizard.TaskManager
-@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Modules.Dcm.UI.Models;
 
 @{
 
@@ -48,7 +48,7 @@
       
     $("#prevBt").click(function(){
         
-        $('#preloader').show();
+        $('.uploadWizardStep').preloader(16, "Previous step is loading.");
         var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
   
 
@@ -58,7 +58,7 @@
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();
-            $('#preloader').hide();
+            //$('#StepView').removePreloader();
         })
 
        
@@ -66,7 +66,10 @@
 
     $("#nextBt").click(function () {
        
-        $('#preloader').show();
+        //fontsize, text, height
+
+        $('.uploadWizardStep').preloader(16, "Next step is loading.");
+
         $.ajax({ 
             type: 'POST', 
             contentType: 'application/json; charset=utf-8', 
@@ -77,7 +80,7 @@
                     $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();
-                    $('#preloader').hide();
+                   
                 }
             });
     })
@@ -94,7 +97,7 @@
 
     function StartUpload()
     {
-        $('#preloader').show();
+        $('.uploadWizardStep').preloader(16, "Upload wizard step is loading.");
         $.ajax({
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -109,7 +112,7 @@
                     $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();
-                    $('#preloader').hide();
+                    
                 }
                 else
                 {

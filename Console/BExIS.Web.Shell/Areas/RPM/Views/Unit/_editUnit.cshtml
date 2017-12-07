@@ -2,7 +2,7 @@
 @using System
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
-@model BExIS.Web.Shell.Areas.RPM.Models.EditUnitModel
+@model BExIS.Modules.Rpm.UI.Models.EditUnitModel
 
 @{
     string DimDesc = "";
@@ -150,38 +150,34 @@
                 <td class="bx-errorMsg"></td>
             </tr>
         </table>
-        @(Html.Telerik().Grid(Model.DataTypeList)
+            @(Html.Telerik().Grid(Model.DataTypeList)
             .Name("bx-rpm-selectDataTypeGrid")
-            .Scrollable(t => t.Height(250))
-            .Sortable()
+            .Scrollable()
+            //.Sortable()
             .Filterable()
             //.DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))
             .Columns(columns =>
-                {
-                    columns.Template(
-                    @<text>
-                        <input class="checkBox" name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" tabindex = "5" 
-                            @if (dataTypeIds.Contains(item.Id) || checkedIds.Contains(item.Id))
-                            {
-                                <text>checked="checked"</text>
-                            }
-                        />
-                    </text>)
+            {
+            columns.Template(
+                @<text>
+                    <input class="checkBox" name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" tabindex="5"
+                           @if (dataTypeIds.Contains(item.Id) || checkedIds.Contains(item.Id)) { <text> checked="checked" </text>  } />
+                </text>)
                     .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
-                    columns.Bound(c => c.Id)
-                    .Width(100);
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.SystemType);
-                    columns.Bound(c => c.Description);
-                })
-                .ClientEvents(events=>events.OnDataBound("onDataBound"))
+                columns.Bound(c => c.Id)
+                .Width(100);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.SystemType);
+                columns.Bound(c => c.Description);
+            })
+                .ClientEvents(events => events.OnDataBound("onDataBound"))
             )
         <div class="bx-errorMsg bx-rpm-functions">
                 @Session["dataTypeMsg"]
         </div>
         <div class="bx-rpm-submit bx-rpm-buttons">
-            <button name="create" value="create" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
-            @Html.ActionLink("Cancel", "UnitManager", "Unit", new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "7" })
+            <button name="create" value="create" type="submit" class="bx-button action"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
+            @Html.ActionLink("Cancel", "UnitManager", "Unit", new { area = "RPM", @class = "bx-button action", @title = "Cancel", @tabindex = "7" })
         </div>       
     }
 

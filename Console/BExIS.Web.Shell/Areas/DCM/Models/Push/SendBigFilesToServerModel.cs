@@ -1,10 +1,7 @@
-﻿using System;
+﻿using BExIS.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.IO;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.Push
+namespace BExIS.Modules.Dcm.UI.Models.Push
 {
     public class SendBigFilesToServerModel
     {
@@ -12,9 +9,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Push
         public bool IsUploading { get; set; }
 
         public List<string> SupportedFileExtentions = new List<string>();
+        public int FileSize = 0;
 
-        public SendBigFilesToServerModel() {
-
+        public SendBigFilesToServerModel()
+        {
             IsUploading = false;
         }
     }

@@ -5,17 +5,12 @@ using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 
-
-using Telerik.Web.Mvc;
-
-using BExIS.Web.Shell.Areas.RPM.Models;
-using BExIS.RPM.Output;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.IO.Transform.Output;
 
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class MessageModel
     {
@@ -38,29 +33,37 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "The Name field is required.",
+                    Message = "The name field is required.",
                     CssId = cssId
                 };
             }
             else
             {
-                DataStructureManager dataStructureManager = new DataStructureManager();
-                List<DataStructure> dataStructures = dataStructureManager.AllTypesDataStructureRepo.Get().ToList();
-
-                foreach (DataStructure ds in dataStructures)
+                DataStructureManager dataStructureManager = null;
+                try
                 {
-                    if (Id != ds.Id)
+                    dataStructureManager = new DataStructureManager();
+                    List<DataStructure> dataStructures = dataStructureManager.AllTypesDataStructureRepo.Get().ToList();
+
+                    foreach (DataStructure ds in dataStructures)
                     {
-                        if (ds.Name.Trim().ToLower() == Name.Trim().ToLower())
+                        if (Id != ds.Id)
                         {
-                            return new MessageModel()
+                            if (ds.Name.Trim().ToLower() == Name.Trim().ToLower())
                             {
-                                hasMessage = true,
-                                Message = "A Data Structure with same Name already exists.",
-                                CssId = cssId
-                            };
+                                return new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "A data structure with the same name already exists.",
+                                    CssId = cssId
+                                };
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    dataStructureManager.Dispose();
                 }
             }
             return new MessageModel() { CssId = cssId };
@@ -68,9 +71,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public static MessageModel validateDataStructureDelete(long Id)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
-            return validateDataStructureDelete(Id, dataStructure);
+            DataStructureManager dataStructureManager = null;
+            try
+            {
+                dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
+                return validateDataStructureDelete(Id, dataStructure);
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
+            }
         }
 
         public static MessageModel validateDataStructureDelete(long Id , DataStructure dataStructure)
@@ -83,7 +94,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     return new MessageModel()
                     {
                         hasMessage = false,
-                        Message = "Are you sure you want to delete the Datastructure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                        Message = "Are you sure you want to delete the data structure " + dataStructure.Name + " (" + dataStructure.Id + ").",
                         CssId = dataStructure.Id.ToString()
                     };
                 }
@@ -94,7 +105,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't delete the Datastructure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                            Message = "Cannot delete the data structure " + dataStructure.Name + " (" + dataStructure.Id + ").",
                             CssId = dataStructure.Id.ToString()
                         };
                     }
@@ -103,7 +114,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Datastructure " + Id,
+                            Message = "Something is wrong with data structure " + Id,
                             CssId = "0"
                         };
                     }
@@ -114,7 +125,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "Something is wrong with Datastructure " + Id,
+                    Message = "Something is wrong with data structure " + Id,
                     CssId = "0"
                 };
             }
@@ -122,9 +133,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public static MessageModel validateDataStructureInUse(long Id)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
-            return validateDataStructureInUse(Id, dataStructure);
+            DataStructureManager dataStructureManager = null;
+            try
+            {
+                dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
+                return validateDataStructureInUse(Id, dataStructure);
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
+            }
         }
 
         public static MessageModel validateDataStructureInUse(long Id, DataStructure dataStructure)
@@ -138,7 +157,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't save Datastructure " + dataStructure.Name + " (" + Id + "), it's uesed by a Dataset.",
+                            Message = "Can't save data structure " + dataStructure.Name + " (" + Id + "), it's uesed by a Dataset.",
                             CssId = "inUse"
                         };
                     }
@@ -147,7 +166,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Datastructure " + Id,
+                            Message = "Something is wrong with data structure " + Id,
                             CssId = "0"
                         };
                     }
@@ -168,7 +187,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     return new MessageModel()
                     {
                         hasMessage = true,
-                        Message = "Can't store Variable for the Datastructure " + Id + ", it's uesed by a Dataset.",
+                        Message = "Can't store variable for the data structure " + Id + ", it's uesed by a dataset.",
                         CssId = "0"
                     };
                 }
@@ -178,8 +197,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public static MessageModel validateAttributeDelete(long Id)
         {
-            DataAttribute dataAttribute = new DataContainerManager().DataAttributeRepo.Get(Id);
-            return validateAttributeDelete(Id, dataAttribute);
+            DataContainerManager dataContainerManager = null;
+            try
+            {
+                dataContainerManager = new DataContainerManager();
+                DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(Id);
+                return validateAttributeDelete(Id, dataAttribute);
+            }
+            finally
+            {
+                dataContainerManager.Dispose();
+            }
         }
 
         public static MessageModel validateAttributeDelete(long Id, DataAttribute dataAttribute)
@@ -192,7 +220,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     return new MessageModel()
                     {
                         hasMessage = false,
-                        Message = "Are you sure you want to delete the Variable Temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
+                        Message = "Are you sure you want to delete the variable temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
                         CssId = dataAttribute.Id.ToString()
                     };
                 }
@@ -203,7 +231,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't delete the Variable Temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
+                            Message = "Can't delete the variable temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
                             CssId = dataAttribute.Id.ToString()
                         };
                     }
@@ -212,7 +240,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Variable Temlate " + Id,
+                            Message = "Something is wrong with variable temlate " + Id,
                             CssId = "0"
                         };
                     }
@@ -223,7 +251,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "Something is wrong with Variable Temlate " + Id,
+                    Message = "Something is wrong with variable temlate " + Id,
                     CssId = "0"
                 };
             }
@@ -236,28 +264,37 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 return new MessageModel()
                 {
                     hasMessage = true,
-                    Message = "The Name field is required.",
+                    Message = "The name field is required.",
                     CssId = cssId
                 };
             }
             else
             {
-                List<DataAttribute> dataAttributes = new DataContainerManager().DataAttributeRepo.Get().ToList();
-  
-                foreach (DataAttribute da in dataAttributes)
+                DataContainerManager dataContainerManager = null;
+                dataContainerManager = new DataContainerManager();
+                try
                 {
-                    if (Id != da.Id)
+                    List<DataAttribute> dataAttributes = dataContainerManager.DataAttributeRepo.Get().ToList();
+
+                    foreach (DataAttribute da in dataAttributes)
                     {
-                        if (da.Name.Trim().ToLower() == Name.Trim().ToLower())
+                        if (Id != da.Id)
                         {
-                            return new MessageModel()
+                            if (da.Name.Trim().ToLower() == Name.Trim().ToLower())
                             {
-                                hasMessage = true,
-                                Message = "A Variable Template with same Name already exists.",
-                                CssId = cssId
-                            };
+                                return new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "A variable template with same name already exists.",
+                                    CssId = cssId
+                                };
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    dataContainerManager.Dispose();
                 }
             }
             return new MessageModel() { CssId = cssId };
@@ -265,9 +302,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public static MessageModel validateAttributeInUse(long Id)
         {
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-            DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
-            return validateAttributeInUse(Id, dataAttribute);
+            DataContainerManager dataAttributeManager = null;
+            try
+            {
+                dataAttributeManager = new DataContainerManager();
+                DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
+                return validateAttributeInUse(Id, dataAttribute);
+            }
+            finally
+            {
+                dataAttributeManager.Dispose();
+            }
         }
 
         public static MessageModel validateAttributeInUse(long Id, DataAttribute dataAttribute)
@@ -281,7 +326,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Can't save Variable Template " + dataAttribute.Name + " (" + Id + "), it's uesed by a Data Structure.",
+                            Message = "Can't save variable template " + dataAttribute.Name + " (" + Id + "), it's uesed by a data structure.",
                             CssId = "inUse"
                         };
                     }
@@ -290,7 +335,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         return new MessageModel()
                         {
                             hasMessage = true,
-                            Message = "Something is wrong with Variable Template " + Id,
+                            Message = "Something is wrong with variable template " + Id,
                             CssId = "0"
                         };
                     }
@@ -311,7 +356,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     return new MessageModel()
                     {
                         hasMessage = true,
-                        Message = "Can't save Variable Template " + Id + ", it's uesed by a Data Structure.",
+                        Message = "Can't save variable template " + Id + ", it's uesed by a data structure.",
                         CssId = "0"
                     };
                 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BExIS.Dcm.Wizard;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using BExIS.Dcm.Wizard;
 
 /// <summary>
 ///
@@ -75,7 +75,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static CreateTaskmanager Bind(XmlDocument xmlDocument)
         {
             XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
-            CreateTaskmanager tm = new CreateTaskmanager(); 
+            CreateTaskmanager tm = new CreateTaskmanager();
             tm.StepInfos = new List<StepInfo>();
 
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
@@ -143,7 +143,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
         public bool IsChildCurrent(StepInfo stepInfo)
         {
-            if(IsCurrent(stepInfo))
+            if (IsCurrent(stepInfo))
             {
                 return true;
             }
@@ -152,7 +152,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             {
                 foreach (StepInfo child in stepInfo.Children)
                 {
-                   if(IsChildCurrent(child) ==true) return true;
+                    if (IsChildCurrent(child) == true) return true;
                 }
             }
 
@@ -218,7 +218,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
             return newStep;
         }
-        
+
 
         /// <summary>
         /// 
@@ -325,24 +325,24 @@ namespace BExIS.Dcm.CreateDatasetWizard
         {
             //if (child.IsInstanze)
             //{
-                StepInfo parent = child.Parent;
+            StepInfo parent = child.Parent;
 
-                int index = parent.Children.IndexOf(child);
+            int index = parent.Children.IndexOf(child);
 
-                if (index + 1 < parent.Children.Count)
-                {
-                    // return next child
-                    return parent.Children.ElementAt(index + 1);
-                }
+            if (index + 1 < parent.Children.Count)
+            {
+                // return next child
+                return parent.Children.ElementAt(index + 1);
+            }
+            else
+            {
+                if (IsRoot(parent)) return new StepInfo("");
                 else
                 {
-                    if (IsRoot(parent)) return new StepInfo("");
-                    else
-                    {
 
-                        return findNextInstanze(parent);
-                    }
+                    return findNextInstanze(parent);
                 }
+            }
             //}
             //else
             //{
@@ -415,7 +415,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             //        if (StepInfos[i].stepStatus != StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
             //    }
             //}
-        
+
         }
 
         public int GenerateStepId()
@@ -457,7 +457,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 if (child.Children.Count > 0)
                 {
                     StepInfo s = get(child, id);
-                    if(s !=null) return s;
+                    if (s != null) return s;
                 }
             }
 
@@ -487,7 +487,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         }
 
         public int GetPosition()
-        { 
+        {
             return GetX(Current(), 1);
         }
 
@@ -501,7 +501,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
                 for (int i = 0; i < stepIndex; i++)
                 {
-                    position += countSteps(parent.Children.ElementAt(i))+1;
+                    position += countSteps(parent.Children.ElementAt(i)) + 1;
                 }
             }
             else
@@ -513,7 +513,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return position;
         }
 
-        
+
 
         /// <summary>
         /// Remove stepInfo from parent stepInfo
@@ -537,8 +537,8 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
             }
             catch (Exception ex)
-            { 
-                
+            {
+
             }
 
             return parent;
@@ -566,7 +566,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             }
 
         }
-    
+
 
     }
 }

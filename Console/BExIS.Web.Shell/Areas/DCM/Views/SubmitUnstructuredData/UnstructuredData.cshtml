@@ -1,8 +1,8 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.SelectFileViewModel
+﻿@model BExIS.Modules.Dcm.UI.Models.SelectFileViewModel
 @using Telerik.Web.Mvc.UI;
 @using System;
 @using System.Web.Configuration;
-@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Modules.Dcm.UI.Models;
 
 @{
     
@@ -47,7 +47,7 @@
 
                                 )
                                 .Async(async => async
-                                    .Save("SelectFileProcess", @Model.StepInfo.PostActionInfo.ControllerName, new { area = "DCM" })
+                                    .Save("SelectFileProcess", @Model.StepInfo.PostActionInfo.ControllerName, new { area = "Dcm" })
                                     .AutoUpload(true))
 
                                 )
@@ -87,7 +87,7 @@
                 else
                 { 
                    <ul>
-                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                         { 
                             <li>@s.ToString()</li>
                         }

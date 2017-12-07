@@ -3,8 +3,8 @@
 @using BExIS.Dlm.Services.DataStructure
 @using System
 @using System.Text.RegularExpressions
-@using BExIS.Web.Shell.Areas.RPM.Controllers
-@model BExIS.Web.Shell.Areas.RPM.Models.UnitManagerModel
+@using BExIS.Modules.Rpm.UI.Controllers
+@model BExIS.Modules.Rpm.UI.Models.UnitManagerModel
 
 @*<header>*@
     <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
@@ -42,7 +42,7 @@
 }
 
 <div title="Create a new Unit" class="bx-rpm-buttons">
-    @Html.ActionLink("Create Unit", "openUnitWindow", "Unit", new { id = 0 }, new { @class = "t-button function" })
+    @Html.ActionLink("Create Unit", "openUnitWindow", "Unit", new { id = 0 }, new { @class = "bx-button function" })
 </div>
 
     @(Html.Telerik().Grid(Model.editUnitModelList)

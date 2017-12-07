@@ -1,135 +1,186 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.SAM.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 using Telerik.Web.Mvc;
-using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public delegate bool IsFeatureInEveryoneGroupDelegate(long featureId);
-
-    public class FeaturePermissionsController : Controller
+    public class FeaturePermissionsController : BaseController
     {
-        public ActionResult Index()
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="featureId"></param>
+        public void AddFeatureToPublic(long featureId)
         {
-            return View();
-        }
+            var featurePermissionManager = new FeaturePermissionManager();
 
-        public bool IsFeatureInEveryoneGroup(long featureId)
-        {
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-
-            return permissionManager.ExistsFeaturePermission(subjectManager.GetGroupByName("everyone").Id, featureId);
-        }
-
-        public ActionResult Features()
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
-
-            FeatureManager featureManager = new FeatureManager();
-
-            List<FeatureTreeViewModel> features = new List<FeatureTreeViewModel>();
-
-            IQueryable<Feature> roots = featureManager.GetRoots();
-            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f, new IsFeatureInEveryoneGroupDelegate(IsFeatureInEveryoneGroup))));
-
-            return View(features.AsEnumerable<FeatureTreeViewModel>());
-        }
-
-        public ActionResult Subjects(long id)
-        {
-            ViewData["FeatureId"] = id;
-
-            FeatureManager featureManager = new FeatureManager();
-
-            return PartialView("_SubjectsPartial");
-        }
-
-        [GridAction]
-        public ActionResult Subjects_Select(long id)
-        {
-            FeatureManager featureManager = new FeatureManager();
-
-            // DATA
-            Feature feature = featureManager.GetFeatureById(id);
-
-            List<FeaturePermissionGridRowModel> featurePermissions = new List<FeaturePermissionGridRowModel>();
-
-            if (feature != null)
+            try
             {
-                PermissionManager permissionManager = new PermissionManager();
-                SubjectManager subjectManager = new SubjectManager();
-
-                IQueryable<Subject> data = subjectManager.GetAllSubjects();
-
-                data.ToList().ForEach(s => featurePermissions.Add(FeaturePermissionGridRowModel.Convert(s, feature, permissionManager.GetFeaturePermissionType(s.Id, feature.Id), permissionManager.HasSubjectFeatureAccess(s.Id, feature.Id))));
+                if (!featurePermissionManager.Exists(null, featureId))
+                {
+                    featurePermissionManager.Create(null, featureId, PermissionType.Grant);
+                }
             }
-
-            return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
+            finally
+            {
+                featurePermissionManager.Dispose();
+            }
         }
 
-        public bool SetFeaturePermission(long subjectId, long featureId, int value)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="subjectId"></param>
+        /// <param name="featureId"></param>
+        /// <param name="permissionType"></param>
+        public void CreateOrUpdateFeaturePermission(long? subjectId, long featureId, int permissionType)
         {
-            PermissionManager permissionManager = new PermissionManager();
+            var featurePermissionManager = new FeaturePermissionManager();
 
-            if (value == 2)
+            try
             {
-                permissionManager.DeleteFeaturePermission(subjectId, featureId);
-
-                return true;
-            }
-            else
-            {
-                FeaturePermission featurePermission = permissionManager.GetFeaturePermission(subjectId, featureId);
+                var featurePermission = featurePermissionManager.Find(subjectId, featureId);
 
                 if (featurePermission != null)
                 {
-                    featurePermission.PermissionType = (PermissionType)value;
-                    permissionManager.UpdateFeaturePermission(featurePermission);
-
-                    return true;
+                    featurePermission.PermissionType = (PermissionType)permissionType;
+                    featurePermissionManager.Update(featurePermission);
                 }
                 else
                 {
-                    permissionManager.CreateFeaturePermission(subjectId, featureId, (PermissionType)value);
-
-                    return true;
+                    featurePermissionManager.Create(subjectId, featureId, (PermissionType)permissionType);
                 }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
             }
         }
 
-        public bool SetFeaturePublicity(long featureId, bool value)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="subjectId"></param>
+        /// <param name="featureId"></param>
+        /// <param name="permissionType"></param>
+        public void DeleteFeaturePermission(long subjectId, long featureId)
         {
-            FeatureManager featureManager = new FeatureManager();
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            var featurePermissionManager = new FeaturePermissionManager();
 
-            Feature feature = featureManager.GetFeatureById(featureId);
-
-            if (feature != null)
+            try
             {
-                if (value)
-                {
-                    permissionManager.CreateFeaturePermission(subjectManager.GetGroupByName("everyone").Id, feature.Id);
-                }
-                else
-                {
-                    permissionManager.DeleteFeaturePermission(subjectManager.GetGroupByName("everyone").Id, feature.Id);
-                }
-
-                return true;
+                featurePermissionManager.Delete(subjectId, featureId);
             }
+            finally
+            {
+                featurePermissionManager.Dispose();
+            }
+        }
 
-            return false;
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
+        {
+            var featureManager = new FeatureManager();
+
+            try
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
+
+                var features = featureManager.Features.Select(f => FeatureTreeViewModel.Convert(f, f.Permissions.Any(p => p.Subject == null), f.Parent.Id)).ToList();
+
+                foreach (var feature in features)
+                {
+                    feature.Children = features.Where(f => f.ParentId == feature.Id).ToList();
+                }
+
+                return View(features.Where(f => f.ParentId == null).AsEnumerable());
+            }
+            finally
+            {
+                featureManager.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="featureId"></param>
+        public void RemoveFeatureFromPublic(long featureId)
+        {
+            var featurePermissionManager = new FeaturePermissionManager();
+
+            try
+            {
+                if (featurePermissionManager.Exists(null, featureId))
+                {
+                    featurePermissionManager.Delete(null, featureId);
+                }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose(); ;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="featureId"></param>
+        /// <returns></returns>
+        public ActionResult Subjects(long featureId)
+        {
+            return PartialView("_Subjects", featureId);
+        }
+
+        [GridAction]
+        public ActionResult Subjects_Select(long featureId)
+        {
+            FeaturePermissionManager featurePermissionManager = null;
+            SubjectManager subjectManager = null;
+            FeatureManager featureManager = null;
+
+            try
+            {
+                featurePermissionManager = new FeaturePermissionManager();
+                subjectManager = new SubjectManager();
+                featureManager = new FeatureManager();
+
+                var feature = featureManager.FindById(featureId);
+
+                var featurePermissions = new List<FeaturePermissionGridRowModel>();
+
+                if (feature == null)
+                    return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
+                var subjects = subjectManager.Subjects.ToList();
+
+                foreach (var subject in subjects)
+                {
+                    var rightType = featurePermissionManager.GetPermissionType(subject.Id, feature.Id);
+                    var hasAccess = featurePermissionManager.HasAccess(subject.Id, feature.Id);
+
+                    featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
+                }
+
+                return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
+            }
+            finally
+            {
+                featureManager?.Dispose();
+                featurePermissionManager?.Dispose();
+                subjectManager?.Dispose();
+            }
         }
     }
 }

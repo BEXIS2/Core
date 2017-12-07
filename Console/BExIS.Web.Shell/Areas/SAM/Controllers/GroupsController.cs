@@ -1,180 +1,243 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Web.Mvc;
+﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.SAM.Models;
+using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 using Telerik.Web.Mvc;
-using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Extensions;
+using Telerik.Web.Mvc.Extensions;
+using Vaiona.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class GroupsController : Controller
+    public class GroupsController : BaseController
     {
-        public ActionResult Index()
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupName"></param>
+        [HttpPost]
+        public async Task<bool> AddUserToGroup(long userId, string groupName)
         {
-            return View();
+            var identityUserService = new IdentityUserService();
+
+            try
+            {
+                var user = identityUserService.FindByIdAsync(userId).Result;
+                var result = await identityUserService.AddToRoleAsync(user.Id, groupName);
+                return result.Succeeded;
+            }
+            finally
+            {
+                identityUserService.Dispose();
+            }
         }
 
-        // --------------------------------------------------
-        // GROUPS
-        // --------------------------------------------------
-
-        #region Groups
-
-        public ActionResult Groups()
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Create()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Groups", this.Session.GetTenant());
-            return View();
+            return PartialView("_Create", new CreateGroupModel());
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> Create(CreateGroupModel model)
+        {
+            var identityGroupService = new IdentityGroupService();
+
+            try
+            {
+                if (!ModelState.IsValid) return PartialView("_Create", model);
+
+                var group = new Group()
+                {
+                    Name = model.Name,
+                    Description = model.Description
+                };
+
+                var result = await identityGroupService.CreateAsync(group);
+                if (result.Succeeded)
+                {
+                    return Json(new { success = true });
+                }
+
+                AddErrors(result);
+
+                return PartialView("_Create", model);
+            }
+            finally
+            {
+                identityGroupService.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public async Task<bool> Delete(long groupId)
+        {
+            var identityGroupService = new IdentityGroupService();
+
+            try
+            {
+                var group = identityGroupService.FindByIdAsync(groupId).Result;
+                var result = await identityGroupService.DeleteAsync(group);
+                return result.Succeeded;
+            }
+            finally
+            {
+                identityGroupService.Dispose();
+            }
         }
 
         [GridAction]
         public ActionResult Groups_Select()
         {
-            SubjectManager subjectManager = new SubjectManager();
-            List<GroupGridRowModel> groups = subjectManager.GetAllGroups().Select(g => GroupGridRowModel.Convert(g)).ToList();
+            var groupManager = new GroupManager();
 
-            return View(new GridModel<GroupGridRowModel> { Data = groups });
-        }
-
-        #endregion Groups
-
-        [HttpPost]
-        public void Delete(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-            subjectManager.DeleteGroupById(id);
-        }
-
-        public ActionResult Edit(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            Group group = subjectManager.GetGroupById(id);
-
-            return PartialView("_EditPartial", GroupEditModel.Convert(group));
-        }
-
-        [HttpPost]
-        public ActionResult Edit(GroupEditModel model)
-        {
-            if (ModelState.IsValid)
+            try
             {
-                SubjectManager subjectManager = new SubjectManager();
+                var groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
 
-                Group group = subjectManager.GetGroupById(model.GroupId);
+                return View(new GridModel<GroupGridRowModel> { Data = groups });
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
+        }
 
-                group.Name = model.GroupName;
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupName"></param>
+        [HttpPost]
+        public async Task<bool> RemoveUserFromGroup(long userId, string groupName)
+        {
+            var identityUserService = new IdentityUserService();
+
+            try
+            {
+                var user = identityUserService.FindByIdAsync(userId).Result;
+                var result = await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
+                return result.Succeeded;
+            }
+            finally
+            {
+                identityUserService.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public ActionResult Update(long groupId)
+        {
+            var groupManager = new GroupManager();
+
+            try
+            {
+                var group = groupManager.FindByIdAsync(groupId).Result;
+                return PartialView("_Update", UpdateGroupModel.Convert(group));
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Update(UpdateGroupModel model)
+        {
+            var groupManager = new GroupManager();
+
+            try
+            {
+                if (!ModelState.IsValid) return PartialView("_Update", model);
+
+                var group = groupManager.FindByIdAsync(model.Id).Result;
+
+                if (group == null) return PartialView("_Update", model);
+
+                group.Name = model.Name;
                 group.Description = model.Description;
 
-                long[] users = group.Users.Select(g => g.Id).ToArray();
-
-                foreach (long userId in users)
-                {
-                    subjectManager.RemoveUserFromGroup(userId, group.Id);
-                }
-
-                if (Session["Users"] != null)
-                {
-                    foreach (GroupMembershipGridRowModel user in (GroupMembershipGridRowModel[]) Session["Users"])
-                    {
-                        if (user.IsUserInGroup)
-                        {
-                            subjectManager.AddUserToGroup(user.Id, group.Id);
-                        }
-                    }
-                }
-
-                subjectManager.UpdateGroup(group);
-
+                groupManager.UpdateAsync(group);
                 return Json(new { success = true });
             }
-            else
+            finally
             {
-                return PartialView("_EditPartial", model);
+                groupManager.Dispose();
             }
+        }
+
+        /// <summary>
+        /// ToDo: Documentation
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public ActionResult Users(string groupName)
+        {
+            return PartialView("_Users", groupName);
         }
 
         [GridAction]
-        public ActionResult Membership_Select(long id, long[] selectedUsers)
+        public ActionResult Users_Select(string groupName = "")
         {
-            SubjectManager subjectManager = new SubjectManager();
+            var userManager = new UserManager();
 
-            List<GroupMembershipGridRowModel> users = new List<GroupMembershipGridRowModel>();
-
-            if (selectedUsers != null)
+            try
             {
-                users = subjectManager.GetAllUsers().Select(u => GroupMembershipGridRowModel.Convert(u, selectedUsers.Contains(u.Id))).ToList();
-            }
-            else
-            {
-                Group group = subjectManager.GetGroupById(id);
+                var users = new List<UserMembershipGridRowModel>();
 
-                users = subjectManager.GetAllUsers().Select(u => GroupMembershipGridRowModel.Convert(u, u.Groups.Any(g => g.Id == id))).ToList();
-            }
-
-            return View(new GridModel<GroupMembershipGridRowModel> { Data = users });
-        }
-
-        public void SetMembership(GroupMembershipGridRowModel[] users)
-        {
-            Session["Users"] = users;
-        }
-
-        #region Grid View
-
-        // C
-        public ActionResult Create()
-        {
-            return PartialView("_CreatePartial");
-        }
-
-        [HttpPost]
-        public ActionResult Create(GroupCreateModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                SubjectManager subjectManager = new SubjectManager();
-                subjectManager.CreateGroup(model.GroupName, model.Description);
-
-                return Json(new { success = true });
-            }
-
-            return PartialView("_CreatePartial", model);
-        }
-
-        #endregion Grid View
-
-        #region Validation
-
-        public JsonResult ValidateGroupName(string groupName, long groupId = 0)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            Group group = subjectManager.GetGroupByName(groupName);
-
-            if (group == null)
-            {
-                return Json(true, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                if (group.Id == groupId)
+                foreach (var user in userManager.Users)
                 {
-                    return Json(true, JsonRequestBehavior.AllowGet);
+                    users.Add(UserMembershipGridRowModel.Convert(user, groupName));
                 }
-                else
-                {
-                    string error = String.Format(CultureInfo.InvariantCulture, "The group name already exists.", groupName);
 
-                    return Json(error, JsonRequestBehavior.AllowGet);
-                }
+                return View(new GridModel<UserMembershipGridRowModel> { Data = users });
+            }
+            finally
+            {
+                userManager.Dispose();
             }
         }
 
-        #endregion Validation
+        #region Hilfsprogramme
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
+            }
+        }
+
+        #endregion Hilfsprogramme
     }
 }

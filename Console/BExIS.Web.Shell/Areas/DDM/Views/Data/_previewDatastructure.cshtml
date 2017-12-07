@@ -1,8 +1,9 @@
-﻿@model Tuple<DataStructure, long>
-@using BExIS.Ddm.Model;
+﻿@using Telerik.Web.Mvc.UI;
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
-@using BExIS.Web.Shell.Areas.DDM.Helpers;
+@using BExIS.Modules.Ddm.UI.Helpers;
+
+@model Tuple<DataStructure, long>
 
 @{
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
@@ -32,7 +33,7 @@
 @if (@Model.Item1 != null)
 { 
     <div style="text-align:left">
-        <h2>@Model.Item1.Self.Name</h2>
+        <h2>@Model.Item1.Self.Name (@Model.Item1.Self.Id)</h2>
         <p>@Model.Item1.Self.Description</p>
     </div>
     
@@ -46,7 +47,8 @@
     {
         if (Model.Item2 > 0)
         {
-            dt = SearchUIHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
+            SearchUIHelper suiHelper = new SearchUIHelper();
+            dt = suiHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
         }
     }
     

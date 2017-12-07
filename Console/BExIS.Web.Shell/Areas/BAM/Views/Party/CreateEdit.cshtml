@@ -1,0 +1,281 @@
+﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
+@{
+    bool createMode = (Model.PartyType.Id == 0);
+    bool addRelationship = true;
+    if (Request.QueryString["relationTabAsDefault"] != null)
+    {
+        addRelationship = true;
+
+    }
+    else
+    { addRelationship = (bool)(ViewBag.RelationTabAsDefault != null ? ViewBag.RelationTabAsDefault : false); }
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
+}
+@if (Model.Errors != null && Model.Errors.Count() > 0)
+{
+    hasErrors = true;
+}
+
+@if (hasErrors == true)
+{
+    errorClass = "bx-input-error";
+    foreach (var item in Model.Errors)
+    {
+        if (Model.Errors.First().Equals(item))
+        {
+            errorMessage = item.GetMessage();
+        }
+        else
+        {
+            errorMessage += ", " + item.GetMessage();
+        }
+    }
+}
+@section Information
+{
+    <text>
+        Here you can create, edit, or delete a relationship between two parties. Note: only predefined relationship type are allowed. Contact you system administrator if you think there is a relationship type missing.
+    </text>
+    <p>
+        <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+@using (Html.BeginForm("CreateEdit", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @(Html.Telerik().TabStrip()
+        .Name("ShowDataTabStrip").ClientEvents(item => item.OnLoad("onLoad"))
+        .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
+        .Items(tabs =>
+        {
+        tabs.Add()
+                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? Model.PartyType.Title : "Party").Content(@<text>
+                <table class="bx-table-form" id="tblParty">
+                    <tr>
+                        <td><b title="Required" style="color: red">*</b></td>
+                        <td style="width:300px;">
+                            <label for="PartyType">Party Type</label>
+                        </td>
+                        <td>
+                            @if (!createMode)
+                            {
+                                @Html.HiddenFor(m => m.PartyType.Id)
+                                @Model.PartyType.Title
+                            }
+                            else
+                            {
+                                @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:372px;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
+                                @Html.ValidationMessageFor(m => m.PartyType.Id, "Select party type")
+                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
+                                <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
+                            }
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <label for="StartDate">Start Date</label>
+                        </td>
+                        <td>
+                            @(Html.Telerik().DatePickerFor(m => m.StartDate)
+                                    .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
+                            )
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <label for="EndDate">End Date</label>
+                        </td>
+                        <td>
+                            @(Html.Telerik().DatePickerFor(m => m.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
+                            <div id="divDatesError"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <label for="Description">Description</label>
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input " })
+                            @Html.ValidationMessageFor(m => m.Description)
+                            <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Description" />
+                        </td>
+                    </tr>
+                </table>
+                    </text>);
+        tabs.Add().Text("Additional attributes").Enabled((createMode ? false : true)).Content(@<text>
+                        <div id="divPartyCustomAttr"></div>
+        </text>);
+        tabs.Add().Text("Relationships").Enabled((createMode ? false : true)).Content(@<text>
+            @Html.Partial("~/Areas/BAM/Views/PartyService/_partyRelationshipsPartial.cshtml", Model)
+        </text>);
+        })
+    )<span style="color:red" id="errorsMsgSpan">@errorMessage</span>
+
+    <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
+        <button type="submit" id="submitBtn" class="bx-button action" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
+        @Html.ActionLink("Back to party manager", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
+    </div>
+}
+
+<div id="divPartyRelation"></div>
+<script type="text/javascript">
+
+    var partyTabStrip =undefined;
+    //if it is in create mode and the first tab is activate;it opens the next tab
+    function submitClick()
+    {
+        if(!checkDateRange())
+            return;
+        if(!validateRelationships())
+        {
+            return false;
+        }
+        var validationError=false;
+        if(!$("#PartyType_Id").val())
+        {
+            $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
+            return false;
+        }
+        else if ('@createMode'=='True' && !validationError)
+        {
+            if(partyTabStrip.getSelectedTabIndex()==0)
+            {
+                var customAttrTab=$(".t-item", partyTabStrip.element)[1];
+                partyTabStrip.select(customAttrTab);
+                $("#submitBtn").html("Save");
+                return false;
+            }
+        }
+        else
+        {
+            var $form = $("#frmParty");
+            $form.valid();
+            $(".t-item", partyTabStrip.element).each(function(index,element){
+                if ($(partyTabStrip.getContentElement(index)).find(".input-validation-error").length)
+                {
+                    partyTabStrip.select(element);
+                    validationError=true;
+                    if(index!=0)
+                        $("#submitBtn").html("Save");
+                    return false;
+                }
+            });
+            //if(checkUniqeness &&  checkUniqeness())
+            //    return true;
+            //else
+            //    return false;
+        }
+    }
+
+    function checkDateRange() {
+        $parentElement = $("#tblParty");
+        startDate = new Date($parentElement.find("[id*='StartDate']").val());
+        endDate = new Date($parentElement.find("[id*='EndDate']").val());
+        $warningElement = $parentElement.find("#divDatesError");
+        if ((startDate > endDate))
+        {  //first span should be there for the class and is not usable because of automatic changing by validation
+            $warningElement.html("<span class='input-validation-error' ></span><span id='endDateValidation-error' style='background-color: #ffeeee;border: 1px solid #ff0000;'>End date should be equal or greater than start date.</span>");
+            return false;
+        }
+        else
+            $warningElement.html("");
+        return true;
+    }
+
+    function OnChangePartyType(e) {
+        var partyTypeId = e.value;
+        if (!partyTypeId)
+        {
+            partyTabStrip.disable($(".t-item", partyTabStrip.element)[1]);
+            $("[data-valmsg-for='PartyType.Id']").removeClass("field-validation-valid").addClass("field-validation-error");
+        }
+        else {
+            $("[data-valmsg-for='PartyType.Id']").addClass("field-validation-valid").removeClass("field-validation-error");
+
+            partyTabStrip.enable($(".t-item", partyTabStrip.element)[1]);
+            $('#imgPartyCustomeAttrLoading').show();
+            $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Id, function (response, status, xhr) {
+                if (status == "error") {
+                    $('#divPartyCustomAttr').html("")
+                    alert(response);
+                }
+                $('#imgPartyCustomeAttrLoading').hide();
+            });
+        }
+    }
+
+    function validateRelationships()
+    {
+        var valid=true;
+        if(@Model.Id != 0)
+        {
+            $.post('/BAM/Party/ValidateRelationships',
+            { partyId: @Model.Id },
+            function(response) {
+                if(response!=""){
+                    valid=false;
+                    //  $("#divSubmitButtons").hide();
+                }
+                $("#errorsMsgSpan").html(""+response+"");
+            });
+        }
+        return valid;
+    }
+
+    function tabSelected(tab)
+    {
+        validateRelationships();
+        if($(tab.item).text()=="Relationships")
+        {
+            $("#submitBtn").attr("disabled","true");
+            $("#submitBtn").css("background-color","#f5f5f5");
+            $("#submitBtn").attr("title","Every change in relationships will save immediately. No need to save!");
+        }
+        else
+        {
+            $("#submitBtn").removeAttr("disabled");
+            $("#submitBtn").removeAttr("title");
+            $("#submitBtn").css("background-color","");
+        }
+    }
+
+    //Enable dynamic validation in every ajax request because they will disable each time
+    $(function () {
+        //parsing the unobtrusive attributes when we get content via ajax
+        $(document).ajaxComplete(function () {
+            var $form = $("#frmParty");
+            // Unbind existing validation
+            $form.unbind();
+            $form.data("validator", null);
+            // Check document for changes
+            $.validator.unobtrusive.parse(document);
+            // Re add validation with changes
+            $form.validate($form.data("unobtrusiveValidation").options);
+        });
+    });
+    function onLoad(){
+        partyTabStrip = $("#ShowDataTabStrip").data("t-TabStrip");
+        if(window.location.href.includes("PartyRelationshipsGrid"))
+            partyTabStrip.select($(".t-item", partyTabStrip.element)[2]);
+        if ('@createMode'=='False')
+            OnChangePartyType({value:@Model.PartyType.Id });
+        validateRelationships();
+        if(partyTabStrip.getSelectedTabIndex()==2)
+        {
+            $("#submitBtn").attr("disabled","true");
+            $("#submitBtn").css("background-color","#f5f5f5");
+            $("#submitBtn").attr("title","Every change in relationships will save immediately. No need to save!");
+        }
+
+
+    }
+
+</script>

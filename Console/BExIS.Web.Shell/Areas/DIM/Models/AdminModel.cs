@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.Dlm.Entities.MetadataStructure;
+﻿using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.DIM.Models
+namespace BExIS.Modules.Dim.UI.Models
 {
     public class AdminModel
     {
-        public Dictionary<long,string> MetadataStructuresDic { get; set; }
+        public Dictionary<long, string> MetadataStructuresDic { get; set; }
 
         public AdminModel()
         {
             MetadataStructuresDic = new Dictionary<long, string>();
         }
 
-        public void Add(MetadataStructure metadataStructure)
+        public void Add(long metadataStructureId, string metadataStrutcureName)
         {
-            this.MetadataStructuresDic.Add(metadataStructure.Id,
-                                         metadataStructure.Name);
+            this.MetadataStructuresDic.Add(metadataStructureId,
+                                         metadataStrutcureName);
         }
     }
 }

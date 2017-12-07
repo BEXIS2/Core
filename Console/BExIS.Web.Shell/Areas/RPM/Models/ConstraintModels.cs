@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BExIS.Dlm.Entities.DataStructure;
-using DataAnnotationsExtensions;
 using System.ComponentModel.DataAnnotations;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class ConstraintModel
     {

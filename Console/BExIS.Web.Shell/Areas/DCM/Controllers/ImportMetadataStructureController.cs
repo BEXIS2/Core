@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BExIS.Dcm.ImportMetadataStructureWizard;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
+using BExIS.Utils.Helpers;
+using System;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using BExIS.Dcm.ImportMetadataStructureWizard;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureController : Controller
     {
@@ -29,7 +29,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ImportMetadataStructureWizard()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Import Metadata Structure", this.Session.GetTenant()); 
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Import Metadata Structure", this.Session.GetTenant());
 
             Session["TaskManager"] = null;
             TaskManager = null;
@@ -47,7 +47,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     Session["TaskManager"] = TaskManager;
 
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     ModelState.AddModelError(String.Empty, e.Message);
                 }
@@ -94,9 +94,44 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (msm.Repo.Query(m => m.Name.Equals(schemaName)).Any())
                 {
                     MetadataStructure ms = msm.Repo.Query(m => m.Name.Equals(schemaName)).FirstOrDefault();
-                    msm.Delete(ms);
+                    var deleted = msm.Delete(ms);
+
+                    if (deleted)
+                    {
+
+                        //delete xsds
+
+                        if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
+                        {
+                            schemaName = RegExHelper.GetCleanedFilename(schemaName);
+                            string directoryPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dcm"), "Metadata", schemaName);
+
+                            if (Directory.Exists(directoryPath)) Directory.Delete(directoryPath, true);
+                        }
+
+                        //delete mappingfiles
+                        if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT))
+                        {
+                            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dim"), TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString());
+                            if (FileHelper.FileExist(filepath))
+                            {
+                                FileHelper.Delete(filepath);
+                            }
+
+                        }
+
+                        if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT))
+                        {
+                            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dim"), TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString());
+                            if (FileHelper.FileExist(filepath))
+                            {
+                                FileHelper.Delete(filepath);
+                            }
+                        }
+                    }
                 }
             }
+
 
             #endregion
             Session["Taskmanager"] = null;
@@ -111,7 +146,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult FinishUpload()
         {
-            return RedirectToAction("ShowMyDatasetsInFullPage", "Home", new {area = "DDM" });
+            return RedirectToAction("ShowMyDatasetsInFullPage", "Home", new { area = "DDM" });
         }
     }
 }

@@ -1,115 +1,92 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
+using System.Linq;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
-    public class GroupCreateModel
+    public class CreateGroupModel
     {
-        [Display(Name = "Group Name")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The group name must not contain spaces.")]
-        [Remote("ValidateGroupName", "Groups")]
-        [Required]
-        [StringLength(50, ErrorMessage = "The group name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string GroupName { get; set; }
-
-        [Display(Name = "Description")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The description must start and end with no space.")]
-        [StringLength(250, ErrorMessage = "The description must be less than {1} characters long.")]
         public string Description { get; set; }
+        public string Name { get; set; }
+        public int Type { get; set; }
     }
 
-    public class GroupEditModel
+    public class DeleteGroupModel
     {
-        [Display(Name = "Group Id")]
-        [Editable(false)]
-        [Required]
-        public long GroupId { get; set; }
+    }
 
-        [Display(Name = "Group Name")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The group name is invalid.")]
-        [Remote("ValidateGroupName", "Groups", AdditionalFields = "GroupId")]
-        [Required]
-        [StringLength(50, ErrorMessage = "The group name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string GroupName { get; set; }
-
-        [Display(Name = "Description")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The description must start and end with no space.")]
-        [StringLength(250, ErrorMessage = "The description must be less than {1} characters long.")]
+    public class GroupFeaturePermissionGridRowModel
+    {
         public string Description { get; set; }
+        public string GroupName { get; set; }
+        public bool HasFeaturePermission { get; set; }
+        public long Id { get; set; }
 
-        public static GroupEditModel Convert(Group group)
+        public static GroupFeaturePermissionGridRowModel Convert(Group group)
         {
-            return new GroupEditModel()
+            return new GroupFeaturePermissionGridRowModel()
             {
-                GroupId = group.Id,
+                Description = group.Description,
                 GroupName = group.Name,
-                Description = group.Description
+                Id = group.Id,
             };
         }
     }
 
     public class GroupGridRowModel
     {
-        [Display(Name = "Group Id")]
-        [Editable(false)]
-        [Required]
-        public long Id { get; set; }
-
-        [Display(Name = "Group Name")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The group name is invalid.")]
-        [Remote("ValidateGroupName", "Groups", AdditionalFields = "Id")]
-        [Required]
-        [StringLength(50, ErrorMessage = "The group name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string GroupName { get; set; }
-
-        [Display(Name = "Description")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The description must start and end with no space.")]
-        [StringLength(250, ErrorMessage = "The description must be less than {1} characters long.")]
         public string Description { get; set; }
+        public string GroupName { get; set; }
+        public long Id { get; set; }
 
         public static GroupGridRowModel Convert(Group group)
         {
             return new GroupGridRowModel()
             {
-                Id = group.Id,
-                GroupName = group.Name,
                 Description = group.Description,
+                GroupName = group.Name,
+                Id = group.Id
             };
         }
     }
 
     public class GroupMembershipGridRowModel
     {
+        public string Description { get; set; }
         public long Id { get; set; }
-
-        public string Username { get; set; }
-
-        public string FullName { get; set; }
-
-        public string Email { get; set; }
-
         public bool IsUserInGroup { get; set; }
+        public string Name { get; set; }
 
-        public static GroupMembershipGridRowModel Convert(User user, bool isUserInGroup)
+        public static GroupMembershipGridRowModel Convert(Group group, long userId)
         {
             return new GroupMembershipGridRowModel()
             {
-                Id = user.Id,
-                Username = user.Name,
-                FullName = user.FullName,
-                Email = user.Email,
-
-                IsUserInGroup = isUserInGroup
+                Description = group.Description,
+                Name = group.Name,
+                Id = group.Id,
+                IsUserInGroup = group.Users.Any(u => u.Id == userId)
             };
         }
     }
 
-    public class GroupSelectListItemModel
+    public class ReadGroupModel
     {
     }
 
-    public class GroupSelectListModel
+    public class UpdateGroupModel
     {
+        public string Description { get; set; }
+        public int GroupType { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public static UpdateGroupModel Convert(Group group)
+        {
+            return new UpdateGroupModel()
+            {
+                Id = group.Id,
+                Name = group.Name,
+                Description = group.Description
+            };
+        }
     }
 }

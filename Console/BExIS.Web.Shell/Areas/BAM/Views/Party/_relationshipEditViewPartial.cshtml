@@ -1,0 +1,114 @@
+﻿@model BExIS.Dlm.Entities.Party.PartyRelationship
+
+@{
+    var viewMode = (Boolean)(ViewBag.viewMode);
+}
+@Html.HiddenFor(m => m.Id)
+@using (Html.BeginForm("", "", new { area = "BAM" }, FormMethod.Post, new { id = "frmEditPartyRelationsip" }))
+{
+    <table id="tblRelationship">
+        <tr>
+            <td style="width:200px">Title</td>
+            <td>
+                @Html.HiddenFor(item => item.Id)
+                @(viewMode ? Html.ValueFor(m => m.Title) : Html.TextBoxFor(m => m.Title, new { @class = "t-input bx-input" }))
+                @Html.ValidationMessageFor(m => m.Title)
+            </td>
+        </tr>
+        <tr>
+            <td style="width:200px">Description</td>
+            <td>
+                @(viewMode ? Html.ValueFor(m => m.Description) : Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" }))
+                @Html.ValidationMessageFor(m => m.Description)
+            </td>
+        </tr>
+        <tr>
+            <td style="width:200px">Start Date</td>
+            <td>
+                @if (viewMode)
+                {
+                    if (Model.StartDate.Date != DateTime.MinValue.Date)
+                    {
+                        <text>
+                            @Model.StartDate.ToString()
+                        </text>
+                    }
+                }
+                else
+                {
+                    @Html.Telerik().DatePicker().Name("EditRelStartDate").Value(Model.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
+                }
+            </td>
+        </tr>
+        <tr>
+            <td style="width:200px">End Date</td>
+            <td>
+                @if (viewMode)
+                {
+                    if (Model.EndDate.Date != DateTime.MaxValue.Date)
+                    {
+                        <text>
+                            @Model.EndDate.ToString()
+                        </text>
+                    }
+                }
+                else
+                {
+                    @Html.Telerik().DatePicker().Name("EditRelEndDate").Value(Model.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td style="width:200px">Scope</td>
+            <td>
+                @(viewMode ? Html.ValueFor(m => m.Scope) : Html.TextBoxFor(m => m.Scope, new { @class = "t-input bx-input" }))
+            </td>
+        </tr>
+    </table>
+    <div id="" class="bx-footer right">
+        @if (!viewMode)
+        {
+
+            <button type="button" value="Save" id="savePartyRelationship" class="bx-button action" style="border:0px;">Save</button>
+            <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
+
+        }
+        else
+        {
+            <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
+
+        }
+    </div>
+}
+<script>
+    var thisObject=$("#tblRelationship");
+    $("#savePartyRelationship").bind("click", function () {
+        var partyRelationshipData={partyRelationship:{
+            description:thisObject.find("#Description").val(),
+            id: @Model.Id,
+            scope:thisObject.find("#Scope").val() ,
+            startDate:new Date(thisObject.find("#EditRelStartDate").val()),
+            endDate:new Date(thisObject.find("#EditRelEndDate").val()),
+            title:thisObject.find("#Title").val()
+        }};
+
+        $.ajax({
+            url: '/BAM/Party/EditPartyRelationship/' ,
+            type: 'POST',
+            data: JSON.stringify(partyRelationshipData),
+            contentType: "application/json; charset=utf-8",
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                window.location.href = window.location.pathname+"?"+$.param({'relationTabAsDefault':'true'})
+            },
+            async: true,
+            processData: false
+        });
+    });
+    $(document).ready(function(){
+        resetAllTelerikIconTitles();
+    });
+
+</script>

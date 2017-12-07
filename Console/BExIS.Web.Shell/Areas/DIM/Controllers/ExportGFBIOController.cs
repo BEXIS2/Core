@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using BExIS.Dlm.Services.Data;
+﻿using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
+using System.Collections.Generic;
+using System.Web.Http;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class ExportGFBIOController : ApiController
     {
@@ -19,9 +15,16 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
-            var datasetIds = dm.GetDatasetLatestIds();
+            try
+            {
+                var datasetIds = dm.GetDatasetLatestIds();
 
-            return datasetIds;
+                return datasetIds;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
         }
 
         // GET: api/Export/5
