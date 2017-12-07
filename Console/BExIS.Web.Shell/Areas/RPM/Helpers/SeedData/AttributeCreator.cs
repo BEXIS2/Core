@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Xml;
 using Vaiona.Persistence.Api;
 
@@ -137,7 +136,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     List<string> Types = mapUnitsRow["DataTypes"].ToString().Split(' ').Distinct().ToList();
 
                     // get existing unit or create
-                    Unit existU = unitManager.Repo.Get(u => u.Name.Equals(unit.Name)).FirstOrDefault();
+                    Unit existU = unitManager.Repo.Get(u => u.Name.ToLower().Equals(unit.Name.ToLower())).FirstOrDefault();
                     if (existU == null)
                     {
                         unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
@@ -179,8 +178,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             unitManager.Update(unit);
         }
 
-    // create dimensions in bpp
-    public void CreateDimensions(ref DataTable mappedDimensions)
+        // create dimensions in bpp
+        public void CreateDimensions(ref DataTable mappedDimensions)
         {
             UnitManager unitManager = null;
             try

@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using DocumentFormat.OpenXml;
@@ -15,6 +14,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Vaiona.Persistence.Api;
 /// <summary>
 ///
 /// </summary>        
@@ -148,73 +148,77 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
-            string message = "row :" + rowIndex + "column:" + columnIndex;
-            Debug.WriteLine(message);
 
-            DataContainerManager CM = new DataContainerManager();
-            DataAttribute dataAttribute = CM.DataAttributeRepo.Get(variableValue.DataAttribute.Id);
 
-            string cellRef = getColumnIndex(columnIndex);
-
-            Cell cell = new Cell();
-            cell.CellReference = cellRef;
-            cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType, styleIndexArray);
-            //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
-            //cell.CellValue = new CellValue(variableValue.Value.ToString());
-
-            CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
-            object value = variableValue.Value;
-
-            if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
+            using (var uow = this.GetUnitOfWork())
             {
-                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
 
-                try
-                {
-                    if (value.ToString() != "")
-                    {
-                        double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-                        cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message + "\n|" + message);
-                }
+                string message = "row :" + rowIndex + "column:" + columnIndex;
+                Debug.WriteLine(message);
 
-                return cell;
-            }
-            else
-            {
-                if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
-                {
+                string cellRef = getColumnIndex(columnIndex);
 
+                Cell cell = new Cell();
+                cell.CellReference = cellRef;
+                cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType, styleIndexArray);
+                //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
+                //cell.CellValue = new CellValue(variableValue.Value.ToString());
+
+                CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
+                object value = variableValue.Value;
+
+                if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
+                {
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                    //CultureInfo provider = CultureInfo.InvariantCulture;
+
                     try
                     {
                         if (value.ToString() != "")
                         {
-                            DateTime dt = Convert.ToDateTime(value.ToString());
-                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                            double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+                            cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.Message + "|" + message);
+                        throw new Exception(ex.Message + "\n|" + message);
                     }
+
+                    return cell;
                 }
                 else
                 {
-                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    if (value == null)
-                        cell.CellValue = new CellValue("");
-                    else
-                        cell.CellValue = new CellValue(value.ToString());
-                }
-            }
+                    if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+                    {
 
-            return cell;
+                        cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                        //CultureInfo provider = CultureInfo.InvariantCulture;
+                        try
+                        {
+                            if (value.ToString() != "")
+                            {
+                                DateTime dt = Convert.ToDateTime(value.ToString());
+                                cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message + "|" + message);
+                        }
+                    }
+                    else
+                    {
+                        cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                        if (value == null)
+                            cell.CellValue = new CellValue("");
+                        else
+                            cell.CellValue = new CellValue(value.ToString());
+                    }
+                }
+
+                return cell;
+            }
         }
 
         /// <summary>

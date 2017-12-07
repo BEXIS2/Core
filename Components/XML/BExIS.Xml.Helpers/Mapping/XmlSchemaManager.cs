@@ -1524,7 +1524,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         //unit
                         // it is the second time I am seeing this cose segment, would be good to factor it out to a function
-                        Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("none")).First();
+                        Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("none")).FirstOrDefault();
                         if (noneunit == null)
                             unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
