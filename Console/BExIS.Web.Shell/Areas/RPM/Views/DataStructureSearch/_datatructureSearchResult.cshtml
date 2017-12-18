@@ -119,6 +119,7 @@
             if ($('#' + id).attr('inuse') == 'true') {
                 $('#' + id + '_edit').removeClass('bx-edit');
                 $('#' + id + '_edit').addClass('bx-show');
+                $('#' + id + '_edit').attr('title','Show Data Structure');
             }
             $(".t-grid").trigger('load');
         }

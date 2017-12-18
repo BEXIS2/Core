@@ -15,9 +15,7 @@ namespace BExIS.IO.Transform.Input
 {
     public class EasyUploadExcelReader : ExcelReader
     {
-        private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-
-        public DataTuple[] ReadFile(Stream file, string fileName, EasyUploadFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public DataTuple[] ReadFile(Stream file, string fileName, EasyUploadFileReaderInfo fri, StructuredDataStructure sds, long datasetId, String worksheetUri)
         {
             this.FileStream = file;
             this.FileName = fileName;
@@ -57,13 +55,20 @@ namespace BExIS.IO.Transform.Input
                 // get all the defined area 
                 //List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
 
-                this._areaOfVariables.StartColumn = alphabet[fri.VariablesStartColumn - 1].ToString();
-                this._areaOfVariables.EndColumn = alphabet[fri.VariablesEndColumn - 1].ToString();
+                /*
+                 * Markus: Fixed it for column names greater than Z - leaving the old code commented out in case something goes wrong
+                 * */
+                //this._areaOfVariables.StartColumn = alphabet[fri.VariablesStartColumn - 1].ToString();
+                this._areaOfVariables.StartColumn = columnToLetter(fri.VariablesStartColumn);
+                //this._areaOfVariables.EndColumn = alphabet[fri.VariablesEndColumn - 1].ToString();
+                this._areaOfVariables.EndColumn = columnToLetter(fri.VariablesEndColumn);
                 this._areaOfVariables.StartRow = fri.VariablesStartRow;
                 this._areaOfVariables.EndRow = fri.VariablesEndRow;
 
-                this._areaOfData.StartColumn = alphabet[fri.DataStartColumn - 1].ToString();
-                this._areaOfData.EndColumn = alphabet[fri.DataEndColumn - 1].ToString();
+                //this._areaOfData.StartColumn = alphabet[fri.DataStartColumn - 1].ToString();
+                this._areaOfData.StartColumn = columnToLetter(fri.DataStartColumn);
+                //this._areaOfData.EndColumn = alphabet[fri.DataEndColumn - 1].ToString();
+                this._areaOfData.EndColumn = columnToLetter(fri.DataEndColumn);
                 this._areaOfData.StartRow = fri.DataStartRow;
                 this._areaOfData.EndRow = fri.DataEndRow;
 
@@ -77,9 +82,8 @@ namespace BExIS.IO.Transform.Input
 
                 int endRowData = fri.DataEndRow;
 
-                // select worksheetpart by selected defined name area like data in sheet
-                // sheet where data area is inside
-                WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
+                // select worksheetpart by Uri
+                WorksheetPart worksheetPart = workbookPart.WorksheetParts.Where(ws => ws.Uri.ToString() == worksheetUri).FirstOrDefault();
 
                 // get styleSheet
                 _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
@@ -88,7 +92,7 @@ namespace BExIS.IO.Transform.Input
                 _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
 
-                if (this.SubmitedVariableIdentifiers != null)
+                if (this.SubmitedVariableIdentifiers != null && worksheetPart != null)
                 {
                     ReadRows(worksheetPart, fri.DataStartRow, endRowData);
                 }
@@ -104,5 +108,17 @@ namespace BExIS.IO.Transform.Input
             this.SubmitedVariableIdentifiers = vi;
         }
 
+        private string columnToLetter(int column)
+        {
+            int temp = 0;
+            string letter = "";
+            while (column > 0)
+            {
+                temp = (column - 1) % 26;
+                letter = alphabet[temp] + letter;
+                column = (column - temp - 1) / 26;
+            }
+            return letter;
+        }
     }
 }

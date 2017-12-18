@@ -1,16 +1,36 @@
 ﻿using BExIS.Modules.Bam.UI.Helpers;
+using System;
+using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
+
 namespace BExIS.Modules.Bam.UI
 {
     public class BamModule : ModuleBase
     {
-        public BamModule(): base("bam")
+        public BamModule() : base("bam")
         {
+            LoggerFactory.GetFileLogger().LogCustom("...ctor of bam...");
         }
         public override void Install()
         {
-            base.Install();
-            BAMSeedDataGenerator.GenerateSeedData();
+            LoggerFactory.GetFileLogger().LogCustom("...start install of bam...");
+            try
+            {
+                base.Install();
+                using (BAMSeedDataGenerator generator = new BAMSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
+                
+            }
+            catch (Exception e)
+            {
+                LoggerFactory.GetFileLogger().LogCustom(e.Message);
+                LoggerFactory.GetFileLogger().LogCustom(e.StackTrace);
+            }
+
+            LoggerFactory.GetFileLogger().LogCustom("...end install of bam...");
+
         }
         /// <summary>
         /// Registers current area with the routing engine.

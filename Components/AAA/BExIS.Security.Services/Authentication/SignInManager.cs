@@ -7,8 +7,8 @@ namespace BExIS.Security.Services.Authentication
 {
     public sealed class SignInManager : SignInManager<User, long>
     {
-        public SignInManager(UserManager userManager, IAuthenticationManager authenticationManager)
-             : base(userManager, authenticationManager)
+        public SignInManager(IAuthenticationManager authenticationManager)
+             : base(new IdentityUserService(), authenticationManager)
         {
         }
     }

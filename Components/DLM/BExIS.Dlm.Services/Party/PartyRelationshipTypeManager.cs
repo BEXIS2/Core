@@ -10,16 +10,42 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Party
 {
-    public class PartyRelationshipTypeManager
+    public class PartyRelationshipTypeManager:IDisposable
     {
-        public IReadOnlyRepository<PartyRelationshipType> Repo { get; private set; }
-        public IReadOnlyRepository<PartyTypePair> RepoPartyTypePair { get; private set; }
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public PartyRelationshipTypeManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            Repo = uow.GetReadOnlyRepository<PartyRelationshipType>();
-            RepoPartyTypePair = uow.GetReadOnlyRepository<PartyTypePair>();
+            _guow = this.GetIsolatedUnitOfWork();
+            PartyRelationshipTypeRepository = _guow.GetReadOnlyRepository<PartyRelationshipType>();
+            PartyTypePairRepository = _guow.GetReadOnlyRepository<PartyTypePair>();
         }
+
+        ~PartyRelationshipTypeManager()
+        {
+            Dispose(true);
+        }
+        public IReadOnlyRepository<PartyTypePair> PartyTypePairRepository { get; }
+        public IReadOnlyRepository<PartyRelationshipType> PartyRelationshipTypeRepository { get; }
+        public IQueryable<PartyRelationshipType> PartyRelationshipTypes => PartyRelationshipTypeRepository.Query();
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        public void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
+        }
+        
         #region PartyRelationshipType
         /// <summary>
         /// Creating PartyRelationshipType
@@ -37,7 +63,7 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         public PartyRelationshipType Create(string title, string displayName, string description, bool indicatesHierarchy, int maxCardinality,
             int minCardinality, bool partyRelationShipTypeDefault, PartyType partyTypePairAlowedSource, PartyType partyTypePairAlowedTarget,
-            string partyTypePairTitle, string partyTypePairDescription)
+            string partyTypePairTitle, string partyTypePairDescription,string conditionSource,string conditionTarget)
         {
 
             Contract.Requires(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(partyTypePairTitle));
@@ -62,7 +88,9 @@ namespace BExIS.Dlm.Services.Party
                 Description = partyTypePairDescription,
                 PartyRelationshipType = entity,
                 Title = partyTypePairTitle,
-                PartyRelationShipTypeDefault = partyRelationShipTypeDefault
+                PartyRelationShipTypeDefault = partyRelationShipTypeDefault,
+                ConditionSource=conditionSource,
+                ConditionTarget=conditionTarget
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -81,11 +109,11 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(id > 0);
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Ensures((Contract.Result<PartyRelationshipType>() != null && Contract.Result<PartyRelationshipType>().Id >= 0));
-            var entity = new PartyRelationshipType();
+            //var entity = new PartyRelationshipType();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationshipType> repo = uow.GetRepository<PartyRelationshipType>();
-                entity = repo.Get(id);
+                var entity = repo.Get(id);
                 if (entity == null)
                     BexisException.Throw(null, "PartyRelationshipType not found", BexisException.ExceptionType.Edit);
                 entity.Title = title;
@@ -95,8 +123,8 @@ namespace BExIS.Dlm.Services.Party
                 entity.MinCardinality = minCardinality;
                 repo.Put(entity);
                 uow.Commit();
+                return entity;
             }
-            return entity;
         }
 
         public bool Delete(PartyRelationshipType partyRelationType)
@@ -146,7 +174,13 @@ namespace BExIS.Dlm.Services.Party
             }
             return (true);
         }
-        public IEnumerable<PartyRelationshipType> GetPartyRelationshipTypeWithAllowedAssociated(int sourcePartyTypeId)
+
+        /// <summary>
+        /// return all relationship type which has at least one source party type in their party types pair
+        /// </summary>
+        /// <param name="sourcePartyTypeId"></param>
+        /// <returns></returns>
+        public IEnumerable<PartyRelationshipType> GetAllPartyRelationshipTypes(long sourcePartyTypeId)
         {
             Contract.Requires(sourcePartyTypeId > 0);
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -155,18 +189,22 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyRelationshipType> repoPRT = uow.GetRepository<PartyRelationshipType>();
                 IRepository<PartyTypePair> repoPTP = uow.GetRepository<PartyTypePair>();
                 PartyType sourcePartyType = repoPT.Get(sourcePartyTypeId);
-                var partyRelationshipTypes = repoPRT.Get().OrderBy(item => item.Title);
-                foreach (var partyRelationshipType in partyRelationshipTypes)
-                    partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => item.AllowedSource.Id == sourcePartyType.Id).ToList();
-                return partyRelationshipTypes.ToList();
+                var partyRelationshipTypes = repoPRT.Get(cc => cc.AssociatedPairs.Any(item => item.AllowedSource.Id == sourcePartyTypeId)).OrderBy(item => item.Title);
+                //foreach (var partyRelationshipType in partyRelationshipTypes)
+                //{
+                //    var typepairs = repoPTP.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).ToList();
+                //    partyRelationshipType.AssociatedPairs = repoPTP.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id && cc.AllowedSource.Id == sourcePartyTypeId).ToList();
+                //}
+                return partyRelationshipTypes;
             }
         }
 
 
         #endregion
+
         #region PartyTypePair
         public PartyTypePair AddPartyTypePair(string title, PartyType allowedSource, PartyType allowedTarget, string description, bool partyRelationShipTypeDefault,
-            PartyRelationshipType partyRelationshipType)
+            PartyRelationshipType partyRelationshipType,string conditionSource,string conditionTarget)
         {
             Contract.Requires(!string.IsNullOrEmpty(title));
             Contract.Requires(allowedSource != null && allowedSource.Id > 0);
@@ -180,7 +218,9 @@ namespace BExIS.Dlm.Services.Party
                 Description = description,
                 PartyRelationshipType = partyRelationshipType,
                 Title = title,
-                PartyRelationShipTypeDefault = partyRelationShipTypeDefault
+                PartyRelationShipTypeDefault = partyRelationShipTypeDefault,
+                ConditionSource=conditionSource,
+                ConditionTarget=conditionTarget
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -262,7 +302,17 @@ namespace BExIS.Dlm.Services.Party
             }
         }
         #endregion
+
         #region additional_methods
+        public IEnumerable<PartyTypePair> GetPartyTypePairs(PartyRelationshipType partyRelationshipType,PartyType sourcePartyType, PartyType targetPartyType)
+        {
+             using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
+                var partyTypePairs=repoPartyTypePair.Get(cc =>cc.PartyRelationshipType.Id==partyRelationshipType.Id && cc.AllowedSource.Id == sourcePartyType.Id && cc.AllowedTarget.Id == targetPartyType.Id);
+                return partyTypePairs;
+            }
+        }
         public IEnumerable<PartyType> GetRootPartyTypes()
         {
             var partyTypes = new List<PartyType>();
@@ -272,7 +322,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
                 var inheritencePartyTypepairs = repoPartyTypePair.Get(item => item.PartyRelationshipType.IndicatesHierarchy).ToList();
                 var inheritenceTargetParties = inheritencePartyTypepairs.Select(cc => cc.AllowedTarget).ToList();
-                return inheritencePartyTypepairs.Where(cc => !inheritenceTargetParties.Contains(cc.AllowedSource)).Select(cc=>cc.AllowedSource);
+                return inheritencePartyTypepairs.Where(cc => !inheritenceTargetParties.Contains(cc.AllowedSource)).Select(cc => cc.AllowedSource);
             }
 
         }
@@ -297,16 +347,16 @@ namespace BExIS.Dlm.Services.Party
                 foreach (PartyTypePair partyTypePair in parentPartyTypePairs)
                 {
                     List<string> res = new List<string>();
-                    res.Add(partyTypePair.AllowedTarget.Title);
+                    res.Add(partyTypePair.AllowedTarget.DisplayName);
                     res.AddRange(getAllchildrens(partyTypePair.AllowedTarget, inheritencePartyTypepairs));
-                    if (rootPartiesDic.ContainsKey(partyTypePair.AllowedSource.Title))
+                    if (rootPartiesDic.ContainsKey(partyTypePair.AllowedSource.DisplayName))
                     {
-                        var combinedChild = rootPartiesDic[partyTypePair.AllowedSource.Title];
+                        var combinedChild = rootPartiesDic[partyTypePair.AllowedSource.DisplayName];
                         combinedChild.AddRange(res);
-                        rootPartiesDic[partyTypePair.AllowedSource.Title] = combinedChild.Distinct().ToList();
+                        rootPartiesDic[partyTypePair.AllowedSource.DisplayName] = combinedChild.Distinct().ToList();
                     }
                     else
-                        rootPartiesDic.Add(partyTypePair.AllowedSource.Title, res.Distinct().ToList());
+                        rootPartiesDic.Add(partyTypePair.AllowedSource.DisplayName, res.Distinct().ToList());
                 }
 
             }
@@ -339,8 +389,9 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
+
                 //Find all the typePair which are IndicatesHierarchy and their target is equal to the input
-                var partyTypePairs = RepoPartyTypePair.Get(item => item.AllowedTarget.Id == targetPartyTypeId && item.PartyRelationshipType.IndicatesHierarchy);
+                var partyTypePairs = repoPartyTypePair.Get(item => item.AllowedTarget.Id == targetPartyTypeId && item.PartyRelationshipType.IndicatesHierarchy);
                 //Add all of their parties
                 partyTypes.AddRange(partyTypePairs.Select(item => item.AllowedSource).Distinct());
 

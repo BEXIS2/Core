@@ -41,12 +41,14 @@ namespace BExIS.Security.Services.Requests
             return RequestRepository.Get(id);
         }
 
-        public void Update(Request request)
+        public void Update(Request entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var entityRequestRepository = uow.GetRepository<Request>();
-                entityRequestRepository.Put(request);
+                var repo = uow.GetRepository<Request>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }

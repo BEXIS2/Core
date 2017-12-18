@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BExIS.Utils.Helpers;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -17,7 +14,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
     /// <remarks></remarks>        
     public static class EncoderHelper
     {
-        static string[] specialCharacterArray = new string[] {"\\","\"", "+", "-","&&","||","!","(",")","{","}","[","]","~","*","?",":","<" };
+        static string[] specialCharacterArray = new string[] { "\\", "^", "\"", "+", "-", "&&", "||", "!", "(", ")", "{", "}", "[", "]", "~", "*", "?", ":", "<" };
 
         /// <summary>
         /// 
@@ -31,7 +28,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
             string encodedValue = value;
 
             // has special characters
-            if (SpecialCharactrersInValue(value))
+            if (RegExHelper.IsMatch(value, RegExHelper.LUCENE_INVALID_CHARS_REGEX))
             {
                 encodedValue = ReplaceSpecialCharacters(value);
             }
@@ -47,7 +44,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <seealso cref=""/>
         /// <param name="value"></param>    
         /// <returns></returns>
-        private static string ReplaceSpecialCharacters(string value,bool encodeSpace= false)
+        private static string ReplaceSpecialCharacters(string value, bool encodeSpace = false)
         {
 
             foreach (string specailCharacter in specialCharacterArray)
@@ -69,9 +66,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <returns></returns>
         private static bool SpecialCharactrersInValue(string value)
         {
-            string regExPattern = @"[+\-&&||!(){}[\]~*?:\\""]";
-
-            Regex rgx = new Regex(regExPattern, RegexOptions.IgnoreCase);
+            Regex rgx = new Regex(RegExHelper.LUCENE_INVALID_CHARS_REGEX, RegexOptions.IgnoreCase);
             Match m = rgx.Match(value);
             if (m.Success)
             {

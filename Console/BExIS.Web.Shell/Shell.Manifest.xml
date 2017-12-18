@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Manifest moduleId="Shell" displayName="BEXIS" version="2.10.0" builtin="true">
+<Manifest moduleId="Shell" displayName="BEXIS" version="2.11.0" builtin="true">
   <Description>
     Research Data Management Platform
   </Description>
@@ -14,36 +14,22 @@
     <Export tag="menubar" id="menubarRoot" order="1"
             title="" description="" icon=""
             controller="" action=""
-            extends="."
-            />
+            extends="." />
     <!--<Export tag="menubar" id="dashboard" order="1"
             title="Dashboard" description="Quick Access to User Area" icon=""
             controller="home" action="index"
             extends="./menubarRoot"
             />-->
 
-    <Export tag="menubar" id="dashboard" order="1"
-            title="Dashboard" description="Quick Access to User Area" icon=""
-            controller="home" action="index"
-            extends="./menubarRoot"
-            />
-
-    <Export tag="menubar" id="collect" order="2"
-            title="Collect" description="Quick access to Data Collection Area" icon=""
-            controller="" action=""
-            extends="./menubarRoot"
-            />
 
     <Export tag="lunchbar" id="lunchbarRoot" order="1"
             title="" description="" icon=""
             controller="" action=""
-            extends="."
-            />
+            extends="." />
     <Export tag="lunchbar" id="help" order="2"
             title="Help" description="Help" icon=""
             controller="" action=""
-            extends="./lunchbarRoot" 
-            />
+            extends="./lunchbarRoot" />
 
     <!--<Export tag="settings" id="settingsRoot" order="2"
             title="" description="" icon=""
@@ -54,13 +40,11 @@
     <Export tag="settings" id="settingsRoot" order=""
             title="Settings" description="Settings, configuration, and Management" icon="settings.icon"
             controller="" action=""
-            extends="."
-            />
+            extends="." />
 
     <Export tag="api" id="apiRoot" order="4"
             title="" description="" icon=""
             controller="" action=""
-            extends="."
-            />
+            extends="." />
   </Exports>
 </Manifest>

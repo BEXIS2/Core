@@ -13,20 +13,17 @@
 <div id="@id" sourceId="@sourceId" targetId="@targetId" class="mapping-container-transformation-rule">
     <b>Transformation Rule (@Model.Source.Name to @Model.Target.Name)</b>
     <span class="bx bx-angle-double-down toogle-icon" onclick="iconTransformtionRuleClick(this)"></span>
-    <div class="mapping-container-transformation-rule-content">
+    <div class="mapping-container-transformation-rule-content" style="display: none;">
         <table>
             <tr>
+                <td>
+                    
+                </td>
                 <td>
                     Source
                 </td>
                 <td>
-                    Example
-                </td>
-                <td>
                     RegEx
-                </td>
-                <td>
-                    Result
                 </td>
                 <td>
                     Mask from Target (@Model.Target.Name)
@@ -34,23 +31,38 @@
             </tr>
             <tr>
                 <td>
-                    @Model.Source.Name
+                    Rule:
+                </td>
+                <td >
+                    <span id="sourceName">@Model.Source.Name</span>
+                </td>
+
+                <td>
+                    @Html.TextBox("RegExPattern", @Model.TransformationRule.RegEx)
+                </td>
+                
+                <td>
+                    @Html.TextBox("Mask", @Model.TransformationRule.Mask)
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    Example:
                 </td>
                 <td>
                     @Html.TextArea("Example")
                 </td>
                 <td>
-                    @Html.TextArea("RegExPattern", @Model.TransformationRule.RegEx)
+                    <div id="resultRegEx" class="col-md-5" style="width: 100%">
+
+                    </div>
                 </td>
                 <td>
                     <div id="result" class="col-md-5">
 
                     </div>
                 </td>
-                <td>
-                    @Html.TextArea("Mask", @Model.Target.Mask)
-                </td>
-
             </tr>
         </table>
        
@@ -59,65 +71,149 @@
     <script type="text/javascript">
 
         $("#" + '@id' + " #RegExPattern")
-            .change(function() {
+            .change(function () {
 
-                var tmpString = $("#" + '@id' + " #Example").val();
-                var exp = new RegExp($(this).val(),"g");
-                //alert($(this).val());
-                //alert(exp);
-                var result = tmpString.match(exp);
+                var parent = $(this).parents(".mapping-container-transformation-rule")[0];
+                var parentid = $(parent).attr("id");
+                changeIt(parentid);
 
-                //alert(result);
+            });
 
-                console.log("input: " + tmpString);
-                console.log("regex: " + exp);
-                console.log("result: " + result);
-                console.log(result);
-                //console.log(result[1]);
+        $("#" + '@id' + " #Mask")
+            .change(function () {
 
-                if (result != null) {
+                var parent = $(this).parents(".mapping-container-transformation-rule")[0];
+                var parentid = $(parent).attr("id");
+                changeIt(parentid);
 
-                    console.log("-----");
-                    console.log(result);
-
-                    var resultString = "";
-
-                    for (var i = 0; i < result.length; i++) {
-                        resultString = resultString + "\n" + result[i];
-                    }
-
-                    $("#" + '@id' + " #result").html(resultString);
-                }
-        });
+            });
 
         $("#" + '@id' + " #Example")
             .change(function() {
 
-                 var tmpString = $("#" + '@id' + " #Example").val();
-                var exp = new RegExp($(this).val(),"g");
+                var parent = $(this).parents(".mapping-container-transformation-rule")[0];
+                var parentid = $(parent).attr("id");
+                changeIt(parentid);
 
-                var result = tmpString.match(exp);
+            });
 
-                console.log("input: " + tmpString);
-                console.log("regex: " + exp);
-                console.log("result: " + result);
-                console.log(result);
-                //console.log(result[1]);
+        function changeIt(transformationId) {
 
-                if (result != null) {
+            console.log("------>change");
+            updateRegexExample(transformationId);
+            updateMaskExample(transformationId);
+
+        }
+
+        function updateRegexExample(transformationId) {
+
+            var tmpString = $("#" + transformationId + " #Example").val();
+            var regExValue = $("#" + transformationId + " #RegExPattern").val();
+            var exp = new RegExp(regExValue, "g");
+
+            var sourceName = $("#" + transformationId + " #sourceName").text();
+
+            //alert($(this).val());
+            //alert(exp);
+            var result = tmpString .match(exp);
+
+            //alert(result);
+
+            console.log("input: " + tmpString);
+            console.log("regex: " + exp);
+            console.log("result: " + result);
+            console.log(result);
+            console.log("sourceName" + sourceName);
+            //console.log(result[1]);
+
+            if (result != null) {
+
+                var resultString = "<table>";
+
+                if (regExValue.length == 0) {
+
+                    var maskName = sourceName + "[0]";
+
+                    resultString += '<tr><td>' + tmpString + "  -> " + maskName + '</td></tr>';
+
+                    $("#" + transformationId + " #resultRegEx").html(resultString);
+
+                } else {
 
                     console.log("-----");
                     console.log(result);
 
-                    var resultString = "";
+                    
 
                     for (var i = 0; i < result.length; i++) {
-                        resultString = resultString+"\n"+result[i];
+
+                        var maskName = sourceName + "[" + i + "]";
+                        resultString += '<tr><td>' + result[i] + "  -> " + maskName + '</td></tr>';
+                    }
+                    resultString += "</table>";
+
+                    $("#" + transformationId + " #resultRegEx").html(resultString);
+                }
+
+            } else {
+
+                $("#" + transformationId + " #resultRegEx").html("");
+
+            }
+        }
+
+        function updateMaskExample(transformationId) {
+
+            var tmpString = $("#" + transformationId + " #Example").val();
+            var regExValue = $("#" + transformationId + " #RegExPattern").val();
+            var mask = $("#" + transformationId + " #Mask").val();
+            var sourceName = $("#" + transformationId + " #sourceName").text();
+
+            var exp = new RegExp(regExValue, "g");
+            var result = tmpString.match(exp);
+
+            console.log("input: " + tmpString);
+            console.log("regex: " + exp);
+            console.log("result: " + result);
+            console.log("mask: " + mask);
+            console.log("sourceName" + sourceName);
+            console.log(transformationId);
+
+            console.log(result);
+
+            if (result != null) {
+                console.log("replace pls: -------------------");
+
+                if (regExValue === '') {
+
+                    var r = tmpString;
+
+                    var place = sourceName + "[0]";
+                    mask = mask.replace(place, r);
+
+
+                } else {
+                    
+                
+                    for (var i = 0; i < result.length; i++) {
+                        var r = result[i];
+                        var place = sourceName + "[" + i + "]";
+                        mask = mask.replace(place, r);
+
+                        console.log(r);
+                        console.log(place);
+                        console.log(mask);
                     }
 
-                    $("#" + '@id' + " #result").html(resultString);
                 }
-            });
+
+                $("#" + transformationId + " #result").html(mask);
+
+            }
+            
+        }
+
+
     </script>
 </div>
 

@@ -93,7 +93,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
          * add it to the bus
          * */
         [HttpPost]
-        public ActionResult AddSelectedDatasetToBus(string format)
+        public ActionResult AddSelectedDatasetStructureToBus(string format)
         {
 
             SelectSheetFormatModel model = new SelectSheetFormatModel();

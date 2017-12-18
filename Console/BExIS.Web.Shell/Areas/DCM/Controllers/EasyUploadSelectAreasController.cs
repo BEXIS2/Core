@@ -4,6 +4,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Utils.Helpers;
 using BExIS.Utils.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,68 +33,68 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.RemoveExecutedStep(TaskManager.Current());
             }
 
-            /*
-             * Use the given file and the given sheet format to create a json-table
-             * */
+            
+            //Use the given file and the given sheet format to create a json-table
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
-            string jsonTable = "{}";
+            string jsonTable = "[]";
 
             SelectAreasModel model = new SelectAreasModel();
-
-            // When jumping back to this step
-            // Check if the json-table has already been created, if yes, use it
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
+            
+            try
             {
-                if (!String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA])))
+                //FileStream for the users file
+                fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+                //Grab the sheet format from the bus
+                string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
+                SheetFormat CurrentSheetFormat = 0;
+                Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
+
+                //Transforms the content of the file into a 2d-json-array
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+                //If the active worksheet was never changed, we default to the first one
+                string activeWorksheet;
+                if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
                 {
-                    model.JsonTableData = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+                    activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
+                    TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
+                }
+                else
+                {
+                    activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
+                }
+                //Generate the table for the active worksheet
+                jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
+
+                //Save the worksheet uris to the model
+                model.SheetUriDictionary = EUEReader.GetWorksheetUris();
+                
+                if (!String.IsNullOrEmpty(jsonTable))
+                {
+                    TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+                }
+
+                //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
+                model.activeSheetUri = activeWorksheet;
+            }
+            catch (Exception ex)
+            {
+                LoggerFactory.LogCustom(ex.Message);
+            }
+            finally
+            {
+                if (fis != null)
+                {
+                    fis.Close();
                 }
             }
-            else //Create a new json-table
-            {
-                try
-                {
-                    fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-                    string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
-
-                    SheetFormat CurrentSheetFormat = 0;
-                    Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
-
-                    JsonTableGenerator EUEReader = new JsonTableGenerator();
-                    EUEReader.Open(fis);
-                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat);
-
-                    if (!String.IsNullOrEmpty(jsonTable))
-                    {
-                        TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
-                    }
-
-                    model.JsonTableData = jsonTable;
-                }
-                catch (Exception ex)
-                {
-                    LoggerFactory.LogCustom(ex.Message);
-                }
-                finally
-                {
-                    if (fis != null)
-                    {
-                        fis.Close();
-                    }
-                }
-            }
-
-
-
-
+            
             // Check if the areas have already been selected, if yes, use them (Important when jumping back to this step)
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
             {
                 model.DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             }
-
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
             {
                 model.HeaderArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
@@ -102,7 +103,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.StepInfo = TaskManager.Current();
 
             return PartialView(model);
-
         }
 
         [HttpPost]
@@ -162,16 +162,105 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.HeaderArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
                     }
 
-                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
+                    #region Generate sheet-list and table for active sheet
+                    //Grab the sheet format from the bus
+                    string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
+                    SheetFormat CurrentSheetFormat = 0;
+                    Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
+
+                    //Open the users file
+                    string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
+                    FileStream fis = null;
+                    string jsonTable = "{}";
+                    fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+                    //Generate the Sheet-List and grab the active worksheet
+                    JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+                    //If the active worksheet was never changed, we default to the first one
+                    string activeWorksheet;
+                    if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
                     {
-                        model.JsonTableData = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+                        activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
+                        TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
                     }
+                    else
+                    {
+                        activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
+                    }
+                    //Generate the table for the active worksheet
+                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
+
+                    //Save the worksheet uris to the model
+                    model.SheetUriDictionary = EUEReader.GetWorksheetUris();
+
+                    if (!String.IsNullOrEmpty(jsonTable))
+                    {
+                        TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+                    }
+
+                    //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
+                    model.activeSheetUri = activeWorksheet;
+                    #endregion
 
                     model.StepInfo = TaskManager.Current();
                 }
             }
 
             return PartialView(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangeWorksheet(string sheetIdentifier)
+        {
+            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            #region Reset selected units, datatypes and suggestions
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS);
+            #endregion
+
+            #region Generate table for selected sheet
+            string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
+            FileStream fis = null;
+            string jsonTable = "[]";
+
+            try
+            {
+                //FileStream for the users file
+                fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+                //Grab the sheet format from the bus
+                string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
+                SheetFormat CurrentSheetFormat = 0;
+                Enum.TryParse<SheetFormat>(sheetFormatString, true, out CurrentSheetFormat);
+
+                //Transforms the content of the file into a 2d-json-array
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+                jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, sheetIdentifier);
+
+                if (!String.IsNullOrEmpty(jsonTable))
+                {
+                    TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+                }
+
+                TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, sheetIdentifier);
+            }
+            catch (Exception ex)
+            {
+                LoggerFactory.LogCustom(ex.Message);
+            }
+            finally
+            {
+                if (fis != null)
+                {
+                    fis.Close();
+                }
+            }
+            #endregion
+            //Send back the table-data
+            return Content(jsonTable, "application/json");
         }
 
         /*
@@ -213,12 +302,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 if (dataArea != "")
                 {
-                    var serializer = new JavaScriptSerializer();
-                    int[] newArea = serializer.Deserialize<int[]>(dataArea);
+                    int[] newArea = JsonConvert.DeserializeObject<int[]>(dataArea);
                     Boolean contains = false;
                     foreach (string area in model.DataArea)
                     {
-                        int[] oldArea = serializer.Deserialize<int[]>(area);
+                        int[] oldArea = JsonConvert.DeserializeObject<int[]>(area);
                         //If one of the already selected areas contains the new one, don't add the new one to the selection (prevents duplicate selection)
                         if (oldArea[0] <= newArea[0] && oldArea[2] >= newArea[2] &&
                             oldArea[1] <= newArea[1] && oldArea[3] >= newArea[3])
@@ -231,7 +319,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //If the new area contains one (or several) of the already selected areas, remove the old ones
                         for (int i = model.DataArea.Count - 1; i >= 0; i--)
                         {
-                            int[] oldArea = serializer.Deserialize<int[]>(model.DataArea[i]);
+                            int[] oldArea = JsonConvert.DeserializeObject<int[]>(model.DataArea[i]);
 
                             if (newArea[0] <= oldArea[0] && newArea[2] >= oldArea[2] &&
                                 newArea[1] <= oldArea[1] && newArea[3] >= oldArea[3])
@@ -254,6 +342,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.AddToBus(EasyUploadTaskManager.SHEET_HEADER_AREA, headerArea);
                 model.HeaderArea = headerArea;
             }
+
+            string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
+            FileStream fis = null;
+
+            try
+            {
+                //FileStream for the users file
+                fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+                JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+
+                //Get the worksheet uris and save them to the model
+                model.SheetUriDictionary = EUEReader.GetWorksheetUris();                
+            }
+            catch (Exception ex)
+            {
+                LoggerFactory.LogCustom(ex.Message);
+            }
+            finally
+            {
+                if (fis != null)
+                {
+                    fis.Close();
+                }
+            }
+
 
             Session["TaskManager"] = TaskManager;
 

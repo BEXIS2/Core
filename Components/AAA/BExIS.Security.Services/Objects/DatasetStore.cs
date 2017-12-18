@@ -4,13 +4,13 @@ namespace BExIS.Security.Services.Objects
 {
     public class DatasetStore : IEntityStore
     {
-        public List<EntityStoreItemModel> GetEntities()
+        public List<EntityStoreItem> GetEntities()
         {
-            var datasets = new List<EntityStoreItemModel>();
+            var datasets = new List<EntityStoreItem>();
 
             for (int i = 0; i < 25; i++)
             {
-                datasets.Add(new EntityStoreItemModel() { Id = i, Title = $"Dataset with Title {i}" });
+                datasets.Add(new EntityStoreItem() { Id = i, Title = $"Dataset with Title {i}" });
             }
 
             return datasets;

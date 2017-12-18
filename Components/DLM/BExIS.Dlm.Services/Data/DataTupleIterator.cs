@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -36,7 +37,10 @@ namespace BExIS.Dlm.Services.Data
                 if (tupleIds.Skip(round * preferedBatchSize).Take(preferedBatchSize).Count() > 0)
                 {
                     var tupleIdPack = tupleIds.Skip(round * preferedBatchSize).Take(preferedBatchSize).ToList();
-                    List<DataTuple> tuplePackage = datasetManager.DataTupleRepo.Query(d => tupleIdPack.Contains(d.Id)).ToList();
+                    //List<DataTuple> tuplePackage = datasetManager.DataTupleRepo.Query(d => tupleIdPack.Contains(d.Id)).ToList();
+                    var uow = this.GetBulkUnitOfWork();
+                    var repo = uow.GetReadOnlyRepository<DataTuple>();
+                    List<DataTuple> tuplePackage = repo.Query(d => tupleIdPack.Contains(d.Id)).ToList();
                     foreach (var dataTuple in tuplePackage)
                     {
                         if (materialize)
