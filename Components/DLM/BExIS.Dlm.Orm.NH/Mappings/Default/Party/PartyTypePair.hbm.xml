@@ -24,6 +24,14 @@
       <column name="Description" sql-type="text"/>
     </property>
 
+    <property name="ConditionSource" type="String" >
+      <column name="ConditionSource"  />
+    </property>
+
+    <property name="ConditionTarget" type="String" >
+      <column name="ConditionTarget"  />
+    </property>
+    
     <property name="PartyRelationShipTypeDefault" type="yes_no" >
       <column name="PartyRelationShipTypeDefault"  />
     </property>

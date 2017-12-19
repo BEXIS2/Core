@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Objects;
@@ -64,16 +63,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 Dimension dimension = null;
 
-                if (!unitManager.DimensionRepo.Get().Any(d => d.Name.Equals("none")))
+                if (!unitManager.DimensionRepo.Get().Any(d => d.Name.ToLower().Equals("none")))
                 {
                     dimension = unitManager.Create("none", "none", "If no unit is used."); // the null dimension should be replaced bz a proper valid one. Javad 11.06
                 }
                 else
                 {
-                    dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.Equals("none")).FirstOrDefault();
+                    dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals("none")).FirstOrDefault();
                 }
 
-                if (!unitManager.Repo.Get().Any(u => u.Name.Equals("none")))
+                if (!unitManager.Repo.Get().Any(u => u.Name.ToLower().Equals("none")))
                 {
                     unitManager.Create("none", "none", "If no unit is used.", dimension, MeasurementSystem.Unknown);
                 }
@@ -83,15 +82,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region create entities
 
                 // Entities
+                Entity entity = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).FirstOrDefault();
 
-                Entity entity = new Entity();
-                entity.Name = "Dataset";
-                entity.EntityType = typeof(Dataset);
-                entity.EntityStoreType = typeof(DatasetManager);
-                entity.UseMetadata = true;
-                entity.Securable = true;
+                if (entity == null)
+                {
+                    entity = new Entity();
+                    entity.Name = "Dataset";
+                    entity.EntityType = typeof(Dataset);
+                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity.UseMetadata = true;
+                    entity.Securable = true;
 
-                entityManager.Create(entity);
+                    entityManager.Create(entity);
+                }
+
 
 
                 #endregion
@@ -109,7 +113,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (DataCollectionFeature == null) DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
 
                 Feature DatasetCreationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Creation"));
-                if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation");
+                if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation", DataCollectionFeature);
 
                 Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
                 if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
@@ -120,14 +124,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Help Workflow
 
-                operationManager.Create("DCM", "Help", "*", DataCollectionFeature);
+                operationManager.Create("DCM", "Help", "*");
 
                 #endregion
 
                 #region Create Dataset Workflow
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
-                operationManager.Create("DCM", "Form", "*", DatasetCreationFeature);
+                operationManager.Create("DCM", "Form", "*");
 
                 #endregion
 
@@ -158,12 +162,19 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Metadata Managment Workflow
 
+                operationManager.Create("DCM", "ImportMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ImportMetadataStructureSummary", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "ManageMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", MetadataManagementFeature);
+
+                #endregion
+
+                #region public available
+
+                operationManager.Create("DCM", "Form", "*");
 
                 #endregion
 
@@ -185,18 +196,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 }
 
-                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
-                {
-                    string titleXPath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                    string descriptionXpath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
+                //{
+                //    string titleXPath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                //    string descriptionXpath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
 
-                    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
-                        titleXPath, descriptionXpath);
+                //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
+                //        titleXPath, descriptionXpath);
 
-                }
+                //}
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {

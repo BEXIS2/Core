@@ -61,6 +61,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var stepInfoModelHelpers = new List<StepModelHelper>();
             var Model = new MetadataEditorModel();
 
+
             TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
 
             AdvanceTaskManagerBasedOnExistingMetadata(metadataStructureId);
@@ -98,15 +99,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Model.FromEditMode = edit;
             Model.Created = created;
 
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
+            {
+                if (TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE] != null)
+                    Model.DatasetTitle = TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE].ToString();
+            }
+            else
+                Model.DatasetTitle = "No Title available.";
+
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
                 var entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                 Model.EditRight = hasUserEditRights(entityId);
                 Model.EditAccessRight = hasUserEditAccessRights(entityId);
                 Model.DatasetId = entityId;
+
+
             }
             else
             {
+                Model.DatasetTitle = "No Title available.";
                 Model.EditRight = false;
                 Model.EditAccessRight = false;
                 Model.DatasetId = -1;
@@ -127,7 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["ShowOptional"] = false;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            if (TaskManager == null)
+            if (TaskManager == null || resetTaskManager)
             {
                 TaskManager = new CreateTaskmanager();
                 loadFromExternal = true;
@@ -377,6 +389,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
+
+            //set title
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
+            {
+                if (TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE] != null)
+                    Model.DatasetTitle = TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE].ToString();
+            }
+            else
+                Model.DatasetTitle = "No Title available.";
+
             return PartialView("MetadataEditor", Model);
         }
 
@@ -1980,11 +2002,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
-        public ActionResult _AutoCompleteAjaxLoading(string text, long id)
+        public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
+            var x = new List<string>();
+            switch (type)
+            {
+                case "MetadataNestedAttributeUsage":
+                    {
+                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        break;
+                    }
+                case "MetadataAttributeUsage":
+                    {
+                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        break;
+                    }
+            }
 
-            //ToDo Modularity dcm -> dim call
-            var x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex
@@ -2646,9 +2680,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserEditAccessRights(long entityId)
         {
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-            this.Disposables.Add(featurePermissionManager);
 
-            return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
+
+            try
+            {
+                return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
+            }
         }
 
         /// <summary>
@@ -2660,9 +2701,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            this.Disposables.Add(entityPermissionManager);
 
-            return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+
+            try
+            {
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+            }
+            finally
+            {
+                entityPermissionManager.Dispose();
+            }
 
             #endregion security permissions and authorisations check
         }
@@ -2769,7 +2817,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
                 }
 
-                return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = true, locked = true });
+                return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = false, locked = true });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");

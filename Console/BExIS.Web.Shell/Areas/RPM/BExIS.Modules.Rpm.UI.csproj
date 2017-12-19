@@ -50,8 +50,9 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -165,9 +166,6 @@
     <Content Include="Content\Images\Help\create_data_type.png" />
     <Content Include="Content\Images\Help\create_unit.png" />
     <Content Include="Content\Images\Help\create_variable.png" />
-    <Content Include="Content\Images\Help\delete_button.png" />
-    <Content Include="Content\Images\Help\edit_button.png" />
-    <Content Include="Content\Images\Help\Help_img6.png" />
     <Content Include="Content\Images\Help\main_menu.png" />
     <Content Include="Content\Images\Help\manage_data_type.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -215,7 +213,9 @@
     <Content Include="Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <None Include="Properties\PublishProfiles\BPP211_Rpm.pubxml" />
+    <None Include="Properties\PublishProfiles\RPM.pubxml" />
     <None Include="Properties\PublishProfiles\RPM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\RPM21108.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

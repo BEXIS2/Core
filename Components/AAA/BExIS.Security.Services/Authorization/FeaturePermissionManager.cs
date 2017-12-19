@@ -201,14 +201,6 @@ namespace BExIS.Security.Services.Authorization
                 var feature = featureRepository.Get(featureId);
                 var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
 
-                return HasAccess(subject, feature);
-            }
-        }
-
-        public bool HasAccess(Subject subject, Feature feature)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
                 // Anonymous
                 if (subject == null)
                 {
@@ -258,6 +250,62 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        //public bool HasAccess(Subject subject, Feature feature)
+        //{
+        //    using (var uow = this.GetUnitOfWork())
+        //    {
+        //        var featureRepository = uow.GetReadOnlyRepository<Feature>();
+        //        var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+
+        //        // Anonymous
+        //        if (subject == null)
+        //        {
+        //            while (feature != null)
+        //            {
+        //                if (Exists(null, feature.Id, PermissionType.Grant))
+        //                    return true;
+
+        //                feature = feature.Parent;
+        //            }
+
+        //            return false;
+        //        }
+
+        //        // Non-Anonymous
+        //        while (feature != null)
+        //        {
+        //            if (Exists(null, feature.Id, PermissionType.Grant))
+        //                return true;
+
+        //            if (Exists(subject.Id, feature.Id, PermissionType.Deny))
+        //                return false;
+
+        //            if (Exists(subject.Id, feature.Id, PermissionType.Grant))
+        //                return true;
+
+        //            if (subject is User)
+        //            {
+        //                var user = subject as User;
+        //                var groupIds = user.Groups.Select(g => g.Id).ToList();
+
+        //                if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
+        //                {
+        //                    return false;
+        //                }
+
+        //                if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
+        //                {
+        //                    return true;
+        //                }
+        //            }
+
+        //            feature = feature.Parent;
+        //        }
+
+        //        return false;
+        //    }
+        //}
+
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
             using (var uow = this.GetUnitOfWork())
@@ -275,12 +323,14 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Update(FeaturePermission featurePermission)
+        public void Update(FeaturePermission entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                featurePermissionRepository.Put(featurePermission);
+                var repo = uow.GetRepository<FeaturePermission>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }

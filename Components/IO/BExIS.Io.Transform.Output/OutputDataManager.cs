@@ -281,6 +281,10 @@ namespace BExIS.IO.Transform.Output
 
                 return "";
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             finally
             {
                 datasetManager.Dispose();

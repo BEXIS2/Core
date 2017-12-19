@@ -18,7 +18,11 @@ namespace BExIS.Modules.Sam.UI
             try
             {
                 base.Install();
-                SamSeedDataGenerator.GenerateSeedData();
+
+                using (var generator = new SamSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
             }
             catch (Exception e)
             {

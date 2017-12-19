@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BExIS.IO;
+﻿using BExIS.IO;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Push
 {
@@ -9,9 +9,10 @@ namespace BExIS.Modules.Dcm.UI.Models.Push
         public bool IsUploading { get; set; }
 
         public List<string> SupportedFileExtentions = new List<string>();
+        public int FileSize = 0;
 
-        public SendBigFilesToServerModel() {
-
+        public SendBigFilesToServerModel()
+        {
             IsUploading = false;
         }
     }

@@ -20,8 +20,8 @@
                 @Html.LabelFor(m => m.UserName)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.UserName)
+                @Html.DisplayFor(m => m.UserName, new { @class = "t-input bx-input" })
+                @Html.HiddenFor(m => m.UserName)
             </td>
         </tr>
         <tr>

@@ -1,18 +1,14 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using System;
 using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Helpers
 {
-    public class SamSeedDataGenerator
+    public class SamSeedDataGenerator : IDisposable
     {
-        public static void GenerateSeedData()
-        {
-            createSecuritySeedData();
-        }
-
-        private static void createSecuritySeedData()
+        public void GenerateSeedData()
         {
             // Javad:
             // 1) all the create operations should check for existence of the record
@@ -25,35 +21,63 @@ namespace BExIS.Modules.Sam.UI.Helpers
             //#region Security
 
             //// Tasks
-            var operationManager = new OperationManager();
-            var featureManager = new FeatureManager();
+            OperationManager operationManager = null;
+            FeatureManager featureManager = null;
 
-            // find root
-            var root = featureManager.FindRoots().FirstOrDefault();
+            try
+            {
+                operationManager = new OperationManager();
+                featureManager = new FeatureManager();
 
-            // administration node
-            var administrationFeature = featureManager.FindByName("Administration") ?? featureManager.Create("Administration", "node for all administrative features", root);
+                // find root
+                var root = featureManager.FindRoots().FirstOrDefault();
 
-            // users node
-            var userFeature = featureManager.FindByName("Users") ?? featureManager.Create("Users", "", administrationFeature);
-            var userOperation = operationManager.Find("SAM", "Users", "*") ?? operationManager.Create("SAM", "Users", "*", userFeature);
+                // administration node
+                var administrationFeature = featureManager.FindByName("Administration") ?? featureManager.Create("Administration", "node for all administrative features", root);
 
-            // groups node
-            var groupFeature = featureManager.FindByName("Groups") ?? featureManager.Create("Groups", "", administrationFeature);
-            var groupOperation = operationManager.Find("SAM", "Groups", "*") ?? operationManager.Create("SAM", "Groups", "*", groupFeature);
+                // users node
+                var userFeature = featureManager.FindByName("Users") ?? featureManager.Create("Users", "", administrationFeature);
+                var userOperation = operationManager.Find("SAM", "Users", "*") ?? operationManager.Create("SAM", "Users", "*", userFeature);
 
-            // feature permissions
-            var featurePermissionFeature = featureManager.FindByName("Feature Permissions") ?? featureManager.Create("Feature Permissions", "", administrationFeature);
-            var featurePermissionOperation = operationManager.Find("SAM", "FeaturePermissions", "*") ?? operationManager.Create("SAM", "FeaturePermissions", "*", featurePermissionFeature);
+                // groups node
+                var groupFeature = featureManager.FindByName("Groups") ?? featureManager.Create("Groups", "", administrationFeature);
+                var groupOperation = operationManager.Find("SAM", "Groups", "*") ?? operationManager.Create("SAM", "Groups", "*", groupFeature);
 
-            // Entity Permissions
-            var entityPermissionFeature = featureManager.FindByName("Entity Permissions") ?? featureManager.Create("Entity Permissions", "", administrationFeature);
-            var entityPermissionOperation = operationManager.Find("SAM", "EntityPermissions", "*") ?? operationManager.Create("SAM", "EntityPermissions", "*", entityPermissionFeature);
+                // feature permissions
+                var featurePermissionFeature = featureManager.FindByName("Feature Permissions") ?? featureManager.Create("Feature Permissions", "", administrationFeature);
+                var featurePermissionOperation = operationManager.Find("SAM", "FeaturePermissions", "*") ?? operationManager.Create("SAM", "FeaturePermissions", "*", featurePermissionFeature);
 
-            var featurePermissionManager = new FeaturePermissionManager();
+                // Entity Permissions
+                var entityPermissionFeature = featureManager.FindByName("Entity Permissions") ?? featureManager.Create("Entity Permissions", "", administrationFeature);
+                var entityPermissionOperation = operationManager.Find("SAM", "EntityPermissions", "*") ?? operationManager.Create("SAM", "EntityPermissions", "*", entityPermissionFeature);
 
-            if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
-                featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);
+                // User Permissions
+                var userPermissionFeature = featureManager.FindByName("User Permissions") ?? featureManager.Create("User Permissions", "", administrationFeature);
+                var userPermissionOperation = operationManager.Find("SAM", "UserPermissions", "*") ?? operationManager.Create("SAM", "UserPermissions", "*", userPermissionFeature);
+
+
+                // Dataset Management
+                var datasetManagementFeature = featureManager.FindByName("Dataset Management") ?? featureManager.Create("Dataset Management", "", administrationFeature);
+                var datasetManagementOperation = operationManager.Find("SAM", "Datasets", "*") ?? operationManager.Create("SAM", "Datasets", "*", datasetManagementFeature);
+
+                // Help
+                var helpOperation = operationManager.Find("SAM", "Help", "*") ?? operationManager.Create("SAM", "Help", "*");
+
+                var featurePermissionManager = new FeaturePermissionManager();
+
+                if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
+                    featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);
+            }
+            finally
+            {
+                featureManager?.Dispose();
+                operationManager?.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
         }
     }
 }

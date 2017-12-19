@@ -14,7 +14,7 @@
     <property name="adonet.batch_size">1200</property>
     <property name="show_sql">False</property><!--set to false on production-->
     <property name="format_sql">True</property><!--set to false on production-->
-    <property name="generate_statistics">True</property><!--set to false on production-->
+    <property name="generate_statistics">False</property><!--set to false on production-->
   </session-factory>
   
 </hibernate-configuration>

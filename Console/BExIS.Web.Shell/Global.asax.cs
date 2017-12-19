@@ -29,9 +29,9 @@ namespace BExIS.Web.Shell
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
 #if !DEBUG
-            filters.Add(new BExISAuthorizeAttribute());
-            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+            filters.Add(new BExIS.Web.Shell.Attributes.BExISAuthorizeAttribute());
 #endif
+            //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
         }
 
@@ -139,7 +139,7 @@ namespace BExIS.Web.Shell
                     {
                         string message = string.Format("Unable to install module '{0}' while in pending state. Details: {1}.", moduleId, ex.Message);
                         LoggerFactory.GetFileLogger().LogCustom(message);
-                        throw new Exception(message);
+                        //throw new Exception(message);
                     }
 
                     // For security reasons, pending modules go to the "inactive" status after schema export.
@@ -150,9 +150,9 @@ namespace BExIS.Web.Shell
                     }
                     catch (Exception ex)
                     {
-                        string message = string.Format("Unable to diable module '{0}' after recovering from pending state. Details: {1}.", moduleId, ex.Message);
+                        string message = string.Format("Unable to disable module '{0}' after recovering from pending state. Details: {1}.", moduleId, ex.Message);
                         LoggerFactory.GetFileLogger().LogCustom(message);
-                        throw new Exception(message);
+                        //throw new Exception(message);
                     }
                 }
             }
@@ -172,7 +172,7 @@ namespace BExIS.Web.Shell
                     {
                         string message = string.Format("Unable to install module '{0}'. Details: {1}.", module.Id, ex.Message);
                         LoggerFactory.GetFileLogger().LogCustom(message);
-                        throw new Exception(message);
+                        //throw new Exception(message);
                     }
                 }
             }
@@ -218,7 +218,11 @@ namespace BExIS.Web.Shell
         {
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
-            IoCFactory.Container.ShutdownSessionLevelContainer();
+            try
+            {
+                IoCFactory.Container.ShutdownSessionLevelContainer();
+            }
+            catch { }
         }
 
         protected virtual void Application_BeginRequest()

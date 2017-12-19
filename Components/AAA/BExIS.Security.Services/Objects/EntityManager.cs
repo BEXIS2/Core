@@ -101,8 +101,10 @@ namespace BExIS.Security.Services.Objects
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var entityRepository = uow.GetRepository<Entity>();
-                entityRepository.Put(entity);
+                var repo = uow.GetRepository<Entity>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }

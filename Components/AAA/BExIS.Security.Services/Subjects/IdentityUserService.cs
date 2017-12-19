@@ -50,6 +50,7 @@ namespace BExIS.Security.Services.Subjects
         {
             return base.ChangePhoneNumberAsync(userId, phoneNumber, token);
         }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

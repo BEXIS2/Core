@@ -55,7 +55,7 @@ namespace BExIS.Web.Shell.Attributes
 
                 var result = userManager.FindByNameAsync(userName);
 
-                if (featurePermissionManager.HasAccess(result.Result, feature)) return;
+                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return;
 
                 if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
                 {

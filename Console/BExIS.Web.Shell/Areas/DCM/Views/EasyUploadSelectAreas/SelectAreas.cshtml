@@ -5,27 +5,27 @@
 
 
 <style>
-    .selectAreasButton {
+    .selectAreasButton{
         padding: 5px 10px;
     }
 
-    #setSelectedHeaderArea {
+    #setSelectedHeaderArea{
         background-color: rgba(102, 7, 5, 1) !important;
     }
 
-    #setSelectDataArea {
+    #setSelectDataArea{
         background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    #expandSelection {
+    #expandSelection{
         background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    .headerMarking {
+    .headerMarking{
         background-color: rgba(102, 7, 5, 0.5) !important;
     }
 
-    .dataMarking {
+    .dataMarking{
         background-color: rgba(56, 5, 102, 0.5) !important;
     }
 
@@ -33,19 +33,33 @@
         float: right;
     }
 
-    #tableControlRight select{
-        max-width: 150px;
-        text-overflow: ellipsis;
-    }
+        #tableControlRight select{
+            max-width: 150px;
+            text-overflow: ellipsis;
+        }
 
     /*Overwriting the css of the wizard*/
-    #Step4 .uploadWizardStep_Main {
+    #Step4 .uploadWizardStep_Main{
         width: 90%
     }
+
     #Step4 .uploadWizardStep_Content{
         height: auto;
     }
 
+    #showKnownErrorsButton {
+        padding: 0px;
+        margin-bottom: 5px;
+        color: black;
+        background: none;
+        border: none;
+    }
+
+    #knownDisplayErrors {
+        display: none;
+        border: 1px solid black;
+        padding: 2px;
+    }
 </style>
 
 <div id="Step4" class="uploadWizardStep">
@@ -59,6 +73,33 @@
             <p>Please mark your header (the names of the variables) and data area.</p>
         </div>
 
+        <!--<button id="showKnownErrorsButton" onclick="showKnownDisplayErrors()">
+            Why is my data not displayed correctly? 
+            <i class="fa fa-caret-square-o-down" aria-hidden="true"></i>
+        </button>
+        <div id="knownDisplayErrors">
+            <p>The representation of the data you are seeing in the table below might differ from what you see in Microsoft Excel or similar programs.</p>
+            <p>Don't worry, your data will be uploaded correctly if you choose the correct datatypes during the next step.</p>
+            <figure>
+                <figcaption>The following differences are known:</figcaption>
+                <ul>
+                    <li>Dates and times</li>
+                    <ul>
+                        <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
+                        <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
+                    </ul>
+                    <li>Boolean values</li>
+                    <ul>
+                        <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
+                    </ul>
+                    <li>Real Numbers</li>
+                    <ul>
+                        <li>Real numbers might be displayed with scientific notation.</li>
+                    </ul>
+                </ul>
+            </figure>
+        </div>-->
+
         <div class="uploadWizardStep_Content stepper">
             <div style="margin-bottom: 1em">
                 <button type="button" class="t-button action selectAreasButton" id="setSelectedHeaderArea">Header</button>
@@ -70,7 +111,7 @@
                 <button type="button" class="t-button action selectAreasButton" id="setSelectReset">Reset</button>
 
                 <div id="tableControlRight">
-                    @{ 
+                    @{
                         SelectListItem tmp;
                         List<SelectListItem> listItems = new List<SelectListItem>();
                         foreach (KeyValuePair<Uri, String> worksheetIdentifier in Model.SheetUriDictionary)
@@ -88,11 +129,14 @@
                     <button type="button" class="t-button action selectAreasButton" id="changeWorksheet" title="This will change the active worksheet and reset all your marked areas.">Change Worksheet</button>
                 </div>
             </div>
-            
+
+            <div id="loadingSpinner">
+                <i class="fa fa-spinner fa-spin fa-fw fa-2x"></i>Worksheet is loading
+            </div>
             <div id="handsonExcelTable" style="margin-bottom: 2em">
             </div>
             <div style="display:none" id="emptyTableMessage">It seems like the worksheet you selected is empty. Please select a different worksheet.</div>
-            
+
         </div>
 
         <div class="uploadWizardStep_Error stepper">
@@ -115,7 +159,6 @@
     var activeSheet = "";
     var loadingInitialTable = true;
     var currentButton = null;
-    var selectedDataArea = null;
     var markedAreas = [];
 
     $(document).ready(function () {
@@ -131,26 +174,10 @@
             var selected = hot.getSelected();
 
             if(!jQuery.isEmptyObject(selected)) {
-
-                // check if selection is from right bottom to left top and reverse it
-                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                    selected = reverseArea(selected);
-                }
-
-                //Check if selection is from bottom to top and reverse it vertically
-                if(selected[0] > selected[2]){
-                    selected = reverseAreaVertically(selected);
-                }
-
-                //Check if selection is from right to left and reverse it horizontally
-                if (selected[3] <= selected[1]) {
-                    selected = reverseAreaHorizontally(selected);
-                }
+                selected = orderSelectionArray(selected);
 
                 //Only mark and save if the marked area is not intersecting an area that's marked differently
                 if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
-                    selectedDataArea = selected;
-
                     // set the css class for all selected cells
                     markArea(selected[0], selected[1], selected[2], selected[3], 'dataMarking');
 
@@ -171,21 +198,7 @@
             currentButton = "header";
             var selected = hot.getSelected();
             if(!jQuery.isEmptyObject(selected)) {
-
-                // check if selection is from right bottom to left top and reverse it
-                if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                    selected = reverseArea(selected);
-                }
-
-                //Check if selection is from bottom to top and reverse it vertically
-                if (selected[0] > selected[2]) {
-                    selected = reverseAreaVertically(selected);
-                }
-
-                //Check if selection is from right to left and reverse it horizontally
-                if (selected[3] <= selected[1]) {
-                    selected = reverseAreaHorizontally(selected);
-                }
+                selected = orderSelectionArray(selected);
 
                 //Only mark and save if the marked area is not intersecting an area that's marked differently
                 if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'headerMarking')) {
@@ -228,8 +241,6 @@
                 hot.render();
             }
 
-            selectedDataArea = null;
-
             markedAreas = [];
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
@@ -242,36 +253,24 @@
                 var selected = null;
 
                 //If there is a marked data area we want to expand it
-                if(!jQuery.isEmptyObject(selectedDataArea)) {
-                    selected = selectedDataArea;
+                var lastDataAreaIndex = lastIndexInArray(markedAreas, function (el) {
+                    return (el[4] == 'dataMarking');
+                });
+                if (lastDataAreaIndex > -1) {
+                    selected = markedAreas[lastDataAreaIndex];
                 } else{
                     //If there is no marked data area yet, we want to expand the current selection
                     selected = hot.getSelected();
                 }
 
-                if(!jQuery.isEmptyObject(selected)) {
-                    // check if selection is from right bottom to left top and reverse it
-                    if (selected[2] <= selected[0] && selected[3] <= selected[1]) {
-                        selected = reverseArea(selected);
-                    }
-
-                    //Check if selection is from bottom to top and reverse it vertically
-                    if (selected[0] > selected[2]) {
-                        selected = reverseAreaVertically(selected);
-                    }
-
-                    //Check if selection is from right to left and reverse it horizontally
-                    if (selected[3] <= selected[1]) {
-                        selected = reverseAreaHorizontally(selected);
-                    }
+                if (!jQuery.isEmptyObject(selected)) {
+                    selected = orderSelectionArray(selected);
 
                     //Get the new selection
                     selected = [selected[0], selected[1], hot.countRows() - 1, selected[3]];
 
                     //Only mark and save if the area is not intersecting an area that's marked differently
                     if (!intersectsDifferentMarking(selected[0], selected[1], selected[2], selected[3], 'dataMarking')) {
-                        selectedDataArea = selected;
-
                         //Mark the selected cells as data
                         markArea(selected[0], selected[1], selected[2], selected[3], 'dataMarking');
 
@@ -298,6 +297,10 @@
                 //Show a spinner & disable the button - making sure the button is not resized by setting min-width and -height
                 var button = this;
                 $(button).prop('disabled', true);
+                $('#setSelectedHeaderArea').prop('disabled', true);
+                $('#setSelectDataArea').prop('disabled', true);
+                $('#expandSelection').prop('disabled', true);
+                $('#setSelectReset').prop('disabled', true);
                 var oldHtml = $(button).html();
                 var curWidth = $(button).outerWidth();
                 var curHeight = $(button).outerHeight();
@@ -306,12 +309,19 @@
                     "min-height": curHeight.toString() + "px"
                 });
                 $(button).html('<i class="fa fa-spinner fa-spin fa-fw"></i><span class="sr-only">Loading...</span>');
+                $('#loadingSpinner').show();
+                $('#handsonExcelTable').hide();
 
                 //Request the new sheet
                 $.post('@Url.Action("ChangeWorksheet", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { sheetIdentifier: selVal }, function (response) {
-                    //Restore old button content
+                    //Restore old button content, re-enable buttons, hide spinner
                     $(button).html(oldHtml);
                     $(button).prop('disabled', false);
+                    $('#setSelectedHeaderArea').prop('disabled', false);
+                    $('#setSelectDataArea').prop('disabled', false);
+                    $('#expandSelection').prop('disabled', false);
+                    $('#setSelectReset').prop('disabled', false);
+                    $('#loadingSpinner').hide();
 
                     //Store the new active sheet
                     activeSheet = selVal;
@@ -323,7 +333,7 @@
 
                     //Get the container that
                     var container = document.getElementById('handsonExcelTable');
-                    if (isTableEmpty(JSON.parse(response))) {
+                    if (isTableEmpty(response)) {
                         if (typeof (hotActive) !== 'undefined') {
                             if (hotActive) {
                                 hot.destroy();
@@ -333,9 +343,9 @@
                         $('#handsonExcelTable').hide();
                         $('#emptyTableMessage').show();
                     } else {
-                        $('#handsonExcelTable').show();
                         $('#emptyTableMessage').hide();
-                        hot = createHandsontableForData(JSON.parse(response), container);
+                        hot = createHandsontableForData(response, container);
+                        $('#handsonExcelTable').show();
 
                         if (loadingInitialTable) {
                             //If there was a previous selection, parse it and mark the cells
@@ -491,5 +501,41 @@
         var endRow = selected[2];
 
         return [startRow, startCol, endRow, endCol];
+    }
+
+    /*Arguments: An array and a function that takes one element of the array as parameter
+    Returns: Last index of the array for which the given functions returns true
+    Returns -1 if no element satisfies the given function*/
+    function lastIndexInArray(array, callback) {
+        var index = -1;
+        for (var i = 0; i < array.length; i++) {
+            if (callback(array[i]) === true) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    function orderSelectionArray(selection) {
+        // check if selection is from right bottom to left top and reverse it
+        if (selection[2] <= selection[0] && selection[3] <= selection[1]) {
+            return reverseArea(selection);
+        }
+
+        //Check if selection is from bottom to top and reverse it vertically
+        if (selection[0] > selection[2]) {
+            return reverseAreaVertically(selection);
+        }
+
+        //Check if selection is from right to left and reverse it horizontally
+        if (selection[3] <= selection[1]) {
+            return reverseAreaHorizontally(selection);
+        }
+
+        return selection;
+    }
+
+    function showKnownDisplayErrors() {
+        $('#knownDisplayErrors').fadeToggle('slow');
     }
 </script>

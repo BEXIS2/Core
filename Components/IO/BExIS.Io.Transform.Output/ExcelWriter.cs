@@ -1,7 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -14,7 +14,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using Vaiona.Persistence.Api;
 /// <summary>
 ///
 /// </summary>        
@@ -56,7 +56,7 @@ namespace BExIS.IO.Transform.Output
 
         private List<DataTuple> dataTuples = new List<DataTuple>();
 
-        private uint[] styleIndexArray = new uint[4];
+        private uint[] styleIndexArray = new uint[6];
 
         private WorkbookPart workbookPart;
         private WorksheetPart worksheetPart;
@@ -148,73 +148,77 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
-            string message = "row :" + rowIndex + "column:" + columnIndex;
-            Debug.WriteLine(message);
 
-            DataContainerManager CM = new DataContainerManager();
-            DataAttribute dataAttribute = CM.DataAttributeRepo.Get(variableValue.DataAttribute.Id);
 
-            string cellRef = getColumnIndex(columnIndex);
-
-            Cell cell = new Cell();
-            cell.CellReference = cellRef;
-            // cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndexArray);
-            //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
-            //cell.CellValue = new CellValue(variableValue.Value.ToString());
-
-            CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
-            object value = variableValue.Value;
-
-            if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
+            using (var uow = this.GetUnitOfWork())
             {
-                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
 
-                try
-                {
-                    if (value.ToString() != "")
-                    {
-                        double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-                        cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message + "\n|" + message);
-                }
+                string message = "row :" + rowIndex + "column:" + columnIndex;
+                Debug.WriteLine(message);
 
-                return cell;
-            }
-            else
-            {
-                if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
-                {
+                string cellRef = getColumnIndex(columnIndex);
 
+                Cell cell = new Cell();
+                cell.CellReference = cellRef;
+                cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType, styleIndexArray);
+                //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
+                //cell.CellValue = new CellValue(variableValue.Value.ToString());
+
+                CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
+                object value = variableValue.Value;
+
+                if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
+                {
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                    //CultureInfo provider = CultureInfo.InvariantCulture;
+
                     try
                     {
                         if (value.ToString() != "")
                         {
-                            DateTime dt = Convert.ToDateTime(value.ToString());
-                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                            double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+                            cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.Message + "|" + message);
+                        throw new Exception(ex.Message + "\n|" + message);
                     }
+
+                    return cell;
                 }
                 else
                 {
-                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    if (value == null)
-                        cell.CellValue = new CellValue("");
-                    else
-                        cell.CellValue = new CellValue(value.ToString());
-                }
-            }
+                    if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+                    {
 
-            return cell;
+                        cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                        //CultureInfo provider = CultureInfo.InvariantCulture;
+                        try
+                        {
+                            if (value.ToString() != "")
+                            {
+                                DateTime dt = Convert.ToDateTime(value.ToString());
+                                cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message + "|" + message);
+                        }
+                    }
+                    else
+                    {
+                        cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                        if (value == null)
+                            cell.CellValue = new CellValue("");
+                        else
+                            cell.CellValue = new CellValue(value.ToString());
+                    }
+                }
+
+                return cell;
+            }
         }
 
         /// <summary>
@@ -640,7 +644,37 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        ///
+        /// 1 0
+        /// 2 0.00
+        /// 3 #,##0
+        /// 4 #,##0.00
+        /// 5 $#,##0_);($#,##0)
+        /// 6 $#,##0_);[Red]($#,##0)
+        /// 7 $#,##0.00_);($#,##0.00)
+        /// 8 $#,##0.00_);[Red]($#,##0.00)
+        /// 9 0%
+        /// 10 0.00%
+        /// 11 0.00E+00
+        /// 12 # ?/?
+        /// 13 # ??/??
+        /// 14 m/d/yyyy
+        /// 15 d-mmm-yy
+        /// 16 d-mmm
+        /// 17 mmm-yy
+        /// 18 h:mm AM/PM
+        /// 19 h:mm:ss AM/PM
+        /// 20 h:mm
+        /// 21 h:mm:ss
+        /// 22 m/d/yyyy h:mm
+        /// 37 #,##0_);(#,##0)
+        /// 38 #,##0_);[Red](#,##0)
+        /// 39 #,##0.00_);(#,##0.00)
+        /// 40 #,##0.00_);[Red](#,##0.00)
+        /// 45 mm:ss
+        /// 46 [h]:mm:ss
+        /// 47 mm:ss.0
+        /// 48 ##0.0E+0
+        /// 49 @
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -666,22 +700,29 @@ namespace BExIS.IO.Transform.Output
             cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndexArray[2] = (uint)cellFormats.Count++;
+
+            //datetime
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)22U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
+            cellFormats.Append(cellFormat);
+            styleIndexArray[3] = (uint)cellFormats.Count++;
+
             //date
             cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
             cellFormat.Protection = new Protection();
             cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
-            styleIndexArray[3] = (uint)cellFormats.Count++;
+            styleIndexArray[4] = (uint)cellFormats.Count++;
+
+            //time
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)19U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
+            cellFormats.Append(cellFormat);
+            styleIndexArray[5] = (uint)cellFormats.Count++;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="styleIndex"></param>
-        /// <param name="systemType"></param>
-        /// <returns></returns>
         private uint getExcelStyleIndex(string systemType, uint[] styleIndex)
         {
             if (systemType == "Double" || systemType == "Decimal")
@@ -694,6 +735,52 @@ namespace BExIS.IO.Transform.Output
                 return styleIndex[3];
             if (systemType == "Boolean")
                 return styleIndex[2];
+
+            return styleIndex[2];
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="styleIndex"></param>
+        /// <param name="systemType"></param>
+        /// <returns></returns>
+        private uint getExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, uint[] styleIndex)
+        {
+
+            string systemType = dataType.SystemType;
+
+            if (systemType == "Double" || systemType == "Decimal")
+                return styleIndex[0];
+            if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64")
+                return styleIndex[1];
+            if (systemType == "Char" || systemType == "String")
+                return styleIndex[2];
+
+            if (systemType == "Boolean")
+                return styleIndex[2];
+
+            //for time and date only
+            if (dataType.Extra != null)
+            {
+                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
+
+                //date
+                if (systemType == "DateTime" && displayPattern.Name.ToLower().Contains("date"))
+                    return styleIndex[4];
+
+                //time
+                if (systemType == "DateTime" &&
+                (displayPattern.Name.ToLower().Equals("time") ||
+                displayPattern.Name.ToLower().Equals("time 12h")))
+                    return styleIndex[5];
+            }
+
+            if (systemType == "DateTime")
+                return styleIndex[3];
+
             return styleIndex[2];
         }
 

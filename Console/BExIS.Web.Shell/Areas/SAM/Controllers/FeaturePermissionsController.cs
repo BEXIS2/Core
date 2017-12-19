@@ -105,7 +105,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     feature.Children = features.Where(f => f.ParentId == feature.Id).ToList();
                 }
 
-                return View(features.AsEnumerable());
+                return View(features.Where(f => f.ParentId == null).AsEnumerable());
             }
             finally
             {

@@ -113,6 +113,18 @@ namespace BExIS.Utils.Helpers
                                         SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                         value = sharedStringItem.InnerText;
                                     }
+                                    //If cell contains boolean (doesn't always work for files saved with libre office)
+                                    else if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.Boolean)
+                                    {
+                                        if(c.InnerText == "1")
+                                        {
+                                            value = "true";
+                                        }
+                                        else
+                                        {
+                                            value = "false";
+                                        }
+                                    }
                                     // not a text
                                     else if (c.StyleIndex != null && c.StyleIndex.HasValue)
                                     {
@@ -274,6 +286,9 @@ namespace BExIS.Utils.Helpers
             return columnIndex;
         }
 
+        /*
+         * Returns a dictionary, containing the Uris of all worksheets as keys and their names (displaynames) as values
+         * */
         public Dictionary<Uri, String> GetWorksheetUris()
         {
             if (this.fileStream != null)

@@ -168,11 +168,11 @@
                                           .Name(@idInput)
                                           .Encode(false)
                                           .Value(value)
-                                          .HtmlAttributes(new {@class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)"})
+                                          .HtmlAttributes(new {@class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id })
                                           .ClientEvents(events => events
                                               .OnChange("OnChangeTextInput"))
                                           .DataBinding(dataBinding => dataBinding
-                                              .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new {id = Model.Id})
+                                              .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new {id = Model.Id, type = Model.Source.GetType().Name})
                                               .Cache(false))
 
                                           .Filterable(filtering =>
@@ -306,11 +306,12 @@
                                 .Value(value)
                                 .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
+                                .InputHtmlAttributes(new { Title = @errorMessage, @class = @errorClass })
                             )
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id,  @class = "bx-input bx-metadataFormTextInput " + lockedClass })
                         }
                     }
                 </td>

@@ -248,8 +248,15 @@ h2{
     white-space:nowrap;
 }
 
-.bx-rpm-selectdropdown .bx-dropdown{
-    width:372px;
+.bx-rpm-selectdropdown .bx-dropdown,
+.bx-rpm-selectdropdown .bx-rpm-itemdescription {
+    width: 372px;
+}
+
+.bx-rpm-itemdescription {
+    text-align: left;
+    overflow-y: visible;
+    white-space:normal;
 }
 
 .bx-rpm-selectdropdown .t-arrow-down.bx-rpm-dropdownArrow,

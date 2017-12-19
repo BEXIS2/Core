@@ -4,7 +4,9 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Xml.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.Web.Mvc;
@@ -14,51 +16,66 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class EasyUploadSheetSelectMetaDataController : BaseController
     {
         private EasyUploadTaskManager TaskManager;
+        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [HttpGet]
         public ActionResult SheetSelectMetaData(int index)
         {
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-
-            //set current stepinfo based on index
-            if (TaskManager != null)
-            {
-                TaskManager.SetCurrent(index);
-
-                // remove if existing
-                TaskManager.RemoveExecutedStep(TaskManager.Current());
-            }
-
-            SelectMetaDataModel model = new SelectMetaDataModel();
-
-            //Load available metadata structures
             MetadataStructureManager msm = new MetadataStructureManager();
-            this.Disposables.Add(msm);
-            foreach (MetadataStructure metadataStructure in msm.Repo.Get())
+            try
             {
-                model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
-            }
+                TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-            //If there's already a selected Metadata schema, load its id into the model
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
+                //set current stepinfo based on index
+                if (TaskManager != null)
+                {
+                    TaskManager.SetCurrent(index);
+
+                    // remove if existing
+                    TaskManager.RemoveExecutedStep(TaskManager.Current());
+                }
+
+                SelectMetaDataModel model = new SelectMetaDataModel();
+
+                //Load available metadata structures
+                IEnumerable<MetadataStructure> metadataStructureList = msm.Repo.Get();
+
+                foreach (MetadataStructure metadataStructure in metadataStructureList)
+                {
+                    if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                        xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                    {
+                        model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                    }                        
+                }
+                //Sort the metadata structures
+                model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
+
+                //If there's already a selected Metadata schema, load its id into the model
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
+                {
+                    model.SelectedMetaDataId = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
+                }
+
+                //if the title was changed at some point during the upload, load the title into the model
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                {
+                    model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                }
+                //if it wasn't changed yet, the default title is the filename
+                else
+                {
+                    model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
+                }
+
+                model.StepInfo = TaskManager.Current();
+
+                return PartialView(model);
+            }
+            finally
             {
-                model.SelectedMetaDataId = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
+                msm.Dispose();
             }
-
-            //if the title was changed at some point during the upload, load the title into the model
-            if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
-            {
-                model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
-            }
-            //if it wasn't changed yet, the default title is the filename
-            else
-            {
-                model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
-            }
-
-            model.StepInfo = TaskManager.Current();
-
-            return PartialView(model);
         }
 
         [HttpPost]
@@ -90,7 +107,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
 
                 //If the user typed in a title, the title must not be empty
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE)){
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                {
                     string tmp = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
                     if (String.IsNullOrWhiteSpace(tmp))
                     {
@@ -111,24 +129,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     TaskManager.Current().SetStatus(StepStatus.error);
                     MetadataStructureManager msm = new MetadataStructureManager();
-                    this.Disposables.Add(msm);
-                    foreach (MetadataStructure metadataStructure in msm.Repo.Get())
+                    try
                     {
-                        model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
-                    }
+                        IEnumerable<MetadataStructure> metadataStructureList = msm.Repo.Get();
 
-                    //reload model
-                    model.StepInfo = TaskManager.Current();
+                        foreach (MetadataStructure metadataStructure in metadataStructureList)
+                        {
+                            if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                                xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                            {
+                                model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                            }
+                        }
+                        //Sort the metadata structures
+                        model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
 
-                    //if the title was changed at some point during the upload, load the title into the model
-                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
-                    {
-                        model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                        //reload model
+                        model.StepInfo = TaskManager.Current();
+
+                        //if the title was changed at some point during the upload, load the title into the model
+                        if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                        {
+                            model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                        }
+                        //if it wasn't changed yet, the default title is the filename
+                        else
+                        {
+                            model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
+                        }
                     }
-                    //if it wasn't changed yet, the default title is the filename
-                    else
+                    finally
                     {
-                        model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
+                        msm.Dispose();
                     }
                 }
             }
@@ -139,51 +171,66 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult SaveMetaDataSelection(object[] data)
         {
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-            SelectMetaDataModel model = new SelectMetaDataModel();
+            MetadataStructureManager msm = new MetadataStructureManager();
 
-            long metadataId = -1;
-
-            if (TaskManager != null)
+            try
             {
-                //Load available metadata structures and store them in the model
-                MetadataStructureManager msm = new MetadataStructureManager();
-                this.Disposables.Add(msm);
-                foreach (MetadataStructure metadataStructure in msm.Repo.Get())
-                {
-                    model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
-                }
+                TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+                SelectMetaDataModel model = new SelectMetaDataModel();
 
-                TaskManager.Current().SetValid(false);
+                long metadataId = -1;
 
-                //Grabs the id of the selected metadata from the Http-Request
-                foreach (string key in Request.Form.AllKeys)
+                if (TaskManager != null)
                 {
-                    if ("metadataId" == key)
+                    //Load available metadata structures and store them in the model
+                    IEnumerable<MetadataStructure> metadataStructureList = msm.Repo.Get();
+
+                    foreach (MetadataStructure metadataStructure in metadataStructureList)
                     {
-                        metadataId = Convert.ToInt64(Request.Form[key]);
+                        if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
+                            xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                        {
+                            model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
+                        }
+                    }
+                    //Sort the metadata structures
+                    model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));
+
+                    TaskManager.Current().SetValid(false);
+
+                    //Grabs the id of the selected metadata from the Http-Request
+                    foreach (string key in Request.Form.AllKeys)
+                    {
+                        if ("metadataId" == key)
+                        {
+                            metadataId = Convert.ToInt64(Request.Form[key]);
+                        }
+                    }
+
+                    //If a valid id was submitted, save its id as the currently selected model id
+                    model.SelectedMetaDataId = metadataId;
+
+                    TaskManager.AddToBus(EasyUploadTaskManager.SCHEMA, model.SelectedMetaDataId);
+                    TaskManager.Current().SetValid(true);
+
+
+                    //Store all other information in the model
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
+                    {
+                        model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
+                    }
+                    else
+                    {
+                        model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
                     }
                 }
 
-                //If a valid id was submitted, save its id as the currently selected model id
-                model.SelectedMetaDataId = metadataId;
-
-                TaskManager.AddToBus(EasyUploadTaskManager.SCHEMA, model.SelectedMetaDataId);
-                TaskManager.Current().SetValid(true);
-
-
-                //Store all other information in the model
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))
-                {
-                    model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.DESCRIPTIONTITLE]);
-                }
-                else
-                {
-                    model.DescriptionTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
-                }
+                return PartialView("SheetSelectMetaData", model);
             }
-
-            return PartialView("SheetSelectMetaData", model);
+            finally
+            {
+                msm.Dispose();
+            }
         }
 
         [HttpPost]

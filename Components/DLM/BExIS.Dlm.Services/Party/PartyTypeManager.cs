@@ -171,7 +171,7 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region PartyCustomAttribute
-        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, string validValues, bool isValueOptional = true, bool isUnique = false, bool isMain = false, int? displayOrder = null)
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, string validValues,string condition, bool isValueOptional = true, bool isUnique = false, bool isMain = false, int? displayOrder = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(partyType != null);
@@ -187,7 +187,8 @@ namespace BExIS.Dlm.Services.Party
                 IsValueOptional = isValueOptional,
                 IsUnique = isUnique,
                 IsMain = isMain,
-                Name = name
+                Name = name,
+                Condition=condition
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -232,7 +233,8 @@ namespace BExIS.Dlm.Services.Party
                 IsValueOptional = partyCustomeAttribute.IsValueOptional,
                 IsUnique = partyCustomeAttribute.IsUnique,
                 IsMain = partyCustomeAttribute.IsMain,
-                Name = partyCustomeAttribute.Name
+                Name = partyCustomeAttribute.Name,
+                Condition=partyCustomeAttribute.Condition
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -278,10 +280,12 @@ namespace BExIS.Dlm.Services.Party
                 if (partyCustomAttribute.PartyType.CustomAttributes.FirstOrDefault(item => item.DisplayOrder == partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id) != null)
                     partyCustomAttribute.PartyType.CustomAttributes.Where(item => item.DisplayOrder >= partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id)
                         .ToList().ForEach(item => item.DisplayOrder = item.DisplayOrder + 1);
-                repo.Put(partyCustomAttribute);
+                repo.Merge(partyCustomAttribute);
+                var merged = repo.Get(partyCustomAttribute.Id);
+                repo.Put(merged);
                 uow.Commit();
+                return (merged);
             }
-            return (partyCustomAttribute);
         }
 
         public bool DeletePartyCustomAttribute(PartyCustomAttribute entity)
@@ -332,6 +336,7 @@ namespace BExIS.Dlm.Services.Party
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
         }
+
         #endregion
 
         #region Associations

@@ -1,8 +1,8 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.PartyTypeAccountModel
 @{
-    ViewBag.Title = "Registeration";
+    ViewBag.Title = "Registration";
 }
-<h2>Registeration</h2>
+<h2>Registration</h2>
 <script type="text/javascript">
     var PartyRelations = { items: []}
 </script>
@@ -12,7 +12,7 @@
     <table>
         <tr>
             <td style="width:40px;"><b title="Required" style="color: red;">*</b></td>
-            <td style="width:300px;">
+            <td style="width:200px;">
                 <label>
                     Account type:
                 </label>
@@ -20,18 +20,17 @@
             <td>
                 @if (Model.Party == null)
                 {
-                    <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()">
+                    <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;">
                         @foreach (var partyTypeModel in Model.PartyRelationshipsTypes)
                     {
                             <script type="text/javascript">
-
                                 var partyTypePairs=[];
                             </script>
                             foreach (var PartyTypePair in partyTypeModel.Value)
                             {
-
                                 <script type="text/javascript">
-                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.AllowedTarget.Parties.Select(item => new { item.Id, item.Name })))});
+                                    
+                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,conditionSource:"@PartyTypePair.Value.ConditionSource",parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.AllowedTarget.Parties.Select(item => new { item.Id, item.Name })))});
                                 </script>
                             }
                             <script type="text/javascript">
@@ -53,25 +52,24 @@
         </tr>
     </table>
     <div id="divPartyCustomAttr"></div>
-        <div id="divPartyRelationships"></div>
-        <div class="form-group">
-            <div class="">
-                <button type="button" id="submitRegisteration" name="submit" value="saveDataset" onclick="submitForm()" class="t-button function" style="border:0px;">Save</button>
-    </div>
+    <div id="divPartyRelationships"></div>
+    <div class="form-group">
+        <div class="">
+            <button type="submit" id="submitRegisteration" name="submit" value="saveDataset" onclick="return submitForm()" class="t-button function" style="border:0px;">Save</button>
         </div>
-       
+    </div>
+
 }
 <script>
+
     var $loadingImg=$('#imgPartyCustomeAttrLoading');
     var $registerationBtn=$('#submitRegisteration');
-
+    thisobject=this;
     function submitForm()
     {
-        var d = new Date();
-        var year = d.getFullYear();
-        var month = d.getMonth();
-        var day = d.getDate();
-        var endDate = new Date(year + 1, month, day).toJSON();
+        $("#frmParty").valid();
+        if ($("#frmParty").find(".input-validation-error").length)
+            return false;
         PartyTypeId=$("#ddl_PartyType").val();
         var customAttributeValues=[];
         $("[name^='partyCustomAttributeValues']").each(function( index ) {
@@ -83,24 +81,26 @@
             $(this).find("option:selected").val();
         });
         relations=[];
-        $(".partyTypeRelation").each(function(index,item)
+        $(".partyTypeRelation:visible").each(function(index,item)
         {
             secondPartyId=parseInt($(this).find("option:selected").val());
             if(secondPartyId!=-1)
             {
                 relations.push({SecondParty:{Id:secondPartyId},
                     PartyRelationshipType:{Id:parseInt($(item).attr("partyrelationshipid"))},
+                    PartyTypePair:{Id:parseInt($(item).attr("partyTypePairId"))},
                     Title:$(this).find("label").text(),
                     Description:'',
-                    StartDate:  new Date().toJSON(),
-                    EndDate:endDate,
+                    
                     Scope:''});
             }
         });
         $.post("/BAM/PartyService/CreateUserParty",
-               {  party:
+               {
+                   party:
                     {
-                        StartDate:  new Date().toJSON(),EndDate:endDate,PartyType:{Id:parseInt($("#ddl_PartyType").val())}
+                        //StartDate:  new Date().toJSON(),EndDate:endDate,
+                        PartyType:{Id:parseInt($("#ddl_PartyType").val())}
                     }
                    ,
                    partyCustomAttributeValues:customAttributeValues,
@@ -112,6 +112,7 @@
                }).error(function(data) {
                    alert("error: "+data[0]);
                });
+        return false;
     }
 
     function showLoading(enable)
@@ -126,16 +127,31 @@
         }
     }
 
+    function checkPartyRelationshipConditions()
+    {
+        $("#divPartyRelationships .partyTypeRelation").each(function(i, element) {
+            if(eval(parsePartyCondition($(element).attr("conditionSource"))))
+                $(element).show();
+            else
+                $(element).hide();
+        });
+    }
+
     function changePartyType() {
+        
         partyTypeId = $("#ddl_PartyType").val();
         showLoading(true);
         //Retrieving custome attribute types
         $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@(Model.Party!=null ? Model.Party.Id:0), function (response, status, xhr) {
             if (status == "error") {
-                $('#divPartyCustomAttr').html("")
+                $('#divPartyCustomAttr').html("");
                 alert(response);
             }
             showLoading(false);
+            $('#tblPartyCustomAttributes').on('partyCustomAttributesChanged',
+                         function (objectEvent, args) {
+                             checkPartyRelationshipConditions();
+                         });
         });
 
         //create party relationship element and related parties options
@@ -145,13 +161,13 @@
         });
         elements="";
         $("#divPartyRelationships").html("");
-
         $.each(data, function(i, item) {
             $.each(item.partyTypePairs, function(i, partyTypePair) {
-                elements +="<div style='border-bottom:thin solid #ebebeb' class='partyTypeRelation' PartyRelationshipId='"+partyTypePair.PartyRelationshipId+"'><div style='display: inline-block; width: 340px; padding-left: 50px; padding-bottom: 20px; padding-top: 10px;'><label>"+partyTypePair.Title+": </label></div><div style='display:inline-block;padding-left: 10px;'><select name='typeid' id='ddl_PartyTypePairId' >";
+                elements +="<div style='border-bottom:thin solid #ebebeb' conditionSource='"+partyTypePair.conditionSource+"' class='partyTypeRelation' PartyRelationshipId='"+partyTypePair.PartyRelationshipId+"' partyTypePairId='"+partyTypePair.Id+"'><div style='display: inline-block; width: 240px; padding-left: 50px; padding-bottom: 20px; padding-top: 10px;'><label>"+partyTypePair.Title+": </label></div><div style='display:inline-block;padding-left: 7px;'><select name='typeid' id='ddl_PartyTypePairId'  class='comboboxBootstrap' style='width: 372px; border: 2px solid black; height: 30px;'>";
                 elements +="<option value='-1'>---</option>";
                 $.each(partyTypePair.parties, function(i, Party) {
                     elements +="<option value='"+Party.Id+"'>"+Party.Name+"</option>";
+                  
                 });
                 elements+="</select></div></div>";
             });
@@ -166,15 +182,13 @@
             // Unbind existing validation
             $form.unbind();
             $form.data("validator", null);
-
             // Check document for changes
             $.validator.unobtrusive.parse(document);
-
             // Re add validation with changes
             $form.validate($form.data("unobtrusiveValidation").options);
         });
     });
-   
+
 </script>
 @if (Model.Party == null)
 {

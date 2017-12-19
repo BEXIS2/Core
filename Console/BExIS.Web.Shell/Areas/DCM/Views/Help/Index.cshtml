@@ -58,14 +58,14 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <p>This wizard will assist you in creating a new dataset in BEXIS 2. The Wizard is very flexible and builds up differently depending on the selected Metadata structure. Therefore, we describe only the basic functions here. </p>
 <p>The first step is to generate an empty or a copy of an existing dataset based on your selection of the two mandatory elements: data structure, and metadata structure. </p>
-<p><img src="~/Areas/DCM/Content/Images/Help/create_dataset.png" width="900" alt="Create Dataset" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/create_dataset.jpg" width="900" alt="Create Dataset" />&#xa0;</p>
 <p>The next stage is determined by the selected metadata structure.</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_Toc468355751">2.1. Copy an existing Dataset</a></h2>
 <p>By using Select button, you can choose a Dataset to make a copy of it. Related to the Dataset, you can choose a Data Structure, but there is only one related Metadata Structure.</p>
 <p>You are able to use predefined content or change fields as you want.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/Help_img2.jpeg" width="590" alt="Dataset_Copy" />&#xa0;</p>
+<!--<p><img src="~/Areas/DCM/Content/Images/Help/Help_img2.jpeg" width="590" alt="Dataset_Copy" />&#xa0;</p>-->
 
 <h2><a id="_content">2.2. Content</a></h2>
 <p>The content area is where you enter metadata describing your dataset. The forms provided here may look different and contain different attributes depending on the metadata schema (structure) you have chosen in the first step. </p>
@@ -74,7 +74,7 @@ This guide will walk you through the basics of data collection including how to 
 <p><img src="~/Areas/DCM/Content/Images/Help/plus.png" width="31"alt="Add" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add an attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/mines.png" width="31" alt="Mines" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove an attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/up_down.png" width="55" alt="Up Down" />&nbsp;&nbsp;Change order of the attribute, </p>
-<p><img src="~/Areas/DCM/Content/Images/Help/down.png" width="20" alt="Expand" /><img src="~/Areas/DCM/Content/Images/Help/up.png" width="20" alt="Collapse" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expand / collapse</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/expand.png" width="20" alt="Expand" /><img src="~/Areas/DCM/Content/Images/Help/collapse.png" width="20" alt="Collapse" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expand / collapse</p>
 <p>&#xa0;</p>
 <p>On the Bottom, there is a button titled Validate to examine whether required attributes have been filled and whether the information complies with the business logic. The validation may also be triggered by using the Submit.</p>
 <p>You could edit a submitted dataset or make a copy of that by clicking on the Edit or Copy buttons.</p>
@@ -84,10 +84,10 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <h1><a id="_upload_data">3. Upload Data</a></h1>
 <p>To upload your data, please go to the Collect > Upload Data via main menu. This wizard will assist you in uploading data into the BEXIS 2 repository. A dataset can be structured or unstructured (i.e tabular or file).</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/upload_data.png" width="900"  alt="Upload Data" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/upload_data.png" width="599"  alt="Upload Data" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_upload_tabular">3.1. Upload Tabular Data</a></h2>
-<p>The term “Tabular&nbsp;data” is used for all datasets where there internal structure of the data is "known" to the system. For example, in a data table the header, which defines the columns (i.e. variables) is the structure of the data. Before uploading/importing data to the system the data structure needs to be created with the Data Structure Manager of the Data Planning module.</p>
+<p>The term "Tabular data" is used for all datasets where there internal structure of the data is "known" to the system. For example, in a data table the header, which defines the columns (i.e. variables) is the structure of the data. Before uploading/importing data to the system the data structure needs to be created with the Data Structure Manager of the Data Planning module.</p>
 <p>&#xa0;</p>
 <h3><a id="_select_file">3.1.1. Select File</a></h3>
 <p>In the first step an existing file containing your data needs to be selected. You can either select a file from your local computer or a file that has been uploaded to the server prior to starting the Upload Wizard. The second option is designed for files larger than 4 MB that may take several minutes to transfer. The wizard supports file formats of Microsoft Excel (*.xlsm) or ASCII (*.txt, *.csv). Microsoft Excel files are required to use a template created with the Data Planning Module of BEXIS 2 (refer to <a href="~/rpm/Help/index#_overview">Data Planning User Guide</a> for more details). Once a file has been successfully selected, click the Next button and proceed to the next step.</p>
@@ -114,13 +114,13 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <h2><a id="_Toc468355759">3.3. Define Primary Key</a></h2>
 <p>While adding data to an existing dataset you need to specify a unique identifier (e.g. primary key) for each tuple (i.e. row) in your dataset. If your dataset already contains a variable with such a key please select it. Otherwise a primary key can be created by combining available variables. Please click the Check button to verify whether the selected combination is unique. If you go back and change something in the process of uploading, you need to check the primary key again.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/Help_img18.png" width="604" height="328" alt="Primary Key" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/primary_key.png" width="604" height="328" alt="Primary Key" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_Toc468355760">3.4. Validation</a></h2>
 <p>With this step, the selected data file is validated against the selected data structure. Both, the structure of the data (e.g. variable properties) and whether the data values fit to the specified structure (e.g. data type, value range) is evaluated. </p>
 <p>Click on Validate button to validate the data file.</p>
 <p>If you go back and change something in the process of uploading, you need to validate the file again.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/Help_img19.jpeg" width="596" height="327" alt="Upload_Tabular_Validate" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/upload_tabular.jpg" width="596" height="327" alt="Upload_Tabular_Validate" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_Toc468355761">3.5. Summary</a></h2>
 <p>With this final step a summary of your uploaded data file is provided. Please check the information and click the Finish button to confirm and finalize the upload. </p>
@@ -153,6 +153,26 @@ This guide will walk you through the basics of data collection including how to 
 <p>If you made any mistakes during the selection process just use the "Reset" button to remove all markings and start over.</p>
 <p>If you wish to upload data from a different worksheet you can select it from the dropdown-menu and click the "Change Worksheet" button. Please be aware that you can only upload data from one sheet at a time. Once you have selected the header and at least one data area, click the Next Button to proceed to the next step.</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_select_areas.png" width="600" height="450" alt="Select Areas" />&#xa0;</p>
+<p>The representation of the data you will see in the table might differ from what you see in Microsoft Excel or similar programs.</p>
+<p>Don't worry, your data will be uploaded correctly if you choose the correct datatypes during the next step.</p>
+<figure>
+    <figcaption>The following differences are known:</figcaption>
+    <ul>
+        <li>Dates and times</li>
+        <ul>
+            <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
+            <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
+        </ul>
+        <li>Boolean values</li>
+        <ul>
+            <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
+        </ul>
+        <li>Real Numbers</li>
+        <ul>
+            <li>Real numbers might be displayed with scientific notation.</li>
+        </ul>
+    </ul>
+</figure>
 <p>&#xa0;</p>
 <h2><a id="_easy_upload_verification">4.5. Verification</a></h2>
 <p>With this step you can define which units and datatypes your variables are using. The first column of dropdown-menus provides suggestions for attributes that are being used in other datasets and are similar to your variables. If you select one of the suggestions, unit and datatype are automatically adjusted. If you don't wish to use the suggestions, feel free to choose unit and datatype yourself.</p>
@@ -202,4 +222,8 @@ This guide will walk you through the basics of data collection including how to 
 <h2><a id="_summary">6.4. Summary</a></h2>
 <p>The Summary page is an overview about the created metadata structure.
 <br/><img src="~/Areas/DCM/Content/Images/Help/summary_xsd.png" width="900" alt="Summary" /> </p>
+<p>&#xa0;</p>
+<p>&#xa0;</p>
+<p>&#xa0;</p>
+<p>&#xa0;</p>
 <p>&#xa0;</p>

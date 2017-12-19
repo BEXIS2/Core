@@ -43,8 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
@@ -62,6 +62,10 @@
     <Reference Include="Microsoft.Web.Helpers">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
@@ -69,6 +73,7 @@
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
@@ -148,11 +153,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Controllers\CreateDatasetController.cs" />
     <Compile Include="Controllers\EasyUploadController.cs" />
     <Compile Include="Controllers\EasyUploadSelectAFileController.cs" />
@@ -177,6 +177,7 @@
     <Compile Include="Controllers\SubmitSpecifyDatasetController.cs" />
     <Compile Include="Controllers\SubmitSummaryController.cs" />
     <Compile Include="Controllers\SubmitValidationController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
@@ -419,6 +420,9 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\help\collapse.png" />
+    <Content Include="Content\Images\help\Create_Dataset.png" />
+    <Content Include="Content\Images\help\expand.png" />
     <Content Include="Content\Images\help\Help_easy_upload_end.png" />
     <Content Include="Content\Images\help\Help_easy_upload_metadata.png" />
     <Content Include="Content\Images\help\Help_easy_upload_select_areas.png" />
@@ -432,19 +436,25 @@
     <Content Include="Content\Images\help\Help_img15.jpeg" />
     <Content Include="Content\Images\help\Help_img16.jpeg" />
     <Content Include="Content\Images\help\Help_img17.jpeg" />
-    <Content Include="Content\Images\help\Help_img18.png" />
-    <Content Include="Content\Images\help\Help_img19.jpeg" />
-    <Content Include="Content\Images\help\Help_img2.jpeg" />
     <Content Include="Content\Images\help\Help_img22.png" />
     <Content Include="Content\Images\help\Help_img23.png" />
     <Content Include="Content\Images\help\Help_img24.png" />
     <Content Include="Content\Images\help\Help_img27.png" />
     <Content Include="Content\Images\help\Help_img3.png" />
+    <Content Include="Content\Images\help\mines.png" />
+    <Content Include="Content\Images\help\plus.png" />
+    <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\set_xsd_parameters.png" />
+    <Content Include="Content\Images\help\upload_data.png" />
+    <Content Include="Content\Images\help\up_down.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
+    <None Include="Properties\PublishProfiles\DCM.pubxml" />
+    <None Include="Properties\PublishProfiles\DCM211.pubxml" />
     <None Include="Properties\PublishProfiles\DCM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\DCM21108.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
@@ -516,6 +526,7 @@
   <ItemGroup>
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
+    <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
