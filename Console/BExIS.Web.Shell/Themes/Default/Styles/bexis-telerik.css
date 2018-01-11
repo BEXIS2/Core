@@ -51,6 +51,10 @@ Green 05  #eff7f6 brigth
     color: #ff9700;
 }
 
+.t-icon {
+    width:10px;
+}
+
 /*.t-grid td {padding-left: 30px;}
 
 .t-grid-without-filter th

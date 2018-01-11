@@ -822,15 +822,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (model != null)
             {
-                if (model is MetadataPackageModel)
-                {
-                    return PartialView("_metadataPackageUsageView", stepModelHelperParent);
-                }
+                //if (model is MetadataPackageModel)
+                //{
+                //    return PartialView("_metadataPackageUsageView", stepModelHelperParent);
+                //}
 
-                if (model is MetadataCompoundAttributeModel)
-                {
-                    return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
-                }
+                //if (model is MetadataCompoundAttributeModel)
+                //{
+                //    return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
+                //}
+
+                return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
+
             }
 
             return null;
@@ -901,15 +904,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (model != null)
             {
-                if (model is MetadataPackageModel)
-                {
-                    return PartialView("_metadataPackageUsageView", stepModelHelperParent);
-                }
-
-                if (model is MetadataCompoundAttributeModel)
-                {
-                    return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
-                }
+                return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
             }
 
             return null;
@@ -963,15 +958,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (model != null)
             {
-                if (model is MetadataPackageModel)
-                {
-                    return PartialView("_metadataPackageUsageView", stepModelHelperParent);
-                }
-
-                if (model is MetadataCompoundAttributeModel)
-                {
-                    return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
-                }
+                return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
             }
 
             return null;
@@ -1043,15 +1030,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (model != null)
             {
-                if (model is MetadataPackageModel)
-                {
-                    return PartialView("_metadataPackageUsageView", stepModelHelperParent);
-                }
-
-                if (model is MetadataCompoundAttributeModel)
-                {
-                    return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
-                }
+                return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
             }
 
             return null;
@@ -2043,7 +2022,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var index = list.IndexOf(temp);
 
             list.RemoveAt(index);
-            list.Insert(index + number, temp);
+            list.Insert(index + 1, temp);
+
 
             return stepModelHelperParent;
         }
