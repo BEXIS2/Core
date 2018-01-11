@@ -10,22 +10,22 @@ $(document).ready(function ()
 
 function resetAllTelerikIconTitles()
 {
-	$('.t-arrow-first, ' +
-	  '.t-arrow-prev,' +
-	  '.t-arrow-next,' +
-	  '.t-arrow-last,' +
-	  '.t-arrow-up,' +
-	  '.t-arrow-down,' +
-	  '.t-arrow-up-small,' +
-	  '.t-arrow-down-small,' +
-	  '.t-filter,'+
-	  '.t-group-delete,'+
-	  '.t-close,'+
-	  '.t-icon-calendar'
-	  ).each(function ()
-	  {
-		$(this).empty();
-	});
+	//$('.t-arrow-first, ' +
+	//  '.t-arrow-prev,' +
+	//  '.t-arrow-next,' +
+	//  '.t-arrow-last,' +
+	//  '.t-arrow-up,' +
+	//  '.t-arrow-down,' +
+	//  '.t-arrow-up-small,' +
+	//  '.t-arrow-down-small,' +
+	//  '.t-filter,'+
+	//  '.t-group-delete,'+
+	//  '.t-close,'+
+	//  '.t-icon-calendar'
+	//  ).each(function ()
+	//  {
+	//	$(this).empty();
+	//});
 }
 
 /*Truncate Title*/

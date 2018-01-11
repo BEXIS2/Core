@@ -52,7 +52,12 @@ Green 05  #eff7f6 brigth
 }
 
 .t-icon {
-    width:10px;
+    font-size: 0;
+    line-height: 14px;
+}
+
+.t-icon:before {
+    font-size: 15px;
 }
 
 /*.t-grid td {padding-left: 30px;}
