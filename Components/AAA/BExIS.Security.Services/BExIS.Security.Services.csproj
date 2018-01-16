@@ -79,6 +79,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Web.Services" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
@@ -88,6 +89,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\LdapAuthenticationManager.cs" />
     <Compile Include="Authentication\SignInManager.cs" />
     <Compile Include="Authorization\EntityPermissionManager.cs" />
     <Compile Include="Authorization\FeaturePermissionManager.cs" />
@@ -111,6 +113,10 @@
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Modules\SAM\BExIS.Sam.Providers.Ldap\BExIS.Sam.Providers.Ldap.csproj">
+      <Project>{02239D68-C0FF-4508-AB8A-02E52658CF31}</Project>
+      <Name>BExIS.Sam.Providers.Ldap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
       <Name>BExIS.Security.Entities</Name>

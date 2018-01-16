@@ -54,9 +54,9 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
+            //ControllerContext.HttpContext.Session.RemoveAll();
             // Umleitung an den externen Anmeldeanbieter anfordern
-            return new ChallengeResult(provider,
-                Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLogin", "Account", new { ReturnUrl = returnUrl }));
         }
 
         //
@@ -75,8 +75,7 @@ namespace BExIS.Web.Shell.Controllers
                 }
 
                 // Benutzer mit diesem externen Anmeldeanbieter anmelden, wenn der Benutzer bereits eine Anmeldung besitzt
-
-                var result = await signInManager.ExternalSignInAsync(loginInfo, false);
+                var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
                 switch (result)
                 {
                     case SignInStatus.Success:
@@ -85,12 +84,15 @@ namespace BExIS.Web.Shell.Controllers
                     case SignInStatus.LockedOut:
                         return View("Lockout");
 
+                    case SignInStatus.RequiresVerification:
+                        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+
+                    case SignInStatus.Failure:
                     default:
                         // Benutzer auffordern, ein Konto zu erstellen, wenn er kein Konto besitzt
                         ViewBag.ReturnUrl = returnUrl;
                         ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                        return View("ExternalLoginConfirmation",
-                            new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+                        return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel() { Email = loginInfo.Email });
                 }
             }
             finally
@@ -226,8 +228,6 @@ namespace BExIS.Web.Shell.Controllers
                     return View(model);
                 }
 
-                HttpContext.Items.Add("Test", 1);
-
                 // Require the user to have a confirmed email before they can log on.
 
                 var user = await identityUserService.FindByNameAsync(model.UserName);
@@ -262,8 +262,6 @@ namespace BExIS.Web.Shell.Controllers
             {
                 identityUserService.Dispose();
             }
-
-
         }
 
         //
