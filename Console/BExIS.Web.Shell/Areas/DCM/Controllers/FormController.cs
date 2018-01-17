@@ -708,8 +708,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 IsInstanze = true,
             };
 
-            var xPath = parentStepModelHelper.XPath + "//" + parentStepModelHelper.UsageType + "[" + position + "]";
-
+            string xPath = parentStepModelHelper.XPath + "//" + parentStepModelHelper.UsageAttrName + "[" + position + "]";
             // add to parent stepId
             parentStepModelHelper.Model.StepInfo.Children.Add(newStep);
             TaskManager.StepInfos.Add(newStep);
@@ -729,6 +728,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //Update metadata xml
                 //add step to metadataxml
                 AddCompoundAttributeToXml(model.Source, model.Number, parentStepModelHelper.XPath);
+
             }
 
             if (parentStepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
@@ -787,7 +787,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return PartialView("_metadataCompoundAttributeView", parentStepModelHelper);
 
-            return null;
         }
 
         public ActionResult AddMetadataAttributeUsage(int id, int parentid, int number, int parentModelNumber, int parentStepId)
@@ -1120,7 +1119,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                newStepModelHelper = new StepModelHelper(s.Id, counter, usage.Id, usage.Label, usage.GetType(), xPath, parent, usage.Extra);
+                                newStepModelHelper = new StepModelHelper(s.Id, counter, usage.Id, usage.Label, GetUsageAttrName(usage), usage.GetType(), xPath, parent, usage.Extra);
                                 stepHelperModelList.Add(newStepModelHelper);
 
                                 s.Children = GetChildrenSteps(usage.Id, usage.GetType(), s, xPath, newStepModelHelper);
@@ -1214,7 +1213,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (TaskManager.StepInfos.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                         {
-                            newStepModelHelper = new StepModelHelper(s.Id, 1, u.Id, u.Label, u.GetType(), xPath,
+                            newStepModelHelper = new StepModelHelper(s.Id, 1, u.Id, u.Label, GetUsageAttrName(u), u.GetType(), xPath,
                                 parentStepModelHelper, u.Extra);
                             stepHelperModelList.Add(newStepModelHelper);
 
@@ -1302,7 +1301,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (TaskManager.StepInfos.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                         {
-                            var newStepModelHelper = new StepModelHelper(s.Id, 1, u.Id, u.Label, u.GetType(), xPath, parentStepModelHelper, u.Extra);
+                            var newStepModelHelper = new StepModelHelper(s.Id, 1, u.Id, u.Label, GetUsageAttrName(u), u.GetType(), xPath, parentStepModelHelper, u.Extra);
                             stepHelperModelList.Add(newStepModelHelper);
                             s = LoadStepsBasedOnUsage(u, s, xPath, newStepModelHelper);
                             childrenSteps.Add(s);
@@ -1381,7 +1380,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
                     {
                         var p = GetStepModelhelper(parent.Id);
-                        stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u.Id, u.Label, u.GetType(), xPath, p, u.Extra));
+                        stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u.Id, u.Label, GetUsageAttrName(u), u.GetType(), xPath, p, u.Extra));
                     }
                 }
             }
@@ -1491,7 +1490,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                var newStepModelHelper = new StepModelHelper(s.Id, counter, usage.Id, usage.Label, usage.GetType(), xPath,
+                                var newStepModelHelper = new StepModelHelper(s.Id, counter, usage.Id, usage.Label, GetUsageAttrName(usage), usage.GetType(), xPath,
                                     parent, usage.Extra);
                                 stepHelperModelList.Add(newStepModelHelper);
                                 s.Children = GetChildrenStepsFromMetadata(usage.Id, usage.GetType(), s, xPath, newStepModelHelper);
@@ -1583,7 +1582,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (TaskManager.Root.Children.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                                 {
                                     var parent = GetStepModelhelper(current.Id);
-                                    var newStepModelHelper = new StepModelHelper(s.Id, counter, usage.Id, usage.Label, usage.GetType(), xPath, parent, usage.Extra);
+                                    var newStepModelHelper = new StepModelHelper(s.Id, counter, usage.Id, usage.Label, GetUsageAttrName(usage), usage.GetType(), xPath, parent, usage.Extra);
 
                                     stepHelperModelList.Add(newStepModelHelper);
                                 }
@@ -1664,7 +1663,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     };
 
                     TaskManager.StepInfos.Add(si);
-                    stepModelHelper = new StepModelHelper(si.Id, 1, mpu.Id, mpu.Label, mpu.GetType(), "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null, mpu.Extra);
+                    stepModelHelper = new StepModelHelper(si.Id, 1, mpu.Id, mpu.Label, GetUsageAttrName(mpu), mpu.GetType(), "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null, mpu.Extra);
 
                     stepModelHelperList.Add(stepModelHelper);
 
@@ -1719,7 +1718,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     };
 
                     TaskManager.StepInfos.Add(si);
-                    var stepModelHelper = new StepModelHelper(si.Id, 1, mpu.Id, mpu.Label, mpu.GetType(), "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null, mpu.Extra);
+                    var stepModelHelper = new StepModelHelper(si.Id, 1, mpu.Id, mpu.Label, GetUsageAttrName(mpu), mpu.GetType(), "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null, mpu.Extra);
 
                     stepModelHelperList.Add(stepModelHelper);
 
@@ -1874,6 +1873,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return this.GetUnitOfWork().GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get(Id);
             if (type.Equals(typeof(MetadataPackageUsage)))
                 return this.GetUnitOfWork().GetReadOnlyRepository<MetadataPackageUsage>().Get(Id);
+
+            return null;
+        }
+
+        private string GetUsageAttrName(BaseUsage usage)
+        {
+            if (usage.GetType().Equals(typeof(MetadataAttributeUsage)))
+            {
+                var u = (MetadataAttributeUsage)usage;
+                return u.MetadataAttribute.Name;
+            }
+            if (usage.GetType().Equals(typeof(MetadataNestedAttributeUsage)))
+            {
+                var u = (MetadataNestedAttributeUsage)usage;
+                return u.Member.Name;
+            }
+            if (usage.GetType().Equals(typeof(MetadataPackageUsage)))
+            {
+                var u = (MetadataPackageUsage)usage;
+                return u.MetadataPackage.Name;
+            }
 
             return null;
         }
