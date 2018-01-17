@@ -27,7 +27,6 @@ namespace BExIS.Web.Shell.Models
 
     public class LoginViewModel
     {
-        [Required]
         [Display(Name = "Authenticator")]
         public string Authenticator { get; set; }
 
