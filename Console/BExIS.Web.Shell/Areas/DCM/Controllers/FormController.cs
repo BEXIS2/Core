@@ -750,6 +750,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 UsageId = parentStepModelHelper.UsageId,
                 UsageName = parentStepModelHelper.UsageName,
                 UsageType = parentStepModelHelper.UsageType,
+                UsageAttrName = parentStepModelHelper.UsageAttrName,
                 Number = position,
                 Model = model,
                 XPath = xPath,
@@ -850,8 +851,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (newIndex <= stepModelHelper.Childrens.Count - 1)
             {
-                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageName.Replace(" ", string.Empty) + "[" + number + "]";
-                var destinationXPathElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageName.Replace(" ", string.Empty) + "[" + (number + 1) + "]";
+                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + number + "]";
+                var destinationXPathElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + (number + 1) + "]";
 
                 ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
 
@@ -916,7 +917,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
             var stepModelHelper = GetStepModelhelper(parentStepId);
-            RemoveFromXml(stepModelHelper.XPath + "//" + stepModelHelper.UsageName.Replace(" ", string.Empty) + "[" + number + "]");
+            RemoveFromXml(stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + number + "]");
 
 
             stepModelHelper.Model = createModel(TaskManager.Current().Id, true, stepModelHelper.UsageType);
@@ -974,8 +975,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (newIndex >= 0)
             {
-                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageName.Replace(" ", string.Empty) + "[" + number + "]";
-                var destinationXPathElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageName.Replace(" ", string.Empty) + "[" + (number - 1) + "]";
+                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + number + "]";
+                var destinationXPathElement = stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + (number - 1) + "]";
 
                 ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
 
