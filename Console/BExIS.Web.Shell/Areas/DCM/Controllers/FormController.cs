@@ -895,6 +895,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var parentUsage = loadUsage(stepModelHelperParent.UsageId, stepModelHelperParent.UsageType);
+            var attrUsage = metadataStructureUsageHelper.GetChildren(parentUsage.Id, parentUsage.GetType()).Where(u => u.Id.Equals(id)).FirstOrDefault();
+
+            GetUsageAttrName(attrUsage);
+
+            // up in xml
+
+            var xPathOfSelectedElement = stepModelHelperParent.XPath + "//" + attrUsage.Label + "//" + GetUsageAttrName(attrUsage).Replace(" ", string.Empty) + "[" + number + "]";
+            var destinationXPathElement = stepModelHelperParent.XPath + "//" + attrUsage.Label + "//" + GetUsageAttrName(attrUsage).Replace(" ", string.Empty) + "[" + (number + 1) + "]";
+
+
+            ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
+
 
             Down(stepModelHelperParent, id, number);
 
@@ -1017,10 +1030,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var parentUsage = loadUsage(stepModelHelperParent.UsageId, stepModelHelperParent.UsageType);
+            var attrUsage = metadataStructureUsageHelper.GetChildren(parentUsage.Id, parentUsage.GetType()).Where(u => u.Id.Equals(id)).FirstOrDefault();
+
+            GetUsageAttrName(attrUsage);
 
             // up in xml
-            //ChangeInXml(stepModelHelperParent.Usage, parentModelNumber, id, number);
 
+            var xPathOfSelectedElement = stepModelHelperParent.XPath + "//" + attrUsage.Label + "//" + GetUsageAttrName(attrUsage).Replace(" ", string.Empty) + "[" + number + "]";
+            var destinationXPathElement = stepModelHelperParent.XPath + "//" + attrUsage.Label + "//" + GetUsageAttrName(attrUsage).Replace(" ", string.Empty) + "[" + (number - 1) + "]";
+            ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
             // up in Model
             Up(stepModelHelperParent, id, number);
 
