@@ -13,6 +13,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -151,17 +152,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             try
             {
-
+                List<string> errors = new List<string>();
                 IList<long> ids = dm.GetDatasetLatestIds();
 
                 //ToDo only enitities from type dataset should be indexed in this index
 
                 foreach (var id in ids)
                 {
-                    //the values in the dictionary are already xml documents or null. Javad
-                    writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
-
+                    try
+                    {
+                        writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
+                        //GC.Collect();
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add(string.Format("Enountered a probelm indexing dataset '{0}'. Details: {1}", id, ex.Message));
+                    }
                 }
+                //GC.Collect();
 
                 indexWriter.Optimize();
                 autoCompleteIndexWriter.Optimize();
@@ -171,10 +179,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     indexWriter.Dispose();
                     autoCompleteIndexWriter.Dispose();
                 }
+                if (errors.Count > 0)
+                    throw new Exception(string.Join("\n\r", errors));
             }
             finally
             {
                 dm.Dispose();
+                GC.Collect();
             }
         }
 
@@ -435,8 +446,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                                 long noOfFetchs = tupleSize / fetchSize + 1;
                                 for (int round = 0; round < noOfFetchs; round++)
                                 {
-                                    List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round, fetchSize);
-                                    List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
+                                    List<string> primaryDataStringToindex = null;
+                                    using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
+                                    {
+                                        //List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round, fetchSize); // to be deleted
+                                        //primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds); // should take the table
+                                        table.Dispose();
+                                    }
+
                                     if (primaryDataStringToindex != null)
                                     {
                                         foreach (string pDataValue in primaryDataStringToindex)
@@ -453,8 +470,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                                             writeAutoCompleteIndex(docId, lucene_name, pDataValue);
                                             writeAutoCompleteIndex(docId, "ng_all", pDataValue);
                                         }
+                                        primaryDataStringToindex = null; // to release the string before the GC tries to collect.
                                     }
-                                    GC.Collect();
+                                    //GC.Collect();
                                 }
                             }
                         }

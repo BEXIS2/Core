@@ -198,6 +198,26 @@ namespace BExIS.Dlm.Orm.NH.Utils
             catch (Exception ex)
             {
                 // what to do?
+                throw ex;
+            }
+        }
+
+        public long Count(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0};", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
             }
         }
 

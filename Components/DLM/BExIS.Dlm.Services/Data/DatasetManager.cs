@@ -744,7 +744,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersionId"></param>
         /// <returns></returns>
-        public DataTable GetLatestDatasetVersionTuples(long datasetId)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, bool useFallback = false)
         {
             // check if the dataset is in a proper state: checked-in
 
@@ -753,14 +753,18 @@ namespace BExIS.Dlm.Services.Data
                 DataTable table = queryMaterializedView(datasetId);
                 return table;
             }
-            catch (Exception ex) // fallback to the traditional method. After a while this branch should be removed and an exception should be thrown.
+            catch (Exception ex) // If fallback is not requested, thow the caught exception and done! otherwise try to fallback to the tuple processing method.
             {
+                if (!useFallback)
+                {
+                    throw ex;
+                }
                 DataTable table = convertDataTuplesToDataTable(this.GetDatasetLatestVersion(datasetId));
                 return table;
             }
         }
 
-        public DataTable GetLatestDatasetVersionTuples(long datasetId, int pageNumber, int pageSize)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, int pageNumber, int pageSize, bool useFallback = false)
         {
             // check if the dataset is in a proper state: checked-in
 
@@ -768,8 +772,13 @@ namespace BExIS.Dlm.Services.Data
             {
                 return queryMaterializedView(datasetId, pageNumber, pageSize);
             }
-            catch (Exception ex) // fallback to the traditional method
+            catch (Exception ex) // If fallback is not requested, thow the caught exception and done! otherwise try to fallback to the tuple processing method.
             {
+                
+                if(!useFallback)
+                {
+                    throw ex;
+                }
                 // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
                 var version = this.GetDatasetLatestVersion(datasetId);
                 var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
@@ -818,9 +827,14 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetVersionEffectiveTupleCount(datasetVersion);
         }
 
-        public int GetDatasetLatestVersionEffectiveTupleCount(Int64 datasetId)
+        public long GetDatasetLatestVersionEffectiveTupleCount(Int64 datasetId)
         {
             return getPrimaryTupleCountForLatestVersion(datasetId);
+        }
+
+        public int GetDatasetLatestVersionEffectiveTupleCount(Dataset dataset)
+        {
+            return getPrimaryTupleCountForLatestVersion(dataset);
         }
 
         /// <summary>
@@ -2122,24 +2136,57 @@ namespace BExIS.Dlm.Services.Data
                 List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
                 Int32 tuplesCount = (versionIds == null || versionIds.Count() <= 0) ?
                                             0
-                                            : dataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id)
-                                                           .Count();
+                                            : dataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+                                                            .Select(p => p.Id)
+                                                            .Count();
                 return (tuplesCount);
             }
         }
 
-        private Int32 getPrimaryTupleCountForLatestVersion(Int64 datasetId)
+        private long getPrimaryTupleCountForLatestVersion(Int64 datasetId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
-                Int32 tuplesCount = DataTupleRepo
-                    .Query(p => 
-                            (p.DatasetVersion.Status == DatasetVersionStatus.CheckedIn || p.DatasetVersion.Status == DatasetVersionStatus.Old) 
-                            && p.DatasetVersion.Dataset.Id == datasetId)
-                    .Count();
+                var datasetVersion = getDatasetLatestVersion(datasetId);
 
-                return (tuplesCount);
+                List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
+                long tupleCount = (versionIds == null || versionIds.Count() <= 0) ?
+                    0
+                    : dataTupleRepo.Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
+                        .Select(p => p.Id)
+                        .LongCount();
+                return (tupleCount);
+            }
+
+            //using (IUnitOfWork uow = this.GetUnitOfWork())
+            //{
+            //    var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
+            //    Int32 tuplesCount = DataTupleRepo
+            //        .Query(p => 
+            //                (p.DatasetVersion.Status == DatasetVersionStatus.CheckedIn 
+            //                || p.DatasetVersion.Status == DatasetVersionStatus.Old) 
+            //                && p.DatasetVersion.Dataset.Id == datasetId)
+            //        .Count();
+
+            //    return (tuplesCount);
+            //}
+        }
+
+        private Int32 getPrimaryTupleCountForLatestVersion(Dataset dataset)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
+                var datasetVersion = getDatasetLatestVersion(dataset);
+
+                List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
+                Int32 tupleCount = (versionIds == null || versionIds.Count() <= 0) ?
+                    0
+                    : dataTupleRepo.Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
+                        .Select(p => p.Id)
+                        .Count();
+                return (tupleCount);
             }
         }
 
@@ -2369,8 +2416,8 @@ namespace BExIS.Dlm.Services.Data
             if (behavior == ViewCreationBehavior.None) // do not use this one! (behavior.HasFlag(ViewCreationBehavior.None))
                 return;
 
-            if (enforceSizeCheck)
-            {
+            //if (enforceSizeCheck)
+            //{
                 var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
                 if (dataset == null)
                     throw new Exception($"Dataset '{datasetId}' does not exist.");
@@ -2378,12 +2425,12 @@ namespace BExIS.Dlm.Services.Data
                     throw new Exception($"Dataset '{datasetId}' is not structured.");
 
                 // check the size and threshold            
-                int numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
+                long numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
                 int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
                 long size = numberOfTuples * numberOfVariables;
                 if (size > BIG_DATASET_SIZE_THRESHOLD)
                     return;
-            }
+            //}
             
             if (behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
             {
@@ -2397,11 +2444,19 @@ namespace BExIS.Dlm.Services.Data
                 {
                     refreshMaterializedView(datasetId);
                     // update the the last synced information on the data set. It is used in the dataset maintenance UI logic
+                    // check if the view is actually refreshed, by comparing the records in the view to the records in tuples.
+                    long noOfViewRecords = countRowsOfMaterializedView(datasetId);
+
+                    if(noOfViewRecords < numberOfTuples)
+                    {
+                        throw new Exception($"Could not refresh view for dataset '{datasetId}'. It is possible that the original data is not valid.");
+                    }
+
                     using (var uow = this.GetUnitOfWork())
                     {
                         var repo = uow.GetRepository<Dataset>();
                         // it is fetched again, because it is possible the the first if block is not executed
-                        Dataset dataset = repo.Get(datasetId);
+                        //Dataset dataset = repo.Get(datasetId);
                         if (dataset.StateInfo == null)
                             dataset.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
                         dataset.StateInfo.State = "Synced";
@@ -2456,6 +2511,12 @@ namespace BExIS.Dlm.Services.Data
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             mvHelper.Refresh(datasetId);
+        }
+
+        private long countRowsOfMaterializedView(long datasetId)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            return mvHelper.Count(datasetId);
         }
 
         private bool existsMaterializedView(long datasetId)
