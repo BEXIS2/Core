@@ -67,7 +67,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 OutputDataManager ioOutputDataManager = new OutputDataManager();
 
-                DatasetVersion version = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(id);
+                DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
 
                 string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
 
