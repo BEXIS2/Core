@@ -302,7 +302,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <return></return>
         private void writeBexisIndex(long id, XmlDocument metadataDoc)
         {
-            String docId = id.ToString();//metadataDoc.GetElementsByTagName("bgc:id")[0].InnerText;
+            string docId = id.ToString();//metadataDoc.GetElementsByTagName("bgc:id")[0].InnerText;
 
             var dataset = new Document();
             List<XmlNode> facetNodes = facetXmlNodeList;
@@ -411,127 +411,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
             }
             List<XmlNode> categoryNodes = categoryXmlNodeList;
-            foreach (XmlNode category in categoryNodes)
-            {
-                if (category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
-                {
-                    if (includePrimaryData)
-                    {
-
-                        String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
-                        String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
-                        String analysing = category.Attributes.GetNamedItem("analysed").Value;
-                        float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
-                        var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
-                        if (analysing.ToLower().Equals("yes"))
-                        {
-                            toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
-                        }
-
-                        DatasetManager dm = new DatasetManager();
-                        DataStructureManager dsm = new DataStructureManager();
-                        try
-                        {
-
-                            if (dm.IsDatasetCheckedIn(id))
-                            {
-                                DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
-
-                                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                                // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
-                                // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
-                                // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
-                                int fetchSize = dm.PreferedBatchSize;
-                                long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
-                                long noOfFetchs = tupleSize / fetchSize + 1;
-                                for (int round = 0; round < noOfFetchs; round++)
-                                {
-                                    List<string> primaryDataStringToindex = null;
-                                    using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
-                                    {
-                                        //List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round, fetchSize); // to be deleted
-                                        //primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds); // should take the table
-                                        table.Dispose();
-                                    }
-
-                                    if (primaryDataStringToindex != null)
-                                    {
-                                        foreach (string pDataValue in primaryDataStringToindex)
-                                        // Loop through List with foreach
-                                        {
-                                            Field a = new Field("category_" + lucene_name, pDataValue,
-                                                Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                                            a.Boost = boosting;
-                                            dataset.Add(a);
-                                            dataset.Add(new Field("ng_" + lucene_name, pDataValue,
-                                                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
-                                                Lucene.Net.Documents.Field.Index.ANALYZED));
-                                            writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                                            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
-                                        }
-                                        primaryDataStringToindex = null; // to release the string before the GC tries to collect.
-                                    }
-                                    //GC.Collect();
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            throw ex;
-                        }
-                        finally
-                        {
-                            dm.Dispose();
-                            dsm.Dispose();
-                        }
-                    }
-                }
-                else
-                {
-
-
-                    String multivalued = category.Attributes.GetNamedItem("multivalued").Value;
-                    String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
-                    String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
-                    String storing = category.Attributes.GetNamedItem("store").Value;
-                    String analysing = category.Attributes.GetNamedItem("analysed").Value;
-                    float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
-                    var toStore = Lucene.Net.Documents.Field.Store.NO;
-                    var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
-
-                    if (storing.ToLower().Equals("yes"))
-                    {
-                        toStore = Lucene.Net.Documents.Field.Store.YES;
-                    }
-                    if (analysing.ToLower().Equals("yes"))
-                    {
-                        toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
-                    }
-
-                    string[] metadataElementNames = category.Attributes.GetNamedItem("metadata_name").Value.Split(',');
-
-                    foreach (string metadataElementName in metadataElementNames)
-                    {
-                        XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
-                        if (elemList != null)
-                        {
-                            for (int i = 0; i < elemList.Count; i++)
-                            {
-                                Field a = new Field("category_" + lucene_name, elemList[i].InnerText, toStore, toAnalyse);
-                                a.Boost = boosting;
-                                dataset.Add(a);
-                                dataset.Add(new Field("ng_" + lucene_name, elemList[i].InnerText,
-                                    Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                dataset.Add(new Field("ng_all", elemList[i].InnerText,
-                                    Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                                writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
-                            }
-                        }
-                    }
-
-                }
+            if(includePrimaryData)
+            {                
+                indexPrimaryData(id, categoryNodes, ref dataset, docId, metadataDoc);
             }
 
 
@@ -581,6 +463,124 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             indexWriter.AddDocument(dataset);
         }
+
+        private void indexPrimaryData(long id, List<XmlNode> categoryNodes, ref Document dataset, string docId, XmlDocument metadataDoc)
+        {
+            if (!includePrimaryData)
+                return;
+
+            DatasetManager dm = new DatasetManager();
+            DataStructureManager dsm = new DataStructureManager();
+            if (!dm.IsDatasetCheckedIn(id))
+                return;
+
+            DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+            if (sds == null)
+                return;
+
+            try
+            {
+                {
+                    // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
+                    // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
+                    // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
+                    int fetchSize = dm.PreferedBatchSize;
+                    long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    long noOfFetchs = tupleSize / fetchSize + 1;
+                    for (int round = 0; round < noOfFetchs; round++)
+                    {
+                        List<string> primaryDataStringToindex = null;
+                        using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
+                        {
+                            //primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds); // should take the table
+                            table.Dispose();
+                        }
+
+                        foreach (XmlNode category in categoryNodes)
+                        {
+                            String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
+                            String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
+                            String analysing = category.Attributes.GetNamedItem("analysed").Value;
+                            float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
+                            var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
+
+                            if (analysing.ToLower().Equals("yes"))
+                            {
+                                toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
+                            }
+
+                            if (category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
+                            {
+                                if (primaryDataStringToindex != null && primaryDataStringToindex.Count > 0)
+                                {
+
+                                    foreach (string pDataValue in primaryDataStringToindex)
+                                    // Loop through List with foreach
+                                    {
+                                        Field a = new Field("category_" + lucene_name, pDataValue,
+                                            Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                                        a.Boost = boosting;
+                                        dataset.Add(a);
+                                        dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                                            Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                        dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                                            Lucene.Net.Documents.Field.Index.ANALYZED));
+                                        writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                                        writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                String multivalued = category.Attributes.GetNamedItem("multivalued").Value;
+                                String storing = category.Attributes.GetNamedItem("store").Value;
+
+                                var toStore = Lucene.Net.Documents.Field.Store.NO;
+                                if (storing.ToLower().Equals("yes"))
+                                {
+                                    toStore = Lucene.Net.Documents.Field.Store.YES;
+                                }
+
+                                string[] metadataElementNames = category.Attributes.GetNamedItem("metadata_name").Value.Split(',');
+
+                                foreach (string metadataElementName in metadataElementNames)
+                                {
+                                    XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
+                                    if (elemList != null)
+                                    {
+                                        for (int i = 0; i < elemList.Count; i++)
+                                        {
+                                            Field a = new Field("category_" + lucene_name, elemList[i].InnerText, toStore, toAnalyse);
+                                            a.Boost = boosting;
+                                            dataset.Add(a);
+                                            dataset.Add(new Field("ng_" + lucene_name, elemList[i].InnerText,
+                                                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                            dataset.Add(new Field("ng_all", elemList[i].InnerText,
+                                                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                            writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
+                                            writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                dm.Dispose();
+                dsm.Dispose();
+            }
+        }
+
 
         /// <summary>
         ///

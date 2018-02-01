@@ -33,6 +33,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult SyncAll()
+        {
+            var datasetManager = new DatasetManager();
+            var datasetIds = datasetManager.GetDatasetLatestIds();
+            try
+            {
+                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View("Sync");
+            }
+        }
+
         public ActionResult Sync(long id)
         {
             var datasetManager = new DatasetManager();

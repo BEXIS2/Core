@@ -712,7 +712,22 @@ namespace BExIS.Dlm.Services.Data
         /// <remarks>This method does not drop the MVs if they already exist.</remarks>
         public void SyncView(List<Int64> datasetIds, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
-            datasetIds.ForEach(datasetId => this.updateMaterializedView(datasetId, viewCreationBehavior, false));
+            List<Exception> exs = new List<Exception>();
+            foreach (var datasetId in datasetIds)
+            {
+                try
+                {
+                    this.updateMaterializedView(datasetId, viewCreationBehavior, false);
+                }
+                catch (Exception ex)
+                {
+                    exs.Add(ex);
+                }
+            }
+            if (exs.Count > 0)
+            {
+                throw new Exception(string.Join("\n\r", exs.Select(p => p.Message).ToList()));
+            }
         }
         
         #endregion
