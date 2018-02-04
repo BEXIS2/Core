@@ -2605,7 +2605,12 @@ namespace BExIS.Dlm.Services.Data
                         // commented for the performance testing purpose. see the efects and uncomment if needed-> workingCopyVersion.PriliminaryTuples.Add(item);
                         item.DatasetVersion = workingCopyVersion;
                         item.TupleAction = TupleAction.Created;
-                        item.Timestamp = workingCopyVersion.Timestamp;
+                        //item.Timestamp = workingCopyVersion.Timestamp;
+                        if (null == item.Timestamp)
+                        {
+                            item.Timestamp = workingCopyVersion.Timestamp;
+                        }
+                        item.Timestamp = (item.Timestamp > workingCopyVersion.Timestamp ? workingCopyVersion.Timestamp : item.Timestamp); // new DateTime(Math.Min(item.Timestamp.Ticks, workingCopyVersion.Timestamp.Ticks));
                     }
                 }
 
