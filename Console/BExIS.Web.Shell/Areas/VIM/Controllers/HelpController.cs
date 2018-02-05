@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {
     public class HelpController : Controller
     {
-        // GET: Help
+        //
+        // GET: /DDM/Help/
+
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Visualization Manual", this.Session.GetTenant());
             return View();
-        }
 
+        }
     }
 }
