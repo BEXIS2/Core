@@ -262,6 +262,48 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
         }
 
+        private List<string> getAllStringValuesFromTable(DataTable dataTable)
+        {
+            List<string> tmp = new List<string>();
+
+            // get list of index, where a itemarray is a string
+            List<int> indexes = new List<int>();
+
+            for (int i = 0; i < dataTable.Columns.Count; i++)
+            {
+                DataColumn dc = dataTable.Columns[i];
+                if (dc.DataType.Equals(typeof(string))) indexes.Add(i);
+            }
+
+            foreach (var index in indexes)
+            {
+                tmp.AddRange(dataTable.AsEnumerable().Select(s => s.Field<string>(index)).ToArray<string>());
+            }
+
+            return tmp;
+        }
+
+        private List<string> getListOfValuesFromDataStructure(StructuredDataStructure structuredDataStructure)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+
+                List<string> tmp = new List<string>();
+
+                foreach (var variableId in structuredDataStructure.Variables.Select(v => v.Id))
+                {
+                    var variable = uow.GetReadOnlyRepository<Variable>().Get(variableId);
+
+                    tmp.Add(variable.DataAttribute.Name);
+                    tmp.Add(variable.Label);
+                    if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
+                        tmp.Add(variable.DataAttribute.Description);
+                }
+
+                return tmp;
+            }
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -411,12 +453,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
             }
             List<XmlNode> categoryNodes = categoryXmlNodeList;
-            if(includePrimaryData)
-            {                
-                indexPrimaryData(id, categoryNodes, ref dataset, docId, metadataDoc);
-            }
 
-
+            indexPrimaryData(id, categoryNodes, ref dataset, docId, metadataDoc);
+            
             List<XmlNode> generalNodes = generalXmlNodeList;
 
             foreach (XmlNode general in generalNodes)
@@ -466,8 +505,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         private void indexPrimaryData(long id, List<XmlNode> categoryNodes, ref Document dataset, string docId, XmlDocument metadataDoc)
         {
-            if (!includePrimaryData)
-                return;
+            
 
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
@@ -477,6 +515,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
             StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
             if (sds == null)
+                return;
+
+            indexStructureDataStructcure(sds, ref dataset, docId);
+
+            if (!includePrimaryData)
                 return;
 
             try
@@ -493,7 +536,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         List<string> primaryDataStringToindex = null;
                         using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
                         {
-                            //primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds); // should take the table
+                            primaryDataStringToindex = getAllStringValuesFromTable(table); // should take the table
                             table.Dispose();
                         }
 
@@ -581,6 +624,34 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
         }
 
+        private void indexStructureDataStructcure(StructuredDataStructure sds, ref Document dataset, string docId)
+        {
+            if (sds == null)
+                return;
+
+            List<string> sdsStrings = getListOfValuesFromDataStructure(sds);
+
+            String primitiveType = "string";
+            String lucene_name = "data_structure_field";
+            String analysing = "yes";
+            float boosting = 3;
+            var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
+
+            foreach (string pDataValue in sdsStrings)
+            // Loop through List with foreach
+            {
+                Field a = new Field("category_" + lucene_name, pDataValue,
+                    Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                a.Boost = boosting;
+                dataset.Add(a);
+                dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                    Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                    Lucene.Net.Documents.Field.Index.ANALYZED));
+                writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+            }
+        }
 
         /// <summary>
         ///
