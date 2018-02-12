@@ -1,36 +1,48 @@
 @using Vaiona.Web.Mvc;<br />
 @section Information
 {
-This guide will walk you through the basics of using search UI including how to manage search component.
+    This guide will walk you through the basics of using search UI including how to manage search component.
 }
 @section leftPane{
- <div class="toc">
- <h3> Search UI ToC </h3>
- <br />
-<p></p> <a href="#_Toc468258969">1. Search UI</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258970">1.1. Categories </a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258971">1.2. Properties </a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258972" title="Free text search with Autocomplete">1.3. Free text search with Auto...</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258973">1.4. Selected Filter</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258974">1.5. Results</a>
-<p></p> <a href="#_Toc468258975">2. Data Details</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258976">2.1. Meta Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258977">2.2. Primary Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258978">2.3. Data Structure</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258979">2.4. Dataset Permissions</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468258980">2.5. Search Manager</a>
- </div>
+    <div class="toc">
+        <h3> Search UI ToC </h3>
+        <br />
+        <p></p> <a href="#_Toc468258969">1. Search UI</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258970">1.1. Categories </a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258971">1.2. Properties </a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258972" title="Free text search with Autocomplete">1.3. Free text search with Auto...</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258973">1.4. Selected Filter</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258974">1.5. Results</a>
+        <p></p> <a href="#_Toc468258975">2. Data Details</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258976">2.1. Meta Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258977">2.2. Primary Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258978">2.3. Data Structure</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258979">2.4. Dataset Permissions</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258980">2.5. Search Manager</a>
+    </div>
 }
+
 <style>
-.toc { position: fixed; top:100px; }
-.scrollable { overflow: auto; height: 750px; }
-:target:before { content: ""; display: block; height: 100px; }
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        height: 750px;
+    }
+
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
 </style>
 
+
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
 
-<br/><h1><a id="_Toc468258969"><span>1. Search UI</span></a></h1>
+<br />
+<h1><a id="_Toc468258969"><span>1. Search UI</span></a></h1>
 <p><span>Search UI contains some parts to make search easier. In this way, you are able to look for all details of datasets, but not for the uploaded data. You can control the search UI via search manager explained in section 3.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img1.png" width="605" height="318" alt="img1" /><span>&#xa0;</span></p>
 <h2><a id="_Toc468258970"><span>1.1. Categories</span></a><span> </span></h2>
@@ -40,7 +52,7 @@ This guide will walk you through the basics of using search UI including how to 
 <p><span>Number 2 in the image above is related with properties. In this section there are predefined UI Components like dropdown, radio button or slider to filter the data. There is only one possible choice for every component. After selection the results and the facets are updated accordingly. </span></p>
 <p><span>&#xa0;</span></p>
 <h2><a id="_Toc468258972"><span>1.3. Free text search with Autocomplete</span></a></h2>
-<p><span>The free text search , number 3 in the image above, works as in any common search engine . It includes Autocomplete where words or phrases are being predicted once three letters or figures are entered. It supports also different languages.</span></p>
+<p><span>The free text search, number 3 in the image above, works as in any common search engine . It includes Autocomplete where words or phrases are being predicted once three letters or figures are entered. It supports also different languages.</span></p>
 <p><span>&#xa0;</span></p>
 <h2><a id="_Toc468258973"><span>1.4. Selected Filter</span></a></h2>
 <p><span>You can find selected filter part by number 4 in the image above. Every filter applied from section 1 .1 - 1. 3 is displayed here. Filters can be deselected just by clicking on it. In point 1 by the categories you are able to select more than one option to a category. If there are more than 2 you will see only the category. Click on the category and a window will open to define your selection for this category.</span></p>
