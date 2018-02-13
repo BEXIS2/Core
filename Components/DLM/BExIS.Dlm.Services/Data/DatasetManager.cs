@@ -367,6 +367,7 @@ namespace BExIS.Dlm.Services.Data
                     datasetRepo.Put(entity);
                     uow.Commit();
                     // if any problem was detected during the commit, an exception will be thrown!
+                    dropMaterializedView(datasetId);
                     return (true);
                 }
                 catch (Exception ex)
@@ -2440,17 +2441,21 @@ namespace BExIS.Dlm.Services.Data
 
             //if (enforceSizeCheck)
             //{
-                var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
-                if (dataset == null)
-                    throw new Exception($"Dataset '{datasetId}' does not exist.");
-                if (!(dataset.DataStructure.Self is StructuredDataStructure))
+            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
+            if (dataset == null)
+                throw new Exception($"Dataset '{datasetId}' does not exist.");
+
+            if (!IsDatasetCheckedIn(datasetId))
+                throw new Exception($"Dataset '{datasetId}' must be in the checked-in status.");
+
+            if (!(dataset.DataStructure.Self is StructuredDataStructure))
                     throw new Exception($"Dataset '{datasetId}' is not structured.");
 
                 // check the size and threshold            
                 long numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
                 int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
                 long size = numberOfTuples * numberOfVariables;
-                if (size > BIG_DATASET_SIZE_THRESHOLD)
+                if (enforceSizeCheck && size > BIG_DATASET_SIZE_THRESHOLD)
                     return;
             //}
             

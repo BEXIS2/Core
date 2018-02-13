@@ -280,6 +280,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 tmp.AddRange(dataTable.AsEnumerable().Select(s => s.Field<string>(index)).ToArray<string>());
             }
 
+            tmp = tmp.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+
             return tmp;
         }
 
