@@ -1,4 +1,3 @@
-@using Vaiona.Web.Mvc;<br />
 @section Information
 {
     This guide will walk you through the basics of using search UI including how to manage search component.
@@ -26,8 +25,8 @@
     .toc {
         position: fixed;
         top: 100px;
-        overflow: auto;
-        height: 750px;
+        overflow-y: auto;
+        height: 600px;
     }
 
     :target:before {
@@ -94,7 +93,7 @@
 <p><span>Metadata Node : Add one or more xpaths from the metadata elements to be mapped against the lucene field.</span></p>
 <p><span>Header Item:   Tick if this item should be available as a category (e.g. as a grid column).</span></p>
 <p><span>Default Header Item: The header item is be visible upon page load.</span></p>
-<p><span>Search Component Type : This specifies the search pattern that will be should be used against this field (as discussed in the introduction). Therefore, the value of this attribu te can be any of "Category " for creating a category-base d search field, "Facet " for creating faceted search field, "P roperty" for creating a property search field, and "General " which creates an indexed field which is not displayed in the UI, but however, searched.</span></p>
+<p><span>Search Component Type : This specifies the search pattern that will be should be used against this field (as discussed in the introduction). Therefore, the value of this attribu te can be any of "Category " for creating a category-base d search field, "Facet " for creating faceted search field, "Property" for creating a property search field, and "General " which creates an indexed field which is not displayed in the UI, but however, searched.</span></p>
 <p><span>Data Type : This specifies the primitive data type o f the value to be indexed. E.g. string, integer, double, date .</span></p>
 <p><span>Store : This specifies if the field value should be stored. If the field is not stored, you can only search against the terms in the field, however, you cannot retrieve the value. For minimal display of the search result, it is recommended that some fields be store. This value of the store attribute can be either yes or no .</span></p>
 <p><span>Multi Value : This specifies if there are several values of a metadata element in a given field. E.g. if a dataset can have several owners in a metadata, then, the owners field in the index in this case, will be multi-valued</span></p>
