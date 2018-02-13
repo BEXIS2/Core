@@ -36,6 +36,13 @@ namespace BExIS.Web.Shell.Controllers
                 var user = await identityUserService.FindByIdAsync(userId);
                 await signInManager.SignInAsync(user, false, false);
 
+                var es = new EmailService();
+                es.Send(MessageHelper.GetRegisterUserHeader(),
+                    MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
+                    ConfigurationManager.AppSettings["SystemEmail"]
+                    );
+
+
                 return this.IsAccessibale("bam", "PartyService", "UserRegistration")
                     ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
@@ -308,11 +315,12 @@ namespace BExIS.Web.Shell.Controllers
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
                     await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    //var es = new EmailService();
-                    //es.Send(MessageHelper.GetRegisterUserHeader(),
-                    //    MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
-                    //    ConfigurationManager.AppSettings["SystemEmail"]
-                    //    );
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetTryToRegisterUserHeader(),
+                        MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
 
                     ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
 
