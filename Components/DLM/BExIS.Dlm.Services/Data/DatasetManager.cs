@@ -2193,15 +2193,22 @@ namespace BExIS.Dlm.Services.Data
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
-                var datasetVersion = getDatasetLatestVersion(dataset);
+                try
+                {
+                    var datasetVersion = getDatasetLatestVersion(dataset);
 
-                List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
-                Int32 tupleCount = (versionIds == null || versionIds.Count() <= 0) ?
-                    0
-                    : dataTupleRepo.Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
-                        .Select(p => p.Id)
-                        .Count();
-                return (tupleCount);
+                    List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
+                    Int32 tupleCount = (versionIds == null || versionIds.Count() <= 0) ?
+                        0
+                        : dataTupleRepo.Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
+                            .Select(p => p.Id)
+                            .Count();
+                    return (tupleCount);
+                }
+                catch
+                {
+                    return 0;
+                }
             }
         }
 
