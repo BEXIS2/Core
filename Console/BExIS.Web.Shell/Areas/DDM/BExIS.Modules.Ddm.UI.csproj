@@ -154,7 +154,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Controllers\VisualizationController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
@@ -165,7 +164,6 @@
     <Compile Include="Models\ShowDataModel.cs" />
     <Compile Include="Models\ShowMetadataModel.cs" />
     <Compile Include="Models\ShowPrimaryDataModel.cs" />
-    <Compile Include="Models\VisualizationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -427,8 +425,6 @@
     <Content Include="Views\Test\Index.cshtml" />
     <None Include="Properties\PublishProfiles\DDM.pubxml" />
     <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
-    <Content Include="Views\Visualization\Index.cshtml" />
-    <Content Include="Views\Visualization\vis.cshtml" />
     <None Include="Properties\PublishProfiles\DDM21108.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
