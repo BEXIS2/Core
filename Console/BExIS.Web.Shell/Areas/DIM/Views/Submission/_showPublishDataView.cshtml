@@ -1,0 +1,311 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Utils.WebHelpers;
+
+@model BExIS.Modules.Dim.UI.Models.ShowPublishDataModel
+
+@{
+    List<string> datarepolist = Model.Brokers;
+}
+<script type="text/javascript">
+
+        $(document)
+            .ready(function() {
+                resetAllTelerikIconTitles();
+            });
+
+
+        function onSelectDataRepositoryDropDownChange(e) {
+
+            var datarepo = e.value;
+            var id = '@Model.DatasetId';
+            //alert(e.value);
+
+            if(e.value !="")
+            {
+
+            
+
+                $.post('@Url.Action("LoadDataRepoRequirementView", "Submission")',
+                    { datarepo: e.value, datasetid: id },
+                    function(response) {
+                        //$("#requirementsContainer").html(response);
+                    
+                        $("#preloader").preloader(14, "Please wait...");
+
+                        var jsonObject = {
+                            "datarepo": e.value,
+                            "datasetid": id
+                        };
+
+                        jQuery.ajax({
+                            type: "POST",
+                            url: "@Url.Action("CheckExportPossibility", "Submission")",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: JSON.stringify(jsonObject),
+                            success: function(data) {
+
+                                console.log(data);
+
+                                var isMetadataConvertable = data.isMetadataConvertable;
+                                var metadataValidMessage = data.metadataValidMessage;
+                                var isDataConvertable = data.isDataConvertable;
+                                var exist = data.Exist;
+
+
+                                if (isMetadataConvertable &&
+                                    typeof metadataValidMessage === "undefined" &&
+                                    isDataConvertable) {
+
+                                    console.log("ok");
+                                    console.log(isMetadataConvertable);
+                                    console.log(metadataValidMessage);
+                                    console.log(isDataConvertable);
+
+                                    $("#submitPublishBt").removeAttr("disabled");
+                                    $("#submitPublishBt").removeClass("bx-disabled");
+
+                                } else if (isMetadataConvertable &&
+                                    typeof metadataValidMessage !== "undefined" &&
+                                    isDataConvertable) {
+
+                                    if (typeof metadataValidMessage !== "undefined") {
+                                        //alert(metadataValidMessage);
+                                        $("#submitPublishBt").removeAttr("disabled");
+                                        $("#submitPublishBt").removeClass("bx-disabled");
+                                    }
+
+                                } else {
+
+                                    console.log("failure");
+
+                                    if (!exist) {
+                                        $("#submitPublishBt").attr("disabled", "disabled");
+                                        $("#submitPublishBt").addClass("bx-disabled");
+
+                                        var message = "";
+
+                                        if (!isMetadataConvertable) {
+                                            message += "Metadata is not convertable. ";
+                                        }
+
+                                        if (typeof metadataValidMessage !== "undefined") {
+                                            message += metadataValidMessage;
+                                        }
+
+                                        if (!isDataConvertable) {
+                                            message += "Data is not convertable. ";
+                                        }
+
+                                        $("#requirementsContainer").text(message);
+                                        $("#requirementsContainer").css("color", "#f24c24");
+                                    }
+
+                                }
+                                $("#preloader").removePreloader();
+
+                            },
+                            failure: function(errMsg) {
+                                alert(errMsg);
+                                $("#preloader").removePreloader();
+
+                            }
+                        });
+                    })
+            }
+            else
+            {
+                $("#submitPublishBt").attr("disabled", "disabled");
+                $("#submitPublishBt").addClass("bx-disabled");
+            }
+
+        }
+
+        function onSubmitPublishBtClick(e) {
+
+            $("#preloader").preloader(14, "Publishing data...");
+
+            var id = @Model.DatasetId;
+
+            //get selected value
+            var input = $(".t-dropdown .t-input").text();
+
+            //alert(input);
+            sendDataToDataRepo(id, input);
+
+        }
+
+    function prepareData(id,input) {
+
+        $.post('@Url.Action("PrepareData", "Submission", new RouteValueDictionary {{"area", "dim"}})',
+                { datasetid: id, datarepo: input },
+                function(response) {
+                    //alert("prepare data copmplete");
+                    $("#publishContentContainer").replaceWith(response);
+
+                    //sendDataToDataRepo(id, input);
+
+                });
+    }
+
+    function sendDataToDataRepo(id,input) {
+
+        //alert("start send data to repo ");
+
+        $.post('@Url.Action("SendDataToDataRepo", "Submission", new RouteValueDictionary {{"area", "dim"}})',
+            { datasetid: id, datarepo: input },
+            function(response) {
+
+               // alert("end send data to repo ");
+               // alert(response);
+                var hasSuccessed = false;
+
+                if(response !== true)
+                {
+                    //alert(response);
+                    //var obj = jQuery.parseJSON(response);
+                    var message = $("#requirementsContainer").text();
+
+                    var htmltext = "<p>" + message + "</p><p><br/>" + response + "</p>";
+
+                    //alert(response);
+
+                    $("#requirementsContainer").html(htmltext);
+                    $("#requirementsContainer").css("color", "#f24c24");
+
+                    $("#preloader").removePreloader();
+
+                } else {
+                    hasSuccessed = true;
+                }
+               
+                //reload site
+                $.post('@Url.Action("getPublishDataPartialView", "Submission", new RouteValueDictionary {{"area", "dim"}})',
+                    { datasetid: id },
+                    function(site) {
+
+                        //alert("test");
+                        $("#publishContentContainer").replaceWith(site);
+                        $("#requirementsContainer").html(htmltext);
+
+                        if (hasSuccessed) {
+                            $("#requirementsContainer").css("color", "#000000");
+                        } else {
+                            $("#requirementsContainer").css("color", "#f24c24");
+                        }
+
+                        $("#preloader").removePreloader();
+                    });
+            });
+    }
+</script>
+
+<div id="publishContentContainer" style="min-height: 200px">
+    <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
+
+
+    @if (Model.EditRights && Model.MetadataIsValid)
+    {
+
+        <table>
+            <tr>
+                <td style="width: 100px;">
+                    @(Html.Telerik().DropDownList()
+                      .Placeholder("Select")
+                      .Name("SelectDataRepository")
+                      .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
+                      .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
+                      .BindTo(new SelectList(datarepolist)))
+                </td>
+
+                <td style="width: 100px;">
+                    <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
+                </td>
+
+                <td style="text-align: right">
+                    <span id="requirementsContainer" style="color:#f24c24">
+
+                    </span>
+                    <div id="preloader">
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        if (Model.MetadataIsValid == false)
+        {
+            <table>
+                <tr>
+                    <td style="width: 100px;">
+                        It is not possible to publish the current version because the metadata is not valid. Only when the metadata is valid, publishing options are available.
+                    </td>
+                </tr>
+            </table>
+        }
+    }
+        </div>
+
+    <div>
+        <table>
+            <tr>
+                <th style="width: 80px;">Version Id</th>
+                <th>Broker</th>
+                <th>DataRepo</th>
+                <th>Creation Date</th>
+                <th>Status</th>
+                <th>Link</th>
+                <th style="width: 30px;"></th>
+            </tr>
+            @if (Model.Publications.Count > 0)
+            {
+                foreach (var publication in Model.Publications)
+                {
+                    <tr>
+                        <td>@publication.DatasetVersionId</td>
+                        <td>@publication.Broker.Name</td>
+                        <td>@publication.DataRepo</td>
+                        <td>@publication.CreationDate.ToLocalTime()</td>
+                        <td>@publication.Status</td>
+                        <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
+
+                        <td>
+                            @foreach (var datarepo in publication.Broker.DataRepos)
+                            {
+                                if (Model.DownloadRights)
+                                 {
+                                     @Html.ActionLink(" ", "DownloadZip", "Submission", new {broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download for "+datarepo})
+                                 }
+                                 else
+                                 {
+                                     <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                                 }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td>empty</td></tr>
+            }
+        </table>
+    </div>
+
+
+
+    
+    <style type="text/css">
+        
+        .t-content {
+            text-align:left
+        }
+
+        .t-state-active {
+            line-height:14pt
+        }
+
+    </style>
+</div>
