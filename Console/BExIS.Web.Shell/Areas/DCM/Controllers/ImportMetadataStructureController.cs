@@ -146,7 +146,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult FinishUpload()
         {
-            return RedirectToAction("ShowMyDatasetsInFullPage", "Home", new { area = "DDM" });
+            return RedirectToAction("ShowMyDatasetsInFullPage", "Dashboard", new { area = "DDM" });
         }
     }
 }

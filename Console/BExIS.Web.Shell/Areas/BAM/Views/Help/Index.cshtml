@@ -1,11 +1,11 @@
-﻿@using Vaiona.Web.Mvc;<br />
+﻿
 @section Information
 {
     This guide will walk you through the basics of using data dissemination.
 }
 @section leftPane{
     <div class="toc">
-        <h3> Data Dissemination ToC </h3>
+        <h3> Business Administration ToC </h3>
         <br />
         <p></p> <a href="#_overview">           1. Overview</a>
         <p></p> <a href="#_manage_parties">     2. Manage Parties</a>
@@ -14,23 +14,22 @@
         <p></p> <a href="#_account_registration">3. Account registration</a>
     </div>
 }
-<style>
-    .toc {
-        position: fixed;
-        top: 100px;
-    }
 
-    .scrollable {
-        overflow: auto;
-        height: 750px;
-    }
+    <style>
+        .toc {
+            position: fixed;
+            top: 100px;
+            overflow-y: auto;
+            height: 600px;
+        }
 
-    :target:before {
-        content: "";
-        display: block;
-        height: 100px;
-    }
-</style>
+        :target:before {
+            content: "";
+            display: block;
+            height: 100px;
+        }
+    </style>
+
 
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
@@ -43,7 +42,7 @@
 <h1><a id="_manage_parties"><span>2. Manage Parties</span></a></h1>
 <p><span>&#xa0;</span></p>
 <p>Through Manage Parties you can see all the available entities, create, edit and delete theme. The red warning icon in action required column shows that this party needs some relationships to be valid.</p>
-<p><img src="~/Areas/BAM/Content/Images/Help/manage_parties.jpg"  width="900" alt="Manage_Parties_img" /><span>&#xa0;</span></p>
+<p><img src="~/Areas/BAM/Content/Images/Help/manage_parties.jpg" width="900" alt="Manage_Parties_img" /><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
 <br /><p><span>&#xa0;</span></p>
 <h2><a id="_Toc468454464"><span>2.2. Create and Edit</span></a></h2>
