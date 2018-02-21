@@ -5,8 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Administration;
+using BExIS.App.Testing;
 
-namespace BExIS.Dlm.Entities.Data.Tests
+namespace BExIS.Dlm.Tests.Entities.Data
 {
     [TestFixture()]
     public class DatasetTests
@@ -17,6 +21,7 @@ namespace BExIS.Dlm.Entities.Data.Tests
         /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
+            // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
         }
 
         [SetUp]
@@ -40,7 +45,7 @@ namespace BExIS.Dlm.Entities.Data.Tests
         {}
 
         [Test()]
-        public void CreateDatasetTest()
+        public void InstantiateDatasetTest()
         {
             Dataset dataset = new Dataset();
             Assert.That(dataset, Is.Not.Null);
@@ -49,7 +54,7 @@ namespace BExIS.Dlm.Entities.Data.Tests
         }
 
         [Test]
-        public void CreateDatasetWithoutDataStructureTest()
+        public void InstantiateDatasetWithoutDataStructureTest()
         {
             // Test pass means the exception has been thrown and caught properly.
             Assert.Throws(typeof(ArgumentNullException), delegate { new Dataset(null); });
