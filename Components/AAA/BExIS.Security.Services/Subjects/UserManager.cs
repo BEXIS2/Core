@@ -198,26 +198,22 @@ namespace BExIS.Security.Services.Subjects
 
         #region IUserLoginStore
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="login"></param>
-        /// <returns></returns>
         public Task AddLoginAsync(User user, UserLoginInfo login)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var userRepository = uow.GetRepository<User>();
+                var userRepository = uow.GetReadOnlyRepository<User>();
+                var loginRepository = uow.GetRepository<Login>();
 
                 user = userRepository.Get(user.Id);
-                user.Logins.Add(new Login()
+                var userLogin = new Login()
                 {
                     ProviderKey = login.ProviderKey,
-                    LoginProvider = login.LoginProvider
-                });
+                    LoginProvider = login.LoginProvider,
+                    User = user
+                };
 
-                userRepository.Put(user);
+                loginRepository.Put(userLogin);
                 uow.Commit();
 
                 return Task.FromResult(0);

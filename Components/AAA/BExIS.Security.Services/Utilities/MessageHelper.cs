@@ -73,6 +73,16 @@
             return message + ".";
         }
 
+        public static string GetTryToRegisterUserHeader()
+        {
+            return $"User tries to register";
+        }
+
+        public static string GetTryToRegisterUserMessage(long userId, string userName, string email)
+        {
+            return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> tries to register.";
+        }
+
         public static string GetRegisterUserHeader()
         {
             return $"User has registered";

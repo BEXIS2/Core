@@ -500,6 +500,9 @@ function OnClickAdd(e, max) {
                 //alert(id);
                 //alert(response);
                 $("#" + id).replaceWith(response);
+
+                resetAllTelerikIconTitles();
+
             });
     } else {
         alert("Maxium cardinality is reached.");
@@ -580,7 +583,7 @@ function OnClickUp(e) {
 }
 
 function OnClickDown(e) {
-    //alert(value);
+
     var value = $("#" + e.id).closest(".ValueClass").value;
     if (value != "") {
 
@@ -599,7 +602,7 @@ function OnClickDown(e) {
             ParentModelNumber: ParentModelNumber
         };
 
-        $.post('DCM/Form/DownMetadataAttributeUsage',
+        $.post('/DCM/Form/DownMetadataAttributeUsage',
             {
                 id: id,
                 parentid: parentid,

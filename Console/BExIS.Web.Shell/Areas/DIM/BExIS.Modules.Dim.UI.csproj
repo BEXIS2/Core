@@ -656,6 +656,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>

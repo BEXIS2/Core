@@ -33,6 +33,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult SyncAll()
+        {
+            var datasetManager = new DatasetManager();
+            var datasetIds = datasetManager.GetDatasetLatestIds();
+            try
+            {
+                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View("Sync");
+            }
+        }
+
         public ActionResult Sync(long id)
         {
             var datasetManager = new DatasetManager();
@@ -40,13 +57,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                ViewData.ModelState.AddModelError("", $@"Dataset {id} could not be synced.");
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View();
             }
-            //return View();
-            return RedirectToAction("Index", new { area = "Sam" });
         }
 
         /// <summary>
@@ -93,20 +111,24 @@ namespace BExIS.Modules.Sam.UI.Controllers
             DatasetManager dm = new DatasetManager();
             var entityPermissionManager = new EntityPermissionManager();
 
-            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
-
+            List<Dataset> datasets = new List<Dataset>();
             List<long> datasetIds = new List<long>();
-            if (HttpContext.User.Identity.Name != null)
-            {
-                datasetIds.AddRange(entityPermissionManager.GetKeys(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
-            }
+            //if (!string.IsNullOrWhiteSpace(HttpContext.User.Identity.Name))
+            //{
+            //    datasetIds.AddRange(entityPermissionManager.GetKeys(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
+            //    if(datasetIds.Count() > 0)
+            //        datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+            //}
+
+            datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+            datasetIds = datasets.Select(p => p.Id).ToList();
 
             // dataset id, dataset status, number of data tuples of the latest version, number of variables in the dataset's structure
             List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
             foreach (Dataset ds in datasets)
             {
                 long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
-                long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds.Id) : 0;
+                long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
                 bool synced = false;
                 if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
                         && ds.StateInfo?.Timestamp != null

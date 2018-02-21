@@ -20,6 +20,7 @@ namespace BExIS.Utils.Data.Helpers
             var o3 = operationManager.Find("Shell", "Error", "*") ?? operationManager.Create("Shell", "Error", "*");
             var o4 = operationManager.Find("Shell", "Terms", "*") ?? operationManager.Create("Shell", "Terms", "*");
             var o5 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
+            var o6 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
         }
 
         public void Dispose()
