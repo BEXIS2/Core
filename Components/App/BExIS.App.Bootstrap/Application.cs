@@ -56,6 +56,15 @@ namespace BExIS.App.Bootstrap
             }
         }
 
+        public void Stop()
+        {
+            ModuleManager.ShutdownModules();
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            pManager.Shutdown(); // release all data access related resources!
+            IoCFactory.ShutdownContainer();
+            started = false;
+        }
+
         private void runForProduction(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
             application_Start(configurationCallback, configureModules); // this will error b/c not fully loaded yet.

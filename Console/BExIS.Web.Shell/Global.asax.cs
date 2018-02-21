@@ -19,10 +19,10 @@ namespace BExIS.Web.Shell
     public class MvcApplication : HttpApplication
     {
 
-
+        private Application app = null;
         protected void Application_Start()
         {
-            Application app = new Application(RunStage.Production);
+            app = new Application(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -30,10 +30,7 @@ namespace BExIS.Web.Shell
 
         protected void Application_End()
         {
-            ModuleManager.ShutdownModules();
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            pManager.Shutdown(); // release all data access related resources!
-            IoCFactory.ShutdownContainer();
+            app.Stop();
         }
 
         protected void Session_Start()
