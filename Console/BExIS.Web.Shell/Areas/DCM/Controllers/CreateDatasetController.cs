@@ -545,7 +545,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                         //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
-                        if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                        if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
 
                             var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });

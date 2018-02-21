@@ -36,7 +36,7 @@ namespace BExIS.Web.Shell.Controllers
                 var user = await identityUserService.FindByIdAsync(userId);
                 await signInManager.SignInAsync(user, false, false);
 
-                return this.IsAccessibale("bam", "PartyService", "UserRegistration")
+                return this.IsAccessible("bam", "PartyService", "UserRegistration")
                     ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
             }
