@@ -16,6 +16,12 @@ namespace BExIS.Web.Shell.Controllers.Tests
             helper = new TestSetupHelper(WebApiConfig.Register, false);
         }
 
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            helper.Dispose();
+        }
+
         [Test()]
         public void IndexTest()
         {

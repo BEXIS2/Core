@@ -14,7 +14,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.App.Testing
 {
-    public class TestSetupHelper
+    public class TestSetupHelper: IDisposable
     {
         protected Application app = null;
 
@@ -41,6 +41,11 @@ namespace BExIS.App.Testing
             ControllerContext controllerCtx = new ControllerContext();
             controllerCtx.HttpContext = httpCtxMock.Object;
             return controllerCtx;
+        }
+
+        public void Dispose()
+        {
+            app.Stop();
         }
     }
 }
