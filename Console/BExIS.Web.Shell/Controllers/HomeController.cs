@@ -9,12 +9,16 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
-            if (!this.IsAccessibale("DDM", "Home", "Index")) return View();
+            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
+            {
+                if (!this.IsAccessibale("DDM", "Home", "Index")) return View();
 
-            var result = this.Render("DDM", "Home", "Index");
-            return Content(result.ToHtmlString(), "text/html");
+                var result = this.Render("DDM", "Home", "Index");
+                return Content(result.ToHtmlString(), "text/html");
+            }
+
+            return View();
         }
-
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
         {

@@ -13,7 +13,32 @@
     @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
 </div>
 <div style="text-align: center; margin-top: 24pt">
-   
+
     @Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { @class = "t-button function", id = "registerLink" })
     @Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { @class = "t-button function", id = "loginLink" })
+    @Html.ActionLink("Continue without Login", "Index", "Home", new { area = "DDM" }, htmlAttributes: new { @class = "t-button action", id = "search" })
+
+    <div id="info">
+        <p>ATTO is a joint German-Brazilian project launched in 2009. It is an infrastructure platform for observing forest-atmosphere interactions and their impact on climate, atmospheric chemistry, aerosols and clouds, and greenhouse gases.</p>
+        <p>The ATTO data portal is the corresponding infrastructure for the data management of the research consortium. It is built for the scientists in order to store, share, exchange and publish the data derived on and around the ATTO tower.</p>
+    	<br />
+        <p><b>Registration</b><p>
+	<p>The metadata of the stored datasets in this portal are freely accessible to anyone interested and can be explored via clicking on the button “Continue without Login”. Datasets which are published and do have a persistent identifier (DOI or similar) are publically available as well. To access datasets which are not public available, you need to be a registered user and request the datasets. For registration, please click on the “Register” button above. Please send an e-mail to <span>
+        </span><a href="mailto:mguderle@bgc-jena.mpg.de">
+        <span> mguderle@bgc-jena.mpg.de</span>
+        </a> briefly indicating your intended use of the datasets, in order to receive respective rights. </p>
+	<p>Please note that the validation and approval of your registration requires one working day.</p>
+	<p>Registration does not make you a member of ATTO. This registration is intended to ensure that the scope and copyright of the datasets is fully taken into account. Furthermore, registered users will receive notifications about updates and corrections of the respective downloaded datasets.</p>
+	<p>Details regarding the use of the data management portal can be found under the “Help” link above. If you have any further questions and suggestion please contact us.</p>
+
+    </div>
+    <style type="text/css">
+
+        #info {
+            text-align: justify;
+            padding-top: 40px;
+            width: 600px;
+            margin: 0 auto;
+        }
+    </style>
 </div>
