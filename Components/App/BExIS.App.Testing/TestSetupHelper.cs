@@ -3,6 +3,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -28,16 +29,38 @@ namespace BExIS.App.Testing
 
         public ControllerContext BuildHttpContext()
         {
+            return this.BuildHttpContext(null);
+        }
+
+        /// <summary>
+        /// creates a httpcontxt with an authenticated user
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public ControllerContext BuildHttpContext(string userName)
+        {
             if (!app.Started)
                 throw new System.InvalidOperationException("The test environmnet has not been started yet. call app.Start(...) before calling this method.");
 
             var httpCtxMock = new Mock<HttpContextBase>();
-            var httpSessionMock = new Mock<HttpSessionStateBase>();
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
 
+            var httpSessionMock = new Mock<HttpSessionStateBase>();
             httpSessionMock.Setup(x => x["CurrentTenant"]).Returns(tenantResolver.DefaultTenant);
             httpCtxMock.Setup(ctx => ctx.Session).Returns(httpSessionMock.Object);
+
+            if(!string.IsNullOrWhiteSpace(userName))
+            {
+                var validPrincipal = new ClaimsPrincipal(
+                   new[]
+                   {
+                        new ClaimsIdentity(
+                            new[] {new Claim(ClaimTypes.NameIdentifier, userName)})
+                   });
+                httpCtxMock.Setup(ctx => ctx.User).Returns(validPrincipal);
+            }
+
             ControllerContext controllerCtx = new ControllerContext();
             controllerCtx.HttpContext = httpCtxMock.Object;
             return controllerCtx;

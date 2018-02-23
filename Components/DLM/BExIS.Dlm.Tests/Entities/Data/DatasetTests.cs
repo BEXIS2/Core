@@ -9,6 +9,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.App.Testing;
+using FluentAssertions;
 
 namespace BExIS.Dlm.Tests.Entities.Data
 {
@@ -48,16 +49,21 @@ namespace BExIS.Dlm.Tests.Entities.Data
         public void InstantiateDatasetTest()
         {
             Dataset dataset = new Dataset();
-            Assert.That(dataset, Is.Not.Null);
-            Assert.That(dataset.DataStructure, Is.Not.Null, "Dataset must have a data structure.");
-            Assert.That(dataset.Status, Is.EqualTo(DatasetStatus.CheckedIn), "Dataset must be in CheckedIn status.");
+            dataset.Should().NotBeNull(); // Assert.That(dataset, Is.Not.Null);
+            dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure."); // Assert.That(dataset.DataStructure, Is.Not.Null, "Dataset must have a data structure.");
+            dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status."); // Assert.That(dataset.Status, Is.EqualTo(DatasetStatus.CheckedIn), "Dataset must be in CheckedIn status.");
         }
 
         [Test]
         public void InstantiateDatasetWithoutDataStructureTest()
         {
             // Test pass means the exception has been thrown and caught properly.
-            Assert.Throws(typeof(ArgumentNullException), delegate { new Dataset(null); });
+            // Assert.Throws(typeof(ArgumentNullException), delegate { new Dataset(null); });
+
+            Action action = () => new Dataset(null);
+            action.Should().Throw<ArgumentNullException>()
+                //.WithInnerException<ArgumentException>()
+                .WithMessage("*without*data structure*");
         }
     }
 }
