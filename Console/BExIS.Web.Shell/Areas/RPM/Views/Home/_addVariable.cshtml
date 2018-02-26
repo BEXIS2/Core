@@ -1,10 +1,10 @@
 ﻿@using System.Data
 @using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
-@model BExIS.Web.Shell.Areas.RPM.Models.DataStructureDesignerModel
+@model BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel
 
 @{
-    ViewBag.Title = "Planing";
+    ViewBag.Title = "Planning";
 
     long[][] selected = new long[][] { };
     
@@ -78,7 +78,7 @@ else
             .ClientEvents(events=>events.OnDataBound("onDataBound"))
             )
             <div class="bx-rpm-submit bx-rpm-buttons">
-            <button name="addVariables" value="add" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "1">Save</button>
+            <button name="addVariables" value="add" type="submit" class="bx-button action"  id="saveButton" title="Save The Unit" tabindex = "1">Save</button>
             @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "bx-button action", @title = "Cancel", @tabindex = "2", @autofocus = "autofocus" })
         </div>
         }

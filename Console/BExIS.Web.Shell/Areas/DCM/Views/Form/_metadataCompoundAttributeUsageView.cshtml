@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.CreateDataset.StepModelHelper
+﻿@model BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper
 @using BExIS.Dcm.Wizard;
 @using Telerik.Web.Mvc.Extensions
 
@@ -49,7 +49,7 @@
 
 
 
-<div id="@stepId" name="@Model.Usage.Label" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass">
+<div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass">
     @if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
     {
 
@@ -145,23 +145,39 @@
                     }
                     else
                     {
+                        if(Model.ChoiceMax <= 1)
+                        { 
                         <div class="metadata-choice-container">
-                            @foreach (var element in Model.Childrens)
+                            @if (!locked)
                             {
-                                string choiceId = element.StepId + "_choice";
-
-                                if (element.Activated)
+                                foreach (var element in Model.Childrens)
                                 {
-                                    <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
-                                }
-                                else
-                                {
-                                    <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
-                                }
+                                    string choiceId = element.StepId + "_choice";
 
-                                @element.DisplayName()
+                                    if (element.Activated)
+                                    {
+                                        <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
+                                    }
+                                    else
+                                    {
+                                        <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
+                                    }
+
+                                    @element.DisplayName()
+                                }
+                            }
+                            else
+                            {
+                                foreach (var element in Model.Childrens)
+                                {
+                                    if (element.Activated)
+                                    {
+                                        @element.DisplayName()
+                                    }
+                                }
                             }
                         </div>
+                        }
                     }
 
                 }
@@ -191,7 +207,7 @@
         {
             <div id="@id_container" class="contentContainer">
 
-                @if (Model.Choice)
+                @if (Model.Choice && Model.ChoiceMax <= 1)
                 {
                     <div id="choiceContainer" class="complexAttributesContainer">
                         @foreach (var element in Model.Childrens)

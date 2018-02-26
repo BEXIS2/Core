@@ -1,26 +1,27 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.IO.Transform.Output;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using BExIS.Web.Shell.Areas.RPM.Models;
+using Vaiona.Persistence.Api;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class StructuresController : ApiController
     {
         // GET: api/Structures
-        public IEnumerable<string> Get()
+        public IEnumerable<long> Get()
         {
-            throw new HttpResponseException(HttpStatusCode.NotFound);
+            var dataStructureIds = this.GetUnitOfWork().GetReadOnlyRepository<DataStructure>().Query().Select(d => d.Id).ToList();
+            return dataStructureIds;
         }
 
         // GET: api/Structures/5
-        public Structure Get(long id)
+        public DataStructureDataTable Get(long id)
         {
             // The model object, Structure, can not have access to the services, or data
-            return new Structure(id);
+            return new DataStructureDataTable(id);
         }
 
         // POST: api/Structures

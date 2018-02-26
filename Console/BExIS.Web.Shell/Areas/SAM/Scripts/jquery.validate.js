@@ -148,13 +148,13 @@
             }
 
             var data = $.validator.normalizeRules(
-                $.extend(
-                    {},
-                    $.validator.classRules(element),
-                    $.validator.attributeRules(element),
-                    $.validator.dataRules(element),
-                    $.validator.staticRules(element)
-                ), element);
+            $.extend(
+                {},
+                $.validator.classRules(element),
+                $.validator.attributeRules(element),
+                $.validator.dataRules(element),
+                $.validator.staticRules(element)
+            ), element);
 
             // make sure required is at front
             if (data.required) {
@@ -330,11 +330,11 @@
                 }
                 $(this.currentForm)
                     .validateDelegate(":text, [type='password'], [type='file'], select, textarea, " +
-                    "[type='number'], [type='search'] ,[type='tel'], [type='url'], " +
-                    "[type='email'], [type='datetime'], [type='date'], [type='month'], " +
-                    "[type='week'], [type='time'], [type='datetime-local'], " +
-                    "[type='range'], [type='color'] ",
-                    "focusin focusout keyup", delegate)
+                        "[type='number'], [type='search'] ,[type='tel'], [type='url'], " +
+                        "[type='email'], [type='datetime'], [type='date'], [type='month'], " +
+                        "[type='week'], [type='time'], [type='datetime-local'], " +
+                        "[type='range'], [type='color'] ",
+                        "focusin focusout keyup", delegate)
                     .validateDelegate("[type='radio'], [type='checkbox'], select, option", "click", delegate);
 
                 if (this.settings.invalidHandler) {
@@ -446,10 +446,10 @@
                 if (this.settings.focusInvalid) {
                     try {
                         $(this.findLastActive() || this.errorList.length && this.errorList[0].element || [])
-                            .filter(":visible")
-                            .focus()
-                            // manually trigger focusin event; without it, focusin handler isn't called, findLastActive won't have anything to find
-                            .trigger("focusin");
+                        .filter(":visible")
+                        .focus()
+                        // manually trigger focusin event; without it, focusin handler isn't called, findLastActive won't have anything to find
+                        .trigger("focusin");
                     } catch (e) {
                         // ignore IE throwing errors when focusing hidden elements
                     }
@@ -469,22 +469,22 @@
 
                 // select all valid inputs inside the form (no submit or reset buttons)
                 return $(this.currentForm)
-                    .find("input, select, textarea")
-                    .not(":submit, :reset, :image, [disabled]")
-                    .not(this.settings.ignore)
-                    .filter(function () {
-                        if (!this.name && validator.settings.debug && window.console) {
-                            console.error("%o has no name assigned", this);
-                        }
+                .find("input, select, textarea")
+                .not(":submit, :reset, :image, [disabled]")
+                .not(this.settings.ignore)
+                .filter(function () {
+                    if (!this.name && validator.settings.debug && window.console) {
+                        console.error("%o has no name assigned", this);
+                    }
 
-                        // select only the first element for each name, and only those with rules specified
-                        if (this.name in rulesCache || !validator.objectLength($(this).rules())) {
-                            return false;
-                        }
+                    // select only the first element for each name, and only those with rules specified
+                    if (this.name in rulesCache || !validator.objectLength($(this).rules())) {
+                        return false;
+                    }
 
-                        rulesCache[this.name] = true;
-                        return true;
-                    });
+                    rulesCache[this.name] = true;
+                    return true;
+                });
             },
 
             clean: function (selector) {
@@ -1191,7 +1191,7 @@
         var ajax = $.ajax;
         $.ajax = function (settings) {
             var mode = ("mode" in settings ? settings : $.ajaxSettings).mode,
-                port = ("port" in settings ? settings : $.ajaxSettings).port;
+				port = ("port" in settings ? settings : $.ajaxSettings).port;
             if (mode === "abort") {
                 if (pendingRequests[port]) {
                     pendingRequests[port].abort();

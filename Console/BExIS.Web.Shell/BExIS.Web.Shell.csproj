@@ -35,9 +35,10 @@
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
-    <DontImportPostSharp>True</DontImportPostSharp>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +60,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DataAnnotationsExtensions">
       <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
@@ -76,21 +81,25 @@
       <HintPath>..\..\packages\FluentBootstrap.Mvc.3.3.5.1\lib\net40\FluentBootstrap.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Glimpse.AspNet, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Glimpse.AspNet.1.8.0\lib\net45\Glimpse.AspNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Glimpse.Core, Version=1.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Glimpse.1.8.2\lib\net45\Glimpse.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Glimpse.Mvc5, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Glimpse.Mvc5.1.5.3\lib\net45\Glimpse.Mvc5.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\IBM.Data.DB2.dll</HintPath>
-    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\IKVM.OpenJDK.Util.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
@@ -104,6 +113,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
@@ -142,30 +155,26 @@
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Npgsql, Version=3.1.1.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Npgsql.3.0.7\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql, Version=3.2.5.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Npgsql.3.2.5\lib\net451\Npgsql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="saxon9he-api, Version=9.6.0.8, Culture=neutral, PublicKeyToken=e1fdd002d5083fe6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\saxon9he-api.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
@@ -177,6 +186,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Extensions" />
@@ -195,6 +208,9 @@
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
@@ -288,6 +304,9 @@
     <Reference Include="WebActivator">
       <HintPath>..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
     </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
     <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
       <Private>True</Private>
@@ -296,6 +315,7 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -368,50 +388,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
-    <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
-    <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
-    <Compile Include="Areas\BAM\Models\PartyModel.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
-    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
-    <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Legacy\DataAttributeController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Legacy\HomeController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Legacy\UnitController.cs" />
-    <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
-    <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
-    <Compile Include="Areas\RPM\Helpers\SeedData\AttributeCreator.cs" />
-    <Compile Include="Areas\RPM\Helpers\SeedData\MappingReader.cs" />
-    <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
-    <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
-    <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataAttributeModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataStructureDesignerModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataStructureTreeModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataTypeManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\UnitDimenstionModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\UnitManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
-    <Compile Include="Areas\RPM\Models\StructureModel.cs" />
-    <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
+    <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LdapController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
+    <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
+    <Compile Include="Helpers\SeedDataGenerator.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
+    <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -424,74 +421,10 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\RPM\Images\help\help_img1.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img10.png" />
-    <Content Include="Areas\RPM\Images\help\help_img11.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img12.png" />
-    <Content Include="Areas\RPM\Images\help\help_img13.png" />
-    <Content Include="Areas\RPM\Images\help\help_img14.png" />
-    <Content Include="Areas\RPM\Images\help\help_img15.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img16.png" />
-    <Content Include="Areas\RPM\Images\help\help_img17.png" />
-    <Content Include="Areas\RPM\Images\help\help_img18.png" />
-    <Content Include="Areas\RPM\Images\help\help_img2.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img3.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img4.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img5.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img6.png" />
-    <Content Include="Areas\RPM\Images\help\help_img7.jpeg" />
-    <Content Include="Areas\RPM\Images\help\help_img8.png" />
-    <Content Include="Areas\RPM\Images\help\help_img9.png" />
-    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.js" />
-    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
-    <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.bexis.min.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.min.js" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructure.css" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
-    <Content Include="Areas\RPM\Stylesheets\RPM.css" />
-    <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\Help\Informations.xml" />
-    <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_addVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editClassifier.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editDataType.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_patternConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_rangeConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\Unit\UnitManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Unit\_editUnit.cshtml" />
-    <Content Include="Areas\RPM\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
+    <Content Include="Content\handsontable\handsontable.css" />
+    <Content Include="Content\handsontable\handsontable.full.css" />
+    <Content Include="Content\handsontable\handsontable.full.min.css" />
+    <Content Include="Content\handsontable\handsontable.min.css" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -505,18 +438,22 @@
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_94x94.png" />
     <Content Include="Content\Images\2.svg" />
     <Content Include="Content\Images\favicon.ico" />
+    <Content Include="Content\Images\info.png" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.svg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_113x28.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.png" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.png" />
+    <Content Include="Content\Images\Bad.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
     <Content Include="css\font-awesome.css" />
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.backup.js" />
     <Content Include="Scripts\autosize\autosize.js" />
     <Content Include="Scripts\autosize\autosize.min.js" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
@@ -537,27 +474,23 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dropdown.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_editUnit.cshtml" />
-    <None Include="Properties\PublishProfiles\BC2017.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
-    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
-    <Content Include="Areas\BAM\Views\web.config" />
-    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP211.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP21105.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP21108.pubxml" />
+    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\SITE.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\DCM\Form.js" />
-    <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
-    <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
-    <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
+    <Content Include="Scripts\handsontable\handsontable.full.js" />
+    <Content Include="Scripts\handsontable\handsontable.full.min.js" />
+    <Content Include="Scripts\handsontable\handsontable.js" />
+    <Content Include="Scripts\handsontable\handsontable.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
@@ -570,6 +503,11 @@
     <Content Include="Scripts\minimap\minimap.js" />
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
     <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
@@ -583,7 +521,6 @@
     <Content Include="Scripts\2012.3.1018\telerik.extensions.js" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.autocomplete.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.calendar.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.chart.min.js" />
@@ -660,7 +597,6 @@
     <Content Include="Themes\Default\Styles\bexis-elements.css" />
     <Content Include="Themes\Default\Styles\Copy of telerik.default.min.css" />
     <Content Include="Themes\Default\Styles\Default\editor.png" />
-    <Content Include="Themes\Default\Styles\DIM\bexis-dim.css" />
     <Content Include="Themes\Default\Styles\emptyPng.png" />
     <Content Include="Themes\Default\Styles\Default\imagebrowser.png" />
     <Content Include="Themes\Default\Styles\Default\infoicon.png" />
@@ -898,36 +834,37 @@
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
     <Content Include="Views\Terms\Index.cshtml" />
-    <Content Include="Views\Account\EmailConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalSignInConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalSignInFailure.cshtml" />
+    <Content Include="Views\Footer\Content.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\SendCode.cshtml" />
-    <Content Include="Views\Account\SignIn.cshtml" />
-    <Content Include="Views\Account\SignUp.cshtml" />
-    <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Account\_ExternalSignIns.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsList.cshtml" />
+    <Content Include="Views\Account\_ChangePassword.cshtml" />
+    <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Account\_SetPassword.cshtml" />
     <Content Include="Views\Account\_RemoveAccount.cshtml" />
     <Content Include="Views\Shared\Info.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\LockOut.cshtml" />
-    <Content Include="Views\Footer\Content.cshtml" />
+    <Content Include="Views\Shared\NotAuthorized.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Ldap\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\BAM\Views\Shared\" />
+    <Folder Include="Areas\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1050,6 +987,14 @@
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
+      <Name>BExIS.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -1061,34 +1006,6 @@
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
       <Name>BExIS.Xml.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\BMM\BExISMigration\BExISMigration.csproj">
-      <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
-      <Name>BExISMigration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
-      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
-      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -1234,15 +1151,15 @@ rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
 C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
-  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
-    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
-    <Error Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
-  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <Import Project="..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
+  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
+    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
   </Target>
 </Project>

@@ -33,9 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\Libraries\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Mvc">
       <HintPath>..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
@@ -49,19 +57,41 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Vaiona.Utils">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicWebService.cs" />
+    <Compile Include="Export\PangaeaDataRepoConverter.cs" />
+    <Compile Include="Export\GenericDataRepoConverter.cs" />
+    <Compile Include="Export\IDataRepoConverter.cs" />
+    <Compile Include="Export\PensoftDataRepoConverter.cs" />
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
+    <Compile Include="Mapping\MappingUtils.cs" />
     <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
+      <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+      <Project>{455EC826-9A92-40FF-BD3B-388C288955CE}</Project>
+      <Name>BExIS.IO.Transform.Output</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
@@ -74,11 +104,14 @@
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
       <Name>BExIS.Dim.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
+      <Project>{CAC933A2-6849-4C61-82B4-CBF4052210CC}</Project>
+      <Name>BExIS.Dim.Services</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Mapping\" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,13 +1,14 @@
-﻿using System;
+﻿using BExIS.Dcm.ImportMetadataStructureWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
+using BExIS.Utils.Helpers;
+using BExIS.Xml.Helpers.Mapping;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Dcm.ImportMetadataStructureWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
-using BExIS.Xml.Helpers.Mapping;
-using BExIS.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -60,7 +61,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 ModelState.AddModelError("", "Please click generate button.");
             }
-            
+
 
             if (TaskManager.Current().IsValid())
             {
@@ -78,19 +79,36 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult SetRootNode(string name)
         {
-             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
+            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
-             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
-                 TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE] = name;
-             else
-                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.ROOT_NODE, name);
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
+                TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE] = name;
+            else
+                TaskManager.Bus.Add(ImportMetadataStructureTaskManager.ROOT_NODE, name);
 
 
-             return Content("");
+            return Content("");
         }
 
-        public ActionResult SetSchemaName(string name)
+        public JsonResult SetSchemaName(string name)
         {
+
+            if (String.IsNullOrEmpty(name))
+            {
+                return Json("A Metadata structure must have a name.", JsonRequestBehavior.AllowGet);
+            }
+
+            if (!RegExHelper.IsFilenameValid(name))
+            {
+                return Json("Name : \" " + name + " \" is invalid. These special characters are not allowed : \\/:*?\"<>|", JsonRequestBehavior.AllowGet);
+            }
+
+            if (SchemaNameExist(name))
+            {
+                return Json("A Metadata structure with this name already exist. Please choose a other name.", JsonRequestBehavior.AllowGet);
+            }
+
+
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
@@ -98,47 +116,58 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.SCHEMA_NAME, name);
 
-            return Content("");
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         public bool SchemaNameExist(string SchemaName)
         {
+
             MetadataStructureManager msm = new MetadataStructureManager();
 
-            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() == 0)
+            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() > 0)
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
 
         public ActionResult GenerateMS()
         {
-                //open schema
-                XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+            //open schema
+            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
 
-                string root = "";
-                string schemaName = "";
-                long metadataStructureid = 0;
+            string root = "";
+            string schemaName = "";
+            long metadataStructureid = 0;
 
-                TaskManager = (ImportMetadataStructureTaskManager) Session["TaskManager"];
+            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
-                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
-                    root = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
+                root = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
 
-                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
-                    schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
+                schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
 
-                string path = TaskManager.Bus[ImportMetadataStructureTaskManager.FILEPATH].ToString();
-                //path = @"https://code.ecoinformatics.org/code/eml/tags/RELEASE_EML_2_1_1/eml.xsd";
+            string path = TaskManager.Bus[ImportMetadataStructureTaskManager.FILEPATH].ToString();
+            //path = @"https://code.ecoinformatics.org/code/eml/tags/RELEASE_EML_2_1_1/eml.xsd";
 
-                ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
-                model.SchemaName = schemaName;
-                model.RootNode = root;
+            ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
+            model.SchemaName = schemaName;
+            model.RootNode = root;
+
+            if (!RegExHelper.IsFilenameValid(schemaName))
+            {
+                model.ErrorList.Add(new Error(ErrorType.Other,
+                        "Name : \" " + schemaName + " \" is invalid. These special characters are not allowed : \\/:*?\"<>|"));
+            }
+            else
+            {
+
 
                 try
                 {
@@ -205,10 +234,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     else
                         TaskManager.Bus.Add(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID, metadataStructureid);
                 }
+            }
 
-          
-            return PartialView("ReadSource",model);
-            
+            return PartialView("ReadSource", model);
+
         }
 
         // chekc if user exist

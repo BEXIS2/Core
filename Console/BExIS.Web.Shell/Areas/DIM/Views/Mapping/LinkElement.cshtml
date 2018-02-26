@@ -1,9 +1,9 @@
 ﻿
 @using BExIS.Modules.Dim.UI.Models.Mapping
-@model BExIS.Modules.Dim.UI.Models.Mapping.LinkElementModel
+@model LinkElementModel
 
 @{
-    string id = Model.Type+ "_"+Model.ElementId+"_"+ @Model.Position+"_"+@Model.Name;
+    string id = /*Model.Type +*/ "_"+Model.ElementId+"_"+ @Model.Position+"_"+@Model.Name;
     string c = "le-simple-" + @Model.Position;
 }
 
@@ -19,7 +19,6 @@
         <div id="Position">@Model.Position</div>
         <div id="Complexity">@Model.Complexity</div>
         <div id="XPath">@Model.XPath</div>
-        <div id="Mask">@Model.Mask</div>
     </div>
 
    

@@ -52,9 +52,9 @@ namespace BExIS.Dlm.Entities.Common
         public virtual string MissingValue { get; set; }
 
         /// <summary>
-        ///
+        /// Indicates whether the value of the variable/parameter is optional.
         /// </summary>
-        /// <remarks></remarks>
+        /// <remarks>Setting this propery affects the minimum cardinality.</remarks>
         /// <seealso cref=""/>        
         public virtual bool IsValueOptional
         {
@@ -62,5 +62,11 @@ namespace BExIS.Dlm.Entities.Common
             set { MinCardinality = value ? 0 : 1; } // if value is optional, set the min cardinality to zero
         }
 
+        /// <summary>
+        /// Indicates the order of the usage in its context, e.g., variable order in a data structure.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual int OrderNo { get; set; }
     }
 }

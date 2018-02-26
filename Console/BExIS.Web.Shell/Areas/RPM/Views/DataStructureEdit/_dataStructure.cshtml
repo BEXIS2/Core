@@ -1,10 +1,10 @@
 ﻿@using Telerik.Web.Mvc.UI
-@using BExIS.Web.Shell.Areas.RPM.Models
-@model BExIS.Web.Shell.Areas.RPM.Models.DataStructurePreviewModel
+@using BExIS.Modules.Rpm.UI.Models
+@model BExIS.Modules.Rpm.UI.Models.DataStructurePreviewModel
 
 <div class="bx-rpm-dataStructure-container">
     <div class="bx-rpm-datastructureheader">
-        <h2>@Model.Name (@Model.Id)</h2>
+        <h2 id="dataStructureName">@Model.Name (@Model.Id)</h2>
         @Html.Hidden("id", Model.Id, new { @id = "id" })
         <table>
             <tr class="name">
@@ -43,7 +43,7 @@
                 }
                 else
                 {
-                    <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Server.UrlEncode(Model.Name)', 'datastructure')">Delete</button>
+                    <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'', 'datastructure')">Delete</button>
                 }
                 <button class="hidden" id="storeVariablesButton" value="@Model.Id">Store Variables</button>
                 <button class="hidden" id="addVariableButton" value="0,''">Add Variable</button>
@@ -490,14 +490,17 @@
     }
 
     function openDelWindow(id, name, type) {
-        name = decodeURIComponent(name);
+        if (name && name != '')
+            name = decodeURIComponent(name) + ' (' + id + ')';
+        else
+            name = $('#dataStructureName').text();
         var parameters = encodeURI('/?Id=' + id);
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
             dataType: 'html',
             success: function (data) {
-                createMessageWindow(data,'Delete DataStructure ' + name + ' (' + id + ')', type, id);
+                createMessageWindow(data,'Delete DataStructure ' + name, type, id);
             }
         });
     }

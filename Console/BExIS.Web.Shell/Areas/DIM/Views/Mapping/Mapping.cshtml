@@ -1,5 +1,5 @@
 ﻿@using BExIS.Modules.Dim.UI.Models.Mapping
-@model BExIS.Modules.Dim.UI.Models.Mapping.ComplexMappingModel
+@model ComplexMappingModel
 @{
     string id = "mapping_container_" + Model.Id;
     bool created = false;
@@ -12,84 +12,111 @@
 
 
 
-<div id="@id" class="mapping-container">
+<div id="@id" parent="@Model.ParentId" class="mapping-container">
 
-    <div class="row">
-        <div class="mapping_container_child mapping_container_source col-md-4">
+    <div class="mapping-container-expand">
 
-            @if (Model.Source != null)
-            {
-                @Html.Partial("MappingLinkElement", Model.Source)
-            }
-            else
-            {
-                <div id="emptySourceContainer">
-                    <b>SOURCE</b>
-                </div>
-            }
-        </div>
-
-        <div class="mapping_container_child mapping_container_target col-md-offset-4  col-md-4">
-            @if (Model.Target != null)
-            {
-                @Html.Partial("MappingLinkElement", Model.Target)
-            }
-            else
-            {
-                <div id="emptyTargetContainer">
-                    <b>TARGET</b>
-                </div>
-            }
-        </div>
-    </div>
-
-    <div class="mapping-container-hidden-mappings" style="display: none">
-
-        @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
-        {
-            string sourceId = simpleMappingModel.Source.Type + "_" + simpleMappingModel.Source.ElementId + "_" + @simpleMappingModel.Source.Position + "_" + @simpleMappingModel.Source.Name + "_MappingSimpleLinkElement";
-            string targetId = simpleMappingModel.Target.Type + "_" + simpleMappingModel.Target.ElementId + "_" + @simpleMappingModel.Target.Position + "_" + @simpleMappingModel.Target.Name + "_MappingSimpleLinkElement";
-
-            <span id="@simpleMappingModel.Id" class="mapping-container-simple-hidden-mapping" targetId="@targetId" sourceId="@sourceId"></span>
-        }
-
-    </div>
-
-    <div class="mapping-settings">
         <div class="row">
-            <div class="mapping_container_transformation col-12">
+            <div class="mapping_container_child mapping_container_source col-md-4">
 
-                @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
+                @if (Model.Source != null)
                 {
-                    @Html.Partial("TransformationRule", simpleMappingModel)
-                }
-
-            </div>
-        </div>
-        <div class="row">
-            <div class="mapping-options col-xs-1">
-                @if (created == false)
-                {
-                    <button class="createButton bx-button action" onclick="saveMapping(this,true)">Create</button>
+                    @Html.Partial("MappingLinkElement", Model.Source)
                 }
                 else
                 {
-                    <button class="saveButton bx-button action bx-disabled" disabled="disabled" onclick="saveMapping(this,false)">Save</button>
-                    <button class="deleteButton bx-button action" onclick="deleteMapping(this)">Delete</button>
+                    <div id="emptySourceContainer">
+                        <b>SOURCE</b>
+                    </div>
+                }
+            </div>
+
+            <div class="mapping_container_child mapping_container_target col-md-offset-4  col-md-4">
+                @if (Model.Target != null)
+                {
+                    @Html.Partial("MappingLinkElement", Model.Target)
+                }
+                else
+                {
+                    <div id="emptyTargetContainer">
+                        <b>TARGET</b>
+                    </div>
                 }
             </div>
         </div>
+
+        <div class="mapping-container-hidden-mappings" style="display: none">
+
+            @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
+            {
+                string sourceId = simpleMappingModel.Source.Type + "_" + simpleMappingModel.Source.ElementId + "_" + @simpleMappingModel.Source.Position + "_" + @simpleMappingModel.Source.Name + "_MappingSimpleLinkElement";
+                string targetId = simpleMappingModel.Target.Type + "_" + simpleMappingModel.Target.ElementId + "_" + @simpleMappingModel.Target.Position + "_" + @simpleMappingModel.Target.Name + "_MappingSimpleLinkElement";
+
+                <span id="@simpleMappingModel.Id" class="mapping-container-simple-hidden-mapping" targetId="@targetId" sourceId="@sourceId"></span>
+            }
+
+        </div>
+
+        <div class="mapping-settings">
+            <div class="row">
+                <div class="mapping_container_transformation col-12">
+
+                    @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
+                    {
+                        @Html.Partial("TransformationRule", simpleMappingModel)
+                    }
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="mapping-options col-xs-1">
+                    @if (created == false)
+                    {
+                        <button class="createButton bx-button action" onclick="saveMapping(this, true)">Create</button>
+                    }
+                    else
+                    {
+                        <button class="saveButton bx-button action bx-disabled" disabled="disabled" onclick="saveMapping(this, false)">Save</button>
+                        <button class="deleteButton bx-button action" onclick="deleteMapping(this)">Delete</button>
+                    }
+                </div>
+            </div>
+        </div>
+
     </div>
+    <div class="mapping-container-collapse" style="display: none">
+        
+        <div class="row">
+            <div class="mapping_container_child mapping_container_source col-md-4">
 
+                <div id="@id" class="le-mapping-complex">
 
-    <script type="text/javascript">
-        $(document)
-            .ready(function () {
+                    <div class="le-mapping-container-header row">
+                        <div class="le-mapping-container-header-label col-md-8">
+                            @if (Model.Source != null)
+                            {
+                                @Model.Source.Name
+                            }
+          
+                        </div>
+                    </div>
+                </div>
 
-                initJSPLUMB('@id');
+            </div>
 
-            })
+            <div class="mapping_container_child mapping_container_target col-md-offset-4  col-md-4">
 
+                <div class="le-mapping-container-header row">
+                    <div class="le-mapping-container-header-label col-md-8">
+                        @if (Model.Target != null)
+                        {
+                            @Model.Target.Name
+                        }
+                 
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    </script>
+    </div>
 </div>

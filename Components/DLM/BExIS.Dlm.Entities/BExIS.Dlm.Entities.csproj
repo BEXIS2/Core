@@ -106,6 +106,7 @@
     <Compile Include="MetadataStrcuture\MetadataStructure.cs" />
     <Compile Include="Metadata\Metadata.cs" />
     <Compile Include="Party\Party.cs" />
+    <Compile Include="Party\PartyAccount.cs" />
     <Compile Include="Party\PartyCustomAttribute.cs" />
     <Compile Include="Party\PartyCustomAttributeValue.cs" />
     <Compile Include="Party\PartyRelationship.cs" />
@@ -119,6 +120,7 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="Administration\Administration.cd" />
+    <None Include="app.config" />
     <None Include="DataStructure\DataStructure.cd" />
     <None Include="Data\Data.cd" />
     <None Include="MetadataStrcuture\MetadataStructure.cd" />

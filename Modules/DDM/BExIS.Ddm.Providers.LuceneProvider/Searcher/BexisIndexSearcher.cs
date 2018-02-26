@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider.Helpers;
+﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
+using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -13,6 +8,13 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Highlight;
 using Lucene.Net.Store;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
+using HeaderItem = BExIS.Utils.Models.HeaderItem;
+using Row = BExIS.Utils.Models.Row;
+using SearchResult = BExIS.Utils.Models.SearchResult;
 
 /// <summary>
 ///
@@ -35,7 +37,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 
         public static IndexReader autoCompleteIndexReader = IndexReader.Open(autoCompleteIndex, true);
         public static IndexSearcher autoCompleteSearcher = new IndexSearcher(autoCompleteIndexReader);
-        
+
         /// <summary>
         ///
         /// </summary>
@@ -162,6 +164,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <returns></returns>
         public static SearchResult search(Query query, List<XmlNode> headerItemXmlNodeList)
         {
+
             TopDocs docs = searcher.Search(query, 1000);
             SearchResult sro = new SearchResult();
             sro.PageSize = 10;

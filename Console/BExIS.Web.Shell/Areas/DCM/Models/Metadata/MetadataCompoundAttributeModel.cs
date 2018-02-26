@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dlm.Entities.Common;
+﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Utils.Data.MetadataStructure;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
-    public class MetadataCompoundAttributeModel:AbstractMetadataStepModel
+    public class MetadataCompoundAttributeModel : AbstractMetadataStepModel
     {
 
         public int NumberOfSourceInPackage { get; set; }
@@ -13,37 +14,15 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public bool last = false;
         public bool first = false;
 
+        private MetadataStructureUsageHelper metadataStructureUsageHelper;
+
         public MetadataCompoundAttributeModel()
         {
             MetadataAttributeModels = new List<MetadataAttributeModel>();
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
         }
 
-        public static MetadataCompoundAttributeModel ConvertToModel(BaseUsage metadataAttributeUsage, int number)
-        {
-            
-            return new MetadataCompoundAttributeModel
-            {
-
-                Id = metadataAttributeUsage.Id,
-                Number = number,
-                //PackageModelNumber = packageModelNumber,
-                //MetadataStructureId = metadataStructureId,
-                //Parent = metadataPackageUsage,
-                Source = metadataAttributeUsage,
-                DisplayName = metadataAttributeUsage.Label,
-                Discription = metadataAttributeUsage.Description,
-                //DataType = metadataAttributeUsage..MetadataAttribute.DataType.Name,
-                //SystemType = metadataAttributeUsage.MetadataAttribute.DataType.SystemType,
-                MinCardinality = metadataAttributeUsage.MinCardinality,
-                MaxCardinality = metadataAttributeUsage.MaxCardinality,
-                NumberOfSourceInPackage = 1,
-                first = true,
-                ////DomainList = domainConstraintList,
-                last = true
-            };
-        }
-
-        public void ConvertMetadataAttributeModels( BaseUsage source, long metadataStructureId, long stepId)
+        public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, long stepId)
         {
             Source = source;
 
@@ -60,9 +39,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
                         {
-                            if (UsageHelper.IsSimple(usage))
+                            if (metadataStructureUsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mau, metadataStructureId, Number, stepId));
+                                MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mau, metadataStructureId, Number, stepId));
                             }
                         }
                     }
@@ -80,9 +59,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
                         {
-                            if (UsageHelper.IsSimple(usage))
+                            if (metadataStructureUsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mnau, metadataStructureId, Number, stepId));
+                                MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mnau, metadataStructureId, Number, stepId));
                             }
                         }
                     }

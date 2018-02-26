@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Party" table="Parties">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Party" table="Parties" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
     <id name = "Id" type="Int64">
@@ -24,16 +24,20 @@
       <column name="Alias"  />
     </property>
 
-    <property name="Description" type="String" >
+    <property name="Description" type="String" not-null="false">
       <column name="Description"  />
     </property>
 
-    <property name="StartDate" type="DateTime" >
+    <property name="StartDate" type="DateTime" not-null="false" >
       <column name="StartDate"  />
     </property>
 
-    <property name="EndDate" type="DateTime" >
+    <property name="EndDate" type="DateTime" not-null="false" >
       <column name="EndDate"  />
+    </property>
+    
+    <property name="IsTemp" type="yes_no" >
+      <column name="IsTemp"  />
     </property>
 
     <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"  lazy="false" />

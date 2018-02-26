@@ -20,7 +20,7 @@ namespace BExIS.Dcm.Wizard
         public bool notExecuted = true;
         public Dictionary<string, object> parameters;
 
-        public bool Root { get; set;}
+        public bool Root { get; set; }
         public bool IsInstanze { get; set; }
         public bool HasContent { get; set; }
         public bool Expand { get; set; }
@@ -133,7 +133,7 @@ namespace BExIS.Dcm.Wizard
     /// 
     /// </summary>
     public enum StepStatus
-    { 
+    {
         none,
         success,
         error,

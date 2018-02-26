@@ -9,7 +9,7 @@ using System.IO;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Entities.DataStructure;
 
-namespace BExIS.Web.Shell.Areas.RPM.Helpers.SeedData
+namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
     public class MappingReader
     {
@@ -239,42 +239,52 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers.SeedData
                 //jump over the first row
                 line = reader.ReadLine();
 
-                UnitManager unitManager = new UnitManager();
-                DataTypeManager dataTypeManager = new DataTypeManager();
-
-                while ((line = reader.ReadLine()) != null)
+                UnitManager unitManager = null;
+                DataTypeManager dataTypeManager = null;
+                try
                 {
-                    // (char)59 = ';'
-                    string[] vars = line.Split((char)59);
+                    unitManager = new UnitManager();
+                    dataTypeManager = new DataTypeManager();
 
-                    System.Data.DataRow newRow = mappedAttributes.NewRow();
-                    newRow["Name"] = vars[0];
-                    newRow["ShortName"] = vars[1];
-                    newRow["Description"] = vars[2];
-                    newRow["IsMultipleValue"] = vars[3];
-                    newRow["IsBuiltIn"] = vars[4];
-                    newRow["Owner"] = vars[5];
-                    newRow["ContainerType"] = vars[6];
-                    newRow["MeasurementScale"] = vars[7];
-                    newRow["EntitySelectionPredicate"] = vars[8];
-                    newRow["Self"] = vars[9];
-                    string DataType = vars[10];
-                    newRow["DataType"] = DataType;
-                    string UnitAbbreviation = vars[11];
-                    newRow["Unit"] = UnitAbbreviation;
-                    newRow["Methodology"] = vars[12];
-                    newRow["Constraints"] = vars[13];
-                    newRow["ExtendedProperties"] = vars[14];
-                    newRow["GlobalizationInfos"] = vars[15];
-                    newRow["AggregateFunctions"] = vars[16];
-                    // add DataTypesId and UnitId to the mappedAttributes Table
-                    newRow["DataTypeId"] = dataTypeManager.Repo.Get().Where(dt => dt.Name.ToLower().Equals(DataType.ToLower())).FirstOrDefault().Id;
-                    Unit unit = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault();
-                    if (unit != null)
-                        newRow["UnitId"] = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault().Id;
-                    else
-                        newRow["UnitId"] = 1;
-                    mappedAttributes.Rows.Add(newRow);
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        // (char)59 = ';'
+                        string[] vars = line.Split((char)59);
+
+                        System.Data.DataRow newRow = mappedAttributes.NewRow();
+                        newRow["Name"] = vars[0];
+                        newRow["ShortName"] = vars[1];
+                        newRow["Description"] = vars[2];
+                        newRow["IsMultipleValue"] = vars[3];
+                        newRow["IsBuiltIn"] = vars[4];
+                        newRow["Owner"] = vars[5];
+                        newRow["ContainerType"] = vars[6];
+                        newRow["MeasurementScale"] = vars[7];
+                        newRow["EntitySelectionPredicate"] = vars[8];
+                        newRow["Self"] = vars[9];
+                        string DataType = vars[10];
+                        newRow["DataType"] = DataType;
+                        string UnitAbbreviation = vars[11];
+                        newRow["Unit"] = UnitAbbreviation;
+                        newRow["Methodology"] = vars[12];
+                        newRow["Constraints"] = vars[13];
+                        newRow["ExtendedProperties"] = vars[14];
+                        newRow["GlobalizationInfos"] = vars[15];
+                        newRow["AggregateFunctions"] = vars[16];
+                        // add DataTypesId and UnitId to the mappedAttributes Table
+                        newRow["DataTypeId"] = dataTypeManager.Repo.Get().Where(dt => dt.Name.ToLower().Equals(DataType.ToLower())).FirstOrDefault().Id;
+                        Unit unit = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault();
+                        if (unit != null)
+                            newRow["UnitId"] = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault().Id;
+                        else
+                            newRow["UnitId"] = 1;
+                        mappedAttributes.Rows.Add(newRow);
+                    }
+                }
+                finally
+                {
+                    unitManager.Dispose();
+                    dataTypeManager.Dispose();
                 }
             }
             return mappedAttributes;      
@@ -305,31 +315,39 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers.SeedData
             {
                 StreamReader reader = new StreamReader(filePath + "\\units.csv");
 
-                UnitManager unitmanager = new UnitManager();
-                string line = "";
-                //jump over the first row
-                line = reader.ReadLine();
-                Dimension dim = new Dimension();
-
-                while ((line = reader.ReadLine()) != null)
+                UnitManager unitmanager = null;
+                try
                 {
-                    // (char)59 = ';'
-                    string[] vars = line.Split((char)59);
+                    unitmanager = new UnitManager();
+                    string line = "";
+                    //jump over the first row
+                    line = reader.ReadLine();
+                    Dimension dim = new Dimension();
 
-                    System.Data.DataRow newRow = mappedUnits.NewRow();
-                    newRow["Name"] = vars[0];
-                    newRow["Abbreviation"] = vars[1];
-                    newRow["Description"] = vars[2];
-                    string DimensionName = vars[3];
-                    newRow["DimensionName"] = DimensionName;
-                    newRow["MeasurementSystem"] = vars[4];
-                    newRow["DataTypes"] = vars[5];
-                    dim = unitmanager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(DimensionName.ToLower())).FirstOrDefault();
-                    if (dim != null)
-                        newRow["DimensionId"] = dim.Id;
-                    else
-                        newRow["DimensionId"] = 1;
-                    mappedUnits.Rows.Add(newRow);
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        // (char)59 = ';'
+                        string[] vars = line.Split((char)59);
+
+                        System.Data.DataRow newRow = mappedUnits.NewRow();
+                        newRow["Name"] = vars[0];
+                        newRow["Abbreviation"] = vars[1];
+                        newRow["Description"] = vars[2];
+                        string DimensionName = vars[3];
+                        newRow["DimensionName"] = DimensionName;
+                        newRow["MeasurementSystem"] = vars[4];
+                        newRow["DataTypes"] = vars[5];
+                        dim = unitmanager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(DimensionName.ToLower())).FirstOrDefault();
+                        if (dim != null)
+                            newRow["DimensionId"] = dim.Id;
+                        else
+                            newRow["DimensionId"] = 1;
+                        mappedUnits.Rows.Add(newRow);
+                    }
+                }
+                finally
+                {
+                    unitmanager.Dispose();
                 }
             }
             return mappedUnits;

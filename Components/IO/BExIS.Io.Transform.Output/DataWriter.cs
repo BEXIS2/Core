@@ -1,27 +1,23 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
+using BExIS.IO.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using Vaiona.Utils.Cfg;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
-using DocumentFormat.OpenXml.Drawing;
+using Vaiona.Utils.Cfg;
 using Path = System.IO.Path;
-using BExIS.RPM.Output;
 
 /// <summary>
 ///
@@ -36,47 +32,50 @@ namespace BExIS.IO.Transform.Output
     public abstract class DataWriter
     {
         #region public
-            /// <summary>
-            /// if a few errors occur, they are stored here
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref="Error"/>    
-            public List<Error> ErrorMessages { get; set; }
+        /// <summary>
+        /// if a few errors occur, they are stored here
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="Error"/>    
+        public List<Error> ErrorMessages { get; set; }
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public String[] VisibleColumns { get; set; }
-		 
-	    #endregion
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public String[] VisibleColumns { get; set; }
+
+        #endregion
 
         #region protected
 
-            /// <summary>
-            /// File to be read as stream
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref="Stream"/>  
-            protected Stream FileStream { get; set; }
+        /// <summary>
+        /// File to be read as stream
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="Stream"/>  
+        protected Stream FileStream { get; set; }
 
-            /// <summary>
-            /// List of VariableIdentifiers 
-            /// with VariableName and VariableID
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            protected List<VariableIdentifier> VariableIdentifiers = new List<VariableIdentifier>();
+        /// <summary>
+        /// List of VariableIdentifiers 
+        /// with VariableName and VariableID
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        protected List<VariableIdentifier> VariableIdentifiers = new List<VariableIdentifier>();
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            protected List<List<string>> VariableIdentifierRows = new List<List<string>>();
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        protected List<List<string>> VariableIdentifierRows = new List<List<string>>();
 
-            protected StructuredDataStructure dataStructure = null;
+        protected StructuredDataStructure dataStructure = null;
+
+        // line number
+        protected int rowIndex;
         #endregion
 
         //managers
@@ -117,19 +116,19 @@ namespace BExIS.IO.Transform.Output
                     return null;
                 }
 
-                
+
                 return stream;
-  
+
             }
             else
                 return null;
         }
 
-      
+
         public string CreateFile(string filepath)
         {
             string dicrectoryPath = Path.GetDirectoryName(filepath);
-            createDicrectoriesIfNotExist(dicrectoryPath);
+            createDirectoriesIfNotExist(dicrectoryPath);
 
             try
             {
@@ -149,7 +148,7 @@ namespace BExIS.IO.Transform.Output
 
         public string CreateFile(string path, string filename)
         {
-            createDicrectoriesIfNotExist(path);
+            createDirectoriesIfNotExist(path);
 
             string dataPath = Path.Combine(path, filename);
 
@@ -169,8 +168,8 @@ namespace BExIS.IO.Transform.Output
             return dataPath;
         }
 
-        protected void createDicrectoriesIfNotExist(string path)
-        { 
+        protected void createDirectoriesIfNotExist(string path)
+        {
             // if folder not exist
             if (!Directory.Exists(path))
             {
@@ -185,7 +184,7 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref="AppConfiguration"/>
         /// <param></param>       
-        public string GetFullStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        public string GetFullStorePath(long datasetId, long datasetVersionOrderNr, string title, string extension)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
 
@@ -201,11 +200,34 @@ namespace BExIS.IO.Transform.Output
                 }
             }
 
-            return Path.Combine(storePath,datasetId.ToString()+"_"+datasetVersionOrderNr.ToString() + "_" + title + extention);
+            return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extension);
         }
 
         /// <summary>
-        /// Generate the gernal store path based on
+        /// create the general store path under AppConfiguration.DataPath
+        /// using the given namespace and file name
+        /// </summary>
+        /// <param name="ns"></param>
+        /// <param name="title"></param>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        public string GetFullStorePath(string ns, string title, string extension)
+        {
+            string dataPath = AppConfiguration.DataPath;
+
+            // data/datasets/ns/
+            string storePath = Path.Combine(dataPath, "Datasets", ns);
+
+            if (Directory.Exists(dataPath))
+            {
+                createDirectoriesIfNotExist(storePath);
+            }
+
+            return Path.Combine(storePath, title + extension);
+        }
+
+        /// <summary>
+        /// Generate the general store path based on
         /// AppConfiguration.DataPath without filename
         /// </summary>
         /// <param name="datasetId"></param>
@@ -237,11 +259,11 @@ namespace BExIS.IO.Transform.Output
         /// <param name="datasetId"></param>
         /// <param name="datasetVersionOrderNr"></param>
         /// <param name="title"></param>
-        /// <param name="extention"></param>
+        /// <param name="extension"></param>
         /// <returns></returns>
-        public string GetNewTitle(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        public string GetNewTitle(long datasetId, long datasetVersionOrderNr, string title, string extension)
         {
-            return datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention;
+            return datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extension;
         }
 
         /// <summary>
@@ -252,11 +274,11 @@ namespace BExIS.IO.Transform.Output
         /// <param name="datasetId"></param>
         /// <param name="datasetVersionOrderNr"></param>
         /// <param name="title"></param>
-        /// <param name="extention"></param>
+        /// <param name="extension"></param>
         /// <returns></returns>
-        public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extension)
         {
-            return IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "data", extention);
+            return IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "data", extension);
         }
 
         /// <summary>
@@ -309,9 +331,9 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="dataStructureId"></param>
-        /// <param name="extention"></param>
+        /// <param name="extension"></param>
         /// <returns></returns>
-        public string GetDataStructureTemplatePath(long dataStructureId, string extention)
+        public string GetDataStructureTemplatePath(long dataStructureId, string extension)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
 
@@ -342,7 +364,7 @@ namespace BExIS.IO.Transform.Output
                 }
                 //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
                 return Path.Combine(AppConfiguration.DataPath, path);
-            }          
+            }
             path = provider.CreateTemplate(dataStructure);
             return Path.Combine(AppConfiguration.DataPath, path);
         }
@@ -359,7 +381,7 @@ namespace BExIS.IO.Transform.Output
             if (dataStructure == null)
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
-                dataStructure =  dataStructureManager.StructuredDataStructureRepo.Get(id);
+                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             }
 
             return dataStructure;
@@ -386,7 +408,7 @@ namespace BExIS.IO.Transform.Output
 
                 // get MetadataStructure 
                 MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
                 XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
 
                 string xpath = temp.Attribute("value").Value.ToString();
@@ -409,7 +431,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected List<Variable> GetSubsetOfVariables(List<Variable> source, String[] selected)
         {
-            return source.Where(p=> selected.Contains(p.Id.ToString())).ToList();
+            return source.Where(p => selected.Contains(p.Id.ToString())).ToList();
         }
 
         /// <summary>
@@ -435,7 +457,7 @@ namespace BExIS.IO.Transform.Output
             return "";
         }
 
-        protected string GetFormatedValue( object value, Dlm.Entities.DataStructure.DataType datatype, string format)
+        protected string GetFormatedValue(object value, Dlm.Entities.DataStructure.DataType datatype, string format)
         {
             string tmp = value.ToString();
 
@@ -448,28 +470,28 @@ namespace BExIS.IO.Transform.Output
                     case DataTypeCode.Int16:
                     case DataTypeCode.Int32:
                     case DataTypeCode.Int64:
-                    {
-                        Int64 newValue = Convert.ToInt64(tmp);
-                        return newValue.ToString(format);
-                    }
+                        {
+                            Int64 newValue = Convert.ToInt64(tmp);
+                            return newValue.ToString(format);
+                        }
 
                     case DataTypeCode.UInt16:
                     case DataTypeCode.UInt32:
                     case DataTypeCode.UInt64:
-                    {
-                        UInt64 newValue = Convert.ToUInt64(tmp);
-                        return newValue.ToString(format);
-                    }
+                        {
+                            UInt64 newValue = Convert.ToUInt64(tmp);
+                            return newValue.ToString(format);
+                        }
 
                     case DataTypeCode.Decimal:
                     case DataTypeCode.Double:
-                    {
-                        Double newValue = Convert.ToDouble(tmp);
-                        return newValue.ToString(format);
-                    }
+                        {
+                            Double newValue = Convert.ToDouble(tmp);
+                            return newValue.ToString(format);
+                        }
 
                     case DataTypeCode.DateTime:
-                    {
+                        {
                             DateTime dateTime;
 
                             if (DateTime.TryParse(tmp, out dateTime))
@@ -493,12 +515,168 @@ namespace BExIS.IO.Transform.Output
                             }
 
                             return tmp;
- ;                   }
+                            ;
+                        }
                     default: return tmp;
                 }
             }
 
             return "";
         }
+
+        #region abstract definitions
+
+        // startup / close actions
+        protected abstract void Init(string filepath, long dataStructureId);
+        protected abstract void Close();
+
+        // add table header
+        protected abstract bool AddHeader(StructuredDataStructure header);
+        protected abstract bool AddHeader(DataColumnCollection header);
+
+        // add a single row to the output file
+        protected abstract bool AddRow(AbstractTuple tuple, long rowIndex);
+        protected abstract bool AddRow(DataRow row, long rowIndex);
+
+        #endregion
+
+        #region add data to files
+
+        /// <summary>
+        /// Add Datatuples to a Excel Template file
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataTuples"> Datatuples to add</param>
+        /// <param name="filePath">Path of the excel template file</param>
+        /// <param name="dataStructureId">Id of datastructure</param>
+        /// <returns>List of Errors or null</returns>
+        public List<Error> AddDataTuples(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId)
+        {
+            if (File.Exists(filePath))
+            {
+
+                // setup file
+                Init(filePath, dataStructureId);
+
+                // add header
+                StructuredDataStructure sds = GetDataStructure(dataStructureId);
+                AddHeader(sds);
+
+                // iterate over all input rows
+                DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
+                foreach (var tuple in tupleIterator)
+                {
+                    // add row and increment current index
+                    if (AddRow(tuple, rowIndex) && !tuple.Id.Equals(dataTuplesIds.Last()))
+                    {
+                        rowIndex += 1;
+                    }
+                }
+
+                // close the excel file
+                Close();
+
+            }
+
+            return ErrorMessages;
+        }
+
+        /// <summary>
+        /// Add Datatuples to a Excel Template file
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataTuples"> Datatuples to add</param>
+        /// <param name="filePath">Path of the excel template file</param>
+        /// <param name="dataStructureId">Id of datastructure</param>
+        /// <returns>List of Errors or null</returns>
+        public List<Error> AddDataTuples(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
+        {
+            if (File.Exists(filePath))
+            {
+
+                // setup file
+                Init(filePath, dataStructureId);
+
+                // add header
+                StructuredDataStructure sds = GetDataStructure(dataStructureId);
+                AddHeader(sds);
+
+                // iterate over all input rows
+                foreach (DataTuple dataTuple in dataTuples)
+                {
+                    // add row and increment current index
+                    if (AddRow(dataTuple, rowIndex) && !dataTuple.Equals(dataTuples.Last()))
+                    {
+                        rowIndex += 1;
+                    }
+                }
+
+                // close the excel file
+                Close();
+
+            }
+
+            return ErrorMessages;
+        }
+
+        /// <summary>
+        /// add all rows of the given datatable to a file using the given datastructure
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="filePath"></param>
+        /// <param name="dataStructureId"></param>
+        /// <returns></returns>
+        public List<Error> AddDataTuples(DataTable table, string filePath, long dataStructureId)
+        {
+
+            if (File.Exists(filePath))
+            {
+
+                // setup excel file
+                Init(filePath, dataStructureId);
+
+                // add header
+                AddHeader(table.Columns);
+
+                // iterate over all input rows
+                foreach (DataRow row in table.Rows)
+                {
+                    // add row and increment current index
+                    if (AddRow(row, rowIndex))
+                    {
+                        rowIndex += 1;
+                    }
+                }
+
+
+
+                // close the excel file
+                Close();
+
+            }
+
+            return ErrorMessages;
+        }
+
+        #endregion
+
+        #region add data to files (compatibility aliases)
+        public List<Error> AddDataTuplesToTemplate(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId)
+        {
+            return AddDataTuples(datasetManager, dataTuplesIds, filePath, dataStructureId);
+        }
+
+        public List<Error> AddDataTuplesToTemplate(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
+        {
+            return AddDataTuples(dataTuples, filePath, dataStructureId);
+        }
+
+        public List<Error> AddDataTuplesToFile(DataTable table, string filePath, long dataStructureId)
+        {
+            return AddDataTuples(table, filePath, dataStructureId);
+        }
+        #endregion
     }
 }

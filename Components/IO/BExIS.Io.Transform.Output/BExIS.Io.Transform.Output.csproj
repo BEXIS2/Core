@@ -46,6 +46,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -76,17 +80,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
+    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
@@ -104,7 +104,7 @@
       <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Io.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
+    <ProjectReference Include="..\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

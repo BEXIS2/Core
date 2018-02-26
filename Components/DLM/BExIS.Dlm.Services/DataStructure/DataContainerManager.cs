@@ -7,17 +7,43 @@ using BExIS.Dlm.Services.Helpers;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class DataContainerManager
+    public class DataContainerManager: IDisposable
     {
         ConstraintHelper helper = new ConstraintHelper();
 
+        private IUnitOfWork guow = null;
         public DataContainerManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.DataAttributeRepo = uow.GetReadOnlyRepository<DataAttribute>();
-            this.ExtendedPropertyRepo = uow.GetReadOnlyRepository<ExtendedProperty>();
-            this.UsageRepo = uow.GetReadOnlyRepository<Parameter>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.DataAttributeRepo = guow.GetReadOnlyRepository<DataAttribute>();
+            this.ExtendedPropertyRepo = guow.GetReadOnlyRepository<ExtendedProperty>();
+            this.UsageRepo = guow.GetReadOnlyRepository<Parameter>();
         }
+
+        private bool isDisposed = false;
+        ~DataContainerManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                        isDisposed = true;
+                }
+            }
+        }
+
 
         #region Data Readers
 
@@ -142,7 +168,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    
@@ -225,7 +253,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<ExtendedProperty> repo = uow.GetRepository<ExtendedProperty>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);

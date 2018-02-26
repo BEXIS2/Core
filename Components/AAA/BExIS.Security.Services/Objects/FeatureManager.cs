@@ -1,29 +1,68 @@
 ﻿using BExIS.Security.Entities.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public class FeatureManager
+    public class FeatureManager : IDisposable
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public FeatureManager()
         {
-            var uow = this.GetUnitOfWork();
-
-            FeatureRepository = uow.GetReadOnlyRepository<Feature>();
+            _guow = this.GetIsolatedUnitOfWork();
+            FeatureRepository = _guow.GetReadOnlyRepository<Feature>();
         }
 
-        public IQueryable<Feature> Entities => FeatureRepository.Query();
+        ~FeatureManager()
+        {
+            Dispose(true);
+        }
+
         public IReadOnlyRepository<Feature> FeatureRepository { get; }
+        public IQueryable<Feature> Features => FeatureRepository.Query();
 
         public void Create(Feature feature)
         {
             using (var uow = this.GetUnitOfWork())
             {
+                if (feature == null)
+                    return;
+
+                if (Exists(feature.Name, feature.Parent))
+                    return;
+
                 var featureRepository = uow.GetRepository<Feature>();
                 featureRepository.Put(feature);
                 uow.Commit();
+            }
+        }
+
+        public Feature Create(string name, string description, Feature parent = null)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                if (string.IsNullOrEmpty(name))
+                    return null;
+
+                if (Exists(name, parent))
+                    return null;
+
+                var feature = new Feature()
+                {
+                    Name = name,
+                    Description = description,
+                    Parent = parent
+                };
+
+                var featureRepository = uow.GetRepository<Feature>();
+                featureRepository.Put(feature);
+                uow.Commit();
+
+                return feature;
             }
         }
 
@@ -37,28 +76,73 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public bool Exists(string name, Feature parent)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetReadOnlyRepository<Feature>();
+
+                if (parent == null)
+                    return featureRepository.Query(f => f.Name.ToUpperInvariant() == name.ToUpperInvariant() && f.Parent == null).Count() == 1;
+
+                return featureRepository.Query(f => f.Name.ToUpperInvariant() == name.ToUpperInvariant() && f.Parent.Id == parent.Id).Count() == 1;
+            }
+        }
+
         public Feature FindById(long featureId)
-        {
-            return FeatureRepository.Get(featureId);
-        }
-
-        public Feature FindByName(string groupName)
-        {
-            return FeatureRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
-        }
-
-        public List<Feature> FindRoots()
-        {
-            return FeatureRepository.Query(f => f.Parent == null).ToList();
-        }
-
-        public void Update(Feature feature)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var featureRepository = uow.GetRepository<Feature>();
-                featureRepository.Put(feature);
+                return featureRepository.Get(featureId);
+            }
+        }
+
+        public Feature FindByName(string groupName)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetRepository<Feature>();
+                return featureRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
+            }
+        }
+
+        public List<Feature> FindRoots()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetRepository<Feature>();
+                return featureRepository.Query(f => f.Parent == null).ToList();
+            }
+        }
+
+        public void Update(Feature entity)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetRepository<Feature>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
+            }
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
             }
         }
     }

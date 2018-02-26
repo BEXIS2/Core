@@ -1,57 +1,6 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
-@model IEnumerable<FeatureTreeViewItemModel>
-@(Html.Telerik().TreeView()
-        .Name("treeViewFeatures")
-        .BindTo(Model, mappings =>
-        {
-            mappings.For<FeatureTreeViewItemModel>(binding => binding
-
-                .ItemDataBound((item, feature) =>
-                {
-                    item.Text = feature.FeatureName;
-                    item.Value = feature.Id.ToString();
-                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
-                })
-                .Children(feature => feature.Children));
-        })
-        .ClientEvents(events => events
-            .OnSelect("OnSelect")
-        )
-
-        .ExpandAll(true)
-)
-
-<script type="text/javascript">
-
-    $("#treeViewFeatures li div").click(function (e) {
-        $(e.target).find(".t-in").trigger("click");
-    });
-
-    function GetTreeView() {
-        return $('#treeViewFeatures').data('tTreeView');
-    }
-
-    function OnSelect(e) {
-        var featureId = GetTreeView().getItemValue(e.item);
-        var prevSelectedDiv = $(".bx-selected");
-        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
-
-        var selectedDiv = $(e.item).find("div")[0];
-        $(selectedDiv).addClass("bx-selected");
-
-        $('#subjects').empty();
-
-        $.get('@Url.Action("Subjects", "FeaturePermissions")',
-            { FeatureId: featureId },
-            function (contentData) {
-
-                $('#subjects').html(contentData);
-
-                truncateTitle();
-            });
-    }
-</script>
+@model IEnumerable<FeatureTreeViewModel>
 
 <style type="text/css">
     #TreeView_Features .t-minus {
@@ -99,3 +48,27 @@
         overflow-x: hidden;
     }
 </style>
+
+@(Html.Telerik().TreeView()
+      .Name("treeView_features")
+      .ShowCheckBox(true)
+      .BindTo(Model, mappings =>
+      {
+          mappings.For<FeatureTreeViewModel>(binding => binding
+
+              .ItemDataBound((item, feature) =>
+              {
+                  item.Text = feature.FeatureName;
+                  item.Value = feature.Id.ToString();
+                  item.Checked = feature.IsPublic;
+                  item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
+              })
+              .Children(feature => feature.Children));
+      })
+      .ClientEvents(events => events
+        .OnChecked("treeView_features_onChecked")
+        .OnSelect("treeView_features_onSelect")
+      )
+
+      .ExpandAll(true)
+)

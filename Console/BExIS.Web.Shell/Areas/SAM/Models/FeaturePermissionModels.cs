@@ -1,26 +1,36 @@
-﻿using BExIS.Security.Entities.Objects;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public class FeatureTreeViewItemModel
+    public class FeaturePermissionGridRowModel
     {
-        public List<FeatureTreeViewItemModel> Children { get; set; }
-        public string Description { get; set; }
-        public string FeatureName { get; set; }
-        public long Id { get; set; }
+        public bool EffectiveRight { get; set; }
+        public long FeatureId { get; set; }
 
-        public static FeatureTreeViewItemModel Convert(Feature feature)
+        public int FeaturePermissionType { get; set; }
+        public long SubjectId { get; set; }
+
+        public string SubjectName { get; set; }
+
+        public string SubjectType { get; set; }
+
+        public static FeaturePermissionGridRowModel Convert(Subject subject, long featureId, int featurePermissionType, bool effectiveRight)
         {
-            return new FeatureTreeViewItemModel()
+            return new FeaturePermissionGridRowModel()
             {
-                Id = feature.Id,
-                FeatureName = feature.Name,
-                Description = feature.Description,
+                FeatureId = featureId,
 
-                Children = feature.Children.Select(Convert).ToList()
+                SubjectId = subject.Id,
+                SubjectName = subject.Name,
+                SubjectType = subject is User ? "User" : "Group",
+
+                EffectiveRight = effectiveRight,
+                FeaturePermissionType = featurePermissionType
             };
         }
+    }
+
+    public class FeaturePermissionReadModel
+    {
     }
 }

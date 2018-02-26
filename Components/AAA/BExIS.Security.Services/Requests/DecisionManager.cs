@@ -36,17 +36,19 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public Decision FindByIdAsync(long decisionId)
+        public Decision FindById(long decisionId)
         {
             return DecisionRepository.Get(decisionId);
         }
 
-        public void Update(Decision decision)
+        public void Update(Decision entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var decisionRepository = uow.GetRepository<Decision>();
-                decisionRepository.Put(decision);
+                var repo = uow.GetRepository<Decision>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
         }

@@ -1,8 +1,8 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata.ReadSourceModel
+﻿@model BExIS.Modules.Dcm.UI.Models.ImportMetadata.ReadSourceModel
 @using Telerik.Web.Mvc.UI;
 @using System;
 @using System.Web.Configuration;
-@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Modules.Dcm.UI.Models;
 
 @{
     
@@ -21,6 +21,7 @@
         <div class="wizardStep_Description stepper">
             <p>Please specify a name for the new metadata structure. You may also enter a root node if only a part of the XSD is to be used (optional).</p>
             <p>Generating the new metadata structure in the system may take a few minutes, depending on the size and complexity of the XSD schema. Please wait for the confirmation message before heading to the next step.</p>
+            
         </div>
         
         <div class="wizardStep_Content stepper">
@@ -68,7 +69,7 @@
                                 },
                                 new {@class = "bx-button function"})
                         }
-
+                        <div class="preloader"></div>
                     </td>
                     <td></td>
                 </tr>
@@ -93,34 +94,36 @@
            }
        }
      </div>
-
+     
      <div class="wizardStep_Error stepper" style="top:120px">
 
         @Html.ValidationSummary(true)
 
-        @if (Model != null)
-        {
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
-                {
+         <ul class="error-list">
+             @if (Model != null)
+             {
+                 if (Model.ErrorList != null)
+                 {
+                     if (Model.ErrorList.Count == 0)
+                     {
 
 
-                }
-                else
-                { 
-                   <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
+                     }
+                     else
+                     {
+              
+                        foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        {
                             <li>@s.ToString()</li>
                         }
-                   </ul>
+         
 
-                }
-            }
+                     }
+                 }
 
-        }
-    </div>     
+             }
+         </ul>
+</div>     
 
 </div>
 
@@ -128,27 +131,39 @@
 
     function generateOnBegin()
     {
-        $('#preloader').show();
+        //$(".wizardStep_Error").Empty();
+        $('.preloader').preloader(16, "Generate Metadata Structure.",40);
     }
 
     function generateOnSuccess() {
-        $('#preloader').hide();
+        $('.preloader').removePreloader();
     }
 
-    $('#RootNode').change(function () {
+    $('#RootNode')
+        .change(function() {
 
-        var name = $('#RootNode').val();
+            var name = $('#RootNode').val();
 
-        $.post('@Url.Action("SetRootNode", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
-        })
+            $.post('@Url.Action("SetRootNode", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })',
+                    { name: name },
+                    function(response) {
+                    });
 
-    })
+        });
 
     $('#SchemaName').change(function () {
 
         var name = $('#SchemaName').val();
 
         $.post('@Url.Action("SetSchemaName", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
+
+            $(".error-list").empty();
+            if (response != true)
+            {
+               
+                $(".error-list").append("<li>" + response + "</li>");
+            }
+
         })
 
     })

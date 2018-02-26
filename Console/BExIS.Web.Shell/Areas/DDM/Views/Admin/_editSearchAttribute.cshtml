@@ -1,6 +1,6 @@
 ﻿@model SearchAttributeViewModel
 
-@using BExIS.Ddm.Model;
+@using BExIS.Utils.Models;
 @using BExIS.Modules.Ddm.UI.Models;
 
 @{
@@ -91,7 +91,7 @@
                         @Html.ValidationMessageFor(m => m.displayName)
                     </td>
                 </tr>
-                <tr>
+                @*<tr>
                     <td>
                          @(Html.LabelFor(m => m.sourceName))<span class="bx bx-required" title="Required">
                     </td>
@@ -100,7 +100,7 @@
 
                          @Html.ValidationMessageFor(m => m.sourceName)
                     </td>
-                </tr>
+                </tr>*@
                 <tr>
                     <td style="vertical-align:top;">
                         @(Html.LabelFor(m => m.metadataNames))<span class="bx bx-required" title="Required">

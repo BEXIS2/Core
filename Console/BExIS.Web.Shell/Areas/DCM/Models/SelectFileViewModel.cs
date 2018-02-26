@@ -1,10 +1,10 @@
-﻿using System;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dcm.UI.Models
 
         public List<string> SupportedFileExtentions = new List<string>();
 
-        
+
         public StepInfo StepInfo { get; set; }
     }
 }

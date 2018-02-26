@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Xml.Schema;
 
 namespace BExIS.Xml.Helpers
@@ -102,12 +98,12 @@ namespace BExIS.Xml.Helpers
 
         public static List<XmlSchemaElement> GetAllElements(XmlSchemaObject obj, bool recursive, List<XmlSchemaElement> allElements)
         {
-            List<XmlSchemaElement> elements  = new List<XmlSchemaElement>(); 
+            List<XmlSchemaElement> elements = new List<XmlSchemaElement>();
 
             // Element
             if (obj.GetType().Equals(typeof(XmlSchemaElement)))
             {
-                XmlSchemaElement element  = (XmlSchemaElement)obj;
+                XmlSchemaElement element = (XmlSchemaElement)obj;
 
                 XmlSchemaComplexType complexType = element.ElementSchemaType as XmlSchemaComplexType;
 
@@ -120,6 +116,20 @@ namespace BExIS.Xml.Helpers
                     {
                         // Iterate over each XmlSchemaElement in the Items collection.
                         foreach (XmlSchemaObject childElement in sequence.Items)
+                        {
+                            elements = GetElements(childElement, elements, recursive, allElements);
+                        }
+                    }
+
+                    #endregion
+
+                    #region sequence
+                    /// Get the sequence particle of the complex type.
+                    XmlSchemaAll all = complexType.ContentTypeParticle as XmlSchemaAll;
+                    if (all != null)
+                    {
+                        // Iterate over each XmlSchemaElement in the Items collection.
+                        foreach (XmlSchemaObject childElement in all.Items)
                         {
                             elements = GetElements(childElement, elements, recursive, allElements);
                         }
@@ -181,19 +191,19 @@ namespace BExIS.Xml.Helpers
             {
                 XmlSchemaGroup group = obj as XmlSchemaGroup;
 
-              #region sequence
-                    /// Get the sequence particle of the complex type.
-                    XmlSchemaSequence sequence = group.Particle as XmlSchemaSequence;
-                    if (sequence != null)
+                #region sequence
+                /// Get the sequence particle of the complex type.
+                XmlSchemaSequence sequence = group.Particle as XmlSchemaSequence;
+                if (sequence != null)
+                {
+                    // Iterate over each XmlSchemaElement in the Items collection.
+                    foreach (XmlSchemaObject childElement in sequence.Items)
                     {
-                        // Iterate over each XmlSchemaElement in the Items collection.
-                        foreach (XmlSchemaObject childElement in sequence.Items)
-                        {
-                            elements = GetElements(childElement, elements, recursive, allElements);
-                        }
+                        elements = GetElements(childElement, elements, recursive, allElements);
                     }
+                }
 
-              #endregion
+                #endregion
 
                 #region choice
                 // check if it is e choice
@@ -228,7 +238,7 @@ namespace BExIS.Xml.Helpers
             //    }
             //}
 
-        
+
             return elements;
 
         }
@@ -246,7 +256,7 @@ namespace BExIS.Xml.Helpers
                     {
                         //if (!child.SchemaTypeName.Name.Equals(parentTypeName))
                         //{
-                        
+
                         list.Add(child);
 
                         if (recursive)
@@ -299,6 +309,10 @@ namespace BExIS.Xml.Helpers
                         XmlSchemaElement refElement = allElements.Where(e => e.QualifiedName.Equals(child.RefName)).FirstOrDefault();
                         if (refElement != null)
                         {
+                            //set parameters from the child to the refernce
+                            refElement.MinOccurs = child.MinOccurs;
+                            refElement.MaxOccurs = child.MaxOccurs;
+
                             list.Add(refElement);
 
                             if (recursive)
@@ -352,11 +366,11 @@ namespace BExIS.Xml.Helpers
                     list = GetElements(childElement, list, recursive, allElements);
                 }
             }
-            else 
+            else
                 if (element.GetType().Equals(typeof(XmlSchemaSequence)))
             {
                 XmlSchemaSequence sequence = (XmlSchemaSequence)element;
-                    
+
                 // Iterate over each XmlSchemaElement in the Items collection.
                 foreach (XmlSchemaObject childElement in sequence.Items)
                 {
@@ -456,7 +470,7 @@ namespace BExIS.Xml.Helpers
                 }
                 #endregion
             }
-     
+
             return false;
         }
 

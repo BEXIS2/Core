@@ -1,43 +1,41 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public static class GroupExtensions
-    {
-        public static IQueryable<GroupGridRowModel> ToGroupGridRowModel(this IQueryable<Group> source)
-        {
-            return source.Select(g => new GroupGridRowModel()
-            {
-                Description = g.Description,
-                GroupName = g.Name,
-                GroupType = g.GroupType,
-                Id = g.Id
-            });
-        }
-    }
-
     public class CreateGroupModel
     {
         public string Description { get; set; }
-
-        [Required]
-        public string GroupName { get; set; }
-
-        [Required]
-        public int GroupType { get; set; }
+        public string Name { get; set; }
+        public int Type { get; set; }
     }
 
     public class DeleteGroupModel
     {
     }
 
+    public class GroupFeaturePermissionGridRowModel
+    {
+        public string Description { get; set; }
+        public string GroupName { get; set; }
+        public bool HasFeaturePermission { get; set; }
+        public long Id { get; set; }
+
+        public static GroupFeaturePermissionGridRowModel Convert(Group group)
+        {
+            return new GroupFeaturePermissionGridRowModel()
+            {
+                Description = group.Description,
+                GroupName = group.Name,
+                Id = group.Id,
+            };
+        }
+    }
+
     public class GroupGridRowModel
     {
         public string Description { get; set; }
         public string GroupName { get; set; }
-        public GroupType GroupType { get; set; }
         public long Id { get; set; }
 
         public static GroupGridRowModel Convert(Group group)
@@ -46,20 +44,49 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Description = group.Description,
                 GroupName = group.Name,
-                GroupType = group.GroupType,
                 Id = group.Id
             };
         }
     }
 
+    public class GroupMembershipGridRowModel
+    {
+        public string Description { get; set; }
+        public long Id { get; set; }
+        public bool IsUserInGroup { get; set; }
+        public string Name { get; set; }
+
+        public static GroupMembershipGridRowModel Convert(Group group, long userId)
+        {
+            return new GroupMembershipGridRowModel()
+            {
+                Description = group.Description,
+                Name = group.Name,
+                Id = group.Id,
+                IsUserInGroup = group.Users.Any(u => u.Id == userId)
+            };
+        }
+    }
+
+    public class ReadGroupModel
+    {
+    }
+
     public class UpdateGroupModel
     {
         public string Description { get; set; }
-
-        [Required]
-        public string GroupName { get; set; }
-
-        [Required]
         public int GroupType { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public static UpdateGroupModel Convert(Group group)
+        {
+            return new UpdateGroupModel()
+            {
+                Id = group.Id,
+                Name = group.Name,
+                Description = group.Description
+            };
+        }
     }
 }

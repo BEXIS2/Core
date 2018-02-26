@@ -1,28 +1,40 @@
 ﻿@using BExIS.Modules.Dim.UI.Models.Mapping
+@using Microsoft.Web.Helpers
 @using Telerik.Web.Mvc.UI
-@model BExIS.Modules.Dim.UI.Models.Mapping.MappingMainModel
+@model MappingMainModel
+
 
 <div id="DIM_MappingContainer">
 
+@{
+    ViewBag.Title = "Metadata Structure Mapping";
+}
+    @section Information
+    {
+        Here you are able to create/edit mappings between two metadata structures or a metadata structure and system information defined in other modules (e.g. party package).
+        <p><a href="/DIM/Help/Index/#_mapping" class="bx-informationLink" title="go to help" target="_blank">More</a></p>
+    }
+
+
     @section Scripts{
 
-        <link href="@Url.Content(Themes.GetResourcePath("Styles/DIM","bexis-dim.css"))" rel="stylesheet" type="text/css" />
-        <script src="@Url.Content("~/Scripts/DIM/bexis.dim.mapping.js")"></script>
-        <script src="@Url.Content("~/Scripts/DIM/isotope.pkgd.min.js")"></script>
-        <script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
+        <link href="@Url.Content("~/Areas/DIM/Content/DIM/bexis-dim.css")" rel="stylesheet" type="text/css" />
+        
+        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/bexis.dim.mapping.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/isotope.pkgd.min.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
     }
 
     @section LeftPane
     {
-        <span>
+        @*<span>
             @(Html.Telerik().DropDownList()
                                 .Name("SelectSource")
                                 .Placeholder("Select")
                                 .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
                                 .ClientEvents(events => events.OnChange("onChangeSourceDropDown"))
                                 .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))
-
-        </span>
+        </span>*@
 
         @if (Model.Source != null)
         {
@@ -30,13 +42,25 @@
         }
     }
 
+    @Html.ActionLink(" ", "Switch", "Mapping", new 
+    {
+        sourceId =   Model.Source.Id,
+        targetId =  Model.Target.Id,
+        sourceType =Model.Source.Type,
+        targetType =Model.Target.Type,
+
+    }, new
+    {
+        @class = "bx-button fa fa-exchange function"
+    })
+
 
     @Html.Partial("Mappings",Model.ParentMappings)
 
 
     @section RightPane
     {
-        <span>
+        @*<span>
             @(Html.Telerik().DropDownList()
                             .Name("SelectTarget")
                             .Placeholder("Select")
@@ -44,7 +68,7 @@
                             .ClientEvents(events => events.OnChange("onChangeTargetDropDown"))
                             .BindTo(new SelectList(Model.SelectionList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))
 
-        </span>
+        </span>*@
 
         @if (Model.Target != null)
         {
@@ -70,15 +94,21 @@
         var sourceInfo = $(source).find(".le-root-info")[0];
         var sourceType = $(sourceInfo).find("#Type").text();
 
+        var target = $("#le-root-target");
+        console.log(target);
+        var targetId = $(target).attr("id").split("_")[1];
+        var targetInfo = $(target).find(".le-root-info")[0];
+        var targetType = $(targetInfo).find("#Type").text();
+
 
         //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
         var sendData =
         {
             "sourceId": sourceId,
-            "targetId": id,
+            "targetId": targetId,
             "sourceType": sourceType,
-            "targetType": type,
-            "position":"Target"
+            "targetType": targetType,
+            "position":"Source"
         }
 
         $("#le-root-target").preloader(12,"Loading Target");

@@ -5,10 +5,10 @@
     It allows for exporting data, metadata, and schema.
   </Description>
   <Assemblies>
-    <Assembly fullName="BExIS.Dim.Entities" role="Entity"/>
-    <Assembly fullName="BExIS.Dim.Helpers" role="Helper"/>
-    <Assembly fullName="BExIS.Dim.Orm.NH" role="ORM"/>
-    <Assembly fullName="BExIS.Dim.Services" role="Services"/>
+    <Assembly fullName="BExIS.Dim.Entities" role=""/>
+    <Assembly fullName="BExIS.Dim.Helpers" role=""/>
+    <!--<Assembly fullName="BExIS.Dim.Orm.NH" role=""/>-->
+    <Assembly fullName="BExIS.Dim.Services" role=""/>
     <!--<Assembly fullName="BExIS.Modules.Dim.UI" role="UI"/>-->
   </Assemblies>
   <Dependencies>
@@ -24,6 +24,23 @@
             title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
             controller="Help" action="index"
             extends="./lunchbarRoot/help"
+            />
+
+    <Export tag="internalAction" id="publishDataset" order="1"
+                title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""
+                controller="submission" action="getPublishDataPartialView"
+                extends=""
+            />
+    <Export tag="internalAction" id="goToMappingViewWithSourceMetadata" order="1"
+                title="go the the mapping view where source = metadatatstructure" description="call a action that returns a view where you can map elemnts" icon=""
+                controller="mapping" action="index"
+                extends=""
+            />
+
+    <Export tag="internalAction" id="goToMappingView" order="1"
+                title="go the the mapping view where source can be no metadata Structure" description="call a action that returns a view where you can map elemnts" icon=""
+                controller="mapping" action="mapping"
+                extends=""
             />
   </Exports>
 </Manifest>

@@ -1,22 +1,22 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
 
 @using Telerik.Web.Mvc.UI;
+@using Vaiona.Web.Mvc.Modularity
 
 @section Information
 {
     This is a detailed view on all parts of a dataset. Depending on your
     permissions your are able to view, edit, or download either the
     metadata, the primary data or the data structure.<br/>
-    You may also set
-    permissions for this particular dataset
+    You may also set permissions for this particular dataset
    <p>
-    <a href="/ddm/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    <a href="~/ddm/Help/Index/#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
 </p>
 
 }
 
 @{
-    <script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>*@
 }
 
 
@@ -28,11 +28,12 @@
                 <h2>@Model.Title ( @Model.Id )</h2>
             </td>
             <td>
-                <div id="preloaderContainer" />
+                <div id="preloaderContainer"/>
             </td>
         </tr>
     </table>
 </div>
+
 @if(@Model != null)
 {
     if (ViewData.ModelState.IsValid)
@@ -40,9 +41,11 @@
 
         @(Html.Telerik().TabStrip()
               .Name("ShowDataTabStrip")
-              .SelectedIndex(0)     
+              .SelectedIndex(0)
               .Items(tabs =>
               {
+
+                  //ToDo Recator Modularity -> load metadata from from dcm
 
                   tabs.Add()
                       .Text("Metadata")
@@ -66,16 +69,18 @@
 
                   tabs.Add()
                       .Text("Dataset Permissions")
-                      .LoadContentFrom("Subjects", "Data", new {area = "ddm", dataId = @Model.Id})
+                      .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
                       .Enabled(false)
-                      .HtmlAttributes(new {id = "datapermissions"});
+                      .HtmlAttributes(new { id = "datapermissions" });
 
 
                   tabs.Add()
                       .Text("Publish")
-                      .LoadContentFrom("publishData", "Data", new {area = "ddm", datasetId = @Model.Id})
-                      .Enabled(false)
-                      .HtmlAttributes(new {id = "prepare"});
+                      //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                        .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+                        .Enabled(false)
+                        .HtmlAttributes(new { id = "prepare" });
+
 
               })
               .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
@@ -86,87 +91,111 @@
     }
 }
 
+
 <script type="text/javascript">
+    function grid_subjects_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $("#grid_subjects tbody input:checkbox").click(function () {
+            if ($(this).is(':checked')) {
+                $.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
+                    { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                    function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+            } else {
+                $.post('@Url.Action("RemoveRightFromEntityPermission", "UserPermissions", new { area = "sam" })',
+                    { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                    function () {
+                        $("#grid_subjects .t-refresh").trigger('click');
+                    });
+            }
+        });
+    }
+
+    $("#MetadataEditor").ready(function() {
 
 
-
-
-$("#MetadataEditor").ready(function() {
-            
-
-});
-
-$(document).ready(function () {
-
-    $("#preloaderContainer").preloader(20, "Loading...");
-    resetAllTelerikIconTitles();
-
-    $(document).bind("MetadataFormIsReady", function () {
-        //alert("m is ready");
-        var viewAccess = '@Model.ViewAccess';
-        var grantAccess = '@Model.GrantAccess';
-
-        var tabStrip = $(".t-tabstrip");
-        //console.log(tabStrip);
-        //console.log(viewAccess);
-        //console.log(grantAccess);
-
-
-        $("li#datastructure").removeClass("t-state-disabled");
-        //console.log($(tabStrip).find("li #datastructure"));
-
-        if (viewAccess === "True") {
-            $("li#primarydata").removeClass("t-state-disabled");
-            $("li#prepare").removeClass("t-state-disabled");
-        }
-
-        if (grantAccess === "True") {
-            $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
-        }
-
-        //console.log($("li", tabStrip.element));
-        var items = $("li", tabStrip.element);
-        //console.log(items);
-        //tabStrip.enable(items);
-
-        $("#preloaderContainer").removePreloader();
     });
 
-});
+    $(document).ready(function () {
+
+        $("#preloaderContainer").preloader(20, "Loading...");
+        resetAllTelerikIconTitles();
+
+        $(document).bind("MetadataFormIsReady", function () {
+            //alert("m is ready");
+            var viewAccess = '@Model.ViewAccess';
+            var grantAccess = '@Model.GrantAccess';
+
+            var tabStrip = $(".t-tabstrip");
+            //console.log(tabStrip);
+            //console.log(viewAccess);
+            //console.log(grantAccess);
 
 
-function existsRightType(rights, rightType) {
-    if (jQuery.inArray(rightType, rights) != -1) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+            $("li#datastructure").removeClass("t-state-disabled");
+            //console.log($(tabStrip).find("li #datastructure"));
 
-function setDataPermission(value, rightType, subjectId, dataId, entityId) {
-    if (value) {
-        $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
-            $("#Grid_Subjects .t-refresh").trigger('click');
+            if (viewAccess === "True") {
+                $("li#primarydata").removeClass("t-state-disabled");
+                $("li#prepare").removeClass("t-state-disabled");
+            }
+
+            if (grantAccess === "True") {
+                $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+            }
+
+            //console.log($("li", tabStrip.element));
+            var items = $("li", tabStrip.element);
+            //console.log(items);
+            //tabStrip.enable(items);
+
+            $("#preloaderContainer").removePreloader();
         });
-    } else {
-        $.post('@Url.Action("DeleteDataPermission", "Data")',
-            { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType },
-            function(e) {
-                $("#Grid_Subjects .t-refresh").trigger('click');
-            });
-    }
-}
 
-function OnSelectShowDataTabStrip(e) {
+    });
+
+
+    function existsRightType(rights, rightType) {
+        if (jQuery.inArray(rightType, rights) != -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function OnSelectShowDataTabStrip(e) {
         if (e.item.id == "metadata") {
+
             setTimeout(function () {
                 bindMinimap(true);
-            },120);
-        } 
+
+                $(window).resize(function () {
+
+                        setTimeout(function () {
+                            //alert("r");
+                            bindMinimap();
+                        }, 120);
+                    });
+
+            }, 120);
+
+            
+        }
         else {
             $(".miniregion").remove();
             $(".minimap").remove();
+
+            $(window).off('resize');
+        }
+
+        if (e.item.id == "prepare") {
+
+            var tabStrip = $("#ShowDataTabStrip").data("tTabStrip");
+            tabStrip.reload($("#" + e.item.id));
         }
     }
 

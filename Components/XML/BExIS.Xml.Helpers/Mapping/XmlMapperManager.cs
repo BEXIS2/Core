@@ -1,21 +1,17 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
+using BExIS.Xml.Models.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Linq.Dynamic;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Schema;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
-using BExIS.Xml.Models;
-using BExIS.Xml.Models.Mapping;
-using BExIS.Xml.Services;
-using NHibernate.Persister.Collection;
 using Vaiona.Utils.Cfg;
 
 
@@ -80,13 +76,13 @@ namespace BExIS.Xml.Helpers.Mapping
 
             XmlNode header = mappingFile.GetElementsByTagName(XmlMapperTags.header.ToString())[0];
 
-            foreach(XmlNode xmlNode in header.ChildNodes)
+            foreach (XmlNode xmlNode in header.ChildNodes)
             {
-                if(xmlNode.NodeType.Equals(System.Xml.XmlNodeType.Element))
+                if (xmlNode.NodeType.Equals(System.Xml.XmlNodeType.Element))
                 {
                     #region create destination
 
-                    if(xmlNode.Name.Equals(XmlMapperTags.destination.ToString()))
+                    if (xmlNode.Name.Equals(XmlMapperTags.destination.ToString()))
                     {
                         xmlMappingHeader.Destination = Destination.Convert(xmlNode);
                     }
@@ -96,30 +92,30 @@ namespace BExIS.Xml.Helpers.Mapping
                     #region read & add packages
                     if (xmlNode.Name.Equals(XmlMapperTags.packages.ToString()))
                     {
-                        foreach(XmlNode childNode in xmlNode.ChildNodes)
+                        foreach (XmlNode childNode in xmlNode.ChildNodes)
                         {
                             if (childNode.Name.Equals(XmlMapperTags.package.ToString()))
                             {
                                 xmlMappingHeader.AddToPackages(childNode);
                             }
-                        
+
                         }
                     }
 
                     #endregion
 
                     #region read & add Attributes
-                        if (xmlNode.Name.Equals(XmlMapperTags.attributes.ToString()))
+                    if (xmlNode.Name.Equals(XmlMapperTags.attributes.ToString()))
+                    {
+                        foreach (XmlNode childNode in xmlNode.ChildNodes)
                         {
-                            foreach (XmlNode childNode in xmlNode.ChildNodes)
+                            if (childNode.Name.Equals(XmlMapperTags.attribute.ToString()))
                             {
-                                if (childNode.Name.Equals(XmlMapperTags.attribute.ToString()))
-                                {
-                                    xmlMappingHeader.AddToAttributes(childNode);
-                                }
-
+                                xmlMappingHeader.AddToAttributes(childNode);
                             }
+
                         }
+                    }
                     #endregion
 
                     #region read & add schemas
@@ -163,7 +159,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return xmlMapper;
         }
 
-        public XmlDocument Generate(XmlDocument metadataXml, long id,bool addEmptyNode = false)
+        public XmlDocument Generate(XmlDocument metadataXml, long id, bool addEmptyNode = false)
         {
             addAlsoEmptyNode = addEmptyNode;
 
@@ -176,9 +172,12 @@ namespace BExIS.Xml.Helpers.Mapping
             newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
             XmlNode root = newMetadata.DocumentElement;
 
-            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
-            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
-            root.Attributes.Append(rootAttr);
+            //FROM DS Comment  it out because of:
+            //by generate the namespaces should not added, otherwise single node function by xmldocument is not getting any node
+            //XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
+            //rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
+            //root.Attributes.Append(rootAttr);
+
 
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
@@ -205,7 +204,7 @@ namespace BExIS.Xml.Helpers.Mapping
             string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "Metadata " + id + ".xml");
 
             newMetadata.Save(path);
-   
+
             // the following call to Validate succeeds.
             //document.Validate(eventHandler);
 
@@ -214,7 +213,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return newMetadata;
         }
 
-        public string Export(XmlDocument metadataXml , long datasetVersionId, string exportTo)
+        public string Export(XmlDocument metadataXml, long datasetVersionId, string exportTo)
         {
             addAlsoEmptyNode = false;
 
@@ -226,22 +225,24 @@ namespace BExIS.Xml.Helpers.Mapping
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
-            //if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
-            //{
-            //    newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
-            //}
-            //else
-            //{
-            //    newMetadata.AppendChild(newMetadata.CreateElement("root"));
-            //}
+            if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            }
+            else
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement("root"));
+            }
 
-            XmlNode root = newMetadata.DocumentElement;
+
 
             // create nodes
             newMetadata = mapNode(newMetadata, null, metadataXml.DocumentElement);
 
             // add required attributes
             newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
+
+            XmlNode root = newMetadata.DocumentElement;
 
             //add root attributes
             foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
@@ -257,7 +258,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
 
             //add root namespaces
-            foreach ( KeyValuePair<string,string> package  in xmlMapper.Header.Packages )
+            foreach (KeyValuePair<string, string> package in xmlMapper.Header.Packages)
             {
                 XmlAttribute attr = newMetadata.CreateAttribute(package.Key);
                 attr.Value = package.Value;
@@ -276,7 +277,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return path;
         }
 
-        public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId,string exportTo, bool save = false)
+        public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId, string exportTo, bool save = false)
         {
             addAlsoEmptyNode = false;
 
@@ -287,6 +288,18 @@ namespace BExIS.Xml.Helpers.Mapping
             //add declaration
             XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             newMetadata.AppendChild(declaration);
+
+            // Add Schema
+            newMetadata.Schemas = xmlSchemaManager.SchemaSet;
+
+            //create namespaces
+
+            this.xmlSchemaManager.XmlNamespaceManager = new XmlNamespaceManager(newMetadata.NameTable);
+            foreach (var ns in xmlSchemaManager.Schema.Namespaces.ToArray())
+            {
+                this.xmlSchemaManager.XmlNamespaceManager.AddNamespace(ns.Name, ns.Namespace);
+            }
+
             //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
@@ -300,7 +313,7 @@ namespace BExIS.Xml.Helpers.Mapping
             //    newMetadata.AppendChild(newMetadata.CreateElement("root"));
             //}
 
-           
+
 
             // create nodes
             newMetadata = mapNode(newMetadata, null, metadataXml.DocumentElement);
@@ -310,9 +323,37 @@ namespace BExIS.Xml.Helpers.Mapping
 
 
             XmlNode root = newMetadata.DocumentElement;
-            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
-            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
-            root.Attributes.Append(rootAttr);
+            //root.Prefix = "";
+            XmlAttribute rootAttr = null;
+
+            //create NameSpaces
+            foreach (var nsp in xmlSchemaManager.Schema.Namespaces.ToArray())
+            {
+
+                string attrName = "xmlns";
+
+                if (!string.IsNullOrEmpty(nsp.Name)) attrName += ":" + nsp.Name;
+
+                if (root.Attributes[attrName] == null)
+                {
+                    rootAttr = newMetadata.CreateAttribute(attrName);
+                    rootAttr.Value = nsp.Namespace;
+                    root.Attributes.Append(rootAttr);
+
+                    //root.
+
+                    //Add Prefix to root
+                    if (nsp.Namespace.Equals(xmlSchemaManager.Schema.TargetNamespace))
+                    {
+                        if (!string.IsNullOrEmpty(nsp.Name))
+                            root.Prefix = nsp.Name;
+                        //root.NamespaceURI = xmlSchemaManager.Schema.TargetNamespace;
+                    }
+                }
+
+            }
+
+
 
             //add root attributes
             foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
@@ -347,7 +388,7 @@ namespace BExIS.Xml.Helpers.Mapping
         {
 
             string msg = "";
-  
+
             try
             {
                 doc.Schemas = this.xmlSchemaManager.SchemaSet;
@@ -365,74 +406,77 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             try
             {
-                
-            // load the xpath from source node
-            // x[1]\y[2]\f[1]
-            string sourceXPath = XmlUtility.GetDirectXPathToNode(sourceNode);
-            // x\y\f
-            string sourceXMppingFilePath = XmlUtility.GetXPathToNode(sourceNode);
 
-            //load route from mappingFile of the source node
-            XmlMappingRoute route = xmlMapper.GetRoute(sourceXMppingFilePath);
+                // load the xpath from source node
+                // x[1]\y[2]\f[1]
+                string sourceXPath = XmlUtility.GetDirectXPathToNode(sourceNode);
+                // x\y\f
+                string sourceXMppingFilePath = XmlUtility.GetXPathToNode(sourceNode);
 
-            XmlNode destinationPNode = destinationParentNode;
+                //load route from mappingFile of the source node
+                XmlMappingRoute route = xmlMapper.GetRoute(sourceXMppingFilePath);
 
-            // check if this source xpath is mapped in the xmlMapper
-            if (xmlMapper.SourceExist(sourceXMppingFilePath))
-            {
+                XmlNode destinationPNode = destinationParentNode;
 
-                if (!string.IsNullOrEmpty(sourceNode.InnerText) || addAlsoEmptyNode)
+                // check if this source xpath is mapped in the xmlMapper
+                if (xmlMapper.SourceExist(sourceXMppingFilePath))
                 {
-                    // get name of the destination node            
-                    string destinationTagName = route.GetDestinationTagNames();
 
-                    // get xpath of the destination node
-                    // X\XType\Y\F
-                    string destinationXMppingFilePath = route.GetDestinationXPath();
-
-                    //ToDo checkif the way to map is intern to extern or extern to intern
-                    // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
-                    string destinationXPath = "";
-
-                    if (this.TransactionDirection == TransactionDirection.ExternToIntern)
-                        destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, destinationXMppingFilePath);
-                    else
-                        destinationXPath = mapInternPathToExternPathWithIndex(sourceXPath, destinationXMppingFilePath);
-
-                    // create xmlnode in document
-                    XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
-                        destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
-                    destinationNode.InnerText = sourceNode.InnerText;
-
-                    //if (type == element), get content
-                    if (xmlMapper.IsSourceElement(sourceXPath))
+                    if (!string.IsNullOrEmpty(sourceNode.InnerText) || addAlsoEmptyNode)
                     {
+                        // get name of the destination node            
+                        string destinationTagName = route.GetDestinationTagNames();
 
+                        // get xpath of the destination node
+                        // X\XType\Y\F
+                        string destinationXMppingFilePath = route.GetDestinationXPath();
+
+                        //ToDo checkif the way to map is intern to extern or extern to intern
+                        // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
+                        string destinationXPath = "";
+
+                        if (this.TransactionDirection == TransactionDirection.ExternToIntern)
+                            destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, destinationXMppingFilePath);
+                        else
+                            destinationXPath = mapInternPathToExternPathWithIndex(sourceXPath, destinationXMppingFilePath);
+
+                        // create xmlnode in document
+
+
+
+                        XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
+                            destinationXPath, xmlSchemaManager.Elements, xmlSchemaManager.XmlNamespaceManager); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
+                        destinationNode.InnerText = sourceNode.InnerText;
+
+                        //if (type == element), get content
+                        if (xmlMapper.IsSourceElement(sourceXPath))
+                        {
+
+                        }
+
+
+
+                        //destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
+
+                        ////check if nodes in destination not exist, create them
+                        //string destinationParentXPath = route.GetDestinationParentXPath();
+                        //string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
                     }
 
-
-
-                    //destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
-
-                    ////check if nodes in destination not exist, create them
-                    //string destinationParentXPath = route.GetDestinationParentXPath();
-                    //string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
                 }
 
-            }
-
-            if (sourceNode.HasChildNodes)
-            {
-                foreach (XmlNode childNode in sourceNode.ChildNodes)
+                if (sourceNode.HasChildNodes)
                 {
-                    destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
+                    foreach (XmlNode childNode in sourceNode.ChildNodes)
+                    {
+                        destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
+                    }
                 }
-            }
 
             }
             catch (Exception exception)
             {
-                  Debug.WriteLine(exception.Message);
+                Debug.WriteLine(exception.Message);
             }
 
             return destinationDoc;
@@ -451,10 +495,10 @@ namespace BExIS.Xml.Helpers.Mapping
             Array.Reverse(sourceSplitWidthIndex);
 
             string[] destinationSplit = destination.Split('/');
-    
+
             // XFType\F\yType\Y\XType\x
             Array.Reverse(destinationSplit);
-            int j =0;
+            int j = 0;
             for (int i = 0; i < sourceSplitWidthIndex.Length; i++)
             {
 
@@ -469,16 +513,16 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     //set j
                     if (i == 0) j = 0;
-                    else if(i == 1) j = i + 1;
+                    else if (i == 1) j = i + 1;
                     else j = i * 2;
 
-                    if (destinationSplit.Length > j+1)
+                    if (destinationSplit.Length > j + 1)
                     {
                         string destinationTemp = destinationSplit[j];
                         destinationSplit[j] = destinationTemp + "[" + index + "]";
                         //set parent
-                        string destinationTempParent = destinationSplit[j+1];
-                        destinationSplit[j+1] = destinationTempParent + "[" + 1 + "]";
+                        string destinationTempParent = destinationSplit[j + 1];
+                        destinationSplit[j + 1] = destinationTempParent + "[" + 1 + "]";
                     }
                 }
             }
@@ -506,7 +550,7 @@ namespace BExIS.Xml.Helpers.Mapping
             // XFType\F\yType\Y\XType\x
             Array.Reverse(destinationSplit);
             int j = 0;
-            for (int i = 0; i < sourceSplitWidthIndex.Length; i=i+2)
+            for (int i = 0; i < sourceSplitWidthIndex.Length; i = i + 2)
             {
 
                 string tmp = sourceSplitWidthIndex[i];
@@ -721,7 +765,7 @@ namespace BExIS.Xml.Helpers.Mapping
         // add required attributes
         private XmlDocument addAttributes(XmlDocument doc, XmlNode parentNode)
         {
-         
+
             if (xmlSchemaManager.HasAttributes(parentNode))
             {
                 addAttributesToXmlNode(doc, parentNode, xmlSchemaManager.GetAttributes(parentNode));
@@ -735,7 +779,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
-            
+
 
             return doc;
         }
@@ -845,7 +889,7 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             string dif = destinationParentXPath.Substring(currentParentXPath.Length);
 
-            List<string> temp =  dif.Split('/').ToList();
+            List<string> temp = dif.Split('/').ToList();
             temp.RemoveAt(0);
 
             XmlNode parentTemp = parentNode;
@@ -853,25 +897,25 @@ namespace BExIS.Xml.Helpers.Mapping
             foreach (string s in temp)
             {
 
-                    if (XmlUtility.GetXmlNodeByName(parentTemp, s) == null)
-                    {
-                        XmlNode t = XmlUtility.CreateNode(s, doc);
+                if (XmlUtility.GetXmlNodeByName(parentTemp, s) == null)
+                {
+                    XmlNode t = XmlUtility.CreateNode(s, doc);
 
-                        addChild(parentTemp, t);
-                        parentTemp = t;
-                    }
-                    else
-                    {
-                        XmlNode t = XmlUtility.GetXmlNodeByName(parentTemp, s);
-                        parentTemp = t;
-                    }
+                    addChild(parentTemp, t);
+                    parentTemp = t;
+                }
+                else
+                {
+                    XmlNode t = XmlUtility.GetXmlNodeByName(parentTemp, s);
+                    parentTemp = t;
+                }
 
             }
 
             return parentTemp;
         }
 
-        private string getStorePath(long datasetVersionId,string exportTo)
+        private string getStorePath(long datasetVersionId, string exportTo)
         {
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
@@ -884,9 +928,9 @@ namespace BExIS.Xml.Helpers.Mapping
             string path;
 
             if (string.IsNullOrEmpty(exportTo) || exportTo.ToLower().Equals("generic"))
-                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata", ".xml");
+                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId, "metadata", ".xml");
             else
-                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId, "metadata_"+ exportTo, ".xml");
+                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId, "metadata_" + exportTo, ".xml");
 
             return path;
         }

@@ -1,8 +1,5 @@
-﻿using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
-using System;
-using Vaiona.Entities.Common;
+﻿using BExIS.Security.Entities.Requests;
+using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
@@ -11,28 +8,49 @@ namespace BExIS.Security.Services.Requests
     {
         public RequestManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
+            var uow = this.GetUnitOfWork();
 
-            EntityRepository = uow.GetReadOnlyRepository<Entity>();
-            UserRepository = uow.GetReadOnlyRepository<User>();
+            RequestRepository = uow.GetReadOnlyRepository<Request>();
         }
 
-        #region Data Readers
+        public IReadOnlyRepository<Request> RequestRepository { get; }
+        public IQueryable<Request> Requests => RequestRepository.Query();
 
-        public IReadOnlyRepository<Entity> EntityRepository { get; private set; }
-        public IReadOnlyRepository<Request> RequestRepository { get; private set; }
-        public IReadOnlyRepository<User> UserRepository { get; private set; }
-
-        #endregion Data Readers
-
-        public Request CreateRequest(User applicant, BaseEntity entity)
+        public void Create(Request request)
         {
-            throw new NotImplementedException();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRequestRepository = uow.GetRepository<Request>();
+                entityRequestRepository.Put(request);
+                uow.Commit();
+            }
         }
 
-        public bool DeleteRequest(long id)
+        public void Delete(Request request)
         {
-            throw new NotImplementedException();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRequestRepository = uow.GetRepository<Request>();
+                entityRequestRepository.Delete(request);
+                uow.Commit();
+            }
+        }
+
+        public Request FindById(long id)
+        {
+            return RequestRepository.Get(id);
+        }
+
+        public void Update(Request entity)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetRepository<Request>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
+            }
         }
     }
 }

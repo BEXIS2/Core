@@ -1,7 +1,6 @@
-﻿@model SetupModel
+﻿@model BExIS.Modules.Dcm.UI.Models.CreateDataset.SetupModel
+@using BExIS.Modules.Dcm.UI.Models
 @using Telerik.Web.Mvc.UI
-@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
-@using BExIS.Web.Shell.Areas.DCM.Models;
 
 @{
     List<ListViewItem> DatasetsList = new List<ListViewItem>();
@@ -11,7 +10,6 @@
     {
         DatasetsList.Add(item);
     }
-
 }
 
 <div id="SetupContainer">
@@ -26,7 +24,7 @@
     @Html.ValidationSummary(true)
 
     <p>Please provide the following information.</p>
-    @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new { area = "Dcm" }, FormMethod.Post))
+    @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", FormMethod.Post))
     {
         <table>
             <tr>
@@ -35,7 +33,7 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datasetsContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new { area="DCM" , title = "Select a Dataset as Template" } ,
+                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new { title = "Select a Dataset as Template" } ,
                             new AjaxOptions
                             {
                                 HttpMethod = "GET",
@@ -63,7 +61,10 @@
                               .SelectedIndex(0)
                               .HtmlAttributes(new {title = "Select a Dataset as Template", @class= "bx-dropdown" })
                               .BindTo(new SelectList(DatasetsList, "Id", "Title", Model.SelectedDatasetId))
-                              .ClientEvents(events => events.OnChange("datasetChange"))
+                              .ClientEvents(events =>
+                              {
+                                  events.OnChange("datasetChange");
+                              })
                               )
                     }
                 </td>
@@ -78,7 +79,7 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datastructuresContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new { area = "Dcm"},
+                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset",
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
@@ -104,12 +105,12 @@
                               .Placeholder("Select")
                               .HtmlAttributes(new {title = "Select a Data Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
-                              .ClientEvents(events => events.OnChange("onChange"))
                               .BindTo(new SelectList(Model.DataStructureViewList, "Id", "Title", Model.SelectedDataStructureId))
-                              .ClientEvents(e => e.OnChange("onChangeDataStructure"))
+                              .ClientEvents(e =>
+                              {
+                                  e.OnChange("onChangeDataStructure");
+                              })
                               )
-
-
                     }
                 </td>
                 <td>
@@ -129,7 +130,7 @@
                         }
                         else
                         {
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new { area = "Dcm"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset",
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
@@ -158,7 +159,10 @@
                               .HtmlAttributes(new {title = "Select a Metadata Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
                               .BindTo(new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadataStructureId))
-                              .ClientEvents(e => e.OnChange("onChangeMetadataStructure"))
+                              .ClientEvents(e =>
+                              {
+                                  e.OnChange("onChangeMetadataStructure");
+                              })
                               )
 
                     }
@@ -170,8 +174,10 @@
             </tr>
         </table>
 
-        <br />
-        <button type="submit" value="Save" name="saveDataset" class="bx-button function" style="border:0px;">Next</button>
+        <div class="bx-footer right">
+            <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Next</button>
+
+        </div>
 
     }
 </div>
@@ -191,7 +197,7 @@
 
         //alert(id);
 
-        $.post('@Url.Action("StoreSelectedDataset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+        $.post('@Url.Action("StoreSelectedDataset", "CreateDataset")',
             { id: id },
             function(response) {
                 $("#SetupContainer").replaceWith(response);
@@ -208,7 +214,7 @@
         else
             id = $(this).val();
 
-        $.post('@Url.Action("StoreSelectedOption", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+        $.post('@Url.Action("StoreSelectedOption", "CreateDataset")',
             { id: id, type: "ms" },
             function(response) {
 

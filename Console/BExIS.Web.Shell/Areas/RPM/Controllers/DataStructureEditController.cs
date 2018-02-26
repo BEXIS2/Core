@@ -1,31 +1,42 @@
 ﻿using System;
 using System.Web.Mvc;
-using Telerik.Web.Mvc;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.RPM.Output;
-
-using BExIS.Web.Shell.Areas.RPM.Models;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Modules.Rpm.UI.Classes;
 using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Persistence.Api;
 using Vaiona.Logging;
+using Vaiona.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class DataStructureEditController : Controller
+    public class DataStructureEditController : BaseController
     {
         public ActionResult Index(long DataStructureId = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
-            if (DataStructureId != 0 && new DataStructureManager().StructuredDataStructureRepo.Get(DataStructureId) != null)
-                return View(DataStructureId);
-            else
-                return RedirectToAction("Index", "DataStructureSearch");
+            DataStructureManager dsm = null;
+            try
+            {
+                dsm = new DataStructureManager();
+                if (DataStructureId != 0 && dsm.StructuredDataStructureRepo.Get(DataStructureId) != null)
+                    return View(DataStructureId);
+                else if (DataStructureId == 0)
+                    return View(DataStructureId);
+                else
+                    return RedirectToAction("Index", "DataStructureSearch");
+            }
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         public ActionResult _attributeResultBinding()
@@ -83,121 +94,175 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                DataStructureManager dataStructureManager = new DataStructureManager();
-                if (dataStructureManager.StructuredDataStructureRepo.Get(Id) != null)
+                DataStructureManager dataStructureManager = null;
+                try
                 {
-                    StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
-                    DataStructureIO.deleteTemplate(dataStructure.Id);
-                    foreach (Variable v in dataStructure.Variables)
-                    {
-                        dataStructureManager.RemoveVariableUsage(v);
+                    dataStructureManager = new DataStructureManager();
+                    var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
+                    StructuredDataStructure structuredDataStructure = structureRepo.Get(Id);
+
+                    if (structuredDataStructure != null) // Javad: This one retrieves the entity withough using it, and then the next line agian fetches the same! 
+                    {                 
+                        DataStructureIO.deleteTemplate(structuredDataStructure.Id);
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
+                            dataStructureManager.RemoveVariableUsage(v);
+                        }
+                        dataStructureManager.DeleteStructuredDataStructure(structuredDataStructure);
+                        LoggerFactory.LogData(structuredDataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                     }
-                    dataStructureManager.DeleteStructuredDataStructure(dataStructure);
-                    LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                    else
+                    {
+                        var unStructureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>();
+                        UnStructuredDataStructure unStructuredDataStructure = unStructureRepo.Get(Id);
+                        dataStructureManager.DeleteUnStructuredDataStructure(unStructuredDataStructure);
+                        LoggerFactory.LogData(unStructuredDataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                    }
+                    return PartialView("_message", new MessageModel()
+                    {
+                        Message = "DataStructure" + Id + "deleted",
+                        hasMessage = false,
+                        CssId = "deleted"
+                    });
                 }
-                else
+                finally
                 {
-                    UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
-                    dataStructureManager.DeleteUnStructuredDataStructure(dataStructure);
-                    LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+                    dataStructureManager.Dispose();
                 }
-                return PartialView("_message", new MessageModel()
-                {
-                    Message = "DataStructure" + Id + "deleted",
-                    hasMessage = false,
-                    CssId = "deleted"
-                });
             }
         }
 
         [HttpPost]
         public ActionResult storeVariables(long Id, storeVariableStruct[] variables)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
-            MessageModel returnObject = new MessageModel();
-            MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
-            if (messageModel.hasMessage)
+            DataStructureManager dataStructureManager = null;
+            DataContainerManager dataContainerManager = null;
+            UnitManager um = null;
+
+            try
             {
-                foreach (Variable v in dataStructure.Variables)
-                {
-                    if (variables.Select(svs => svs.Id).ToList().Contains(v.Id))
-                    { 
-                        v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
-                        dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
-                    }
-                }
-                return PartialView("_messageWindow", messageModel);
-            }
+                dataStructureManager = new DataStructureManager();
+                var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
 
-            if (variables != null && variables.Count() > 0)
-            {
-                Variable variable = new Variable();
-                List<long> order = new List<long>();
-            
-                foreach (Variable v in dataStructure.Variables)
+                StructuredDataStructure dataStructure = structureRepo.Get(Id);
+                MessageModel returnObject = new MessageModel();
+                MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
+                if (messageModel.hasMessage)
                 {
-                    if (!variables.Select(svs => svs.Id).ToList().Contains(v.Id))
-                        dataStructureManager.RemoveVariableUsage(v);
-                }
-
-                foreach (storeVariableStruct svs in variables.Where(svs => svs.Id == 0).ToList())
-                {
-                    if (svs.Lable == null)
-                        svs.Lable = "";
-                    if (svs.Description == null)
-                        svs.Description = "";
-
-                    DataAttribute dataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
-                    if (dataAttribute != null)
+                    foreach (Variable v in dataStructure.Variables)
                     {
-                        variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), new UnitManager().Repo.Get(svs.UnitId));
-                        svs.Id = variable.Id;
-                    }
-                    else
-                    {
-                        returnObject = new MessageModel()
+                        if (variables.Select(svs => svs.Id).ToList().Contains(v.Id))
                         {
-                            hasMessage = true,
-                            Message = "Not all Variables are stored.",
-                            CssId = "0"
-                        };
+                            v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
+                            dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+                        }
                     }
+                    return PartialView("_messageWindow", messageModel);
                 }
-                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
 
-                variables = variables.Where(v => v.Id != 0).ToArray();
-
-                foreach (storeVariableStruct svs in variables.Where(svs => svs.Id != 0).ToList())
+                if (variables != null && variables.Count() > 0)
                 {
-                    if (svs.Lable == null)
-                        svs.Lable = "";
-                    if (svs.Description == null)
-                        svs.Description = "";
+                    Variable variable = new Variable();
+                    List<long> order = new List<long>();
 
-                    variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
-                    if (variable != null)
+                    foreach (Variable v in dataStructure.Variables)
                     {
-                        variable.Label = svs.Lable.Trim();
-                        variable.Description = svs.Description.Trim();
-                        variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
-                        variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
-                        variable.IsValueOptional = svs.isOptional;
+                        if (!variables.Select(svs => svs.Id).ToList().Contains(v.Id))
+                            dataStructureManager.RemoveVariableUsage(v);
+                    }
+
+                    foreach (storeVariableStruct svs in variables.Where(svs => svs.Id == 0).ToList())
+                    {
+                        if (svs.Lable == null)
+                            svs.Lable = "";
+                        if (svs.Description == null)
+                            svs.Description = "";
+                        try
+                        {
+                            dataContainerManager = new DataContainerManager();
+                            DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                            if (dataAttribute != null)
+                            {
+                                try
+                                {
+                                    um = new UnitManager();
+                                    variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
+                                    svs.Id = variable.Id;
+                                }
+                                finally
+                                {
+                                    um.Dispose();
+                                }
+                            }
+                            else
+                            {
+                                returnObject = new MessageModel()
+                                {
+                                    hasMessage = true,
+                                    Message = "Not all Variables are stored.",
+                                    CssId = "0"
+                                };
+                            }
+                        }
+                        finally
+                        {
+                            // Javad: would be better to conctruct and dispose this object outside of the loop
+                            dataContainerManager.Dispose();
+                        }
+                    }
+                    dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
+
+                    variables = variables.Where(v => v.Id != 0).ToArray();
+
+                    foreach (storeVariableStruct svs in variables.Where(svs => svs.Id != 0).ToList())
+                    {
+                        if (svs.Lable == null)
+                            svs.Lable = "";
+                        if (svs.Description == null)
+                            svs.Description = "";
+
+                        variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
+                        if (variable != null)
+                        {
+                            variable.Label = svs.Lable.Trim();
+                            variable.Description = svs.Description.Trim();
+
+                            try
+                            {
+                                um = new UnitManager();
+                                dataContainerManager = new DataContainerManager();
+
+                                variable.Unit = um.Repo.Get(svs.UnitId);
+                                variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                                variable.IsValueOptional = svs.isOptional;
+                            }
+                            finally
+                            {
+                                um.Dispose(); // Javad: would be better to conctruct and dipose these objects outside of the loop
+                                dataContainerManager.Dispose();
+                            }
+                        }
+                    }
+
+                    dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+                    DataStructureIO.setVariableOrder(dataStructure, variables.Select(svs => svs.Id).ToList());
+                }
+                else
+                {
+                    foreach (Variable v in dataStructure.Variables)
+                    {
+                        dataStructureManager.RemoveVariableUsage(v);
                     }
                 }
-
-                dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
-                DataStructureIO.setVariableOrder(dataStructure, variables.Select(svs => svs.Id).ToList());
+                LoggerFactory.LogCustom("Variables for Data Structure " + Id + " stored.");
+                return Json(returnObject, JsonRequestBehavior.AllowGet);
             }
-            else
+            finally
             {
-                foreach (Variable v in dataStructure.Variables)
-                {
-                    dataStructureManager.RemoveVariableUsage(v);
-                }
+                dataStructureManager.Dispose();
+                dataContainerManager.Dispose();
+                um.Dispose();
             }
-            LoggerFactory.LogCustom("Variables for Data Structure " + Id + " stored.");
-            return Json(returnObject, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult _deleteDataAttributeBinding(long Id, string cssId)
@@ -214,18 +279,26 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                DataContainerManager dataAttributeManager = new DataContainerManager();
-
-                DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
-
-                dataAttributeManager.DeleteDataAttribute(dataAttribute);
-                
-                return PartialView("_message", new MessageModel()
+                DataContainerManager dataAttributeManager = null;
+                try
                 {
-                    Message = "DataStructure" + Id + "deleted",
-                    hasMessage = false,
-                    CssId = "deleted"
-                });
+                    dataAttributeManager = new DataContainerManager();
+
+                    DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
+
+                    dataAttributeManager.DeleteDataAttribute(dataAttribute);
+
+                    return PartialView("_message", new MessageModel()
+                    {
+                        Message = "DataStructure" + Id + "deleted",
+                        hasMessage = false,
+                        CssId = "deleted"
+                    });
+                }
+                finally
+                {
+                    dataAttributeManager.Dispose();
+                }
             }
         }
 
@@ -277,33 +350,52 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 else
                 {
-                    DataContainerManager dataAttributeManager = new DataContainerManager();
-                    DataAttribute dataAttribute;
-                   
-                    if (Id == 0)
+                    DataContainerManager dataAttributeManager = null;
+                    UnitManager um = null;
+                    DataTypeManager dataTypeManager = null;
+
+                    try
                     {
-                        Unit unit = new UnitManager().Repo.Get(unitId);
-                        DataType dataType = new DataTypeManager().Repo.Get(dataTypeId);
-                        dataAttribute = dataAttributeManager.CreateDataAttribute(Name, Name, Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
-                        return new MessageModel()
+
+                        dataAttributeManager = new DataContainerManager();
+                        DataAttribute dataAttribute;
+
+                        if (Id == 0)
                         {
-                            Message = dataAttribute.Id.ToString(),
-                            hasMessage = false,
-                            CssId = "refresh"
-                        };
+                            um = new UnitManager();
+
+                            Unit unit = um.Repo.Get(unitId);
+
+                            dataTypeManager = new DataTypeManager();
+
+                            DataType dataType = dataTypeManager.Repo.Get(dataTypeId);
+                            dataAttribute = dataAttributeManager.CreateDataAttribute(Name, Name, Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
+                            return new MessageModel()
+                            {
+                                Message = dataAttribute.Id.ToString(),
+                                hasMessage = false,
+                                CssId = "refresh"
+                            };
+                        }
+                        else
+                        {
+                            dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
+                            dataAttribute.Name = Name;
+                            dataAttribute.Description = Description;
+                            dataAttribute = dataAttributeManager.UpdateDataAttribute(dataAttribute);
+                            return new MessageModel()
+                            {
+                                Message = Id.ToString(),
+                                hasMessage = false,
+                                CssId = "refresh"
+                            };
+                        }
                     }
-                    else
+                    finally
                     {
-                        dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
-                        dataAttribute.Name = Name;
-                        dataAttribute.Description = Description;
-                        dataAttribute = dataAttributeManager.UpdateDataAttribute(dataAttribute);
-                        return new MessageModel()
-                        {
-                            Message = Id.ToString(),
-                            hasMessage = false,
-                            CssId = "refresh"
-                        };
+                        dataAttributeManager.Dispose();
+                        um.Dispose();
+                        dataTypeManager.Dispose();
                     }
                 }
             }
@@ -312,30 +404,52 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult _getDataTypes(long unitId)
         {
             List<ItemStruct> DataTypes = new List<ItemStruct>();
-            Unit unit = new UnitManager().Repo.Get(unitId);
-            if (unit.Name.ToLower() != "none")
+            UnitManager um = null;
+
+            try
             {
-                foreach (DataType dt in unit.AssociatedDataTypes)
+                um = new UnitManager();
+
+                Unit unit = um.Repo.Get(unitId);
+                if (unit.Name.ToLower() != "none")
                 {
-                    DataTypes.Add(new ItemStruct()
+                    foreach (DataType dt in unit.AssociatedDataTypes)
                     {
-                        Name = dt.Name,
-                        Id = dt.Id
-                    });
+                        DataTypes.Add(new ItemStruct()
+                        {
+                            Name = dt.Name,
+                            Id = dt.Id,
+                            Description = dt.Description
+                        });
+                    }
+                    return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
                 }
-                return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                else
+                {
+                    DataTypeManager dtm = null;
+                    try
+                    {
+                        dtm = new DataTypeManager();
+                        foreach (DataType dt in dtm.Repo.Get())
+                        {
+                            DataTypes.Add(new ItemStruct()
+                            {
+                                Name = dt.Name,
+                                Id = dt.Id,
+                                Description = dt.Description
+                            });
+                        }
+                        return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                    }
+                    finally
+                    {
+                        dtm.Dispose();
+                    }
+                }
             }
-            else
+            finally
             {
-                foreach (DataType dt in new DataTypeManager().Repo.Get())
-                {
-                    DataTypes.Add(new ItemStruct()
-                    {
-                        Name = dt.Name,
-                        Id = dt.Id
-                    });
-                }
-                return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                um.Dispose();
             }
         }
 
@@ -442,100 +556,126 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         [HttpPost]
         public DataAttribute storeRangeConstraint(RangeConstraintModel constraintModel)
         {
-            DataContainerManager dcManager = new DataContainerManager();
-            DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
-
-            if (constraintModel.Max != 0 || constraintModel.Min != 0)
+            DataContainerManager dcManager = null;
+            try
             {
-                if (constraintModel.Id == 0)
+                dcManager = new DataContainerManager();
+
+                DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
+
+                if (constraintModel.Max != 0 || constraintModel.Min != 0)
                 {
-                    RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, constraintModel.Description, constraintModel.Negated, null, null, null, constraintModel.Min, constraintModel.MinInclude, constraintModel.Max, constraintModel.MaxInclude);
-                    dcManager.AddConstraint(constraint, dataAttribute);
-                }
-                else
-                {
-                    for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                    if (constraintModel.Id == 0)
                     {
-                        if (dataAttribute.Constraints.ElementAt(i).Id == constraintModel.Id)
+                        RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, constraintModel.Description, constraintModel.Negated, null, null, null, constraintModel.Min, constraintModel.MinInclude, constraintModel.Max, constraintModel.MaxInclude);
+                        dcManager.AddConstraint(constraint, dataAttribute);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < dataAttribute.Constraints.Count; i++)
                         {
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Description = constraintModel.Description;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = constraintModel.Negated;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Lowerbound = constraintModel.Min;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).LowerboundIncluded = constraintModel.MinInclude;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Upperbound = constraintModel.Max;
-                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).UpperboundIncluded = constraintModel.MaxInclude;
-                            break;
+                            if (dataAttribute.Constraints.ElementAt(i).Id == constraintModel.Id)
+                            {
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Description = constraintModel.Description;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = constraintModel.Negated;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Lowerbound = constraintModel.Min;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).LowerboundIncluded = constraintModel.MinInclude;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Upperbound = constraintModel.Max;
+                                ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).UpperboundIncluded = constraintModel.MaxInclude;
+                                break;
+                            }
                         }
                     }
                 }
+                return dataAttribute;
             }
-            return dataAttribute;
+            finally
+            {
+                dcManager.Dispose();
+            }      
         }
 
         [HttpPost]
         public DataAttribute storePatternConstraint(PatternConstraintModel constraintModel)
         {
-            DataContainerManager dcManager = new DataContainerManager();
-            DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
-
-            if (constraintModel.MatchingPhrase != null && constraintModel.MatchingPhrase != "")
+            DataContainerManager dcManager = null;
+            try
             {
-                if (constraintModel.Id == 0)
+                dcManager = new DataContainerManager();
+                DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
+
+                if (constraintModel.MatchingPhrase != null && constraintModel.MatchingPhrase != "")
                 {
-                    PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, constraintModel.Description, constraintModel.Negated, null, null, null, constraintModel.MatchingPhrase, false);
-                    dcManager.AddConstraint(constraint, dataAttribute);
-                }
-                else
-                {
-                    for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                    if (constraintModel.Id == 0)
                     {
-                        if (dataAttribute.Constraints.ElementAt(i).Id == constraintModel.Id)
+                        PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, constraintModel.Description, constraintModel.Negated, null, null, null, constraintModel.MatchingPhrase, false);
+                        dcManager.AddConstraint(constraint, dataAttribute);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < dataAttribute.Constraints.Count; i++)
                         {
-                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Description = constraintModel.Description;
-                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = constraintModel.Negated;
-                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).MatchingPhrase = constraintModel.MatchingPhrase;
-                            break;
+                            if (dataAttribute.Constraints.ElementAt(i).Id == constraintModel.Id)
+                            {
+                                ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Description = constraintModel.Description;
+                                ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = constraintModel.Negated;
+                                ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).MatchingPhrase = constraintModel.MatchingPhrase;
+                                break;
+                            }
                         }
                     }
                 }
+                return dataAttribute;
             }
-            return dataAttribute;
+            finally
+            {
+                dcManager.Dispose();
+            }
         }
 
         public DataAttribute storeDomainConstraint(DomainConstraintModel constraintModel)
         {
-            DataContainerManager dcManager = new DataContainerManager();
-            DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
-            List<DomainItem> items = new List<DomainItem>();
-            if (constraintModel.Terms != null && constraintModel.Terms.Trim() != "")
-                items = createDomainItems(constraintModel.Terms.Trim());
-
-            if (items.Count > 0)
+            DataContainerManager dcManager = null;
+            try
             {
-                if (constraintModel.Id == 0)
+                dcManager = new DataContainerManager();
+
+                DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
+                List<DomainItem> items = new List<DomainItem>();
+                if (constraintModel.Terms != null && constraintModel.Terms.Trim() != "")
+                    items = createDomainItems(constraintModel.Terms.Trim());
+
+                if (items.Count > 0)
                 {
-                    DomainConstraint constraint = new DomainConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, constraintModel.Description, constraintModel.Negated, null, null, null, items);
-                    dcManager.AddConstraint(constraint, dataAttribute);
-                }
-                else
-                {
-                    DomainConstraint temp = new DomainConstraint();
-                    for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                    if (constraintModel.Id == 0)
                     {
-                        if (dataAttribute.Constraints.ElementAt(i).Id == constraintModel.Id)
+                        DomainConstraint constraint = new DomainConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, constraintModel.Description, constraintModel.Negated, null, null, null, items);
+                        dcManager.AddConstraint(constraint, dataAttribute);
+                    }
+                    else
+                    {
+                        DomainConstraint temp = new DomainConstraint();
+                        for (int i = 0; i < dataAttribute.Constraints.Count; i++)
                         {
-                            temp = (DomainConstraint)dataAttribute.Constraints.ElementAt(i);
-                            temp.Materialize();
-                            temp.Description = constraintModel.Description;
-                            temp.Negated = constraintModel.Negated;
-                            temp.Items = items;
-                            dcManager.AddConstraint(temp, dataAttribute);
-                            break;
+                            if (dataAttribute.Constraints.ElementAt(i).Id == constraintModel.Id)
+                            {
+                                temp = (DomainConstraint)dataAttribute.Constraints.ElementAt(i);
+                                temp.Materialize();
+                                temp.Description = constraintModel.Description;
+                                temp.Negated = constraintModel.Negated;
+                                temp.Items = items;
+                                dcManager.AddConstraint(temp, dataAttribute);
+                                break;
+                            }
                         }
                     }
                 }
+                return dataAttribute;
             }
-            return dataAttribute;
+            finally
+            {
+                dcManager.Dispose();
+            }
         }
     }
 }
