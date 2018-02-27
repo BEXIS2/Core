@@ -74,7 +74,6 @@
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -618,7 +617,7 @@
       <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
-      <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
+      <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
       <Name>BExIS.Web.Shell</Name>
     </ProjectReference>
     <ProjectReference Include="..\DIM\BExIS.Modules.Dim.UI.csproj">
