@@ -48,7 +48,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Mappings\Default\Authentication\Login.hbm.xml" />
     <Content Include="Mappings\Default\Authorization\EntityPermission.hbm.xml" />

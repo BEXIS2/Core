@@ -55,6 +55,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// 1: projection: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
         /// 2: selection: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
+        /// /api/data/6?header=TimeUTC,D8CO1_1&filter=TimeUTC<5706000
         /// </remarks>
         public HttpResponseMessage Get(int id)
         {
@@ -67,7 +68,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 OutputDataManager ioOutputDataManager = new OutputDataManager();
 
-                DatasetVersion version = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(id);
+                DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
 
                 string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
 
