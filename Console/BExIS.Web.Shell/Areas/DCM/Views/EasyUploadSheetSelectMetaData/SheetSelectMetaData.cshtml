@@ -5,7 +5,7 @@
 @using BExIS.Dlm.Entities.DataStructure;
 
 
-<div id="Step3" class="uploadWizardStep">
+<div id="Step2" class="uploadWizardStep">
 
     <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
@@ -29,16 +29,12 @@
                                     <option selected value="-1" title="Please select...">Please select...</option>
                                 }
 
-                                @{
-                                    Tuple<long, string> tuple = Model.AvailableMetadata.Where(t => t.Item1 == Model.SelectedMetaDataId).FirstOrDefault();
-                                };
-
                                 @foreach (Tuple<long, string> metadata in Model.AvailableMetadata)
                                 {
 
                                     string selected = "";
-
-                                    if (tuple != null && tuple.Item1 == metadata.Item1)
+                                    
+                                    if (metadata.Item1 == Model.SelectedMetaDataId)
                                     {
                                         selected = "selected";
                                     }
@@ -57,27 +53,14 @@
     </div>
 
     <div class="uploadWizardStep_Error stepper">
-        @if (Model != null)
+        @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
         {
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
+            <ul>
+                @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                 {
-
-
+                    <li>@s.ToString()</li>
                 }
-                else
-                {
-                    <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        {
-                            <li>@s.ToString()</li>
-                        }
-                    </ul>
-
-                }
-            }
-
+            </ul>
         }
     </div>
 </div>
@@ -92,14 +75,11 @@
 
             // send to bus
             $.post('@Url.Action("SaveMetaDataSelection", "EasyUploadSheetSelectMetaData", new RouteValueDictionary { { "area", "DCM" } })', { metadataId: selectedMetaDataTypeId }, function (response) {
-                //$("#Step3").html(response);
             });
         });
 
         $('.asciiFormularField').change(function () {
             $.post('@Url.Action("SaveMetaDescription", "EasyUploadSheetSelectMetaData", new RouteValueDictionary { { "area", "DCM" } })', { DescriptionTitle: $(this).val() }, function (response) {
-
-
             })
 
         })

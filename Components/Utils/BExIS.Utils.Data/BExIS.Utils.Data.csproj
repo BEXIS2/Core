@@ -11,6 +11,8 @@
     <AssemblyName>BExIS.Utils.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,7 +51,9 @@
     <Compile Include="MetadataStructure\MetadataStructureUsageHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>

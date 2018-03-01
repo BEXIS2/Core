@@ -9,33 +9,65 @@ namespace BExIS.Modules.Rpm.UI.Models
 {
     public class DataAttributeManagerModel
     {
-        private DataContainerManager dataContainerManager = new DataContainerManager();
+        private DataContainerManager dataContainerManager = null;
         public DataAttributeModel DataAttributeModel = new DataAttributeModel();
         public List<DataAttributeStruct> DataAttributeStructs = new List<DataAttributeStruct>();
 
 
         public DataAttributeManagerModel()
         {
-            DataAttributeModel = new DataAttributeModel();
-            dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            try
+            {
+                dataContainerManager = new DataContainerManager();
+                DataAttributeModel = new DataAttributeModel();
+                dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            }
+            finally
+            {
+                dataContainerManager.Dispose();
+            }
         }
 
         public DataAttributeManagerModel(bool showConstraints)
         {
-            DataAttributeModel = new DataAttributeModel(showConstraints);
-            dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            try
+            {
+                dataContainerManager = new DataContainerManager();
+                DataAttributeModel = new DataAttributeModel(showConstraints);
+                dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            }
+            finally
+            {
+                dataContainerManager.Dispose();
+            }
         }
 
         public DataAttributeManagerModel(long dataAttributeId, bool showConstraints = false)
         {
-            DataAttributeModel = new DataAttributeModel(dataContainerManager.DataAttributeRepo.Get(dataAttributeId), showConstraints);
-            dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            try
+            {
+                dataContainerManager = new DataContainerManager();
+                DataAttributeModel = new DataAttributeModel(dataContainerManager.DataAttributeRepo.Get(dataAttributeId), showConstraints);
+                dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            }
+            finally
+            {
+                dataContainerManager.Dispose();
+            }
         }
 
         public DataAttributeManagerModel(DataAttributeModel dataAttributeModel)
         {
-            DataAttributeModel = dataAttributeModel;
-            dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            try
+            {
+                dataContainerManager = new DataContainerManager();
+                DataAttributeModel = dataAttributeModel;
+                dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+            }
+            finally
+            {
+                dataContainerManager.Dispose();
+            }
         }
 
         private bool inUse(DataAttribute dataAttribute)
@@ -84,8 +116,8 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class DataAttributeModel
     {
-        private DataTypeManager dataTypeManager = new DataTypeManager();
-        private UnitManager unitManager = new UnitManager();
+        private DataTypeManager dataTypeManager = null;
+        private UnitManager unitManager = null;
 
         public long Id { get; set; }
         public string Name { get; set; }
@@ -116,8 +148,18 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataType = new DataTypeItemModel();
             Unit = new UnitItemModel();
 
-            dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
-            unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            try
+            {
+                dataTypeManager = new DataTypeManager();
+                unitManager = new UnitManager();
+                dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
+                unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            }
+            finally
+            {
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
+            }
 
             RangeConstraints = new List<RangeConstraintModel>();
             DomainConstraints = new List<DomainConstraintModel>();
@@ -136,8 +178,18 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataType = new DataTypeItemModel();
             Unit = new UnitItemModel();
 
-            dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
-            unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            try
+            {
+                dataTypeManager = new DataTypeManager();
+                unitManager = new UnitManager();
+                dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
+                unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            }
+            finally
+            {
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
+            }
 
             RangeConstraints = new List<RangeConstraintModel>();
             DomainConstraints = new List<DomainConstraintModel>();
@@ -155,8 +207,18 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataType = new DataTypeItemModel(dataAttribute.DataType);
             Unit = new UnitItemModel(dataAttribute.Unit);
 
-            dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
-            unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            try
+            {
+                dataTypeManager = new DataTypeManager();
+                unitManager = new UnitManager();
+                dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
+                unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            }
+            finally
+            {
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
+            }
 
             RangeConstraints = new List<RangeConstraintModel>();
             DomainConstraints = new List<DomainConstraintModel>();

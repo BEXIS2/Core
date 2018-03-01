@@ -42,5 +42,8 @@
       <column name="PrimaryDataFormat" />
     </property>
 
+    <property name="Link" type="string">
+      <column name="Link" />
+    </property>
   </class>
 </hibernate-mapping>

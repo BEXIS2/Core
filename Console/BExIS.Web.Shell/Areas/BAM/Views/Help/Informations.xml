@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Informations>
+  <Information name="Admin">
+    <description>
+      On this page you are able to ...<br />
+    </description>
+    <more text="More" title="go to help" path="/BIM/Help/Index"/>
+  </Information>
+
+  <Information name="Help">
+    <description>
+      This guide will walk you through the ...
+    </description>
+    <more text="More" title="go to help" path=""/>
+  </Information>
+</Informations>

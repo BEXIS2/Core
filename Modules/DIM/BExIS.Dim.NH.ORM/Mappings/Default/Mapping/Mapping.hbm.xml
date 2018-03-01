@@ -28,6 +28,9 @@
 
     <many-to-one class="BExIS.Dim.Entities.Mapping.TransformationRule" name="TransformationRule" column="TransformationRuleRef">
     </many-to-one>
+
+    <many-to-one class="BExIS.Dim.Entities.Mapping.Mapping" name="Parent" column="ParentRef">
+    </many-to-one>
     
   </class>
 </hibernate-mapping>

@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Utils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +8,26 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
-    public class EntityPermissionManager
+    // Sven
+    // UoW -> Done
+    public class EntityPermissionManager : IDisposable
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public EntityPermissionManager()
         {
-            var uow = this.GetUnitOfWork();
-
-            EntityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
-            EntityRepository = uow.GetReadOnlyRepository<Entity>();
-            SubjectRepository = uow.GetReadOnlyRepository<Subject>();
+            _guow = this.GetIsolatedUnitOfWork();
+            EntityPermissionRepository = _guow.GetReadOnlyRepository<EntityPermission>();
         }
 
-        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; private set; }
+        ~EntityPermissionManager()
+        {
+            Dispose(true);
+        }
+
+        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
         public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
-        public IReadOnlyRepository<Entity> EntityRepository { get; private set; }
-        public IReadOnlyRepository<Subject> SubjectRepository { get; private set; }
 
         public void Create(EntityPermission entityPermission)
         {
@@ -35,18 +39,42 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Create(Subject subject, Entity entity, long key, short rights)
+        public void Create(Subject subject, Entity entity, long key, int rights)
         {
-            var entityPermission = new EntityPermission()
-            {
-                Subject = subject,
-                Entity = entity,
-                Key = key,
-                Rights = rights
-            };
-
             using (var uow = this.GetUnitOfWork())
             {
+                var entityPermission = new EntityPermission()
+                {
+                    Subject = subject,
+                    Entity = entity,
+                    Key = key,
+                    Rights = rights
+                };
+
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Put(entityPermission);
+                uow.Commit();
+            }
+        }
+
+        public void Create(Subject subject, Entity entity, long key, List<RightType> rightTypes)
+        {
+        }
+
+        public void Create(long? subjectId, long entityId, long key, int rights)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityPermission = new EntityPermission()
+                {
+                    Subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault(),
+                    Entity = entityRepository.Get(entityId),
+                    Key = key,
+                    Rights = rights
+                };
+
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
@@ -64,16 +92,31 @@ namespace BExIS.Security.Services.Authorization
             if (entityType == null)
                 return null;
 
-            var entityPermission = new EntityPermission()
-            {
-                Subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault(),
-                Entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault(),
-                Key = key,
-                Rights = rights.ToInt()
-            };
-
+            EntityPermission entityPermission = null;
             using (var uow = this.GetUnitOfWork())
             {
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+
+                var subject = subjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+                if (subject == null)
+                    return null;
+
+                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+                if (entity == null)
+                    return null;
+
+                if (Exists(subject, entity, key))
+                    return null;
+
+                entityPermission = new EntityPermission()
+                {
+                    Subject = subject,
+                    Entity = entity,
+                    Key = key,
+                    Rights = rights.Aggregate(0, (current, right) => current | (int)right)
+                };
+
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
@@ -94,11 +137,10 @@ namespace BExIS.Security.Services.Authorization
 
         public void Delete(Type entityType, long key)
         {
-            var entityPermissions = EntityPermissionRepository.Query(p => p.Entity.EntityType == entityType && p.Key == key) as IEnumerable<EntityPermission>;
-
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                var entityPermissions = entityPermissionRepository.Query(p => p.Entity.EntityType == entityType && p.Key == key) as IEnumerable<EntityPermission>;
                 entityPermissionRepository.Delete(entityPermissions);
                 uow.Commit();
             }
@@ -109,128 +151,301 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Delete(EntityPermissionRepository.Get(entityPermissionId));
+                entityPermissionRepository.Delete(entityPermissionRepository.Get(entityPermissionId));
                 uow.Commit();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public bool Exists(Subject subject, Entity entity, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+
+                if (entity == null)
+                    return false;
+
+                if (subject == null)
+                    return entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+
+                return entityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+            }
+        }
+
+        public bool Exists(long? subjectId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1 : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
+            }
+        }
+
+        public bool Exists(long? subjectId, long entityId, long key, RightType rightType)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count == 1 : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count == 1;
+            }
+        }
+
+        public EntityPermission Find(long? subjectId, long entityId, long instanceId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault() : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault();
             }
         }
 
         public EntityPermission FindById(long entityPermissionId)
         {
-            return EntityPermissionRepository.Get(entityPermissionId);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return entityPermissionRepository.Get(entityPermissionId);
+            }
         }
 
-        public List<long> GetKeys<T>(string subjectName, string entityName, Type entityType, RightType rightType) where T : Subject
+        // Entity Null
+        // User Null
+        public List<long> GetKeys(string userName, string entityName, Type entityType, RightType rightType)
         {
-            if (string.IsNullOrEmpty(subjectName))
-                return new List<long>();
+            using (var uow = this.GetUnitOfWork())
+            {
+                if (entityType == null)
+                    return new List<long>();
 
-            if (string.IsNullOrEmpty(entityName))
-                return new List<long>();
+                if (string.IsNullOrEmpty(entityName))
+                    return new List<long>();
 
-            if (entityType == null)
-                return new List<long>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
 
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
-            if (subject == null)
-                return new List<long>();
+                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+                if (entity == null)
+                    return new List<long>();
 
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
-            if (entity == null)
-                return new List<long>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                var userRepository = uow.GetReadOnlyRepository<User>();
 
-            return
-                EntityPermissionRepository
-                    .Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id).AsEnumerable()
-                    .Where(e => e.Rights.ToRightTypes().Contains(rightType))
+                var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
+                if (user == null)
+                    return entityPermissionRepository
+                        .Query(e => e.Subject == null && e.Entity.Id == entity.Id).AsEnumerable()
+                        .Where(e => (e.Rights & (int)rightType) > 0)
+                        .Select(e => e.Key)
+                        .ToList();
+
+                var subjectIds = new List<long>() { user.Id };
+                subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
+
+                return
+                    entityPermissionRepository
+                        .Query(e => (subjectIds.Contains(e.Subject.Id) || e.Subject == null) && e.Entity.Id == entity.Id).AsEnumerable()
+                        .Where(e => (e.Rights & (int)rightType) > 0)
+                        .Select(e => e.Key)
+                        .ToList();
+            }
+        }
+
+        public List<long> GetKeys(long? subjectId, long entityId, RightType rightType)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+
+                if (subjectId == null)
+                    return entityPermissionRepository.Query(e =>
+                        e.Subject == null &&
+                        e.Entity.Id == entityId &&
+                        (e.Rights & (int)rightType) > 0
+                        )
                     .Select(e => e.Key)
                     .ToList();
-        }
 
-        public List<long> GetKeys(long subjectId, long entityId, RightType rightType)
-        {
-            var subject = SubjectRepository.Get(subjectId);
-            if (subject == null)
-                return new List<long>();
-
-            var entity = EntityRepository.Get(entityId);
-            if (entity == null)
-                return new List<long>();
-
-            return EntityPermissionRepository.Query(e =>
-                e.Subject.Id == subject.Id &&
-                e.Entity.Id == entity.Id &&
-                e.Rights.ToRightTypes().Contains(rightType)
-                )
+                return entityPermissionRepository.Query(e =>
+                    e.Subject.Id == subjectId &&
+                    e.Entity.Id == entityId &&
+                    (e.Rights & (int)rightType) > 0
+                    )
                 .Select(e => e.Key)
                 .ToList();
+            }
+        }
+
+        // Entity Null
+        // Subject Null
+        // Subject User
+        // Subject Group
+        public int GetEffectiveRights(long? subjectId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+
+                var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+
+                if (entityRepository.Get(entityId) == null)
+                    return 0;
+
+                if (subject == null)
+                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entityId && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+
+                if (subject is User)
+                {
+                    var user = subject as User;
+                    var subjectIds = new List<long>() { user.Id };
+                    subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
+                    var rights = entityPermissionRepository.Get(m => subjectIds.Contains(m.Subject.Id) && m.Entity.Id == entityId && m.Key == key).Select(e => e.Rights).ToList();
+                    return rights.Aggregate(0, (left, right) => left | right);
+                }
+
+                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entityId && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+            }
         }
 
         public int GetRights(Subject subject, Entity entity, long key)
         {
-            if (subject == null)
-                return 0;
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
 
-            if (entity == null)
-                return 0;
-
-            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault();
-            return entityPermission?.Rights ?? 0;
+                if (subject == null)
+                {
+                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+                }
+                if (entity == null)
+                    return 0;
+                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+            }
         }
 
-        public List<RightType> GetRights<T>(string subjectName, string entityName, Type entityType, long key) where T : Subject
+        public int GetRights(long? subjectId, long entityId, long key)
         {
-            if (string.IsNullOrEmpty(subjectName))
-                return new List<RightType>();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
 
-            if (string.IsNullOrEmpty(entityName))
-                return new List<RightType>();
-
-            if (entityType == null)
-                return new List<RightType>();
-
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
-            if (subject == null)
-                return new List<RightType>();
-
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
-            if (entity == null)
-                return new List<RightType>();
-
-            return GetRights(subject, entity, key).ToRightTypes();
-        }
-
-        public List<RightType> GetRights(long subjectId, long entityId, long key)
-        {
-            var subject = SubjectRepository.Get(subjectId);
-            var entity = EntityRepository.Get(entityId);
-            return GetRights(subject, entity, key).ToRightTypes();
+                var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+                var entity = entityRepository.Get(entityId);
+                return GetRights(subject, entity, key);
+            }
         }
 
         public bool HasRight<T>(string subjectName, string entityName, Type entityType, long key, RightType rightType) where T : Subject
         {
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
 
-            var binary = Convert.ToString(GetRights(subject, entity, key), 2);
-            return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
+                var subject = subjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+
+                return (GetRights(subject, entity, key) & (int)rightType) > 0;
+            }
         }
 
-        public bool HasRight(long subjectId, long entityId, long key, RightType rightType)
+        public bool HasEffectiveRight(Subject subject, Entity entity, long key, RightType rightType)
         {
-            var subject = SubjectRepository.Get(subjectId);
-            var entity = EntityRepository.Get(entityId);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
 
-            var binary = Convert.ToString(GetRights(subject, entity, key), 2);
-            return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
+                if (subject == null)
+                {
+                    return (entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
+                }
+                if (entity == null)
+                    return false;
+
+                return (GetEffectiveRights(subject.Id, entity.Id, key) & (int)rightType) > 0;
+            }
         }
 
-        public void Update(EntityPermission entityPermission)
+        public bool HasEffectiveRight(string username, string entityName, Type entityType, long key, RightType rightType)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var userRepository = uow.GetReadOnlyRepository<User>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+
+                var user = userRepository.Query(s => s.Name.ToUpperInvariant() == username.ToUpperInvariant()).FirstOrDefault();
+                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+
+                return HasEffectiveRight(user?.Id, entity?.Id, key, rightType);
+            }
+        }
+
+        public bool HasRight(long? subjectId, long? entityId, long key, RightType rightType)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Put(entityPermission);
+
+                if (entityId == null)
+                    return false;
+
+                return subjectId == null ? (entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0 : (entityPermissionRepository.Get(p => (p.Subject.Id == subjectId || p.Subject == null) && p.Entity.Id == entityId && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
+            }
+        }
+
+        public bool HasEffectiveRight(long? userId, long? entityId, long key, RightType rightType)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                var userRepository = uow.GetReadOnlyRepository<User>();
+
+                if (entityId == null)
+                    return false;
+
+                if (userId == null)
+                    return (entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
+
+
+                var user = userRepository.Get((long)userId);
+
+                if (user == null) return false;
+
+                var subjectIds = new List<long>() { user.Id };
+                subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
+                var rights = entityPermissionRepository.Get(m => (subjectIds.Contains(m.Subject.Id) || m.Subject == null) && m.Entity.Id == entityId && m.Key == key).Select(e => e.Rights).ToList();
+                return (rights.Aggregate(0, (left, right) => left | right) & (int)rightType) > 0;
+            }
+        }
+
+        public void Update(EntityPermission entity)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetRepository<EntityPermission>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
+            }
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
             }
         }
     }

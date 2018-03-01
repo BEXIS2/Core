@@ -51,6 +51,15 @@ Green 05  #eff7f6 brigth
     color: #ff9700;
 }
 
+.t-icon {
+    font-size: 0;
+    line-height: 14px;
+}
+
+.t-icon:before {
+    font-size: 15px;
+}
+
 /*.t-grid td {padding-left: 30px;}
 
 .t-grid-without-filter th

@@ -1,22 +1,27 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
+
+
     /// <summary>
     /// Manages all funactions an authorized user can do with datasets and their versions
     /// </summary>
-    public class DatasetsController : Controller
+    public class DatasetsController : BaseController
     {
         public ActionResult Checkin(int id)
         {
@@ -26,6 +31,40 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Checkout(int id)
         {
             return View();
+        }
+
+        public ActionResult SyncAll()
+        {
+            var datasetManager = new DatasetManager();
+            var datasetIds = datasetManager.GetDatasetLatestIds();
+            try
+            {
+                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View("Sync");
+            }
+        }
+
+        public ActionResult Sync(long id)
+        {
+            var datasetManager = new DatasetManager();
+
+            try
+            {
+                datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View();
+            }
         }
 
         /// <summary>
@@ -44,11 +83,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
                 {
-                    entityPermissionManager.Delete(typeof(Dataset), id);
+                    //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
-                    // ToDo: refactor the indexing after "delete dataset" process
-                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    //provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    {
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                    }
                 }
             }
             catch (Exception e)
@@ -71,16 +111,34 @@ namespace BExIS.Modules.Sam.UI.Controllers
             DatasetManager dm = new DatasetManager();
             var entityPermissionManager = new EntityPermissionManager();
 
-            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
-
+            List<Dataset> datasets = new List<Dataset>();
             List<long> datasetIds = new List<long>();
-            if (HttpContext.User.Identity.Name != null)
-            {
-                datasetIds.AddRange(entityPermissionManager.GetKeys<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
-            }
+            //if (!string.IsNullOrWhiteSpace(HttpContext.User.Identity.Name))
+            //{
+            //    datasetIds.AddRange(entityPermissionManager.GetKeys(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), RightType.Delete));
+            //    if(datasetIds.Count() > 0)
+            //        datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+            //}
 
+            datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+            datasetIds = datasets.Select(p => p.Id).ToList();
+
+            // dataset id, dataset status, number of data tuples of the latest version, number of variables in the dataset's structure
+            List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
+            foreach (Dataset ds in datasets)
+            {
+                long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
+                long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
+                bool synced = false;
+                if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
+                        && ds.StateInfo?.Timestamp != null
+                        && ds.StateInfo?.Timestamp > DateTime.MinValue
+                        && ds.StateInfo?.Timestamp < DateTime.MaxValue)
+                    synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
+                datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced });
+            }
             ViewData["DatasetIds"] = datasetIds;
-            return View(datasets);
+            return View(datasetStat);
         }
 
         /// <summary>
@@ -102,9 +160,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     entityPermissionManager.Delete(typeof(Dataset), id);
 
-                    // ToDo: refactor the indexing after "delete dataset" process
-                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    //provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    {
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                    }
                 }
             }
             catch (Exception e)

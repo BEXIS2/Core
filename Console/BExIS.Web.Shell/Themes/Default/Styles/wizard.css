@@ -201,12 +201,13 @@ tr td
 
 .uploadWizardStep_Content 
 {
-    height:220px;
+    height:400px;
+
    
 }
 
 .createWizardStep_Content
 {
     height:auto;
-    overflow:auto;
+ 
 }

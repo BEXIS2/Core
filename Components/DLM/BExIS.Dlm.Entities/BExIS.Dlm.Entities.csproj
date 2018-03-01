@@ -120,6 +120,7 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="Administration\Administration.cd" />
+    <None Include="app.config" />
     <None Include="DataStructure\DataStructure.cd" />
     <None Include="Data\Data.cd" />
     <None Include="MetadataStrcuture\MetadataStructure.cd" />

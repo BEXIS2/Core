@@ -14,16 +14,41 @@ namespace BExIS.Dlm.Services.DataStructure
     /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in 
     /// cooperation together can materialize the formal specification of the structure of group of datasets.
     /// </summary>
-    public sealed class DataStructureManager
+    public class DataStructureManager: IDisposable
     {
 
+        private IUnitOfWork guow = null;
         public DataStructureManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.StructuredDataStructureRepo = uow.GetReadOnlyRepository<StructuredDataStructure>();
-            this.UnStructuredDataStructureRepo = uow.GetReadOnlyRepository<UnStructuredDataStructure>();
-            this.AllTypesDataStructureRepo = uow.GetReadOnlyRepository<DS.DataStructure>();
-            this.VariableRepo = uow.GetReadOnlyRepository<Variable>();
+            guow = this.GetIsolatedUnitOfWork();
+            this.StructuredDataStructureRepo = guow.GetReadOnlyRepository<StructuredDataStructure>();
+            this.UnStructuredDataStructureRepo = guow.GetReadOnlyRepository<UnStructuredDataStructure>();
+            this.AllTypesDataStructureRepo = guow.GetReadOnlyRepository<DS.DataStructure>();
+            this.VariableRepo = guow.GetReadOnlyRepository<Variable>();
+        }
+
+        private bool isDisposed = false;
+        ~DataStructureManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                        isDisposed = true;
+                }
+            }
         }
 
         #region Data Readers
@@ -182,7 +207,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -282,7 +309,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -313,39 +342,45 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires((variableUnit == null && dataAttribute.Unit == null) || (variableUnit == null) || (variableUnit.Dimension == dataAttribute.Unit.Dimension));
             Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0);
 
-            //StructuredDataStructureRepo.Reload(dataStructure);
-            StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
-            int count = (from v in dataStructure.Variables
-                         where v.DataAttribute.Id.Equals(dataAttribute.Id)
-                         select v
-                        )
-                        .Count();
-
-            //if (count > 0)
-            //    throw new Exception(string.Format("Data attribute {0} is already used as a variable in data structure {0}", dataAttribute.Id, dataStructure.Id));
-
-            Variable usage = new Variable()
-            {
-                DataStructure = dataStructure,
-                DataAttribute = dataAttribute,
-                MinCardinality = isValueOptional ? 0 : 1,
-                // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current structure
-                Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
-                DefaultValue = defaultValue,
-                MissingValue = missingValue,
-                Description = description,
-                Unit = (variableUnit != null ? variableUnit : dataAttribute.Unit),
-                OrderNo = order > 0 ? order: dataStructure.Variables.Count() + 1,
-            };
-            dataAttribute.UsagesAsVariable.Add(usage);
-            dataStructure.Variables.Add(usage);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                IRepository<StructuredDataStructure> structuredDataStructureRepo = uow.GetRepository<StructuredDataStructure>();
+                IRepository<DataAttribute> attributesRepo = uow.GetRepository<DataAttribute>();
+
+                dataStructure = structuredDataStructureRepo.Get(dataStructure.Id);
+                dataAttribute = attributesRepo.Get(dataAttribute.Id);
+
+                structuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
+                int count = (from v in dataStructure.Variables
+                             where v.DataAttribute.Id.Equals(dataAttribute.Id)
+                             select v
+                            )
+                            .Count();
+
+                //if (count > 0)
+                //    throw new Exception(string.Format("Data attribute {0} is already used as a variable in data structure {0}", dataAttribute.Id, dataStructure.Id));
+
+                Variable usage = new Variable()
+                {
+                    DataStructure = dataStructure,
+                    DataAttribute = dataAttribute,
+                    MinCardinality = isValueOptional ? 0 : 1,
+                    // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current structure
+                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
+                    DefaultValue = defaultValue,
+                    MissingValue = missingValue,
+                    Description = description,
+                    Unit = (variableUnit != null ? variableUnit : dataAttribute.Unit),
+                    OrderNo = order > 0 ? order: dataStructure.Variables.Count() + 1,
+                };
+                dataAttribute.UsagesAsVariable.Add(usage);
+                dataStructure.Variables.Add(usage);
+
                 IRepository<Variable> repo = uow.GetRepository<Variable>();
                 repo.Put(usage);
                 uow.Commit();
+                return (usage);
             }
-            return (usage);
         }
 
         /// <summary>
@@ -361,6 +396,24 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<Variable> repo = uow.GetRepository<Variable>();
                 IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                usage = repo.Get(usage.Id);
+
+                repo.Delete(usage);
+                paramRepo.Delete(usage.Parameters.ToList());
+                uow.Commit();
+            }
+        }
+
+        public void RemoveVariableUsage(long id)
+        {
+            Contract.Requires(id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                var usage = repo.Get(id);
+
                 repo.Delete(usage);
                 paramRepo.Delete(usage.Parameters.ToList());
                 uow.Commit();
@@ -382,40 +435,41 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
             Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0);
-
-            VariableRepo.Reload(variableUsage);
-            VariableRepo.LoadIfNot(variableUsage.Parameters);
-            int count = (from pu in variableUsage.Parameters
-                         where pu.DataAttribute.Id.Equals(dataAttribute.Id)
-                         select pu
-                        )
-                        .Count();
-
-            // support multiple use of a data attribute as a parameter in a variable context
-            //if (count > 0)
-            //    throw new Exception(string.Format("Data attribute {0} is already used as a parameter in conjunction with variable {1} in data structure {2}", dataAttribute.Id, variableUsage.DataAttribute.Id, variableUsage.DataStructure.Id));
-
-            Parameter usage = new Parameter()
-            {
-                DataAttribute = dataAttribute,
-                Variable = variableUsage,
-                MinCardinality = isValueOptional ? 0 : 1,
-                // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current usage
-                Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
-                DefaultValue = defaultValue,
-                MissingValue = missingValue,
-                Description = description,
-                OrderNo = order > 0 ? order : variableUsage.Parameters.Count() + 1,
-            };
-            dataAttribute.UsagesAsParameter.Add(usage);
-            variableUsage.Parameters.Add(usage);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
+                variableRepo.Reload(variableUsage);
+                variableRepo.LoadIfNot(variableUsage.Parameters);
+                int count = (from pu in variableUsage.Parameters
+                             where pu.DataAttribute.Id.Equals(dataAttribute.Id)
+                             select pu
+                            )
+                            .Count();
+
+                // support multiple use of a data attribute as a parameter in a variable context
+                //if (count > 0)
+                //    throw new Exception(string.Format("Data attribute {0} is already used as a parameter in conjunction with variable {1} in data structure {2}", dataAttribute.Id, variableUsage.DataAttribute.Id, variableUsage.DataStructure.Id));
+
+                Parameter usage = new Parameter()
+                {
+                    DataAttribute = dataAttribute,
+                    Variable = variableUsage,
+                    MinCardinality = isValueOptional ? 0 : 1,
+                    // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current usage
+                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
+                    DefaultValue = defaultValue,
+                    MissingValue = missingValue,
+                    Description = description,
+                    OrderNo = order > 0 ? order : variableUsage.Parameters.Count() + 1,
+                };
+                dataAttribute.UsagesAsParameter.Add(usage);
+                variableUsage.Parameters.Add(usage);
+
                 IRepository<Parameter> repo = uow.GetRepository<Parameter>();
                 repo.Put(usage);
                 uow.Commit();
+                return (usage);
             }
-            return (usage);
         }
 
         /// <summary>
@@ -448,22 +502,23 @@ namespace BExIS.Dlm.Services.DataStructure
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
 
 
-            StructuredDataStructureRepo.Reload(dataStructure);
-            StructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
-            int count = (from v in dataStructure.Views
-                         where v.Id.Equals(view.Id)
-                         select v
-                        )
-                        .Count();
-
-            if (count > 0)
-                throw new Exception(string.Format("There is a connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
-
-            dataStructure.Views.Add(view);
-            view.DataStructures.Add(dataStructure);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
+                repo.Reload(dataStructure);
+                repo.LoadIfNot(dataStructure.Views);
+                int count = (from v in dataStructure.Views
+                             where v.Id.Equals(view.Id)
+                             select v
+                            )
+                            .Count();
+
+                if (count > 0)
+                    throw new Exception(string.Format("There is a connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
+
+                dataStructure.Views.Add(view);
+                view.DataStructures.Add(dataStructure);
+
                 repo.Put(dataStructure);
                 uow.Commit();
             }
@@ -482,23 +537,24 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<UnStructuredDataStructure>() != null && Contract.Result<UnStructuredDataStructure>().Id >= 0);
 
-
-            UnStructuredDataStructureRepo.Reload(dataStructure);
-            UnStructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
-            int count = (from v in dataStructure.Views
-                         where v.Id.Equals(view.Id)
-                         select v
-                        )
-                        .Count();
-
-            if (count > 0)
-                throw new Exception(string.Format("There is a connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
-
-            dataStructure.Views.Add(view);
-            view.DataStructures.Add(dataStructure);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
+
+                repo.Reload(dataStructure);
+                repo.LoadIfNot(dataStructure.Views);
+                int count = (from v in dataStructure.Views
+                             where v.Id.Equals(view.Id)
+                             select v
+                            )
+                            .Count();
+
+                if (count > 0)
+                    throw new Exception(string.Format("There is a connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
+
+                dataStructure.Views.Add(view);
+                view.DataStructures.Add(dataStructure);
+
                 repo.Put(dataStructure);
                 uow.Commit();
             }
@@ -516,22 +572,23 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
 
-            StructuredDataStructureRepo.Reload(dataStructure);
-            StructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
-            int count = (from v in dataStructure.Views
-                         where v.Id.Equals(view.Id)
-                         select v
-                        )
-                        .Count();
-
-            if (count <= 0)
-                throw new Exception(string.Format("There is no connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
-
-            dataStructure.Views.Remove(view);
-            view.DataStructures.Remove(dataStructure);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
+                repo.Reload(dataStructure);
+                repo.LoadIfNot(dataStructure.Views);
+                int count = (from v in dataStructure.Views
+                             where v.Id.Equals(view.Id)
+                             select v
+                            )
+                            .Count();
+
+                if (count <= 0)
+                    throw new Exception(string.Format("There is no connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
+
+                dataStructure.Views.Remove(view);
+                view.DataStructures.Remove(dataStructure);
+
                 repo.Put(dataStructure);
                 uow.Commit();
             }
@@ -550,22 +607,23 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<UnStructuredDataStructure>() != null && Contract.Result<UnStructuredDataStructure>().Id >= 0);
 
-            UnStructuredDataStructureRepo.Reload(dataStructure);
-            UnStructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
-            int count = (from v in dataStructure.Views
-                         where v.Id.Equals(view.Id)
-                         select v
-                        )
-                        .Count();
-
-            if (count <= 0)
-                throw new Exception(string.Format("There is no connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
-
-            dataStructure.Views.Remove(view);
-            view.DataStructures.Remove(dataStructure);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
+                repo.Reload(dataStructure);
+                repo.LoadIfNot(dataStructure.Views);
+                int count = (from v in dataStructure.Views
+                             where v.Id.Equals(view.Id)
+                             select v
+                            )
+                            .Count();
+
+                if (count <= 0)
+                    throw new Exception(string.Format("There is no connection between data structure {0} and view {1}", dataStructure.Id, view.Id));
+
+                dataStructure.Views.Remove(view);
+                view.DataStructures.Remove(dataStructure);
+
                 repo.Put(dataStructure);
                 uow.Commit();
             }

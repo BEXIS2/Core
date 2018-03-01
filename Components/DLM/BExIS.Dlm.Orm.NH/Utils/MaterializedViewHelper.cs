@@ -36,7 +36,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber*pageSize, pageSize));
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber * pageSize, pageSize));
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
@@ -54,7 +54,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             catch (Exception ex)
             {
-                return null;
+                throw new Exception(string.Format("Could not retrieve data from dataset {0}. Check whether the corresponding view exists and is populated with data.", datasetId), ex);
             }
 
         }
@@ -111,7 +111,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 .AppendLine(string.Format("{0},", "t.datasetversionref AS VersionId"))
                 ;
             int counter = 0;
-            foreach (var columnDefinition in columnDefinitionList.OrderBy(p=>p.Item3)) // item3 is the variable order in its data structure
+            foreach (var columnDefinition in columnDefinitionList.OrderBy(p => p.Item3)) // item3 is the variable order in its data structure
             {
                 counter++;
                 string columnStr = buildViewField(columnDefinition.Item1, columnDefinition.Item2, columnDefinition.Item3, columnDefinition.Item4);
@@ -127,8 +127,9 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             selectBuilder
                 .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
-                .AppendLine(string.Format("WHERE v.datasetref = {0}", datasetId))
-                .Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
+                .AppendLine(string.Format("WHERE (v.datasetref = {0} AND v.status = 2) OR (v.datasetref = {0} AND v.status = 0)", datasetId))
+                .Append("WITH NO DATA") //avoids refreshing the MV at the creation time, the view will not be queryable until explicitly refreshed.
+                //.Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
 
             // build the satetment
@@ -143,10 +144,11 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     int result = uow.ExecuteNonQuery(mvBuilder.ToString());
-                }
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    columnLabels.ForEach(p => uow.ExecuteNonQuery(p));
+                    foreach (var columnLabel in columnLabels)
+                    {
+                        uow.ExecuteNonQuery(columnLabel);
+                    }
+                    //columnLabels.ForEach(columnLabel => uow.ExecuteNonQuery(columnLabel));
                 }
             }
             catch (Exception ex)
@@ -161,7 +163,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         }
 
         public bool ExistsForDataset(long datasetId)
-        {            
+        {
             StringBuilder mvBuilder = new StringBuilder();
             // the functions should obtain a reference to the DB dialect and based on that 1) load the templates from the native objects folder and 2) decide to use lowercase,uppercase, or natural case for object names.
             mvBuilder.AppendLine(string.Format("SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class c WHERE  c.relname = '{0}' AND c.relkind = 'm');", this.BuildName(datasetId).ToLower()));
@@ -188,7 +190,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // execute the statement
             try
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                 {
                     uow.ExecuteNonQuery(mvBuilder.ToString());
                 }
@@ -196,6 +198,26 @@ namespace BExIS.Dlm.Orm.NH.Utils
             catch (Exception ex)
             {
                 // what to do?
+                throw ex;
+            }
+        }
+
+        public long Count(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0};", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
             }
         }
 
@@ -232,11 +254,20 @@ namespace BExIS.Dlm.Orm.NH.Utils
         /// <returns></returns>
         private string buildViewField(string variableName, string dataType, int order, long Id)
         {
-            // @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}"
-            string template = @"cast(unnest(cast(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
+            // string template = @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}";
+            // string template =   @"cast(unnest(cast(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
+            // string template = @"unnest(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)::character varying[]){1} AS {2}";
+            
+            string fieldType = dbDataType(dataType);
+            fieldType = !string.IsNullOrEmpty(fieldType) ? " AS " + fieldType : "";
 
-            string def = string.Format(template, order, dbDataType(dataType), this.BuildColumnName(Id).ToLower());// variableName.Replace(" ", "_"));
-            return def;
+            string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
+            string accessPath = string.Format(accessPathTemplate, Id);
+
+            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(unnest({accessPath}::character varying[]) {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
+            //string fieldDef = string.Format(fieldTemplate, accessPath, fieldType, this.BuildColumnName(Id).ToLower());
+            // guard the column mapping for NULL protection
+            return fieldDef;
         }
 
         private static Dictionary<string, string> typeTable = new Dictionary<string, string>
@@ -244,15 +275,17 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "bool", "bool" },
                 { "boolean", "bool" },
                 { "date", "date" },
-                { "datetime", "date" },
+                { "datetime", "timestamp without time zone" },
                 { "time", "time" },
                 { "decimal", "numeric" },
                 { "double", "float8" },
-                { "int", "int4" },
-                { "int32", "int4" },
-                { "integer", "int4" },
-                { "text", "text" },
-                { "string", "character varying(255)" }
+                { "int", "integer" },
+                { "integer", "integer" },
+                { "int32", "integer" },
+                { "long", "bigint" },
+                { "int64", "bigint" },
+                { "text", "" }, // not needed -> character varying[]
+                { "string", "character varying(255)" } 
             };
 
         /// <summary>

@@ -11,34 +11,7 @@
 <head>
     <title>@ViewBag.Title</title>
 
-    @Html.Favicon(Html.GetTenant().FavIconPath)
-
-
-
-    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"></script>
-
-    
-    <script src="@Url.Content("~/Scripts/bootstrap.min.js")" type="text/javascript"></script>
-
-    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-
-    <script src="@Url.Content("~/Scripts/bootstrap-slider.min.js")" type="text/javascript"></script>
-    <link href="@Url.Content("~/Content/bootstrap-slider.min.css")" rel="stylesheet" type="text/css" />
-
-    <script src="@Url.Content("~/Scripts/minimap/minimap.min.js")" type="text/javascript"></script>
-    <link href="@Url.Content("~/Scripts/minimap/minimap.min.css")" rel="stylesheet" type="text/css" />
-
-
-    <script src="@Url.Content("~/Scripts/autosize/autosize.js")" type="text/javascript"></script>
-
-    <script src="@Url.Content("~/Scripts/handsontable/handsontable.full.js")"></script>
-
-    <link rel="stylesheet" media="screen" href="@Url.Content("~/Content/handsontable/handsontable.full.css")">
-
-    <script src="@Url.Content("~/Scripts/bexis_default.js")" type="text/javascript"></script>
+     @Html.Favicon(Html.GetTenant().FavIconPath)
 
     <style>
         .t-window-content {
@@ -70,17 +43,12 @@
     @Scripts.Render("~/bundles/modernizr")
 
     @Scripts.Render("~/bundles/jquery")
-    @*@(Html.Telerik().ScriptRegistrar()
-            .DefaultGroup(group => group.Combined(true).Compress(true)
-            //.DefaultPath("~/Scripts/2013.2.611/")
-            )
-            .jQuery(false)
-        )*@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/autosize")
     @Scripts.Render("~/bundles/minimap")
     @Scripts.Render("~/bundles/switchery")
+    @Scripts.Render("~/bundles/handsontable")
     @Scripts.Render("~/bundles/bexis")
 </head>
 

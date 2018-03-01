@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {
@@ -13,10 +14,6 @@ namespace BExIS.Modules.Ddm.UI.Models
         [Display(Name = "Display Name")]
         [Required(ErrorMessage = "Please enter a Display Name.")]
         public String displayName { get; set; }
-
-        [Display(Name = "Source Name")]
-        [Required(ErrorMessage = "Please enter a Source Name.")]
-        public String sourceName { get; set; }
 
         [Display(Name = "Metadata Node")]
         [Required(ErrorMessage = "Please select a Metadata link.")]
@@ -86,7 +83,8 @@ namespace BExIS.Modules.Ddm.UI.Models
 
             //names
             sa.displayName = searchAttributeViewModel.displayName;
-            sa.sourceName = searchAttributeViewModel.sourceName;
+            sa.sourceName = Regex.Replace(searchAttributeViewModel.displayName, "[^0-9a-zA-Z]+", "");
+
             sa.metadataName = String.Join(",", searchAttributeViewModel.metadataNames.ToArray());
 
             //types
@@ -120,7 +118,6 @@ namespace BExIS.Modules.Ddm.UI.Models
             sa.id = searchAttribute.id;
             //names
             sa.displayName = searchAttribute.displayName;
-            sa.sourceName = searchAttribute.sourceName;
             sa.metadataNames.AddRange(searchAttribute.metadataName.Split(','));
 
             //types

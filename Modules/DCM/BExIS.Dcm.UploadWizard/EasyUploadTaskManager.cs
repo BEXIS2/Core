@@ -45,6 +45,7 @@ namespace BExIS.Dcm.UploadWizard
         public static string SHEET_HEADER_AREA = "SheetHeaderArea";
         public static string SHEET_DATA_AREA = "SheetDataArea";
         public static string SHEET_JSON_DATA = "SheetJsonData";
+        public static string ACTIVE_WOKSHEET_URI = "ActiveWorksheetUri";
 
         //Easy Upload Data Validation
         public static string VERIFICATION_AVAILABLEUNITS = "VerificationAvailableUnits";
