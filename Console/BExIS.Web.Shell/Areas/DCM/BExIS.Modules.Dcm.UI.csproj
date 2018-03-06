@@ -452,6 +452,7 @@
     <Content Include="Content\Images\help\push_big_file.png" />
     <Content Include="Content\Images\help\red_star.png" />
     <Content Include="Content\Images\help\set_xsd_parameters.png" />
+    <Content Include="Content\Images\help\summary_xsd.png" />
     <Content Include="Content\Images\help\upload_data.png" />
     <Content Include="Content\Images\help\Upload_Unstructures.png" />
     <Content Include="Content\Images\help\up_down.png" />
@@ -527,6 +528,7 @@
     <Content Include="Views\EasyUpload\_taskListView.cshtml" />
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
