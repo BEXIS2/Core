@@ -448,10 +448,14 @@
     <Content Include="Content\Images\help\Help_img3.png" />
     <Content Include="Content\Images\help\mines.png" />
     <Content Include="Content\Images\help\plus.png" />
+    <Content Include="Content\Images\help\primary_key.png" />
+    <Content Include="Content\Images\help\push_big_file.png" />
     <Content Include="Content\Images\help\red_star.png" />
     <Content Include="Content\Images\help\set_xsd_parameters.png" />
     <Content Include="Content\Images\help\upload_data.png" />
+    <Content Include="Content\Images\help\Upload_Unstructures.png" />
     <Content Include="Content\Images\help\up_down.png" />
+    <Content Include="Content\Images\help\Validation.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -468,7 +472,9 @@
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\_errorMessages.cshtml" />
     <Content Include="Views\Shared\_summaryErrorMessages.cshtml" />
     <Content Include="Views\CreateDataset\Index.cshtml" />
