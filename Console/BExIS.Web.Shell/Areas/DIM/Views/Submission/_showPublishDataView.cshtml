@@ -18,94 +18,106 @@
 
             var datarepo = e.value;
             var id = '@Model.DatasetId';
+            //alert(e.value);
 
-            $.post('@Url.Action("LoadDataRepoRequirementView", "Submission")',
-                { datarepo: e.value, datasetid: id },
-                function(response) {
-                    //$("#requirementsContainer").html(response);
+            if(e.value !="")
+            {
+
+            
+
+                $.post('@Url.Action("LoadDataRepoRequirementView", "Submission")',
+                    { datarepo: e.value, datasetid: id },
+                    function(response) {
+                        //$("#requirementsContainer").html(response);
                     
-                    $("#preloader").preloader(14, "Please wait...");
+                        $("#preloader").preloader(14, "Please wait...");
 
-                    var jsonObject = {
-                        "datarepo": e.value,
-                        "datasetid": id
-                    };
+                        var jsonObject = {
+                            "datarepo": e.value,
+                            "datasetid": id
+                        };
 
-                    jQuery.ajax({
-                        type: "POST",
-                        url: "@Url.Action("CheckExportPossibility", "Submission")",
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        data: JSON.stringify(jsonObject),
-                        success: function(data) {
+                        jQuery.ajax({
+                            type: "POST",
+                            url: "@Url.Action("CheckExportPossibility", "Submission")",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: JSON.stringify(jsonObject),
+                            success: function(data) {
 
-                            console.log(data);
+                                console.log(data);
 
-                            var isMetadataConvertable = data.isMetadataConvertable;
-                            var metadataValidMessage = data.metadataValidMessage;
-                            var isDataConvertable = data.isDataConvertable;
-                            var exist = data.Exist;
+                                var isMetadataConvertable = data.isMetadataConvertable;
+                                var metadataValidMessage = data.metadataValidMessage;
+                                var isDataConvertable = data.isDataConvertable;
+                                var exist = data.Exist;
 
 
-                            if (isMetadataConvertable &&
-                                typeof metadataValidMessage === "undefined" &&
-                                isDataConvertable) {
+                                if (isMetadataConvertable &&
+                                    typeof metadataValidMessage === "undefined" &&
+                                    isDataConvertable) {
 
-                                console.log("ok");
-                                console.log(isMetadataConvertable);
-                                console.log(metadataValidMessage);
-                                console.log(isDataConvertable);
+                                    console.log("ok");
+                                    console.log(isMetadataConvertable);
+                                    console.log(metadataValidMessage);
+                                    console.log(isDataConvertable);
 
-                                $("#submitPublishBt").removeAttr("disabled");
-                                $("#submitPublishBt").removeClass("bx-disabled");
-
-                            } else if (isMetadataConvertable &&
-                                typeof metadataValidMessage !== "undefined" &&
-                                isDataConvertable) {
-
-                                if (typeof metadataValidMessage !== "undefined") {
-                                    //alert(metadataValidMessage);
                                     $("#submitPublishBt").removeAttr("disabled");
                                     $("#submitPublishBt").removeClass("bx-disabled");
-                                }
 
-                            } else {
-
-                                console.log("failure");
-
-                                if (!exist) {
-                                    $("#submitPublishBt").attr("disabled", "disabled");
-                                    $("#submitPublishBt").addClass("bx-disabled");
-
-                                    var message = "";
-
-                                    if (!isMetadataConvertable) {
-                                        message += "Metadata is not convertable. ";
-                                    }
+                                } else if (isMetadataConvertable &&
+                                    typeof metadataValidMessage !== "undefined" &&
+                                    isDataConvertable) {
 
                                     if (typeof metadataValidMessage !== "undefined") {
-                                        message += metadataValidMessage;
+                                        //alert(metadataValidMessage);
+                                        $("#submitPublishBt").removeAttr("disabled");
+                                        $("#submitPublishBt").removeClass("bx-disabled");
                                     }
 
-                                    if (!isDataConvertable) {
-                                        message += "Data is not convertable. ";
+                                } else {
+
+                                    console.log("failure");
+
+                                    if (!exist) {
+                                        $("#submitPublishBt").attr("disabled", "disabled");
+                                        $("#submitPublishBt").addClass("bx-disabled");
+
+                                        var message = "";
+
+                                        if (!isMetadataConvertable) {
+                                            message += "Metadata is not convertable. ";
+                                        }
+
+                                        if (typeof metadataValidMessage !== "undefined") {
+                                            message += metadataValidMessage;
+                                        }
+
+                                        if (!isDataConvertable) {
+                                            message += "Data is not convertable. ";
+                                        }
+
+                                        $("#requirementsContainer").text(message);
+                                        $("#requirementsContainer").css("color", "#f24c24");
                                     }
 
-                                    $("#requirementsContainer").text(message);
-                                    $("#requirementsContainer").css("color", "#f24c24");
                                 }
+                                $("#preloader").removePreloader();
+
+                            },
+                            failure: function(errMsg) {
+                                alert(errMsg);
+                                $("#preloader").removePreloader();
 
                             }
-                            $("#preloader").removePreloader();
-
-                        },
-                        failure: function(errMsg) {
-                            alert(errMsg);
-                            $("#preloader").removePreloader();
-
-                        }
-                    });
-                })
+                        });
+                    })
+            }
+            else
+            {
+                $("#submitPublishBt").attr("disabled", "disabled");
+                $("#submitPublishBt").addClass("bx-disabled");
+            }
 
         }
 

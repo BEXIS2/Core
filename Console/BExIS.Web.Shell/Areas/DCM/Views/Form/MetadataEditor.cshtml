@@ -260,9 +260,6 @@
 
 function SelectFileProcess_OnSelect(e) {
 
-
-        $("#root").preloader(20, "Import selected xml file.", 300);
-
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
 
@@ -281,6 +278,8 @@ function SelectFileProcess_OnSelect(e) {
                 return false;
             }
         }
+
+        $("#root").preloader(20, "Import selected xml file.", 300);
 
     }
 
@@ -305,7 +304,7 @@ function IsExtentionValid(fileExtention) {
     return false;
 }
 
-function OnSuccess() {
+function OnSuccess(e) {
     //alert("on success");
 
 

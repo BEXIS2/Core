@@ -13,7 +13,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Dissemination Manual", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Business Administration Manual", this.Session.GetTenant());
             return View();
 
         }

@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,7 +71,11 @@
       <HintPath>..\..\..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7" />
+    <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -443,10 +448,15 @@
     <Content Include="Content\Images\help\Help_img3.png" />
     <Content Include="Content\Images\help\mines.png" />
     <Content Include="Content\Images\help\plus.png" />
+    <Content Include="Content\Images\help\primary_key.png" />
+    <Content Include="Content\Images\help\push_big_file.png" />
     <Content Include="Content\Images\help\red_star.png" />
     <Content Include="Content\Images\help\set_xsd_parameters.png" />
+    <Content Include="Content\Images\help\summary_xsd.png" />
     <Content Include="Content\Images\help\upload_data.png" />
+    <Content Include="Content\Images\help\Upload_Unstructures.png" />
     <Content Include="Content\Images\help\up_down.png" />
+    <Content Include="Content\Images\help\Validation.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -463,7 +473,9 @@
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\_errorMessages.cshtml" />
     <Content Include="Views\Shared\_summaryErrorMessages.cshtml" />
     <Content Include="Views\CreateDataset\Index.cshtml" />
@@ -516,6 +528,7 @@
     <Content Include="Views\EasyUpload\_taskListView.cshtml" />
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -646,6 +659,11 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <Import Project="..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
+  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
+    <Error Condition="!Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

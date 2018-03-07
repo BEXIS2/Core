@@ -35,9 +35,10 @@
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
-    <DontImportPostSharp>True</DontImportPostSharp>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -136,10 +137,6 @@
       <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
@@ -176,8 +173,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
@@ -318,9 +316,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XmlSampleGenerator">
-      <HintPath>..\..\..\..\..\RDB\GIT\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -400,6 +395,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LdapController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
@@ -850,7 +846,7 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsList.cshtml" />
     <Content Include="Views\Account\_ChangePassword.cshtml" />
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Account\_SetPassword.cshtml" />
@@ -858,6 +854,7 @@
     <Content Include="Views\Shared\Info.cshtml" />
     <Content Include="Views\Shared\NotAuthorized.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Ldap\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1154,15 +1151,15 @@ rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
 C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
-  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
-    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
-    <Error Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
-  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <Import Project="..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
+  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
+    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
   </Target>
 </Project>

@@ -1,16 +1,5 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.MetadataStructureModel
 
-
-
-
-@*@using (Ajax.BeginForm("Save", "ManageMetadataStructure", new AjaxOptions
-{
-    HttpMethod = "Post",
-    UpdateTargetId = "metadataStructureForm",
-    OnSuccess = "OnSuccess",
-    OnFailure = "OnFailure"
-}))
-{*@
     <div id="metadataStructureFrom" class="bx-content" style="overflow:auto">
         <table>
             <tr>
@@ -33,10 +22,10 @@
             </tr>
             <tr>
                 <td>
-                    @(Html.LabelFor(m => m.Entity.ClassPath))<span class="bx bx-required" title="Required" />
+                    Class <span class="bx bx-required" title="Required" />
                 </td>
                 <td>
-                    @Html.DropDownListFor(m => m.Entity.ClassPath, new SelectList(Model.EntityClasses.Select(e=>e.ClassPath), Model.Entity.Name), "Select", new {@id="classPathSelector"})
+                    @Html.DropDownListFor(m => m.Entity.Name, new SelectList(Model.EntityClasses.Select(e => e.Name), Model.Entity.Name), "Select", new { @id = "classPathSelector", classPath = @Model.Entity.ClassPath })
                     <label title="Select an associated entity.">?</label>
                 </td>
             </tr>
@@ -118,18 +107,18 @@
             Id: $('#Id').val(),
             Name: $('#Name').val(),
             Entity: {
-                Name: '@Model.Entity.Name',
-                ClassPath: $('#classPathSelector').val()
+                Name:  $('#classPathSelector').val(),
+                ClassPath: $('#classPathSelector').attr("classPath")
             },
             TitleNode: $('#TitleNode').val(),
             DescriptionNode: $('#DescriptionNode').val(),
             Active: $('#Active').is(':checked'),
             SystemNodes: SystemNodes
         }
-        
+
         console.log(SystemNodes);
         console.log(metadataStructureModel);
-        
+
         metadataStructureModel = { metadataStructureModel: metadataStructureModel }
 
         $.ajax({

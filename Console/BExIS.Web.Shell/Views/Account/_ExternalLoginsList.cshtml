@@ -3,9 +3,11 @@
 
 <h4>Einen anderen Dienst zum Anmelden verwenden.</h4>
 <hr />
+
+@Html.ActionLink("Ldap", "Login", "Ldap", null, new { @class = "btn btn-default" })
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-    if (loginProviders.Count() == 0)
+    if (!loginProviders.Any())
     {
         <div>
             <p>
@@ -16,12 +18,14 @@
     }
     else
     {
+
+
         using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
         {
             @Html.AntiForgeryToken()
             <div id="socialLoginList">
                 <p>
-                    @foreach (AuthenticationDescription p in loginProviders)
+                    @foreach (var p in loginProviders)
                     {
                         <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Mit Ihrem @p.Caption-Konto anmelden">@p.AuthenticationType</button>
                     }

@@ -546,7 +546,9 @@ namespace BExIS.IO.Transform.Output
             string columnName = "";
             foreach (var vv in t.VariableValues)
             {
-                columnName = useLabelsAsColumnName == true ? vv.Variable.Label : "ID" + vv.VariableId.ToString();
+                Variable variable = sts.Variables.FirstOrDefault(v => v.Id.Equals(vv.VariableId));
+
+                columnName = useLabelsAsColumnName == true ? variable.Label : "ID" + vv.VariableId.ToString();
 
                 if (vv.VariableId > 0)
                 {

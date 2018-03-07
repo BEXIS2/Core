@@ -116,10 +116,6 @@
       <HintPath>..\..\..\packages\NCalc-Edge.1.4.3\lib\NCalc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
