@@ -175,6 +175,7 @@
   <ItemGroup>
     <Compile Include="Entities\Data\DatasetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DataStructure\UnitManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
