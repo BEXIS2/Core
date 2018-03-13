@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -95,6 +96,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
         [HttpPost]
+        [MeasurePerformance]
         public ActionResult ValidateFile()
         {
             DataStructureManager dsm = new DataStructureManager();
