@@ -3,12 +3,13 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
-    public class DdmSeedDataGenerator
+    public class DdmSeedDataGenerator: IModuleSeedDataGenerator
     {
-        public static void GenerateSeedData()
+        public void GenerateSeedData()
         {
             FeatureManager featureManager = new FeatureManager();
             OperationManager operationManager = new OperationManager();
@@ -106,5 +107,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
 
         }
+
+        public void Dispose()
+        {
+        }
+
     }
 }
