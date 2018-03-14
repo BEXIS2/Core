@@ -3,29 +3,29 @@ $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
-    //console.log("on document ready");
-    //Bootstrat tooltip
+	//console.log("on document ready");
+	//Bootstrat tooltip
 	$('[data-toggle="tooltip"]').tooltip();
 });
 
 function resetAllTelerikIconTitles()
 {
-	$('.t-arrow-first, ' +
-	  '.t-arrow-prev,' +
-	  '.t-arrow-next,' +
-	  '.t-arrow-last,' +
-	  '.t-arrow-up,' +
-	  '.t-arrow-down,' +
-	  '.t-arrow-up-small,' +
-	  '.t-arrow-down-small,' +
-	  '.t-filter,'+
-	  '.t-group-delete,'+
-	  '.t-close,'+
-	  '.t-icon-calendar'
-	  ).each(function ()
-	  {
-		$(this).empty();
-	});
+	//$('.t-arrow-first, ' +
+	//  '.t-arrow-prev,' +
+	//  '.t-arrow-next,' +
+	//  '.t-arrow-last,' +
+	//  '.t-arrow-up,' +
+	//  '.t-arrow-down,' +
+	//  '.t-arrow-up-small,' +
+	//  '.t-arrow-down-small,' +
+	//  '.t-filter,'+
+	//  '.t-group-delete,'+
+	//  '.t-close,'+
+	//  '.t-icon-calendar'
+	//  ).each(function ()
+	//  {
+	//	$(this).empty();
+	//});
 }
 
 /*Truncate Title*/
@@ -38,54 +38,55 @@ function truncateTitle()
 		//if (!$(this).attr("title") == true) { 
 		var n = $(".bx-trunc-parent").width()-60;
 		var text = $(this).text();
-
+		console.log(text);
 		
-
+		var ntLast
+		var nt
 		//Link Breiter als/ oder gleich breit Container
 		if ($(this).width() >= n) {
-		    
-		    //console.log("start truncate xxx");
-		    //console.log(this);
-		    //console.log("text:" + text);
-		    //console.log("n :" + n);
-		    //console.log("$(this).width() :" + $(this).width());
+			
+			//console.log("start truncate xxx");
+			//console.log(this);
+			//console.log("text:" + text);
+			//console.log("n :" + n);
+			//console.log("$(this).width() :" + $(this).width());
 
 			$(this).width(n);
 
 			//console.log("new .width() :" + $(this).width());
 
 			//get text from title or text
-			if ($(this).attr("title") != null)
+			if ($(this).attr("title") !== null)
 				t = $(this).attr("title");
 			else
 				t = $(this).text();
 
-			var nt = t.split(" ");
+			nt = t.split(" ");
 
 			//console.log("nt :" + nt);
-			var ntLast = nt.pop();
+			ntLast = nt.pop();
 			//console.log("ntLast :" + ntLast);
-		    $(this).trunk8(
-		    {
-		        fill: "..." + ntLast
-		    });
+			$(this).trunk8(
+			{
+				fill: "..." + ntLast
+			});
 
-		    //console.log("new text:" + $(this).text());
+			//console.log("new text:" + $(this).text());
 
 
 		}
-	    //Link kürzer als Container
-		else if (text.indexOf(".") != -1 || text == '' || text == null)
+		//Link kürzer als Container
+		else if (text.indexOf(".") !== -1 || text === '' || text === null)
 		{
 
 			var l = $(this).text().length;
-		    if (l == 0)
+			if (l === 0)
 			{
 				l = 1;
 			}
 
 			var w = $(this).width();
-		    if (w == 0)
+			if (w === 0)
 			{
 				w = 1;
 			}
@@ -108,8 +109,8 @@ function truncateTitle()
 				$(this).width(maxWidth);
 			}
 
-			var nt = t.split(" ");
-			var ntLast = nt.pop();
+			nt = t.split(" ");
+			ntLast = nt.pop();
 
 
 			$(this).trunk8(
@@ -126,10 +127,10 @@ function truncateTitle()
 function addTooltips() {
 	$(".t-grid > table > tbody > tr > td , .t-grid > table > thead > tr > th").each(function ()
 	{
-        var $this = $(this);
-        var text = $this.text();
-        $this.attr("title", text);
-    });
+		var $this = $(this);
+        var text = this.innerText;
+		$this.attr("title", text);
+	});
 }
 
 /**
@@ -139,127 +140,127 @@ function addTooltips() {
 
 $(".t-grid").load(function () {
 
-    $(".t-grid th").each(function () {
-        var element = $(this);
-        var div;
-        if (element.find(".bx-header-title").length > 0) {
-            div = element.find(".bx-header-title");
-        }
-        else {
-            div = $(document.createElement("div"));
-            div.addClass("bx-header-title");
-            div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
-            div.append(element.find("a"));
-            element.prepend(div);
-        }
+	$(".t-grid th").each(function () {
+		var element = $(this);
+		var div;
+		if (element.find(".bx-header-title").length > 0) {
+			div = element.find(".bx-header-title");
+		}
+		else {
+			div = $(document.createElement("div"));
+			div.addClass("bx-header-title");
+			div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+			div.append(element.find("a"));
+			element.prepend(div);
+		}
 
-        var filter = element.find(".t-grid-filter");
-        filter.css("float", "right");
-        filter.css("margin-top", "2px");
-        div.width((element.innerWidth() - filter.outerWidth() - 5));
-    });
+		var filter = element.find(".t-grid-filter");
+		filter.css("float", "right");
+		filter.css("margin-top", "2px");
+		div.width((element.innerWidth() - filter.outerWidth() - 5));
+	});
 });
 
 $(".t-grid th").click(function (e) {
 
-    //var element = e.currentTarget;
+	//var element = e.currentTarget;
 
-    //var arrow = $(element).find("span")[0];
-    //console.log(arrow);
+	//var arrow = $(element).find("span")[0];
+	//console.log(arrow);
 
-    //var hasDownClass = $(arrow).hasClass("t-arrow-down");
-    //var hasUpClass = $(arrow).hasClass("t-arrow-up");
-    //var display = $(arrow).css("display");
+	//var hasDownClass = $(arrow).hasClass("t-arrow-down");
+	//var hasUpClass = $(arrow).hasClass("t-arrow-up");
+	//var display = $(arrow).css("display");
 
-    //console.log(hasDownClass);
-    //console.log(display);
+	//console.log(hasDownClass);
+	//console.log(display);
 
-    //if ((hasDownClass && display.length == 0) ||
-    //    (hasDownClass && display == "inline-block")
-    //    ||
-    //    (!hasDownClass && display == "none")
-    //    ||
-    //    (!hasDownClass && display.length == 0)) {
+	//if ((hasDownClass && display.length == 0) ||
+	//    (hasDownClass && display == "inline-block")
+	//    ||
+	//    (!hasDownClass && display == "none")
+	//    ||
+	//    (!hasDownClass && display.length == 0)) {
 
-    //    $(arrow).removeClass();
-    //    $(arrow).addClass("t-icon");
-    //    $(arrow).addClass("t-arrow-up");
-    //    $(arrow).attr("display", "inline-block");
-    //    console.log("1");
+	//    $(arrow).removeClass();
+	//    $(arrow).addClass("t-icon");
+	//    $(arrow).addClass("t-arrow-up");
+	//    $(arrow).attr("display", "inline-block");
+	//    console.log("1");
 
-    //} else 
-    //if ((hasDownClass && display.length == 0) ||
-    //    (hasDownClass && display == "none")) {
+	//} else 
+	//if ((hasDownClass && display.length == 0) ||
+	//    (hasDownClass && display == "none")) {
 
-    //    $(arrow).removeClass();
-    //    $(arrow).addClass("t-icon");
-    //    $(arrow).addClass("t-arrow-down");
-    //    $(arrow).attr("display", "inline-block");
-    //    console.log("2");
+	//    $(arrow).removeClass();
+	//    $(arrow).addClass("t-icon");
+	//    $(arrow).addClass("t-arrow-down");
+	//    $(arrow).attr("display", "inline-block");
+	//    console.log("2");
 
-    //}
-    //else
-    //if (hasUpClass) {
+	//}
+	//else
+	//if (hasUpClass) {
 
-    //    $(arrow).removeClass();
-    //    $(arrow).addClass("t-icon");
-    //    $(arrow).addClass("t-arrow-down");
-    //    $(arrow).attr("display", "none");
-    //    console.log("3");
+	//    $(arrow).removeClass();
+	//    $(arrow).addClass("t-icon");
+	//    $(arrow).addClass("t-arrow-down");
+	//    $(arrow).attr("display", "none");
+	//    console.log("3");
 
-    //}
+	//}
 
-    //console.log(arrow);
+	//console.log(arrow);
 
 
-    //if (orderBy.indexOf("desc")>0) {
+	//if (orderBy.indexOf("desc")>0) {
 
-    //    $(arrow).removeClass();
-    //    $(arrow).addClass("t-icon");
-    //    $(arrow).addClass("t-icon t-arrow-up");
-    //    console.log("desc");
-    //}
-    //else
-    //    if (orderBy.indexOf("asc") > 0) {
+	//    $(arrow).removeClass();
+	//    $(arrow).addClass("t-icon");
+	//    $(arrow).addClass("t-icon t-arrow-up");
+	//    console.log("desc");
+	//}
+	//else
+	//    if (orderBy.indexOf("asc") > 0) {
 
-    //    $(arrow).removeClass();
-    //    $(arrow).addClass("t-icon");
-    //    $(arrow).addClass("t-icon t-arrow-up");
-    //    console.log("asc");
-    //}
-    //else
-    //{
-    //    $(arrow).removeClass();
-    //    $(arrow).addClass("t-icon");
-    //    $(arrow).addClass("t-icon t-arrow-down");
-    //    console.log("---");
-    //}
+	//    $(arrow).removeClass();
+	//    $(arrow).addClass("t-icon");
+	//    $(arrow).addClass("t-icon t-arrow-up");
+	//    console.log("asc");
+	//}
+	//else
+	//{
+	//    $(arrow).removeClass();
+	//    $(arrow).addClass("t-icon");
+	//    $(arrow).addClass("t-icon t-arrow-down");
+	//    console.log("---");
+	//}
 })
 
 $(".t-grid").change(function () {
 
-    $(".t-grid th").each(function () {
+	$(".t-grid th").each(function () {
 
-        var element = $(this);
-        var div = $(document.createElement("div"));
-        div.addClass("bx-header-title");
-        div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+		var element = $(this);
+		var div = $(document.createElement("div"));
+		div.addClass("bx-header-title");
+		div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
 
-        var filter = element.find(".t-grid-filter");
-        filter.css("float", "right");
+		var filter = element.find(".t-grid-filter");
+		filter.css("float", "right");
 
-        div.width((element.innerWidth() - filter.outerWidth()-5));
+		div.width((element.innerWidth() - filter.outerWidth()-5));
 
-        var a = element.find("a");
-        //var arrow = element.find("span");
-        //console.log(arrow);
-        //a.append(arrow);
-        div.append(a);
+		var a = element.find("a");
+		//var arrow = element.find("span");
+		//console.log(arrow);
+		//a.append(arrow);
+		div.append(a);
 
-        element.prepend(div);
+		element.prepend(div);
 
 
-    });
+	});
 });
 
 /*List*/
@@ -267,7 +268,7 @@ $(".t-grid").change(function () {
 $(".bx-list > li").click(function ()
 {
 	$(this).parent().find(".selected").removeClass("selected");
-    if ($(this).hasClass("selected"))
+	if ($(this).hasClass("selected"))
 	{
 		$(this).removeClass("selected");
 	}
@@ -295,76 +296,81 @@ $(".bx-list-multi >li").click(function ()
  * *******PRELOADER********/
 
 $.fn.extend({
-    preloader: function(fontsize, text, height) {
+	preloader: function(fontsize, text, height) {
 
-        //console.log(text);
-        //console.log(height);
-        //console.log(fontsize);
+		var h = $(this).height();
+		if (height !== null && height > 0) {
+			h = height;
+		}
 
-        if (typeof text === "undefined") {
-            text = "Loading...";
-        }
+		//console.log(text);
+		//console.log(height);
+		//console.log(fontsize);
 
-        if (typeof height === "undefined" || height === 0) {
-            height = "auto";
-        }
+		if (typeof text === "undefined") {
+			text = "Loading...";
+		}
 
-        if (typeof fontsize === "undefined") {
-            fontsize = 10;
-        }
+		if (typeof height === "undefined" || height === 0) {
+			height = "auto";
+		}
 
-        //console.log(text);
-        //console.log(height);
-        //console.log(fontsize);
+		if (typeof fontsize === "undefined") {
+			fontsize = 10;
+		}
 
-        var loader = document.createElement('span');
-        console.log(loader);
+		//console.log(text);
+		//console.log(height);
+		//console.log(fontsize);
 
-        $(loader).css("font-size", fontsize);
-        $(loader).css("padding", 5);
-        $(loader).addClass("fa fa-spinner fa-pulse");
+		var loader = document.createElement('span');
+		console.log(loader);
 
-        //    '<span style="font-size:'+fontsize+'px;" ' +
-        //'class="preloader fa fa-spinner fa-pulse"></span> '+text+
+		$(loader).css("font-size", fontsize);
+		$(loader).css("padding", 5);
+		$(loader).addClass("fa fa-spinner fa-pulse");
 
-        var div = document.createElement('div');
+		//    '<span style="font-size:'+fontsize+'px;" ' +
+		//'class="preloader fa fa-spinner fa-pulse"></span> '+text+
 
-        $(div).append(loader);
-        $(div).append(text);
+		var div = document.createElement('div');
 
-        $(div).addClass("preloader");
+		$(div).append(loader);
+		$(div).append(text);
 
-        $(div).css("font-size", fontsize);
-        $(div).css("height", height);
-        $(div).css("padding", 2);
+		$(div).addClass("preloader");
 
-        console.log(div);
+		$(div).css("font-size", fontsize);
+		$(div).css("height", h);
+		$(div).css("padding", 2);
 
-        $(this).children().hide();
+		console.log(div);
 
-        $(this).append(div);
+		$(this).children().hide();
 
-        return this;
-    },
+		$(this).append(div);
 
-    removePreloader: function () {
+		return this;
+	},
 
-        $(".preloader").remove();
-        $(this).children().show();
-        return this;
-    }
+	removePreloader: function () {
+
+		$(".preloader").remove();
+		$(this).children().show();
+		return this;
+	}
 });
 
 
 /* jQuery Validation Extension - CheckBox */
 if (jQuery.validator) {
-    // Checkbox Validation
-    jQuery.validator.addMethod("checkrequired", function (value, element, params) {
-        var checked = false;
-        checked = $(element).is(':checked');
-        return checked;
-    }, '');
-    if (jQuery.validator.unobtrusive) {
-        jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
-    }
+	// Checkbox Validation
+	jQuery.validator.addMethod("checkrequired", function (value, element, params) {
+		var checked = false;
+		checked = $(element).is(':checked');
+		return checked;
+	}, '');
+	if (jQuery.validator.unobtrusive) {
+		jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
+	}
 }

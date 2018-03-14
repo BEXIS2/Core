@@ -230,8 +230,7 @@
         var value = $(this).val();
 
 
-        $
-            .post('@Url.Action("SelectFileFromServerProcess", @Model.StepInfo.PostActionInfo.ControllerName , new RouteValueDictionary { { "area", "DCM" } })',
+        $.post('@Url.Action("SelectFileFromServerProcess", @Model.StepInfo.PostActionInfo.ControllerName , new RouteValueDictionary { { "area", "DCM" } })',
                 { fileName: value },
                 function(response) {
 

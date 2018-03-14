@@ -149,120 +149,144 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             List<VariableStruct> variableStructs = new List<VariableStruct>();
             List<Variable> variables = getOrderedVariables(structuredDataStructure);
-            DataContainerManager dataAttributeManager = new DataContainerManager();
+            DataContainerManager dataAttributeManager = null;
             VariableStruct temp = new VariableStruct();
             List<BExIS.Dlm.Entities.DataStructure.Constraint> tempconstraints;
             UnitDimenstionModel unitDimenstionModel = new UnitDimenstionModel();
             foreach (Variable v in variables)
             {
-                unitDimenstionModel = new UnitDimenstionModel();
-                temp.variable = v;
-                temp.unitStructs = unitDimenstionModel.getUnitListByDimenstionAndDataType(v.DataAttribute.Unit.Dimension.Id, v.DataAttribute.DataType.Id);
-                tempconstraints = dataAttributeManager.DataAttributeRepo.Get(v.DataAttribute.Id).Constraints.ToList();
-                temp.rangeConstraints = new List<RangeConstraint>();
-                temp.domainConstraints = new List<DomainConstraint>();
-                temp.patternConstraints = new List<PatternConstraint>();
-                foreach (BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints)
+                try
                 {
-                    if (c is DomainConstraint)
+                    unitDimenstionModel = new UnitDimenstionModel();
+                    temp.variable = v;
+                    temp.unitStructs = unitDimenstionModel.getUnitListByDimenstionAndDataType(v.DataAttribute.Unit.Dimension.Id, v.DataAttribute.DataType.Id);
+                    dataAttributeManager = new DataContainerManager();
+                    tempconstraints = dataAttributeManager.DataAttributeRepo.Get(v.DataAttribute.Id).Constraints.ToList();
+                    temp.rangeConstraints = new List<RangeConstraint>();
+                    temp.domainConstraints = new List<DomainConstraint>();
+                    temp.patternConstraints = new List<PatternConstraint>();
+                    foreach (BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints)
                     {
-                        DomainConstraint tempDomainConstraint = (DomainConstraint)c;
-                        tempDomainConstraint.Materialize();
-                        temp.domainConstraints.Add(tempDomainConstraint);
-                    }
-                    if (c is PatternConstraint)
-                        temp.patternConstraints.Add((PatternConstraint)c);
-                    if (c is RangeConstraint)
-                        temp.rangeConstraints.Add((RangeConstraint)c);
+                        if (c is DomainConstraint)
+                        {
+                            DomainConstraint tempDomainConstraint = (DomainConstraint)c;
+                            tempDomainConstraint.Materialize();
+                            temp.domainConstraints.Add(tempDomainConstraint);
+                        }
+                        if (c is PatternConstraint)
+                            temp.patternConstraints.Add((PatternConstraint)c);
+                        if (c is RangeConstraint)
+                            temp.rangeConstraints.Add((RangeConstraint)c);
 
+                    }
+                    variableStructs.Add(temp);
                 }
-                variableStructs.Add(temp);
+                finally
+                {
+                    dataAttributeManager.Dispose();
+                }
             }
             return variableStructs;
         }
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
-            DataStructureManager dsm = new DataStructureManager();
-            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
-            XmlNode order;
-
-            if (doc == null)
+            DataStructureManager dsm = null;
+            try
             {
-                doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
-                doc.AppendChild(root);
-            }
-            if (doc.GetElementsByTagName("order").Count == 0)
-            {
+                dsm = new DataStructureManager();
+                XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
+                XmlNode order;
 
-                if (structuredDataStructure.Variables.Count > 0)
+                if (doc == null)
                 {
-                    order = doc.CreateNode(XmlNodeType.Element, "order", null);
-
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order.AppendChild(variable);
-                    }
-
-                    doc.FirstChild.AppendChild(order);
-                    structuredDataStructure.Extra = doc;
-                    dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    doc = new XmlDocument();
+                    XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
+                    doc.AppendChild(root);
                 }
-            }
-
-            order = doc.GetElementsByTagName("order")[0];
-            List<Variable> orderedVariables = new List<Variable>();
-            if (structuredDataStructure.Variables.Count != 0)
-            {
-                foreach (XmlNode x in order)
+                if (doc.GetElementsByTagName("order").Count == 0)
                 {
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-                        if (v.Id == Convert.ToInt64(x.InnerText))
-                            orderedVariables.Add(v);
 
+                    if (structuredDataStructure.Variables.Count > 0)
+                    {
+                        order = doc.CreateNode(XmlNodeType.Element, "order", null);
+
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
+
+                            XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                            variable.InnerText = v.Id.ToString();
+                            order.AppendChild(variable);
+                        }
+
+                        doc.FirstChild.AppendChild(order);
+                        structuredDataStructure.Extra = doc;
+                        dsm.UpdateStructuredDataStructure(structuredDataStructure);
                     }
                 }
+
+                order = doc.GetElementsByTagName("order")[0];
+                List<Variable> orderedVariables = new List<Variable>();
+                if (structuredDataStructure.Variables.Count != 0)
+                {
+                    foreach (XmlNode x in order)
+                    {
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
+                            if (v.Id == Convert.ToInt64(x.InnerText))
+                                orderedVariables.Add(v);
+
+                        }
+                    }
+                }
+                return orderedVariables;
             }
-            return orderedVariables;
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
         {
 
-            DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure structuredDataStructure = dsm.StructuredDataStructureRepo.Get(ID);
-            this.dataStructure = structuredDataStructure;
-
-            if (this.dataStructure != null)
+            DataStructureManager dsm = null;
+            try
             {
-                this.variableStructs = getOrderedVariableStructs(structuredDataStructure);
+                dsm = new DataStructureManager();
+                StructuredDataStructure structuredDataStructure = dsm.StructuredDataStructureRepo.Get(ID);
+                this.dataStructure = structuredDataStructure;
 
-                if (this.dataStructure.Datasets == null)
+                if (this.dataStructure != null)
                 {
-                    inUse = false;
-                }
-                else
-                {
-                    if (this.dataStructure.Datasets.Count > 0)
-                    {
-                        inUse = true;
-                    }
-                    else
+                    this.variableStructs = getOrderedVariableStructs(structuredDataStructure);
+
+                    if (this.dataStructure.Datasets == null)
                     {
                         inUse = false;
                     }
+                    else
+                    {
+                        if (this.dataStructure.Datasets.Count > 0)
+                        {
+                            inUse = true;
+                        }
+                        else
+                        {
+                            inUse = false;
+                        }
+                    }
+                    this.BuildDataTable();
+                    return (structuredDataStructure);
                 }
-                this.BuildDataTable();
-                return (structuredDataStructure);
+                else
+                {
+                    this.dataStructure = new StructuredDataStructure();
+                    return (structuredDataStructure);
+                }
             }
-            else
+            finally
             {
-                this.dataStructure = new StructuredDataStructure();
-                return (structuredDataStructure);
+                dsm.Dispose();
             }
 
         }
@@ -270,12 +294,24 @@ namespace BExIS.Modules.Rpm.UI.Models
         public void fillDatasetList()
         {
             DatasetListElement datasetListElement = new DatasetListElement();
-            DatasetManager dm = new DatasetManager();
+            DatasetManager dm = null;
             datasets = new List<DatasetListElement>();
-            foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
+
+            try
             {
-                datasetListElement = new DatasetListElement(item.Key, XmlDatasetHelper.GetInformation(item.Value, NameAttributeValues.title));
-                datasets.Add(datasetListElement);
+                dm = new DatasetManager();
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
+                foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
+                {
+                    datasetListElement = new DatasetListElement(item.Key, xmlDatasetHelper.GetInformation(item.Value.Id, NameAttributeValues.title));
+                    datasets.Add(datasetListElement);
+                }
+            }
+            finally
+            {
+                dm.Dispose();
             }
         }
 
@@ -296,41 +332,49 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
             else
             {
-                DataStructureManager dsm = new DataStructureManager();
-                UnStructuredDataStructure unStructuredDataStructure = dsm.UnStructuredDataStructureRepo.Get(ID);
-                this.dataStructure = unStructuredDataStructure;
-
-                if (this.dataStructure != null)
+                DataStructureManager dsm = null;
+                try
                 {
-                    this.variableStructs = null;
-                    if (this.dataStructure.Datasets == null)
+                    dsm = new DataStructureManager();
+                    UnStructuredDataStructure unStructuredDataStructure = dsm.UnStructuredDataStructureRepo.Get(ID);
+                    this.dataStructure = unStructuredDataStructure;
+
+                    if (this.dataStructure != null)
                     {
-                        inUse = false;
-                    }
-                    else
-                    {
-                        if (this.dataStructure.Datasets.Count > 0)
-                        {
-                            inUse = true;
-                            //DatasetListElement datasetListElement = new DatasetListElement();
-                            //DatasetManager dm = new DatasetManager();
-                            //foreach (Dataset d in unStructuredDataStructure.Datasets)
-                            //{
-                            //    datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
-                            //    datasets.Add(datasetListElement);
-                            //}
-                        }
-                        else
+                        this.variableStructs = null;
+                        if (this.dataStructure.Datasets == null)
                         {
                             inUse = false;
                         }
+                        else
+                        {
+                            if (this.dataStructure.Datasets.Count > 0)
+                            {
+                                inUse = true;
+                                //DatasetListElement datasetListElement = new DatasetListElement();
+                                //DatasetManager dm = new DatasetManager();
+                                //foreach (Dataset d in unStructuredDataStructure.Datasets)
+                                //{
+                                //    datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
+                                //    datasets.Add(datasetListElement);
+                                //}
+                            }
+                            else
+                            {
+                                inUse = false;
+                            }
+                        }
+                        return (unStructuredDataStructure);
                     }
-                    return (unStructuredDataStructure);
+                    else
+                    {
+                        this.dataStructure = new StructuredDataStructure();
+                        return (unStructuredDataStructure);
+                    }
                 }
-                else
+                finally
                 {
-                    this.dataStructure = new StructuredDataStructure();
-                    return (unStructuredDataStructure);
+                    dsm.Dispose();
                 }
             }
         }
@@ -495,8 +539,16 @@ namespace BExIS.Modules.Rpm.UI.Models
         /// <seealso cref=""/>        
         public void GetDataAttributeList()
         {
-            DataContainerManager DataAttributeManager = new DataContainerManager();
-            this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
+            DataContainerManager DataAttributeManager = null;
+            try
+            {
+                DataAttributeManager = new DataContainerManager();
+                this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
+            }
+            finally
+            {
+                DataAttributeManager.Dispose();
+            }
         }
 
         #region helper

@@ -550,6 +550,24 @@
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\DIM\bexis-dim.css" />
+    <Content Include="Content\Images\help\collections.png" />
+    <Content Include="Content\Images\help\help_img1.png" />
+    <Content Include="Content\Images\help\help_img2.png" />
+    <Content Include="Content\Images\help\help_img3.png" />
+    <Content Include="Content\Images\help\help_img4.png" />
+    <Content Include="Content\Images\help\many_to_one.png" />
+    <Content Include="Content\Images\help\mapping.png" />
+    <Content Include="Content\Images\help\mapping_tool.png" />
+    <Content Include="Content\Images\help\mapping_tool2.png" />
+    <Content Include="Content\Images\help\mapping_tool3.png" />
+    <Content Include="Content\Images\help\one_to_many.png" />
+    <Content Include="Content\Images\help\one_to_one.png" />
+    <Content Include="Content\Images\help\pangaea1.png" />
+    <Content Include="Content\Images\help\pangaea2.png" />
+    <Content Include="Content\Images\help\publish.png" />
+    <Content Include="Content\Images\help\source.png" />
+    <Content Include="Content\Images\help\target.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Dim.Manifest.xml">
       <SubType>Designer</SubType>
@@ -588,9 +606,15 @@
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\BPP211_Dim.pubxml" />
     <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\DIM.pubxml" />
+    <None Include="Properties\PublishProfiles\DIM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\DIM21108.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
+    <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
+    <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -632,6 +656,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>

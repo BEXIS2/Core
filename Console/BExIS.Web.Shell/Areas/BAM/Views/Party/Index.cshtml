@@ -1,19 +1,33 @@
 ﻿@model Dictionary<String, List<String>>
+@section Information
+{
+    With this interface you are able to manage parties. New party can be added with the "Create" button. Existing parties can be edited and removed through the "Edit" and "Delete" button. Furthermore, their details can be viewed through the "View" button.
+    <p>
+        <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
 <div class="bx-rpm-buttons">
-    @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button function" })
+    @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button action" })
 </div>
-<div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" style="background-color:none !important;">
-        <li id="" class="ui-state-default ui-corner-top ui-state-active">
-            <a class="ui-tabs-anchor">
+@if (Model == null || !Model.Any())
+{
+    <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
+    </div>
+}
+else
+{
+<div id="tabs" class="t-widget t-tabstrip t-header">
+    <ul class="t-reset t-tabstrip-items" style="background-color:none !important;">
+        <li id="" class="t-item t-state-default t-state-active">
+            <a class="t-link">
                 <span>All</span>
             </a>
         </li>
         @foreach (var rootPartyType in Model)
         {
-            var partyTypes=string.Join(",", rootPartyType.Value);
-            <li partyTypes="@partyTypes" class="ui-state-default ui-corner-top">
-                <a class="ui-tabs-anchor">
+            var partyTypes = string.Join(",", rootPartyType.Value);
+            <li partyTypes="@partyTypes" class="t-item t-state-default">
+                <a class="t-link">
                     <span>@rootPartyType.Key</span>
                 </a>
             </li>
@@ -23,11 +37,9 @@
 
     <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartiesLoading" />
     <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
-        
-
-
     </div>
 </div>
+}
 <script type="text/javascript">
 
     $("#tabs li").on("click", function () {
@@ -36,8 +48,7 @@
         loadParties($(this).attr("partyTypes"));
     });
 
-    function loadParties(partyTypes)
-    {
+    function loadParties(partyTypes) {
         if (!partyTypes)
             partyTypes = '';
         $('#imgPartiesLoading').show();
@@ -48,8 +59,13 @@
                 alert(response);
             }
             $('#imgPartiesLoading').hide();
+            $('[data-toggle="tooltip"]').tooltip();
+            onDataBound();
         });
     }
-
+    function onDataBound() {
+        resetAllTelerikIconTitles();
+        addTooltips();
+    }
     loadParties('');
 </script>

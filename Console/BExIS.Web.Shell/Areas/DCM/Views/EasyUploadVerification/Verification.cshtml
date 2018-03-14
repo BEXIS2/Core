@@ -3,11 +3,11 @@
 @using Telerik.Web.Mvc.Resources;
 @using BExIS.Modules.Dcm.UI.Models;
 @using BExIS.Dlm.Entities.DataStructure;
-@using BExIS.Modules.Dcm.UI.Helpers;
+@using BExIS.Web.Shell.Areas.DCM.Helpers;
 
 
 
-<div id="Step3" class="uploadWizardStep">
+<div id="Step5" class="uploadWizardStep">
 
     <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
@@ -24,6 +24,7 @@
                         <th>Variable name</th>
                         <th>Unit</th>
                         <th>Datatype</th>
+                        <th>Datatype description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,14 +32,13 @@
                     {
                         <tr>
                             <td varName="@Html.Name(Model.HeaderFields[i])" index=@i>
-                                <i class="fa fa-exclamation-triangle" aria-hidden="true" title=""></i>
-                                @*Html.Name(Model.HeaderFields[i])*@
+                                <i class="fa" aria-hidden="true" title=""></i>
 
                                 <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
-                                <select style="min-width: 90%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
+                                <select  style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
 
                                     <!--The default option is the name of the column in the submitted table-->
-                                    <option data-unit="1" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
+                                    <option data-unit="@ViewData["defaultUnitID"]" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
 
                                     <!--Create an option for each variable in the respective suggestions
                                         make sure that the one that is registered as selected is actually shown as selected in the list-->
@@ -69,15 +69,13 @@
 
                             <td>
                                 <!--Unit Selector-->
-                                <select name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
+                                <select style="width: 80%" name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
                                     @foreach (UnitInfo unit in Model.AvailableUnits)
                                     {
                                         string selected = "";
 
                                         if (Model.AssignedHeaderUnits.Count > 0)
                                         {
-
-                                            //Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item2 == Model.HeaderFields[i]).FirstOrDefault();
                                             Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item1 == i).FirstOrDefault();
 
                                             if (tuple != null)
@@ -92,10 +90,11 @@
                             </td>
                             <td>
                                 <!--Datatype Selector-->
-                                <select name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
+                                <select style="width: 80%" name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
                                     @{
 
                                         Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
+                                        string datatypeDescription = "";
 
                                         if (tupleBla != null && tupleBla.Item3.UnitId >= 0)
                                         {
@@ -106,6 +105,7 @@
                                                 if (tupleBla.Item3.SelectedDataTypeId == dataTypeInfo.DataTypeId)
                                                 {
                                                     selected = "selected";
+                                                    datatypeDescription = dataTypeInfo.Description;
                                                 }
 
                                                 <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
@@ -113,55 +113,41 @@
                                         }
                                         else
                                         {
-                                            <option value="none" tilte="">Please select an unit</option>
+                                            <option value="none" title="Please select a unit">Please select an unit</option>
                                         }
-
-                                    }
-
                                     }
                                 </select>
                             </td>
+                            <td class="datatypeinfo">
+                                @Html.Raw(datatypeDescription)
+                            </td>
                         </tr>
-                                        }
+                    }
                 </tbody>
             </table>
         </div>
 
         <div style="float:left; padding-top: 10px">
-            <button id="validateBtn" onClick="validateData()" class="t-button action" title="Validate Selection">Validate</button>
+            <button id="validateBtn" onClick="validateData(this)" class="t-button action" title="Validate Selection">Validate</button>
         </div>
 
     </div>
 
     <div class="uploadWizardStep_Error stepper">
-        @if (Model != null)
+        @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
         {
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
+            <ul>
+                @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                 {
-
-
+                    <li>@s.ToString()</li>
                 }
-                else
-                {
-                    <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        {
-                            <li>@s.ToString()</li>
-                        }
-                    </ul>
-
-                }
-            }
-
+            </ul>
         }
     </div>
 </div>
 
 <style>
     .fa-exclamation-triangle {
-        display: none;
         color: darkorange;
     }
 
@@ -172,54 +158,83 @@
 
 <script type="text/javascript">
 
-    function validateData() {
+    function validateData(button) {
+        //Hide the results of previous validation attempts
+        $(button).closest('tr').find('i').prop('title', "");
+
+        //Show a spinner - making sure the button is not resized by setting min-width and -height
+        var oldHtml = $(button).html();
+        var curWidth = $(button).outerWidth();
+        var curHeight = $(button).outerHeight();
+        $(button).css({
+            "min-width": curWidth.toString() + "px",
+            "min-height": curHeight.toString() + "px"
+        });
+        $(button).html('<i class="fa fa-spinner fa-spin fa-fw"></i><span class="sr-only">Loading...</span>');
 
         $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
-                if (response.errors.length > 0) {
-                    for (var i = 0; i < response.errors.length; i++) {
-                        var error = response.errors[i];
-                        //var VariableName = error.VariableName;
-                        //var TitleCell = $('td[varName="' + VariableName + '"] > i');
-                        var TitleCell = $('td[index="' + error.Item1 + '"] > i');
+            //Restore old button content
+            $(button).html(oldHtml);
 
-                        if (TitleCell.is(":visible")) {
-                            var currentTitle = TitleCell.attr("title");
-                            var currentErrorCount = currentTitle.split("\n").length;
-
-                            if (currentErrorCount < 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
-                            }
-                            if (currentErrorCount == 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
-                                TitleCell.attr("title", currentTitle + "\nand more...");
-                            }
-                        } else {
-                            TitleCell.show();
-                            TitleCell.attr("title", error.Item2.Value + " is not valid as " + error.Item2.DataType);
-                        }
-                    }
-                } else {
-                    $('td > i').each(function () {
-                        $(this).removeClass("fa-exclamation-triangle");
-                        $(this).addClass("fa-check");
-                    });
-                }
+            //Remove all old icons, they are added while parsing the errors
+            $('td > i').each(function () {
+                $(this).removeClass("fa-exclamation-triangle");
+                $(this).removeClass("fa-check");
             });
+
+            //See if there are errors, display them or display a check mark
+            if (response.errors.length > 0) {
+                for (var i = 0; i < response.errors.length; i++) {
+                    var error = response.errors[i];
+                    //var VariableName = error.VariableName;
+                    //var TitleCell = $('td[varName="' + VariableName + '"] > i');
+                    var TitleCell = $('td[index="' + error.Item1 + '"] > i');
+
+                    //Show a warning sign, hide check marks if they were visible before
+                    TitleCell.removeClass("fa-check");
+                    TitleCell.addClass("fa-exclamation-triangle");
+
+                    if (TitleCell.is(":visible")) {
+                        var currentTitle = TitleCell.attr("title");
+                        var currentErrorCount = currentTitle.split("\n").length;
+
+                        if (currentErrorCount < 50) {
+                            TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
+                        }
+                        if (currentErrorCount == 50) {
+                            TitleCell.attr("title", currentTitle + "\n\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
+                            TitleCell.attr("title", currentTitle + "\nand more...");
+                        }
+                    } else {
+                        TitleCell.show();
+                        TitleCell.attr("title", "\"" + error.Item2.Value + "\" is not valid as " + error.Item2.DataType);
+                    }
+                }
+                //Show check marks for all Title cells that did not receive an error
+                $('td > i').each(function () {
+                    if ( !$(this).hasClass("fa-exclamation-triangle") ) {
+                        $(this).addClass("fa-check");
+                    }
+                    if ( !$(this).is(":visible") ) {
+                        $(this).show();
+                    }
+                });
+            } else {
+                //No errors so show a check-mark for all title cells
+                $('td > i').each(function () {
+                    $(this).addClass("fa-check");
+                });
+            }
+        });
     }
 
     $(document).ready(function () {
 
-        /*
-        //Is this function even needed?
-        $('select[name="DataType"]').each(function (index) {
-            var selectId = $(this).attr('headerfieldId');
-            var val = $('select[name="Unit"][headerfieldId="' + selectId + '"]').val();
-            if(val > 0)
-            {
-                $(this).prop("disabled", false);
-
-            }
-        });*/
+        //Destroy the handsontable from the last step because it's causing performance problems
+        if (hotActive) {
+            hot.destroy();
+            hotActive = false;
+        }
         
         $('select[name="Unit"]').change(function () {
             if ($(this).val() != null && $(this).val() != '') {
@@ -228,7 +243,7 @@
 
                 // send to bus
                 $.post('@Url.Action("SaveUnitSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { selectFieldId: selectId, selectOptionId: selectOptionId }, function (response) {
-                    $("#Step3").html(response);
+                    $('#StepView > div').first().html(response);
                 });
             }
         });
@@ -239,13 +254,12 @@
 
             // send to bus
             $.post('@Url.Action("SaveDataTypeSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { headerfieldId: headerfieldId, selectedDataTypeId: selectedDataTypeId }, function (response) {
-                $("#Step3").html(response);
+                $('#StepView > div').first().html(response);
             });
         });
     });
 
     function suggestionSelected(suggestionSelectObject, i) {
-        console.log("Selected " + i + "   " + suggestionSelectObject);
         //Find the selected option object
         var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
 
@@ -264,8 +278,8 @@
                 selectedUnitId: unitID,
                 selectedDataTypeId: datatypeID
             }, function (response) {
-            $("#Step3").html(response);
-        });
+                $('#StepView > div').first().html(response);
+            });
     }
 
     //Necessary to trigger onChange even when the same option is selected again

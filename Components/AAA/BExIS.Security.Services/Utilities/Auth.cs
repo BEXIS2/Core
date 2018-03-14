@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BExIS.Sam.Providers.Ldap;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
@@ -32,17 +33,33 @@ namespace BExIS.Security.Services.Utilities
             //   consumerKey: "dfgdfgdfgd",
             //   consumerSecret: "dfgdfffffffg");
 
-            //app.UseLdapAuthentication(new LdapAuthenticationOptions("/signin-ldap", "host"));
+            //app.UseLdapAuthentication(new LdapAuthenticationOptions());
 
             //app.UseFacebookAuthentication(
-            //   appId: "sfg",
-            //   appSecret: "ffffffffffff");
+            //   appId: "134998043776447",
+            //   appSecret: "c8b3b4a0878ebe70f9494f93202e203b"
+            //);
 
-            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            {
-                ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
-                ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
-            });
+            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            //{
+            //    ClientId = "587369244487-4cd2h297b0gispb44lvvbns8ohlvm2fj.apps.googleusercontent.com",
+            //    ClientSecret = "lm7FGNTY0Bz_Y3rh0apf2T6F"
+            //});
+
+            //app.UseOrcidAuthentication(new OrcidAuthenticationOptions()
+            //{
+            //    Endpoints = new OrcidAuthenticationEndpoints
+            //    {
+            //        ApiEndpoint = "https://pub.sandbox.orcid.org/v1.2/0000-0003-0514-2115/orcid-profile",
+            //        TokenEndpoint = "https://sandbox.orcid.org/oauth/token",
+            //        AuthorizationEndpoint = h"https://sandbox.orcid.org/oauth/authorize?client_idttps://sandbox.orcid.org/oauth/authorize?client_id="
+            //                        + clientId + "&response_type=code&scope="
+            //                        + "/read-limited" + "&redirect_uri="
+            //                        + "http://localhost:55247/Acces"
+            //    },
+            //    ClientId = clientId,
+            //    ClientSecret = clientSecret
+            //});
         }
     }
 }

@@ -9,18 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitDefinePrimaryKeyController : Controller
+    public class SubmitDefinePrimaryKeyController : BaseController
     {
         private TaskManager TaskManager;
-        //
+        private UploadWizardHelper uploadWizardHelper = new UploadWizardHelper();
+
         // GET: /DCM/DefinePrimaryKey/
         [HttpGet]
         public ActionResult DefinePrimaryKey(int index)
         {
-            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
+            TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
             {
@@ -118,7 +120,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //[MeasurePerformance]
         public ActionResult CheckPrimaryKeys(object[] data)
         {
-            BExIS.Dcm.UploadWizard.TaskManager TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
             PrimaryKeyViewModel model = new PrimaryKeyViewModel();
             model.StepInfo = TaskManager.Current();
@@ -151,9 +153,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // temporary solution to make it a little bit faster
                     // direct link to xml is no t allow, need to call functions from dlm
-                    bool IsUniqueInDb = UploadWizardHelper.IsUnique2(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    bool IsUniqueInDb = uploadWizardHelper.IsUnique2(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
 
-                    bool IsUniqueInFile = UploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
+                    bool IsUniqueInFile = uploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
                     if (IsUniqueInDb && IsUniqueInFile)
                     {
@@ -231,14 +233,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<ListViewItem> LoadVariableLableList()
         {
             DataStructureManager datastructureManager = new DataStructureManager();
-            StructuredDataStructure structuredDatastructure = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"]));
 
-            return (from var in structuredDatastructure.Variables
-                    select new ListViewItem
-                    {
-                        Id = var.Id,
-                        Title = var.Label
-                    }).ToList();
+            try
+            {
+
+                StructuredDataStructure structuredDatastructure = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"]));
+
+                return (from var in structuredDatastructure.Variables
+                        select new ListViewItem
+                        {
+                            Id = var.Id,
+                            Title = var.Label
+                        }).ToList();
+            }
+            finally
+            {
+                datastructureManager.Dispose();
+            }
         }
 
         #endregion

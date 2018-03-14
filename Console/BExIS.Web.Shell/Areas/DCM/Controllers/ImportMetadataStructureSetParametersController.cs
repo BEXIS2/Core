@@ -16,6 +16,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -23,35 +24,43 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private List<SearchMetadataNode> _metadataNodes = new List<SearchMetadataNode>();
         private ImportMetadataStructureTaskManager TaskManager;
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes()
         {
-            List<SearchMetadataNode> list = new List<SearchMetadataNode>();
 
-            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
-
-            // load metadatastructure with all packages and attributes
-
-            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-                long metadataStrutureId = Convert.ToInt64(TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID]);
-                MetadataStructureManager msd = new MetadataStructureManager();
-                string title = msd.Repo.Get(metadataStrutureId).Name;
 
-                XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStrutureId);
+                List<SearchMetadataNode> list = new List<SearchMetadataNode>();
 
-                List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
+                TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
-                foreach (XElement element in elements)
+                // load metadatastructure with all packages and attributes
+
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
                 {
-                    list.Add(
-                      new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
-                      );
+                    long metadataStrutureId = Convert.ToInt64(TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID]);
+                    string title = unitOfWork.GetReadOnlyRepository<MetadataStructure>().Get(metadataStrutureId).Name;
+
+                    XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                    XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStrutureId);
+
+                    List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
+
+                    foreach (XElement element in elements)
+                    {
+                        list.Add(
+                          new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
+                          );
+                    }
                 }
+
+                return list;
             }
 
-            return list;
+
         }
 
         public ActionResult Save(ParametersModel model)
@@ -326,16 +335,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<string> GetEntityList()
         {
             EntityManager entityManager = new EntityManager();
-            List<string> tmp = new List<string>();
 
-            foreach (var entity in entityManager.Entities)
+            try
             {
-                tmp.Add(entity.Name);
+                List<string> tmp = new List<string>();
+
+                foreach (var entity in entityManager.Entities)
+                {
+                    tmp.Add(entity.Name);
+                }
+
+                //IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
+
+                return tmp.ToList();
             }
-
-            //IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
-
-            return tmp.ToList();
+            finally
+            {
+                entityManager.Dispose();
+            }
         }
 
 
@@ -356,7 +373,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
-            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+            XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
             return doc;
         }
@@ -371,38 +388,48 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
-
-            XmlDocument xmlDoc = new XmlDocument();
-
-            if (metadataStructure.Extra != null)
-            {
-                xmlDoc = (XmlDocument)metadataStructure.Extra;
-            }
-
-            // add title Node
-            xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-            // add Description
-            xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-
             EntityManager entityManager = new EntityManager();
 
-            if (entityManager.EntityRepository.Get().Any(e => { return e.Name != null && e.Name.Equals(entity); }))
+            try
             {
-                Entity e = entityManager.EntityRepository.Get().FirstOrDefault(x => x.Name != null && x.Name.Equals(entity));
-                if (e != null)
-                    xmlDoc = AddReferenceToMetadatStructure(e.Name, e.EntityType.FullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(id);
+
+                XmlDocument xmlDoc = new XmlDocument();
+
+                if (metadataStructure.Extra != null)
+                {
+                    xmlDoc = (XmlDocument)metadataStructure.Extra;
+                }
+
+                // add title Node
+                xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+                // add Description
+                xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+
+
+                if (entityManager.EntityRepository.Get().Any(e => { return e.Name != null && e.Name.Equals(entity); }))
+                {
+                    Entity e = entityManager.EntityRepository.Get().FirstOrDefault(x => x.Name != null && x.Name.Equals(entity));
+                    if (e != null)
+                        xmlDoc = AddReferenceToMetadatStructure(e.Name, e.EntityType.FullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+                }
+
+                // add mappingFilePath
+                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+                xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+                //set active
+                xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+
+                metadataStructure.Extra = xmlDoc;
+                mdsManager.Update(metadataStructure);
             }
-
-            // add mappingFilePath
-            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
-            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
-
-            //set active
-            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
-
-            metadataStructure.Extra = xmlDoc;
-            mdsManager.Update(metadataStructure);
+            finally
+            {
+                mdsManager.Dispose();
+                entityManager.Dispose();
+            }
         }
 
         #endregion extra xdoc
