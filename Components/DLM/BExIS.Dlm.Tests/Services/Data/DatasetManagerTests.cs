@@ -13,6 +13,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.Data.Qurying;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {    
@@ -23,6 +24,8 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+            var dsm = new DataStructureManager();
+            //var ds = dsm.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
         }
 
         [OneTimeTearDown]
@@ -143,10 +146,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
                 dataset.Should().NotBeNull();
-                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                dataset.Id.Should().BeGreaterThan(0, "Dataset was not persisted.");
                 dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in the CheckedIn status.");
                 dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
             }
 
@@ -156,6 +159,45 @@ namespace BExIS.Dlm.Tests.Services.Data
             dm.PurgeDataset(dataset.Id, true);
         }
 
+        [Test()]
+        public void CreateAndExpressionforQueryingTest()
+        {
+            FilterExpression fex = BinaryFilterExpression
+                .And(
+                    new FilterNumberItemExpression()
+                    {
+                        Field = new Field() { DataType = DataType.Ineteger, Name = "var1" }
+                        ,
+                        Operator = NumberOperator.Operation.GreaterThan
+                        ,
+                        Value = 12
+                    }
+                    ,
+                    new FilterStringItemExpression()
+                    {
+                        Field = new Field() { DataType = DataType.String, Name = "var10" }
+                            ,
+                        Operator = StringOperator.Operation.EndsWith
+                            ,
+                        Value = "test"
+                    }
+                );
+
+            fex.ToSQL().Should().Be("((var1) > (12)) AND ((var10) LIKE ('%test'))");
+
+            OrderByExpression orderByExpr = new OrderByExpression(
+                                                    new List<OrderItemExpression>() {
+                                                        new OrderItemExpression("var22"),
+                                                        new OrderItemExpression("var36", SortDirection.Descending)
+                                                    });
+            orderByExpr.ToSQL().Should().Be("var22 ASC, var36 DESC");
+
+            // pass this filter to get a subset of dataset X
+            DatasetManager dm = new DatasetManager();
+            var dst = dm.GetLatestDatasetVersionTuples(1, fex, null, null, 1, 10);
+            dst.Should().NotBeNull();
+            dst.Rows.Count.Should().Be(10); // or less
+        }
     }
 
 }
