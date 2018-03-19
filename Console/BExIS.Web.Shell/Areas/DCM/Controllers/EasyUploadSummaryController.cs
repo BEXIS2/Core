@@ -588,7 +588,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
                     //Reindex search
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                     {
 
                         this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });

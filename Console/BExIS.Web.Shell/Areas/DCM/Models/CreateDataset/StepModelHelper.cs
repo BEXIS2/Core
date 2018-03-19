@@ -14,6 +14,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public long UsageId { get; set; }
         public Type UsageType { get; set; }
         public string UsageName { get; set; }
+        public string UsageAttrName { get; set; }
         public int Number { get; set; }
         public int Level { get; set; }
 
@@ -48,12 +49,13 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             Level = 0;
         }
 
-        public StepModelHelper(int stepId, int number, long usageId, string usageName, Type usageType, string xpath, StepModelHelper parent, XmlNode extra)
+        public StepModelHelper(int stepId, int number, long usageId, string usageName, string usageAttrName, Type usageType, string xpath, StepModelHelper parent, XmlNode extra)
         {
             StepId = stepId;
             UsageId = usageId;
             UsageType = usageType;
             UsageName = usageName;
+            UsageAttrName = usageAttrName;
             Number = number;
             XPath = xpath;
             Childrens = new List<StepModelHelper>();

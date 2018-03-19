@@ -1,4 +1,4 @@
-@using Vaiona.Web.Mvc;<br />
+
 @section Information
 {
 This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
@@ -34,11 +34,21 @@ This guide will walk you through the basics of data collection including how to 
 <p></p>&nbsp;&nbsp; <a href="#_summary">6.4. Summary</a>
   </div>
 }
-<style>
-.toc { position: fixed; top:100px; }
-.scrollable { overflow: auto; height: 750px; }
-:target:before { content: ""; display: block; height: 100px; }
-</style>
+
+  <style>
+      .toc {
+          position: fixed;
+          top: 100px;
+          overflow-y: auto;
+          height: 600px;
+      }
+
+      :target:before {
+          content: "";
+          display: block;
+          height: 100px;
+      }
+  </style>
 
 <p>&#xa0;</p>
 <p>&#xa0;</p>
@@ -58,7 +68,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <p>This wizard will assist you in creating a new dataset in BEXIS 2. The Wizard is very flexible and builds up differently depending on the selected Metadata structure. Therefore, we describe only the basic functions here. </p>
 <p>The first step is to generate an empty or a copy of an existing dataset based on your selection of the two mandatory elements: data structure, and metadata structure. </p>
-<p><img src="~/Areas/DCM/Content/Images/Help/create_dataset.jpg" width="900" alt="Create Dataset" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/create_dataset.png" width="900" alt="Create Dataset" />&#xa0;</p>
 <p>The next stage is determined by the selected metadata structure.</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
@@ -120,7 +130,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>With this step, the selected data file is validated against the selected data structure. Both, the structure of the data (e.g. variable properties) and whether the data values fit to the specified structure (e.g. data type, value range) is evaluated. </p>
 <p>Click on Validate button to validate the data file.</p>
 <p>If you go back and change something in the process of uploading, you need to validate the file again.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/upload_tabular.jpg" width="596" height="327" alt="Upload_Tabular_Validate" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Validation.png" width="596" height="327" alt="Validate" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_Toc468355761">3.5. Summary</a></h2>
 <p>With this final step a summary of your uploaded data file is provided. Please check the information and click the Finish button to confirm and finalize the upload. </p>
@@ -129,7 +139,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>An unstructured data could be either selected from your local computer or could be a file that has been uploaded to the server. In the case of unstructured data, we do not read the contents of the data. We copy the files to the server and place them in relation to the dataset.  </p>
 <p>BEXIS 2 application can support many file formats such as *.avi) (*.bmp) (*.csv) (*.dbf) (*.doc) (*.docx) (*.gif) (*.jpg) (*.jpeg) (*.mp3) (*.mp4) (*.pdf) (*.png) (*.shp) (*.shx) (*.tif) (*.txt) (*.xls) (*.xlsm) (*.xlsx) (*.xsd) (*.zip).</p>
 <p>The Maximum acceptable file size up to now is: 1024 MB.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/select_file.png" width="900" alt="Select File" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Upload_Unstructures.png" width="900" alt="Select File" />&#xa0;</p>
 <p>&#xa0;</p>
 <h1><a id="_easy_upload_import_data">4. Import Data</a></h1>
 <p>The Import Data wizard enables you to import both a tabular datastructure and data from a file in a single workflow.</p>
