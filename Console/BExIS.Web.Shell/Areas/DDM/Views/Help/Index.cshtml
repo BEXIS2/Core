@@ -22,11 +22,24 @@
 }
 
 <style>
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
+
     .toc {
         position: fixed;
         top: 100px;
-        overflow-y: auto;
-        height: 600px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
+
+
+    .scrollable {
+        overflow: auto;
+        height: 750px;
     }
 
     :target:before {
@@ -37,11 +50,7 @@
 </style>
 
 
-<p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-
-<br />
-<h1><a id="_Toc468258969"><span>1. Search UI</span></a></h1>
+<h1><a id="_Toc468258969" "top"><span>1. Search UI</span></a></h1>
 <p><span>Search UI contains some parts to make search easier. In this way, you are able to look for all details of datasets, but not for the uploaded data. You can control the search UI via search manager explained in section 3.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img1.png" width="605" height="318" alt="img1" /><span>&#xa0;</span></p>
 <h2><a id="_Toc468258970"><span>1.1. Categories</span></a><span> </span></h2>
@@ -103,3 +112,8 @@
 <p><span>UI Component Type: Choose a UI component Type according to the number of options (1-3 = item, 3-15 = list, &gt;15= range).</span></p>
 <p><span>Selection Type: Choose a selection type based how many choices should be allowed (single, multiple).</span></p>
 <p><span>Direction: Default sort direction for this item (ascending, descending).</span></p>
+
+<p>&#xa0;</p>
+<p>&#xa0;</p>
+
+<a href="#top"> Go to top</a>

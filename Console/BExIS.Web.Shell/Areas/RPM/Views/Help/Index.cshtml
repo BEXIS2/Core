@@ -20,11 +20,24 @@
 }
 
     <style>
+        a:hover {
+            background-color: #bee1da;
+            text-decoration: none;
+        }
+
         .toc {
             position: fixed;
             top: 100px;
-            overflow-y: auto;
-            height: 600px;
+            overflow: auto;
+            max-height: 64vh;
+            width: 250px;
+            max-width: 350px;
+        }
+
+
+        .scrollable {
+            overflow: auto;
+            height: 750px;
         }
 
         :target:before {
@@ -35,7 +48,6 @@
     </style>
 
 
-<br />
 <h1><a id="_overview">1. Overview</a></h1>
 <p>&#xa0;</p>
 <p>In BEXIS 2 data is stored and managed as part of a dataset. A dataset may be anything from a single record up to a collection of millions of records and multiple variables. Each dataset may have an individual structure given by the number of variables and their properties. It is up to the user or the data manager of a project to define such Data Structures. This is what the Data Planning Module is for. </p>
@@ -100,4 +112,8 @@
 <li>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Pattern: takes the value as input and matches it against a pattern to see whether the pattern is found in the input. If so, it returns true; otherwise false. Pattern constraints apply to text values only, for more information on the format click <a href="https://en.wikipedia.org/wiki/Regular_expression"><span class="Hyperlink">here</a>.</li>
 <li>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Domain: takes the value as input and matches it against each and every domain item in the list. If the value matches one, it stops matching and returns true, which means the value satisfies the constraint. If no match is found it returns false. No duplicate domain item is allowed, although it does not affect the matching procedure described. Domain items can be characters, strings, Booleans or numbers. Their data type is enforced by the associated Variable Template. Using the domain constraint as a tool to model acronyms and similar topics provided that some extra information such as description of each item is available, is supported.</li>
 <li>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Negation: The inversion of the chosen constraint will apply. In fact the result of the constraint is XORed with the negation field. For example, a negated Range Constraint of Min=1 and Max=100 will allow all values outside of this range.</li>
-<p>&#xa0;</p>
+
+<p><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+
+<a href="#_overview"> Go to top</a>

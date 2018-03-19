@@ -7,7 +7,7 @@
     <div class="toc">
         <h3> Data Dissemination ToC </h3>
         <br />
-        <p></p> <a href="#overview">1. Overview</a>
+        <p></p> <a href="#_overview">1. Overview</a>
         <p></p> <a href="#metadata_export">2. Metadata Export</a>
         <p></p> <a href="#mapping_tool">3. Mapping tool</a>
         <p></p>&nbsp;&nbsp; <a href="#mapping_overview">3.1. Mapping Overview</a>
@@ -18,12 +18,27 @@
         <p></p>&nbsp;&nbsp; <a href="#gfbio">4.2. GBFIO</a>
     </div>
 }
+
+
     <style>
+        a:hover {
+            background-color: #bee1da;
+            text-decoration: none;
+        }
+
         .toc {
             position: fixed;
             top: 100px;
-            overflow-y: auto;
-            height: 600px;
+            overflow: auto;
+            max-height: 64vh;
+            width: 250px;
+            max-width: 350px;
+        }
+
+
+        .scrollable {
+            overflow: auto;
+            height: 750px;
         }
 
         :target:before {
@@ -33,10 +48,7 @@
         }
     </style>
 
-<p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-
-<h1><a id="overview"><span>1. Overview</span></a></h1>
+<h1><a id="_overview"><span>1. Overview</span></a></h1>
 <p><span>&#xa0;</span></p>
 <p><span>The Data Dissemination Module, available via Setup (Cog button) and Export Metadata, provides a tool to export metadata to a standard compliant XML file. For every metadata structure in the system there is one tab in the tab strip.</span></p>
 <p><span>The data grid in one tab shows all datasets belonging to the selected metadata structure.</span></p>
@@ -159,5 +171,9 @@
 <p>For Pangea, the metadata and primary data are stored in a text file.</p>
 <p><img src="~/Areas/DIM/Content/Images/Help/pangaea1.png" width="750" alt="img3" /><span>&#xa0;</span></p>
 <p><img src="~/Areas/DIM/Content/Images/Help/pangaea2.png" width="750" alt="img3" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
+
+<p>&#xa0;</p>
+<p>&#xa0;</p>
+
+<a href="#_overview"> Go to top</a>
+
