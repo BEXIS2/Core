@@ -128,18 +128,18 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
+                entity = repo.Reload(entity);
                 // delete associated variables and thier parameters
                 IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
                 IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
                 foreach (var usage in entity.Variables)
                 {
-                    variableRepo.Delete(usage);
-                    paramRepo.Delete(usage.Parameters.ToList());
-
+                    var localVar = variableRepo.Reload(usage);
+                    paramRepo.Delete(localVar.Parameters.ToList());
+                    variableRepo.Delete(localVar);
                 }
                 //uow.Commit(); //  should not be needed
-                IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                entity = repo.Reload(entity);
                 repo.Delete(entity);
 
                 uow.Commit();
@@ -180,8 +180,9 @@ namespace BExIS.Dlm.Services.DataStructure
                     // delete associated variables and thier parameters
                     foreach (var usage in latest.Variables)
                     {
-                        variableRepo.Delete(usage);
-                        paramRepo.Delete(usage.Parameters.ToList());
+                        var localVar = variableRepo.Reload(usage);
+                        paramRepo.Delete(localVar.Parameters.ToList());
+                        variableRepo.Delete(localVar);
                     }
                     //uow.Commit(); //  should not be needed
 
