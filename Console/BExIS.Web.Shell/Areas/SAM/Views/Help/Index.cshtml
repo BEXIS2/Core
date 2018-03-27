@@ -25,26 +25,34 @@
     </div>
 }
 
-    <style>
-        .toc {
-            position: fixed;
-            top: 100px;
-            overflow-y: auto;
-            height: 600px;
-        }
+<style>
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
 
-        :target:before {
-            content: "";
-            display: block;
-            height: 100px;
-        }
-    </style>
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
 
 
-<p>&#xa0;</p>
-<p>&#xa0;</p>
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
 
-<br /><p>&#xa0;</p>
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
+</style>
+
 <h2><a id="_overview">1. Overview</a></h2>
 <p>Caution! Do not delete the preset user and group!</p>
 <p>Users. After installation there is just a single user inside the database. The user name is "Administrator" and the password is "gWg2xG". By default, this user has full access to the whole application (because of the relationship to group "Admin", see next paragraph).</p>
@@ -128,4 +136,8 @@
 <p>Delete: this function tags a dataset to exclude it from nearly all features of the system (e.g. search). But the dataset itself will stay inside the database. So later on you are able to recover the dataset - if needed.</p>
 <p>Purge: the dataset will be removed from the system at all (incl. removal of data permissions, metadata and primary data). There is no way to rollback that action.</p>
 <p>Note that if you purge a dataset, you cannot recover it at all.</p>
-<p>&#xa0;</p>
+
+<p><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+
+<a href="#_overview"> Go to top</a>

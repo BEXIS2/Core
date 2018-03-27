@@ -85,7 +85,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {
                         var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                     }
@@ -160,7 +160,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     entityPermissionManager.Delete(typeof(Dataset), id);
 
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {
                         var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                     }

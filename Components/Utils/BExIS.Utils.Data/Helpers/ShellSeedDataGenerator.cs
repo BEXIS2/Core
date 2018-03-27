@@ -1,10 +1,12 @@
 ﻿using BExIS.Security.Services.Objects;
+using System;
+using Vaiona.Web.Mvc.Modularity;
 
-namespace BExIS.Web.Shell.Helpers
+namespace BExIS.Utils.Data.Helpers
 {
-    public class SeedDataGenerator
+    public class ShellSeedDataGenerator : IModuleSeedDataGenerator
     {
-        public static void Init()
+        public void GenerateSeedData()
         {
             // Features
             var featureManager = new FeatureManager();
@@ -19,6 +21,11 @@ namespace BExIS.Web.Shell.Helpers
             var o4 = operationManager.Find("Shell", "Terms", "*") ?? operationManager.Create("Shell", "Terms", "*");
             var o5 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
             var o6 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
         }
     }
 }

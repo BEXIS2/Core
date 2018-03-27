@@ -3,10 +3,11 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
 using System.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Helpers
 {
-    public class SamSeedDataGenerator : IDisposable
+    public class SamSeedDataGenerator : IModuleSeedDataGenerator
     {
         public void GenerateSeedData()
         {
