@@ -15,7 +15,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Data.Qurying;
+using BExIS.Dlm.Orm.NH.Qurying;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {    
@@ -155,7 +155,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 .And(
                     new FilterNumberItemExpression()
                     {
-                        Field = new Field() { DataType = Vaiona.Data.Qurying.DataType.Ineteger, Name = var1Name }
+                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = var1Name }
                         ,
                         Operator = NumberOperator.Operation.GreaterThan
                         ,
@@ -164,7 +164,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     ,
                     new FilterStringItemExpression()
                     {
-                        Field = new Field() { DataType = Vaiona.Data.Qurying.DataType.String, Name =  var2Name}
+                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name =  var2Name}
                             ,
                         Operator = StringOperator.Operation.EndsWith
                             ,
