@@ -11,8 +11,14 @@ namespace BExIS.Dlm.Entities.Party
     /// AND
     /// this.PartyRelationshipType.PartyTypePairs.AllowedAtrget MUST CONTAIN this.SecondParty.PartyRelationshipType
     /// </summary>
-    public class PartyRelationship: BaseEntity
+    public class PartyRelationship : BaseEntity
     {
+        public PartyRelationship()
+        {
+            PartyRelationshipType = new PartyRelationshipType();
+            FirstParty = new Party();
+            SecondParty = new Party();
+        }
         #region Attributes
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }
@@ -27,6 +33,7 @@ namespace BExIS.Dlm.Entities.Party
 
         #region Associations
         public virtual PartyRelationshipType PartyRelationshipType { get; set; }
+        public virtual PartyTypePair PartyTypePair { get; set; }
         public virtual Party FirstParty { get; set; }
         public virtual Party SecondParty { get; set; }
         #endregion

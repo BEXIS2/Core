@@ -20,15 +20,27 @@
       <column name="Title"  />
     </property>
 
-    <property name="Description" type="String" >
-      <column name="Description"  />
+    <property name="Description" type="StringClob" >
+      <column name="Description" sql-type="text"/>
     </property>
 
-    <many-to-one name="AlowedSource" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedSourceRef"/>
+    <property name="ConditionSource" type="String" >
+      <column name="ConditionSource"  />
+    </property>
 
-    <many-to-one name="AlowedTarget" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedTargetRef"/>
+    <property name="ConditionTarget" type="String" >
+      <column name="ConditionTarget"  />
+    </property>
+    
+    <property name="PartyRelationShipTypeDefault" type="yes_no" >
+      <column name="PartyRelationShipTypeDefault"  />
+    </property>
 
-    <many-to-one name="PartyRelationshipType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="false" column="PartyRelationshipTypeRef"/>
+    <many-to-one name="AllowedSource" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedSourceRef" lazy="false" />
+
+    <many-to-one name="AllowedTarget" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedTargetRef" lazy="false" />
+
+    <many-to-one name="PartyRelationshipType" class="BExIS.Dlm.Entities.Party.PartyRelationshipType" not-null="false" column="PartyRelationshipTypeRef"/>
 
   </class>
 </hibernate-mapping>

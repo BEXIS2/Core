@@ -1,79 +1,99 @@
-@using Vaiona.Web.Mvc;<br />
 @section Information
 {
-This guide will walk you through the basics of using search UI including how to manage search component.
+    This guide will walk you through the basics of using search UI including how to manage search component.
 }
 @section leftPane{
- <div class="toc">
- <h2> Search UI ToC </h2>
- <br />
-<p></p> <a href="#_Toc468258969">Search UI</a>
-<p></p> <a href="#_Toc468258970">&#xa0;&#xa0;&#xa0;&#xa0;Categories </a>
-<p></p> <a href="#_Toc468258971">&#xa0;&#xa0;&#xa0;&#xa0;Properties </a>
-<p></p> <a href="#_Toc468258972">&#xa0;&#xa0;&#xa0;&#xa0;Free text search with Autocomplete</a>
-<p></p> <a href="#_Toc468258973">&#xa0;&#xa0;&#xa0;&#xa0;Selected Filter</a>
-<p></p> <a href="#_Toc468258974">&#xa0;&#xa0;&#xa0;&#xa0;Results</a>
-<p></p> <a href="#_Toc468258975">Data Details</a>
-<p></p> <a href="#_Toc468258976">&#xa0;&#xa0;&#xa0;&#xa0;Meta Data</a>
-<p></p> <a href="#_Toc468258977">&#xa0;&#xa0;&#xa0;&#xa0;Primary Data</a>
-<p></p> <a href="#_Toc468258978">&#xa0;&#xa0;&#xa0;&#xa0;Data Structure</a>
-<p></p> <a href="#_Toc468258979">&#xa0;&#xa0;&#xa0;&#xa0;Dataset Permissions</a>
-<p></p> <a href="#_Toc468258980">&#xa0;&#xa0;&#xa0;&#xa0;Search Manager</a>
- </div>
+    <div class="toc">
+        <h3> Search UI ToC </h3>
+        <br />
+        <p></p> <a href="#_searchUi">1. Search UI</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258970">1.1. Categories </a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258971">1.2. Properties </a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258972" title="Free text search with Autocomplete">1.3. Free text search with Auto...</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258973">1.4. Selected Filter</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258974">1.5. Results</a>
+        <p></p> <a href="#_Toc468258975">2. Data Details</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258976">2.1. Meta Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258977">2.2. Primary Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258978">2.3. Data Structure</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258979">2.4. Dataset Permissions</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468258980">2.5. Search Manager</a>
+    </div>
 }
+
 <style>
-.toc { position: fixed; top:100px; }
-.scrollable { overflow: auto; height: 750px; }
-:target:before { content: ""; display: block; height: 100px; }
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
+
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
+
+
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
+
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
 </style>
-<p><a id="_GoBack" /><span>&#xa0;</span></p>
-<p><span>Content</span></p>
-<p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<br/><h1><a id="_Toc468258969"><span>Search UI</span></a></h1>
+
+
+<h1><a id="_searchUi"><span>1. Search UI</span></a></h1>
 <p><span>Search UI contains some parts to make search easier. In this way, you are able to look for all details of datasets, but not for the uploaded data. You can control the search UI via search manager explained in section 3.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img1.png" width="605" height="318" alt="img1" /><span>&#xa0;</span></p>
-<h2><a id="_Toc468258970"><span>Categories</span></a><span> </span></h2>
+<h2><a id="_Toc468258970"><span>1.1. Categories</span></a><span> </span></h2>
 <p><span>Categories are defined by number 1 in the image above. The main nodes like "Project Name" are based on nodes in the metadata. The elements are values in the metadata from a main node and can be used to restrict the current selection. The numbers next to the elements and main nodes show the number of existing data sets in the database. This list changes according to the current selection. After selection the results and the facets updated. With the "more" button it is possible to select more than on e element at the same time.</span></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258971"><span>Properties</span></a><span> </span></h2>
+<h2><a id="_Toc468258971"><span>1.2. Properties</span></a><span> </span></h2>
 <p><span>Number 2 in the image above is related with properties. In this section there are predefined UI Components like dropdown, radio button or slider to filter the data. There is only one possible choice for every component. After selection the results and the facets are updated accordingly. </span></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258972"><span>Free text search with Autocomplete</span></a></h2>
-<p><span>The free text search , number 3 in the image above, works as in any common search engine . It includes Autocomplete where words or phrases are being predicted once three letters or figures are entered. It supports also different languages.</span></p>
+<h2><a id="_Toc468258972"><span>1.3. Free text search with Autocomplete</span></a></h2>
+<p><span>The free text search, number 3 in the image above, works as in any common search engine . It includes Autocomplete where words or phrases are being predicted once three letters or figures are entered. It supports also different languages.</span></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258973"><span>Selected Filter</span></a></h2>
+<h2><a id="_Toc468258973"><span>1.4. Selected Filter</span></a></h2>
 <p><span>You can find selected filter part by number 4 in the image above. Every filter applied from section 1 .1 - 1. 3 is displayed here. Filters can be deselected just by clicking on it. In point 1 by the categories you are able to select more than one option to a category. If there are more than 2 you will see only the category. Click on the category and a window will open to define your selection for this category.</span></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258974"><span>Results</span></a></h2>
+<h2><a id="_Toc468258974"><span>1.5. Results</span></a></h2>
 <p><span>The matching results are displayed in a table or in the list view. It marks by number 5 in the image above. B asic functions like sorting, filtering, paging are available in the table header. By right clicking on the header, you can change visibility of columns.</span></p>
 <p><span>T he details button opens the det ailed view of the selected data set .</span></p>
 <p><span>&#xa0;</span></p>
-<h1><a id="_Toc468258975"><span>Data Details</span></a></h1>
+<h1><a id="_Toc468258975"><span>2. Data Details</span></a></h1>
 <p><span>About each dataset created in the BEXIS 2 , you can find a detail contains Meta Data, Primary Data, Data Structure, and Dataset Permissions explain later.</span></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258976"><span>Meta Data</span></a></h2>
+<h2><a id="_Toc468258976"><span>2.1. Meta Data</span></a></h2>
 <p><span>On this tab you have access to the Meta data of the selected datasets. You are able edit this dataset or make a copy of that.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img2.png" width="604" height="254" alt="img2" /><span>&#xa0;</span></p>
-<h2><a id="_Toc468258977"><span>Primary Data</span></a></h2>
+<h2><a id="_Toc468258977"><span>2.2. Primary Data</span></a></h2>
 <p><span>On this tab you have access to the primary data of the selected dataset . You can download selected data in an Excel file, comma separated in a CSV file, or tab separated in a TXT file.</span></p>
-<p><img src="~/Areas/DDM/Content/Images/Help/Help_img3.png" width="604" height="259" alt="img3" /><span><img src="~/Areas/DDM/Content/Images/Help/Help_img4.png" width="144" height="13" alt="img4" /> &#xa0;</span></p>
+<p><img src="~/Areas/DDM/Content/Images/Help/Help_img3.png" width="604" height="259" alt="img3" /></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258978"><span>Data Structure</span></a></h2>
+<h2><a id="_Toc468258978"><span>2.3. Data Structure</span></a></h2>
 <p><span>On this tab you have access to the data structure of the selected datasets.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img5.png" width="604" height="296" alt="img5" /><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<h2><a id="_Toc468258979"><span>Dataset Permissions</span></a></h2>
+<h2><a id="_Toc468258979"><span>2.4. Dataset Permissions</span></a></h2>
 <p><span>On this tab you have access to the Dataset Permissions Manager .</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img6.png" width="604" height="297" alt="img6" /><span>&#xa0;</span></p>
 <h2><span>Publish a Dataset Version</span></h2>
 <p><span>On this tab you are able to publish the latest version of your dataset. In this Version a Zip file will be generated and prepared for download for a specific defined datacenter. More information can be found in the data dissemination manual .</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img7.png" width="627" height="173" alt="img7" /><span>&#xa0;</span></p>
-<h1><a id="_Toc468258980"><span>Search Manager</span></a></h1>
+<h2><a id="_Toc468258980"><span>2.5. Search Manager</span></a></h2>
 <p><span>With the help of the search manager, you can make search UI more operative. This part is available from Setup &gt; Manage search . </span></p>
 <p><span>You need to click on the Refresh Search button, to make the search result effective.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img8.png" width="604" height="377" alt="img8" /><span>&#xa0;</span></p>
-<p><span>You can u se </span><img src="~/Areas/DDM/Content/Images/Help/Help_img9.png" width="25" height="25" alt="img9" /><span> for edit and </span><img src="~/Areas/DDM/Content/Images/Help/Help_img10.png" width="25" height="25" alt="img10" /><span> for delete a search component . </span></p>
+<p><span>You can u se </span><img src="~/Areas/DDM/Content/Images/Help/edit_button.png" width="25" height="25" alt="img9" /><span> for edit and </span><img src="~/Areas/DDM/Content/Images/Help/delete_button.png" width="25" height="25" alt="img10" /><span> for delete a search component . </span></p>
 <p><span>To add a new search component, click on the Create Search Attribute button. The configuration files consist of one element – the field element, and several attributes. The element represent each lucene field and its attribute are used to configure indexing, searching, and display. Take mouse over each question mark near by a field and you can see the help information.</span></p>
 <p><img src="~/Areas/DDM/Content/Images/Help/Help_img11.png" width="604" height="409" alt="img11" /><span>&#xa0;</span></p>
 <p><span>We, therefore, go through each of the elements attributes of the configuration file.</span></p>
@@ -82,7 +102,7 @@ This guide will walk you through the basics of using search UI including how to 
 <p><span>Metadata Node : Add one or more xpaths from the metadata elements to be mapped against the lucene field.</span></p>
 <p><span>Header Item:   Tick if this item should be available as a category (e.g. as a grid column).</span></p>
 <p><span>Default Header Item: The header item is be visible upon page load.</span></p>
-<p><span>Search Component Type : This specifies the search pattern that will be should be used against this field (as discussed in the introduction). Therefore, the value of this attribu te can be any of "Category " for creating a category-base d search field, "Facet " for creating faceted search field, "P roperty" for creating a property search field, and "General " which creates an indexed field which is not displayed in the UI, but however, searched.</span></p>
+<p><span>Search Component Type : This specifies the search pattern that will be should be used against this field (as discussed in the introduction). Therefore, the value of this attribu te can be any of "Category " for creating a category-base d search field, "Facet " for creating faceted search field, "Property" for creating a property search field, and "General " which creates an indexed field which is not displayed in the UI, but however, searched.</span></p>
 <p><span>Data Type : This specifies the primitive data type o f the value to be indexed. E.g. string, integer, double, date .</span></p>
 <p><span>Store : This specifies if the field value should be stored. If the field is not stored, you can only search against the terms in the field, however, you cannot retrieve the value. For minimal display of the search result, it is recommended that some fields be store. This value of the store attribute can be either yes or no .</span></p>
 <p><span>Multi Value : This specifies if there are several values of a metadata element in a given field. E.g. if a dataset can have several owners in a metadata, then, the owners field in the index in this case, will be multi-valued</span></p>
@@ -92,3 +112,8 @@ This guide will walk you through the basics of using search UI including how to 
 <p><span>UI Component Type: Choose a UI component Type according to the number of options (1-3 = item, 3-15 = list, &gt;15= range).</span></p>
 <p><span>Selection Type: Choose a selection type based how many choices should be allowed (single, multiple).</span></p>
 <p><span>Direction: Default sort direction for this item (ascending, descending).</span></p>
+
+<p>&#xa0;</p>
+<p>&#xa0;</p>
+
+<a href="#_searchUi"> Go to top</a>

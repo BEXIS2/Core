@@ -26,6 +26,26 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         private string _issue = "";
         private ErrorType _errorType;
 
+        public String getName()
+        {
+            return this._name;
+        }
+
+        public String getValue()
+        {
+            return this._value;
+        }
+
+        public int getRow()
+        {
+            return this._row;
+        }
+
+        public String getDataType()
+        {
+            return this._dataType;
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -1,21 +1,46 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.MetadataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Persistence.Api;
-using BExIS.Dlm.Entities.MetadataStructure;
 using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
-    public sealed class MetadataPackageManager
+    public class MetadataPackageManager : IDisposable
     {
 
+        private IUnitOfWork guow = null;
         public MetadataPackageManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            this.MetadataPackageRepo = uow.GetReadOnlyRepository<MetadataPackage>(); 
+            guow = this.GetIsolatedUnitOfWork();
+            this.MetadataPackageRepo = guow.GetReadOnlyRepository<MetadataPackage>();
         }
+
+        private bool isDisposed = false;
+        ~MetadataPackageManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (guow != null)
+                        guow.Dispose();
+                    isDisposed = true;
+                }
+            }
+        }
+
 
         #region Data Readers
 
@@ -44,7 +69,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 repo.Put(e);
                 uow.Commit();
             }
-            return (e);            
+            return (e);
         }
 
         public bool Delete(MetadataPackage entity)
@@ -75,7 +100,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
                 foreach (var entity in entities)
                 {
-                    var latest = repo.Reload(entity);                
+                    var latest = repo.Reload(entity);
                     repo.Delete(latest);
                 }
                 uow.Commit();
@@ -96,7 +121,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
@@ -110,39 +135,45 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
             Contract.Ensures(Contract.Result<MetadataAttributeUsage>() != null && Contract.Result<MetadataAttributeUsage>().Id >= 0);
 
-            MetadataPackageRepo.Reload(package);
-            MetadataPackageRepo.LoadIfNot(package.MetadataAttributeUsages);
-            int count = 0;
-            try
-            {
-                count = (from v in package.MetadataAttributeUsages
-                 where v.MetadataAttribute.Id.Equals(attribute.Id)
-                 select v
-                         )
-                         .Count();
-            }
-            catch { }
-
-            MetadataAttributeUsage usage = new MetadataAttributeUsage()
-            {
-                MetadataPackage = package,
-                MetadataAttribute = attribute,
-                // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
-                Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? attribute.Name : string.Format("{0} ({1})", attribute.Name, count)),
-                Description = description,
-                MinCardinality = minCardinality,
-                MaxCardinality = maxCardinality,
-            };
-            package.MetadataAttributeUsages.Add(usage);
-            attribute.UsedIn.Add(usage);
-            
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                var metadataPackageRepo = uow.GetReadOnlyRepository<MetadataPackage>();
+                var attributesRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
+
+                attribute = attributesRepo.Get(attribute.Id);
+                metadataPackageRepo.Reload(package);
+                metadataPackageRepo.LoadIfNot(package.MetadataAttributeUsages);
+                int count = 0;
+                try
+                {
+                    count = (from v in package.MetadataAttributeUsages
+                             where v.MetadataAttribute.Id.Equals(attribute.Id)
+                             select v
+                             )
+                             .Count();
+                }
+                catch { }
+
+                MetadataAttributeUsage usage = new MetadataAttributeUsage()
+                {
+                    MetadataPackage = package,
+                    MetadataAttribute = attribute,
+                    // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
+                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? attribute.Name : string.Format("{0} ({1})", attribute.Name, count)),
+                    Description = description,
+                    MinCardinality = minCardinality,
+                    MaxCardinality = maxCardinality,
+                };
+                package.MetadataAttributeUsages.Add(usage);
+                attribute.UsedIn.Add(usage);
+
+
                 IRepository<MetadataAttributeUsage> repo = uow.GetRepository<MetadataAttributeUsage>();
                 repo.Put(usage);
                 uow.Commit();
+
+                return (usage);
             }
-            return (usage);
         }
 
         public void RemoveMetadataAtributeUsage(MetadataAttributeUsage usage)
@@ -156,7 +187,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 uow.Commit();
             }
         }
-        
+
         #endregion
 
     }

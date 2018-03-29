@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.XPath;
-using BExIS.IO;
-using NHibernate.Util;
 
 namespace BExIS.Xml.Helpers
 {
@@ -42,7 +43,7 @@ namespace BExIS.Xml.Helpers
                 // finde same childs
                 if (node.ParentNode != null && node.ParentNode.ChildNodes.Count > 1)
                 {
-                    for (int i = 0;i<node.ParentNode.ChildNodes.Count;i++)
+                    for (int i = 0; i < node.ParentNode.ChildNodes.Count; i++)
                     {
                         XmlNode tmpNode = node.ParentNode.ChildNodes[i];
                         if (tmpNode.Name.Equals(node.Name))
@@ -52,11 +53,11 @@ namespace BExIS.Xml.Helpers
 
                 if (tmpChilds.Count > 0)
                 {
-                    index = tmpChilds.IndexOf(node)+1;
+                    index = tmpChilds.IndexOf(node) + 1;
                 }
 
 
-                return xPath + "/" + node.LocalName + "[" + index  + "]";
+                return xPath + "/" + node.LocalName + "[" + index + "]";
             }
         }
 
@@ -119,14 +120,14 @@ namespace BExIS.Xml.Helpers
 
         public static XmlNode GetXmlNodeByAttribute(XmlNode parentNode, string name, string attrName, string attrValue)
         {
-            return getXmlNodeByAttribute(parentNode,name,attrName,attrValue);
+            return getXmlNodeByAttribute(parentNode, name, attrName, attrValue);
         }
 
         private static XmlNode getXmlNodeByAttribute(XmlNode node, string name, string attrName, string attrValue)
         {
-            if (node.LocalName.Equals(name) && 
-                node.Attributes.Any() && 
-                node.Attributes[attrName]!=null &&
+            if (node.LocalName.Equals(name) &&
+                node.Attributes.Count > 0 &&
+                node.Attributes[attrName] != null &&
                 node.Attributes[attrName].Value.Equals(attrValue))
             {
                 return node;
@@ -137,7 +138,7 @@ namespace BExIS.Xml.Helpers
                 {
                     foreach (XmlNode child in node.ChildNodes)
                     {
-                         XmlNode tmp = getXmlNodeByAttribute(child, name, attrName, attrValue);
+                        XmlNode tmp = getXmlNodeByAttribute(child, name, attrName, attrValue);
                         if (tmp != null) return tmp;
                     }
                 }
@@ -166,7 +167,7 @@ namespace BExIS.Xml.Helpers
 
 
             // get or create the node from the name
-            
+
             int index = 1;
             string nodeName = nextNodeInXPath;
             if (nextNodeInXPath.Contains("["))
@@ -179,7 +180,7 @@ namespace BExIS.Xml.Helpers
 
             XmlNodeList nodes = parent.SelectNodes(nodeName);
 
-            XmlNode node = nodes[index-1];
+            XmlNode node = nodes[index - 1];
 
             if (node == null)
             {
@@ -198,6 +199,110 @@ namespace BExIS.Xml.Helpers
             // rejoin the remainder of the array as an xpath expression and recurse
             string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
             return GenerateNodeFromXPath(doc, node, rest);
+        }
+
+        /// <summary>
+        /// Generate all xml elements from a xpath if  there are not exsiting
+        /// with the xsd elements list you can get the prefix and the 
+        /// namespace the a xml node when you need to create it
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="parent"></param>
+        /// <param name="xpath"></param>
+        /// <param name="Elements"></param>
+        /// <returns></returns>
+        public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath, List<XmlSchemaElement> XsdElements, XmlNamespaceManager nsManager)
+        {
+
+            Debug.WriteLine("-------------------------------");
+            Debug.WriteLine(xpath);
+
+            // grab the next node name in the xpath; or return parent if empty
+            string[] partsOfXPath = xpath.Trim('/').Split('/');
+
+            if (partsOfXPath.Length == 0)
+                return parent;
+
+            string nextNodeInXPath = partsOfXPath[0];
+            if (string.IsNullOrEmpty(nextNodeInXPath))
+                return parent;
+
+
+            // get or create the node from the name
+
+            int index = 1;
+            string nodeName = nextNodeInXPath;
+            if (nextNodeInXPath.Contains("["))
+            {
+                string[] tmp = nextNodeInXPath.Split('[');
+                nodeName = tmp[0];
+                index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
+
+            }
+
+            XmlSchemaElement xsdelement = XsdElements.FirstOrDefault(x => x.Name.Equals(nodeName));
+
+
+            string name = nodeName;
+            string prefix = "";
+            string nameSpace = "";
+            XmlNodeList nodes = null;
+
+            // if xml element is defined by a xsd element 
+            if (xsdelement != null && nsManager != null)
+            {
+                nameSpace = xsdelement.QualifiedName.Namespace;
+                prefix = nsManager.LookupPrefix(nameSpace);
+                name = xsdelement.QualifiedName.Name;
+
+                Debug.WriteLine(nameSpace);
+                Debug.WriteLine(prefix);
+                Debug.WriteLine(name);
+
+
+
+                string searchName = String.IsNullOrEmpty(prefix) ? name : prefix + ":" + name;
+
+                Debug.WriteLine(searchName);
+
+                if (!String.IsNullOrEmpty(nameSpace) && !String.IsNullOrEmpty(prefix))
+                    nodes = parent.SelectNodes(searchName, nsManager);
+                else
+                    nodes = parent.SelectNodes(nodeName);
+            }
+            else
+            {
+                nodes = parent.SelectNodes(nodeName);
+            }
+
+
+
+            XmlNode node = nodes?[index - 1];
+
+            if (node == null)
+            {
+                if (nextNodeInXPath.StartsWith("@"))
+                {
+                    XmlAttribute anode = doc.CreateAttribute(nextNodeInXPath.Substring(1));
+                    node = parent.Attributes.Append(anode);
+                }
+                else
+                {
+                    //if xsdelement exist and namespace and prefix if exist
+                    if (xsdelement != null && !String.IsNullOrEmpty(nameSpace) && !string.IsNullOrEmpty(prefix))
+                    {
+                        node = parent.AppendChild(doc.CreateElement(prefix, name, nameSpace));
+                    }
+                    else
+                        node = parent.AppendChild(doc.CreateElement(nodeName));
+
+                }
+            }
+
+            // rejoin the remainder of the array as an xpath expression and recurse
+            string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
+            return GenerateNodeFromXPath(doc, node, rest, XsdElements, nsManager);
+
         }
 
         /// <summary>
@@ -267,80 +372,100 @@ namespace BExIS.Xml.Helpers
 
         #region xdoc
 
-            public static bool HasChildren(XElement element)
-            {
-                if (element.Nodes().OfType<XElement>().Count() > 0)
-                    return true;
+        public static bool HasChildren(XElement element)
+        {
+            if (element.Nodes().OfType<XElement>().Count() > 0)
+                return true;
 
-                return false;
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <param name="source"></param>
-            /// <returns></returns>
-            public static IEnumerable<XElement> GetChildren(XElement source)
-            {
-
-                return source.Nodes().OfType<XElement>();
-
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public static IEnumerable<XElement> GetXElementByNodeName(string nodeName, XDocument xDoc)
-            {
-                return xDoc.Root.Descendants(nodeName);
-            }
-
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
-            {
-                string name = nodeName.Replace(" ","");
-                return xDoc.Root.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+            return false;
         }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
-            {
-                string name = nodeName.Replace(" ", "");
-                return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName) != null &&  p.Attribute(attrName).Value.Equals(value));
-            }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetChildren(XElement source)
+        {
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XElement parent)
-            {
-                string name = nodeName.Replace(" ", "");
-                return parent.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
-            }
+            return source.Nodes().OfType<XElement>();
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetAllChildren(XElement element)
+        {
+            return element.Descendants();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElementByNodeName(string nodeName, XDocument xDoc)
+        {
+            return xDoc.Root.Descendants(nodeName);
+        }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
+        {
+            string name = nodeName.Replace(" ", "");
+            return xDoc.Root.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
+        {
+            string name = nodeName.Replace(" ", "");
+            return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
+
+        public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, string value, XDocument xDoc)
+        {
+            return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XElement parent)
+        {
+            string name = nodeName.Replace(" ", "");
+            return parent.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
 
         /// <summary>
         /// 
@@ -350,63 +475,87 @@ namespace BExIS.Xml.Helpers
         /// <param name="name"></param>
         /// <returns></returns>
         public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XElement Parent)
+        {
+            string name = nodeName.Replace(" ", "");
+            return Parent.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XDocument xDoc)
+        {
+            string name = nodeName.Replace(" ", "");
+            IEnumerable<XElement> elements = new List<XElement>();
+
+            foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
             {
-                string name = nodeName.Replace(" ", "");
-                return Parent.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+                IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, xDoc);
+
+                if (elements.Count() > 0)
+                    elements = elements.Intersect(newElements);
+                else
+                    elements = newElements;
+
             }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string,string> AttrValueDic, XDocument xDoc)
-            {
-                string name = nodeName.Replace(" ", "");
-                IEnumerable<XElement> elements = new List<XElement>();
+            return elements;
+        }
 
-                foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+        public static IEnumerable<XElement> GetXElementsByAttribute(Dictionary<string, string> AttrValueDic, XDocument xDoc)
+        {
+            string name = "";
+            IEnumerable<XElement> elements = new List<XElement>();
+
+            foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+            {
+                IEnumerable<XElement> newElements = GetXElementsByAttribute(keyValuePair.Key, keyValuePair.Value, xDoc);
+
+                if (elements.Count() > 0)
                 {
-                    IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, xDoc);
-
-                    if (elements.Count() > 0)
-                        elements = elements.Intersect(newElements);
-                    else
-                        elements = newElements;
-
+                    elements = elements.Intersect(newElements);
+                    if (elements == null || elements.Count() == 0)
+                        return elements;
                 }
+                else
+                    elements = newElements;
 
-                return elements;
             }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XDocument xDoc, string parentXPath)
+            return elements;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XDocument xDoc, string parentXPath)
+        {
+            string name = nodeName.Replace(" ", "");
+            IEnumerable<XElement> elements = new List<XElement>();
+            XElement parent = GetXElementByXPath(parentXPath, xDoc);
+
+            foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
             {
-                string name = nodeName.Replace(" ", "");
-                IEnumerable<XElement> elements = new List<XElement>();
-                XElement parent = GetXElementByXPath(parentXPath,xDoc);    
+                IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, parent);
 
-                foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
-                {
-                    IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, parent);
+                if (elements.Count() > 0)
+                    elements = elements.Intersect(newElements);
+                else
+                    elements = newElements;
 
-                    if (elements.Count() > 0)
-                        elements = elements.Intersect(newElements);
-                    else
-                        elements = newElements;
-
-                }
-
-                return elements;
             }
+
+            return elements;
+        }
 
         /// <summary>
         /// 
@@ -416,35 +565,37 @@ namespace BExIS.Xml.Helpers
         /// <param name="name"></param>
         /// <returns></returns>
         public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
-            {
-                return xDoc.XPathSelectElement(xpath.Replace(" ",string.Empty));
-            }
+        {
+            return xDoc.XPathSelectElement(xpath.Replace(" ", string.Empty));
+        }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="xDocument"></param>
-            /// <returns></returns>
-            public static XmlDocument ToXmlDocument(XDocument xDocument)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xDocument"></param>
+        /// <returns></returns>
+        public static XmlDocument ToXmlDocument(XDocument xDocument)
+        {
+            var xmlDocument = new XmlDocument();
+            using (var xmlReader = xDocument.CreateReader())
             {
-                var xmlDocument = new XmlDocument();
-                using (var xmlReader = xDocument.CreateReader())
-                {
-                    xmlDocument.Load(xmlReader);
-                }
-                return xmlDocument;
+                xmlDocument.Load(xmlReader);
             }
+            return xmlDocument;
+        }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="xmlDocument"></param>
-            /// <returns></returns>
-            public static XDocument ToXDocument(XmlDocument xmlDocument)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xmlDocument"></param>
+        /// <returns></returns>
+        public static XDocument ToXDocument(XmlDocument xmlDocument)
+        {
+            if (xmlDocument != null)
             {
                 using (var nodeReader = new XmlNodeReader(xmlDocument))
                 {
@@ -452,6 +603,9 @@ namespace BExIS.Xml.Helpers
                     return XDocument.Load(nodeReader);
                 }
             }
+
+            return null;
+        }
 
 
         #endregion

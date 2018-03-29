@@ -10,34 +10,59 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Party
 {
-    public class PartyTypeManager
+    public class PartyTypeManager : IDisposable
     {
-        public IReadOnlyRepository<PartyType> Repo { get; private set; }
-        public IReadOnlyRepository<PartyStatusType> RepoPartyStatusType { get; private set; }
-        public IReadOnlyRepository<PartyCustomAttribute> RepoPartyCustomAttribute { get; private set; }
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public PartyTypeManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
-            Repo = uow.GetReadOnlyRepository<PartyType>();
-            RepoPartyStatusType = uow.GetReadOnlyRepository<PartyStatusType>();
-            RepoPartyCustomAttribute = uow.GetReadOnlyRepository<PartyCustomAttribute>();
+            _guow = this.GetIsolatedUnitOfWork();
+            PartyTypeRepository = _guow.GetReadOnlyRepository<PartyType>();
+            PartyCustomAttributeRepository = _guow.GetReadOnlyRepository<PartyCustomAttribute>();
         }
 
+        ~PartyTypeManager()
+        {
+            Dispose(true);
+        }
+        public IReadOnlyRepository<PartyCustomAttribute> PartyCustomAttributeRepository { get; }
+        public IReadOnlyRepository<PartyType> PartyTypeRepository { get; }
+        public IQueryable<PartyType> PartyTypes => PartyTypeRepository.Query();
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        public void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
+        }
 
         #region PartyType
 
-        public PartyType Create(string title, string description, List<PartyStatusType> statusTypes)
+        public PartyType Create(string title, string description, string displayName, List<PartyStatusType> statusTypes)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
-            Contract.Requires(statusTypes != null && statusTypes.Count() > 0); // there should be at least one status defined for each party type
+            Contract.Requires(statusTypes != null && statusTypes.Count() > 0); // there should be at least one status defined for each party type --> status type 
             Contract.Ensures(Contract.Result<PartyType>() != null && Contract.Result<PartyType>().Id >= 0);
             //
             PartyType entity = new PartyType()
             {
                 Title = title,
                 Description = description,
+                DisplayName = displayName,
                 StatusTypes = statusTypes
             };
+            statusTypes.ForEach(item => item.PartyType = entity);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyType> repo = uow.GetRepository<PartyType>();
@@ -146,7 +171,7 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region PartyCustomAttribute
-        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description,string validValues,bool isValueOptional=true, int? displayOrder = null)
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, string validValues,string condition, bool isValueOptional = true, bool isUnique = false, bool isMain = false, int? displayOrder = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(partyType != null);
@@ -158,15 +183,18 @@ namespace BExIS.Dlm.Services.Party
                 DataType = dataType.ToLower(),
                 Description = description,
                 PartyType = partyType,
-                ValidValues=validValues,
-                IsValueOptional=isValueOptional,
-                Name = name
+                ValidValues = validValues,
+                IsValueOptional = isValueOptional,
+                IsUnique = isUnique,
+                IsMain = isMain,
+                Name = name,
+                Condition=condition
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
                 //Name is unique for PartyCustomAttribute with the same party type
-                if (repo.Get(item => item.Name == name && item.PartyType == partyType).Count>0)
+                if (repo.Get(item => item.Name == name && item.PartyType == partyType).Count > 0)
                     BexisException.Throw(entity, "This name for this type of 'PartyCustomAttribute' is already exist.", BexisException.ExceptionType.Add);
                 //Calculate displayorder
                 var partyCustomAttrs = repo.Get(item => item.PartyType == partyType);
@@ -187,6 +215,77 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return (entity);
+        }
+
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyCustomAttribute partyCustomeAttribute)
+        {
+            Contract.Requires(partyCustomeAttribute != null);
+            Contract.Requires(partyCustomeAttribute.PartyType != null);
+            Contract.Requires(!string.IsNullOrWhiteSpace(partyCustomeAttribute.Name));
+            Contract.Ensures(Contract.Result<PartyCustomAttribute>() != null && Contract.Result<PartyCustomAttribute>().Id >= 0);
+
+            var entity = new PartyCustomAttribute()
+            {
+                DataType = partyCustomeAttribute.DataType.ToLower(),
+                Description = partyCustomeAttribute.Description,
+                PartyType = partyCustomeAttribute.PartyType,
+                ValidValues = partyCustomeAttribute.ValidValues,
+                IsValueOptional = partyCustomeAttribute.IsValueOptional,
+                IsUnique = partyCustomeAttribute.IsUnique,
+                IsMain = partyCustomeAttribute.IsMain,
+                Name = partyCustomeAttribute.Name,
+                Condition=partyCustomeAttribute.Condition
+            };
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
+                //Name is unique for PartyCustomAttribute with the same party type
+                if (repo.Get(item => item.Name == partyCustomeAttribute.Name && item.PartyType == partyCustomeAttribute.PartyType).Count > 0)
+                    BexisException.Throw(entity, "This name for this type of 'PartyCustomAttribute' is already exist.", BexisException.ExceptionType.Add);
+                //Calculate displayorder
+                var partyCustomAttrs = repo.Get(item => item.PartyType == partyCustomeAttribute.PartyType);
+                if (partyCustomAttrs.Count() == 0)
+                    entity.DisplayOrder = 0;
+                //if displayOrder is null then it goes to the last                
+                else if (partyCustomeAttribute.DisplayOrder == 0)
+                    entity.DisplayOrder = partyCustomAttrs.Max(item => item.DisplayOrder) + 1;
+                //else it push the other items with the same displayOrder or greater than
+                else
+                {
+                    entity.DisplayOrder = partyCustomeAttribute.DisplayOrder;
+                    partyCustomAttrs.Where(item => item.DisplayOrder >= partyCustomeAttribute.DisplayOrder)
+                        .ToList().ForEach(item => item.DisplayOrder = item.DisplayOrder + 1);
+
+                }
+                repo.Put(entity);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+
+        public PartyCustomAttribute UpdatePartyCustomAttribute(PartyCustomAttribute partyCustomAttribute)
+        {
+            Contract.Requires(partyCustomAttribute != null, "Provided entities can not be null");
+            Contract.Requires(partyCustomAttribute.Id >= 0, "Provided entitities must have a permanent ID");
+            Contract.Ensures(Contract.Result<PartyCustomAttribute>() != null && Contract.Result<PartyCustomAttribute>().Id >= 0);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
+                //Name is unique for PartyCustomAttribute with the same party type
+                if (partyCustomAttribute.PartyType.CustomAttributes.Where(item => item.Name == partyCustomAttribute.Name && item.Id != partyCustomAttribute.Id).Count() > 0)
+                    BexisException.Throw(partyCustomAttribute, "This name for this type of 'PartyCustomAttribute' is already exist.", BexisException.ExceptionType.Add);
+                //Calculate displayorder
+                //if find the same displayOrder then it pushes the other items with the same displayOrder or greater than
+                if (partyCustomAttribute.PartyType.CustomAttributes.FirstOrDefault(item => item.DisplayOrder == partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id) != null)
+                    partyCustomAttribute.PartyType.CustomAttributes.Where(item => item.DisplayOrder >= partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id)
+                        .ToList().ForEach(item => item.DisplayOrder = item.DisplayOrder + 1);
+                repo.Merge(partyCustomAttribute);
+                var merged = repo.Get(partyCustomAttribute.Id);
+                repo.Put(merged);
+                uow.Commit();
+                return (merged);
+            }
         }
 
         public bool DeletePartyCustomAttribute(PartyCustomAttribute entity)
@@ -226,7 +325,7 @@ namespace BExIS.Dlm.Services.Party
                     var latest = repo.Reload(entity);
                     //Prevent of deleting if there is a 'customAttributeVaue' for this entity
                     if (entity.CustomAttributeValues.Count() > 0)
-                        BexisException.Throw(entity, "There is one or more 'customAttributeVaue' for this entity.", BexisException.ExceptionType.Delete,true);
+                        BexisException.Throw(entity, "There is one or more 'customAttributeVaue' for this entity.", BexisException.ExceptionType.Delete, true);
 
                     //delete the entity
                     repo.Delete(latest);
@@ -237,6 +336,7 @@ namespace BExIS.Dlm.Services.Party
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
         }
+
         #endregion
 
         #region Associations
@@ -261,7 +361,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyStatusType> repo = uow.GetRepository<PartyStatusType>();
                 var ff = repo.Get(item => item.Name == name && item.PartyType == partyType);
                 //Name and partyType are unique in PartyStatusTypes 
-                if (repo.Get(item => item.Name == name && item.PartyType == partyType).Count()>0)
+                if (repo.Get(item => item.Name == name && item.PartyType == partyType).Count() > 0)
                     BexisException.Throw(entity, "This name with this PartyType is already exist.", BexisException.ExceptionType.Add);
 
                 repo.Put(entity);
@@ -270,9 +370,14 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
 
         }
+
         public PartyStatusType GetStatusType(PartyType partyType, string name)
         {
-            return RepoPartyStatusType.Get(item => item.Name == name && item.PartyType == partyType).FirstOrDefault();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyStatusType> repoPartyStatusType = uow.GetRepository<PartyStatusType>();
+                return repoPartyStatusType.Get(item => item.Name == name && item.PartyType == partyType).FirstOrDefault();
+            }
         }
         public bool RemoveStatusType(PartyStatusType entity)
         {
@@ -286,7 +391,7 @@ namespace BExIS.Dlm.Services.Party
                     BexisException.Throw(latest, "There are some relevent 'PartStatus' to this entity.", BexisException.ExceptionType.Delete);
 
                 //Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.
-                if (latest.PartyType.StatusTypes.Count()>1)
+                if (latest.PartyType.StatusTypes.Count() > 1)
                     BexisException.Throw(latest, "Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete);
                 //delete the entity
                 repo.Delete(latest);
@@ -313,7 +418,7 @@ namespace BExIS.Dlm.Services.Party
                         BexisException.Throw(entity, "There are some relevent party status to this entity.", BexisException.ExceptionType.Delete, true);
                     //Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.
                     if (latest.PartyType.StatusTypes.Count() > 1)
-                        BexisException.Throw(latest, "Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete,true);
+                        BexisException.Throw(latest, "Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete, true);
                     //delete the entity
                     repo.Delete(latest);
                 }

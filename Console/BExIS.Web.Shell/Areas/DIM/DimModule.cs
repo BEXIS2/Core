@@ -1,7 +1,9 @@
 ﻿using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models;
+using System;
 using System.Net.Http.Formatting;
 using System.Web.Http;
+using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI
@@ -10,13 +12,27 @@ namespace BExIS.Modules.Dim.UI
     {
         public DimModule() : base("dim")
         {
-
+            LoggerFactory.GetFileLogger().LogCustom("...ctor of dim...");
         }
 
         public override void Install()
         {
-            base.Install();
-            DimSeedDataGenerator.GenerateSeedData();
+            LoggerFactory.GetFileLogger().LogCustom("...start install of dim...");
+            try
+            {
+                base.Install();
+                using (DimSeedDataGenerator generator = new DimSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
+            }
+            catch (Exception e)
+            {
+                LoggerFactory.GetFileLogger().LogCustom(e.Message);
+                LoggerFactory.GetFileLogger().LogCustom(e.StackTrace);
+            }
+
+            LoggerFactory.GetFileLogger().LogCustom("...end install of dim...");
         }
 
         public override void Start()

@@ -1,10 +1,4 @@
 ﻿using BExIS.Ddm.Api;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using System;
@@ -16,7 +10,6 @@ using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
-using HeaderItem = BExIS.Utils.Models.HeaderItem;
 using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
@@ -24,6 +17,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     public class HomeController : Controller
     {
         public bool searchConfigFileInUse = false;
+
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
 
         /// <summary>
         /// is called when the Search View is selected
@@ -38,7 +34,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
                 //if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
                 //{
@@ -72,8 +68,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             if (searchType == "new")
             {
@@ -113,7 +108,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             SetFilterAC(SelectedFilter);
 
             return View("Index", provider);
@@ -127,7 +122,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
         }
 
@@ -140,7 +135,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public void ChangeSearchValuesACBySearchType(string value)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             Session["SearchType"] = value;
         }
 
@@ -161,7 +156,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult CheckedTreeViewItem(string SelectedItem, string Parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
@@ -170,13 +165,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult UpdateFacets()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
         }
 
         public ActionResult GetDataForBreadCrumbView()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             return PartialView("_searchBreadCrumb", provider.WorkingSearchModel);
         }
@@ -194,7 +189,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
@@ -211,7 +206,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             List<string> selectedValues = new List<string>();
             string parent = GetParentOfSelectAbleCategories();
@@ -246,7 +241,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         public ActionResult ShowMoreWindow(string parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             SetParentOfSelectAbleCategories(parent);
 
@@ -278,7 +273,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             RemoveFromPropertiesDic(parent, value, provider.WorkingSearchModel.CriteriaComponent);
 
@@ -301,7 +296,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [GridAction]
         public ActionResult _CustomBinding(GridCommand command)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             DataTable table = provider.Get(provider.WorkingSearchModel.CriteriaComponent).ResultComponent.ConvertToDataTable();
 
             return View(new GridModel(table));
@@ -322,14 +317,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult FilterByRangeSlider(int start, int end, string parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             return PartialView("_searchBreadcrumb", provider.WorkingSearchModel);
         }
 
         [HttpPost]
         public ActionResult FilterBySlider(int value, string parent)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             UpdatePropertiesDic(parent, value.ToString());
             provider.WorkingSearchModel.UpdateSearchCriteria(parent, value.ToString(), SearchComponentBaseType.Property, false, true);
@@ -341,7 +336,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult FilterByDropDown(string value, string node)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
@@ -354,7 +349,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
 
@@ -502,460 +497,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         #endregion
-
-        #region mydatasets
-
-        /// <summary>
-        /// create the model of My Dataset table
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param>NA</param>       
-        /// <returns>model</returns>
-        public ActionResult ShowMyDatasets()
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
-
-            DataTable model = new DataTable();
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-
-            #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "View",
-                DisplayName = "View",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Update",
-                DisplayName = "Update",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion
-
-            model = CreateDataTable(headerItems);
-
-            return PartialView("_myDatasetGridView", model);
-        }
-
-        /// <summary>
-        /// create the model of My Dataset table
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param>NA</param>       
-        /// <returns>model</returns>
-        public ActionResult ShowMyDatasetsInFullPage()
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
-
-            DataTable model = new DataTable();
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-
-            #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "View",
-                DisplayName = "View",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Update",
-                DisplayName = "Update",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion
-
-            model = CreateDataTable(headerItems);
-
-            return View("_myDatasetGridView", model);
-        }
-
-        [GridAction]
-        /// <summary>
-        /// create a model to fill the table of My Dataset
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="ShowMyDatasets"/>
-        /// <param>NA</param>       
-        /// <returns>model</returns>
-        public ActionResult _CustomMyDatasetBinding()
-        {
-            DataTable model = new DataTable();
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-            #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "View",
-                DisplayName = "View",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Update",
-                DisplayName = "Update",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion
-
-            model = CreateDataTable(headerItems);
-
-
-            DatasetManager datasetManager = new DatasetManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            List<long> gridCommands = datasetManager.GetDatasetLatestIds();
-            gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
-
-            foreach (long datasetId in gridCommands)
-            {
-                //get permissions
-                List<RightType> rights = entityPermissionManager.GetRights<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), datasetId);
-
-                if (rights.Count > 0)
-                {
-                    DataRow dataRow = model.NewRow();
-                    Object[] rowArray = new Object[8];
-
-                    if (datasetManager.IsDatasetCheckedIn(datasetId))
-                    {
-                        DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                        MetadataStructureManager msm = new MetadataStructureManager();
-                        dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-                        string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
-
-                        rowArray[0] = Convert.ToInt64(datasetId);
-                        rowArray[1] = title;
-                        rowArray[2] = description;
-                    }
-                    else
-                    {
-                        rowArray[0] = Convert.ToInt64(datasetId);
-                        rowArray[1] = "";
-                        rowArray[2] = "Dataset is just in processing.";
-                    }
-
-                    if (rights.Contains(RightType.Read))
-                    {
-                        rowArray[3] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[3] = "✘";
-                    }
-                    if (rights.Contains(RightType.Write))
-                    {
-                        rowArray[4] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[4] = "✘";
-                    }
-                    if (rights.Contains(RightType.Delete))
-                    {
-                        rowArray[5] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[5] = "✘";
-                    }
-                    if (rights.Contains(RightType.Read))
-                    {
-                        //ToDo RigthType Download not exist -> set RigthType Read
-                        rowArray[6] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[6] = "✘";
-                    }
-                    if (rights.Contains(RightType.Grant))
-                    {
-                        rowArray[7] = "✔";
-                    }
-                    else
-                    {
-                        rowArray[7] = "✘";
-                    }
-
-                    dataRow = model.NewRow();
-                    dataRow.ItemArray = rowArray;
-                    model.Rows.Add(dataRow);
-                }
-            }
-
-            return View(new GridModel(model));
-        }
-
-
-        private DataTable CreateDataTable(List<HeaderItem> items)
-        {
-            DataTable table = new DataTable();
-
-            foreach (HeaderItem item in items)
-            {
-                table.Columns.Add(new DataColumn()
-                {
-                    ColumnName = item.Name,
-                    Caption = item.DisplayName,
-                    DataType = getDataType(item.DataType)
-                });
-            }
-
-            return table;
-        }
-
-        private Type getDataType(string dataType)
-        {
-            switch (dataType)
-            {
-                case "String":
-                    {
-                        return Type.GetType("System.String");
-                    }
-
-                case "Double":
-                    {
-                        return Type.GetType("System.Double");
-                    }
-
-                case "Int16":
-                    {
-                        return Type.GetType("System.Int16");
-                    }
-
-                case "Int32":
-                    {
-                        return Type.GetType("System.Int32");
-                    }
-
-                case "Int64":
-                    {
-                        return Type.GetType("System.Int64");
-                    }
-
-                case "Decimal":
-                    {
-                        return Type.GetType("System.Decimal");
-                    }
-
-                case "DateTime":
-                    {
-                        return Type.GetType("System.DateTime");
-                    }
-
-                default:
-                    {
-                        return Type.GetType("System.String");
-                    }
-            }
-        }
-
-        // chekc if user exist
-        // if true return usernamem otherwise "DEFAULT"
-        public string GetUsernameOrDefault()
-        {
-            string username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
-        }
-
-        #endregion
-
 
     }
 }

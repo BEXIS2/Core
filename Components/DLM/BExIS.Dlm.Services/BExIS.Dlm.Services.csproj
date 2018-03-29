@@ -112,9 +112,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
+    <Reference Include="NCalc, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NCalc-Edge.1.4.3\lib\NCalc.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -151,6 +151,7 @@
     <Compile Include="DataStructure\DataTypeManager.cs" />
     <Compile Include="DataStructure\UnitManager.cs" />
     <Compile Include="DataStructure\ViewManager.cs" />
+    <Compile Include="Helpers\DatasetConvertor.cs" />
     <Compile Include="MetadataStructure\MetadataPackageManager.cs" />
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />
     <Compile Include="MetadataStructure\MetadataStructureManager.cs" />
@@ -163,6 +164,10 @@
     <Compile Include="TypeSystem\DataTypeUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\EXT\BExIS.Ext.Model\BExIS.Ext.Model.csproj">
       <Project>{f296cb14-3b71-40c9-89f7-f928ba2c7c5b}</Project>
       <Name>BExIS.Ext.Model</Name>
@@ -171,8 +176,13 @@
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj">
+      <Project>{E234118C-1B89-493C-B17A-6990F6B98A9F}</Project>
+      <Name>BExIS.Dlm.Orm.NH</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

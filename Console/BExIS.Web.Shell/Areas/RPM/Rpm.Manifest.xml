@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="RPM" displayName="Research Planning" version="1.0.0" builtin="false">
   <Description>
-    <!--add proper description-->
+    RPM is called "Data Planning" since it is good practice to specify the Data Structure before collecting your data in the field or the laboratory. Your data can only be uploaded to the system (using the Data Collection Module) if there is a corresponding Data Structure already existing.
   </Description>
   <Assemblies>
     <Assembly fullName="" role=""/>
@@ -13,11 +13,18 @@
     <Export tag="menubar" id="ManageDataStructures" order="1"
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructureSearch" action="" argument=""
-            extends="./menubarRoot/Planing"/>
+            extends="./menubarRoot/Plan"/>
     <Export tag="menubar" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
-            extends="./menubarRoot/Planing"/>
+            extends="./menubarRoot/Plan"/>
+    
+    <Export tag="lunchbar" id="helpRpm" order="1"
+        title="Data Planning" description="Data Planning Help Manual" icon=""
+        controller="Help" action="index"
+        extends="./lunchbarRoot/help"
+            />
+    
     <Export tag="settings" id="ManageVariableTemplates" order="1"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
             controller="DataAttribute" action="AttributeManager" argument=""

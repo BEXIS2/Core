@@ -20,8 +20,11 @@ namespace BExIS.Dlm.Entities.Party
             AssociatedPairs = new List<PartyTypePair>();
         }
         #region Attributes
+        
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }
+        private string displayName;
+        public virtual string DisplayName{ get { return string.IsNullOrEmpty(displayName) ? Title : displayName; } set { displayName = value; } }
 
         /// <summary>
         /// If true, the the source party type is considered to be the parent of the target party type, hence the same for the associated parties in the linked relationship

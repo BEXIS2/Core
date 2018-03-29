@@ -1,55 +1,179 @@
-@using Vaiona.Web.Mvc;<br />
+
 @section Information
 {
-This guide will walk you through the basics of using data dissemination.
+    This guide will walk you through the basics of using data dissemination.
 }
 @section leftPane{
- <div class="toc">
- <h2> Data Dissemination ToC </h2>
- <br />
-<p></p> <a href="#_Toc468454461">Overview</a>
-<p></p> <a href="#_Toc468454462">Publish a Dataset Version</a>
-<p></p> <a href="#_Toc468454463">&#xa0;&#xa0;&#xa0;&#xa0;Configurate</a>
-<p></p> <a href="#_Toc468454464">&#xa0;&#xa0;&#xa0;&#xa0;Publish</a>
-<p></p> <a href="#_Toc468454465">&#xa0;&#xa0;&#xa0;&#xa0;Zip</a>
- </div>
+    <div class="toc">
+        <h3> Data Dissemination ToC </h3>
+        <br />
+        <p></p> <a href="#_overview">1. Overview</a>
+        <p></p> <a href="#metadata_export">2. Metadata Export</a>
+        <p></p> <a href="#mapping_tool">3. Mapping tool</a>
+        <p></p>&nbsp;&nbsp; <a href="#mapping_overview">3.1. Mapping Overview</a>
+        <p></p>&nbsp;&nbsp; <a href="#mapping_examples">3.2. Mapping Examples</a>
+        <p></p>&nbsp;&nbsp; <a href="#create_mapping">3.3. Create a mapping</a>
+        <p></p> <a href="#publish_ds">4. Publishing a Dataset Version</a>
+        <p></p>&nbsp;&nbsp; <a href="#publish">4.1. Publish</a>
+        <p></p>&nbsp;&nbsp; <a href="#gfbio">4.2. GBFIO</a>
+    </div>
 }
-<style>
-.toc { position: fixed; top:100px; }
-.scrollable { overflow: auto; height: 750px; }
-:target:before { content: ""; display: block; height: 100px; }
-</style>
 
-<h1><a id="_Toc468454461"><span>Overview</span></a></h1>
+
+    <style>
+        a:hover {
+            background-color: #bee1da;
+            text-decoration: none;
+        }
+
+        .toc {
+            position: fixed;
+            top: 100px;
+            overflow: auto;
+            max-height: 64vh;
+            width: 250px;
+            max-width: 350px;
+        }
+
+
+        .scrollable {
+            overflow: auto;
+            height: 750px;
+        }
+
+        :target:before {
+            content: "";
+            display: block;
+            height: 100px;
+        }
+    </style>
+
+<h1><a id="_overview"><span>1. Overview</span></a></h1>
 <p><span>&#xa0;</span></p>
-<p><span>The Data Di ssemination Module , available via Setup ( Cog button ) and Export Metadata , provides a tool to export metadata to a standard compliant XML file . For every metadata structure in the system there is one tab in the tab strip.</span></p>
-<p><span>The data grid in one tab show s all datasets belong ing to the selected metadata structure.</span></p>
-<p><span>S elect a checkbox to mark the datasets you w ould like to export.</span></p>
-<p><span>Please click the E xport button and wait until the metadata XML file has been created successful ly and a download link is available in-line .</span></p>
+<p><span>The Data Dissemination Module, available via Setup (Cog button) and Export Metadata, provides a tool to export metadata to a standard compliant XML file. For every metadata structure in the system there is one tab in the tab strip.</span></p>
+<p><span>The data grid in one tab shows all datasets belonging to the selected metadata structure.</span></p>
+<h1><a id="metadata_export">2. Metadata Export</a></h1>
+<p><span>Select a checkbox to mark datasets you would like to export.</span></p>
+<p><span>Please click the Export button and wait until the metadata XML file has been created successfully and a download link is available in-line.</span></p>
 <p><span>&#xa0;</span></p>
-<p><img src="~/Areas/DIM/Content/Images/Help/Help_img1.png" width="604" height="204" alt="img1" /><span>&#xa0;</span></p>
-<h1><a id="_Toc468454462"><span>Publish a Dataset Version</span></a></h1>
-<h2><a id="_Toc468454463"><span>Configurate</span></a></h2>
+<p><img src="~/Areas/DIM/Content/Images/Help/Help_img1.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<h1><a id="mapping_tool">3. Mapping tool</a></h1>
+<p>In the mapping tool in BEXIS it is possible to set each metadata structure to predefined keys and party types (for more information about party types see the manual about parties).</p>
+<ul>
+    <li>Keys are attributes such as title or description.</li>
+    <li>Party types are defined objects such as persons, institutes, organization or workshops.</li>
+</ul>
+<p>Advantages after mapping a metadata structure:</p>
+<ol type="1">
+    <li>When publishing a dataset, BEXIS must retrieve information from the metadata and convert it to the requested formats. The more keys and party types are defined, the better the information can be prepared for publication.</li>
+    <li>
+        In the BEXIS there are party types like people, project, etc.
+        <p>In the metadata form, according to the mapping, appropriate results are suggested. If a user encapsulates a person in the metadata form, all matching persons are made available for selection. This simplifies the input of metadata.</p>
+    </li>
+</ol>
+<p><img src="~/Areas/DIM/Content/Images/Help/mapping_tool.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<p>This image shows an overview of the existing Parties. In this case only one person and one exists.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/mapping_tool2.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<p>Auto complete for projects.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/mapping_tool3.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<p>Auto complete for persons.</p>
+
+<h2><a id="mapping_overview"><span>3.1. Mapping Overview</span></a></h2>
+<p><img src="~/Areas/DIM/Content/Images/Help/mapping.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<p>The page is divided into 3 sections. The source is displayed on the left. The target is displayed on the right side. In the middle all created mappings are displayed.</p>
+<h3>3.1.1 Source and Target</h3>
+<p>Each side as a simple and complex block as also a free text search. Simple elements are example first name, last name or full name from a person. A Complex type can be a person.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/source.png" width="304" alt="img1" /><span>&#xa0;&#xa0;&#xa0;</span><img src="~/Areas/DIM/Content/Images/Help/target.png" width="304" alt="img1" /></p>
+<h3>3.1.2 Mapping</h3>
+<p>Mappings are connections between the source and the target. There are different connection possibilities between the simple attributes. Generally only the connection between two simple attributes is considered.</p>
+<p>With the aid of a transformation rule, it is possible to cover a wide range of different cases. A transformation rule consists of a RegEx and a mask. With an example you can check the values and the expected result.</p>
+<p><a href="https://msdn.microsoft.com/de-de/library/az24scfc(v=vs.110).aspx">RegEx Documenation (mdsn)</a></p>
+
+<h2><a id="mapping_examples">3.2 Mapping Examples </a></h2>
+<p>Following is some examples of one to one, one to many and many to one mapping.</p>
+<h4>3.2.1 EXAMPLE one to one</h4>
+<p>This example creates a connection between 2 titles. All words are separated by a RegEx and then arranged differently via the mask.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/one_to_one.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<h3>3.2.2	EXAMPLE one to many</h3>
+<p>This example creates a connection between 1 name and a FirstName and LastName. In the transformation rule, the first and last names are separated from one another by a RegEx and then positioned in the mask via the variable.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/one_to_many.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<h3>3.2.3	EXAMPLE many to one</h3>
+<p>This example creates a connection between the FirstName and LastName by name. Here is no RegEx needed but the mask ordered from both variables.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/many_to_one.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+
+<h2><a id="create_mapping">3.3.	Create a mapping</a></h2>
+<ol>
+    <li>Search a select for a simple or complex element from the source.</li>
+    <li>Add Element to the mapping in the middle by clicking the orange arrow next to the element.</li>
+    <li>Search a select for a simple or complex element from the target.</li>
+    <li>Search a select for a simple or complex element from the target.</li>
+    <li>Create the mapping by clicking the create button</li>
+    <li>In the mapping container there are all available simple elements for this mapping. Draw a line by clicking on one simple element from the source side and drag it to a simple element on the target side.</li>
+    <li>If needed, add RegEx and mask to the transformation rule. After entering values in the blocks</li>
+    <li>Press save</li>
+</ol>
+
+
+<h1><a id="publish_ds"><span>4. Publishing a Dataset Version</span></a></h1>
+<p>It is possible to prepare the data for 2 brokers and a total of 3 data repositories.</p>
+<ul>
+    <li>
+        Broker
+        <ul type="circle">
+            <li>GFBIO</li>
+            <li>Pensoft</li>
+        </ul>
+    </li>
+    <li>
+        Data Repositories
+        <ul type="circle">
+            <li>GFBIO – Collections</li>
+            <li>Pangaea</li>
+            <li>Pensoft</li>
+        </ul>
+    </li>
+</ul>
+<p>There is a limitation for Pensoft. All data prepared for Pensoft must be generated with the GBIF metadata structure.</p>
+<p>It is only possible to prepare datasets if the metadata is valid.</p>
+
+<h2><a id="publish"><span>4.1. Publish</span></a></h2>
+<p>The user can publish a dataset version if you go to the dataset and find the publish tab.</p>
+<p>The dropdown is showing all available data center. Select on and the system try to convert the data and the metadata as defined in the submissionConfig.xml. If something fails a message will displayed.</p>
 <p><span>&#xa0;</span></p>
-<p><span>In the workspace a submisionConfig.xml is placed under "...\Workspace\Modules\DIM".</span><br/><span>The data centers can be registered in this file . Here you can define requirements such as, for example, to export the primary data to csv . </span></p>
-<p><img src="~/Areas/DIM/Content/Images/Help/Help_img2.png" width="605" height="144" alt="img2" /><span>&#xa0;</span></p>
+<p>There are two types of fails:</p>
+<ol>
+    <li>The system is not able to convert the data.</li>
+    <li>Metadata is not valid. This is a warning. You can go on but the metadata.xml in the zip ist not valid against the exported xsd schema</li>
+</ol>
+<p><img src="~/Areas/DIM/Content/Images/Help/publish.png" width="750" alt="img3" /><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<br/><p><span>&#xa0;</span></p>
-<h2><a id="_Toc468454464"><span>Publish</span></a></h2>
-<p><span>&#xa0;</span></p>
-<p><span>The use r can publish a dataset version if you go to the dataset and find the publish tab.</span><br/><span>The dropdown is showing all available data center. Select on and the system try to convert the data and the metadata as defined in the submissionConfig.xml. If something fails a message will displayed.</span><br/><span>There are two types of fails.</span></p>
-<p><span>1) &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; The system is not able to convert the data. The administrator should check the config and the convert option.</span></p>
-<p><span>2) &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Metadata is not valid. This is a warning. You can go on but the metadata.xml in the zip ist not valid against the exported xsd schema</span></p>
-<p><img src="~/Areas/DIM/Content/Images/Help/Help_img3.png" width="605" height="162" alt="img3" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<h2><a id="_Toc468454465"><span>Zip</span></a></h2>
-<p><span>&#xa0;</span></p>
-<p><span>The following files can be found in the zip file .</span></p>
-<p><img src="~/Areas/DIM/Content/Images/Help/Help_img4.png" width="634" height="189" alt="img4" /><span>&#xa0;</span></p>
-<p><span>1. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Schema   -   XSD Schema for the metadata</span></p>
-<p><span>2. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Data.***   -   Primary Data</span></p>
-<p><span>3. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Data structure   -   Structure of the primary data</span></p>
-<p><span>4. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Manifest File   -   General information's about the Dataset</span></p>
-<p><span>5. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Metadata   -   Metadata information's about the dataset</span></p>
-<p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
+<h2><a id="gfbio"><span>4.2. GBFIO</span></a></h2>
+<p>Via the GFBIO portal you can start a submission and publish your dataset. Depending on the subject of the data set, a suitable Data Repository is defined. There are different main Types.</p>
+<ul>
+    <li>Pangaea</li>
+    <li>Collections</li>
+    <li>ENA</li>
+</ul>
+<p>Each data repository has different data requirements. BEXIS 2 offers an export for Pangea and Collections.</p>
+
+<h3>4.2.1 Collections</h3>
+<p>The data for the collections is stored in a zip file.</p>
+<p>The following files can be found in the zip file.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/collections.png" width="750" alt="img3" /><span>&#xa0;</span></p>
+<ol>
+    <li>Schema 	-	XSD Schema for the metadata</li>
+    <li>Data.***	- 	Primary Data</li>
+    <li>Data structure	-	Structure of the primary data</li>
+    <li>Manifest File	-	General information’s about the Dataset</li>
+    <li>Metadata	-	Metadata information’s about the dataset</li>
+</ol>
+<h3>4.2.2 Pangaea</h3>
+<p>For Pangea, the metadata and primary data are stored in a text file.</p>
+<p><img src="~/Areas/DIM/Content/Images/Help/pangaea1.png" width="750" alt="img3" /><span>&#xa0;</span></p>
+<p><img src="~/Areas/DIM/Content/Images/Help/pangaea2.png" width="750" alt="img3" /><span>&#xa0;</span></p>
+
+<p>&#xa0;</p>
+<p>&#xa0;</p>
+
+<a href="#_overview"> Go to top</a>
+

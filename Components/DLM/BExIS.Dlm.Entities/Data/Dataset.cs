@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using BExIS.Dlm.Entities.Administration;
+﻿using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.DataStructure;
+using System;
+using System.Collections.Generic;
 using Vaiona.Entities.Common;
-using BExIS.Dlm.Entities.MetadataStructure;
 
 /// <summary>
 ///
@@ -15,9 +14,18 @@ namespace BExIS.Dlm.Entities.Data
     /// </summary>
     public enum DatasetStatus
     {
-            CheckedOut  = 1 // dataset version is newly created or checked out for edit. during this time no other user is able to change the dataset
-        ,   CheckedIn   = 2 // the version has committed the changes. The whole version and its tuples are freezed then.
-        ,   Deleted     = 3 // dataset was committed and then logically deleted. physical delete in not managed here because it deletes the should versions, histories. but a Purge function can be available for db admins
+        CheckedOut = 1 // dataset version is newly created or checked out for edit. during this time no other user is able to change the dataset
+        , CheckedIn = 2 // the version has committed the changes. The whole version and its tuples are freezed then.
+        , Deleted = 3 // dataset was committed and then logically deleted. physical delete in not managed here because it deletes the should versions, histories. but a Purge function can be available for db admins
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum DatasetStateInfo
+    {
+        NotValid = 1, // Metadata is not valid
+        Valid = 2  // Metadata is valid
     }
 
     /// <summary>
@@ -26,7 +34,7 @@ namespace BExIS.Dlm.Entities.Data
     /// </summary>
     /// <remarks></remarks>
     public class Dataset : BusinessEntity
-    {        
+    {
         #region Attributes
 
         /// <summary>
@@ -58,35 +66,35 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual DataStructure.DataStructure          DataStructure { get; set; }
+        public virtual DataStructure.DataStructure DataStructure { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual MetadataStructure.MetadataStructure  MetadataStructure { get; set; }
+        public virtual MetadataStructure.MetadataStructure MetadataStructure { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<DatasetVersion>          Versions { get; set; }
+        public virtual ICollection<DatasetVersion> Versions { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ResearchPlan                         ResearchPlan { get; set; } // it can be null, but check how hibernate deals with nullables
+        public virtual ResearchPlan ResearchPlan { get; set; } // it can be null, but check how hibernate deals with nullables
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<DatasetView>                Views { get; set; }
+        public virtual ICollection<DatasetView> Views { get; set; }
         #endregion
 
         #region Methods
@@ -100,7 +108,7 @@ namespace BExIS.Dlm.Entities.Data
         public Dataset()
             : this(new StructuredDataStructure())
         {
-            
+
         }
 
         /// <summary>
@@ -111,7 +119,9 @@ namespace BExIS.Dlm.Entities.Data
         /// <param name="dataStructure"></param>
         public Dataset(DataStructure.DataStructure dataStructure)
         {
-            Versions = new List<DatasetVersion>(); 
+            if (dataStructure == null)
+                throw new ArgumentNullException("Dataset can not be constructed without a data structure.");
+            Versions = new List<DatasetVersion>();
             Status = DatasetStatus.CheckedIn;
             //Metadata = null; // new XmlElement();// Metadata.Metadata();
             //XmlExtendedPropertyValues = new XmlDocument();

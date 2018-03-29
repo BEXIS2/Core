@@ -1,7 +1,8 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Utils.Models;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Web.Mvc;
 using Vaiona.IoC;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
@@ -11,7 +12,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     /// This Search Index API is only for internal comminication
     /// 
     /// </summary>
-    public class SearchIndexController
+    public class SearchIndexController : Controller
     {
         // GET: api/SearchIndex
         /// <summary>
@@ -20,30 +21,33 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         public IEnumerable<string> ReIndex()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.Reload();
 
             return null;
         }
 
-        // GET: api/SearchIndex/5
-        /// <summary>
-        /// id = dataset id and this get will reindex search based on the dataset
-        /// </summary>
-        /// <param name="id">Dataset Id</param>
-        /// <returns></returns>
-        /// <remarks> 
-        /// </remarks>
-        public HttpResponseMessage Redinex(int id)
+        public IEnumerable<string> ReIndexSingle(long id = 0)
         {
-
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-            provider?.UpdateSingleDatasetIndex(id, IndexingAction.CREATE);
-
-
-            return null;
+            return ReIndexUpdateSingle(id, "CREATE");
         }
 
+        public IEnumerable<string> ReIndexUpdateSingle(long id = 0, string actionType = "CREATE")
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+
+            if (id == 0)
+            {
+                provider?.Reload();
+            }
+            else
+            {
+                var enumAction = (IndexingAction)Enum.Parse(typeof(IndexingAction), actionType);
+                provider?.UpdateSingleDatasetIndex(id, enumAction);
+
+            }
+            return null;
+        }
 
 
         /// <summary>
@@ -53,8 +57,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         public SearchModel Get(string value)
         {
-
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             return provider?.GetTextBoxSearchValues(value, "", "new", 10);
         }
     }

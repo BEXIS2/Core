@@ -43,9 +43,9 @@
                 <div class="bx-rpm-selectdropdown">
                     @Html.Partial("_dropdown", Model.Units)
                 </div>
-                <div class="bx-rpm-partial" style="display:none;">
+                @*<div class="bx-rpm-partial" style="display:none;">
                     @Html.Partial("_editUnit", new EditUnitStruct())
-                </div>
+                </div>*@
             </td>
             @*<td class="bx-rpm-function" style="vertical-align:top">
                 <div class="bx-function bx-add" id="addUnit"></div>
@@ -55,8 +55,10 @@
             <td>
                 Data Type
             </td>
-            <td class="datatype bx-rpm-selectdropdown">
-                @Html.Partial("_dropdown", Model.DataTypes)
+            <td class="datatype">
+                <div class="bx-rpm-selectdropdown">
+                    @Html.Partial("_dropdown", Model.DataTypes)
+                </div>
             </td>
             <td class="bx-rpm-function"></td>
         </tr>
@@ -93,12 +95,15 @@
             if($(options[i]).text().toLowerCase() == 'none'){
                 var select = $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select');
                 select.val($(options[i]).attr('value')).change();
-                var parameters = encodeURI('/?unitId=' + select.val());
-                unitChange(parameters);
+                unitChange(select.val());
                 break;
             }
         }
         $('.bx-rpm-createAttributeContainer #constraints').toggle();
+
+        $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select').change(function () {
+            unitChange($(this).val());
+        });
     });
 
     function clickConstraints(){
@@ -194,7 +199,7 @@
 
     $('.bx-rpm-createAttributeContainer #saveButton').click(function () {
         var cssId = 'message';
-        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #description').val()) + '&unitId=' + $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer .datatype.bx-rpm-selectdropdown #select').val() + '&cssId=' + cssId + '&inUse=' + inUse);
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #description').val()) + '&unitId=' + $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #select').val() + '&cssId=' + cssId + '&inUse=' + inUse);
         parameters = parameters.replace('#','%23');
         $.get('@Url.Action("createAtttribute", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
@@ -214,15 +219,32 @@
         });
     });
 
-    $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select').change(function() {
-        var parameters = encodeURI('/?unitId=' + $(this).val());
-        unitChange(parameters);
-    });
+    
 
-    function unitChange(parameters){
+    function unitChange(value) {
+        var parameters = encodeURI('/?unitId=' + parseInt(value));
         $.get('@Url.Action("_getDataTypes", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
-            $('.bx-rpm-createAttributeContainer .datatype.bx-rpm-selectdropdown').html($(data));
+            for (var i = 0; i < $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select option').length; i++) {
+                if ($('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select option')[i].getAttribute('value') == value) {
+                    $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #description').html($('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select option')[i].getAttribute('title'));
+                }
+            }
+            $('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown').html($(data));
+
+            $('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #select').change(function () {
+                dataTypeChange($(this).val());
+            });
+
+            dataTypeChange($('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #select').val());
         });
+    }
+
+    function dataTypeChange(value) {
+            for (var i = 0; i < $('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #select option').length; i++) {
+                if ($('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #select option')[i].getAttribute('value') == value) {
+                    $('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #description').html($('.bx-rpm-createAttributeContainer .datatype .bx-rpm-selectdropdown #select option')[i].getAttribute('title'));
+                }
+            }
     }
 
     function onRangeChange() {

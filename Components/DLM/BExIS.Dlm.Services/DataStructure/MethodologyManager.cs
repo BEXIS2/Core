@@ -5,20 +5,13 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public sealed class MethodologyManager
+    public class MethodologyManager
     {
         public MethodologyManager() 
         {
-            //// define aggregate paths
-            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
-            this.Repo = this.GetUnitOfWork().GetReadOnlyRepository<Methodology>();
         }
 
         #region Data Readers
-
-        // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<Methodology> Repo { get; private set; }
-
         #endregion
 
         #region Methodology
@@ -94,7 +87,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = entity.GetUnitOfWork())
             {
                 IRepository<Methodology> repo = uow.GetRepository<Methodology>();
-                repo.Put(entity); // Merge is required here!!!!
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);    

@@ -17,8 +17,7 @@ Green 04  #d2e8e3
 Green 05  #eff7f6 brigth
 
 ----------------------------------------------------------*/
-body
-{
+body {
     background-color: #ffffff;
     font-size: 11pt;
     font-family: Arial;
@@ -29,79 +28,67 @@ body
 header,
 footer,
 nav,
-section 
-{
+section {
     display: block;
 }
 
-#region
-
-#endregion
+#region #endregion
 /*SECTIONS
 ----------------------------------------------------------*/
-
-leftPane, #leftPane
-{
-	margin:10px;
-	margin-left:15px;
+leftPane, #leftPane {
+    margin: 10px;
+    margin-left: 15px;
 }
 
-contentPane, #contentPane
-{	
-	width:auto;
-	margin:10px;	
+contentPane, #contentPane {
+    width: auto;
+    margin: 10px;
 }
 
-leftPane, #rightPane
-{
-	margin:10px;
+leftPane, #rightPane {
+    margin: 10px;
 }
 
 /* HEADINGS   
 ----------------------------------------------------------*/
-h1, h2, h3, h4, h5, h6
-{
+h1, h2, h3, h4, h5, h6 {
     font-size: 1.5em;
     color: #000;
 }
 
-h1
-{
+h1 {
     font-size: 2em;
     padding-bottom: 0;
     margin-bottom: 0;
 }
-h2
-{
+
+h2 {
     padding: 0 0 10px 0;
 }
-h3
-{
+
+h3 {
     font-size: 1.2em;
 }
-h4
-{
+
+h4 {
     font-size: 1.1em;
 }
-h5, h6
-{
+
+h5, h6 {
     font-size: 1em;
 }
 
-a
-{
+a {
     color: #696969;
 }
 
-li
-{
+li {
     line-height: 1.6;
 }
 
 /* this rule styles <h2> tags that are the 
 first child of the left and right table columns */
-.rightColumn > h1, .rightColumn > h2, .leftColumn > h1, .leftColumn > h2
-{
+.rightColumn > h1, .rightColumn > h2, .leftColumn > h1, .leftColumn > h2 {
     margin-top: 0;
 }
 
@@ -110,44 +97,39 @@ first child of the left and right table columns */
 
 /* you can specify a greater or lesser percentage for the 
 page width. Or, you can specify an exact pixel width. */
-.page
-{
+.page {
     width: 99%;
     margin-left: auto;
     margin-right: auto;
 }
 
-header, #header
-{
-    position:relative;
+header, #header {
+    position: relative;
     margin-bottom: 0px;
     color: grey;
     padding: 0;
 }
 
-header h1, #header h1
-{
-    font-weight: bold;
-    color: #555555;
-    padding: 5px 0;
-    margin: 0;   
-    border: none;
-    line-height: 2em;
-    font-size: 32px !important;
-}
+    header h1, #header h1 {
+        font-weight: bold;
+        color: #555555;
+        padding: 5px 0;
+        margin: 0;
+        border: none;
+        line-height: 2em;
+        font-size: 32px !important;
+    }
 
-#main
-{
+#main {
     background: #fff;
     padding: 30px 30px 15px 30px;
     margin-bottom: 30px;
     _height: 1px; /* only IE6 applies CSS properties starting with an underscore */
 }
 
-footer, #footer
-{
+footer, #footer {
     color: gray;
-    background-color:white;
+    background-color: white;
     padding: 10px 0;
     text-align: center;
     vertical-align: text-top;
@@ -156,70 +138,60 @@ footer, #footer
     font-size: .9em;
 }
 
-#footer td
-{
-    vertical-align: text-top;
-    width: 30%;
-}
+    #footer td {
+        vertical-align: text-top;
+        width: 30%;
+    }
 
-#footer a:link
-{
-    color: darkgray;
-    text-decoration:none;
-}
+    #footer a:link {
+        color: darkgray;
+        text-decoration: none;
+    }
 
-#footer a:visited
-{
-    color: darkgray;
-    text-decoration: none;
-}
+    #footer a:visited {
+        color: darkgray;
+        text-decoration: none;
+    }
 
-#footer a:hover
-{
-    color: darkorange;
-    text-decoration: none;
-}
+    #footer a:hover {
+        color: darkorange;
+        text-decoration: none;
+    }
 
 /* MENU   
 ----------------------------------------------------------*/
-#menu
-{
+#menu {
     position: relative;
     margin: 0;
     text-align: left;
 }
 
-#menu .t-item
-{
-    border-width: 0 0 0 1px;
-}
+    #menu .t-item {
+        border-width: 0 0 0 1px;
+    }
 
-#menu .t-link
-{
-    padding: 5px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 1.8em;
-}
+    #menu .t-link {
+        padding: 5px 20px;
+        font-weight: bold;
+        text-decoration: none;
+        line-height: 1.8em;
+    }
 
 /* FORM LAYOUT ELEMENTS   
 ----------------------------------------------------------*/
 
-fieldset 
-{
-    border:1px solid #ddd;
-    padding:0 1.4em 1.4em 1.4em;
-    margin:0 0 1.5em 0;
+fieldset {
+    border: 1px solid #ddd;
+    padding: 0 1.4em 1.4em 1.4em;
+    margin: 0 0 1.5em 0;
 }
 
-legend 
-{
-    font-size:1.2em;
+legend {
+    font-size: 1.2em;
     font-weight: bold;
 }
 
-textarea 
-{
+textarea {
     min-height: 75px;
 }
 
@@ -227,199 +199,180 @@ textarea
 /* TABLE
 ----------------------------------------------------------*/
 
-table 
-{
+table {
     width: 100%;
-    background-color:white;
+    background-color: white;
 }
 
-table td 
-{
-  padding: 5px;   
-  border-bottom: #ebebeb solid thin;
-  vertical-align:middle;
-  line-height: 14pt; 
-  text-align: left;
-  float:none;
-}
+    table td {
+        padding: 5px;
+        border-bottom: #ebebeb solid thin;
+        vertical-align: middle;
+        line-height: 14pt;
+        text-align: left;
+        float: none;
+    }
 
 
-table th
-{
-    color:black;
-    margin: 3px 0 3px 0;
-    padding: 0;
-    text-align: left;
-    border-top: solid 2px #565655; 
-    border-Bottom: solid 2px #565655;  
-    line-height: 28px;  
-    
-}
-table th, table td
-{
-    border-right: solid 4px white;  
-}
+    table th {
+        color: black;
+        margin: 3px 0 3px 0;
+        padding: 0;
+        text-align: left;
+        border-top: solid 2px #565655;
+        border-Bottom: solid 2px #565655;
+        line-height: 28px;
+    }
 
-table tr{ border: none; line-height: 14pt; }
-table th a {text-decoration: none; font-weight: bold;margin-right: 5px; }
+    table th, table td {
+        border-right: solid 4px white;
+    }
+
+    table tr {
+        border: none;
+        line-height: 14pt;
+    }
+
+    table th a {
+        text-decoration: none;
+        font-weight: bold;
+        margin-right: 5px;
+    }
 
 
 /* MISC  
 ----------------------------------------------------------*/
-.clear
-{
+.clear {
     clear: both;
 }
 
-.error
-{
-    color:Red;
+.error {
+    color: Red;
 }
 
-div#title
-{
-    display:block;
-    text-align:left;
+div#title {
+    display: block;
+    text-align: left;
 }
 
-#logindisplay
-{
-    font-size:1.1em;
-    text-align:right;
-    margin:10px;
-    color:#000;
+#logindisplay {
+    font-size: 1.1em;
+    text-align: right;
+    margin: 10px;
+    color: #000;
 }
 
-#logindisplay a:link
-{
-    color:gray;
-    text-decoration: underline;
-}
+    #logindisplay a:link {
+        color: gray;
+        text-decoration: underline;
+    }
 
-#logindisplay a:visited
-{
-    color:gray;
-    text-decoration: underline;
-}
+    #logindisplay a:visited {
+        color: gray;
+        text-decoration: underline;
+    }
 
-#logindisplay a:hover
-{
-    color:darkgray;
-    text-decoration: none;
-}
+    #logindisplay a:hover {
+        color: darkgray;
+        text-decoration: none;
+    }
 
 /* Styles for validation helpers
 -----------------------------------------------------------*/
-.field-validation-error
-{
+.field-validation-error {
     color: #f24c24;
 }
 
-.field-validation-valid
-{
+.field-validation-valid {
     display: none;
 }
 
-.input-validation-error
-{
+.input-validation-error {
     border: 1px solid #ff0000;
     background-color: #ffeeee;
 }
 
-.validation-summary-errors
-{
+.validation-summary-errors {
     font-weight: bold;
     color: #ff0000;
 }
 
-.validation-summary-valid
-{
+.validation-summary-valid {
     display: none;
 }
 
 /* Styles for editor and display helpers
 ----------------------------------------------------------*/
 .display-label,
-.editor-label
-{
+.editor-label {
     margin: 1em 0 0 0;
 }
 
 .display-field,
-.editor-field
-{
-    margin:0.5em 0 0 0;
+.editor-field {
+    margin: 0.5em 0 0 0;
 }
 
-.text-box
-{
+.text-box {
     width: 30em;
 }
 
-.text-box.multi-line
-{
-    height: 6.5em;
-}
+    .text-box.multi-line {
+        height: 6.5em;
+    }
 
-.tri-state
-{
+.tri-state {
     width: 6em;
 }
 
 /* Styles for help documents
 ----------------------------------------------------------*/
-p.MsoToc2, li.MsoToc2, div.MsoToc2
-{
-	margin-left:11.0pt;
-}
-p.MsoToc3, li.MsoToc3, div.MsoToc3
-{
-	margin-left:22.0pt;
-}
-p.MsoTitle, li.MsoTitle, div.MsoTitle
-{
-	margin-bottom:15.0pt;
-	font-size:26.0pt;
-	color:#17365D;
-	letter-spacing:.25pt;
-}
-p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
-{
-    margin-top:15.0pt;
-    line-height:115%;
-    font-size:larger;
-	font-weight:bold;
+p.MsoToc2, li.MsoToc2, div.MsoToc2 {
+    margin-left: 11.0pt;
 }
 
-.navbar 
-{
-    border: none !important; 
-    font-size:large;
+p.MsoToc3, li.MsoToc3, div.MsoToc3 {
+    margin-left: 22.0pt;
 }
 
-.breadcrumb 
-{
+p.MsoTitle, li.MsoTitle, div.MsoTitle {
+    margin-bottom: 15.0pt;
+    font-size: 26.0pt;
+    color: #17365D;
+    letter-spacing: .25pt;
+}
+
+p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading {
+    margin-top: 15.0pt;
+    line-height: 115%;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.navbar {
+    border: none !important;
+    font-size: large;
+}
+
+.breadcrumb {
     background-color: #f8f8f8 !important;
-    margin-bottom: 0px !important; 
+    margin-bottom: 0px !important;
 }
 
-table.bx-table-form tr td
-{
+table.bx-table-form tr td {
     padding: 5px;
     border: 0 none;
-    vertical-align:middle;
-    line-height: 14pt; 
+    vertical-align: middle;
+    line-height: 14pt;
     /*overflow:hidden;*/
 }
 
-#Content_Data > .t-grid > table > tbody > tr:hover
-{
+#Content_Data > .t-grid > table > tbody > tr:hover {
     background-color: #eff7f6;
 }
 
-#Content_Data >.t-grid > table > tbody > tr:active,
-#Content_Data > .t-grid > table > tbody > tr.t-state-selected
-{
+#Content_Data > .t-grid > table > tbody > tr:active,
+#Content_Data > .t-grid > table > tbody > tr.t-state-selected {
     background-color: #d2e8e3;
 }
 
@@ -429,7 +382,7 @@ table.bx-table-form tr td
 }
 
 .t-grid td,
-.t-grid th{
+.t-grid th {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
