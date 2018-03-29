@@ -52,10 +52,8 @@ namespace BExIS.IO.Tests
         [Test()]
         public void CreateFileTest()
         {
-
             FileStream file = FileHelper.Create(filePath);
             file.Should().NotBeNull("File can´t create or already exist.");
-
             file.Close();
         }
     }

@@ -899,6 +899,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
         }
 
+        public static implicit operator CreateDatasetController(ViewResult v)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion Helper
     }
 }
