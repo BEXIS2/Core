@@ -304,28 +304,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 partTypeManager?.Dispose();
             }
         }
-        public Boolean HasRight(Party sourceParty, Party targetparty, PartyRelationshipType partyRelationshipType, RightType rightType)
-        {
-            Contract.Requires(sourceParty != null && sourceParty.Id >= 0, "Provided party entity must have a permanent ID");
-            Contract.Requires(targetparty != null && targetparty.Id >= 0, "Provided party entity must have a permanent ID");
-            Contract.Requires(partyRelationshipType != null && partyRelationshipType.Id >= 0, "Provided partyRelationshipType entity must have a permanent ID");
-            PartyManager partyManager =null;
-            try
-            {
-                partyManager = new PartyManager();
-                var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == sourceParty.Id && cc.SecondParty.Id == targetparty.Id && cc.PartyRelationshipType.Id == partyRelationshipType.Id);
-                if(partyRelationships.Any())
-                {
-                    if ((partyRelationships.Sum(cc => cc.Permission) & (int)rightType) > 0)
-                        return true;
-                }
-            }
-            finally
-            {
-                partyManager?.Dispose();
-            }
-            return false;
-        }
+        
         public static RightType[] GetRightTypes(int permissions)
         {
             var rightTypes = new List<RightType>();

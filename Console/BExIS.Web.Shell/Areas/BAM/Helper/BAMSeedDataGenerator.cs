@@ -17,7 +17,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
         {
             createSecuritySeedData();
             ImportPartyTypes();
-            AddSystemRelationshipsSamples();
+           // AddSystemRelationshipsSamples();
 
         }
         private void AddSystemRelationshipsSamples()

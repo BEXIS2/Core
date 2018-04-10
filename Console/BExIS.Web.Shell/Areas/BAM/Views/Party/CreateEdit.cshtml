@@ -116,10 +116,10 @@
         tabs.Add().Text("Relationships").Enabled((createMode ? false : true)).Content(@<text>
             @Html.Partial("~/Areas/BAM/Views/PartyService/_partyRelationshipsPartial.cshtml", Model)
         </text>);
-        tabs.Add().Text("SystemRelationship").Enabled((createMode ? false : true)).Content(@<text>
+        @*tabs.Add().Text("SystemRelationship").Enabled((createMode ? false : true)).Content(@<text>
             <div id="systemRelationships"></div>
 
-        </text>);
+        </text>);*@
         })
     )<span style="color:red" id="errorsMsgSpan">@errorMessage</span>
 
@@ -273,11 +273,11 @@
         if ('@createMode'=='False')
             OnChangePartyType({value:@Model.PartyType.Id });
         validateRelationships();
-        if(@Model.Id>0)
+        @*if(@Model.Id>0)
         {
             $('#systemRelationships').load('/BAM/Party/LoadSystemRelationships/'+@Model.Id);
             partyTabStrip.enable($(".t-item", partyTabStrip.element)[2]);
-        }
+        }*@
         if(partyTabStrip.getSelectedTabIndex()==2)
         {
             $("#submitBtn").attr("disabled","true");
