@@ -10,7 +10,7 @@
             })
             .Columns(columns =>
             {
-                columns.Bound(c => c.Id);
+               // columns.Bound(c => c.Id);
                 columns.Bound(c => c.Name);
                 columns.Bound(c => c.PartyTypeTitle).Title("Type");
                 columns.Bound(c => c.StartDate).Title("Start date");
@@ -37,4 +37,3 @@
           pageable.Position(GridPagerPosition.Bottom);
       })
 )
-
