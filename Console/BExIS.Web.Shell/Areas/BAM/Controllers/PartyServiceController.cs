@@ -203,7 +203,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 if (partyModel.Id == 0)
                     return RedirectToAction("Index", "Home");
                 else
-                    party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
+                    party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues,null);
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             finally

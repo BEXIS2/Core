@@ -115,6 +115,7 @@
     <Compile Include="Party\PartyStatusType.cs" />
     <Compile Include="Party\PartyType.cs" />
     <Compile Include="Party\PartyTypePair.cs" />
+    <Compile Include="Party\PartyCustomGridColumns.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -52,7 +52,7 @@
         .Items(tabs =>
         {
         tabs.Add()
-                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? Model.PartyType.Title : "Party").Content(@<text>
+                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? string.Format("{0}({1})", Model.PartyType.Title, Model.Name) : "Party").Content(@<text>
                 <table class="bx-table-form" id="tblParty">
                     <tr>
                         <td><b title="Required" style="color: red">*</b></td>
@@ -115,6 +115,10 @@
         </text>);
         tabs.Add().Text("Relationships").Enabled((createMode ? false : true)).Content(@<text>
             @Html.Partial("~/Areas/BAM/Views/PartyService/_partyRelationshipsPartial.cshtml", Model)
+        </text>);
+        tabs.Add().Text("SystemRelationship").Enabled((createMode ? false : true)).Content(@<text>
+            <div id="systemRelationships"></div>
+
         </text>);
         })
     )<span style="color:red" id="errorsMsgSpan">@errorMessage</span>
@@ -192,6 +196,7 @@
 
     function OnChangePartyType(e) {
         var partyTypeId = e.value;
+
         if (!partyTypeId)
         {
             partyTabStrip.disable($(".t-item", partyTabStrip.element)[1]);
@@ -268,14 +273,31 @@
         if ('@createMode'=='False')
             OnChangePartyType({value:@Model.PartyType.Id });
         validateRelationships();
+        if(@Model.Id>0)
+        {
+            $('#systemRelationships').load('/BAM/Party/LoadSystemRelationships/'+@Model.Id);
+            partyTabStrip.enable($(".t-item", partyTabStrip.element)[2]);
+        }
         if(partyTabStrip.getSelectedTabIndex()==2)
         {
             $("#submitBtn").attr("disabled","true");
             $("#submitBtn").css("background-color","#f5f5f5");
             $("#submitBtn").attr("title","Every change in relationships will save immediately. No need to save!");
         }
-
-
+        $("#frmParty").submit(function(){
+            $.ajax({
+                type: 'POST',
+                url: "/Quiz/Index",
+                dataType: "json",
+                data: $("#frmParty").serialize() + '' ,
+                success: function () {
+                    alert("Successful");
+                },
+                error: function(){
+                    alert('error');
+                }
+            });
+        });
     }
 
 </script>
