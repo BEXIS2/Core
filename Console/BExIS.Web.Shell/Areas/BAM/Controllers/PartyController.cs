@@ -304,12 +304,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 foreach (var partyRelationship in partyRelationships)
                 {
                     // Party secondParty = partyManager.PartyRepository.Get(partyRelationship.SecondParty.Id);
-                    PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
+                   // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                     PartyTypePair partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                     //Min date value is sent from telerik date time element, if it was empty
                     if (partyRelationship.EndDate == DateTime.MinValue)
                         partyRelationship.EndDate = DateTime.MaxValue;
-                    partyManager.AddPartyRelationship(partyRelationship.FirstParty, partyRelationship.SecondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyTypePair, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                    partyManager.AddPartyRelationship(partyRelationship.FirstParty, partyRelationship.SecondParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
                 }
                 partyManager?.Dispose();
                 return RedirectToAction("CreateEdit", "party", new { id = partyId, relationTabAsDefault = true });
