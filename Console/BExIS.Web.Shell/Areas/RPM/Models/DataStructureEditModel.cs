@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Classes;
-
+using System.Collections.Generic;
+using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Models
@@ -330,7 +328,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             {
                 unitManager = new UnitManager();
                 var unitRepo = unitManager.GetUnitOfWork().GetReadOnlyRepository<Unit>();
-                foreach (Unit u in unitRepo.Get().Where(u => u.Description != null))
+                foreach (Unit u in unitRepo.Get())
                 {
                     this.Units.Add(new ItemStruct()
                     {
@@ -338,6 +336,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                         Id = u.Id,
                         Description = u.Description
                     });
+                    if (Description == null)
+                        Description = "";
                 }
             }
             finally
@@ -543,4 +543,3 @@ namespace BExIS.Modules.Rpm.UI.Models
     }
 
 }
-    

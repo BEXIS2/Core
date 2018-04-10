@@ -45,7 +45,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                if (this.IsAccessibale("SAM", "UserPermissions", "Subjects"))
+                if (this.IsAccessible("SAM", "UserPermissions", "Subjects"))
                 {
                     var result = this.Render("SAM", "UserPermissions", "Subjects",
                         new RouteValueDictionary() { { "EntityId", entityManager.FindByName("Dataset").Id }, { "InstanceId", datasetId } });

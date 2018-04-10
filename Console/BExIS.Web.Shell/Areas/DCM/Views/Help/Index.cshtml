@@ -1,49 +1,70 @@
-@using Vaiona.Web.Mvc;<br />
+
 @section Information
 {
-This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
+    This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
 }
 @section leftPane{
-  <div class="toc">
-  <h3> Data Collection ToC </h3>
-  <br />
-<p></p>    <a href="#_overview">1. Overview</a>
-<p></p>    <a href="#_create_dataset">2. Create Dataset</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355751">2.1. Copy an existing Dataset</a>
-<p></p>&nbsp;&nbsp; <a href="#_content">2.2. Content</a>
-<p></p>&nbsp;&nbsp; <a href="#_messages">2.3. Messages</a>
-<p></p>    <a href="#_upload_data">3. Upload Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_upload_tabular">3.1. Upload Tabular Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355758">3.2. Specify Dataset</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355759">3.3. Define Primary Key</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355760">3.4. Validation</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355761">3.5. Summary</a>
-<p></p>&nbsp;&nbsp; <a href="#_upload_data">3.6. Upload Data</a>
-<p></p>    <a href="#_easy_upload_import_data">4. Import Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_file">4.1. Select File</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_metadata">4.2. Metadata</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_sheet_structure">4.3. Sheet Structure</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_areas">4.4. Select Areas</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_verification">4.5. Verification</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_summary">4.6. Summary</a>
-<p></p>    <a href="#_push_big_file">5. Push Big File</a>
-<p></p>    <a href="#_manage_metadata_structure">6. Manage Metadata Structure</a>
-<p></p>&nbsp;&nbsp; <a href="#_select_xsd">6.1. Select File</a>
-<p></p>&nbsp;&nbsp; <a href="#_read_source">6.2. Read Source</a>
-<p></p>&nbsp;&nbsp; <a href="#_set_parameters">6.3. Set Parameters</a>
-<p></p>&nbsp;&nbsp; <a href="#_summary">6.4. Summary</a>
-  </div>
+    <div class="toc">
+        <h3> Data Collection ToC </h3>
+        <br />
+        <p></p>    <a href="#_overview">1. Overview</a>
+        <p></p>    <a href="#_create_dataset">2. Create Dataset</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355751">2.1. Copy an existing Dataset</a>
+        <p></p>&nbsp;&nbsp; <a href="#_content">2.2. Content</a>
+        <p></p>&nbsp;&nbsp; <a href="#_messages">2.3. Messages</a>
+        <p></p>    <a href="#_upload_data">3. Upload Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_upload_tabular">3.1. Upload Tabular Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355758">3.2. Specify Dataset</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355759">3.3. Define Primary Key</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355760">3.4. Validation</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355761">3.5. Summary</a>
+        <p></p>&nbsp;&nbsp; <a href="#_upload_data">3.6. Upload Data</a>
+        <p></p>    <a href="#_easy_upload_import_data">4. Import Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_file">4.1. Select File</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_metadata">4.2. Metadata</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_sheet_structure">4.3. Sheet Structure</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_areas">4.4. Select Areas</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_verification">4.5. Verification</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_summary">4.6. Summary</a>
+        <p></p>    <a href="#_push_big_file">5. Push Big File</a>
+        <p></p>    <a href="#_manage_metadata_structure">6. Manage Metadata Structure</a>
+        <p></p>&nbsp;&nbsp; <a href="#_select_xsd">6.1. Select File</a>
+        <p></p>&nbsp;&nbsp; <a href="#_read_source">6.2. Read Source</a>
+        <p></p>&nbsp;&nbsp; <a href="#_set_parameters">6.3. Set Parameters</a>
+        <p></p>&nbsp;&nbsp; <a href="#_summary">6.4. Summary</a>
+    </div>
 }
+
 <style>
-.toc { position: fixed; top:100px; }
-.scrollable { overflow: auto; height: 750px; }
-:target:before { content: ""; display: block; height: 100px; }
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
+
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
+
+
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
+
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
 </style>
 
-<p>&#xa0;</p>
-<p>&#xa0;</p>
 
-<br/><h1><a id="_overview">1. Overview</a></h1>
+<h1><a id="_overview">1. Overview</a></h1>
 <p>&#xa0;</p>
 <p>The Data Collection Module provides tools to create new datasets, enter metadata, upload data to the system, and import metadata structures (i.e. schemas). There are some workflows available under the Collect tab and also in the Setup:</p>
 <li>Create Dataset</li>
@@ -58,7 +79,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <p>This wizard will assist you in creating a new dataset in BEXIS 2. The Wizard is very flexible and builds up differently depending on the selected Metadata structure. Therefore, we describe only the basic functions here. </p>
 <p>The first step is to generate an empty or a copy of an existing dataset based on your selection of the two mandatory elements: data structure, and metadata structure. </p>
-<p><img src="~/Areas/DCM/Content/Images/Help/create_dataset.jpg" width="900" alt="Create Dataset" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/create_dataset.png" width="599" alt="Create Dataset" />&#xa0;</p>
 <p>The next stage is determined by the selected metadata structure.</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
@@ -71,7 +92,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>The content area is where you enter metadata describing your dataset. The forms provided here may look different and contain different attributes depending on the metadata schema (structure) you have chosen in the first step. </p>
 <p>&#xa0;</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/red_star.png" width="15" alt="Required" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Required attributes, </p>
-<p><img src="~/Areas/DCM/Content/Images/Help/plus.png" width="31"alt="Add" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add an attribute, </p>
+<p><img src="~/Areas/DCM/Content/Images/Help/plus.png" width="31" alt="Add" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add an attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/mines.png" width="31" alt="Mines" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove an attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/up_down.png" width="55" alt="Up Down" />&nbsp;&nbsp;Change order of the attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/expand.png" width="20" alt="Expand" /><img src="~/Areas/DCM/Content/Images/Help/collapse.png" width="20" alt="Collapse" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expand / collapse</p>
@@ -84,7 +105,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <h1><a id="_upload_data">3. Upload Data</a></h1>
 <p>To upload your data, please go to the Collect > Upload Data via main menu. This wizard will assist you in uploading data into the BEXIS 2 repository. A dataset can be structured or unstructured (i.e tabular or file).</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/upload_data.png" width="599"  alt="Upload Data" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/upload_data.png" width="599" alt="Upload Data" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_upload_tabular">3.1. Upload Tabular Data</a></h2>
 <p>The term "Tabular data" is used for all datasets where there internal structure of the data is "known" to the system. For example, in a data table the header, which defines the columns (i.e. variables) is the structure of the data. Before uploading/importing data to the system the data structure needs to be created with the Data Structure Manager of the Data Planning module.</p>
@@ -120,7 +141,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>With this step, the selected data file is validated against the selected data structure. Both, the structure of the data (e.g. variable properties) and whether the data values fit to the specified structure (e.g. data type, value range) is evaluated. </p>
 <p>Click on Validate button to validate the data file.</p>
 <p>If you go back and change something in the process of uploading, you need to validate the file again.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/upload_tabular.jpg" width="596" height="327" alt="Upload_Tabular_Validate" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Validation.png" width="596" height="327" alt="Validate" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_Toc468355761">3.5. Summary</a></h2>
 <p>With this final step a summary of your uploaded data file is provided. Please check the information and click the Finish button to confirm and finalize the upload. </p>
@@ -129,7 +150,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>An unstructured data could be either selected from your local computer or could be a file that has been uploaded to the server. In the case of unstructured data, we do not read the contents of the data. We copy the files to the server and place them in relation to the dataset.  </p>
 <p>BEXIS 2 application can support many file formats such as *.avi) (*.bmp) (*.csv) (*.dbf) (*.doc) (*.docx) (*.gif) (*.jpg) (*.jpeg) (*.mp3) (*.mp4) (*.pdf) (*.png) (*.shp) (*.shx) (*.tif) (*.txt) (*.xls) (*.xlsm) (*.xlsx) (*.xsd) (*.zip).</p>
 <p>The Maximum acceptable file size up to now is: 1024 MB.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/select_file.png" width="900" alt="Select File" />&#xa0;</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Upload_Unstructures.png" width="900" alt="Select File" />&#xa0;</p>
 <p>&#xa0;</p>
 <h1><a id="_easy_upload_import_data">4. Import Data</a></h1>
 <p>The Import Data wizard enables you to import both a tabular datastructure and data from a file in a single workflow.</p>
@@ -159,18 +180,24 @@ This guide will walk you through the basics of data collection including how to 
     <figcaption>The following differences are known:</figcaption>
     <ul>
         <li>Dates and times</li>
-        <ul>
-            <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
-            <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
-        </ul>
+        <li>
+            <ul>
+                <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
+                <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
+            </ul>
+        </li>
         <li>Boolean values</li>
-        <ul>
-            <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
-        </ul>
+        <li>
+            <ul>
+                <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
+            </ul>
+        </li>
         <li>Real Numbers</li>
-        <ul>
-            <li>Real numbers might be displayed with scientific notation.</li>
-        </ul>
+        <li>
+            <ul>
+                <li>Real numbers might be displayed with scientific notation.</li>
+            </ul>
+        </li>
     </ul>
 </figure>
 <p>&#xa0;</p>
@@ -206,24 +233,25 @@ This guide will walk you through the basics of data collection including how to 
 <p>In the first step an existing file containing your data needs to be selected. You can either select a XSD file from your local computer or a file that has been uploaded to the server prior to starting the Wizard. You may use the "Push big data to server" function in the Collect menu to upload multiple related XSD files.</p>
 <p>Note: Please upload a valid XSD structure. BEXIS 2 does not check this kind of validation.</p>
 <p>&#xa0;</p>
-<br/><p><img src="~/Areas/DCM/Content/Images/Help/select_xsd.png" width="900" alt="Select XSD File" />&#xa0;</p>
+<br /><p><img src="~/Areas/DCM/Content/Images/Help/select_xsd.png" width="900" alt="Select XSD File" />&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_read_source">6.2. Read Source</a></h2>
 <p>Please specify a name (i.e. display name) for the new metadata structure. You may also enter a root node if only a part of the XSD is to be used (optional).</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/read_xsd.png" width="900" alt="Read XSD File" /><br/><br/>To find the root node open the XSD Schema file and have a look on the element tags. In the example of ABCD it looks like this.</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/Help_img27.png" width="490" height="234" alt="img27" /><br/><br/>If no root node is selected then the wizard will automatically select the first element which is a complex type. But it is also possible to define the element "DataSet" as root node and the metadata structure starts from this element. The Name of a metadata structure must be unique and the root node must exist.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/read_xsd.png" width="900" alt="Read XSD File" /><br /><br />To find the root node open the XSD Schema file and have a look on the element tags. In the example of ABCD it looks like this.</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/Help_img27.png" width="490" height="234" alt="img27" /><br /><br />If no root node is selected then the wizard will automatically select the first element which is a complex type. But it is also possible to define the element "DataSet" as root node and the metadata structure starts from this element. The Name of a metadata structure must be unique and the root node must exist.</p>
 <p>&#xa0;</p>
 <h2><a id="_set_parameters">6.3. Set Parameters</a></h2>
 <p>For the system to handle a dataset at least the title and a description is needed. In this step these two elements, which are typically available in all metadata structures, should be identified and made explicit to the system. </p>
-<br/><p><img src="~/Areas/DCM/Content/Images/Help/set_xsd_parameters.png" width="900" alt="Set XSD Parameters" />&#xa0;</p>
+<br /><p><img src="~/Areas/DCM/Content/Images/Help/set_xsd_parameters.png" width="900" alt="Set XSD Parameters" />&#xa0;</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
 <h2><a id="_summary">6.4. Summary</a></h2>
-<p>The Summary page is an overview about the created metadata structure.
-<br/><img src="~/Areas/DCM/Content/Images/Help/summary_xsd.png" width="900" alt="Summary" /> </p>
+<p>
+    The Summary page is an overview about the created metadata structure.
+    <br /><img src="~/Areas/DCM/Content/Images/Help/summary_xsd.png" width="900" alt="Summary" />
+</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
-<p>&#xa0;</p>
-<p>&#xa0;</p>
-<p>&#xa0;</p>
+
+<a href="#_overview"> Go to top</a>

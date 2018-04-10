@@ -18,12 +18,11 @@ namespace BExIS.Modules.Ddm.UI
             try
             {
                 base.Install();
-                // ToDo: refactor the seed data generator
-                // at BExIS.Modules.Ddm.UI.Helpers.DdmSeedDataGenerator.<>c__DisplayClass0_0.<GenerateSeedData>b__1(Feature f) in C:\Users\standard\Source\BExIS\Core\Repos\Code\Console\BExIS.Web.Shell\Areas\DDM\Helpers\DdmSeedDataGenerator.cs:line 25
-                // at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
-                // at BExIS.Modules.Ddm.UI.Helpers.DdmSeedDataGenerator.GenerateSeedData() in C: \Users\standard\Source\BExIS\Core\Repos\Code\Console\BExIS.Web.Shell\Areas\DDM\Helpers\DdmSeedDataGenerator.cs:line 25
-                // at BExIS.Modules.Ddm.UI.DdmModule.Install() in C: \Users\standard\Source\BExIS\Core\Repos\Code\Console\BExIS.Web.Shell\Areas\DDM\DdmModule.cs:line 21
-                DdmSeedDataGenerator.GenerateSeedData();
+
+                using (var generator = new DdmSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
             }
             catch (Exception e)
             {

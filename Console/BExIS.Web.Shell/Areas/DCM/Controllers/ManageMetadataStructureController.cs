@@ -186,9 +186,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //get all informaions from xml
                 metadataStructureModel.EntityClasses = GetEntityModelList();
-                string EntityClassPath = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id, metadataStructureManager);
+                string EntityClassName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStructure.Id, metadataStructureManager);
+
                 var entityModel =
-                    metadataStructureModel.EntityClasses.Where(e => e.ClassPath.Equals(EntityClassPath))
+                    metadataStructureModel.EntityClasses.Where(e => e.Name.Equals(EntityClassName))
                         .FirstOrDefault();
                 if (entityModel != null) metadataStructureModel.Entity = entityModel;
 
@@ -323,7 +324,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //set entity
                 tmp = XmlUtility.GetXmlNodeByName(xmlDocument.DocumentElement, nodeNames.entity.ToString());
                 if (tmp != null)
+                {
                     tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Entity.ClassPath;
+                    tmp.Attributes[AttributeNames.name.ToString()].Value = metadataStructureModel.Entity.Name;
+                }
                 else
                 {
                     xmlDocument = xmlDatasetHelper.AddReferenceToXml(xmlDocument, nodeNames.entity.ToString(),
