@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Data;
 using BExIS.Security.Entities.Authorization;
 using System.Diagnostics.Contracts;
+using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {
@@ -57,11 +58,16 @@ namespace BExIS.Modules.Bam.UI.Helpers
     {
         public static int CountRelations(long sourcePartyId, PartyRelationshipType partyRelationshipType)
         {
-            PartyManager partyManager = new PartyManager();
-            var cnt = partyManager.PartyRelationshipRepository.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
-                                      && (item.FirstParty != null && (item.FirstParty.Id == sourcePartyId) || (item.SecondParty.Id == sourcePartyId))
-                                       && (item.EndDate >= DateTime.Now)).Count();
-            return cnt;
+            PartyManager partyManager = null;
+            try
+            {
+                partyManager = new PartyManager();
+                var cnt = partyManager.PartyRelationshipRepository.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
+                                          && (item.FirstParty != null && (item.FirstParty.Id == sourcePartyId) || (item.SecondParty.Id == sourcePartyId))
+                                           && (item.EndDate >= DateTime.Now)).Count();
+                return cnt;
+            }
+            finally { partyManager?.Dispose(); }
         }
 
         internal static DataTable getPartyDataTable(PartyType partyType, List<Party> parties)
@@ -169,25 +175,25 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
                 }
                 partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
-                if (systemPartyRelationships != null)
-                {
-                    foreach (var systemPartyRel in systemPartyRelationships.Where(item => item.Id != long.MaxValue))
-                    {
-                        var firstParty = partyManager.PartyRepository.Reload(party);
-                        var secondParty = partyManager.PartyRepository.Get(systemPartyRel.SecondParty.Id);
-                        var partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(systemPartyRel.PartyTypePair.Id);
-                        //update
-                        if (systemPartyRel.Id > 0)
-                            partyManager.UpdatePartyRelationship(systemPartyRel.Id, permission: systemPartyRel.Permission);
-                        else if (systemPartyRel.Id == 0)
-                            partyManager.AddPartyRelationship(firstParty, secondParty, partyTypePair.PartyRelationshipType, "system", "", partyTypePair, permission: systemPartyRel.Permission);
-                        else {
-                            PartyRelationship partyRelationship = partyManager.PartyRelationshipRepository.Get(-1 * systemPartyRel.Id);
-                            //remove if id is negative
-                            partyManager.RemovePartyRelationship(partyRelationship);
-                        }
-                    }
-                }
+                //if (systemPartyRelationships != null)
+                //{
+                //    foreach (var systemPartyRel in systemPartyRelationships.Where(item => item.Id != long.MaxValue))
+                //    {
+                //        var firstParty = partyManager.PartyRepository.Reload(party);
+                //        var secondParty = partyManager.PartyRepository.Get(systemPartyRel.SecondParty.Id);
+                //        var partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(systemPartyRel.PartyTypePair.Id);
+                //        //update
+                //        if (systemPartyRel.Id > 0)
+                //            partyManager.UpdatePartyRelationship(systemPartyRel.Id, permission: systemPartyRel.Permission);
+                //        else if (systemPartyRel.Id == 0)
+                //            partyManager.AddPartyRelationship(firstParty, secondParty, "system", "", partyTypePair, permission: systemPartyRel.Permission);
+                //        else {
+                //            PartyRelationship partyRelationship = partyManager.PartyRelationshipRepository.Get(-1 * systemPartyRel.Id);
+                //            //remove if id is negative
+                //            partyManager.RemovePartyRelationship(partyRelationship);
+                //        }
+                //    }
+                //}
             }
             finally
             {
@@ -229,16 +235,16 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 newParty = partyManager.Create(partyType, "", description, startDate, endDate, partyStatusType, requiredPartyRelationTypes.Any());
                 partyManager.AddPartyCustomAttributeValues(newParty, toPartyCustomAttributeValues(partyCustomAttributeValuesDict, partyTypeId));
                 // partyManager.AddPartyRelationship(null,secondpartyId,PartyTypePairid)
-                var systemPartyTypePairs = GetSystemTypePairs(newParty.PartyType.Id);
-                //add relationship to the all targets
-                foreach (var systemPartyTypePair in systemPartyTypePairs)
-                {
-                    foreach (var targetParty in systemPartyTypePair.AllowedTarget.Parties)
-                    {
-                        PartyTypePair partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Reload(systemPartyTypePair);
-                        partyManager.AddPartyRelationship(partyManager.PartyRepository.Reload(newParty), targetParty, partyTypePair.PartyRelationshipType, "system", "", systemPartyTypePair, permission: systemPartyTypePair.PermissionTemplate);
-                    }
-                }
+                //var systemPartyTypePairs = GetSystemTypePairs(newParty.PartyType.Id);
+                ////add relationship to the all targets
+                //foreach (var systemPartyTypePair in systemPartyTypePairs)
+                //{
+                //    foreach (var targetParty in systemPartyTypePair.AllowedTarget.Parties)
+                //    {
+                //        PartyTypePair partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Reload(systemPartyTypePair);
+                //        partyManager.AddPartyRelationship(partyManager.PartyRepository.Reload(newParty), targetParty,  "system", "", systemPartyTypePair, permission: systemPartyTypePair.PermissionTemplate);
+                //    }
+                //}
             }
             finally
             {
