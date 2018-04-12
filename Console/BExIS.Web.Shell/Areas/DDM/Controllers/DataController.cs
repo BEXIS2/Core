@@ -216,7 +216,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             Session["Columns"] = columns.Replace("ID", "").Split(',');
 
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+            //Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
 
             return null;
         }
@@ -356,7 +356,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile( "", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile( "temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -408,7 +408,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -445,6 +445,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 finally
                 {
                     datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
                 }
             }
             else
@@ -482,7 +484,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("", datatable, title, datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -547,7 +549,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("", datatable, title, datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -585,6 +587,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 finally
                 {
                     datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
                 }
             }
             else
@@ -617,7 +621,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -672,7 +676,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -709,6 +713,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 finally
                 {
                     datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
                 }
             }
             else
@@ -1007,9 +1013,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return options;
         }
 
-        #endregion helper
-
-        #region helper
 
         public string GetUsernameOrDefault()
         {
