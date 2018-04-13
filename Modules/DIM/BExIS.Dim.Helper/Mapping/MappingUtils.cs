@@ -28,7 +28,7 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <param name="targetType"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static List<string> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType,
+        public static List<MappingPartyResultElemenet> GetAllMatchesInSystem(long targetElementId, LinkElementType targetType,
             string value = "")
         {
             try
@@ -38,7 +38,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
-                    List<string> tmp = new List<string>();
+                    List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
                         .Where(m =>
                             m.Target.ElementId.Equals(targetElementId) &&
@@ -54,20 +54,6 @@ namespace BExIS.Dim.Helpers.Mapping
                 throw ex;
             }
 
-            /*
-            *e.g. 
-            * Metadata Attr Usage -> MicroAgent/Name -> entering "David Blaa"
-            * 
-            * linkt to 
-            * 
-            * Person/FirstName     David
-            * Person/SecondName    Blaa
-            * 
-            * 
-            * => all mappings know must be only the Person/FirstName & Person/SecondName
-            */
-
-
         }
 
         /// <summary>
@@ -76,13 +62,13 @@ namespace BExIS.Dim.Helpers.Mapping
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
-        private static List<string> getAllValuesFromSystem(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
+        private static List<MappingPartyResultElemenet> getAllValuesFromSystem(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
         {
             MappingManager _mappingManager = new MappingManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
 
-            List<string> tmp = new List<string>();
+            List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
             IEnumerable<long> parentIds = mappings.Where(m => m.Parent != null).Select(m => m.Parent.Id).Distinct();
 
@@ -122,36 +108,92 @@ namespace BExIS.Dim.Helpers.Mapping
                 if (parties != null)
                     foreach (var p in parties)
                     {
+                        MappingPartyResultElemenet resultObject = new MappingPartyResultElemenet();
+                        resultObject.PartyId = p.Id;
+
                         mask = mappings.FirstOrDefault().TransformationRule.Mask;
 
                         foreach (var mapping in mappings)
                         {
                             long attributeId = mapping.Source.ElementId;
 
-
                             PartyCustomAttributeValue attrValue =
                                 partyManager.PartyCustomAttributeValueRepository.Get()
                                     .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
                                     .FirstOrDefault();
-
-
-
-
+                            
                             List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
                             string placeHolderName = attrValue.CustomAttribute.Name;
-
-
+                            
                             mask = setOrReplace(mask, regExResultList, placeHolderName);
 
-
+                            resultObject.Value = mask;
                         }
 
                         if (mask.ToLower().Contains(value.ToLower()))
-                            tmp.Add(mask);
+                            tmp.Add(resultObject);
                     }
             }
 
             return tmp;
+        }
+
+        public static string GetValueFromSystem(long partyid, long targetElementId, LinkElementType targetElementType)
+        {
+
+            MappingManager _mappingManager = new MappingManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyManager partyManager = new PartyManager();
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    string value = "";
+
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                            .Where(m =>
+                                m.Target.ElementId.Equals(targetElementId) &&
+                                m.Target.Type.Equals(targetElementType) &&
+                                m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                            ).ToList();
+
+
+                    if (mappings.Any())
+                    {
+                        string mask = "";
+                        mask = mappings.FirstOrDefault().TransformationRule.Mask;
+
+                        foreach (var mapping in mappings)
+                        {
+                            long attributeId = mapping.Source.ElementId;
+
+                            PartyCustomAttributeValue attrValue =
+                                partyManager.PartyCustomAttributeValueRepository.Get()
+                                    .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(partyid))
+                                    .FirstOrDefault();
+
+                            List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
+                            string placeHolderName = attrValue.CustomAttribute.Name;
+
+                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+
+                        }
+
+                        if (mask.ToLower().Contains(value.ToLower()))
+
+
+                            return mask;
+                    }
+                }
+
+                return "";
+            }
+            finally
+            {
+                _mappingManager.Dispose();
+                partyTypeManager.Dispose();
+                partyManager.Dispose();
+            }
         }
 
         #endregion

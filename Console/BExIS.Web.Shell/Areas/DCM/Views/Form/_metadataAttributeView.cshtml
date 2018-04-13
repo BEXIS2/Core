@@ -170,11 +170,15 @@
                                           .Value(value)
                                           .HtmlAttributes(new {@class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id })
                                           .ClientEvents(events => events
-                                              .OnChange("OnChangeTextInput"))
+                                              .OnChange("OnChangeTextInput")
+                                              .OnClose("OnClose"))
+                                              
                                           .DataBinding(dataBinding => dataBinding
                                               .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new {id = Model.Id, type = Model.Source.GetType().Name})
-                                              .Cache(false))
-
+                                              .Cache(false)
+                                              
+                                              )
+                                              
                                           .Filterable(filtering =>
                                           {
                                               filtering.FilterMode(AutoCompleteFilterMode.Contains);

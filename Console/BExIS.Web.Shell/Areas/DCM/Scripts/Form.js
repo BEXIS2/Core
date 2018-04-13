@@ -7,7 +7,7 @@ $(document).ready(function (e) {
           //do something special
           //console.log("doc ready before autosize");
           //console.log($('textarea'));
-          if ($('textarea') != null) {
+          if ($('textarea') !== null) {
 
               $($('textarea')).each(function (index, element) {
                   // element == this
@@ -619,9 +619,73 @@ function OnClickDown(e) {
     }
 }
 
+function OnClose(e) {
+
+    console.log(e.target.value);
+    var value = e.target.value;
+    if (~value.indexOf("(")) {
+
+        var start = value.indexOf("(");
+        var partyid = value.substr(start+1, 1);
+        console.log("partyid = " + partyid);
+
+        if (partyid !== "0") {
+            // find parent
+
+            var parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
+            console.log("parent");
+            console.log(parent);
+
+            if (parent != null) {
+
+                var parentid = $(parent).attr("id");
+                var number = $(parent).attr("number");
+                UpdateWithParty(parentid, number, partyid);
+            }
+        }
+
+    }
+    
+
+    
+
+    // update parent
+
+
+}
+
 /******************************************
  ********* Component************************
  ******************************************/
+function UpdateWithParty(componentId, number, partyid) {
+
+    console.log("update with party");
+    console.log(componentId + "-" + number + "-" + partyid);
+
+    // update party id to component
+    $("#" + componentId).attr("partyid", partyid);
+
+    $("#" + componentId).find(".metadataAttributeInput").each(function () {
+        $(this).preloader(12, "...loading");
+    })
+
+    $.post('/DCM/Form/UpdateComplexUsageWithParty',
+        {
+            stepId: componentId,
+            number:number,
+            partyId: partyid
+        },
+        function (response) {
+
+            console.log(componentId);
+            console.log(response);
+
+            $("#" + componentId).replaceWith(response);
+            //alert("test");
+            autosize($('textarea'));
+        })
+}
+
 
 function Add(e) {
     var temp = e.id;

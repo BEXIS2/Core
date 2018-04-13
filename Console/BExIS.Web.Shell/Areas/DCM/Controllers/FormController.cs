@@ -1024,6 +1024,44 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeView", stepModelHelper);
         }
 
+        public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            TaskManager.SetCurrent(TaskManager.Get(stepId));
+
+            var stepModelHelper = GetStepModelhelper(stepId);
+            stepModelHelper.Model = createModel(stepId, true, stepModelHelper.UsageType);
+            var usage = loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
+
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+
+            foreach (var attrModel in stepModelHelper.Model.MetadataAttributeModels)
+            {
+
+                var metadataAttributeUsage = metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()).Where(u => u.Id.Equals(attrModel.Id)).FirstOrDefault();
+
+                string value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+
+                if (!string.IsNullOrEmpty(value))
+                {
+                    attrModel.Value = value;
+                    UpdateAttribute(
+                        usage,
+                        number,
+                        metadataAttributeUsage,
+                        Convert.ToInt32(attrModel.Number),
+                        attrModel.Value,
+                        stepModelHelper.XPath);
+                }
+            }
+
+            
+            
+
+
+            return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
+        }
+
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -2023,7 +2061,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
-            var x = new List<string>();
+            var x = new List<MappingPartyResultElemenet>();
             switch (type)
             {
                 case "MetadataNestedAttributeUsage":
@@ -2051,7 +2089,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
             // WORKAROUND: return always an empty list
-            return new JsonResult { Data = new SelectList(x) };
+
+
+            return new JsonResult { Data = new SelectList(x.Select(e => e.Value+" ("+e.PartyId+")")) };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
@@ -2150,6 +2190,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return stepModelHelper;
         }
+
+        
 
         #endregion Attribute
 
