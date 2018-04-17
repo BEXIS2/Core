@@ -1,9 +1,9 @@
 ﻿@model BExIS.Dlm.Entities.Party.PartyRelationship
-
 @{
     var viewMode = (Boolean)(ViewBag.viewMode);
+
+    @Html.HiddenFor(m => m.Id)
 }
-@Html.HiddenFor(m => m.Id)
 @using (Html.BeginForm("", "", new { area = "BAM" }, FormMethod.Post, new { id = "frmEditPartyRelationsip" }))
 {
     <table id="tblRelationship">

@@ -43,7 +43,7 @@ namespace BExIS.Web.Shell.Controllers
                     );
 
 
-                return this.IsAccessibale("bam", "PartyService", "UserRegistration")
+                return this.IsAccessible("bam", "PartyService", "UserRegistration")
                     ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
             }

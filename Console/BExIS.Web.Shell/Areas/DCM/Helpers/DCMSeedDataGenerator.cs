@@ -15,9 +15,11 @@ using System.Linq;
 using System.Xml;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
+
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
-    public class DcmSeedDataGenerator : IDisposable
+    public class DcmSeedDataGenerator : IModuleSeedDataGenerator
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 

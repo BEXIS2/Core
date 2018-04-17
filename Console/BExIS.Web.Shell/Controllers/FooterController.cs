@@ -31,7 +31,7 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Policy()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Policy", this.Session.GetTenant());
-            return View("Content", null, Session.GetTenant().PolicyFileNamePath);
+            return View("Content", null, this.Session.GetTenant().PolicyFileNamePath);
         }
     }
 }
