@@ -24,7 +24,6 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,6 +84,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
@@ -135,8 +135,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\BMM_LATES\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
@@ -153,9 +154,10 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
-    <Compile Include="Helpers\BAMSeedDataGenerator.cs" />
-    <Compile Include="Helpers\Helper.cs" />
-    <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="Helper\BAMSeedDataGenerator.cs" />
+    <Compile Include="Helper\Helper.cs" />
+    <Compile Include="Helper\Settings.cs" />
+    <Compile Include="Models\AddRelationshipModel.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
     <Compile Include="Models\PartyModel.cs" />
@@ -218,6 +220,12 @@
     <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\PartyService\_customAttributesPartial.cshtml" />
     <Content Include="Views\PartyService\Edit.cshtml" />
+    <Content Include="Views\Party\View1.cshtml" />
+    <Content Include="Views\Party\_addPartyTypePair.cshtml" />
+    <Content Include="Views\Party\_partiesDynamicGridPartial.cshtml" />
+    <Content Include="Views\Party\_partyGridFields.cshtml" />
+    <Content Include="Views\Party\_templateRelationshipPartial.cshtml" />
+    <Content Include="Views\Party\_editSystemPartyTypes.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

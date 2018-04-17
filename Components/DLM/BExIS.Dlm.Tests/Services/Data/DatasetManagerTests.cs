@@ -1,9 +1,11 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Helpers;
 using BExIS.Web.Shell;
@@ -13,21 +15,33 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BExIS.Dlm.Orm.NH.Qurying;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {    
     public class DatasetManagerTests
     {
         private TestSetupHelper helper = null;
+        private StructuredDataStructure dataStructure;
+        DatasetHelper dsHelper = null;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+            dsHelper = new DatasetHelper();
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+
+            dataStructure = dsHelper.CreateADataStructure();
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+
             helper.Dispose();
         }
 
@@ -35,12 +49,10 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void CreateEmptyDatasetTest()
         {
             DatasetManager dm = new DatasetManager();
-            var dsm = new DataStructureManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
 
-            var ds = dsm.StructuredDataStructureRepo.Query().First();
-            ds.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+            dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
             var rp = rsm.Repo.Query().First();
             rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
@@ -48,7 +60,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var mds = mdm.Repo.Query().First();
             mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-            Dataset dataset = dm.CreateEmptyDataset(ds, rp, mds);
+            Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
 
             dataset.Should().NotBeNull();
             dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
@@ -63,12 +75,10 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void DeleteDatasetTest()
         {
             DatasetManager dm = new DatasetManager();
-            var dsm = new DataStructureManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
 
-            var ds = dsm.StructuredDataStructureRepo.Query().First();
-            ds.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+            dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
             var rp = rsm.Repo.Query().First();
             rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
@@ -76,7 +86,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var mds = mdm.Repo.Query().First();
             mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-            Dataset dataset = dm.CreateEmptyDataset(ds, rp, mds);
+            Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
             dm.DeleteDataset(dataset.Id, "Javad", false);
 
             dataset.Should().NotBeNull();
@@ -93,69 +103,131 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void CreateDatasetVersionTest()
         {
             long numberOfTuples = 1000;
-            DatasetManager dm = new DatasetManager();
-            var dsm = new DataStructureManager();
+            var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
 
-            var dss = dsm.StructuredDataStructureRepo.Query().First();
-            dss.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
-
-            var rp = rsm.Repo.Query().First();
-            rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
-
-            var mds = mdm.Repo.Query().First();
-            mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
-
-            Dataset dataset = dm.CreateEmptyDataset(dss, rp, mds);
-
-            if (dm.IsDatasetCheckedOutFor(dataset.Id, "Javad") || dm.CheckOutDataset(dataset.Id, "Javad"))
+            try
             {
-                dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                var rp = rsm.Repo.Query().First();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
-                DataTuple dt = dm.DataTupleRepo.Query().First(); // its sample data, should be generated properly for the test
-                dt.Should().NotBeNull();
-                dt.XmlVariableValues.Should().NotBeNull();
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                List<DataTuple> tuples = new List<DataTuple>();
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
-                for (int i = 0; i < numberOfTuples; i++)
-                {
-                    DataTuple newDt = new DataTuple();
-                    newDt.XmlAmendments = dt.XmlAmendments;
-                    newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                    newDt.Materialize();
-                    newDt.OrderNo = i;
-                    //newDt.TupleAction = TupleAction.Created;//not required
-                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-                    tuples.Add(newDt);
-                }
-                dm.EditDatasetVersion(workingCopy, tuples, null, null);
-                dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
-                
-                //dm.CheckInDataset(ds.Id, "for testing purposes 1", "Javad", ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
                 //dm.SyncView(ds.Id, ViewCreationBehavior.Create);
                 //dm.SyncView(ds.Id, ViewCreationBehavior.Refresh);
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
-                dataset.Should().NotBeNull();
-                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                dataset.Id.Should().BeGreaterThan(0, "Dataset was not persisted.");
                 dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in the CheckedIn status.");
                 dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
-            }
 
-            dm.DatasetVersionRepo.Evict();
-            dm.DataTupleRepo.Evict();
-            dm.DatasetRepo.Evict();
-            dm.PurgeDataset(dataset.Id, true);
+                dm.DatasetVersionRepo.Evict();
+                dm.DataTupleRepo.Evict();
+                dm.DatasetRepo.Evict();
+                dm.PurgeDataset(dataset.Id, true);
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+            }
         }
 
+        [Test()]
+        public void CreateAndExpressionforQueryingTest()
+        {
+            string var1Name = "var" + dataStructure.Variables.First().Id;
+            string var2Name = "var" + dataStructure.Variables.Skip(1).First().Id;
+
+            FilterExpression fex = BinaryFilterExpression
+                .And(
+                    new FilterNumberItemExpression()
+                    {
+                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = var1Name }
+                        ,
+                        Operator = NumberOperator.Operation.GreaterThan
+                        ,
+                        Value = 12
+                    }
+                    ,
+                    new FilterStringItemExpression()
+                    {
+                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name =  var2Name}
+                            ,
+                        Operator = StringOperator.Operation.EndsWith
+                            ,
+                        Value = "Test"
+                    }
+                );
+
+            fex.ToSQL().Should().Be($"(({var1Name}) > (12)) AND (({var2Name}) LIKE ('%Test'))");
+
+            OrderByExpression orderByExpr = new OrderByExpression(
+                                                    new List<OrderItemExpression>() {
+                                                        new OrderItemExpression(var1Name),
+                                                        new OrderItemExpression(var2Name, SortDirection.Descending)
+                                                    });
+            orderByExpr.ToSQL().Should().Be($"{var1Name} ASC, {var2Name} DESC");
+
+            // create a dataset and test the filter, sorting, and projectgion
+            long numberOfTuples = 100;
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+
+            try
+            {
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = rsm.Repo.Query().First();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset.Should().NotBeNull("The dataset tuple generation has failed!");
+
+                dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+
+                dataset.Id.Should().BeGreaterThan(0, "Dataset was not persisted.");
+                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in the CheckedIn status.");
+                dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
+
+                // pass this filter to get a subset of dataset X
+                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, fex, null, null, 1, 10);
+                dst.Should().NotBeNull();
+                dst.Rows.Count.Should().BeLessOrEqualTo(10);
+
+                dm.DatasetVersionRepo.Evict();
+                dm.DataTupleRepo.Evict();
+                dm.DatasetRepo.Evict();
+                dm.PurgeDataset(dataset.Id, true);
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+            }
+
+        }
     }
 
 }

@@ -24,7 +24,7 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string Description { get; set; }
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime EndDate { get; set; }
-
+        public virtual int Permission { get; set; }
         /// <summary>
         /// Any restriction on the relationship not captured by the other attributes. For example: Person 1 is the coauthor of Person 2 in the scope of Paper 1
         /// </summary>

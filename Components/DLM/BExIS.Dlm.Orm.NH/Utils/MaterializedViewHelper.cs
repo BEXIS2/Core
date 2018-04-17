@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BExIS.Dlm.Orm.NH.Qurying;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
@@ -37,6 +38,35 @@ namespace BExIS.Dlm.Orm.NH.Utils
         {
             StringBuilder mvBuilder = new StringBuilder();
             mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber * pageSize, pageSize));
+            // execute the statement
+            return retrieve(mvBuilder.ToString(), datasetId);
+        }
+
+        public DataTable Retrieve(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        {
+            // Would be better to additionally have a ToHQL() method.
+            var projectionClause = projection?.ToSQL();
+            var orderbyClause = orderBy?.ToSQL();
+            var whereClause = filter?.ToSQL();
+
+            return Retrieve(datasetId, whereClause, orderbyClause, projectionClause, pageNumber, pageSize);
+        }
+
+        // can be public, but after the other overloads got matured enough.
+        protected DataTable Retrieve(long datasetId, string whereClause, string orderbyClause, string projectionClause, int pageNumber = 0, int pageSize = 0)
+        {
+            // the following query must be converted to HQL for DB portability purpose. Also, all other dynamically created queries.
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder
+                .Append("SELECT ")
+                .Append(string.IsNullOrWhiteSpace(projectionClause) ? "*" : projectionClause).Append(" ") // projection
+                .Append("FROM ").Append(this.BuildName(datasetId).ToLower()).Append(" ") // source mat. view
+                .Append(string.IsNullOrWhiteSpace(whereClause) ? "" : "WHERE (" + whereClause + ")").Append(" ") // where
+                .Append(string.IsNullOrWhiteSpace(orderbyClause) ? "Order By OrderNo, Id" : "Order By " + orderbyClause).Append(" ") //order by
+                .Append(pageNumber <= 0 ? "" : "OFFSET " + pageNumber * pageSize).Append(" ") //offset
+                .Append(pageSize <= 0 ? "LIMIT 10" : "LIMIT " + pageSize) // limit, default page size is 10
+                .AppendLine()
+                ;
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
