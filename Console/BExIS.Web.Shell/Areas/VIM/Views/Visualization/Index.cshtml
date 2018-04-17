@@ -1,25 +1,25 @@
 ﻿@model BExIS.Modules.Vim.UI.Models.VisualizationModels
 @using Telerik.Web.Mvc.UI;
 
-<style>
+@*<style>
 
-    .chart div {
-        font: 10px sans-serif;
-        background-color: steelblue;
-        text-align: right;
-        padding: 3px;
-        margin: 1px;
-        color: white;
-    }
-</style>
-<div class="chart">
-    <div style="width: 40px; background-color: red">4</div>
-    <div style="width: 80px;">8</div>
-    <div style="width: 150px;">15</div>
-    <div style="width: 160px;">16</div>
-    <div style="width: 230px;">23</div>
-    <div style="width: 420px;">42</div>
-</div>
+        .chart div {
+            font: 10px sans-serif;
+            background-color: steelblue;
+            text-align: right;
+            padding: 3px;
+            margin: 1px;
+            color: white;
+        }
+    </style>
+    <div class="chart">
+        <div style="width: 40px; background-color: red">4</div>
+        <div style="width: 80px;">8</div>
+        <div style="width: 150px;">15</div>
+        <div style="width: 160px;">16</div>
+        <div style="width: 230px;">23</div>
+        <div style="width: 420px;">42</div>
+    </div>*@
 
 @{
     //string modelValues = String.Join(",", Model.);
@@ -50,10 +50,11 @@
         <option value="all">All time</option>
     </select>
 </div>
+<div id="Warning"></div>
 <br /><br /><br />
 
 <!--GOOGLE CHART-->
-<script type="text/javascript" src="~/Scripts/googleChartLoader.js"></script> <!--Google Chart Library from uploaded script-->
+<!--<script type="text/javascript" src="~/Scripts/googleChartLoader.js"></script>--> <!--Google Chart Library from uploaded script-->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!--Google Chart Library-->
 <script type="text/javascript">
 
@@ -65,6 +66,14 @@
 
         //fill time selector
         var y = years();
+        console.log('Y= ' + y);
+        if (y.length) {
+            console.log('y.length = ' + y.length);
+            console.log('y[0] = ' + y[0]);
+        }
+        //if (y.[0] == 'undefined') {
+        //    document.getElementById('Warning').textContent = 'Error';
+        //}
         var timeSelector = document.getElementById("timeSelector");
 
         for (var i = 0; i < y.length ; i++) {
@@ -230,7 +239,6 @@
                 }
             }
         }
-        console.log(data12);
         return (data12);
     }
 
@@ -333,6 +341,7 @@
         var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
 
         chart.draw(data, google.charts.Bar.convertOptions(options));
+
     }
 
 </script>
