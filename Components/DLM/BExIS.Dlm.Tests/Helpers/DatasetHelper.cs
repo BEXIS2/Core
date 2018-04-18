@@ -1,5 +1,7 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using FluentAssertions;
@@ -58,7 +60,7 @@ namespace BExIS.Dlm.Tests.Helpers
                 var strType = dataTypeManager.Create("String", "String", TypeCode.String);
                 var doubleType = dataTypeManager.Create("Double", "Double", TypeCode.Double);
                 var boolType = dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean);
-                var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.Boolean);
+                var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime);
 
                 var dataAttribute1 = attributeManager.CreateDataAttribute(
                     "att1UT", "att1UT", "Attribute for Unit testing",
@@ -131,9 +133,9 @@ namespace BExIS.Dlm.Tests.Helpers
                     DataTuple dt = new DataTuple();
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = 22 });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = 1.23 });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = 5 });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value =  true});
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01/01/2017" });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
                     dt.Dematerialize();
 
                     dt.Should().NotBeNull();
@@ -159,6 +161,19 @@ namespace BExIS.Dlm.Tests.Helpers
             finally
             {
                 dm.Dispose();
+            }
+        }
+
+        public ResearchPlan CreateResearchPlan()
+        {
+            ResearchPlanManager researchPlanManager = new ResearchPlanManager();
+            try
+            {
+                return researchPlanManager.Create("ResearchPlan_UT", "Researchplan for unit tests.");
+            }
+            finally
+            {
+                researchPlanManager.Dispose();
             }
         }
 
