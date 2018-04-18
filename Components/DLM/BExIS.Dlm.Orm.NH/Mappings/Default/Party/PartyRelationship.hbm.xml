@@ -31,6 +31,10 @@
     <property name="EndDate" type="DateTime" >
       <column name="EndDate"  />
     </property>
+    
+    <property name="Permission" type="int" not-null="false" >
+      <column name="Permission"  />
+    </property>
 
     <property name="Scope" type="String" >
       <column name="Scope"  />

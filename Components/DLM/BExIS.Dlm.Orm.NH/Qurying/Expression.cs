@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Vaiona.Data.Qurying
+namespace BExIS.Dlm.Orm.NH.Qurying
 {
     public abstract class ModelExpression
     {
