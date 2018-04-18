@@ -15,6 +15,152 @@ namespace BExIS.Dim.Helpers.Mapping
     public class MappingUtils
     {
 
+        #region generic
+
+        public static bool ExistMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
+        {
+            try
+            { 
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.ElementId.Equals(sourceId) &&
+                            m.Source.Type.Equals(sourceType)
+                        ).ToList();
+
+                    
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<Entities.Mapping.Mapping> GetMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.ElementId.Equals(sourceId) &&
+                            m.Source.Type.Equals(sourceType)
+                        ).ToList();
+
+                    if(mappings.Any()) return mappings;
+
+                    return new List<Entities.Mapping.Mapping>();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<Entities.Mapping.Mapping> GetMappings(long parentMappingId)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Parent.Id.Equals(parentMappingId)
+                        ).ToList();
+
+                    if (mappings.Any()) return mappings;
+
+                    return new List<Entities.Mapping.Mapping>();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<Entities.Mapping.Mapping> GetMappingsWhereSource(long sourceId, LinkElementType sourceType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Source.ElementId.Equals(sourceId) &&
+                            m.Source.Type.Equals(sourceType)
+                        ).ToList();
+
+                    if (mappings.Any()) return mappings;
+
+                    return new List<Entities.Mapping.Mapping>();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<Entities.Mapping.Mapping> GetMappingsWhereSource(long sourceId, LinkElementType sourceType, int level)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Source.ElementId.Equals(sourceId) &&
+                            m.Source.Type.Equals(sourceType) &&
+                            m.Level == level
+                        ).ToList();
+
+                    if (mappings.Any()) return mappings;
+
+                    return new List<Entities.Mapping.Mapping>();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public static List<Entities.Mapping.Mapping> GetMappingsWhereTarget(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType)
+                        ).ToList();
+
+                    if (mappings.Any()) return mappings;
+
+                    return new List<Entities.Mapping.Mapping>();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion
+
         #region GET FROM SYSTEM
 
 

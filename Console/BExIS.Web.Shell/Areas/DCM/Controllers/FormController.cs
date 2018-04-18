@@ -1055,8 +1055,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            
-            
+            AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
+
 
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
@@ -2311,6 +2311,30 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+            // locat path
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            metadataXml.Save(path);
+        }
+
+        //ToDo really said function, but cant find a other solution for now
+        private void AddXmlAttribute(string xpath, string attrName, string attrValue)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+
+            XmlDocument xmlDocument = XmlUtility.ToXmlDocument(metadataXml);
+
+            XmlNode tmp = xmlDocument.SelectSingleNode(xpath);
+
+            XmlAttribute xmlAttr = xmlDocument.CreateAttribute("partyid");
+            xmlAttr.Value = attrValue;
+
+            tmp.Attributes.Append(xmlAttr);
+
+            metadataXml = XmlUtility.ToXDocument(xmlDocument);
+
+            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+
             // locat path
             var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
             metadataXml.Save(path);

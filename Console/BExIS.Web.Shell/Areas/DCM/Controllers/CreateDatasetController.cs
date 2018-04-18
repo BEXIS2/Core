@@ -1,14 +1,18 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -530,6 +534,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
+                        #region set releationships 
+
+                        //todo check if dim is active
+                        setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                        
+                        #endregion
+
+
                         //add to index
                         // ToDo check which SearchProvider it is, default luceneprovider
 
@@ -902,6 +914,81 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public static implicit operator CreateDatasetController(ViewResult v)
         {
             throw new NotImplementedException();
+        }
+
+
+        //toDo put this function to DIM
+        private void setRelationships(long datasetid, long metadataStructureId, XmlDocument metadata)
+        {
+            PartyManager partyManager = new PartyManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
+
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+
+                    //check if mappings exist between system/relationships and the metadatastructure/attr
+                    // get all party mapped nodes
+                    IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
+
+                    // get releaionship type id for owner
+                    var ownerReleationship = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().FirstOrDefault(p => p.DisplayName.Equals("Owner"));
+
+                    foreach (XElement item in complexElements)
+                    {
+                        if (item.HasAttributes)
+                        {
+                            long sourceId = Convert.ToInt64(item.Attribute("id").Value);
+                            string type = item.Attribute("type").Value;
+                            long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
+
+                            LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
+                            if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
+
+                            // when mapping in both directions are exist
+                            if (MappingUtils.ExistMappings(sourceId, sourceType, ownerReleationship.Id, LinkElementType.PartyRelationshipType) &&
+                                MappingUtils.ExistMappings(ownerReleationship.Id, LinkElementType.PartyRelationshipType, sourceId, sourceType))
+                            {
+                                // create releationship
+
+                                // create a Party for the dataset
+                                var customAttributes = new Dictionary<String, String>();
+                                customAttributes.Add("Name", datasetid.ToString());
+                                customAttributes.Add("Id", datasetid.ToString());
+
+                                var datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+                                var person = partyManager.GetParty(partyid);
+
+
+                                var partyTpePair = ownerReleationship.PartyRelationships.FirstOrDefault().PartyTypePair;
+
+                                if (partyTpePair != null && person != null && datasetParty != null)
+                                {
+                                    partyManager.AddPartyRelationship(
+                                        datasetParty.Id,
+                                        person.Id,
+                                        "Owner Releationship",
+                                        "",
+                                        partyTpePair.Id
+
+                                        );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                partyManager.Dispose();
+                partyTypeManager.Dispose();
+            }
         }
 
         #endregion Helper
