@@ -8,12 +8,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DEC22F9C-47BE-4146-94BE-1C9AA969AFC3}</ProjectGuid>
+    <ProjectGuid>{5EACC614-1F10-4047-8310-4D82517BDFF0}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BExIS.Modules.Sam.UI</RootNamespace>
-    <AssemblyName>BExIS.Modules.Sam.UI</AssemblyName>
+    <RootNamespace>BExIS.Modules.Ato.UI</RootNamespace>
+    <AssemblyName>BExIS.Modules.Ato.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -44,31 +44,47 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AI.Agent.Intercept">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.DependencyCollector.1.2.3\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.1.2.3\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.1.2.3\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.Web.1.2.3\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.WindowsServer.1.2.3\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights">
+      <HintPath>..\..\..\..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
@@ -108,10 +124,6 @@
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
@@ -119,24 +131,18 @@
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Api">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Services">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Vaiona.Utils">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Web.Mvc">
+    <Reference Include="Vaiona.Web.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web.Mvc.Modularity">
@@ -144,65 +150,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\DatasetsController.cs" />
-    <Compile Include="Controllers\EntitiesController.cs" />
-    <Compile Include="Controllers\EntityPermissionsController.cs" />
-    <Compile Include="Controllers\RequestsController.cs" />
-    <Compile Include="Controllers\FeaturePermissionsController.cs" />
-    <Compile Include="Controllers\GroupsController.cs" />
-    <Compile Include="Controllers\HelpController.cs" />
-    <Compile Include="Controllers\ModulesController.cs" />
-    <Compile Include="Controllers\NotificationsController.cs" />
-    <Compile Include="Controllers\TenantsController.cs" />
-    <Compile Include="Controllers\UserPermissionsController.cs" />
-    <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Helpers\Attributes.cs" />
-    <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
-    <Compile Include="Models\DatasetModels.cs" />
-    <Compile Include="Models\DatasetStatModel.cs" />
-    <Compile Include="Models\DecisionModels.cs" />
-    <Compile Include="Models\EntityModels.cs" />
-    <Compile Include="Models\EntityPermissionModels.cs" />
-    <Compile Include="Models\FeatureModels.cs" />
-    <Compile Include="Models\FeaturePermissionModels.cs" />
-    <Compile Include="Models\GroupModels.cs" />
-    <Compile Include="Models\InfoModels.cs" />
-    <Compile Include="Models\ModuleGridRowModel.cs" />
-    <Compile Include="Models\RequestModels.cs" />
-    <Compile Include="Models\SubjectModels.cs" />
-    <Compile Include="Models\TenantModels.cs" />
-    <Compile Include="Models\UserModels.cs" />
+    <Compile Include="AtoModule.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Helpers\ATOSeedDataGenerator.cs" />
+    <Compile Include="Models\CategoryModel.cs" />
+    <Compile Include="Models\FileModel.cs" />
+    <Compile Include="Models\InformationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SamModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\Help\create_group.png" />
-    <Content Include="Content\Images\Help\create_user.png" />
-    <Content Include="Content\Images\Help\edit_group.png" />
-    <Content Include="Content\Images\Help\edit_user.png" />
-    <Content Include="Content\Images\Help\features.png" />
-    <Content Include="Content\Images\Help\groups.png" />
-    <Content Include="Content\Images\Help\Help_img10.png" />
-    <Content Include="Content\Images\Help\Help_img11.png" />
-    <Content Include="Content\Images\Help\login.png" />
-    <Content Include="Content\Images\Help\register.png" />
-    <Content Include="Content\Images\Help\users.png" />
     <Content Include="Content\Site.css" />
-    <Content Include="Sam.Manifest.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="ATO.Manifest.xml" />
+    <Content Include="Scripts\ai.0.15.0-build58334.js" />
+    <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM21108.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -211,56 +178,21 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Scripts\respond.js" />
-    <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Modules\Index.cshtml" />
-    <Content Include="Views\Help\Index.cshtml" />
-    <Content Include="Views\Tenants\Index.cshtml" />
-    <Content Include="Views\Tenants\_Create.cshtml" />
-    <Content Include="Views\Tenants\_Edit.cshtml" />
-    <Content Include="Views\EntityPermissions\Index.cshtml" />
-    <Content Include="Views\Users\Index.cshtml" />
-    <Content Include="Views\EntityPermissions\_Entities.cshtml" />
-    <Content Include="Web.config" />
-    <Content Include="Views\Entities\Index.cshtml" />
-    <Content Include="Views\Entities\Create.cshtml" />
-    <Content Include="Views\Requests\_Entities.cshtml" />
-    <Content Include="Views\Requests\Index.cshtml" />
-    <Content Include="Views\Requests\_Requests.cshtml" />
-    <Content Include="Views\Requests\_Decisions.cshtml" />
-    <Content Include="Views\Datasets\Delete.cshtml" />
-    <Content Include="Views\Datasets\Index.cshtml" />
-    <Content Include="Views\Datasets\Purge.cshtml" />
-    <Content Include="Views\Datasets\Version.cshtml" />
-    <Content Include="Views\Datasets\Versions.cshtml" />
-    <Content Include="Views\Users\_Create.cshtml" />
-    <Content Include="Views\Users\_Groups.cshtml" />
-    <Content Include="Views\Users\_Update.cshtml" />
-    <Content Include="Views\Groups\_Create.cshtml" />
-    <Content Include="Views\Groups\_Users.cshtml" />
-    <Content Include="Views\Groups\_Update.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Features.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
-    <Content Include="Views\FeaturePermissions\Index.cshtml" />
-    <Content Include="Views\Groups\Index.cshtml" />
-    <Content Include="Views\EntityPermissions\_Instances.cshtml" />
-    <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
-    <Content Include="Views\UserPermissions\_Subjects.cshtml" />
-    <Content Include="Views\Datasets\Sync.cshtml" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
+    <Content Include="web.config" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Information.cshtml" />
+    <Content Include="Views\Home\Documentation.cshtml" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
     </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Notifications\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -275,30 +207,6 @@
     <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
       <Name>BExIS.Security.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
-      <Name>BExIS.Ext.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
-      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
-      <Name>BExIS.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-      <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
-      <Name>BExIS.Xml.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -315,16 +223,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>62449</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:34567/</IISUrl>
-          <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
-          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

@@ -387,3 +387,71 @@ table.bx-table-form tr td {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+/*----------------------------------------------------------*/
+ /* The sidebar menu */
+.sidenav {
+    /*height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 160px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    /*z-index: 1; /* Stay on top */
+    /*top: 40px; /* Stay at the top */
+    left: 10px;
+    background-color: #eff7f6; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 8px 0;
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: large;
+    color: #777;
+    display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+    color: #ff9700;
+}
+
+/* Style page content */
+.main {
+    margin-left: 160px; /* Same as the width of the sidebar */
+    font-size: 28px;
+	padding: 0px 10px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+} 
+
+/*----------------------------------------------------------*/
+ /* Horizontal line hr */
+ hr {
+  border: 0;
+  width: 100%;
+  color: #777;
+  background-color: #777;
+  height: 1px;
+}
+
+/*----------------------------------------------------------*/
+ /* Header of ATO Document site */
+ #Head {
+    text-align: justify;
+    width: 800px;
+    margin: 0 auto;
+}
+
+/*----------------------------------------------------------*/
+ /* Content of ATO Document site */
+ #infoContainer {
+    text-align: justify;
+    padding-top: 40px;
+    width: 800px;
+    margin: 0 auto;
+}
