@@ -13,6 +13,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -536,26 +537,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region set releationships 
 
-                        //todo check if dim is active
-                        setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
                         
+                        //todo check if dim is active
+                        // todo call to  a function in dim
+                        setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+
                         #endregion
-
-
-                        //add to index
-                        // ToDo check which SearchProvider it is, default luceneprovider
-
-                        // BUG: invalid call to ddm method
-                        // TODO: mODULARITY ->Call DDM Reindex
-                        /*
-                         <Export tag="internalApi" id="SearchIndex"
-                        title="Reindex Search" description="Reindex Search" icon=""
-                        controller="SearchIndex" action="Get"
-                        extends="" />
-                         */
-                        // WORKAROUND: do not reindex
-                        //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                        //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
                         if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
@@ -911,13 +898,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
         }
 
-        public static implicit operator CreateDatasetController(ViewResult v)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        //toDo put this function to DIM
+        //toDo this function to DIM or BAM ??
+        /// <summary>
+        /// this function is parsing the xmldocument to 
+        /// create releationships based on releationshiptypes between datasets and person parties
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="metadata"></param>
         private void setRelationships(long datasetid, long metadataStructureId, XmlDocument metadata)
         {
             PartyManager partyManager = new PartyManager();
@@ -934,7 +922,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
                     // get releaionship type id for owner
-                    var ownerReleationship = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().FirstOrDefault(p => p.DisplayName.Equals("Owner"));
+                    var releationships = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
+                        p => p.AssociatedPairs.Any(
+                            ap => ap.AllowedSource.Title.ToLower().Equals("dataset") || ap.AllowedTarget.Title.ToLower().Equals("dataset")
+                            ));
 
                     foreach (XElement item in complexElements)
                     {
@@ -947,33 +938,36 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
                             if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
 
-                            // when mapping in both directions are exist
-                            if (MappingUtils.ExistMappings(sourceId, sourceType, ownerReleationship.Id, LinkElementType.PartyRelationshipType) &&
-                                MappingUtils.ExistMappings(ownerReleationship.Id, LinkElementType.PartyRelationshipType, sourceId, sourceType))
+                            foreach (var releationship in releationships)
                             {
-                                // create releationship
-
-                                // create a Party for the dataset
-                                var customAttributes = new Dictionary<String, String>();
-                                customAttributes.Add("Name", datasetid.ToString());
-                                customAttributes.Add("Id", datasetid.ToString());
-
-                                var datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
-                                var person = partyManager.GetParty(partyid);
-
-
-                                var partyTpePair = ownerReleationship.PartyRelationships.FirstOrDefault().PartyTypePair;
-
-                                if (partyTpePair != null && person != null && datasetParty != null)
+                                // when mapping in both directions are exist
+                                if (MappingUtils.ExistMappings(sourceId, sourceType, releationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(releationship.Id, LinkElementType.PartyRelationshipType, sourceId, sourceType))
                                 {
-                                    partyManager.AddPartyRelationship(
-                                        datasetParty.Id,
-                                        person.Id,
-                                        "Owner Releationship",
-                                        "",
-                                        partyTpePair.Id
+                                    // create releationship
 
-                                        );
+                                    // create a Party for the dataset
+                                    var customAttributes = new Dictionary<String, String>();
+                                    customAttributes.Add("Name", datasetid.ToString());
+                                    customAttributes.Add("Id", datasetid.ToString());
+
+                                    var datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+                                    var person = partyManager.GetParty(partyid);
+
+
+                                    var partyTpePair = releationship.PartyRelationships.FirstOrDefault().PartyTypePair;
+
+                                    if (partyTpePair != null && person != null && datasetParty != null)
+                                    {
+                                        partyManager.AddPartyRelationship(
+                                            datasetParty.Id,
+                                            person.Id,
+                                            releationship.Title,
+                                            "",
+                                            partyTpePair.Id
+
+                                            );
+                                    }
                                 }
                             }
                         }

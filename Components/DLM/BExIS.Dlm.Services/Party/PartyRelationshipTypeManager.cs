@@ -45,7 +45,7 @@ namespace BExIS.Dlm.Services.Party
                 }
             }
         }
-        
+
         #region PartyRelationshipType
         /// <summary>
         /// Creating PartyRelationshipType

@@ -49,38 +49,43 @@
     displayName += " " + Model.Number;
 }
 
-@if (ViewData.Keys.Contains("Locked"))
+@if (ViewData.Keys.Contains("Locked") || Model.Locked)
 {
-    locked = (bool)ViewData["Locked"];
+    // check global locked
+    if (ViewData.Keys.Contains("Locked")) { locked = (bool)ViewData["Locked"]; }
+    // check attr locked
+    if (!locked && Model.Locked) { locked = Model.Locked; }
+
     lockedClass = "bx-disabled";
 }
 
-@if (ViewData.Keys.Contains("ShowOptional"))
+    @if (ViewData.Keys.Contains("ShowOptional"))
 {
-    showOptional = (bool)ViewData["ShowOptional"];
-}
+        showOptional = (bool)ViewData["ShowOptional"];
+    }
 
 
-@if (Model.Errors != null && Model.Errors.Count() > 0)
+    @if (Model.Errors != null && Model.Errors.Count() > 0)
 {
-    hasErrors = true;
-}
+        hasErrors = true;
+    }
 
-@if (hasErrors == true)
+    @if (hasErrors == true)
 {
-    errorClass = "bx-input-error";
-    foreach (var item in Model.Errors)
-    {
-        if (Model.Errors.First().Equals(item))
+        errorClass = "bx-input-error";
+        foreach (var item in Model.Errors)
         {
-            errorMessage = item.GetMessage();
-        }
-        else
-        {
-            errorMessage += ", " + item.GetMessage();
+            if (Model.Errors.First().Equals(item))
+            {
+                errorMessage = item.GetMessage();
+            }
+            else
+            {
+                errorMessage += ", " + item.GetMessage();
+            }
         }
     }
-}
+
 
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
 
@@ -90,7 +95,7 @@
             <tr>
                 <td class="metadataAttributeLabel">
                     @if (Model.MinCardinality > 0)
-                    {
+{
                         <b title="This field is required" style="color:red">*</b>
                     }
 

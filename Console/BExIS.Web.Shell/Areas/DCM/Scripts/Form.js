@@ -212,6 +212,9 @@ function textareaToInput(textarea) {
     return input;
 }
 
+
+var afterClosed = false;
+
 function OnChangeTextInput(e) {
 
     var substr = e.target.id.split('_');
@@ -247,8 +250,26 @@ function OnChangeTextInput(e) {
         //console.log(newId);
 
         $("#" + newId).replaceWith(response);
+
         //alert("test");
         autosize($('textarea'));
+
+        //check if the parent is set to a party
+        console.log("after change");
+        var parent = $("#" + ParentStepID)[0];
+        console.log(parent);
+        if ($(parent).attr("partyid") != null && afterClosed == false) {
+
+            console.log(ParentStepID);
+            console.log(ParentModelNumber);
+
+
+            UpdateWithParty(ParentStepID, ParentModelNumber, 0);
+        }
+        else {
+            afterClosed = false;
+        }
+
     })
 }
 
@@ -642,16 +663,10 @@ function OnClose(e) {
                 var number = $(parent).attr("number");
                 UpdateWithParty(parentid, number, partyid);
             }
+
+            afterClosed = true;
         }
-
     }
-    
-
-    
-
-    // update parent
-
-
 }
 
 /******************************************
@@ -662,8 +677,7 @@ function UpdateWithParty(componentId, number, partyid) {
     console.log("update with party");
     console.log(componentId + "-" + number + "-" + partyid);
 
-    // update party id to component
-    $("#" + componentId).attr("partyid", partyid);
+    
 
     $("#" + componentId).find(".metadataAttributeInput").each(function () {
         $(this).preloader(12, "...loading");
@@ -678,9 +692,11 @@ function UpdateWithParty(componentId, number, partyid) {
         function (response) {
 
             console.log(componentId);
-            console.log(response);
+            //console.log(response);
 
             $("#" + componentId).replaceWith(response);
+            // update party id to component
+            $("#" + componentId).attr("partyid", partyid);
             //alert("test");
             autosize($('textarea'));
         })

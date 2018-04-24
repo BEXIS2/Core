@@ -41,6 +41,8 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        
+
         public static List<Entities.Mapping.Mapping> GetMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
         {
             try
@@ -202,6 +204,54 @@ namespace BExIS.Dim.Helpers.Mapping
 
         }
 
+        public static bool ExistMappingWithParty(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.PartyType)
+                        ).ToList();
+
+
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static bool ExistMappingWithParty(long targetId, LinkElementType targetType,long partyId)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent!=null &&
+                            m.Parent.Source.ElementId.Equals(partyId)
+                        ).ToList();
+
+
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         /// <summary>
         /// get all values from systen parties values
         /// 
@@ -342,6 +392,51 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetElementType"></param>
+        /// <param name="parentPartyId"></param>
+        /// <returns></returns>
+        public static bool PartyAttrIsMain(long targetElementId, LinkElementType targetElementType)
+        {
+            try
+            {
+                //get all mapppings where target is mapped
+                // LinkElementType.PartyCustomType is set because of the function name
+                // all mapped attributes are LinkElementType.PartyCustomType in this case
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
+
+      
+                    //Select all mappings where the target is mapped to a party custom attr with the party id 
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetElementId) &&
+                            m.Target.Type.Equals(targetElementType) && 
+                            m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                            m.Parent != null
+                        );
+
+                    foreach (var mapping in mappings)
+                    {
+                        if (mapping != null)
+                        {
+                            PartyCustomAttribute pca = uow.GetReadOnlyRepository<PartyCustomAttribute>().Get(mapping.Source.ElementId);
+                            if (pca != null && pca.IsMain==true) return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         #endregion
 
         #region GET FROM Specific MetadataStructure // Source 
@@ -452,17 +547,30 @@ namespace BExIS.Dim.Helpers.Mapping
 
         private static string setOrReplace(string mask, List<string> replacers, string attrName)
         {
-            foreach (var r in replacers)
-            {
-                string completePlaceHolderName = attrName + "[" + replacers.IndexOf(r) + "]";
 
-                if (mask.Contains(completePlaceHolderName))
-                    mask = mask.Replace(completePlaceHolderName, r);
-                else
-                    mask += r;
+            if (replacers != null && replacers.Any())
+            {
+                if (!string.IsNullOrEmpty(mask))
+                {
+                    foreach (var r in replacers)
+                    {
+                        string completePlaceHolderName = attrName + "[" + replacers.IndexOf(r) + "]";
+
+                        if (mask.Contains(completePlaceHolderName))
+                            mask = mask.Replace(completePlaceHolderName, r);
+                        else
+                            mask += r;
+                    }
+
+                    return mask;
+                }
+
+                if (replacers.Count > 1) return string.Join(", ", replacers.ToArray());
+
+                return replacers[0];
             }
 
-            return mask;
+            return "";
         }
 
         #endregion

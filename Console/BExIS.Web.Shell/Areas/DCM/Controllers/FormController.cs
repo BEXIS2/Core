@@ -626,7 +626,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #endregion Import Metadata From external XML
 
-        #region Add and Remove and Activate
+        #region Add and Remove and Activate and Update
 
         public ActionResult ActivateComplexUsage(int id)
         {
@@ -1040,19 +1040,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var metadataAttributeUsage = metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()).Where(u => u.Id.Equals(attrModel.Id)).FirstOrDefault();
 
-                string value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
-
-                if (!string.IsNullOrEmpty(value))
+                if (partyId > 0)
                 {
-                    attrModel.Value = value;
-                    UpdateAttribute(
-                        usage,
-                        number,
-                        metadataAttributeUsage,
-                        Convert.ToInt32(attrModel.Number),
-                        attrModel.Value,
-                        stepModelHelper.XPath);
+                    attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                    attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
                 }
+                else
+                {
+                    if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        attrModel.Value = "";
+                    }
+                }
+
+                UpdateAttribute(
+                    usage,
+                    number,
+                    metadataAttributeUsage,
+                    Convert.ToInt32(attrModel.Number),
+                    attrModel.Value,
+                    stepModelHelper.XPath);
             }
 
             AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
@@ -2066,12 +2073,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 case "MetadataNestedAttributeUsage":
                     {
-                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+
+                        if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataNestedAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        }
                         break;
                     }
                 case "MetadataAttributeUsage":
                     {
-                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataNestedAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        }
                         break;
                     }
             }
