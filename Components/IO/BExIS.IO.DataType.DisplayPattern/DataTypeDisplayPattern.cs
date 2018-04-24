@@ -18,7 +18,7 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",          StringPattern = "HH:mm:ss",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h",      StringPattern = "hh:mm:ss tt",              RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",          StringPattern = "yyyy",                     RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",         StringPattern = "MMMMMM",                   RegexPattern = null}
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",         StringPattern = "MMMM",                   RegexPattern = null}
         };
 
         public DataTypeCode Systemtype { get; set; }

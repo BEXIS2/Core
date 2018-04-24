@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
@@ -193,7 +194,12 @@ namespace BExIS.IO.Transform.Input
                 // maybee needs to convert into the default datetime culture format
                 if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("DateTime"))
                 {
-                    value = IOUtility.ConvertDateToCulture(row[i]);
+                    var dataType = this.StructuredDataStructure.Variables.FirstOrDefault(p => p.Id.Equals(variableId)).DataAttribute.DataType;
+                    DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
+                    if (displayPattern != null)
+                        value = IOUtility.ConvertDate(row[i], displayPattern.StringPattern);
+                    else
+                        value = IOUtility.ConvertDateToCulture(row[i]);
                 }
                 else
                 {
