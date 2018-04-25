@@ -113,19 +113,19 @@ namespace BExIS.IO.Transform.Validation
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
         /// <param name="name"></param>
         /// <param name="dataType"></param>
         /// <param name="optional"></param>
-        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter)
+        /// <param name="decimalCharacter"></param>
+        /// <param name="pattern"></param>
+        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern="")
         {
             _name = name;
             _dataType = dataType;
             _optional = optional;
             ValidationList = new List<IValueValidation>();
             this.NullOrOptionalCheck = new OptionalCheck(name, dataType, optional);
-            this.DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter);
+            this.DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter,pattern);
         }
     }
 }
