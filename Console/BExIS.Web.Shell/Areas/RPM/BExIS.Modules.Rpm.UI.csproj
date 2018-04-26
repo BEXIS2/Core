@@ -216,6 +216,7 @@
     <Content Include="Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <None Include="Properties\PublishProfiles\BPP211_Rpm.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\RPM.pubxml" />
     <None Include="Properties\PublishProfiles\RPM21105.pubxml" />
     <None Include="Properties\PublishProfiles\RPM21108.pubxml" />

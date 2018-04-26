@@ -450,7 +450,9 @@
     <Content Include="Content\Images\help\plus.png" />
     <Content Include="Content\Images\help\primary_key.png" />
     <Content Include="Content\Images\help\push_big_file.png" />
+    <Content Include="Content\Images\help\read_xsd.png" />
     <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\select_xsd.png" />
     <Content Include="Content\Images\help\set_xsd_parameters.png" />
     <Content Include="Content\Images\help\summary_xsd.png" />
     <Content Include="Content\Images\help\upload_data.png" />

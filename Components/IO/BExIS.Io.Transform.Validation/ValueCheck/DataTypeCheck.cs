@@ -21,15 +21,16 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         private string name = "";
         private string dataType = "";
         private DecimalCharacter decimalCharacter;
+        private string pattern;
 
         #region get
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public ValueType AppliedTo
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public ValueType AppliedTo
             {
                 get
                 {
@@ -245,41 +246,10 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                     case "DateTime": 
                         {
-
                             DateTime dateTime;
-
-                            if(DateTime.TryParse(value,out dateTime))
+                            if (IOUtility.IsDate(value, pattern, out dateTime))
                             {
                                 return dateTime;
-                            }
-
-                            if(DateTime.TryParse(value,new CultureInfo("de-DE", false),DateTimeStyles.None,out dateTime))
-                            {
-                                return dateTime;
-                            }
-
-                            if(DateTime.TryParse(value,new CultureInfo("en-US", false),DateTimeStyles.None,out dateTime))
-                            {
-                                return dateTime;
-                            }
-
-                            if (DateTime.TryParse(value,CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
-                            {
-                                return dateTime;
-                            }
-
-                            //Also accept OA-Dates - try to parse the value as double, then try to parse the double as OA-Date
-                            double valueAsDouble;
-                            if(double.TryParse(value, out valueAsDouble))
-                            {
-                                try
-                                {
-                                    dateTime = DateTime.FromOADate(valueAsDouble);
-                                    return dateTime;
-                                } catch(ArgumentException e)
-                                {
-                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                                }
                             }
 
                             return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
@@ -343,12 +313,14 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         /// <seealso cref=""/>
         /// <param name="name"></param>
         /// <param name="dataType"></param>
-        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter)
+        /// <param name="pattern"></param>
+        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern="")
         {
             this.appliedTo = ValueType.Number;
             this.name = name;
             this.dataType = dataType;
             this.decimalCharacter = decimalCharacter;
+            this.pattern = pattern;
         }
     }
 }
