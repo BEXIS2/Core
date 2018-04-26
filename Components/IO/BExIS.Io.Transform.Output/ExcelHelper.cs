@@ -48,15 +48,12 @@ namespace BExIS.IO.Transform.Output
             foreach (var pattern in DataTypeDisplayPattern.Pattern)
             {
                 //Excel special cases
-                string excelPattern = pattern.StringPattern.Replace("/", "\\/");
-                excelPattern = excelPattern.Replace("tt", "AM/PM");
-                //pattern.StringPattern = excelPattern;
 
                 //add numberFormats from displaypattern
                 var newNumberFortmat = new NumberingFormat
                 {
                     NumberFormatId = UInt32Value.FromUInt32(iExcelIndex++),
-                    FormatCode = StringValue.FromString(excelPattern)
+                    FormatCode = StringValue.FromString(pattern.ExcelPattern)
                 };
                 numberFormats.Append(newNumberFortmat);
 
@@ -67,7 +64,7 @@ namespace BExIS.IO.Transform.Output
 
                 
 
-                 cellFormat = new CellFormat() { NumberFormatId = newNumberFortmat.NumberFormatId, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
+                cellFormat = new CellFormat() { NumberFormatId = newNumberFortmat.NumberFormatId, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
                 cellFormat.Protection = new Protection();
                 cellFormat.Protection.Locked = false;
                 cellFormats.Append(cellFormat);
@@ -76,7 +73,7 @@ namespace BExIS.IO.Transform.Output
                 {
                     Name = pattern.Name,
                     Systemtype = pattern.Systemtype,
-                    StringPattern = excelPattern,
+                    StringPattern = pattern.ExcelPattern,
                     RegexPattern = pattern.RegexPattern
                 };
 
