@@ -47,11 +47,16 @@ namespace BExIS.IO.Transform.Output
             //add cellformats from displaypattern
             foreach (var pattern in DataTypeDisplayPattern.Pattern)
             {
+                //Excel special cases
+                string excelPattern = pattern.StringPattern.Replace("/", "\\/");
+                excelPattern = excelPattern.Replace("tt", "AM/PM");
+                //pattern.StringPattern = excelPattern;
+
                 //add numberFormats from displaypattern
                 var newNumberFortmat = new NumberingFormat
                 {
                     NumberFormatId = UInt32Value.FromUInt32(iExcelIndex++),
-                    FormatCode = StringValue.FromString(pattern.StringPattern)
+                    FormatCode = StringValue.FromString(excelPattern)
                 };
                 numberFormats.Append(newNumberFortmat);
 
@@ -60,16 +65,22 @@ namespace BExIS.IO.Transform.Output
                 //if (pattern.Name.Equals("Time")) uInt32Value = 21U;
                 ///UInt32Value uInt32Value = 0U;
 
-                //Excel special cases
-                string excelPattern = pattern.StringPattern.Replace("/", "\\/");
-                excelPattern = excelPattern.Replace("tt", "AM/PM");
-                pattern.StringPattern = excelPattern;
+                
 
                  cellFormat = new CellFormat() { NumberFormatId = newNumberFortmat.NumberFormatId, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
                 cellFormat.Protection = new Protection();
                 cellFormat.Protection.Locked = false;
                 cellFormats.Append(cellFormat);
-                styleIndex.Add(new StyleIndexStruct() { Name = pattern.Name, Index = (uint)cellFormats.Count++, DisplayPattern = pattern });
+
+                DataTypeDisplayPattern tmp = new DataTypeDisplayPattern()
+                {
+                    Name = pattern.Name,
+                    Systemtype = pattern.Systemtype,
+                    StringPattern = excelPattern,
+                    RegexPattern = pattern.RegexPattern
+                };
+
+                styleIndex.Add(new StyleIndexStruct() { Name = pattern.Name, Index = (uint)cellFormats.Count++, DisplayPattern = tmp });
 
             }
 
