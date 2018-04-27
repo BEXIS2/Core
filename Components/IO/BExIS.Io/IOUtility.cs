@@ -56,6 +56,19 @@ namespace BExIS.IO
                 return true;
             }
 
+            double valueAsDouble;
+            if (double.TryParse(value, out valueAsDouble))
+            {
+                try
+                {
+                    dateTime = DateTime.FromOADate(valueAsDouble);
+                    if (dateTime != null) return true;
+                }
+                catch (ArgumentException e)
+                {
+                }
+            }
+
             return false;
         }
 
@@ -69,7 +82,6 @@ namespace BExIS.IO
         /// <returns>true or false and out datetime</returns>
         public static bool IsDate(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
         {
-
             if (cultureInfo == null) cultureInfo = CultureInfo.InvariantCulture;
 
             if (ConvertToDate(dateAsString, pattern, out dateTime, cultureInfo))
@@ -157,6 +169,21 @@ namespace BExIS.IO
             {
                 return true;
             }
+
+            //Date might still be in OA-Date-Format (happens for Libre-Office dates)
+            double valueAsDouble;
+            if (double.TryParse(dateAsString, out valueAsDouble))
+            {
+                try
+                {
+                    dateTime = DateTime.FromOADate(valueAsDouble);
+                    return true;
+                }
+                catch (ArgumentException e)
+                {
+                }
+            }
+
 
             return false;
         }

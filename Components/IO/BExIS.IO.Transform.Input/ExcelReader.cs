@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
@@ -750,8 +751,9 @@ namespace BExIS.IO.Transform.Input
                                     // Number format 14-22 and 45-47 are built-in date and/or time formats
                                     if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
                                     {
-                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                        value = dateTime.ToString();
+                                        //DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                        //value = dateTime.ToString();
+                                        value = c.CellValue.Text;
                                     }
                                     else
                                     {
@@ -764,8 +766,9 @@ namespace BExIS.IO.Transform.Input
                                                 string formatCode = numberFormat.FormatCode.Value;
                                                 if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
                                                 {
-                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                    value = dateTime.ToString();
+                                                    //DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                    //value = dateTime.ToString();
+                                                    value = c.CellValue.Text;
 
                                                 }
                                                 else
@@ -1008,11 +1011,18 @@ namespace BExIS.IO.Transform.Input
                         }
                         else
                         {
+                          
                             foreach (string s in l)
                             {
-                                int id = Convert.ToInt32(s);
-                                int index = l.IndexOf(s);
-                                SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                if (!string.IsNullOrEmpty(s))
+                                {
+                                    int id = 0;
+                                    if (int.TryParse(s,out id))
+                                    {
+                                        int index = l.IndexOf(s);
+                                        SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                    }
+                                }
                             }
                         }
                     }

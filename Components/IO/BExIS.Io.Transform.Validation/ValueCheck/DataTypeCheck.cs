@@ -246,8 +246,22 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                     case "DateTime": 
                         {
+
+                            
                             DateTime dateTime;
                             if (IOUtility.IsDate(value, pattern, out dateTime))
+                            {
+                                return dateTime;
+                            }
+
+                            double dateAsDouble;
+                            if (double.TryParse(value, out dateAsDouble))
+                            {
+                                if (IOUtility.IsDate(value, out dateTime))
+                                    return dateTime;
+                            }
+
+                            if (IOUtility.IsDate(value, out dateTime))
                             {
                                 return dateTime;
                             }
