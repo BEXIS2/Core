@@ -63,6 +63,20 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         }
     }
 
+    public class FilterBooleanItemExpression : FilterExpression
+    {
+        public Field Field { get; set; }
+        public object Value { get; set; }
+        public BooleanOperator.Operation Operator { get; set; }
+
+        public override string ToSQL()
+        {
+            // a set of checks against the type and value should be done
+            return string.Format(BooleanOperator.Translation[this.Operator].Item2, this.Field.Name, this.Value);
+        }
+
+    }
+
     public class UnaryFilterExpression: FilterExpression
     {
         public FilterExpression Operand { get; set; }
