@@ -1,4 +1,11 @@
-﻿@model Dictionary<String, List<String>>
+﻿@model List<BExIS.Dlm.Entities.Party.PartyType>
+@{
+    string partyTypeTitle = "";
+    if (Request.QueryString["partyTypeTitle"] != null)
+    {
+        partyTypeTitle = Request.QueryString["partyTypeTitle"].ToString();
+    }
+}
 @section Information
 {
     With this interface you are able to manage parties. New party can be added with the "Create" button. Existing parties can be edited and removed through the "Edit" and "Delete" button. Furthermore, their details can be viewed through the "View" button.
@@ -16,44 +23,66 @@
 }
 else
 {
-<div id="tabs" class="t-widget t-tabstrip t-header">
-    <ul class="t-reset t-tabstrip-items" style="background-color:none !important;">
-        <li id="" class="t-item t-state-default t-state-active">
-            <a class="t-link">
-                <span>All</span>
-            </a>
-        </li>
-        @foreach (var rootPartyType in Model)
-        {
-            var partyTypes = string.Join(",", rootPartyType.Value);
-            <li partyTypes="@partyTypes" class="t-item t-state-default">
+    <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyGridCustomGridColumnsLoading" />
+    <div id="partyTypesTabs" class="t-widget t-tabstrip t-header">
+        <ul class="t-reset t-tabstrip-items" style="background-color:none !important;">
+            <li id="" class="t-item t-state-default t-state-active">
                 <a class="t-link">
-                    <span>@rootPartyType.Key</span>
+                    <span>All</span>
                 </a>
             </li>
-        }
-        @*ui-tabs-active*@
-    </ul>
+            @foreach (var partyType in Model)
+            {
+                <li class="t-item t-state-default" partyTypes="@partyType.Title">
+                    <a class="t-link">
+                        <span>@partyType.DisplayName</span>
+                    </a>
+                </li>
+            }
+            @*ui-tabs-active*@
+        </ul>
 
-    <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartiesLoading" />
-    <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
+        <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartiesLoading" />
+        <div id="divPartiesGrid" class="ui-tabs-panel ui-corner-bottom ui-widget-content">
+        </div>
     </div>
-</div>
 }
+<div id="dialog"></div>
+@{
+    Html.Telerik().Window().Name("PartyGridCustomGridColumnsWindow").HtmlAttributes(new { style = "min-width:25%" })
+ .Title(string.Format("Custom columns")).Resizable()
+ .ClientEvents(events => events.OnLoad("closePartyGridCustomGridColumnsWindow"))
+ .Draggable(true).Resizable()
+ .Modal(true)
+ .Visible(true).Content("").Render();
+}
+
+
 <script type="text/javascript">
-
-    $("#tabs li").on("click", function () {
-        $("#tabs li").removeClass("ui-state-active");
-        $(this).addClass("ui-state-active");
-        loadParties($(this).attr("partyTypes"));
+    function closePartyGridCustomGridColumnsWindow() {
+        var customGridColumnsWindow = $("#PartyGridCustomGridColumnsWindow").data("t-window");
+        customGridColumnsWindow.close();
+    }
+    function changeTab(thisObj)
+    {
+        $("#partyTypesTabs li").removeClass("t-state-active");
+        $(thisObj).addClass("t-state-active");
+        //Partytype1,partyType2,...
+        //Currently one but later multiple
+        loadParties($(thisObj).attr("partyTypes"));
+    }
+    $("#partyTypesTabs li").on("click", function () {
+        changeTab($(this));
     });
-
-    function loadParties(partyTypes) {
-        if (!partyTypes)
-            partyTypes = '';
+    partyTypeTitle = '';
+    function loadParties(partyType) {
+        if (!partyType)
+            partyType = '';
+        else
+            partyTypeTitle = partyType;
         $('#imgPartiesLoading').show();
         $('#divPartiesGrid').html("");
-        $('#divPartiesGrid').load('/BAM/Party/LoadParties/?party_types=' + partyTypes, function (response, status, xhr) {
+        $('#divPartiesGrid').load('/BAM/Party/GetPartiesWithCustomColumn/?partyTypeTitle=' + partyType, function (response, status, xhr) {
             if (status == "error") {
                 $('#divPartiesGrid').html("")
                 alert(response);
@@ -66,6 +95,31 @@ else
     function onDataBound() {
         resetAllTelerikIconTitles();
         addTooltips();
+        $("#partiesGrid .t-grid-header").contextmenu(
+               function (e) {
+                   if (!partyTypeTitle)
+                       return;
+                   $("#imgPartyGridCustomGridColumnsLoading").show();
+
+                   var customGridColumnsWindow = $("#PartyGridCustomGridColumnsWindow").data("t-window");
+                   $.get("/BAM/Party/LoadCustomGridColumns/?partyTypeTitle=" + partyTypeTitle, function (data) {
+                       customGridColumnsWindow.content(data);
+                       customGridColumnsWindow.center();
+                       customGridColumnsWindow.open();
+                       customGridColumnsWindow.center();
+                       $("#imgPartyGridCustomGridColumnsLoading").hide();
+                   });
+                   console.log("rightclick");
+                   e.preventDefault();
+                   return false;
+               });
+
     }
-    loadParties('');
+    $(document).ready(function () {
+        if ('@partyTypeTitle')
+        {
+            changeTab($("li[partytypes="+'@partyTypeTitle'+"]"));
+        }
+        loadParties('@partyTypeTitle');
+    });
 </script>
