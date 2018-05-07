@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -753,7 +754,11 @@ namespace BExIS.IO.Transform.Input
                                     {
                                         //DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
                                         //value = dateTime.ToString();
-                                        value = c.CellValue.Text;
+
+                                        double tmp = 0;
+                                        if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                        else value = c.CellValue.Text;
+
                                     }
                                     else
                                     {
@@ -768,7 +773,9 @@ namespace BExIS.IO.Transform.Input
                                                 {
                                                     //DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
                                                     //value = dateTime.ToString();
-                                                    value = c.CellValue.Text;
+                                                    double tmp = 0;
+                                                    if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                                    else value = c.CellValue.Text;
 
                                                 }
                                                 else
@@ -873,6 +880,7 @@ namespace BExIS.IO.Transform.Input
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
+                                Debug.WriteLine(value);
 
                             }
                             // not a text
@@ -887,8 +895,11 @@ namespace BExIS.IO.Transform.Input
                                     // Number format 14-22 and 45-47 are built-in date and/or time formats
                                     if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
                                     {
-                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                        value = dateTime.ToString();
+                                        double tmp = 0;
+                                        if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                        else value = c.CellValue.Text;
+
+
                                     }
                                     else
                                     {
@@ -901,8 +912,9 @@ namespace BExIS.IO.Transform.Input
                                                 string formatCode = numberFormat.FormatCode.Value;
                                                 if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
                                                 {
-                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                    value = dateTime.ToString();
+                                                    double tmp = 0;
+                                                    if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                                    else value = c.CellValue.Text;
 
                                                 }
                                                 else
