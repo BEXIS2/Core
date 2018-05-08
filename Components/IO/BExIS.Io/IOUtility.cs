@@ -177,6 +177,8 @@ namespace BExIS.IO
                 try
                 {
                     dateTime = DateTime.FromOADate(valueAsDouble);
+                    if(dateTime.Millisecond >= 500) dateTime.AddSeconds(1);
+
                     return true;
                 }
                 catch (ArgumentException e)
