@@ -42,7 +42,12 @@ namespace BExIS.IO.Transform.Output
             cellFormats.Append(cellFormat);
             styleIndex.Add(new StyleIndexStruct() { Name = "Text", Index = (uint)cellFormats.Count++, DisplayPattern = null });
 
-
+            //default Date
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
+            cellFormats.Append(cellFormat);
+            styleIndex.Add(new StyleIndexStruct() { Name = "DateTime", Index = (uint)cellFormats.Count++, DisplayPattern = null });
 
             //add cellformats from displaypattern
             foreach (var pattern in DataTypeDisplayPattern.Pattern)
