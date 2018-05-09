@@ -10,15 +10,21 @@ namespace BExIS.IO.DataType.DisplayPattern
     {
         private static List<DataTypeDisplayPattern> displayPatterns = new List<DataTypeDisplayPattern>()
         {
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso",ExcelPattern="yyyy-MM-ddThh:mm:ss",DisplayPattern = "yyyy-MM-ddThh:mm:ss",     StringPattern = "yyyy-MM-ddTHH:mm:ss",     RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateIso",    ExcelPattern="yyyy-MM-dd",        DisplayPattern= "yyyy-MM-dd",               StringPattern = "yyyy-MM-dd",               RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUs",     ExcelPattern=@"MM\/dd\/yyyy",      DisplayPattern="MM/dd/yyyy",                StringPattern = "MM/dd/yyyy",               RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUk",     ExcelPattern=@"dd\/MM\/yyyy",      DisplayPattern="dd/MM/yyyy",                StringPattern = "dd/MM/yyyy",               RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateEu",     ExcelPattern="dd.MM.yyyy",         DisplayPattern="dd.MM.yyyy",                StringPattern = "dd.MM.yyyy",               RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",       ExcelPattern="hh:mm:ss",           DisplayPattern="HH:mm:ss",                  StringPattern = "HH:mm:ss",                 RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h",   ExcelPattern=@"hh:mm:ss AM/PM",    DisplayPattern="hh:mm:ss tt",               StringPattern = "hh:mm:ss tt",              RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",       ExcelPattern="yyyy",               DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",      ExcelPattern="MMMM",               DisplayPattern="MMMM",                      StringPattern = "MMMM",                   RegexPattern = null}
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso",       ExcelPattern="yyyy-MM-ddThh:mm:ss", DisplayPattern = "yyyy-MM-ddThh:mm:ss",     StringPattern = "yyyy-MM-ddTHH:mm:ss",      RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateIso",           ExcelPattern="yyyy-MM-dd",          DisplayPattern= "yyyy-MM-dd",               StringPattern = "yyyy-MM-dd",               RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUs",            ExcelPattern=@"MM/dd/yyyy",         DisplayPattern="MM/dd/yyyy",                StringPattern = "MM/dd/yyyy",               RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUs yy",         ExcelPattern=@"MM/dd/yy",           DisplayPattern="MM/dd/yy",                  StringPattern = "MM/dd/yy",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUk",            ExcelPattern=@"dd/MM/yyyy",         DisplayPattern="dd/MM/yyyy",                StringPattern = "dd/MM/yyyy",               RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateUk yy",         ExcelPattern=@"dd/MM/yy",           DisplayPattern="dd/MM/yy",                  StringPattern = "dd/MM/yy",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateEu",            ExcelPattern="dd.MM.yyyy",          DisplayPattern="dd.MM.yyyy",                StringPattern = "dd.MM.yyyy",               RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateEu yy",         ExcelPattern="dd.MM.yy",            DisplayPattern="dd.MM.yy",                  StringPattern = "dd.MM.yy",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",              ExcelPattern="hh:mm:ss",            DisplayPattern="HH:mm:ss",                  StringPattern = "HH:mm:ss",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time mm:ss",        ExcelPattern="mm:ss",               DisplayPattern="mm:ss",                     StringPattern = "mm:ss",                    RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time hh:mm",        ExcelPattern="hh:mm",               DisplayPattern="HH:mm",                     StringPattern = "HH:mm",                    RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h",          ExcelPattern=@"hh:mm:ss AM/PM",     DisplayPattern="hh:mm:ss tt",               StringPattern = "hh:mm:ss tt",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h hh:mm",    ExcelPattern=@"hh:mm AM/PM",        DisplayPattern="hh:mm tt",                  StringPattern = "hh:mm tt",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null}
         };
 
         public DataTypeCode Systemtype { get; set; }
@@ -110,7 +116,10 @@ namespace BExIS.IO.DataType.DisplayPattern
         public static DataTypeDisplayPattern GetByExcelPattern(string excelPattern)
         {
             excelPattern = excelPattern.Replace("\\/", @"\/");
-            excelPattern = excelPattern.Replace("\\", "");
+            excelPattern = excelPattern.Replace(@"\-", "-");
+            excelPattern = excelPattern.Replace(@"\.", ".");
+            excelPattern = excelPattern.Replace(@"\ ", " ");
+            excelPattern = excelPattern.Replace(@"\T", "T");
 
             foreach (var p in Pattern)
             {

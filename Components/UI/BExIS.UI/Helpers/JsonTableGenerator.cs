@@ -11,6 +11,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using BExIS.Utils.Models;
 using Newtonsoft.Json;
 using BExIS.IO.DataType.DisplayPattern;
+using System.Diagnostics;
 
 namespace BExIS.UI.Helpers
 {
@@ -151,10 +152,14 @@ namespace BExIS.UI.Helpers
                                                         )
                                                     {
                                                         DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                        value = dateTime.ToString(new CultureInfo("en-us"));
+                                                        //value = dateTime.ToString(new CultureInfo("en-us"));
                                                         //get c# display pattern
-                                                        //DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
-                                                        //value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.ExcelPattern) : dateTime.ToString(new CultureInfo("en-us"));
+                                                        
+                                                        DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
+                                                        value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.StringPattern) : dateTime.ToString(new CultureInfo("en-us"));
+
+                                                        //Debug.WriteLine("----");
+                                                        //Debug.WriteLine(formatCode);
                                                     }
                                                 }
                                             }

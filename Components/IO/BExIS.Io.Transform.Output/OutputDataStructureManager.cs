@@ -549,6 +549,7 @@ namespace BExIS.IO.Transform.Output
             //dataStructureFile = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), true);
 
 
+
             foreach (OpenXmlPart part in template.GetPartsOfType<OpenXmlPart>())
             {
                 OpenXmlPart newPart = dataStructureFile.AddPart<OpenXmlPart>(part);
