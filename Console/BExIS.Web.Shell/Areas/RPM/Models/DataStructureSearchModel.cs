@@ -164,18 +164,16 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.fill(previewIds, saerchTerms);
         }
 
-        private List<DataStructure> getStucturedDataStructures(string searchTerms)
+        private List<DataStructure> getStucturedDataStructures(string searchTerms, DataStructureManager dataStructureManager)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
             if (String.IsNullOrEmpty(searchTerms))
                 return (dataStructureManager.StructuredDataStructureRepo.Get().Cast<DataStructure>().ToList());
             else
                 return (getSearchResult(dataStructureManager.StructuredDataStructureRepo.Get().Cast<DataStructure>().ToList(), searchTerms));
         }
 
-        private List<DataStructure> getUnStucturedDataStructures(string searchTerms)
-        {
-            DataStructureManager dataStructureManager = new DataStructureManager();
+        private List<DataStructure> getUnStucturedDataStructures(string searchTerms, DataStructureManager dataStructureManager)
+        {     
             if (String.IsNullOrEmpty(searchTerms))
                 return (dataStructureManager.UnStructuredDataStructureRepo.Get().Cast<DataStructure>().ToList());
             else
@@ -212,41 +210,49 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
-
-            foreach (DataStructure ds in getStucturedDataStructures(saerchTerms))
+        DataStructureManager dataStructureManager = null;
+            try
             {
-                dataStructureResult = new DataStructureResultStruct();
-                dataStructureResult.Id = ds.Id;
-                dataStructureResult.Title = ds.Name;
-                dataStructureResult.Description = ds.Description;
+                dataStructureManager = new DataStructureManager();
+                foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
+                {
+                    dataStructureResult = new DataStructureResultStruct();
+                    dataStructureResult.Id = ds.Id;
+                    dataStructureResult.Title = ds.Name;
+                    dataStructureResult.Description = ds.Description;
 
-                if (ds.Datasets.Count > 0)
-                    dataStructureResult.inUse = true;
+                    if (ds.Datasets.Count > 0)
+                        dataStructureResult.inUse = true;
 
-                dataStructureResult.Structured = true;
+                    dataStructureResult.Structured = true;
 
-                if (previewIds != null && previewIds.Contains(ds.Id))
-                    dataStructureResult.Preview = true;
+                    if (previewIds != null && previewIds.Contains(ds.Id))
+                        dataStructureResult.Preview = true;
 
-                this.dataStructureResults.Add(dataStructureResult);
+                    this.dataStructureResults.Add(dataStructureResult);
+                }
+
+                foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
+                {
+                    dataStructureResult = new DataStructureResultStruct();
+                    dataStructureResult.Id = ds.Id;
+                    dataStructureResult.Title = ds.Name;
+                    dataStructureResult.Description = ds.Description;
+
+                    if (ds.Datasets.Count > 0)
+                        dataStructureResult.inUse = true;
+
+                    if (previewIds != null && previewIds.Contains(ds.Id))
+                        dataStructureResult.Preview = true;
+
+                    this.dataStructureResults.Add(dataStructureResult);
+                }
+                return this;
             }
-
-            foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms))
+            finally
             {
-                dataStructureResult = new DataStructureResultStruct();
-                dataStructureResult.Id = ds.Id;
-                dataStructureResult.Title = ds.Name;
-                dataStructureResult.Description = ds.Description;
-
-                if (ds.Datasets.Count > 0)
-                    dataStructureResult.inUse = true;
-
-                if (previewIds != null && previewIds.Contains(ds.Id))
-                    dataStructureResult.Preview = true;
-
-                this.dataStructureResults.Add(dataStructureResult);
+                dataStructureManager.Dispose();
             }
-            return this;
         }
 
         public DataStructureResultsModel fill(long[] previewIds)
