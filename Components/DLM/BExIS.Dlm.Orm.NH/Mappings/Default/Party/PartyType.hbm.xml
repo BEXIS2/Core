@@ -32,7 +32,11 @@
       <key column="PartyTypeRef"/>
       <one-to-many class="Party"/>
     </set>
-
+    
+    <property name="SystemType" type="yes_no" >
+      <column name="SystemType"  />
+    </property>
+    
     <set name="CustomAttributes" table="PartyCustomAttributes" lazy="true">
       <key column="PartyTypeRef"/>
       <one-to-many class="PartyCustomAttribute"/>
