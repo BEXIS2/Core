@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BExIS.Dlm.Orm.NH.Qurying;
+using BExIS.Dlm.Entities.Administration;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {    
@@ -23,6 +24,7 @@ namespace BExIS.Dlm.Tests.Services.Data
     {
         private TestSetupHelper helper = null;
         private StructuredDataStructure dataStructure;
+        private ResearchPlan researchPlan;
         DatasetHelper dsHelper = null;
 
         [OneTimeSetUp]
@@ -34,6 +36,9 @@ namespace BExIS.Dlm.Tests.Services.Data
             dsHelper.PurgeAllDataStructures();
 
             dataStructure = dsHelper.CreateADataStructure();
+            researchPlan = dsHelper.CreateResearchPlan();
+
+
         }
 
         [OneTimeTearDown]
@@ -234,6 +239,74 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
 
         }
+
+        [Test()]
+        public void ProjectExpressionTest()
+        {
+            string var1Name = "var" + dataStructure.Variables.First().Id;
+            string var3Name = "var" + dataStructure.Variables.Skip(2).First().Id;
+
+            //create prjection expression
+            ProjectionExpression projectionExpression = new ProjectionExpression();
+
+            projectionExpression.Items.Add(new ProjectionItemExpression() { FieldName = var1Name });
+            projectionExpression.Items.Add(new ProjectionItemExpression() { FieldName = var3Name });
+
+
+            // create a dataset and test the filter, sorting, and projectgion
+            long numberOfTuples = 10;
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+
+            try
+            {
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = rsm.Repo.Query().First();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset.Should().NotBeNull("The dataset tuple generation has failed!");
+
+                dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+
+                dataset.Id.Should().BeGreaterThan(0, "Dataset was not persisted.");
+                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in the CheckedIn status.");
+                dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
+
+                // pass this filter to get a subset of dataset X
+                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, null, null, projectionExpression, 1, 3);
+                dst.Should().NotBeNull();
+                dst.Rows.Count.Should().BeLessOrEqualTo(3);
+                dst.Columns.Count.Should().BeLessOrEqualTo(3, "Projection fails, false number of columns");
+
+                dm.DatasetVersionRepo.Evict();
+                dm.DataTupleRepo.Evict();
+                dm.DatasetRepo.Evict();
+                dm.PurgeDataset(dataset.Id, true);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+            }
+
+        }
+
+        
     }
 
 }
