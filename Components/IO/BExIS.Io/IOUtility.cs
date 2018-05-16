@@ -81,5 +81,25 @@ namespace BExIS.IO
             return null;
         }
 
+        /// <summary>
+        /// try to convert a string with a pattern to a datetime
+        /// </summary>
+        /// <param name="dateAsString"></param>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public static string ConvertDate(string dateAsString, string pattern, CultureInfo cultureInfo = null)
+        {
+            DateTime dateTime;
+
+            if (cultureInfo == null) cultureInfo = CultureInfo.InvariantCulture;
+
+            if (DateTime.TryParseExact(dateAsString, pattern, cultureInfo, DateTimeStyles.NoCurrentDateDefault , out dateTime))
+            {
+                return dateTime.ToString(new CultureInfo("en-US"));
+            }
+
+            return null;
+        }
+
     }
 }

@@ -626,7 +626,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #endregion Import Metadata From external XML
 
-        #region Add and Remove and Activate
+        #region Add and Remove and Activate and Update
 
         public ActionResult ActivateComplexUsage(int id)
         {
@@ -1022,6 +1022,51 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return PartialView("_metadataCompoundAttributeView", stepModelHelper);
+        }
+
+        public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            TaskManager.SetCurrent(TaskManager.Get(stepId));
+
+            var stepModelHelper = GetStepModelhelper(stepId);
+            stepModelHelper.Model = createModel(stepId, true, stepModelHelper.UsageType);
+            var usage = loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
+
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+
+            foreach (var attrModel in stepModelHelper.Model.MetadataAttributeModels)
+            {
+
+                var metadataAttributeUsage = metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()).Where(u => u.Id.Equals(attrModel.Id)).FirstOrDefault();
+
+                if (partyId > 0)
+                {
+                    attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                    attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                }
+                else
+                {
+                    if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        attrModel.Value = "";
+                    }
+                }
+
+                UpdateAttribute(
+                    usage,
+                    number,
+                    metadataAttributeUsage,
+                    Convert.ToInt32(attrModel.Number),
+                    attrModel.Value,
+                    stepModelHelper.XPath);
+            }
+
+            AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
+
+
+
+            return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
 
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
@@ -2023,17 +2068,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
-            var x = new List<string>();
+            var x = new List<MappingPartyResultElemenet>();
             switch (type)
             {
                 case "MetadataNestedAttributeUsage":
                     {
-                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+
+                        if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataNestedAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        }
                         break;
                     }
                 case "MetadataAttributeUsage":
                     {
-                        x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataNestedAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
+                        }
                         break;
                     }
             }
@@ -2051,7 +2103,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
             // WORKAROUND: return always an empty list
-            return new JsonResult { Data = new SelectList(x) };
+
+
+            return new JsonResult { Data = new SelectList(x.Select(e => e.Value+" ("+e.PartyId+")")) };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
@@ -2150,6 +2204,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return stepModelHelper;
         }
+
+        
 
         #endregion Attribute
 
@@ -2269,6 +2325,30 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+            // locat path
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            metadataXml.Save(path);
+        }
+
+        //ToDo really said function, but cant find a other solution for now
+        private void AddXmlAttribute(string xpath, string attrName, string attrValue)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+
+            XmlDocument xmlDocument = XmlUtility.ToXmlDocument(metadataXml);
+
+            XmlNode tmp = xmlDocument.SelectSingleNode(xpath);
+
+            XmlAttribute xmlAttr = xmlDocument.CreateAttribute("partyid");
+            xmlAttr.Value = attrValue;
+
+            tmp.Attributes.Append(xmlAttr);
+
+            metadataXml = XmlUtility.ToXDocument(xmlDocument);
+
+            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+
             // locat path
             var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
             metadataXml.Save(path);
