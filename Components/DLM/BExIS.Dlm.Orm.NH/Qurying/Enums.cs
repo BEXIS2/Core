@@ -51,14 +51,14 @@ namespace BExIS.Dlm.Orm.NH.Qurying
     {
         public static Dictionary<Operation, Tuple<string, string>> Translation = new Dictionary<Operation, Tuple<string, string>>()
         {
-            { Operation.And,          Tuple.Create("AND", "({0}) AND ({1})") },
-            { Operation.Or,           Tuple.Create("OR", "({0}) OR ({1})") },
+            { Operation.And,                Tuple.Create("AND", "({0}) AND ({1})") },
+            { Operation.Or,                 Tuple.Create("OR", "({0}) OR ({1})") },
         };
 
         public enum Operation
         {
-            And = GenericOperation.And,
-            Or = GenericOperation.Or,
+            And                             = GenericOperation.And,
+            Or                              = GenericOperation.Or,
         }
     }
 
@@ -75,11 +75,11 @@ namespace BExIS.Dlm.Orm.NH.Qurying
 
         public enum Operation
         {
-            Equals              = GenericOperation.Equals,
-            LessThan            = GenericOperation.LessThan,
-            LessThanOrEqual     = GenericOperation.LessThanOrEqual,
-            GreaterThan         = GenericOperation.GreaterThan,
-            GreaterThanOrEqual  = GenericOperation.GreaterThanOrEqual,
+            Equals                          = GenericOperation.Equals,
+            LessThan                        = GenericOperation.LessThan,
+            LessThanOrEqual                 = GenericOperation.LessThanOrEqual,
+            GreaterThan                     = GenericOperation.GreaterThan,
+            GreaterThanOrEqual              = GenericOperation.GreaterThanOrEqual,
         }
     }
 
@@ -87,18 +87,18 @@ namespace BExIS.Dlm.Orm.NH.Qurying
     {
         public static Dictionary<Operation, Tuple<string, string>> Translation = new Dictionary<Operation, Tuple<string, string>>()
         {
-            { Operation.Equals,                 Tuple.Create("=",  "({0}) = ('{1}')") },
-            { Operation.StartsWith,             Tuple.Create("ST", "({0}) LIKE ('{1}%')") },
-            { Operation.Contains,               Tuple.Create("ST", "({0}) LIKE ('%{1}%')") },
-            { Operation.EndsWith,               Tuple.Create("EW", "({0}) LIKE ('%{1}')") },
+            { Operation.Equals,             Tuple.Create("=",  "({0}) = ('{1}')") },
+            { Operation.StartsWith,         Tuple.Create("ST", "({0}) LIKE ('{1}%')") },
+            { Operation.Contains,           Tuple.Create("ST", "({0}) LIKE ('%{1}%')") },
+            { Operation.EndsWith,           Tuple.Create("EW", "({0}) LIKE ('%{1}')") },
         };
 
         public enum Operation
         {
-            Equals = GenericOperation.Equals,
-            StartsWith = GenericOperation.StartsWith,
-            Contains = GenericOperation.Contains,
-            EndsWith = GenericOperation.EndsWith,
+            Equals                          = GenericOperation.Equals,
+            StartsWith                      = GenericOperation.StartsWith,
+            Contains                        = GenericOperation.Contains,
+            EndsWith                        = GenericOperation.EndsWith,
         }
     }
 
@@ -115,23 +115,34 @@ namespace BExIS.Dlm.Orm.NH.Qurying
 
         public enum Operation
         {
-            Equals = GenericOperation.Equals,
-            LessThan = GenericOperation.LessThan,
-            LessThanOrEqual = GenericOperation.LessThanOrEqual,
-            GreaterThan = GenericOperation.GreaterThan,
-            GreaterThanOrEqual = GenericOperation.GreaterThanOrEqual,
+            Equals                          = GenericOperation.Equals,
+            LessThan                        = GenericOperation.LessThan,
+            LessThanOrEqual                 = GenericOperation.LessThanOrEqual,
+            GreaterThan                     = GenericOperation.GreaterThan,
+            GreaterThanOrEqual              = GenericOperation.GreaterThanOrEqual,
         }
     }
 
+    public static class BooleanOperator
+    {
+        public static Dictionary<Operation, Tuple<string, string>> Translation = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.Equals,             Tuple.Create("=", "({0}) = ({1})") },
+        };
+
+        public enum Operation
+        {
+            Equals = GenericOperation.Equals,
+        }
+    }
 
     public enum DataType
     {
         String,
         Ineteger,
         DateTime,
+        Double,
+        Boolean,
     }
 
-    public class test
-    {
-    }
 }
