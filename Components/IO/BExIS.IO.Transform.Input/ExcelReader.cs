@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
@@ -7,6 +8,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -732,70 +734,57 @@ namespace BExIS.IO.Transform.Input
                         if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
                         {
 
-                            // if Value a text
+                            // shared string
                             if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
                             {
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
-
                             }
+                            //// string
+                            //else if (c.DataType != null && c.DataType.Value == CellValues.String)
+                            //{
+                            //    value = c.CellValue.Text;
+                            //}
+
                             // not a text
-                            else if (c.StyleIndex != null && c.StyleIndex.HasValue)
-                            {
-                                uint styleIndex = c.StyleIndex.Value;
-                                CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
-                                if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
-                                {
-                                    uint numberFormatId = cellFormat.NumberFormatId.Value;
+                            //else if (c.StyleIndex != null && c.StyleIndex.HasValue)
+                            //{
 
-                                    // Number format 14-22 and 45-47 are built-in date and/or time formats
-                                    if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
-                                    {
-                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                        value = dateTime.ToString();
-                                    }
-                                    else
-                                    {
-                                        if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
-                                        {
-                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+                            //    uint styleIndex = c.StyleIndex.Value;
+                            //    CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+                            //    if (cellFormat != null && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                            //    {
+                            //        uint numberFormatId = cellFormat.NumberFormatId.Value;
+ 
+                            //        NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
 
-                                            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
-                                            {
-                                                string formatCode = numberFormat.FormatCode.Value;
-                                                if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
-                                                {
-                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                    value = dateTime.ToString();
+                            //        //
+                            //        if (numberFormat != null)
+                            //        {
+                            //            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+                            //            {
+                            //                string formatCode = numberFormat.FormatCode.Value;
+                            //                if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
+                            //                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
+                            //                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
+                            //                    (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
+                            //                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
+                            //                    )
+                            //                {
+                            //                    //DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                            //                    //value = dateTime.ToString();
+                            //                    double tmp = 0;
+                            //                    if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                            //                    else value = c.CellValue.Text;
 
-                                                }
-                                                else
-                                                {
-                                                    value = c.CellValue.Text;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                value = c.CellValue.Text;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            value = c.CellValue.Text;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    value = c.CellValue.Text;
-                                }
+                            //                }
+                            //            }
+                            //        }
+                            //    }
+                            //}
 
-                            }
-                            else
-                            {
-                                value = c.CellValue.Text;
-                            }
+                            if (string.IsNullOrEmpty(value)) value = c.CellValue.Text;
 
                             // define index based on cell refernce - offset 
                             int index = cellReferencAsInterger - offset - 1;
@@ -872,6 +861,7 @@ namespace BExIS.IO.Transform.Input
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
+                                Debug.WriteLine(value);
 
                             }
                             // not a text
@@ -886,8 +876,11 @@ namespace BExIS.IO.Transform.Input
                                     // Number format 14-22 and 45-47 are built-in date and/or time formats
                                     if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
                                     {
-                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                        value = dateTime.ToString();
+                                        double tmp = 0;
+                                        if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                        else value = c.CellValue.Text;
+
+
                                     }
                                     else
                                     {
@@ -900,8 +893,9 @@ namespace BExIS.IO.Transform.Input
                                                 string formatCode = numberFormat.FormatCode.Value;
                                                 if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
                                                 {
-                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                    value = dateTime.ToString();
+                                                    double tmp = 0;
+                                                    if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                                    else value = c.CellValue.Text;
 
                                                 }
                                                 else
@@ -1010,11 +1004,18 @@ namespace BExIS.IO.Transform.Input
                         }
                         else
                         {
+                          
                             foreach (string s in l)
                             {
-                                int id = Convert.ToInt32(s);
-                                int index = l.IndexOf(s);
-                                SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                if (!string.IsNullOrEmpty(s))
+                                {
+                                    int id = 0;
+                                    if (int.TryParse(s,out id))
+                                    {
+                                        int index = l.IndexOf(s);
+                                        SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                    }
+                                }
                             }
                         }
                     }

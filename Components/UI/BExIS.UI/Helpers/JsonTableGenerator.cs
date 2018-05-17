@@ -10,8 +10,10 @@ using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Spreadsheet;
 using BExIS.Utils.Models;
 using Newtonsoft.Json;
+using BExIS.IO.DataType.DisplayPattern;
+using System.Diagnostics;
 
-namespace BExIS.Utils.Helpers
+namespace BExIS.UI.Helpers
 {
 
     public class JsonTableGenerator
@@ -104,7 +106,7 @@ namespace BExIS.Utils.Helpers
                                 }
 
                                 //We now have the correct index and can grab the value of the cell
-                                if (c.CellValue != null)
+                                if (c.CellValue != null && !string.IsNullOrEmpty(c.CellValue.Text))
                                 {
                                     // if Value a text
                                     if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
@@ -130,57 +132,42 @@ namespace BExIS.Utils.Helpers
                                     {
                                         uint styleIndex = c.StyleIndex.Value;
                                         CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
-                                        if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                                        if (cellFormat != null && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
                                         {
                                             uint numberFormatId = cellFormat.NumberFormatId.Value;
 
-                                            // Number format 14-22 and 45-47 are built-in date and/or time formats
-                                            if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
-                                            {
-                                                DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                value = dateTime.ToString();
-                                            }
-                                            else
-                                            {
-                                                if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
-                                                {
-                                                    NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
 
-                                                    if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
-                                                    {
-                                                        string formatCode = numberFormat.FormatCode.Value;
-                                                        if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
-                                                        {
-                                                            DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                            value = dateTime.ToString();
-
-                                                        }
-                                                        else
-                                                        {
-                                                            value = c.CellValue.Text;
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        value = c.CellValue.Text;
-                                                    }
-                                                }
-                                                else
+                                            //
+                                            if (numberFormat != null)
+                                            {
+                                                if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
                                                 {
-                                                    value = c.CellValue.Text;
+                                                    string formatCode = numberFormat.FormatCode.Value;
+                                                    if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
+                                                        (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
+                                                        (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
+                                                        (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
+                                                        (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
+                                                        )
+                                                    {
+                                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                        //value = dateTime.ToString(new CultureInfo("en-us"));
+                                                        //get c# display pattern
+                                                        
+                                                        DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
+                                                        value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.StringPattern) : dateTime.ToString(new CultureInfo("en-us"));
+
+                                                        //Debug.WriteLine("----");
+                                                        //Debug.WriteLine(formatCode);
+                                                    }
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-                                            value = c.CellValue.Text;
-                                        }
 
                                     }
-                                    else
-                                    {
-                                        value = c.CellValue.Text;
-                                    }
+
+                                    if (string.IsNullOrEmpty(value)) value = c.CellValue.Text;
 
                                     rowAsStringList.Add(value);
 

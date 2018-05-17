@@ -113,7 +113,6 @@
     <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
-    <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Helpers\RegExHelper.cs" />
     <Compile Include="Models\SearchAttribute.cs" />
     <Compile Include="Models\SearchComponent.cs" />
