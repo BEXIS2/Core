@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -197,6 +198,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\SAM.pubxml" />
     <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
@@ -249,6 +251,7 @@
     <Content Include="Views\EntityPermissions\_Instances.cshtml" />
     <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
     <Content Include="Views\UserPermissions\_Subjects.cshtml" />
+    <Content Include="Views\Datasets\Sync.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -16,47 +16,57 @@ namespace BExIS.Security.Services.Utilities
         {
             _smtp = new SmtpClient()
             {
-                Host = ConfigurationManager.AppSettings["Email_Host"], //"smtp.uni-jena.de",
-                Port = int.Parse(ConfigurationManager.AppSettings["Email_Port"]), //587,
-                EnableSsl = bool.Parse(ConfigurationManager.AppSettings["Email_Ssl"]), //true,
-                Credentials =
-                    new NetworkCredential(ConfigurationManager.AppSettings["Email_Account"],
-                        ConfigurationManager.AppSettings["Email_Password"])
+                Host = ConfigurationManager.AppSettings["Email_Host"],
+                Port = int.Parse(ConfigurationManager.AppSettings["Email_Port"]),
+                EnableSsl = bool.Parse(ConfigurationManager.AppSettings["Email_Ssl"])
             };
+
+            if (bool.Parse(ConfigurationManager.AppSettings["Email_Anonymous"]))
+            {
+                _smtp.UseDefaultCredentials = false;
+            }
+            else
+            {
+                _smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["Email_Account"],
+                    ConfigurationManager.AppSettings["Email_Password"]);
+            }
         }
 
         public void Send(string subject, string body, string destination)
         {
-            IdentityMessage message = new IdentityMessage()
+            if (IsValidEmail(destination))
             {
-                Subject = subject,
-                Body = body,
-                Destination = destination
-            };
+                IdentityMessage message = new IdentityMessage()
+                {
+                    Subject = subject,
+                    Body = body,
+                    Destination = destination
+                };
 
-            var from = new MailAddress("bexis2@uni-jena.de");
+                var from = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
 
-            var to = new MailAddress(message.Destination);
-            var mail = new MailMessage(from, to)
-            {
-                Body = message.Body,
-                IsBodyHtml = true,
-                Subject = message.Subject
-            };
+                var to = new MailAddress(message.Destination);
+                var mail = new MailMessage(from, to)
+                {
+                    Body = message.Body,
+                    IsBodyHtml = true,
+                    Subject = message.Subject
+                };
 
-            try
-            {
-                _smtp.Send(mail);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
+                try
+                {
+                    _smtp.Send(mail);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
+                }
             }
         }
 
         public void Send(IdentityMessage message)
         {
-            var from = new MailAddress("bexis2@uni-jena.de");
+            var from = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
 
             var to = new MailAddress(message.Destination);
             var mail = new MailMessage(from, to)
@@ -72,13 +82,18 @@ namespace BExIS.Security.Services.Utilities
             }
             catch (Exception ex)
             {
-                Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
+                Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
             }
+        }
+
+        public void Send(string v1, string v2, object p)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task SendAsync(IdentityMessage message)
         {
-            var from = new MailAddress("bexis2@uni-jena.de");
+            var from = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
 
             var to = new MailAddress(message.Destination);
             var mail = new MailMessage(from, to)
@@ -94,13 +109,21 @@ namespace BExIS.Security.Services.Utilities
             }
             catch (Exception ex)
             {
-                Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
+                Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
             }
         }
 
-        public void Send(string v1, string v2, object p)
+        private bool IsValidEmail(string email)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -50,6 +50,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -107,7 +108,6 @@
     <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
-    <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Helpers\RegExHelper.cs" />
     <Compile Include="Models\SearchAttribute.cs" />
     <Compile Include="Models\SearchComponent.cs" />

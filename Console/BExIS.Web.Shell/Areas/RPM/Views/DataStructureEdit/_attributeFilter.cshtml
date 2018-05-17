@@ -29,7 +29,7 @@
                         appearance += " " + l.ToString();
                     }
                 }
-                <div class="bx-rpm-filterItem"> @{cssId = count + "_" + afd.Key.ToLower().Replace(" ","") + "_" + fvs.Key;}
+                <div class="bx-rpm-filterItem"> @{cssId = count + "_" + afd.Key.ToLower().Replace(" ","");}
                     <input class = "bx-rpm-filterCheckbox" type="checkbox" id="@cssId" appearance="@appearance" /> @{cssId += "_label"; }              
                     <span  class = "bx-rpm-filterCheckboxLable"id="@cssId">@fvs.Value.Name @{cssId += "_count"; }
                         <span id="@cssId">(@fvs.Value.Appearance.Count)</span>

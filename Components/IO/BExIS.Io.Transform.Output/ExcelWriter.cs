@@ -57,6 +57,7 @@ namespace BExIS.IO.Transform.Output
         private List<DataTuple> dataTuples = new List<DataTuple>();
 
         private uint[] styleIndexArray = new uint[6];
+        private List<StyleIndexStruct> styleIndex = new List<StyleIndexStruct>();
 
         private WorkbookPart workbookPart;
         private WorksheetPart worksheetPart;
@@ -154,6 +155,8 @@ namespace BExIS.IO.Transform.Output
             {
                 DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
 
+              
+
                 string message = "row :" + rowIndex + "column:" + columnIndex;
                 Debug.WriteLine(message);
 
@@ -161,7 +164,7 @@ namespace BExIS.IO.Transform.Output
 
                 Cell cell = new Cell();
                 cell.CellReference = cellRef;
-                cell.StyleIndex = getExcelStyleIndex(dataAttribute.DataType, styleIndexArray);
+                cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(dataAttribute.DataType, styleIndex);
                 //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
                 //cell.CellValue = new CellValue(variableValue.Value.ToString());
 
@@ -198,8 +201,29 @@ namespace BExIS.IO.Transform.Output
                         {
                             if (value.ToString() != "")
                             {
-                                DateTime dt = Convert.ToDateTime(value.ToString());
-                                cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                                DateTime dt;
+                                if (dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
+                                {
+                                    DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+                                    if (!string.IsNullOrEmpty(pattern.StringPattern))
+                                    {
+                                        IOUtility.ExportDateTimeString(value.ToString(), pattern.StringPattern, out dt);
+                                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                                    }
+                                    else
+                                    {
+                                        if(IOUtility.IsDate(value.ToString(), out dt))
+                                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                                    }
+
+                                }
+                                else
+                                {
+                                    if(IOUtility.IsDate(value.ToString(),out dt))
+                                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                                }
+
+                               
                             }
                         }
                         catch (Exception ex)
@@ -235,7 +259,7 @@ namespace BExIS.IO.Transform.Output
             string type = value.GetType().Name;
 
             Cell cell = new Cell();
-            cell.StyleIndex = getExcelStyleIndex(type, styleIndexArray);
+            cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(type, styleIndex);
 
             CellValues cellValueType = getExcelType(type);
 
@@ -262,8 +286,11 @@ namespace BExIS.IO.Transform.Output
 
                     if (value.ToString() != "")
                     {
-                        DateTime dt = Convert.ToDateTime(value.ToString());
-                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                        DateTime dt;
+                        if (IOUtility.IsDate(value.ToString(), out dt))
+                        {
+                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                        }
                     }
 
                 }
@@ -345,6 +372,7 @@ namespace BExIS.IO.Transform.Output
                     dataFile.WorkbookPart.Workbook.Save();
                     dataStructureFile.Dispose();
                     dataFile.Dispose();
+            
 
                 }
                 catch (Exception ex)
@@ -681,107 +709,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="spreadsheetDocument"></param>
         private void generateStyle(SpreadsheetDocument spreadsheetDocument)
         {
-            CellFormats cellFormats = spreadsheetDocument.WorkbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
-            //number 0,00
-            CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndexArray[0] = (uint)cellFormats.Count++;
-            //number 0
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)1U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndexArray[1] = (uint)cellFormats.Count++;
-            //text
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndexArray[2] = (uint)cellFormats.Count++;
-
-            //datetime
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)22U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndexArray[3] = (uint)cellFormats.Count++;
-
-            //date
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndexArray[4] = (uint)cellFormats.Count++;
-
-            //time
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)19U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndexArray[5] = (uint)cellFormats.Count++;
-        }
-
-        private uint getExcelStyleIndex(string systemType, uint[] styleIndex)
-        {
-            if (systemType == "Double" || systemType == "Decimal")
-                return styleIndex[0];
-            if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64")
-                return styleIndex[1];
-            if (systemType == "Char" || systemType == "String")
-                return styleIndex[2];
-            if (systemType == "DateTime")
-                return styleIndex[3];
-            if (systemType == "Boolean")
-                return styleIndex[2];
-
-            return styleIndex[2];
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="styleIndex"></param>
-        /// <param name="systemType"></param>
-        /// <returns></returns>
-        private uint getExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, uint[] styleIndex)
-        {
-
-            string systemType = dataType.SystemType;
-
-            if (systemType == "Double" || systemType == "Decimal")
-                return styleIndex[0];
-            if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64")
-                return styleIndex[1];
-            if (systemType == "Char" || systemType == "String")
-                return styleIndex[2];
-
-            if (systemType == "Boolean")
-                return styleIndex[2];
-
-            //for time and date only
-            if (dataType.Extra != null)
-            {
-                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
-
-                //date
-                if (systemType == "DateTime" && displayPattern.Name.ToLower().Contains("date"))
-                    return styleIndex[4];
-
-                //time
-                if (systemType == "DateTime" &&
-                (displayPattern.Name.ToLower().Equals("time") ||
-                displayPattern.Name.ToLower().Equals("time 12h")))
-                    return styleIndex[5];
-            }
-
-            if (systemType == "DateTime")
-                return styleIndex[3];
-
-            return styleIndex[2];
+            ExcelHelper.UpdateStylesheet(spreadsheetDocument.WorkbookPart.WorkbookStylesPart.Stylesheet, out styleIndex);
         }
 
         /// <summary>

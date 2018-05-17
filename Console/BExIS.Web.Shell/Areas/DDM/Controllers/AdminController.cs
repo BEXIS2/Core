@@ -232,8 +232,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
             ISearchDesigner sd = GetSearchDesigner();
-            sd.Reload();
-
+            try
+            {
+                sd.Reload();
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", ex);
+            }
             //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
             //((SearchProvider)provider).RefreshIndex();

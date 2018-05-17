@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
@@ -193,7 +194,18 @@ namespace BExIS.IO.Transform.Input
                 // maybee needs to convert into the default datetime culture format
                 if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("DateTime"))
                 {
-                    value = IOUtility.ConvertDateToCulture(row[i]);
+                    Dlm.Entities.DataStructure.DataType dataType = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType;
+
+                    if (dataType != null && dataType.Extra != null)
+                    {
+                        DataTypeDisplayPattern dp = DataTypeDisplayPattern.Materialize(dataType.Extra);
+                        if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
+                        else value = IOUtility.ConvertDateToCulture(row[i]);
+                    }
+                    else
+                    {
+                        value = IOUtility.ConvertDateToCulture(row[i]);
+                    }
                 }
                 else
                 {
@@ -433,7 +445,15 @@ namespace BExIS.IO.Transform.Input
         /// <returns></returns>
         private ValueValidationManager createValueValidationManager(string varName, string dataType, bool optional, DataAttribute variable)
         {
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal);
+            string pattern = "";
+
+            if (variable != null && variable.DataType != null && variable.DataType.Extra!=null)
+            {
+                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(variable.DataType.Extra);
+                if (displayPattern != null) pattern = displayPattern.StringPattern;
+            }
+
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern);
 
             return vvm;
         }
