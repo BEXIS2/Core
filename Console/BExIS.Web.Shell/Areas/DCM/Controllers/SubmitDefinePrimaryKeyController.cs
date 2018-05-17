@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -117,7 +118,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView(model);
         }
 
-        //[MeasurePerformance]
+        [MeasurePerformance]
         public ActionResult CheckPrimaryKeys(object[] data)
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];

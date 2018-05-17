@@ -695,6 +695,24 @@ namespace BExIS.IO.Transform.Output
             return newDt;
         }
 
+        public static void ClearTempDirectory()
+        {
+            string path = Path.Combine(AppConfiguration.DataPath,"Datasets", "Temp");
+            if (Directory.Exists(path))
+            {
+                System.IO.DirectoryInfo di = new DirectoryInfo(path);
+
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+        }
+
         #endregion
     }
 }

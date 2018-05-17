@@ -700,9 +700,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             }
                                             //return temp;
                                         }
-                                        //model.Validated = true;
-                                        Stopwatch dbTimer = Stopwatch.StartNew();
-
+  
                                         if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
                                             if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
@@ -733,8 +731,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             }
                                         }
 
-                                        dbTimer.Stop();
-                                        Debug.WriteLine(" db time" + dbTimer.Elapsed.TotalSeconds.ToString());
 
                                     } while (rows.Count() > 0 || inputWasAltered == true);
 
@@ -951,6 +947,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        [MeasurePerformance]
         private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion)
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];

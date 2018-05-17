@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Vaiona.Logging.Aspects;
 
 /// <summary>
 ///
@@ -200,6 +201,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
+        [MeasurePerformance]
         public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, int packageSize)
         {
 

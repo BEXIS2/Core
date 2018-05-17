@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
@@ -215,7 +216,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             Session["Columns"] = columns.Replace("ID", "").Split(',');
 
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+            //Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
 
             return null;
         }
@@ -291,7 +292,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         [GridAction(EnableCustomBinding = true)]
         //[MeasurePerformance]
-        public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
+        public ActionResult _CustomPrimaryDataBinding(GridCommand command, string columns, int datasetID)
         {
             GridModel model = new GridModel();
             Session["Filter"] = command;
@@ -304,11 +305,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
-                    // commented by Javad. Now the new API is called
-                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
-                    //    command.PageSize);
-                    //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                    DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, command.Page - 1, command.PageSize);
+                    FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
+                    OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                 
+                    //ProjectionExpression projection;
+
+                    DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, filter, orderBy, null, command.Page - 1, command.PageSize);
 
                     Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
@@ -353,12 +355,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        String[] visibleColumns = null;
-
-                        if (Session["Columns"] != null)
-                            visibleColumns = (String[])Session["Columns"];
-
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv", visibleColumns);
+                        DataTable datatable = GetFilteredData(id);
+                        path = ioOutputDataManager.GenerateAsciiFile( "temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -409,12 +407,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        String[] visibleColumns = null;
-
-                        if (Session["Columns"] != null)
-                            visibleColumns = (String[])Session["Columns"];
-
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv", visibleColumns);
+                        DataTable datatable = GetFilteredData(id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -451,6 +445,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 finally
                 {
                     datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
                 }
             }
             else
@@ -479,15 +475,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
                         datasetVersion.Id);
 
+                    OutputDataManager outputDataManager = new OutputDataManager();
+
+
                     // if filter selected
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
 
-                        //ToDo filter datatuples
+                        DataTable datatable = GetFilteredData(id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
+                        //return File(path, "text/csv", title + ext);
 
                         #endregion generate a subset of a dataset
                     }
@@ -495,7 +496,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        OutputDataManager outputDataManager = new OutputDataManager();
                         path = outputDataManager.GenerateExcelFile(id, title);
                         LoggerFactory.LogCustom(message);
                     }
@@ -539,6 +539,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
                         datasetVersion.Id);
 
+                    OutputDataManager outputDataManager = new OutputDataManager();
+
                     // if filter selected
                     if (filterInUse())
                     {
@@ -546,8 +548,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         //ToDo filter datatuples
 
-                        OutputDataManager ioOutputDataManager = new OutputDataManager();
-                        path = ioOutputDataManager.GenerateExcelFile(id, title);
+                        DataTable datatable = GetFilteredData(id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id);
+
                         LoggerFactory.LogCustom(message);
 
                         return File(path, "application/xlsm", title + ext);
@@ -558,7 +561,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        OutputDataManager outputDataManager = new OutputDataManager();
                         path = outputDataManager.GenerateExcelFile(id, title);
                         LoggerFactory.LogCustom(message);
 
@@ -585,6 +587,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 finally
                 {
                     datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
                 }
             }
             else
@@ -616,12 +620,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        String[] visibleColumns = null;
-
-                        if (Session["Columns"] != null)
-                            visibleColumns = (String[])Session["Columns"];
-
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain", visibleColumns);
+                        DataTable datatable = GetFilteredData(id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
@@ -675,16 +675,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        String[] visibleColumns = null;
-
-                        if (Session["Columns"] != null)
-                            visibleColumns = (String[])Session["Columns"];
-
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain", visibleColumns);
+                        DataTable datatable = GetFilteredData(id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
-                        return File(path, "text/csv", title + ext);
+                        return File(path, "text/plain", title + ext);
 
                         #endregion generate a subset of a dataset
                     }
@@ -717,6 +713,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 finally
                 {
                     datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
                 }
             }
             else
@@ -758,111 +756,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return false;
         }
 
-        private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
+        private DataTable GetFilteredData( long datasetId)
         {
-            DatasetManager datasetManager = new DatasetManager();
 
+            DatasetManager datasetManager = new DatasetManager();
             try
             {
 
-                List<AbstractTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
+                GridCommand command = null;
+                string[] columns = null;
 
-                if (Session["Filter"] != null)
-                {
-                    GridCommand command = (GridCommand)Session["Filter"];
+                if (Session["Filter"] != null) command = (GridCommand)Session["Filter"];
 
-                    List<AbstractTuple> dataTupleList = datatuples;
+                if (Session["Columns"] != null) columns = (string[])Session["Columns"];
 
-                    if (command.FilterDescriptors.Count > 0)
-                    {
-                        foreach (IFilterDescriptor filter in command.FilterDescriptors)
-                        {
-                            var test = filter;
+                FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
+                OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
 
-                            // one filter is set
-                            if (filter.GetType() == typeof(FilterDescriptor))
-                            {
-                                FilterDescriptor filterDescriptor = (FilterDescriptor)filter;
+                ProjectionExpression projection = GridHelper.Convert(columns);
 
-                                // get id as long from filtername
-                                Regex r = new Regex("(\\d+)");
-                                long id = Convert.ToInt64(r.Match(filterDescriptor.Member).Value);
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null);
 
-                                var list = from datatuple in dataTupleList
-                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                           where GridHelper.ValueComparion(val, filterDescriptor.Operator, filterDescriptor.Value)
-                                           select datatuple;
-
-                                dataTupleList = list.ToList();
-                            }
-                            else
-                            // more than one filter is set
-                            if (filter.GetType() == typeof(CompositeFilterDescriptor))
-                            {
-                                CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
-
-                                List<AbstractTuple> temp = new List<AbstractTuple>();
-
-                                foreach (IFilterDescriptor f in filterDescriptor.FilterDescriptors)
-                                {
-                                    if ((FilterDescriptor)f != null)
-                                    {
-                                        FilterDescriptor fd = (FilterDescriptor)f;
-                                        // get id as long from filtername
-                                        Regex r = new Regex("(\\d+)");
-                                        long id = Convert.ToInt64(r.Match(fd.Member).Value);
-
-                                        var list = from datatuple in dataTupleList
-                                                   let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                                   where GridHelper.ValueComparion(val, fd.Operator, fd.Value)
-                                                   select datatuple;
-
-                                        //temp  = list.Intersect<AbstractTuple>(temp as IEnumerable<AbstractTuple>).ToList();
-                                        dataTupleList = list.ToList();
-                                    }
-                                }
-
-                                //dataTupleList = temp;
-                            }
-                        }
-                    }
-
-                    if (command.SortDescriptors.Count > 0)
-                    {
-                        foreach (SortDescriptor sort in command.SortDescriptors)
-                        {
-                            string direction = sort.SortDirection.ToString();
-
-                            // get id as long from filtername
-                            Regex r = new Regex("(\\d+)");
-                            long id = Convert.ToInt64(r.Match(sort.Member).Value);
-
-                            if (direction.Equals("Ascending"))
-                            {
-                                var list = from datatuple in dataTupleList
-                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                           orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) ascending
-                                           select datatuple;
-
-                                dataTupleList = list.ToList();
-                            }
-                            else
-                            if (direction.Equals("Descending"))
-                            {
-                                var list = from datatuple in dataTupleList
-                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                           orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) descending
-                                           select datatuple;
-
-                                dataTupleList = list.ToList();
-                            }
-                        }
-                    }
-
-                    return dataTupleList;
-                }
-
-                return null;
+                return table;
             }
             finally
             {
@@ -1098,9 +1013,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return options;
         }
 
-        #endregion helper
-
-        #region helper
 
         public string GetUsernameOrDefault()
         {
