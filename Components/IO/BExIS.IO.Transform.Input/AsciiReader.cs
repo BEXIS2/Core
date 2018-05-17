@@ -450,7 +450,7 @@ namespace BExIS.IO.Transform.Input
                             dsdIsOk = ValidateDatastructure(line, seperator);
                         }
 
-                        if (dsdIsOk && index >= this.Info.Data)
+                        if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line))
                         {
                             this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(rowToList(line, seperator), index)).ToList();
                         }

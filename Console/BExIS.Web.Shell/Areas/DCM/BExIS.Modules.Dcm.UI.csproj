@@ -450,7 +450,9 @@
     <Content Include="Content\Images\help\plus.png" />
     <Content Include="Content\Images\help\primary_key.png" />
     <Content Include="Content\Images\help\push_big_file.png" />
+    <Content Include="Content\Images\help\read_xsd.png" />
     <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\select_xsd.png" />
     <Content Include="Content\Images\help\set_xsd_parameters.png" />
     <Content Include="Content\Images\help\summary_xsd.png" />
     <Content Include="Content\Images\help\upload_data.png" />
@@ -584,6 +586,10 @@
     <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
+      <Name>BExIS.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>

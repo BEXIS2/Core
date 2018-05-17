@@ -1,6 +1,8 @@
 ﻿using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Helpers;
+using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -39,6 +41,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
             return View();
+        }
+
+        public ActionResult DTTest()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                DateTime dt = DateTime.FromOADate(i+1);
+
+
+                Debug.WriteLine(i + " -> " + DateTime.FromOADate(i).ToString() + " "+i+"+1-> " + DateTime.FromOADate(i + 1).ToString()); 
+            }
+
+            Debug.WriteLine("Leap Year");
+
+            DateTime j1Start = new DateTime(1900, 1, 1, 0, 0, 0);
+            DateTime j1End = new DateTime(1900, 12, 31, 23, 59, 59);
+
+            DateTime j2Start = new DateTime(1905, 1, 1, 0, 0, 0);
+            DateTime j2End = new DateTime(1905, 12, 31, 23, 59, 59);
+
+            TimeSpan j1TimeSpan =  j1End.Subtract(j1Start);
+            TimeSpan j2TimeSpan =  j2End.Subtract(j2Start);
+
+            int diff = TimeSpan.Compare(j1TimeSpan, j2TimeSpan);
+
+            return View("Index");
         }
     }
 }
