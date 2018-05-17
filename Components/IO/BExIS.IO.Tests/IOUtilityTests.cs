@@ -54,18 +54,18 @@ namespace BExIS.IO.Tests
         {
             foreach (var dt in DateTimeCases)
             {
-                
-                string result = IOUtility.ConvertDate(dt.InputDateTimeString, dt.Pattern, dt.CultureInfo);
+                DateTime result;
+                IOUtility.ConvertToDate(dt.InputDateTimeString, dt.Pattern,out result, dt.CultureInfo);
 
                 if (dt.ItMatch)
                 {
-                    result.Should().NotBeNull("can´t convert : " + dt.InputDateTimeString + " with pattern:" + dt.Pattern);
-                    result.Should().Match(dt.OutputDateTimeString, "not match :" + result + " - " + dt.OutputDateTimeString);
+                    result.ToString(new CultureInfo("en-US", false)).Should().NotBeNull("can´t convert : " + dt.InputDateTimeString + " with pattern:" + dt.Pattern);
+                    result.ToString(new CultureInfo("en-US", false)).Should().Match(dt.OutputDateTimeString, "not match :" + result + " - " + dt.OutputDateTimeString);
                 }
                 else
                 {
-                    if (result != null) result.Should().NotMatch(dt.OutputDateTimeString, "should not match :" + result + " - " + dt.OutputDateTimeString);
-                    else result.Should().BeNullOrEmpty();
+                    if (result != null) result.ToString(new CultureInfo("en-US", false)).Should().NotMatch(dt.OutputDateTimeString, "should not match :" + result + " - " + dt.OutputDateTimeString);
+                    else result.ToString(new CultureInfo("en-US", false)).Should().BeNullOrEmpty();
                 }
             }
         }
