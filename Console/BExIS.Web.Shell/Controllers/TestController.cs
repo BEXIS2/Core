@@ -94,8 +94,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //[RecordCall]
         //[LogExceptions]
-        [Diagnose]
-        [MeasurePerformance]
+
         public ActionResult Index(Int64 id = 0)
         {
             ViewBag.Title = PresentationModel.GetGenericViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");

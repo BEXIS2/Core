@@ -167,7 +167,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         // original version of finishupload
-        [MeasurePerformance]
+       
         public List<Error> FinishUpload2(TaskManager taskManager)
         {
             DataStructureManager dsm = new DataStructureManager();
@@ -466,7 +466,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        [MeasurePerformance]
+        
         //temporary solution: norman :FinishUpload2
         public List<Error> FinishUpload(TaskManager taskManager)
         {

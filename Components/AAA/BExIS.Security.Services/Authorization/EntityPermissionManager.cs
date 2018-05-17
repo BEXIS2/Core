@@ -39,6 +39,11 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public IEnumerable<long> GetKeys<T>(string name, string v, Type type, RightType delete)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Create(Subject subject, Entity entity, long key, int rights)
         {
             using (var uow = this.GetUnitOfWork())
