@@ -1026,6 +1026,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
         {
+            ViewData["ShowOptional"] = true;
+
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             TaskManager.SetCurrent(TaskManager.Get(stepId));
 
