@@ -162,7 +162,9 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="ATO.Manifest.xml" />
+    <Content Include="ATO.Manifest.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
@@ -185,6 +187,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\Information.cshtml" />
     <Content Include="Views\Home\Documentation.cshtml" />
+    <Content Include="Views\Home\ExternalCalendar.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

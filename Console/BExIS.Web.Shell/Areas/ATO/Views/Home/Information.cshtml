@@ -7,14 +7,14 @@
 <!-- Side navigation -->
 <div class="sidenav">
     <ul class="nav navbar-nav">
-        @foreach (var category in Model.CategoryModels)
+    @foreach (var category in Model.CategoryModels)
     {
             <li>
                 <a href=#@category.Name>
                     @category.Name
                 </a>
             </li>
-            }
+     }
     </ul>
     </div>
 
@@ -25,5 +25,5 @@
     <div id="infoContainer">
         <div id="documentationContainer">
             @Html.Partial("Documentation", Model.CategoryModels)
-        </div>
+       </div>
     </div>

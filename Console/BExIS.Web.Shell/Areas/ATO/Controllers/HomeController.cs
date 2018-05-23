@@ -28,6 +28,11 @@ namespace BExIS.Modules.Ato.UI.Controllers
             return View(model);
         }
 
+        public ActionResult Calendar()
+        {
+            return View("ExternalCalendar");
+        }
+
         public ActionResult Download(string fileName)
         {
             string dataPath = AppConfiguration.DataPath;

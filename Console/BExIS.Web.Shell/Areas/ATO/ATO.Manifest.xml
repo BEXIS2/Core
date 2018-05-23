@@ -15,7 +15,12 @@
 						title="General Information" description="atto startseite" icon=""
 						controller="home" action="information"
 						extends="./menubarRoot/Information" />
-		
+    
+    <Export tag="menubar" id="calendar" order="1"
+						title="Calendar" description="atto calendar" icon=""
+						controller="home" action="calendar"
+						extends="./menubarRoot/Information" />
+    
 	<!-- Settings Example-->
 		<!--<Export tag="settings" id="manageMetadata" order="1"
 						title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
