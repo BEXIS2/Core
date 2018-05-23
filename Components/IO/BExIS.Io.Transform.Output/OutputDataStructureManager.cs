@@ -383,7 +383,7 @@ namespace BExIS.IO.Transform.Output
 
     }
 
-    struct StyleIndexStruct
+    public struct StyleIndexStruct
     {
         public string Name { get; set; }
         public uint Index { get; set; }
@@ -549,6 +549,7 @@ namespace BExIS.IO.Transform.Output
             //dataStructureFile = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), true);
 
 
+
             foreach (OpenXmlPart part in template.GetPartsOfType<OpenXmlPart>())
             {
                 OpenXmlPart newPart = dataStructureFile.AddPart<OpenXmlPart>(part);
@@ -556,50 +557,11 @@ namespace BExIS.IO.Transform.Output
 
             template.Close();
 
-            // get worksheet
+            //uint iExcelIndex = 164;
             List<StyleIndexStruct> styleIndex = new List<StyleIndexStruct>();
-            CellFormats cellFormats = dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
-            //number 0,00
-            CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndex.Add(new StyleIndexStruct() { Name = "Decimal", Index = (uint)cellFormats.Count++, DisplayPattern = null });
-            //number 0
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)1U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndex.Add(new StyleIndexStruct() { Name = "Number", Index = (uint)cellFormats.Count++, DisplayPattern = null });
-            //text
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndex.Add(new StyleIndexStruct() { Name = "Text", Index = (uint)cellFormats.Count++, DisplayPattern = null });
-            //DateTime
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)22U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndex.Add(new StyleIndexStruct() { Name = "DateTime", Index = (uint)cellFormats.Count++, DisplayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime) && p.Name.Equals("DateTime")).FirstOrDefault() });
-            //Date
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndex.Add(new StyleIndexStruct() { Name = "Date", Index = (uint)cellFormats.Count++, DisplayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime) && p.Name.Equals("Date")).FirstOrDefault() });
-            //Time
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)21U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
-            cellFormat.Protection = new Protection();
-            cellFormat.Protection.Locked = false;
-            cellFormats.Append(cellFormat);
-            styleIndex.Add(new StyleIndexStruct() { Name = "Time", Index = (uint)cellFormats.Count++, DisplayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime) && p.Name.Equals("Time")).FirstOrDefault() });
+            ExcelHelper.UpdateStylesheet(dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet,out styleIndex);
 
             Worksheet worksheet = dataStructureFile.WorkbookPart.WorksheetParts.First().Worksheet;
-
-
-
             List<Row> rows = GetRows(worksheet, 1, 11);
 
             List<Variable> variables = this.GetUnitOfWork().GetReadOnlyRepository<Variable>()
@@ -632,7 +594,7 @@ namespace BExIS.IO.Transform.Output
                     {
                         CellReference = cellRef,
                         DataType = CellValues.String,
-                        StyleIndex = getExcelStyleIndex(dataAttribute.DataType, styleIndex),
+                        StyleIndex = ExcelHelper.GetExcelStyleIndex(dataAttribute.DataType, styleIndex),
                         CellValue = new CellValue("")
                     };
                     rows.ElementAt(1).AppendChild(cell);
@@ -804,45 +766,7 @@ namespace BExIS.IO.Transform.Output
             return CellValues.SharedString;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="systemType"></param>
-        /// <param name="styleIndex"></param>
-        /// <returns></returns>
-        private uint getExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, List<StyleIndexStruct> styleIndex)
-        {
-            if (dataType.SystemType == DataTypeCode.Double.ToString() || dataType.SystemType == DataTypeCode.Decimal.ToString())
-                return styleIndex.Where(p => p.Name.Equals("Decimal")).FirstOrDefault().Index;
-            if (dataType.SystemType == DataTypeCode.Int16.ToString() || dataType.SystemType == DataTypeCode.Int32.ToString() || dataType.SystemType == DataTypeCode.Int64.ToString() || dataType.SystemType == DataTypeCode.UInt16.ToString() || dataType.SystemType == DataTypeCode.Int32.ToString() || dataType.SystemType == DataTypeCode.Int64.ToString())
-                return styleIndex.Where(p => p.Name.Equals("Number")).FirstOrDefault().Index;
-            if (dataType.SystemType == DataTypeCode.String.ToString() || dataType.SystemType == DataTypeCode.Char.ToString())
-                return styleIndex.Where(p => p.Name.Equals("Text")).FirstOrDefault().Index;
-            if (dataType.SystemType == DataTypeCode.DateTime.ToString())
-            {
-                if (dataType.Extra != null)
-                {
-                    if (DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateTimeIso" && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
-                    {
-                        return styleIndex.Where(p => p.Name.Equals("DateTime")).FirstOrDefault().Index;
-                    }
-                    if ((DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateIso" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateUs" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateUk" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateEu") && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
-                    {
-                        return styleIndex.Where(p => p.Name.Equals("Date")).FirstOrDefault().Index;
-                    }
-                    if (DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "Time" && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
-                    {
-                        return styleIndex.Where(p => p.Name.Equals("Time")).FirstOrDefault().Index;
-                    }
-                }
-                return styleIndex.Where(p => p.Name.Equals("DateTime")).FirstOrDefault().Index;
-            }
-            if (dataType.SystemType == DataTypeCode.Boolean.ToString())
-                return styleIndex.Where(p => p.Name.Equals("Text")).FirstOrDefault().Index;
-            return styleIndex.Where(p => p.Name.Equals("Text")).FirstOrDefault().Index;
-        }
+
 
         /// <summary>
         /// 

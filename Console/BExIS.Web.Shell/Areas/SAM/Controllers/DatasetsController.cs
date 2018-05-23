@@ -6,6 +6,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -218,5 +219,80 @@ namespace BExIS.Modules.Sam.UI.Controllers
             ViewBag.VersionId = id;
             return View(versions);
         }
+
+        public ActionResult FlipDateTime(long id, long variableid)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            
+            try
+            {
+                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(id);
+                IEnumerable<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(dsv);
+
+                foreach (var tid in datatupleIds)
+                {
+                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(tid);
+                    dataTuple.Materialize();
+                    bool needUpdate = false;
+
+                    foreach (var vv in dataTuple.VariableValues)
+                    {
+                        string systemType = vv.DataAttribute.DataType.SystemType;
+                        if (systemType.Equals(typeof(DateTime).Name) && vv.VariableId.Equals(variableid))
+                        {
+                            string value = vv.Value.ToString();
+                            vv.Value = flip(value,out needUpdate);
+
+
+                        }
+                    }
+
+                    if (needUpdate)
+                    {
+                        dataTuple.Dematerialize();
+                        datasetManager.UpdateDataTuple(dataTuple);
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+        private string flip(string dateTime, out bool needUpdate)
+        {
+            string newDt = "";
+
+            DateTime dt;
+
+            if(DateTime.TryParse(dateTime, new CultureInfo("en-us"),DateTimeStyles.NoCurrentDateDefault,out dt))
+            {
+                int day = dt.Day;
+                int month = dt.Month;
+
+                if (day < 13)
+                {
+                    needUpdate = true;
+                    //1/1/2017 12:00:00 AM
+                    return day + "/" + month + "/" + dt.Year + " " + dt.TimeOfDay;
+
+                }
+            }
+
+            needUpdate = false;
+
+            return dateTime;
+        }
+        
     }
 }

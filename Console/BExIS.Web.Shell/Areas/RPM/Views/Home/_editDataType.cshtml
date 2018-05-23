@@ -63,18 +63,18 @@
                             {
                                 if (Model.pattern != null)
                                 {
-                                    if (Model.pattern.Systemtype == dtp.Systemtype && Model.pattern.Name == dtp.Name && Model.pattern.StringPattern == dtp.StringPattern && Model.pattern.RegexPattern == dtp.RegexPattern)
+                                    if (Model.pattern.Systemtype == dtp.Systemtype && Model.pattern.Name == dtp.Name && Model.pattern.DisplayPattern == dtp.DisplayPattern && Model.pattern.RegexPattern == dtp.RegexPattern)
                                 {
-                                    <option selected="selected" value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                    <option selected="selected" value="@dtp.Name" title="@dtp.DisplayPattern">@dtp.DisplayPattern</option>
                                 }
                                 else
                                 {
-                                    <option value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                    <option value="@dtp.Name" title="@dtp.DisplayPattern">@dtp.DisplayPattern</option>
                                 }
                             }
                                 else
                                 {
-                                    <option value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                    <option value="@dtp.Name" title="@dtp.DisplayPattern">@dtp.DisplayPattern</option>
                                 }
                             }
                         </select>

@@ -494,28 +494,8 @@ namespace BExIS.IO.Transform.Output
                         {
                             DateTime dateTime;
 
-                            if (DateTime.TryParse(tmp, out dateTime))
-                            {
-                                return dateTime.ToString(format);
-                            }
-
-                            if (DateTime.TryParse(tmp, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
-                            {
-                                return dateTime.ToString(format);
-                            }
-
-                            if (DateTime.TryParse(tmp, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
-                            {
-                                return dateTime.ToString(format);
-                            }
-
-                            if (DateTime.TryParse(tmp, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
-                            {
-                                return dateTime.ToString(format);
-                            }
-
-                            return tmp;
-                            ;
+                            return IOUtility.ExportDateTimeString(value.ToString(), format, out dateTime);
+                            
                         }
                     default: return tmp;
                 }
