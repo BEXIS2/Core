@@ -325,38 +325,50 @@
                     }
                 </td>
                 <td class="metadataAttributeOption">
-                    @Html.ValidationMessageFor(m => m.Value)
-                    @if (Model.MaxCardinality > 1 && !locked)
-                    {
-                        <table id="attributeOptionTable">
-                            <tr>
+
+                    <table id="attributeOptionTable">
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(Model.Discription))
+                                {
+                                    <button type="button" title="@Model.Discription" class="bx-function bx-disabled fa fa-info"></button>
+                                }
+
+                            </td>
+
+
+                            @Html.ValidationMessageFor(m => m.Value)
+                            @if (Model.MaxCardinality > 1 && !locked)
+                            {
+
                                 <td><button id="@idAdd" type="button" value="Add" name="Add" class="bx-function bx-add" onclick="OnClickAdd(this, @Model.MaxCardinality)"></button></td>
                                 <td><button id="@idRemove" type="button" value="Remove" name="Remove" class="bx-function bx-delete" onclick="OnClickRemove(this)"></button></td>
                                 <td>
-                                    @if (!Model.last)
-                                    {
-                                        <button id="@idDown" type="button" value="Down" name="Down" class="bx-function bx-down" onclick="OnClickDown(this)"></button>
-                                    }
-                                    else
-                                    {
-                                        <button id="@idDown" type="button" value="Down" name="Down" class="bx-function bx-down bx-disabled" disabled></button>
-                                    }
+                                 @if (!Model.last)
+                                {
+                                    <button id="@idDown" type="button" value="Down" name="Down" class="bx-function bx-down" onclick="OnClickDown(this)"></button>
+                                }
+                                else
+                                {
+                                    <button id="@idDown" type="button" value="Down" name="Down" class="bx-function bx-down bx-disabled" disabled></button>
+                                }
 
                                 </td>
                                 <td>
-                                    @if (!Model.first)
-                                    {
-                                        <button id="@idUp" type="button" value="Up" name="Up" class="bx-function bx-up" onclick="OnClickUp(this)"></button>
-                                    }
-                                    else
-                                    {
-                                        <button id="@idUp" type="button" value="Up" name="Up" class="bx-function bx-up bx-disabled" disabled></button>
-                                    }
+                                @if (!Model.first)
+                                {
+                                    <button id="@idUp" type="button" value="Up" name="Up" class="bx-function bx-up" onclick="OnClickUp(this)"></button>
+                                }
+                                else
+                                {
+                                     <button id="@idUp" type="button" value="Up" name="Up" class="bx-function bx-up bx-disabled" disabled></button>
+                                }
 
                                 </td>
-                            </tr>
-                        </table>
-                    }
+
+                            }
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>

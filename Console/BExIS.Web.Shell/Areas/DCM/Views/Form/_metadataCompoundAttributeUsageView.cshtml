@@ -129,8 +129,15 @@
                                         }
                                     </td>
 
-                                }
+                                    
 
+                                }
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.Model.Discription))
+                                    {
+                                        <button type="button" title="@Model.Model.Discription" class="bx-function bx-disabled fa fa-info"></button>
+                                    }
+                                </td>
 
                                 <td>
                                     @if (Model.Model.MinCardinality == 0 && !locked)
