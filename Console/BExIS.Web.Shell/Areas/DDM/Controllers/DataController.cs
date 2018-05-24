@@ -136,6 +136,39 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        public ActionResult DownloadZip(long id, string format, long version = -1)
+        {
+
+
+            long datasetVersionId = 0;
+
+            if (version > -1)
+            {
+                datasetVersionId = version;
+            }
+            else
+            {
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    datasetVersionId = datasetManager.GetDatasetLatestVersionId(id);
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+
+            if (this.IsAccessible("DIM", "Export", "GenerateZip"))
+            {
+
+                return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary()  { { "area","DIM"}, { "id", id }, { "format", format } });
+            }
+
+            return Json(false);
+        }
+
         #region metadata
 
         /// <summary>

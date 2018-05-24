@@ -421,6 +421,7 @@
     <Content Include="Content\2013.2.611\Windows7\slider-v.gif" />
     <Content Include="Content\2013.2.611\Windows7\sprite-vertical.png" />
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
+    <Content Include="Content\bexis-metadata.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -531,6 +532,10 @@
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeUsageViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

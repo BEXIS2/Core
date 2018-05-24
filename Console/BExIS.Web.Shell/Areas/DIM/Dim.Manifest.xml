@@ -42,5 +42,11 @@
                 controller="mapping" action="mapping"
                 extends=""
             />
+
+    <Export tag="internalAction" id="getZipOfVersion" order="1"
+                title="Get a zipfile of a datasetversion" description="" icon=""
+                controller="export" action="GenerateZip"
+                extends=""
+            />
   </Exports>
 </Manifest>

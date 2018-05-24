@@ -111,6 +111,7 @@
     <Compile Include="Config\WebApiConfig.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\QueryableExtensions.cs" />
+    <Compile Include="Extensions\ViewExtentions.cs" />
     <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
     <Compile Include="Helpers\RegExHelper.cs" />
