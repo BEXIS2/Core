@@ -167,6 +167,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region metadata
 
+                    //metadata as xml output
                     XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
                              datasetVersion.Dataset.MetadataStructure.Name);
 
@@ -176,6 +177,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #endregion
 
                     #region primary data
+
                     // check the data sturcture type ...
                     if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
@@ -184,7 +186,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
 
-                        odm.GenerateAsciiFile(id, title, format);
+                        if (format.Contains("excel")) odm.GenerateExcelFile(id, title);
+                        else odm.GenerateAsciiFile(id, title, format);
                     }
 
                     #endregion
