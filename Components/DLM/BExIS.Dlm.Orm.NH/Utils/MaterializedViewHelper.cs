@@ -116,7 +116,8 @@ namespace BExIS.Dlm.Orm.NH.Utils
             {
                 var columnName = row["columnname"].ToString();
                 var columnLabel = row["description"].ToString();
-                table.Columns[columnName].Caption = columnLabel;
+                if(table.Columns.Contains(columnName))
+                    table.Columns[columnName].Caption = columnLabel;
             }
             return table;
         }

@@ -746,11 +746,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (columns != null)
                 {
-                    if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
+                    if ((command != null && (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0)) || columns.Count() > 0)
                     {
                         return true;
-                    }
-                }
+                    }                }
             }
 
             return false;
@@ -764,18 +763,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
 
                 GridCommand command = null;
+                FilterExpression filter = null;
+                OrderByExpression orderBy = null;
                 string[] columns = null;
 
                 if (Session["Filter"] != null) command = (GridCommand)Session["Filter"];
 
                 if (Session["Columns"] != null) columns = (string[])Session["Columns"];
 
-                FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
-                OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                if (command != null)
+                {
+                    filter = GridHelper.Convert(command.FilterDescriptors.ToList());
+                    orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                }
 
                 ProjectionExpression projection = GridHelper.Convert(columns);
 
-                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null);
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection);
 
                 return table;
             }
