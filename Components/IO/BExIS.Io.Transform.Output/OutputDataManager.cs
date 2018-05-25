@@ -201,7 +201,17 @@ namespace BExIS.IO.Transform.Output
         public string GenerateExcelFile(string ns, DataTable table, string title, long dsId)
         {
             ExcelWriter writer = new ExcelWriter();
-            string path = generateDownloadFile(ns, dsId, title, ".xlsm", writer);
+
+            string[] columnNames = table.Columns.Cast<DataColumn>()
+                                 .Select(x => x.Caption)
+                                 .ToArray();
+
+            //get variable ids of the datatable columns
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dsId);
+
+     
+            string path = generateDownloadFile(ns, dsId, title, ".xlsm", writer, columnNames);
             writer.AddDataTuplesToFile(table, path, dsId);
 
             return path;
@@ -318,7 +328,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="ext"></param>
         /// <param name="writer"></param>
         /// <returns></returns>
-        private string generateDownloadFile(string ns, long datastructureId, string title, string ext, DataWriter writer)
+        private string generateDownloadFile(string ns, long datastructureId, string title, string ext, DataWriter writer, string[] columns = null)
         {
             switch (ext)
             {
@@ -332,6 +342,7 @@ namespace BExIS.IO.Transform.Output
                 case ".xlsx":
                 case ".xlsm":
                     ExcelWriter excelwriter = (ExcelWriter)writer;
+                    excelwriter.VisibleColumns = columns;
                     return excelwriter.CreateFile(ns, datastructureId, title, ext);
 
                 // no valid extension given

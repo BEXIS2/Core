@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using DocumentFormat.OpenXml;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 /// <summary>
 ///
 /// </summary>        
@@ -434,6 +436,34 @@ namespace BExIS.IO.Transform.Output
                     dataFile.WorkbookPart.Workbook.Save();
                     dataStructureFile.Dispose();
                     dataFile.Dispose();
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message.ToString());
+                }
+
+                #endregion
+            }
+            else
+            {
+                #region generate file with a subset of the datastructure
+
+                DataStructureManager dsm = new DataStructureManager();
+                dataStructure = dsm.StructuredDataStructureRepo.Get(dataStructureId);
+                try
+                {
+                    
+                    // create temp path
+   
+                    ExcelTemplateProvider excelTemplateProvider = new ExcelTemplateProvider();
+
+                    var ids = GetSubsetOfVariableIds(dataStructure.Variables.ToList(), VisibleColumns);
+
+                    SpreadsheetDocument dataFile = excelTemplateProvider.CreateTemplate(ids, dataStructureId, Path.GetDirectoryName(dataPath),Path.GetFileName(dataPath));
+
+                    dataFile.Dispose();
+                    
 
                 }
                 catch (Exception ex)

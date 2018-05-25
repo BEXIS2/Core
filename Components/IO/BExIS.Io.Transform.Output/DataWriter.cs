@@ -435,6 +435,21 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
+        /// select a subset of the variable ids from a datastructure
+        /// based on a list of variablenames
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="source">full list of variables</param>
+        /// <param name="selected">variablenames</param>
+        /// <returns></returns>
+        protected List<long> GetSubsetOfVariableIds(List<Variable> source, String[] selected)
+        {
+            return source.Where(p => selected.Contains(p.Label.ToString())).ToList().Select(v => v.Id).ToList();
+        }
+
+
+        /// <summary>
         /// select a subset of the variables from a datastructure
         /// based on a list of variablenames
         /// </summary>
