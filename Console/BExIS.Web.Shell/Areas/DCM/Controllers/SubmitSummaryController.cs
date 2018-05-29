@@ -312,13 +312,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 //Debug.WriteLine("FullTime " + fullTime.Elapsed.TotalSeconds.ToString());
                             }
 
+
                             #endregion
 
                             #region ascii reader
 
 
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                                TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                            if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader();
@@ -649,8 +649,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region ascii reader
 
 
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                                    TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                            if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader();

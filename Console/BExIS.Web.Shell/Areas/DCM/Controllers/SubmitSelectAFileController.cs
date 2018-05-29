@@ -3,6 +3,7 @@ using BExIS.Dcm.Wizard;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -115,7 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
                                     TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
                                     // excel FileStream
-                                    if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xls"))
+                                    if (UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
 
                                         // open FileStream
@@ -127,7 +128,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         Stream.Close();
                                     }
                                     // text ór csv FileStream
-                                    else if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") || TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                                    else if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         // open FileStream
                                         var reader = new AsciiReader();

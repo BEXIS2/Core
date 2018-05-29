@@ -137,8 +137,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         }
 
-                        if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                            TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                        if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
                             AsciiReader reader = new AsciiReader();
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());

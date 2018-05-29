@@ -356,7 +356,7 @@ namespace BExIS.Dcm.UploadWizard
             int packageSize = 1000;
             int position = 1;
 
-            if (ext.Equals(".txt") || ext.Equals(".csv"))
+            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
             {
                 #region csv
                 do
@@ -757,8 +757,10 @@ namespace BExIS.Dcm.UploadWizard
                 return new List<string>()
                     {
                         ".xlsm",
+                        ".xlsx",
                         ".txt",
-                        ".csv"
+                        ".csv",
+                        ".tsv"
                     };
             }
 
@@ -796,6 +798,35 @@ namespace BExIS.Dcm.UploadWizard
             }
 
             return new List<string>();
+        }
+
+        /// <summary>
+        /// returns true if the file is supported 
+        /// "e.g. .csv"
+        /// </summary>
+        /// <param name="extention"></param>
+        /// <returns></returns>
+        public static bool IsSupportedAsciiFile(string extention)
+        {
+            if (extention.Equals(".csv") ||
+            extention.Equals(".tsv") ||
+            extention.Equals(".txt"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsSupportedExcelFile(string extention)
+        {
+            if (extention.Equals(".xls") ||
+            extention.Equals(".xlsx"))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

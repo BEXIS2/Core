@@ -2,6 +2,7 @@
 using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Web.Mvc;
@@ -55,10 +56,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 else
                 {
-                    if (model.Extention.Equals(".txt") || model.Extention.Equals(".csv"))
+                    if (UploadWizardHelper.IsSupportedAsciiFile(model.Extention))
                         TaskManager.Bus[TaskManager.FILE_READER_INFO] = new AsciiFileReaderInfo();
 
-                    if (model.Extention.Equals(".xls"))
+                    if (UploadWizardHelper.IsSupportedExcelFile(model.Extention))
                         TaskManager.Bus[TaskManager.FILE_READER_INFO] = new ExcelFileReaderInfo();
                 }
 
@@ -167,8 +168,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
-            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt") ||
-                TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv"))
+            if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
             {
 
                 AsciiFileReaderInfo info = (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
