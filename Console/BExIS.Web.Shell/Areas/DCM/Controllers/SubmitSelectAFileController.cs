@@ -116,7 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
                                     TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
                                     // excel FileStream
-                                    if (UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
 
                                         // open FileStream
@@ -128,7 +128,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         Stream.Close();
                                     }
                                     // text ór csv FileStream
-                                    else if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    else if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         // open FileStream
                                         var reader = new AsciiReader();

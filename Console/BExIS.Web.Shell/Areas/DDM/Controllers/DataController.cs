@@ -20,6 +20,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
@@ -261,7 +262,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
-                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
 
                         //return PartialView(new ShowPrimaryDataModel());
                     }
@@ -270,7 +271,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         return
                             PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
-                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess));
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess, IOUtility.GetSupportedAsciiFiles()));
                     }
                 }
                 else
@@ -334,13 +335,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
-        public JsonResult PrepareCsvData(long id)
+        public JsonResult PrepareAscii(long id, string ext)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".csv";
                 DatasetManager datasetManager = new DatasetManager();
-
+                string mimetype = MimeMapping.GetMimeMapping(ext);
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
@@ -348,23 +348,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
-                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
-                        datasetVersion.Id);
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
+                                                    datasetVersion.Id,ext);
+
                     // if filter selected
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile( "temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
+
 
                         #endregion generate a subset of a dataset
                     }
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype);
 
                         LoggerFactory.LogCustom(message);
                     }
@@ -386,12 +389,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public ActionResult DownloadAsCsvData(long id)
+        public ActionResult DownloadAscii(long id, string ext)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".csv";
                 DatasetManager datasetManager = new DatasetManager();
+
+                string mimetype = MimeMapping.GetMimeMapping(ext);
 
                 try
                 {
@@ -400,25 +404,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
-                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
-                        datasetVersion.Id);
+                    string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
+                        datasetVersion.Id, ext);
                     // if filter selected
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
-                        return File(path, "text/csv", title + ext);
+                        return File(path, mimetype, title + ext);
 
                         #endregion generate a subset of a dataset
                     }
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype);
 
                         LoggerFactory.LogCustom(message);
 
@@ -429,7 +433,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             );
 
 
-                        return File(path, "text/csv", title + ".csv");
+                        return File(path, mimetype, title + ext);
                     }
                 }
                 catch (Exception ex)
@@ -597,131 +601,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public JsonResult PrepareTxtData(long id)
-        {
-            if (hasUserRights(id, RightType.Read))
-            {
-                string ext = ".txt";
-                DatasetManager datasetManager = new DatasetManager();
-
-                try
-                {
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                    OutputDataManager ioOutputDataManager = new OutputDataManager();
-                    string title = getTitle(writer.GetTitle(id));
-                    string path = "";
-
-                    string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
-                                                    datasetVersion.Id);
-
-                    // if filter selected
-                    if (filterInUse())
-                    {
-                        #region generate a subset of a dataset
-
-                        DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
-
-                        LoggerFactory.LogCustom(message);
-
-
-                        #endregion generate a subset of a dataset
-                    }
-                    else
-                    {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
-
-                        LoggerFactory.LogCustom(message);
-                    }
-
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                catch (Exception ex)
-                {
-                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
-                }
-                finally
-                {
-                    datasetManager.Dispose();
-                }
-            }
-            else
-            {
-                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        public ActionResult DownloadAsTxtData(long id)
-        {
-            if (hasUserRights(id, RightType.Read))
-            {
-                string ext = ".txt";
-                DatasetManager datasetManager = new DatasetManager();
-
-                try
-                {
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                    OutputDataManager ioOutputDataManager = new OutputDataManager();
-                    string title = getTitle(writer.GetTitle(id));
-                    string path = "";
-
-                    string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
-                                                    datasetVersion.Id);
-
-                    // if filter selected
-                    if (filterInUse())
-                    {
-                        #region generate a subset of a dataset
-
-                        DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
-
-                        LoggerFactory.LogCustom(message);
-
-                        return File(path, "text/plain", title + ext);
-
-                        #endregion generate a subset of a dataset
-                    }
-                    else
-                    {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
-
-                        LoggerFactory.LogCustom(message);
-
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
-                            ConfigurationManager.AppSettings["SystemEmail"]
-                            );
-
-
-                        return File(path, "text/plain", title + ".txt");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
-                        ex.Message,
-                        ConfigurationManager.AppSettings["SystemEmail"]
-                        );
-
-                    throw ex;
-                }
-                finally
-                {
-                    datasetManager.Dispose();
-                    //OutputDataManager.ClearTempDirectory();
-
-                }
-            }
-            else
-            {
-                return Content("User has no rights.");
-            }
-        }
 
         public ActionResult SetFullDatasetDownload(bool subset)
         {

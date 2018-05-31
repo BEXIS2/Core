@@ -231,8 +231,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #region excel reader
 
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") || 
-                                UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
+                                IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 int packageSize = 10000;
 
@@ -260,7 +260,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     // open file
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
-                                    if (UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                     
                                         ExcelFileReaderInfo excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
@@ -328,7 +328,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region ascii reader
 
 
-                            if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader();
@@ -557,7 +557,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region excel reader
 
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
-                                UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 int packageSize = 10000;
 
@@ -602,7 +602,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     Stopwatch upload = Stopwatch.StartNew();
 
-                                    if (UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         ExcelFileReaderInfo excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
                                         rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), excelFileReaderInfo, sds, (int)id, packageSize);
@@ -671,7 +671,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region ascii reader
 
 
-                            if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader();
