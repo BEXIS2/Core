@@ -137,6 +137,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         }
 
+                        if (UploadWizardHelper.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                        {
+                            // open FileStream
+                            ExcelReader reader = new ExcelReader();
+                            Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
+                            model.ErrorList = reader.ErrorMessages;
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                            {
+                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                            }
+                            else
+                            {
+                                TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
+                            }
+                        }
+
+
                         if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
                             AsciiReader reader = new AsciiReader();
