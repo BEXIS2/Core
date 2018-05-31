@@ -136,6 +136,12 @@ namespace BExIS.IO.Transform.Output
                         textSeperator = TextSeperator.semicolon;
                         break;
                     }
+                case "text/tsv":
+                    {
+                        ext = ".tsv";
+                        textSeperator = TextSeperator.tab;
+                        break;
+                    }
                 default:
                     {
                         ext = ".txt";

@@ -59,19 +59,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.FILE_READER_INFO))
                 {
-                    if (UploadWizardHelper.IsSupportedAsciiFile(model.Extention))
+                    if (IOUtility.IsSupportedAsciiFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
 
-                    if (UploadWizardHelper.IsSupportedExcelFile(model.Extention))
+                    if (IOUtility.IsSupportedExcelFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
 
                 }
                 else
                 {
-                    if (UploadWizardHelper.IsSupportedAsciiFile(model.Extention))
+                    if (IOUtility.IsSupportedAsciiFile(model.Extention))
                         TaskManager.Bus[TaskManager.FILE_READER_INFO] = new AsciiFileReaderInfo();
 
-                    if (UploadWizardHelper.IsSupportedExcelFile(model.Extention))
+                    if (IOUtility.IsSupportedExcelFile(model.Extention))
                     {
                         TaskManager.Bus[TaskManager.FILE_READER_INFO] = new ExcelFileReaderInfo();
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
@@ -136,10 +136,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.FILE_READER_INFO))
                 {
-                    if (UploadWizardHelper.IsSupportedAsciiFile(model.Extention))
+                    if (IOUtility.IsSupportedAsciiFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
 
-                    if (UploadWizardHelper.IsSupportedExcelFile(model.Extention))
+                    if (IOUtility.IsSupportedExcelFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
                 }
 
@@ -267,7 +267,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
-            if (UploadWizardHelper.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
             {
 
                 AsciiFileReaderInfo info = (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
