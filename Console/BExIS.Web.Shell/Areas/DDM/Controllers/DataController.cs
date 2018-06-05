@@ -257,7 +257,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //
                         //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
                         //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, 0, 100, true);
+
+                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 1, 100);
 
                         Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 

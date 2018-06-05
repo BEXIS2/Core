@@ -128,27 +128,26 @@
 					if (column.ColumnName.ToLower().StartsWith("var"))
 					{
 						visible = true;
-					}
 
+						DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
 
-					DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title)); 
+						string format = "";
 
-					string format = "";
+						if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+						{
+							//string unit = "";
+							//if (dfo.Unit != "None") unit = dfo.Unit;
 
-					if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
-					{
-						//string unit = "";
-						//if (dfo.Unit != "None") unit = dfo.Unit;
+							format = "{0:" + dfo.Format + "}";
 
-						format = "{0:" + dfo.Format +"}";
-
-						columns.Bound(column.DataType, column.ColumnName)
-						   .Title(title).Format(format).Hidden(!visible);
-					}
-					else
-					{
-						columns.Bound(column.DataType, column.ColumnName)
-						   .Title(title).Hidden(!visible);
+							columns.Bound(column.DataType, column.ColumnName)
+							   .Title(title).Format(format).Hidden(!visible);
+						}
+						else
+						{
+							columns.Bound(column.DataType, column.ColumnName)
+							   .Title(title).Hidden(!visible);
+						}
 					}
 				}
 			})
@@ -192,28 +191,28 @@
 
 	function PrimaryData_OnCommand(e) {
 
-	    var grid = $("#PrimaryDataResultGrid").data("tGrid");
+		var grid = $("#PrimaryDataResultGrid").data("tGrid");
 
-	    var columns = grid.columns;
+		var columns = grid.columns;
 
-	    var currentFilter = grid.filterBy;
-	    var currentOrder = grid.orderBy;
+		var currentFilter = grid.filterBy;
+		var currentOrder = grid.orderBy;
 
-	    var visibleColumns ="";
-	    jQuery.each(columns, function (index) {
-		    if (!this.hidden) {
-			    if (visibleColumns != "")
+		var visibleColumns ="";
+		jQuery.each(columns, function (index) {
+			if (!this.hidden) {
+				if (visibleColumns != "")
 
-				    visibleColumns += "," + this.member;
-			    else
-				    visibleColumns = this.member;
-		    }
-	    });
+					visibleColumns += "," + this.member;
+				else
+					visibleColumns = this.member;
+			}
+		});
 
 		$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "ddm" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
 		//alert("set grid");
 		OnDataBound();
-	    })
+		})
 
 		resetAllTelerikIconTitles();
 		addTooltips();
