@@ -1,0 +1,42 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+@model string
+@(Html.Telerik().Grid<FileOrFolderModel>()
+                  .Name("grid_files")
+                  .DataKeys(keys =>
+                  {
+                      keys.Add(m => m.Path);
+                  })
+                  .Columns(columns =>
+                  {
+                  columns.Bound(m => m.Type).Width(60).Filterable(false); // should be an icon based on type and mime
+                  columns.Bound(m => m.Name).Width(250);
+                  columns.Bound(m => m.DisplayName).Width(250);
+                  columns.Bound(m => m.Description).Width(400); // should take a wider width
+                                                                //columns.Command(p => p.Delete());
+                  columns.Template(@<text><button type="button" class="bx bx-grid-function bx-trash"></button></text>)
+                                .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Path #>\" title=\"Delete\"></button>")
+                                .Width(110);
+            })
+.DataBinding(dataBinding => dataBinding
+    .Ajax()
+    .Select("FolderContent_Select", "Files", new { path = Model })
+)
+.Filterable()
+.Pageable(pageable =>
+{
+    pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+    pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+    pageable.Position(GridPagerPosition.Bottom);
+})
+.Sortable(sortable => sortable
+    .OrderBy(orderby => orderby
+        .Add(m => m.DisplayName)
+        .Ascending()
+    )
+)
+.ClientEvents(events =>
+{
+    events.OnDataBound("grid_files_onDataBound");
+})
+)
