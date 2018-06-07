@@ -463,7 +463,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".xlsm";
+                string ext = ".xlsx";
 
                 DatasetManager datasetManager = new DatasetManager();
 
@@ -500,7 +500,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title);
+                        path = outputDataManager.GenerateExcelFile(id, title, false);
                         LoggerFactory.LogCustom(message);
                     }
 
@@ -527,7 +527,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".xlsm";
+                string ext = ".xlsx";
 
                 DatasetManager datasetManager = new DatasetManager();
 
@@ -544,6 +544,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         datasetVersion.Id);
 
                     OutputDataManager outputDataManager = new OutputDataManager();
+                    string mimitype = MimeMapping.GetMimeMapping(ext);
 
                     // if filter selected
                     if (filterInUse())
@@ -553,11 +554,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id, ext);
 
                         LoggerFactory.LogCustom(message);
 
-                        return File(path, "application/xlsm", title + ext);
+                        return File(path, mimitype, title + ext);
 
                         #endregion generate a subset of a dataset
                     }
@@ -565,7 +566,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title);
+                        path = outputDataManager.GenerateExcelFile(id, title, false);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
@@ -574,8 +575,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
-
-                        return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
+                        return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
                     }
                 }
                 catch (Exception ex)
@@ -601,6 +601,149 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        public JsonResult PrepareExcelTemplateData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".xlsm";
+
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    ExcelWriter writer = new ExcelWriter();
+
+                    string title = getTitle(writer.GetTitle(id));
+
+                    string path = "";
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                        datasetVersion.Id);
+
+                    OutputDataManager outputDataManager = new OutputDataManager();
+
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        DataTable datatable = GetFilteredData(id);
+                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
+
+                        LoggerFactory.LogCustom(message);
+
+                        //return File(path, "text/csv", title + ext);
+
+                        #endregion generate a subset of a dataset
+                    }
+
+                    //filter not in use
+                    else
+                    {
+                        path = outputDataManager.GenerateExcelFile(id, title, true);
+                        LoggerFactory.LogCustom(message);
+                    }
+
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message, JsonRequestBehavior.AllowGet);
+
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+            else
+            {
+                return Json("User has no rights.", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult DownloadAsExcelTemplateData(long id)
+        {
+            if (hasUserRights(id, RightType.Read))
+            {
+                string ext = ".xlsm";
+
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    ExcelWriter writer = new ExcelWriter();
+
+                    string title = getTitle(writer.GetTitle(id));
+
+                    string path = "";
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                        datasetVersion.Id);
+
+                    OutputDataManager outputDataManager = new OutputDataManager();
+                    string mimitype = MimeMapping.GetMimeMapping(ext);
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                        //ToDo filter datatuples
+
+                        DataTable datatable = GetFilteredData(id);
+                        path = outputDataManager.GenerateExcelFile(id,title, true, datatable);
+
+                        LoggerFactory.LogCustom(message);
+
+
+
+                        return File(path, mimitype, title + ext);
+
+                        #endregion generate a subset of a dataset
+                    }
+
+                    //filter not in use
+                    else
+                    {
+                        path = outputDataManager.GenerateExcelFile(id, title, true);
+                        LoggerFactory.LogCustom(message);
+
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+
+                        return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        ex.Message,
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
+                    throw ex;
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                    //OutputDataManager.ClearTempDirectory();
+
+                }
+            }
+            else
+            {
+                return Content("User has no rights.");
+            }
+        }
 
         public ActionResult SetFullDatasetDownload(bool subset)
         {
@@ -654,7 +797,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 ProjectionExpression projection = GridHelper.Convert(columns);
 
-                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null);
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection);
+
+                if (projection == null) table.Strip();
+
 
                 return table;
             }

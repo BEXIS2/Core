@@ -49,10 +49,11 @@
 }
 <div id="downloadOptions" style="text-align:left;">
 
-	@if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
-	{
+    @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
+    {
+        <button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
 
-		<button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>
+        <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>
 
         <span class="dropdown">
             <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -69,34 +70,28 @@
             </ul>
         </span>
 
-		@Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")
+        @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")
 
-	}
-	else
-	{
+    }
+    else
+    {
 
-		<button title="Download Excel"
-				name="Download Excel"
-				class="t-button t-state-disabled margin"
-				disabled="disabled">
-			Download Excel
-		</button>
-		<button title="Download Comma Separated"
-				name="Download Comma Separated"
-				class="t-button t-state-disabled margin"
-				disabled="disabled">
-			Download Comma Separated
-		</button>
-		<button title="Download Tab Separated"
-				name="Download Tab Separated"
-				class="t-button t-state-disabled margin"
-				disabled="disabled">
-			Download Tab Separated
-		</button>
-		@*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
-	}
+        <button title="Download Excel"
+                name="Download Excel"
+                class="t-button t-state-disabled margin"
+                disabled="disabled">
+            Download Excel
+        </button>
+        <button title="Download Comma Separated"
+                name="Download Comma Separated"
+                class="t-button t-state-disabled margin"
+                disabled="disabled">
+            Download Text
+        </button>
+        @*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
+    }
 
-	<span id="preloaderContainer" style="float: right"></span>
+    <span id="preloaderContainer" style="float: right"></span>
 </div>
 <br />
 @(Html.Telerik().Grid(Model.Data)
@@ -142,7 +137,8 @@
 					}
 
 
-					DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title)); 
+					DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
+
 
 					string format = "";
 
@@ -270,16 +266,16 @@
 
 	}
 
-    $(".file-type-download-entry").click(function (id) {
+	$(".file-type-download-entry").click(function (id) {
 
-        var ext = $(this).attr("ext");
+		var ext = $(this).attr("ext");
 
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 
 		window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})'+"?ext="+ext;
 
 		$.ajax({
-            url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })'+"?ext=" + ext,
+			url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })'+"?ext=" + ext,
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
@@ -298,10 +294,32 @@
 	})
 
 
+    function downloadExcelTemplate(id) {
+
+        $("#preloaderContainer").preloader(20, "Preparing excel file...");
+        //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+		$.ajax({
+			url: '@Url.Action("PrepareExcelTemplateData", "Data", new { id = @Model.DatasetId })',
+			contentType: 'application/json; charset=utf-8',
+			datatype: 'json',
+			type: "GET",
+			success: function(e) {
+
+				if (e) {
+					window.location = '@Url.Action("DownloadAsExcelTemplateData", "Data", new { id = @Model.DatasetId })';
+				}
+				else {
+					alert(e);
+				}
+
+				$("#preloaderContainer").removePreloader();
+			}
+		})}
+
 	function downloadExcel(id) {
 
-		$("#preloaderContainer").preloader(20, "Preparing excel file...");
-		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+        $("#preloaderContainer").preloader(20, "Preparing excel file...");
+        //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
 			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })',
 			contentType: 'application/json; charset=utf-8',

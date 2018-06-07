@@ -800,7 +800,6 @@ namespace BExIS.Dcm.UploadWizard
             return new List<string>();
         }
 
-       
 
         #endregion
 

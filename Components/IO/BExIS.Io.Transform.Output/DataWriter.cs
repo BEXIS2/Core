@@ -571,35 +571,35 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuples(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
-        {
-            if (File.Exists(filePath))
-            {
+        //public List<Error> AddDataTuples(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
+        //{
+        //    if (File.Exists(filePath))
+        //    {
 
-                // setup file
-                Init(filePath, dataStructureId);
+        //        // setup file
+        //        Init(filePath, dataStructureId);
 
-                // add header
-                StructuredDataStructure sds = GetDataStructure(dataStructureId);
-                AddHeader(sds);
+        //        // add header
+        //        StructuredDataStructure sds = GetDataStructure(dataStructureId);
+        //        AddHeader(sds);
 
-                // iterate over all input rows
-                foreach (DataTuple dataTuple in dataTuples)
-                {
-                    // add row and increment current index
-                    if (AddRow(dataTuple, rowIndex) && !dataTuple.Equals(dataTuples.Last()))
-                    {
-                        rowIndex += 1;
-                    }
-                }
+        //        // iterate over all input rows
+        //        foreach (DataTuple dataTuple in dataTuples)
+        //        {
+        //            // add row and increment current index
+        //            if (AddRow(dataTuple, rowIndex) && !dataTuple.Equals(dataTuples.Last()))
+        //            {
+        //                rowIndex += 1;
+        //            }
+        //        }
 
-                // close the excel file
-                Close();
+        //        // close the excel file
+        //        Close();
 
-            }
+        //    }
 
-            return ErrorMessages;
-        }
+        //    return ErrorMessages;
+        //}
 
         /// <summary>
         /// add all rows of the given datatable to a file using the given datastructure
@@ -608,11 +608,13 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath"></param>
         /// <param name="dataStructureId"></param>
         /// <returns></returns>
-        public List<Error> AddDataTuples(DataTable table, string filePath, long dataStructureId)
+        public List<Error> AddData(DataTable table, string filePath, long dataStructureId)
         {
 
             if (File.Exists(filePath))
             {
+
+                if (rowIndex == 0) rowIndex = 1;
 
                 // setup excel file
                 Init(filePath, dataStructureId);
@@ -630,7 +632,41 @@ namespace BExIS.IO.Transform.Output
                     }
                 }
 
+                // close the excel file
+                Close();
 
+            }
+
+            return ErrorMessages;
+        }
+
+        /// <summary>
+        /// add all rows of the given list to a file using the given datastructure
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <param name="filePath"></param>
+        /// <param name="dataStructureId"></param>
+        /// <returns></returns>
+        public List<Error> AddData(DataRowCollection rows, string filePath, long dataStructureId)
+        {
+
+            if (File.Exists(filePath))
+            {
+
+                if (rowIndex == 0) rowIndex = 1;
+
+                // setup excel file
+                Init(filePath, dataStructureId);
+
+                // iterate over all input rows
+                foreach (DataRow row in rows)
+                {
+                    // add row and increment current index
+                    if (AddRow(row, rowIndex))
+                    {
+                        rowIndex += 1;
+                    }
+                }
 
                 // close the excel file
                 Close();
@@ -643,19 +679,19 @@ namespace BExIS.IO.Transform.Output
         #endregion
 
         #region add data to files (compatibility aliases)
-        public List<Error> AddDataTuplesToTemplate(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId)
-        {
-            return AddDataTuples(datasetManager, dataTuplesIds, filePath, dataStructureId);
-        }
+        //public List<Error> AddDataTuplesToTemplate(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId)
+        //{
+        //    return AddDataTuples(datasetManager, dataTuplesIds, filePath, dataStructureId);
+        //}
 
-        public List<Error> AddDataTuplesToTemplate(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
-        {
-            return AddDataTuples(dataTuples, filePath, dataStructureId);
-        }
+        //public List<Error> AddDataTuplesToTemplate(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
+        //{
+        //    return AddDataTuples(dataTuples, filePath, dataStructureId);
+        //}
 
         public List<Error> AddDataTuplesToFile(DataTable table, string filePath, long dataStructureId)
         {
-            return AddDataTuples(table, filePath, dataStructureId);
+            return AddData(table, filePath, dataStructureId);
         }
         #endregion
     }
