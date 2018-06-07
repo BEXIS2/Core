@@ -89,6 +89,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long metadataStructureId = -1;
                 long dataStructureId = -1;
                 long researchPlanId = 1;
+                string dataStructureType = DataStructureType.Structured.ToString();
+                bool downloadAccess = false;
                 XmlDocument metadata = new XmlDocument();
 
                 if (dm.IsDatasetCheckedIn(id))
@@ -106,6 +108,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
 
+                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
+                        "Dataset", typeof(Dataset), id, RightType.Read);
+
+                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    {
+                        dataStructureType = DataStructureType.Structured.ToString();
+                    }
+                    else
+                    {
+                        dataStructureType = DataStructureType.Unstructured.ToString();
+                    }
+
                     ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
                 }
                 else
@@ -121,7 +135,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DataStructureId = dataStructureId,
                     ResearchPlanId = researchPlanId,
                     ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
+                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
+                    DataStructureType = dataStructureType,
+                    DownloadAccess = downloadAccess
                 };
 
                 //set metadata in session

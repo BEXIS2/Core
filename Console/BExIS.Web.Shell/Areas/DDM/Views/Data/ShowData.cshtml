@@ -31,22 +31,33 @@
 				<div id="preloaderContainer"/>
 			</td>
             <td style="text-align: -webkit-right;">
-                @*<button id="downloadZipButton" class="bx-combo-button function" title="download" onclick="download(@Model.Id)">Download with Excel</button>*@
 
-                <!-- Split button -->
-                <div class="btn-group">
-                    <button type="button" title="Download dataset with a selected dataformat for the primary data" class="bx-combo-button function" onclick="download(@Model.Id)">Download with Excel</button>
-                    <button type="button" class="bx-button function dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu" style="z-index:100000; margin-top: -2px;margin-left: 2px;">
-                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/excel" })" >Download with Excel</a></li>
-                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv" })">Download with CSV</a></li>
-                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain" })">Download with TXT</a></li>
-                    </ul>
-                </div>
+                @if (Model.DownloadAccess)
+                {
 
+                    if (Model.DataStructureType.ToLower().Equals("structured"))
+                    {
+                        <span class="dropdown">
+                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                                Download Dataset
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm" })">... with Excel</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv" })">... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain" })">... with TXT</a></li>
+                            </ul>
+                        </span>
+                    }
+                    else
+                    {
+                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
+                    }
+                }
+                else
+                {
+                    <button class="bx-button function bx-disabled" disabled="disabled">Download</button>
+                }
             </td>
 		</tr>
 	</table>

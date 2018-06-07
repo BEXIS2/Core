@@ -179,7 +179,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #region primary data
 
                     // check the data sturcture type ...
-                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (format!= null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -280,12 +280,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                        string name = cd.URI.Split('\\').Last();
+                        bool addFile = true;
 
-                        if (FileHelper.FileExist(path))
+                        if (cd.Name.ToLower().Contains("generated"))
                         {
-                            zip.AddFile(path, "");
+                            if (!cd.MimeType.ToLower().Equals(format)) addFile = false;
+                        }
+
+
+                        if (addFile)
+                        {
+                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                            string name = cd.URI.Split('\\').Last();
+
+                            if (FileHelper.FileExist(path))
+                            {
+                                zip.AddFile(path, "");
+                            }
                         }
                     }
 
