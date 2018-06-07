@@ -260,7 +260,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 1, 100);
 
-                        Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                        Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id);
 
                         return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
 
@@ -313,7 +313,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, filter, orderBy, null, command.Page - 1, command.PageSize);
 
-                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, filter);
 
                     model = new GridModel(table);
                     model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
