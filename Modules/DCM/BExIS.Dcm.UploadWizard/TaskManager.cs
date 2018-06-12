@@ -45,6 +45,7 @@ namespace BExIS.Dcm.UploadWizard
         public static string INSTITUTE = "Institute";
 
 
+        public static string UPLOAD_METHOD = "UPLOAD_METHOD";
         public static string NUMBERSOFROWS = "NUMBERSOFROWS";
         public static string CURRENTPACKAGE = "CURRENTPACKAGE";
         public static string CURRENTPACKAGESIZE = "CURRENTPACKAGE";
@@ -101,6 +102,12 @@ namespace BExIS.Dcm.UploadWizard
     {
         Structured,
         Unstructured
+    }
+
+    public enum UploadMethod
+    {
+        Append,
+        Update
     }
 
 }

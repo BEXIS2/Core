@@ -69,6 +69,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.PK_Id_List = (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS];
             }
 
+            // load maybe selected upload method
+            if (TaskManager.Bus.ContainsKey(TaskManager.UPLOAD_METHOD))
+            {
+                model.UploadMethod = (UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD];
+            }
+            else
+            {
+                if (TaskManager != null)
+                {
+                    TaskManager.AddToBus(TaskManager.UPLOAD_METHOD, UploadMethod.Update);
+                }
+            }
+
             return PartialView(model);
         }
 
@@ -81,9 +94,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager.Current().SetValid(false);
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
+
+            // check update process
+            if (TaskManager.Bus.ContainsKey(TaskManager.UPLOAD_METHOD) && ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Update))
             {
                 TaskManager.Current().SetValid((bool)TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE]);
+            }
+            else
+            //check append process
+            if (TaskManager.Bus.ContainsKey(TaskManager.UPLOAD_METHOD) && ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
+            {
+                TaskManager.Current().SetValid(true);
             }
 
             if (TaskManager.Current().IsValid())
@@ -110,6 +131,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS))
             {
                 model.PK_Id_List = (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS];
+            }
+
+            // load maybe selected upload method
+            if (TaskManager.Bus.ContainsKey(TaskManager.UPLOAD_METHOD))
+            {
+                model.UploadMethod = (UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD];
             }
 
             // and add error to model
@@ -254,5 +281,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #endregion
+
+        public JsonResult SetUploadMethod(UploadMethod uploadMethod)
+        {
+            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
+
+            if (TaskManager != null)
+            {
+                TaskManager.AddToBus(TaskManager.UPLOAD_METHOD, uploadMethod);
+            }
+
+            return Json(true);
+        }
     }
 }
