@@ -16,6 +16,19 @@ using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Logging.Aspects;
 
+namespace System.Data
+{
+    public static class DataTableExtensionsForDataset
+    {
+        public static void Strip(this DataTable table)
+        {
+            if (table.Columns.Contains("id")) { table.Columns.Remove("id"); }
+            if (table.Columns.Contains("orderno")) { table.Columns.Remove("orderno"); }
+            if (table.Columns.Contains("timestamp")) { table.Columns.Remove("timestamp"); }
+            if (table.Columns.Contains("versionid")) { table.Columns.Remove("versionid"); }
+        }
+    }
+}
 namespace BExIS.Dlm.Services.Data
 {
     /// <summary>
