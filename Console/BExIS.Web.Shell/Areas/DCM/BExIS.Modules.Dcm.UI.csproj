@@ -175,7 +175,7 @@
     <Compile Include="Controllers\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\PushController.cs" />
     <Compile Include="Controllers\SubmitController.cs" />
-    <Compile Include="Controllers\SubmitDefinePrimaryKeyController.cs" />
+    <Compile Include="Controllers\SubmitChooseUpdateMethodController.cs" />
     <Compile Include="Controllers\SubmitGetFileInformationController.cs" />
     <Compile Include="Controllers\SubmitSelectAFileController.cs" />
     <Compile Include="Controllers\SubmitSpecifyDatasetController.cs" />
@@ -518,7 +518,7 @@
     <Content Include="Views\Submit\_taskListView.cshtml" />
     <Content Include="Views\Submit\_uploadWizardNav.cshtml" />
     <Content Include="Views\Submit\_useTemplateView.cshtml" />
-    <Content Include="Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
+    <Content Include="Views\SubmitChooseUpdateMethod\ChooseUpdateMethod.cshtml" />
     <Content Include="Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
     <Content Include="Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
     <Content Include="Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
