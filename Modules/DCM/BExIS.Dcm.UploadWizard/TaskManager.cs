@@ -44,6 +44,15 @@ namespace BExIS.Dcm.UploadWizard
         public static string PROJECTNAME = "ProjectName";
         public static string INSTITUTE = "Institute";
 
+        //Easy Upload Sheet Structure
+        public static string SHEET_FORMAT = "SheetFormat";
+
+        //Easy Upload Sheet Area Selection
+        public static string SHEET_HEADER_AREA = "SheetHeaderArea";
+        public static string SHEET_DATA_AREA = "SheetDataArea";
+        public static string SHEET_JSON_DATA = "SheetJsonData";
+        public static string ACTIVE_WOKSHEET_URI = "ActiveWorksheetUri";
+
 
         public static string UPLOAD_METHOD = "UPLOAD_METHOD";
         public static string NUMBERSOFROWS = "NUMBERSOFROWS";

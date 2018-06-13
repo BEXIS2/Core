@@ -244,7 +244,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #region excel reader
 
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
+                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
+                                IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 int packageSize = 10000;
 
@@ -283,8 +284,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     // open file
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+
+                                    
+
                                     Stopwatch upload = Stopwatch.StartNew();
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+
+                                    if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    {
+                                        ExcelFileReaderInfo excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), excelFileReaderInfo, sds, (int)id, packageSize);
+                                    }
+                                    else
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+
                                     upload.Stop();
                                     Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
 
@@ -334,8 +346,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region ascii reader
 
 
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                                    TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader();

@@ -1,5 +1,8 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.GetFileInformationModel
-<div id ="Step2" class="uploadWizardStep">
+@using BExIS.Dcm.UploadWizard;
+@using BExIS.IO;
+
+<div id="Step2" class="uploadWizardStep">
     <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
 
@@ -9,25 +12,25 @@
         <div class="uploadWizardStep_Description stepper">
 
         </div>
-        
+
         <div class="uploadWizardStep_Content stepper">
 
-            @if (Model.Extention.Equals(".txt") || Model.Extention.Equals(".csv"))
-            { 
+            @if (IOUtility.IsSupportedAsciiFile(Model.Extention))
+            {
                 @Html.Partial("_txtFormularView", @Model.FileInfoModel)
             }
 
-            @if (Model.Extention.Equals(".xls"))
-            { 
+            @if (IOUtility.IsSupportedExcelFile(Model.Extention))
+            {
                 @Html.Partial("_xlsFormularView", @Model.FileInfoModel)
             }
-                 
-         </div> 
+
+        </div>
     </div>
 
-     <div class="uploadWizardStep_Success stepper"></div> 
+    <div class="uploadWizardStep_Success stepper"></div>
 
-     <div class="uploadWizardStep_Error stepper">
+    <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
         {
             if (Model.ErrorList != null)
@@ -35,21 +38,21 @@
                 if (Model.ErrorList.Count == 0)
                 {
 
-                   
+
                 }
                 else
-                { 
-                   <ul>
+                {
+                    <ul>
                         @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
+                        {
                             <li>@s.ToString()</li>
                         }
-                   </ul>
+                    </ul>
 
                 }
             }
 
         }
-    </div>     
+    </div>
 
 </div>

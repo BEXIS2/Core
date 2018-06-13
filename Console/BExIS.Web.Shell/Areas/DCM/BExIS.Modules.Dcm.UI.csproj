@@ -48,6 +48,10 @@
       <HintPath>..\..\..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
       <Private>True</Private>
@@ -155,6 +159,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CreateDatasetController.cs" />
@@ -186,6 +191,7 @@
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
+    <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Models\CreateDatasetViewModel.cs" />
@@ -420,6 +426,7 @@
     <Content Include="Content\2013.2.611\Windows7\slider-v.gif" />
     <Content Include="Content\2013.2.611\Windows7\sprite-vertical.png" />
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
+    <Content Include="Content\bexis-metadata.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -478,6 +485,9 @@
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
     <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
     <Content Include="Scripts\Form.js" />
+    <Content Include="Scripts\minimap\minimap.js" />
+    <Content Include="Scripts\minimap\minimap.min.css" />
+    <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
@@ -541,6 +551,10 @@
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeUsageViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
