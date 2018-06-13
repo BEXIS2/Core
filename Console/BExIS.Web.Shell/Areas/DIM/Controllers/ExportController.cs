@@ -186,8 +186,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
 
-                        if (format.Contains("excel")) odm.GenerateExcelFile(id, title);
-                        else odm.GenerateAsciiFile(id, title, format);
+                        switch (format)
+                        {
+                            case "application/xlsx":
+                                odm.GenerateExcelFile(id, title, false);
+                                break;
+                            case "application/xlsm":
+                                odm.GenerateExcelFile(id, title, true);
+                                break;
+                            default:
+                                odm.GenerateAsciiFile(id, title, format);
+                                break;
+                        } 
+
                     }
 
                     #endregion

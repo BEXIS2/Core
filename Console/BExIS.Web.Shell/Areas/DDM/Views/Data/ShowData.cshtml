@@ -43,8 +43,10 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm" })">... with Excel</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm" })">... with Template</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx" })">... with Excel</a></li>
                                 <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv" })">... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv" })">... with TSV</a></li>
                                 <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain" })">... with TXT</a></li>
                             </ul>
                         </span>
