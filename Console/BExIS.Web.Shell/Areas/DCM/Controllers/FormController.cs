@@ -317,6 +317,154 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
+        public ActionResult LoadMetadataOfflineVersion(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false)
+        {
+            var loadFromExternal = true;
+            long metadataStructureId = -1;
+
+            var dm = new DatasetManager();
+            //load metadata from session if exist
+            var metadata = new XmlDocument();
+
+
+            if (Session[sessionKeyForMetadata] != null)
+            {
+                metadata = (XmlDocument)Session[sessionKeyForMetadata];
+            }
+            else
+            {
+                //load metadata from latest version
+                metadata = dm.GetDatasetLatestMetadataVersion(entityId);
+            }
+
+
+
+
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
+            ViewData["Locked"] = true;
+            ViewData["ShowOptional"] = false;
+
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager == null || resetTaskManager)
+            {
+                TaskManager = new CreateTaskmanager();
+            }
+
+            var stepInfoModelHelpers = new List<StepModelHelper>();
+            var Model = new MetadataEditorModel();
+
+            if (loadFromExternal)
+            {
+                var entityClassPath = "";
+                //TaskManager = new CreateTaskmanager();
+                Session["CreateDatasetTaskmanager"] = TaskManager;
+                TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
+
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
+                    entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
+
+                var ready = true;
+
+                // todo i case of entity "BExIS.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
+                if (entityClassPath.Equals("BExIS.Dlm.Entities.Data.Dataset"))
+                {
+
+                    //todo need a check if entity is in use
+                    if (!dm.IsDatasetCheckedIn(entityId))
+                    {
+                        ready = false;
+                    }
+                }
+
+                if (ready)
+                {
+                    TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, metadatastructureId);
+                    if (researchplanId != -1) TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, researchplanId);
+                    if (datastructureId != -1) TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, datastructureId);
+
+                    if (metadata != null && metadata.DocumentElement != null)
+                        TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(metadata));
+
+                    TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);
+
+                    var rpm = new ResearchPlanManager();
+                    TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
+
+                    AdvanceTaskManagerBasedOnExistingMetadata(metadatastructureId);
+                    //AdvanceTaskManager(dsv.Dataset.MetadataStructure.Id);
+
+                    foreach (var stepInfo in TaskManager.StepInfos)
+                    {
+                        var stepModelHelper = GetStepModelhelper(stepInfo.Id);
+
+                        if (stepModelHelper.Model == null)
+                        {
+                            if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                            {
+                                stepModelHelper.Model = createPackageModel(stepInfo.Id, false);
+                                if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                    LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            }
+
+                            if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
+                            {
+                                stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
+                                if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                    LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            }
+
+                            getChildModelsHelper(stepModelHelper);
+                        }
+
+                        stepInfoModelHelpers.Add(stepModelHelper);
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
+                    {
+                        var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+
+                        if (String.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
+                        {
+                            if (TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE] != null)
+                                Model.DatasetTitle = TaskManager.Bus[CreateTaskmanager.ENTITY_TITLE].ToString();
+                        }
+                        else
+                            Model.DatasetTitle = "No Title available.";
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
+                }
+            }
+
+            Model.DatasetId = entityId;
+            Model.StepModelHelpers = stepInfoModelHelpers;
+            Model.Created = false;
+
+            //check if a metadatastructure has a import mapping
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+                metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+            if (metadataStructureId != -1)
+                Model.Import = IsImportAvavilable(metadataStructureId);
+
+            //FromCreateOrEditMode
+            TaskManager.AddToBus(CreateTaskmanager.EDIT_MODE, false);
+            Model.FromEditMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
+
+            // set edit rights
+            Model.EditRight = hasUserEditRights(entityId);
+            Model.EditAccessRight = hasUserEditAccessRights(entityId);
+
+            //set addtionaly functions
+            Model.Actions = getAddtionalActions();
+
+            return PartialView("MetadataEditorOffline", Model);
+        }
+
         public ActionResult ReloadMetadataEditor(
             bool locked = false,
             bool show = false,

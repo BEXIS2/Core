@@ -44,6 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.8.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\HtmlAgilityPack.1.8.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -325,6 +328,7 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\PublicationController.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\ExportGFBIOController.cs" />
@@ -335,12 +339,14 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
     <Compile Include="Helper\DimSeedDataGenerator.cs" />
+    <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\MappingHelper.cs" />
     <Compile Include="Helper\ReleationshipHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
     <Compile Include="Models\DataTupleCsvFormatter.cs" />
+    <Compile Include="Models\Export\SimpleDataStructureModel.cs" />
     <Compile Include="Models\Mapping\LinkElementModels.cs" />
     <Compile Include="Models\Mapping\MappingModel.cs" />
     <Compile Include="Models\MetadataStructureModel.cs" />
@@ -660,6 +666,9 @@
     <Content Include="Views\Submission\_dataRepositoryRequirementsView.cshtml" />
     <Content Include="Views\Submission\_showPublishDataView.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Export\SimpleMetadata.cshtml" />
+    <Content Include="Views\Export\SimpleDataStructure.cshtml" />
+    <Content Include="Views\Export\XmlNode.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -704,6 +713,10 @@
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>

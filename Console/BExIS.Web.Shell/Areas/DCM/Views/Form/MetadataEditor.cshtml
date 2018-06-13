@@ -7,14 +7,17 @@
 
 @using Telerik.Web.Mvc.UI;
 @using Vaiona.Web.Mvc.Modularity
+@using System.Web.Optimization
 
 @section scripts
 {
     <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
 }
+    <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
 @{
+
 
     string lockedClass = "";
     bool locked = false;
