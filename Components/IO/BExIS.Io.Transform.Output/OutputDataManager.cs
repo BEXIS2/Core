@@ -195,16 +195,8 @@ namespace BExIS.IO.Transform.Output
             ExcelWriter writer = new ExcelWriter();
             string path = createDownloadFile(ns, dsId, title, ext, writer);
 
-            string[] columnNames = table.Columns.Cast<DataColumn>()
-                                 .Select(x => x.Caption)
-                                 .ToArray();
+            
 
-            //get variable ids of the datatable columns
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dsId);
-
-     
-            string path = generateDownloadFile(ns, dsId, title, ".xlsm", writer, columnNames);
             writer.AddDataTuplesToFile(table, path, dsId);
 
             return path;
@@ -236,11 +228,12 @@ namespace BExIS.IO.Transform.Output
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                 ExcelWriter writer = new ExcelWriter(createAsTemplate);
+                
 
                 string path = "";
 
                 //excel allready exist
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0 && data == null)
                 {
                     #region FileStream exist
 
@@ -272,14 +265,24 @@ namespace BExIS.IO.Transform.Output
                     data = dm.GetLatestDatasetVersionTuples(id);
                     data.Strip();
                 }
+
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
+                if (createAsTemplate)
+                {
 
-                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
+                    string[] columnNames = (from dc in data.Columns.Cast<DataColumn>()
+                                            select dc.Caption).ToArray();
 
-                if(createAsTemplate) writer.AddData(data.Rows, path, datastuctureId);
-                else writer.AddData(data, path, datastuctureId);
+                    path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer, columnNames);
+                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
+                    writer.AddData(data.Rows, path, datastuctureId);
+                }
+                else
+                {
+                    path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
+                    writer.AddData(data, path, datastuctureId);
+                }
 
                 return path;
 
@@ -296,7 +299,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        private string createDownloadFile(long id, long datasetVersionOrderNo, long dataStructureId, string title, string ext, DataWriter writer)
+        private string createDownloadFile(long id, long datasetVersionOrderNo, long dataStructureId, string title, string ext, DataWriter writer, string[] columns = null)
         {
             if (ext.Equals(".csv") || ext.Equals(".txt"))
             {
@@ -307,7 +310,7 @@ namespace BExIS.IO.Transform.Output
             if (ext.Equals(".xlsm"))
             {
                 ExcelWriter excelwriter = (ExcelWriter)writer;
-          
+                excelwriter.VisibleColumns = columns;
                 return excelwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, "data", ext);
             }
             else
@@ -332,8 +335,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         private string createDownloadFile(string ns, long datastructureId, string title, string ext, DataWriter writer, string[] columns = null)
         {
-            ExcelWriter excelwriter;
-
+            ExcelWriter excelwriter = null;
             switch (ext)
             {
                 // text based files
@@ -347,7 +349,7 @@ namespace BExIS.IO.Transform.Output
                     excelwriter = (ExcelWriter)writer;
                     return excelwriter.CreateFile(ns, datastructureId, title, ext);
                 case ".xlsm":
-                    ExcelWriter excelwriter = (ExcelWriter)writer;
+                    excelwriter = (ExcelWriter)writer;
                     excelwriter.VisibleColumns = columns;
                     return excelwriter.CreateFile(ns, datastructureId, title, ext);
 

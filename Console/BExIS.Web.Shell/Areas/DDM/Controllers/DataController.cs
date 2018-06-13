@@ -259,7 +259,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
                         //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
-                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 1, 100);
+                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 0, 100);
 
                         return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
 
@@ -487,7 +487,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title+"_filtered", datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title+"_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
 
                         LoggerFactory.LogCustom(message);
 
@@ -553,7 +553,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
 
                         LoggerFactory.LogCustom(message);
 

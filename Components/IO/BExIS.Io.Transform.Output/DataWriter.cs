@@ -443,7 +443,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="source">full list of variables</param>
         /// <param name="selected">variablenames</param>
         /// <returns></returns>
-        protected List<long> GetSubsetOfVariableIds(List<Variable> source, String[] selected)
+        protected List<long> GetSubsetOfVariableIds(IEnumerable<Variable> source, String[] selected)
         {
             return source.Where(p => selected.Contains(p.Label.ToString())).ToList().Select(v => v.Id).ToList();
         }
