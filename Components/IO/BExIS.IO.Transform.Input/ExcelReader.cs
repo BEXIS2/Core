@@ -364,6 +364,102 @@ namespace BExIS.IO.Transform.Input
             return this.DataTuples;
         }
 
+        /// <summary>
+        /// Read a Excel row by row
+        /// Convert the rows into a datatuple based on the datastructure.
+        /// Return a list of datatuples
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="file">File as stream</param>
+        /// <param name="fileName">Name of the file</param>
+        /// <param name="fri">FileReaderInfo (ExcelFileReaderInfo) for additional Informations to read the file</param>
+        /// <param name="sds">StructuredDataStructure of a dataset</param>
+        /// <param name="datasetId">Datasetid of a dataset</param>
+        /// <returns>List of DataTuples</returns>
+        public List<DataTuple> ReadFile(Stream file, string fileName, ExcelFileReaderInfo fri, StructuredDataStructure sds, long datasetId, int packageSize)
+        {
+            this.FileStream = file;
+            this.FileName = fileName;
+
+            this.StructuredDataStructure = sds;
+            this.Info = fri;
+            this.DatasetId = datasetId;
+
+            // clear list of datatuples for the next package
+            this.DataTuples = new List<DataTuple>();
+
+            // Check params
+            if (this.FileStream == null)
+            {
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+            }
+            if (!this.FileStream.CanRead)
+            {
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+            }
+            if (fri.VariablesStartRow <= 0)
+            {
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+            }
+            if (fri.DataStartRow <= 0)
+            {
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+            }
+
+            if (this.ErrorMessages.Count == 0)
+            {
+                // open excel file
+                spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
+
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+
+                startColumn = fri.DataStartColumn;
+                endColumn = fri.DataEndColumn;
+
+                numOfColumns = (endColumn - startColumn) + 1;
+                offset = fri.Offset;
+
+                int endRowData = fri.DataEndRow;
+
+                // select worksheetpart by selected defined name area like data in sheet
+                // sheet where data area is inside
+                WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
+
+                // get styleSheet
+                _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+                // Get shared strings
+                _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+
+                if (Position == 1)
+                {
+                    Position = fri.DataStartRow;
+                }
+                else
+                    Position++;
+
+                int endPosition = Position + packageSize;
+
+                if (endPosition > endRowData)
+                    endPosition = endRowData;
+
+                if (GetSubmitedVariableIdentifier(worksheetPart, fri.VariablesStartRow, fri.VariablesEndRow) != null)
+                {
+                    ReadRows(worksheetPart, Position, endPosition);
+                    Position += packageSize;
+                }
+
+                return this.DataTuples;
+
+
+            }
+
+            return this.DataTuples;
+        }
+
 
         /// <summary>
         ///
@@ -623,6 +719,59 @@ namespace BExIS.IO.Transform.Input
             // close fehlt
         }
 
+        /// <summary>
+        /// Validate a Excel Template file
+        /// </summary>
+        /// <remarks>Only when excel template is in use</remarks>
+        /// <seealso cref=""/>
+        /// <param name="file">File as stream</param>
+        /// <param name="fileName">Name of the file</param>
+        /// <param name="sds">StructuredDataStructure of a dataset</param>
+        /// <param name="datasetId">Datasetid of a dataset</param>
+        public void ValidateFile(Stream file, string fileName, ExcelFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        {
+            this.FileStream = file;
+            this.FileName = fileName;
+
+            this.StructuredDataStructure = sds;
+            this.Info = fri;
+            this.DatasetId = datasetId;
+
+            // open excel file
+            spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+  
+            startColumn = fri.DataStartColumn;
+            endColumn = fri.DataEndColumn;
+
+            numOfColumns = (endColumn - startColumn) + 1;
+            offset = fri.Offset;
+
+            int endRowData = fri.DataEndRow;
+
+            // select worksheetpart by selected defined name area like data in sheet
+            // select worksheetpart by Uri
+            WorksheetPart worksheetPart = workbookPart.WorksheetParts.Where(ws => ws.Uri.ToString() == fri.WorksheetUri).FirstOrDefault();
+
+            // get styleSheet
+            _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+            // Get shared strings
+            _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+
+            if (this.ErrorMessages.Count == 0)
+            {
+                if (ValidateDatastructure(worksheetPart, fri.VariablesStartRow, fri.VariablesEndRow))
+                {
+                    ValidateRows(worksheetPart, fri.DataStartRow, endRowData);
+                }
+            }
+            // close fehlt
+        }
+
 
         /// <summary>
         /// Validate Datastructure from file
@@ -728,8 +877,8 @@ namespace BExIS.IO.Transform.Input
                     if (c.CellValue != null)
                     {
                         // if cell reference in range of the area
-                        int start = GetColumnNumber(this._areaOfData.StartColumn);
-                        int end = GetColumnNumber(this._areaOfData.EndColumn);
+                        int start = startColumn;//GetColumnNumber(this._areaOfData.StartColumn);
+                        int end = endColumn;//GetColumnNumber(this._areaOfData.EndColumn);
 
                         if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
                         {
@@ -1170,6 +1319,7 @@ namespace BExIS.IO.Transform.Input
 
             return true;
         }
+        
 
         #endregion
 

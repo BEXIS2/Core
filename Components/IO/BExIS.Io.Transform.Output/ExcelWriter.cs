@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -64,8 +65,14 @@ namespace BExIS.IO.Transform.Output
         private WorkbookPart workbookPart;
         private WorksheetPart worksheetPart;
         private SheetData sheetData;
+        private bool Template = false;
 
         #endregion
+
+        public ExcelWriter(bool isTemplate = false)
+        {
+            Template = isTemplate;
+        }
 
         /// <summary>
         /// Convert a Datatuple to a Row
@@ -128,11 +135,43 @@ namespace BExIS.IO.Transform.Output
             columnIndex += offset;
 
             // need to add this empty cell to add cells to the right place
-            row.AppendChild(GetEmptyCell(rowIndex, 0));
+            if(Template) row.AppendChild(GetEmptyCell(rowIndex, 0));
 
             foreach (object variable in src.ItemArray)
             {
                 Cell cell = VariableValueToCell(variable, rowIndex, columnIndex);
+                row.AppendChild(cell);
+                columnIndex += 1;
+            }
+
+            return row;
+        }
+
+        /// <summary>
+        /// convert a DataRow to a Row
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        protected Row DataColumnCollectionToRow(DataColumnCollection src)
+        {
+            Row row = new Row();
+  
+            int columnIndex = 1;
+            columnIndex += offset;
+
+            foreach (DataColumn variable in src)
+            {
+
+                string cellRef = getColumnIndex(columnIndex);
+                string type = typeof(string).Name;
+
+                Cell cell = new Cell();
+                cell.CellReference = new StringValue(cellRef);
+                cell.DataType = CellValues.InlineString;
+                cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
+
+
                 row.AppendChild(cell);
                 columnIndex += 1;
             }
@@ -351,52 +390,41 @@ namespace BExIS.IO.Transform.Output
         {
             string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-            //Template will not be filtered by columns
-            if (this.VisibleColumns == null)
+            if (Template)
             {
-                #region generate file with full datastructure
-
-                string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
-                //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
-
-                try
+                #region template
+                //Template will not be filtered by columns
+                if (this.VisibleColumns == null)
                 {
+                    #region generate file with full datastructure
 
-                    SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
-                    SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
-                        dataStructureFile.DocumentType);
+                    string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
+                    //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-                    foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
-                    {
-                        OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
-                    }
+                    createTemplateFile(dataPath, dataStructureId, extention);
 
-                    dataFile.WorkbookPart.Workbook.Save();
-                    dataStructureFile.Dispose();
-                    dataFile.Dispose();
-            
-
+                    #endregion
                 }
-                catch (Exception ex)
+
+                // create a file with a subset of variables
+                if (this.VisibleColumns != null)
                 {
-                    throw new Exception(ex.Message.ToString());
+                    /// call templateprovider from rpm
+                    ExcelTemplateProvider provider = new ExcelTemplateProvider();
+
+                    string path = GetStorePath(datasetId, datasetVersionOrderNr);
+                    string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
+
+
+                    provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
+
                 }
 
                 #endregion
             }
-
-            // create a file with a subset of variables
-            if (this.VisibleColumns != null)
+            else
             {
-                /// call templateprovider from rpm
-                ExcelTemplateProvider provider = new ExcelTemplateProvider();
-
-                string path = GetStorePath(datasetId, datasetVersionOrderNr);
-                string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
-
-
-                provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
-
+                createEmptyFile(dataPath, extention);
             }
 
             return dataPath;
@@ -414,67 +442,101 @@ namespace BExIS.IO.Transform.Output
         {
             string dataPath = GetFullStorePath(ns, title, extension);
 
-            //Template will not be filtered by columns
-            if (this.VisibleColumns == null)
+
+            if (Template)
             {
-                #region generate file with full datastructure
-
-                string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extension);
-
-                try
+                #region template
+                //Template will not be filtered by columns
+                if (this.VisibleColumns == null)
                 {
+                    #region generate file with full datastructure
 
-                    SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
-                    SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
-                        dataStructureFile.DocumentType);
+                    string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extension);
+                    //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-                    foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
-                    {
-                        OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
-                    }
+                    createTemplateFile(dataPath, dataStructureId, extension);
 
-                    dataFile.WorkbookPart.Workbook.Save();
-                    dataStructureFile.Dispose();
-                    dataFile.Dispose();
-
+                    #endregion
                 }
-                catch (Exception ex)
+
+                // create a file with a subset of variables
+                if (this.VisibleColumns != null)
                 {
-                    throw new Exception(ex.Message.ToString());
+                    /// call templateprovider from rpm
+                    ExcelTemplateProvider provider = new ExcelTemplateProvider();
+
+                    string path =ns;
+                    string newTitle = title+extension;
+
+
+                    provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
+
                 }
 
                 #endregion
             }
             else
             {
-                #region generate file with a subset of the datastructure
-
-                DataStructureManager dsm = new DataStructureManager();
-                dataStructure = dsm.StructuredDataStructureRepo.Get(dataStructureId);
-                try
-                {
-                    
-                    // create temp path
-   
-                    ExcelTemplateProvider excelTemplateProvider = new ExcelTemplateProvider();
-
-                    var ids = GetSubsetOfVariableIds(dataStructure.Variables.ToList(), VisibleColumns);
-
-                    SpreadsheetDocument dataFile = excelTemplateProvider.CreateTemplate(ids, dataStructureId, Path.GetDirectoryName(dataPath),Path.GetFileName(dataPath));
-
-                    dataFile.Dispose();
-                    
-
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message.ToString());
-                }
-
-                #endregion
+                createEmptyFile(dataPath, extension);
             }
 
             return dataPath;
+        }
+
+        private bool createTemplateFile(string dataPath, long dataStructureId, string extension )
+        {
+
+            try
+            {
+                string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extension);
+
+                SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
+                SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
+                    dataStructureFile.DocumentType);
+
+                foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
+                {
+                    OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
+                }
+
+                dataFile.WorkbookPart.Workbook.Save();
+                dataStructureFile.Dispose();
+                dataFile.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Can´t create excel template file.", ex);
+            }
+   
+        }
+
+        private bool createEmptyFile(string dataPath, string extension)
+        {
+            try
+            {
+                string emptyExcelTemplatePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"),"Template","empty"+extension);
+
+                SpreadsheetDocument emptyTemplate = SpreadsheetDocument.Open(emptyExcelTemplatePath, true);
+                SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
+                    emptyTemplate.DocumentType);
+
+                foreach (OpenXmlPart part in emptyTemplate.GetPartsOfType<OpenXmlPart>())
+                {
+                    OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
+                }
+
+                dataFile.WorkbookPart.Workbook.Save();
+                emptyTemplate.Dispose();
+                dataFile.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Can´t create excel template file.", ex);
+            }
         }
 
         /// <summary>
@@ -987,43 +1049,56 @@ namespace BExIS.IO.Transform.Output
             // get workbookpart
             workbookPart = spreadsheetDocument.WorkbookPart;
 
-            // get all the defined area 
-            List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
+            // if the writer should create a template, more preperation is needed
+            if (Template)
+            {
+                // get all the defined area 
+                List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
 
-            // select data area
-            this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+                // select data area
+                this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
 
-            // set starting row number
-            rowIndex = areaOfData.EndRow;
+                // set starting row number
+                rowIndex = areaOfData.EndRow;
 
-            // Select variable area
-            this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+                // Select variable area
+                this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
 
-            // Get integers for reading data
-            startColumn = getColumnNumber(this.areaOfData.StartColumn);
-            endColumn = getColumnNumber(this.areaOfData.EndColumn);
+                // Get integers for reading data
+                startColumn = getColumnNumber(this.areaOfData.StartColumn);
+                endColumn = getColumnNumber(this.areaOfData.EndColumn);
 
-            numOfColumns = (endColumn - startColumn) + 1;
-            offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
+                numOfColumns = (endColumn - startColumn) + 1;
+                offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
 
-            // generate Style for cell types
-            generateStyle(spreadsheetDocument);
+                // generate Style for cell types
+                generateStyle(spreadsheetDocument);
 
-            // get styleSheet
-            stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+                // get styleSheet
+                stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
-            // Get shared strings
-            sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+                // Get shared strings
+                sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
-            // select worksheetpart by selected defined name area like data in sheet
-            // sheet where data area is inside
-            worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
+                // select worksheetpart by selected defined name area like data in sheet
+                // sheet where data area is inside
+                worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
 
-            // Get VariableIndentifiers
-            VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
+                // Get VariableIndentifiers
+                VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
+            }
+            else
+            {
+                worksheetPart = workbookPart.WorksheetParts.FirstOrDefault();
+            }
+
 
             // get sheetData object for adding data to
+            if (worksheetPart!=null && !worksheetPart.Worksheet.HasChildren)
+                worksheetPart.Worksheet.AppendChild(new SheetData());
+
             sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+
         }
 
         /// <summary>
@@ -1032,36 +1107,38 @@ namespace BExIS.IO.Transform.Output
         /// <param name="workbookPart"></param>
         protected override void Close()
         {
-            // adjust count of data rows
-            numOfDataRows = rowIndex;
-
-            // set data area
-            foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
+            if (Template)
             {
-                if (name.Name == "Data")
+                // adjust count of data rows
+                numOfDataRows = rowIndex;
+
+                // set data area
+                foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
                 {
-                    string[] tempArr = name.InnerText.Split('$');
-                    string temp = "";
-                    //$A$10:$C$15
-
-                    tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
-
-                    foreach (string t in tempArr)
+                    if (name.Name == "Data")
                     {
-                        if (t == tempArr.First())
-                        {
-                            temp = temp + t;
-                        }
-                        else
-                        {
-                            temp = temp + "$" + t;
-                        }
-                    }
+                        string[] tempArr = name.InnerText.Split('$');
+                        string temp = "";
+                        //$A$10:$C$15
 
-                    name.Text = temp;
+                        tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
+
+                        foreach (string t in tempArr)
+                        {
+                            if (t == tempArr.First())
+                            {
+                                temp = temp + t;
+                            }
+                            else
+                            {
+                                temp = temp + "$" + t;
+                            }
+                        }
+
+                        name.Text = temp;
+                    }
                 }
             }
-
 
             spreadsheetDocument.WorkbookPart.Workbook.Save();
             spreadsheetDocument.Close();
@@ -1141,7 +1218,32 @@ namespace BExIS.IO.Transform.Output
         }
         protected override bool AddHeader(DataColumnCollection header)
         {
-            return false;
+            // column count
+            int colCount = header.Count;
+
+            // skip rows with only empty cells
+            bool empty = true;
+            for (int i = 0; i < colCount; i++)
+            {
+                if (!String.IsNullOrEmpty(header[i].ToString()))
+                {
+                    empty = false;
+                    break;
+                }
+            }
+            if (empty)
+            {
+                return false;
+            }
+
+            // create excel row
+            Row excelRow = DataColumnCollectionToRow(header);
+            rowIndex++;
+            // add row
+            sheetData.Append(excelRow);
+
+            return true;
+
         }
         #endregion
 

@@ -20,6 +20,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
@@ -260,9 +261,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 1, 100);
 
-                        Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id);
-
-                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
 
                         //return PartialView(new ShowPrimaryDataModel());
                     }
@@ -271,7 +270,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         return
                             PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
-                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess));
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess, IOUtility.GetSupportedAsciiFiles()));
                     }
                 }
                 else
@@ -335,13 +334,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
-        public JsonResult PrepareCsvData(long id)
+        public JsonResult PrepareAscii(long id, string ext)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".csv";
                 DatasetManager datasetManager = new DatasetManager();
-
+                string mimetype = MimeMapping.GetMimeMapping(ext);
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
@@ -349,23 +347,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
-                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
-                        datasetVersion.Id);
+
+                    string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
+                                                    datasetVersion.Id,ext);
+
                     // if filter selected
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile( "temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
+
 
                         #endregion generate a subset of a dataset
                     }
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype);
 
                         LoggerFactory.LogCustom(message);
                     }
@@ -387,12 +388,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public ActionResult DownloadAsCsvData(long id)
+        public ActionResult DownloadAscii(long id, string ext)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".csv";
                 DatasetManager datasetManager = new DatasetManager();
+
+                string mimetype = MimeMapping.GetMimeMapping(ext);
 
                 try
                 {
@@ -401,25 +403,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
-                    string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
-                        datasetVersion.Id);
+                    string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
+                        datasetVersion.Id, ext);
                     // if filter selected
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/csv", datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
 
                         LoggerFactory.LogCustom(message);
 
-                        return File(path, "text/csv", title + ext);
+                        return File(path, mimetype, title + ext);
 
                         #endregion generate a subset of a dataset
                     }
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype);
 
                         LoggerFactory.LogCustom(message);
 
@@ -430,7 +432,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             );
 
 
-                        return File(path, "text/csv", title + ".csv");
+                        return File(path, mimetype, title + ext);
                     }
                 }
                 catch (Exception ex)
@@ -460,7 +462,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".xlsm";
+                string ext = ".xlsx";
 
                 DatasetManager datasetManager = new DatasetManager();
 
@@ -497,7 +499,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title);
+                        path = outputDataManager.GenerateExcelFile(id, title, false);
                         LoggerFactory.LogCustom(message);
                     }
 
@@ -524,7 +526,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".xlsm";
+                string ext = ".xlsx";
 
                 DatasetManager datasetManager = new DatasetManager();
 
@@ -541,6 +543,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         datasetVersion.Id);
 
                     OutputDataManager outputDataManager = new OutputDataManager();
+                    string mimitype = MimeMapping.GetMimeMapping(ext);
 
                     // if filter selected
                     if (filterInUse())
@@ -554,7 +557,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         LoggerFactory.LogCustom(message);
 
-                        return File(path, "application/xlsm", title + ext);
+                        return File(path, mimitype, title + ext);
 
                         #endregion generate a subset of a dataset
                     }
@@ -562,7 +565,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title);
+                        path = outputDataManager.GenerateExcelFile(id, title, false);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
@@ -571,8 +574,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
-
-                        return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
+                        return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
                     }
                 }
                 catch (Exception ex)
@@ -598,23 +600,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public JsonResult PrepareTxtData(long id)
+        public JsonResult PrepareExcelTemplateData(long id)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".txt";
+                string ext = ".xlsm";
+
                 DatasetManager datasetManager = new DatasetManager();
 
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    ExcelWriter writer = new ExcelWriter();
+
                     string title = getTitle(writer.GetTitle(id));
+
                     string path = "";
 
-                    string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
-                                                    datasetVersion.Id);
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                        datasetVersion.Id);
+
+                    OutputDataManager outputDataManager = new OutputDataManager();
+
 
                     // if filter selected
                     if (filterInUse())
@@ -622,25 +629,29 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
 
                         LoggerFactory.LogCustom(message);
 
+                        //return File(path, "text/csv", title + ext);
 
                         #endregion generate a subset of a dataset
                     }
+
+                    //filter not in use
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
-
+                        path = outputDataManager.GenerateExcelFile(id, title, true);
                         LoggerFactory.LogCustom(message);
                     }
+
 
                     return Json(true, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception ex)
                 {
                     return Json(ex.Message, JsonRequestBehavior.AllowGet);
+
                 }
                 finally
                 {
@@ -653,42 +664,52 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public ActionResult DownloadAsTxtData(long id)
+        public ActionResult DownloadAsExcelTemplateData(long id)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string ext = ".txt";
+                string ext = ".xlsm";
+
                 DatasetManager datasetManager = new DatasetManager();
 
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    ExcelWriter writer = new ExcelWriter();
+
                     string title = getTitle(writer.GetTitle(id));
+
                     string path = "";
 
-                    string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
-                                                    datasetVersion.Id);
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                        datasetVersion.Id);
+
+                    OutputDataManager outputDataManager = new OutputDataManager();
+                    string mimitype = MimeMapping.GetMimeMapping(ext);
 
                     // if filter selected
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
 
+                        //ToDo filter datatuples
+
                         DataTable datatable = GetFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, "text/plain", datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile(id,title, true, datatable);
 
                         LoggerFactory.LogCustom(message);
 
-                        return File(path, "text/plain", title + ext);
+
+
+                        return File(path, mimitype, title + ext);
 
                         #endregion generate a subset of a dataset
                     }
+
+                    //filter not in use
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
-
+                        path = outputDataManager.GenerateExcelFile(id, title, true);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
@@ -697,8 +718,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
-
-                        return File(path, "text/plain", title + ".txt");
+                        return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
                     }
                 }
                 catch (Exception ex)
@@ -781,6 +801,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ProjectionExpression projection = GridHelper.Convert(columns);
 
                 DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection);
+
+                if (projection == null) table.Strip();
+
 
                 return table;
             }
