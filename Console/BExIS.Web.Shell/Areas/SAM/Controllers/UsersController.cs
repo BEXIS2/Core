@@ -222,7 +222,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     }
                     else
                     {
-                        var error = string.Format(CultureInfo.InvariantCulture, "The Username exists already.", username);
+                        var error = string.Format(CultureInfo.InvariantCulture, "The username exists already.", username);
 
                         return Json(error, JsonRequestBehavior.AllowGet);
                     }
@@ -254,7 +254,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     }
                     else
                     {
-                        var error = string.Format(CultureInfo.InvariantCulture, "The Email Address exists already.", email);
+                        var error = string.Format(CultureInfo.InvariantCulture, "The email address exists already.", email);
 
                         return Json(error, JsonRequestBehavior.AllowGet);
                     }
