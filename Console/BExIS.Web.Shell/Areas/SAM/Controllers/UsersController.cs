@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Threading.Tasks;
@@ -198,5 +199,73 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 ModelState.AddModelError("", error);
             }
         }
+
+        #region Remote Validation
+
+        public JsonResult ValidateUsername(string username, long id = 0)
+        {
+            var userManager = new UserManager();
+
+            try
+            {
+                var user = userManager.FindByNameAsync(username);
+
+                if (user == null)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (user.Id == id)
+                    {
+                        return Json(true, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        var error = string.Format(CultureInfo.InvariantCulture, "The Username exists already.", username);
+
+                        return Json(error, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
+        }
+
+        public JsonResult ValidateEmail(string email, long id = 0)
+        {
+            var userManager = new UserManager();
+
+            try
+            {
+                var user = userManager.FindByEmailAsync(email);
+
+                if (user == null)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (user.Id == id)
+                    {
+                        return Json(true, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        var error = string.Format(CultureInfo.InvariantCulture, "The Email Address exists already.", email);
+
+                        return Json(error, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
+        }
+
+        #endregion Remote Validation
     }
 }
