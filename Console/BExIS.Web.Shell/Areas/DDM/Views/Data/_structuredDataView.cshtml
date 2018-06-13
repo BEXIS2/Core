@@ -134,28 +134,26 @@
 					if (column.ColumnName.ToLower().StartsWith("var"))
 					{
 						visible = true;
-					}
 
+						DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
 
-					DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
+						string format = "";
 
+						if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+						{
+							//string unit = "";
+							//if (dfo.Unit != "None") unit = dfo.Unit;
 
-					string format = "";
+							format = "{0:" + dfo.Format + "}";
 
-					if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
-					{
-						//string unit = "";
-						//if (dfo.Unit != "None") unit = dfo.Unit;
-
-						format = "{0:" + dfo.Format +"}";
-
-						columns.Bound(column.DataType, column.ColumnName)
-						   .Title(title).Format(format).Hidden(!visible);
-					}
-					else
-					{
-						columns.Bound(column.DataType, column.ColumnName)
-						   .Title(title).Hidden(!visible);
+							columns.Bound(column.DataType, column.ColumnName)
+							   .Title(title).Format(format).Hidden(!visible);
+						}
+						else
+						{
+							columns.Bound(column.DataType, column.ColumnName)
+							   .Title(title).Hidden(!visible);
+						}
 					}
 				}
 			})

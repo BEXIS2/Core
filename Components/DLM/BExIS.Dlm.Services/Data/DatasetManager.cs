@@ -2494,7 +2494,7 @@ namespace BExIS.Dlm.Services.Data
                     refreshMaterializedView(datasetId);
                     // update the the last synced information on the data set. It is used in the dataset maintenance UI logic
                     // check if the view is actually refreshed, by comparing the records in the view to the records in tuples.
-                    long noOfViewRecords = countRowsOfMaterializedView(datasetId);
+                    long noOfViewRecords = RowCount(datasetId);
 
                     if(noOfViewRecords < numberOfTuples)
                     {
@@ -2562,10 +2562,16 @@ namespace BExIS.Dlm.Services.Data
             mvHelper.Refresh(datasetId);
         }
 
-        private long countRowsOfMaterializedView(long datasetId)
+        public long RowCount(long datasetId)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             return mvHelper.Count(datasetId);
+        }
+
+        public long RowCount(long datasetId, FilterExpression filter)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            return mvHelper.Count(datasetId, filter);
         }
 
         private bool existsMaterializedView(long datasetId)

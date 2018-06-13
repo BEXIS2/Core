@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
@@ -387,46 +388,60 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public string CreateFile(long datasetId, long datasetVersionOrderNr, long dataStructureId, string title, string extention)
         {
-            string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
+            DataStructureManager dsm = new DataStructureManager();
 
-            if (Template)
+
+            try
             {
-                #region template
-                //Template will not be filtered by columns
-                if (this.VisibleColumns == null)
+
+                string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
+
+                if (Template)
                 {
-                    #region generate file with full datastructure
+                    #region template
+                    //Template will not be filtered by columns
+                    if (this.VisibleColumns == null)
+                    {
+                        #region generate file with full datastructure
 
-                    string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
-                    //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
+                        string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
+                        //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-                    createTemplateFile(dataPath, dataStructureId, extention);
+                        createTemplateFile(dataPath, dataStructureId, extention);
+
+                        #endregion
+                    }
+
+                    // create a file with a subset of variables
+                    if (this.VisibleColumns != null)
+                    {
+                        /// call templateprovider from rpm
+                        ExcelTemplateProvider provider = new ExcelTemplateProvider();
+
+                        string path = GetStorePath(datasetId, datasetVersionOrderNr);
+                        string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
+
+                        StructuredDataStructure ds = dsm.StructuredDataStructureRepo.Get(dataStructureId);
+
+                        List<long> ids = GetSubsetOfVariableIds(ds.Variables, this.VisibleColumns);
+
+                        provider.CreateTemplate(ids, dataStructureId, path, newTitle);
+
+                    }
 
                     #endregion
                 }
-
-                // create a file with a subset of variables
-                if (this.VisibleColumns != null)
+                else
                 {
-                    /// call templateprovider from rpm
-                    ExcelTemplateProvider provider = new ExcelTemplateProvider();
-
-                    string path = GetStorePath(datasetId, datasetVersionOrderNr);
-                    string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
-
-
-                    provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
-
+                    createEmptyFile(dataPath, extention);
                 }
 
-                #endregion
+                return dataPath;
             }
-            else
+            finally
             {
-                createEmptyFile(dataPath, extention);
+                dsm.Dispose();
             }
-
-            return dataPath;
         }
 
         /// <summary>

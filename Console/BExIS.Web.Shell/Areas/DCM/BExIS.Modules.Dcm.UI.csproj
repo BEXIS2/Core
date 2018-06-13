@@ -484,6 +484,9 @@
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
     <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
     <Content Include="Scripts\Form.js" />
+    <Content Include="Scripts\minimap\minimap.js" />
+    <Content Include="Scripts\minimap\minimap.min.css" />
+    <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
