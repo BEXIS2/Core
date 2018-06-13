@@ -9,11 +9,14 @@
 @using Vaiona.Web.Mvc.Modularity
 @using System.Web.Optimization
 
-@{
-
+@section scripts
+{
     <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+}
     <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
+@{
 
 
     string lockedClass = "";
@@ -146,17 +149,17 @@
                 {
                     <td style="width: 100px">
                         @(Html.Telerik().Upload()
-                                                              .Name("SelectFileUploader")
-                                                              .Multiple(false)
-                                                              .ShowFileList(false)
-                                                              .HtmlAttributes(new { title = "Import from xml", accept = ".xml" })
-                                                              .ClientEvents(events => events
-                                                                  .OnSuccess("OnSuccess")
-                                                                  .OnSelect("SelectFileProcess_OnSelect")
-                                                                  .OnLoad("SelectFileUploader_OnLoad"))
-                                                              .Async(async => async
-                                                                  .Save("SelectFileProcess", "Form")
-                                                                  .AutoUpload(true))
+                                      .Name("SelectFileUploader")
+                                      .Multiple(false)
+                                      .ShowFileList(false)
+                                      .HtmlAttributes(new { title = "Import from xml", accept = ".xml" })
+                                      .ClientEvents(events => events
+                                          .OnSuccess("OnSuccess")
+                                          .OnSelect("SelectFileProcess_OnSelect")
+                                          .OnLoad("SelectFileUploader_OnLoad"))
+                                      .Async(async => async
+                                          .Save("SelectFileProcess", "Form")
+                                          .AutoUpload(true))
 
                         )
                     </td>
@@ -166,7 +169,7 @@
                 <td id="form_message_container_Column" style="text-align: right">
                     <span id="form_message"></span>
                     <div id="preloader_cotainer">
-                        <script type="text/javascript">    $("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
+                        <script type="text/javascript"> $("#preloader_cotainer").preloader(20,"Loading metadata...")</script>
                     </div>
                 </td>
 

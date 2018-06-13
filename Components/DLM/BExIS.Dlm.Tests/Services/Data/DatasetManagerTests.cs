@@ -53,7 +53,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void CreateEmptyDatasetTest()
         {
-            DatasetManager dm = new DatasetManager();
+             DatasetManager dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
 
