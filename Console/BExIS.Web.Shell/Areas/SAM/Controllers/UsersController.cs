@@ -73,14 +73,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public void Delete(long userId)
+        public async Task Delete(long userId)
         {
             var userManager = new UserManager();
 
             try
             {
                 var user = userManager.FindByIdAsync(userId).Result;
-                userManager.DeleteAsync(user);
+
+                foreach (var @group in user.Groups)
+                {
+                    await RemoveUserFromGroup(user.Id, @group.Name);
+                }
+
+                await userManager.DeleteAsync(user);
             }
             finally
             {
