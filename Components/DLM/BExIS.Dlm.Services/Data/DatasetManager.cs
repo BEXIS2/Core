@@ -16,6 +16,10 @@ using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Logging.Aspects;
 
+/// <summary>
+/// The BExIS.Dlm.Services.Data namespace provides classes and interfaces that enable access to the datasets managed by the system.
+/// This includes creating a <see cref="BExIS.Dlm.Entities.Dataset"/>, a <see cref="BExIS.Dlm.Entities.Version"/> of a dataset, or manipulating data tuples associated with a specific version.
+/// </summary>
 namespace BExIS.Dlm.Services.Data
 {
     /// <summary>
