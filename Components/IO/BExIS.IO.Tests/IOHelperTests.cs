@@ -46,43 +46,29 @@ namespace BExIS.IO.Tests
         }
 
         [Test()]
-        public void GetDynamicStorePathTest()
+        public void GetDynamicStorePathValuesTest(
+            [Range(1,1000)] long datasetId, [Range(1, 1000)] long datasetVersionOrderNr)
         {
-            string path = IoHelper.GetDynamicStorePath(1, 2, "test", ".txt");
-            string exceptedResult = @"Datasets\1\DatasetVersions\1_2_test.txt";
+            string path = IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "title", ".txt");
 
-
-            path.Should().BeEquivalentTo(exceptedResult,"because {0} not match with {1}", path, exceptedResult );
-
+            path.Should().NotBeNull("Because path is not null.");
         }
 
-        [Test()]
-        public void GetDynamicStorePathWidthNoDatasetIdTest()
+        [TestCase(1, 2, "test", ".txt", ExpectedResult = @"Datasets\1\DatasetVersions\1_2_test.txt")]
+        public string GetDynamicStorePathResultTest(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
-
-            Assert.Throws<Exception>(() => IoHelper.GetDynamicStorePath(-1, 2, "test", ".txt"));
-  
+            return IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
         }
 
-        [Test()]
-        public void GetDynamicStorePathWidthNoDatasetVersionNrTest()
+
+        [TestCase(-1, 1, "title", ".txt")]
+        [TestCase(1, -1, "title", ".txt")]
+        [TestCase(1, 1, "",".txt")]
+        [TestCase(1, 1, "title", "")]
+        public void GetDynamicStorePathWidthExceptionTest(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
 
-            Assert.Throws<Exception>(() => IoHelper.GetDynamicStorePath(1, -1, "test", ".txt"));
-
-        }
-
-        [Test()]
-        public void GetDynamicStorePathWidthNoTitleTest()
-        {
-            Assert.Throws<Exception>(() => IoHelper.GetDynamicStorePath(1, -1, "", ".txt"));
-        }
-
-        [Test()]
-        public void GetDynamicStorePathWidthNoExtentionsTest()
-        {
-
-            Assert.Throws<Exception>(() => IoHelper.GetDynamicStorePath(1, -1, "title", ""));
+            Assert.Throws<Exception>(() => IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention));
         }
 
     }
