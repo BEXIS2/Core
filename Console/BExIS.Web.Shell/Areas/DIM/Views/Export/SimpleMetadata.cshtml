@@ -1,0 +1,12 @@
+﻿@model System.Xml.XmlDocument
+@{
+    ViewBag.Title = "SimpleMetadataView";
+}
+
+@if (Model!= null && Model.DocumentElement != null && Model.DocumentElement.HasChildNodes)
+{
+    foreach (var item in Model.DocumentElement.ChildNodes)
+    {
+        @Html.Partial("XmlNode", item);
+    }
+}

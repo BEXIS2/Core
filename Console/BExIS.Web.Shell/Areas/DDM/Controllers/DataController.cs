@@ -90,6 +90,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long metadataStructureId = -1;
                 long dataStructureId = -1;
                 long researchPlanId = 1;
+                string dataStructureType = DataStructureType.Structured.ToString();
+                bool downloadAccess = false;
                 XmlDocument metadata = new XmlDocument();
 
                 if (dm.IsDatasetCheckedIn(id))
@@ -107,6 +109,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
 
+                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
+                        "Dataset", typeof(Dataset), id, RightType.Read);
+
+                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    {
+                        dataStructureType = DataStructureType.Structured.ToString();
+                    }
+                    else
+                    {
+                        dataStructureType = DataStructureType.Unstructured.ToString();
+                    }
+
                     ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
                 }
                 else
@@ -122,7 +136,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DataStructureId = dataStructureId,
                     ResearchPlanId = researchPlanId,
                     ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
+                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
+                    DataStructureType = dataStructureType,
+                    DownloadAccess = downloadAccess
                 };
 
                 //set metadata in session
@@ -135,6 +151,39 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 dm.Dispose();
                 entityPermissionManager.Dispose();
             }
+        }
+
+        public ActionResult DownloadZip(long id, string format, long version = -1)
+        {
+
+
+            long datasetVersionId = 0;
+
+            if (version > -1)
+            {
+                datasetVersionId = version;
+            }
+            else
+            {
+                DatasetManager datasetManager = new DatasetManager();
+
+                try
+                {
+                    datasetVersionId = datasetManager.GetDatasetLatestVersionId(id);
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+            }
+
+            if (this.IsAccessible("DIM", "Export", "GenerateZip"))
+            {
+
+                return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary()  { { "area","DIM"}, { "id", id }, { "format", format } });
+            }
+
+            return Json(false);
         }
 
         #region metadata
@@ -258,9 +307,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //
                         //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
                         //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, 0, 100, true);
 
-                        Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                        DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 0, 100);
 
                         return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
 
@@ -313,7 +361,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, filter, orderBy, null, command.Page - 1, command.PageSize);
 
-                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, filter);
 
                     model = new GridModel(table);
                     model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
@@ -488,7 +536,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title+"_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
 
                         LoggerFactory.LogCustom(message);
 
@@ -554,7 +602,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = GetFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id, ext);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
 
                         LoggerFactory.LogCustom(message);
 
@@ -768,11 +816,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (columns != null)
                 {
-                    if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
+                    if ((command != null && (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0)) || columns.Count() > 0)
                     {
                         return true;
-                    }
-                }
+                    }                }
             }
 
             return false;
@@ -786,14 +833,19 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
 
                 GridCommand command = null;
+                FilterExpression filter = null;
+                OrderByExpression orderBy = null;
                 string[] columns = null;
 
                 if (Session["Filter"] != null) command = (GridCommand)Session["Filter"];
 
                 if (Session["Columns"] != null) columns = (string[])Session["Columns"];
 
-                FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
-                OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                if (command != null)
+                {
+                    filter = GridHelper.Convert(command.FilterDescriptors.ToList());
+                    orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                }
 
                 ProjectionExpression projection = GridHelper.Convert(columns);
 

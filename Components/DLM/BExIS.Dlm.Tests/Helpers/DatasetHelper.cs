@@ -157,7 +157,9 @@ namespace BExIS.Dlm.Tests.Helpers
                 }
                 return dataset;
             }
-            catch { return null; }
+            catch (Exception ex) {
+                return null;
+            }
             finally
             {
                 dm.Dispose();

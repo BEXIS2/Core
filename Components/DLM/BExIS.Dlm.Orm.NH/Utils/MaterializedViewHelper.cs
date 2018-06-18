@@ -116,7 +116,8 @@ namespace BExIS.Dlm.Orm.NH.Utils
             {
                 var columnName = row["columnname"].ToString();
                 var columnLabel = row["description"].ToString();
-                table.Columns[columnName].Caption = columnLabel;
+                if(table.Columns.Contains(columnName))
+                    table.Columns[columnName].Caption = columnLabel;
             }
             return table;
         }
@@ -251,6 +252,31 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
         }
 
+        public long Count(long datasetId, FilterExpression filter)
+        {
+            var whereClause = filter?.ToSQL();
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder
+                .Append("SELECT ")
+                .Append("COUNT(id) AS cnt").Append(" ")
+                .Append("FROM ").Append(this.BuildName(datasetId).ToLower()).Append(" ") // source mat. view
+                .Append(string.IsNullOrWhiteSpace(whereClause) ? "" : "WHERE (" + whereClause + ")").Append(" ") // where
+                .AppendLine()
+                ;
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
         public void Drop(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
