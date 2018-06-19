@@ -7,7 +7,7 @@ using FluentAssertions;
 
 namespace BExIS.IO.Tests
 {
-    [TestFixture()]
+
     public class FileHelperTests
     {
         private string directory { get; set; }
