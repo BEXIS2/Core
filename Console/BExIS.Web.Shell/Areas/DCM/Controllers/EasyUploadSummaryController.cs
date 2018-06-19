@@ -270,6 +270,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //Try to find an exact matching datastructure
                     Boolean foundReusableDataStructure = false;
                     List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+                    //For some reason, MappedHeaders might be in a different order in this list than what's indicated by its IDs - to prevent mismatching, sort the headers
+                    MappedHeaders.Sort((m1, m2) => m1.Item1.CompareTo(m2.Item1));
                     List<StructuredDataStructure> allDatastructures = dsm.StructuredDataStructureRepo.Get().ToList();
                     foreach (StructuredDataStructure existingStructure in allDatastructures)
                     {
