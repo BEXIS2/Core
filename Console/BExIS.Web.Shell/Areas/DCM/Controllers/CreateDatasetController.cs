@@ -930,7 +930,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         if (item.HasAttributes)
                         {
-                            long sourceId = Convert.ToInt64(item.Attribute("id").Value);
+                            long sourceId = Convert.ToInt64(item.Attribute("roleId").Value);
                             string type = item.Attribute("type").Value;
                             long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
 
@@ -950,11 +950,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     customAttributes.Add("Name", datasetid.ToString());
                                     customAttributes.Add("Id", datasetid.ToString());
 
-                                    var datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+                                    // get or create datasetParty
+                                    Party datasetParty = partyManager.GetPartyByCustomAttributeValues(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), customAttributes).FirstOrDefault();
+                                    if (datasetParty == null) datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+
+
+                                    // Get user party
                                     var person = partyManager.GetParty(partyid);
 
-
-                                    var partyTpePair = releationship.PartyRelationships.FirstOrDefault().PartyTypePair;
+                                    var partyTpePair = releationship.AssociatedPairs.FirstOrDefault();
 
                                     if (partyTpePair != null && person != null && datasetParty != null)
                                     {
