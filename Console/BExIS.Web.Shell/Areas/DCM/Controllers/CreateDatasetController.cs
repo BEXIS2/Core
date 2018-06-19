@@ -414,6 +414,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // load metadatastructure with all packages and attributes
 
+
+
             if (metadataXml != null)
             {
                 // locat path
