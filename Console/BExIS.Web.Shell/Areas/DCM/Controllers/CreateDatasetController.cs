@@ -13,7 +13,6 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
-using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -537,7 +536,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region set releationships 
 
-                        
+
                         //todo check if dim is active
                         // todo call to  a function in dim
                         setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
@@ -924,7 +923,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // get releaionship type id for owner
                     var releationships = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
                         p => p.AssociatedPairs.Any(
-                            ap => ap.AllowedSource.Title.ToLower().Equals("dataset") || ap.AllowedTarget.Title.ToLower().Equals("dataset")
+                            ap => ap.SourceType.Title.ToLower().Equals("dataset") || ap.TargetType.Title.ToLower().Equals("dataset")
                             ));
 
                     foreach (XElement item in complexElements)

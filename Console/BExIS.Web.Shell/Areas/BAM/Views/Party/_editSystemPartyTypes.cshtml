@@ -18,10 +18,10 @@
             <label id="lblPartyName">@typePair.Title</label>
             <ul>
                 <li style="text-align:left">
-                    @foreach (Party party in typePair.AllowedTarget.Parties)
+                    @foreach (Party party in typePair.TargetType.Parties)
                     {
                        
-                        var existedRelationship = Model.FirstOrDefault(cc => cc.SecondParty.Id == party.Id);
+                        var existedRelationship = Model.FirstOrDefault(cc => cc.TargetParty.Id == party.Id);
                         RightType[] rightTypes;
                         if (existedRelationship != null)
                         {
@@ -43,7 +43,7 @@
                             <input type="hidden" name="systemPartyRelationships[@counter].Id" id="existedRelationship_@counter" value="@(existedRelationship==null?long.MaxValue:existedRelationship.Id)" />
                             <input type="hidden" name="systemPartyRelationships[@counter].Permission" id="systemPermission_@counter" value="@(existedRelationship==null?0:existedRelationship.Permission)" />
                             <input type="hidden" name="systemPartyRelationships[@counter].PartyTypePair.Id" value="@(typePair==null?0:typePair.Id)" />
-                            <input type="hidden" name="systemPartyRelationships[@counter].SecondParty.Id" value="@party.Id" />
+                            <input type="hidden" name="systemPartyRelationships[@counter].TargetParty.Id" value="@party.Id" />
                         </div>
                         counter += 1;
                     }

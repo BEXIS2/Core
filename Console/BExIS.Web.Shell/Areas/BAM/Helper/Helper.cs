@@ -63,7 +63,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             {
                 partyManager = new PartyManager();
                 var cnt = partyManager.PartyRelationshipRepository.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
-                                          && (item.FirstParty != null && (item.FirstParty.Id == sourcePartyId) || (item.SecondParty.Id == sourcePartyId))
+                                          && (item.SourceParty != null && (item.SourceParty.Id == sourcePartyId) || (item.TargetParty.Id == sourcePartyId))
                                            && (item.EndDate >= DateTime.Now)).Count();
                 return cnt;
             }
@@ -113,11 +113,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     foreach (var customAttributeValue in party.CustomAttributeValues)
                         if (partyCustomGridColumnsRepository.Any(cc => cc.CustomAttribute != null && (cc.CustomAttribute.Id == (customAttributeValue.CustomAttribute.Id))))
                             row[customAttributeValue.CustomAttribute.DisplayName.Replace(" ", "_")] = customAttributeValue.Value;
-                    var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => (cc.FirstParty.Id == party.Id));
+                    var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => (cc.SourceParty.Id == party.Id));
                     foreach (var partyRelationship in partyRelationships)
                     {
                         if (partyCustomGridColumnsRepository.Any(cc => cc.TypePair != null && cc.TypePair.Id == (partyRelationship.PartyTypePair.Id)))
-                            row[partyRelationship.PartyTypePair.Title.Replace(" ", "_")] += partyRelationship.SecondParty.Name + "<br/>";
+                            row[partyRelationship.PartyTypePair.Title.Replace(" ", "_")] += partyRelationship.TargetParty.Name + "<br/>";
                     }
 
                     table.Rows.Add(row);
@@ -180,7 +180,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 //    foreach (var systemPartyRel in systemPartyRelationships.Where(item => item.Id != long.MaxValue))
                 //    {
                 //        var firstParty = partyManager.PartyRepository.Reload(party);
-                //        var secondParty = partyManager.PartyRepository.Get(systemPartyRel.SecondParty.Id);
+                //        var secondParty = partyManager.PartyRepository.Get(systemPartyRel.TargetParty.Id);
                 //        var partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(systemPartyRel.PartyTypePair.Id);
                 //        //update
                 //        if (systemPartyRel.Id > 0)
@@ -239,7 +239,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 ////add relationship to the all targets
                 //foreach (var systemPartyTypePair in systemPartyTypePairs)
                 //{
-                //    foreach (var targetParty in systemPartyTypePair.AllowedTarget.Parties)
+                //    foreach (var targetParty in systemPartyTypePair.TargetType.Parties)
                 //    {
                 //        PartyTypePair partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Reload(systemPartyTypePair);
                 //        partyManager.AddPartyRelationship(partyManager.PartyRepository.Reload(newParty), targetParty,  "system", "", systemPartyTypePair, permission: systemPartyTypePair.PermissionTemplate);
@@ -302,7 +302,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             PartyRelationshipTypeManager partTypeManager = new PartyRelationshipTypeManager();
             try
             {
-                var typePairs = partTypeManager.PartyTypePairRepository.Get(cc => cc.AllowedSource.Id == partyTypeId && cc.AllowedTarget.SystemType);
+                var typePairs = partTypeManager.PartyTypePairRepository.Get(cc => cc.SourceType.Id == partyTypeId && cc.TargetType.SystemType);
                 return typePairs;
             }
             finally

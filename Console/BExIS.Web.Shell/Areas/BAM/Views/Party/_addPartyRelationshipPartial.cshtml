@@ -3,8 +3,8 @@
     var hasParty = false;
     var sourceParty = (BExIS.Dlm.Entities.Party.Party)ViewBag.sourceParty;
     var subModels = new Dictionary<IEnumerable<BExIS.Dlm.Entities.Party.PartyRelationshipType>, BExIS.Dlm.Entities.Party.Party>();
-    //subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.AllowedSource.Id == sourceParty.PartyType.Id)), sourceParty);
-    // subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.AllowedTarget.Id == sourceParty.PartyType.Id)), sourceParty);
+    //subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.SourceType.Id == sourceParty.PartyType.Id)), sourceParty);
+    // subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.TargetType.Id == sourceParty.PartyType.Id)), sourceParty);
 
     var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
 }
@@ -29,7 +29,7 @@
                     @foreach (var partyRelationType in Model)
                     {
              var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
-                    if (partyRelationType.AssociatedPairs.Any(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
+                    if (partyRelationType.AssociatedPairs.Any(cc => cc.SourceType.Id == sourceParty.PartyType.Id))
                     {
                         <table>
                             <tr>
@@ -45,7 +45,7 @@
                                     <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
                                 </td>
                             </tr>
-                            @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
+                            @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.SourceType.Id == sourceParty.PartyType.Id))
                             {
                                 if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
                                 {
@@ -57,7 +57,7 @@
                                         </td>
                                         <td style="min-width:300px;">
                                             <table>
-                                                @foreach (var party in partyTypePair.AllowedTarget.Parties)
+                                                @foreach (var party in partyTypePair.TargetType.Parties)
                                                 {
                                                     <tr>
                                                         <td class="partyRelationship">
@@ -101,7 +101,7 @@
 
                 var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
 
-                if (partyRelationType.AssociatedPairs.Any(cc => cc.AllowedTarget.Id == sourceParty.PartyType.Id))
+                if (partyRelationType.AssociatedPairs.Any(cc => cc.TargetType.Id == sourceParty.PartyType.Id))
                 {
                        <table>
                         <tr>
@@ -117,7 +117,7 @@
                                 <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
                             </td>
                         </tr>
-                        @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedTarget.Id == sourceParty.PartyType.Id))
+                        @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.TargetType.Id == sourceParty.PartyType.Id))
                         {
                             if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
                             {
@@ -129,7 +129,7 @@
                                     </td>
                                     <td style="min-width:300px;">
                                         <table>
-                                            @foreach (var party in partyTypePair.AllowedSource.Parties)
+                                            @foreach (var party in partyTypePair.SourceType.Parties)
                                             {
                                                 <tr>
                                                     <td class="partyRelationship">

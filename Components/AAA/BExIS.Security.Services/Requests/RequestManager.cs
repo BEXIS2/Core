@@ -8,13 +8,21 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
 {
-    public sealed class RequestManager
+    public class RequestManager : IDisposable
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public RequestManager()
         {
-            var uow = this.GetUnitOfWork();
+            _guow = this.GetIsolatedUnitOfWork();
+            RequestRepository = _guow.GetReadOnlyRepository<Request>();
+            PartyRepository = _guow.GetReadOnlyRepository<Party>();
+        }
 
-            RequestRepository = uow.GetReadOnlyRepository<Request>();
+        ~RequestManager()
+        {
+            Dispose(true);
         }
 
         public IReadOnlyRepository<Request> RequestRepository { get; }
@@ -32,11 +40,11 @@ namespace BExIS.Security.Services.Requests
                 var userRepository = uow.GetReadOnlyRepository<User>();
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
 
-                var firstOrDefault = partyRelationshipRepository.Query(m => m.PartyRelationshipType.Title == "Owner" && m.SecondParty.Id == key).FirstOrDefault();
+                var firstOrDefault = partyRelationshipRepository.Query(m => m.PartyRelationshipType.Title == "Owner" && m.TargetParty.Id == key).FirstOrDefault();
 
                 if (firstOrDefault == null) return;
 
-                var partyUser = partyUserRepository.Get(firstOrDefault.FirstParty.Id);
+                var partyUser = partyUserRepository.Get(firstOrDefault.SourceParty.Id);
 
                 var request = new Request()
                 {
@@ -95,6 +103,24 @@ namespace BExIS.Security.Services.Requests
                 var merged = repo.Get(entity.Id);
                 repo.Put(merged);
                 uow.Commit();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
             }
         }
     }
