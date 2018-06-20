@@ -344,8 +344,8 @@ namespace BExIS.Dlm.Services.Party
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyTypePair.PartyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
-                var alowedSource = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourceType.Id == firstParty.PartyType.Id || item.SourceType.Id == secondParty.PartyType.Id);
-                var alowedTarget = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetType.Id == firstParty.PartyType.Id || item.TargetType.Id == secondParty.PartyType.Id);
+                var alowedSource = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourceType.Id == firstParty.PartyType.Id);
+                var alowedTarget = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetType.Id == secondParty.PartyType.Id);
                 if (alowedSource == null || alowedTarget == null)
                     BexisException.Throw(entity, "There is not relevant 'PartyTypePair' for these types of parties.", BexisException.ExceptionType.Add);
                 partyTypePair.PartyRelationshipType.PartyRelationships.Add(entity);
