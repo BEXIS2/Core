@@ -31,6 +31,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Index";
 
             try
             {
@@ -67,6 +68,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Index(string autoComplete, string FilterList, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Index";
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
@@ -91,9 +93,75 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //reset searchType
             // after every search - searchType must be based on
             SetSearchType("basedon");
-
             return View(provider);
         }
+
+        #region
+        public ActionResult Public()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Public";
+
+            try
+            {
+                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+
+                provider.WorkingSearchModel.CriteriaComponent.Clear();
+                ///
+                /// Make sure that a criterion to filter public datasets is in the working search model.
+                ///
+                provider.WorkingSearchModel.UpdateSearchCriteria("gen_isPublic", "TRUE", SearchComponentBaseType.General, false, false, "AND");
+
+                provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+                SetSessionsToDefault();
+
+                return View("Index", provider);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
+
+                return View("Index");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Public(string autoComplete, string FilterList, string searchType)
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Public";
+
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+
+            if (searchType == "new")
+            {
+                Session["FilterAC"] = null;
+                Session["SelectedIndexFilterAC"] = 0;
+                Session["PropertiesDictionary"] = null;
+
+                provider.WorkingSearchModel.CriteriaComponent.Clear();
+                ///
+                /// Make sure that a criterion to filter public datasets is in the working search model.
+                ///
+                provider.WorkingSearchModel.UpdateSearchCriteria("gen_isPublic", "TRUE", SearchComponentBaseType.General, false, false, "AND");
+
+            }
+
+            SetSearchType(searchType);
+
+            if (!provider.WorkingSearchModel.CriteriaComponent.ContainsSearchCriterion(FilterList, autoComplete, SearchComponentBaseType.Category))
+            {
+                provider.WorkingSearchModel.UpdateSearchCriteria(FilterList, autoComplete, SearchComponentBaseType.Category);
+            }
+
+            provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+
+            SetSearchType("basedon");
+
+            return View("Index", provider);
+        }
+
+        #endregion
 
         #region SearchHeader
 
@@ -173,7 +241,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel);
+            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel); 
         }
 
         //+++++++++++++++++++++ TreeView onSelect Action +++++++++++++++++++++++++++
@@ -285,7 +353,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return View("Index", provider);
+            return RedirectToAction(Session["SubmissionAction"].ToString()); //View("Index", provider);
         }
 
         #endregion
