@@ -47,7 +47,7 @@ namespace BExIS.IO.Tests
 
         [Test()]
         public void GetDynamicStorePathValuesTest(
-            [Range(1,1000)] long datasetId, [Range(1, 1000)] long datasetVersionOrderNr)
+            [Range(1, 2)] long datasetId, [Range(1, 2)] long datasetVersionOrderNr)
         {
             string path = IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "title", ".txt");
 
