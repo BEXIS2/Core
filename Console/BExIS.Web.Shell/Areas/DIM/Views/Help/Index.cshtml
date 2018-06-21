@@ -20,45 +20,60 @@
 }
 
 
-    <style>
-        a:hover {
-            background-color: #bee1da;
-            text-decoration: none;
-        }
+<style>
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
 
-        .toc {
-            position: fixed;
-            top: 100px;
-            overflow: auto;
-            max-height: 64vh;
-            width: 250px;
-            max-width: 350px;
-        }
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
 
 
-        .scrollable {
-            overflow: auto;
-            height: 750px;
-        }
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
 
-        :target:before {
-            content: "";
-            display: block;
-            height: 100px;
-        }
-    </style>
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
+</style>
 
 <h1><a id="_overview"><span>1. Overview</span></a></h1>
 <p><span>&#xa0;</span></p>
-<p><span>The Data Dissemination Module, available via Setup (Cog button) and Export Metadata, provides a tool to export metadata to a standard compliant XML file. For every metadata structure in the system there is one tab in the tab strip.</span></p>
-<p><span>The data grid in one tab shows all datasets belonging to the selected metadata structure.</span></p>
+<p>
+    Export Metadata and Manage Metadata Structure are available via Setup (Cog button). <br />
+    Export Metadata provides a tool to export metadata to a standard compliant XML file. For every metadata structure in the system there is one tab in the tab strip.<br />
+    Manage Metadata Structure provides a tool to set for each metadata structure predefined keys and party types. It explain in this guide under the name Mapping Tool in part 3.
+</p>
+<p><span>&#xa0;</span></p>
 <h1><a id="metadata_export">2. Metadata Export</a></h1>
-<p><span>Select a checkbox to mark datasets you would like to export.</span></p>
-<p><span>Please click the Export button and wait until the metadata XML file has been created successfully and a download link is available in-line.</span></p>
+<p><span>&#xa0;</span></p>
+<p>
+    The data grid in each tab shows all datasets belonging to the selected metadata structure.
+    Select one or more checkboxes close datasets you would like to export.
+    Clicking on the Export button create the metadata XML files and provides download links in-line.
+</p>
 <p><span>&#xa0;</span></p>
 <p><img src="~/Areas/DIM/Content/Images/Help/Help_img1.png" width="750" alt="img1" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
 <h1><a id="mapping_tool">3. Mapping tool</a></h1>
-<p>In the mapping tool in BEXIS it is possible to set each metadata structure to predefined keys and party types (for more information about party types see the manual about parties).</p>
+<p><span>&#xa0;</span></p>
+
+<!--*******************Text is checked to this point*************************-->
+
+<p>
+    In the mapping tool in BEXIS it is possible to set each metadata structure to predefined keys and party types (for more information about party types see the manual about parties).
+</p>
 <ul>
     <li>Keys are attributes such as title or description.</li>
     <li>Party types are defined objects such as persons, institutes, organization or workshops.</li>
@@ -77,7 +92,7 @@
 <p>Auto complete for projects.</p>
 <p><img src="~/Areas/DIM/Content/Images/Help/mapping_tool3.png" width="750" alt="img1" /><span>&#xa0;</span></p>
 <p>Auto complete for persons.</p>
-
+<p><span>&#xa0;</span></p>
 <h2><a id="mapping_overview"><span>3.1. Mapping Overview</span></a></h2>
 <p><img src="~/Areas/DIM/Content/Images/Help/mapping.png" width="750" alt="img1" /><span>&#xa0;</span></p>
 <p>The page is divided into 3 sections. The source is displayed on the left. The target is displayed on the right side. In the middle all created mappings are displayed.</p>
