@@ -85,7 +85,7 @@ namespace BExIS.Web.Shell.Models
         public string Password { get; set; }
 
         [Display(Name = "Terms and Conditions")]
-        [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before registering.")]
         public bool TermsAndConditions { get; set; }
     }
 
