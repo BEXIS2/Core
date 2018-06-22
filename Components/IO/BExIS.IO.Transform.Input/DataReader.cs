@@ -125,6 +125,9 @@ namespace BExIS.IO.Transform.Input
         /// <seealso cref=""/>        
         protected Dictionary<long, ValueValidationManager> ValueValidationManagerDic = new Dictionary<long, ValueValidationManager>();
 
+
+        protected IOUtility IOUtility;
+
         #endregion
 
         #region private 
@@ -139,11 +142,15 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param></param>       
-        public DataReader()
+        public DataReader(StructuredDataStructure structuredDatastructure, IOUtility iOUtility)
         {
+            IOUtility = iOUtility;
+            StructuredDataStructure = structuredDatastructure;
             this.ErrorMessages = new List<Error>();
+            
             Position = 1;
         }
+
 
         #region IDataReader Member
 
@@ -537,6 +544,27 @@ namespace BExIS.IO.Transform.Input
         }
 
         #endregion
+
+        #region getter setter
+
+        public void SetSubmitedVariableIdentifiers(List<string> variableNames)
+        {
+            SubmitedVariableIdentifiers = new List<VariableIdentifier>();
+
+            foreach (string s in variableNames)
+            {
+                VariableIdentifier vi = new VariableIdentifier();
+                vi.name = s;
+                SubmitedVariableIdentifiers.Add(vi);
+            }
+        }
+
+        public void SetDataStructure(StructuredDataStructure structuredDataStructure)
+        {
+            this.StructuredDataStructure = StructuredDataStructure;
+        }
+
+        # endregion
 
     }
 }

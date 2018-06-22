@@ -69,7 +69,7 @@ namespace BExIS.IO.Transform.Output
 
         #endregion
 
-        public ExcelWriter(bool isTemplate = false)
+        public ExcelWriter(IOUtility iOUtility, bool isTemplate = false): base(iOUtility)
         {
             Template = isTemplate;
         }
@@ -190,8 +190,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
-
-
+ 
             using (var uow = this.GetUnitOfWork())
             {
                 DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();

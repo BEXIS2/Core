@@ -171,6 +171,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<Error> FinishUpload2(TaskManager taskManager)
         {
             DataStructureManager dsm = new DataStructureManager();
+            IOUtility iOUtility = new IOUtility();
 
             try
             {
@@ -232,7 +233,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region excel reader
 
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
-                                IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 int packageSize = 10000;
 
@@ -240,7 +241,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 int counter = 0;
 
-                                ExcelReader reader = new ExcelReader();
+                                ExcelReader reader = new ExcelReader(sds, new IOUtility());
 
                                 //schleife
                                 dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
@@ -260,15 +261,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     // open file
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
-                                    if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                     
                                         ExcelFileReaderInfo excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), excelFileReaderInfo, sds, (int)id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), excelFileReaderInfo, (int)id, packageSize);
                                         
                                     }
                                     else
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
 
                                     if (reader.ErrorMessages.Count > 0)
                                     {
@@ -328,10 +329,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region ascii reader
 
 
-                            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
-                                AsciiReader reader = new AsciiReader();
+                                AsciiReader reader = new AsciiReader(sds, new IOUtility());
                                 //Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
                                 //DatasetManager dm = new DatasetManager();
@@ -353,7 +354,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], id, packageSize);
                                         Stream.Close();
 
                                         if (reader.ErrorMessages.Count > 0)
@@ -483,6 +484,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             DataStructureManager dsm = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
+            IOUtility iOUtility = new IOUtility();
 
             try
             {
@@ -557,7 +559,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region excel reader
 
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
-                                IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 int packageSize = 10000;
 
@@ -565,7 +567,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 int counter = 0;
 
-                                ExcelReader reader = new ExcelReader();
+                                ExcelReader reader = new ExcelReader(sds, new IOUtility());
 
                                 //schleife
                                 dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
@@ -602,13 +604,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     Stopwatch upload = Stopwatch.StartNew();
 
-                                    if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         ExcelFileReaderInfo excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), excelFileReaderInfo, sds, (int)id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), excelFileReaderInfo, (int)id, packageSize);
                                     }
                                     else
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
 
                                     upload.Stop();
                                     Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
@@ -671,10 +673,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #region ascii reader
 
 
-                            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
-                                AsciiReader reader = new AsciiReader();
+                                AsciiReader reader = new AsciiReader(sds, new IOUtility());
                                 //Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
                                 //DatasetManager dm = new DatasetManager();
@@ -710,7 +712,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], id, packageSize);
                                         Stream.Close();
 
                                         if (reader.ErrorMessages.Count > 0)
@@ -930,7 +932,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 //XXX put function like GetStorePathOriginalFile or GetDynamicStorePathOriginalFile
                 // the function is available in the abstract class datawriter
-                ExcelWriter excelWriter = new ExcelWriter();
+                ExcelWriter excelWriter = new ExcelWriter(new IOUtility());
                 // Move Original File to its permanent location
                 String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
                 string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
@@ -980,7 +982,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
-            ExcelWriter excelWriter = new ExcelWriter();
+            ExcelWriter excelWriter = new ExcelWriter(new IOUtility());
 
             // Move Original File to its permanent location
             String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();

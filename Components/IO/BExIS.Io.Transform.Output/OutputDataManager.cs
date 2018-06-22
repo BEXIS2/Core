@@ -66,7 +66,7 @@ namespace BExIS.IO.Transform.Output
                         }
                 }
 
-                AsciiWriter writer = new AsciiWriter(textSeperator);
+                AsciiWriter writer = new AsciiWriter(new IOUtility(), textSeperator);
 
                 string path = "";
 
@@ -136,7 +136,7 @@ namespace BExIS.IO.Transform.Output
                     }
             }
 
-            AsciiWriter writer = new AsciiWriter(textSeperator);
+            AsciiWriter writer = new AsciiWriter(new IOUtility(), textSeperator);
 
             // write to file
             // if there is already a file, replace it
@@ -192,7 +192,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public string GenerateExcelFile(string ns, DataTable table, string title, long dsId, string ext=".xlsm")
         {
-            ExcelWriter writer = new ExcelWriter();
+            ExcelWriter writer = new ExcelWriter(new IOUtility());
             string path = createDownloadFile(ns, dsId, title, ext, writer);
 
             
@@ -227,7 +227,7 @@ namespace BExIS.IO.Transform.Output
             try
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                ExcelWriter writer = new ExcelWriter(createAsTemplate);
+                ExcelWriter writer = new ExcelWriter(new IOUtility(), createAsTemplate);
                 
 
                 string path = "";

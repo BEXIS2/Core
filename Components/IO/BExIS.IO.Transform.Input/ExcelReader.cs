@@ -28,7 +28,7 @@ namespace BExIS.IO.Transform.Input
     /// this class is used to read and validate excel files
     /// </summary>
     /// <remarks></remarks>     
-    public class ExcelReader : DataReader
+    public class ExcelReader : DataReader 
     {
         public static List<string> SUPPORTED_APPLICATIONS = new List<string>() { "Microsoft Excel" };
 
@@ -54,7 +54,7 @@ namespace BExIS.IO.Transform.Input
         public string Application = "";
         public string ApplicationVersion = "";
 
-        public ExcelReader()
+        public ExcelReader(StructuredDataStructure structuredDatastructure, IOUtility iOUtility) : base(structuredDatastructure, iOUtility)
         {
             this.Info = new ExcelFileReaderInfo();
             NumberOfRows = 0;
@@ -204,7 +204,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
         [MeasurePerformance]
-        public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, int packageSize)
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId, int packageSize)
         {
 
             this.FileStream = file;
@@ -213,7 +213,7 @@ namespace BExIS.IO.Transform.Input
             // clear lsit of datatuples for the next package
             this.DataTuples = new List<DataTuple>();
 
-            this.StructuredDataStructure = sds;
+            //this.StructuredDataStructure = sds;
             //this.info = efri;
             this.DatasetId = datasetId;
 
@@ -286,12 +286,10 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, FileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public List<DataTuple> ReadFile(Stream file, string fileName, FileReaderInfo fri,long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
             this.Info = fri;
             this.DatasetId = datasetId;
 
@@ -377,12 +375,10 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, ExcelFileReaderInfo fri, StructuredDataStructure sds, long datasetId, int packageSize)
+        public List<DataTuple> ReadFile(Stream file, string fileName, ExcelFileReaderInfo fri, long datasetId, int packageSize)
         {
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
             this.Info = fri;
             this.DatasetId = datasetId;
 
@@ -473,15 +469,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="variableList"></param>
         /// <param name="packageSize"></param>
         /// <returns></returns>
-        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, List<long> variableList, int packageSize)
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, long datasetId, List<long> variableList, int packageSize)
         {
             List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
-            //this.Info = efri;
             this.DatasetId = datasetId;
 
             // open excel file
@@ -666,12 +659,11 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fileName">Name of the file</param>
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
-        public void ValidateFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId)
+        public void ValidateFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
 
-            this.StructuredDataStructure = sds;
             //this.Info = efri;
             this.DatasetId = datasetId;
 
@@ -728,12 +720,10 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fileName">Name of the file</param>
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
-        public void ValidateFile(Stream file, string fileName, ExcelFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public void ValidateFile(Stream file, string fileName, ExcelFileReaderInfo fri, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
             this.Info = fri;
             this.DatasetId = datasetId;
 

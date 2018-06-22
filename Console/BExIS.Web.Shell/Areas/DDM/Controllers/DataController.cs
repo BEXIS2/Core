@@ -278,7 +278,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Session["Columns"] = null;
             Session["DownloadFullDataset"] = false;
             ViewData["DownloadOptions"] = null;
-
+            IOUtility iOUtility = new IOUtility();
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
             //permission download
@@ -310,7 +310,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 0, 100);
 
-                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
+                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, iOUtility.GetSupportedAsciiFiles()));
 
                         //return PartialView(new ShowPrimaryDataModel());
                     }
@@ -319,7 +319,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         return
                             PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
-                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess, IOUtility.GetSupportedAsciiFiles()));
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess, iOUtility.GetSupportedAsciiFiles()));
                     }
                 }
                 else
@@ -392,7 +392,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    AsciiWriter writer = new AsciiWriter(new IOUtility(), TextSeperator.comma);
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
@@ -448,7 +448,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    AsciiWriter writer = new AsciiWriter(new IOUtility(), TextSeperator.comma);
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
@@ -518,7 +518,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    ExcelWriter writer = new ExcelWriter();
+                    ExcelWriter writer = new ExcelWriter(new IOUtility());
 
                     string title = getTitle(writer.GetTitle(id));
 
@@ -582,7 +582,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    ExcelWriter writer = new ExcelWriter();
+                    ExcelWriter writer = new ExcelWriter(new IOUtility());
 
                     string title = getTitle(writer.GetTitle(id));
 
@@ -660,7 +660,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    ExcelWriter writer = new ExcelWriter();
+                    ExcelWriter writer = new ExcelWriter(new IOUtility());
 
                     string title = getTitle(writer.GetTitle(id));
 
@@ -724,7 +724,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    ExcelWriter writer = new ExcelWriter();
+                    ExcelWriter writer = new ExcelWriter(new IOUtility());
 
                     string title = getTitle(writer.GetTitle(id));
 

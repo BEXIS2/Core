@@ -101,7 +101,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult ValidateFile()
         {
             DataStructureManager dsm = new DataStructureManager();
-
+            IOUtility iOUtility = new IOUtility();
             try
             {
 
@@ -122,9 +122,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                         {
                             // open FileStream
-                            ExcelReader reader = new ExcelReader();
+                            ExcelReader reader = new ExcelReader(sds, new IOUtility());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
                             if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
@@ -138,12 +138,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         }
 
-                        if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                        if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
                             // open FileStream
-                            ExcelReader reader = new ExcelReader();
+                            ExcelReader reader = new ExcelReader(sds, new IOUtility());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], id);
                             model.ErrorList = reader.ErrorMessages;
 
                             if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
@@ -157,11 +157,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
 
 
-                        if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                        if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
-                            AsciiReader reader = new AsciiReader();
+                            AsciiReader reader = new AsciiReader(sds, new IOUtility());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], id);
                             model.ErrorList = reader.ErrorMessages;
 
                             if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))

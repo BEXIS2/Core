@@ -81,6 +81,10 @@ namespace BExIS.IO.Transform.Output
         //managers
         protected DatasetManager DatasetManager = new DatasetManager();
 
+
+        protected IOUtility IOUtility;
+
+
         //Constructor
 
         /// <summary>
@@ -89,8 +93,9 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param>NA</param>       
-        public DataWriter()
+        public DataWriter(IOUtility iOUtility)
         {
+            IOUtility = iOUtility;
             DatasetManager = new DatasetManager();
         }
 

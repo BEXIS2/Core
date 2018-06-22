@@ -12,6 +12,7 @@ using System.Xml;
 using Vaiona.Model.MTnt;
 using Vaiona.Persistence.Api;
 using Vaiona.Logging.Aspects;
+using BExIS.IO;
 
 /// <summary>
 ///
@@ -363,20 +364,22 @@ namespace BExIS.Dcm.UploadWizard
                 {
                     primaryValuesAsOneString = new List<string>();
 
-                    AsciiReader reader = new AsciiReader();
+                    DataStructureManager datastructureManager = new DataStructureManager();
+                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+
+                    AsciiReader reader = new AsciiReader(sds,new IOUtility());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
                     AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
 
-                    DataStructureManager datastructureManager = new DataStructureManager();
-                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+                   
                     // get a list of values for each row
                     // e.g.
                     // primarky keys id, name
                     // 1 [1][David]
                     // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys, packageSize);
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, datasetId, primaryKeys, packageSize);
 
                     // convert List of Lists to list of strings
                     // 1 [1][David] = 1David
@@ -428,18 +431,19 @@ namespace BExIS.Dcm.UploadWizard
                     //reset
                     primaryValuesAsOneString = new List<string>();
 
-                    ExcelReader reader = new ExcelReader();
+                    DataStructureManager datastructureManager = new DataStructureManager();
+                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+
+                    ExcelReader reader = new ExcelReader(sds, new IOUtility());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
-                    DataStructureManager datastructureManager = new DataStructureManager();
-                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
                     // get a list of values for each row
                     // e.g.
                     // primarky keys id, name
                     // 1 [1][David]
                     // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, sds, datasetId, primaryKeys, packageSize);
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename,datasetId, primaryKeys, packageSize);
 
                     // convert List of Lists to list of strings
                     // 1 [1][David] = 1David

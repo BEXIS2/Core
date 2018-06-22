@@ -530,7 +530,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         while (currentBatchStartRow <= areaDataValues[2] + 1) //While the end of the current data area has not yet been reached
                         {
                             //Create a new reader each time because the reader saves ALL tuples it read and therefore the batch processing wouldn't work
-                            EasyUploadExcelReader reader = new EasyUploadExcelReader();
+                            EasyUploadExcelReader reader = new EasyUploadExcelReader(sds, new IOUtility());
                             // open file
                             Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
 
@@ -562,7 +562,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             reader.setSubmittedVariableIdentifiers(identifiers);
 
                             //Read the rows and convert them to DataTuples
-                            rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, worksheetUri);
+                            rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, (int)datasetId, worksheetUri);
 
                             //After reading the rows, add them to the dataset
                             if (rows != null)
