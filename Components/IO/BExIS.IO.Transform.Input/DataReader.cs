@@ -142,11 +142,12 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param></param>       
-        public DataReader(StructuredDataStructure structuredDatastructure, IOUtility iOUtility)
+        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo, IOUtility iOUtility)
         {
             IOUtility = iOUtility;
             StructuredDataStructure = structuredDatastructure;
-            this.ErrorMessages = new List<Error>();
+            Info = fileReaderInfo;
+            ErrorMessages = new List<Error>();
             
             Position = 1;
         }
@@ -557,11 +558,6 @@ namespace BExIS.IO.Transform.Input
                 vi.name = s;
                 SubmitedVariableIdentifiers.Add(vi);
             }
-        }
-
-        public void SetDataStructure(StructuredDataStructure structuredDataStructure)
-        {
-            this.StructuredDataStructure = StructuredDataStructure;
         }
 
         # endregion

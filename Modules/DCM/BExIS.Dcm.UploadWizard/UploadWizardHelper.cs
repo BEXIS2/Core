@@ -366,12 +366,13 @@ namespace BExIS.Dcm.UploadWizard
 
                     DataStructureManager datastructureManager = new DataStructureManager();
                     StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+                    AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
 
-                    AsciiReader reader = new AsciiReader(sds,new IOUtility());
+                    AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
-                    AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
+                    
 
                    
                     // get a list of values for each row
@@ -379,7 +380,7 @@ namespace BExIS.Dcm.UploadWizard
                     // primarky keys id, name
                     // 1 [1][David]
                     // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, datasetId, primaryKeys, packageSize);
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
 
                     // convert List of Lists to list of strings
                     // 1 [1][David] = 1David
@@ -434,7 +435,7 @@ namespace BExIS.Dcm.UploadWizard
                     DataStructureManager datastructureManager = new DataStructureManager();
                     StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
 
-                    ExcelReader reader = new ExcelReader(sds, new IOUtility());
+                    ExcelReader reader = new ExcelReader(sds,new ExcelFileReaderInfo(), new IOUtility());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 

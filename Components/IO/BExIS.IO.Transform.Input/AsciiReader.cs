@@ -22,18 +22,18 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>        
     public class AsciiReader:DataReader
     {
-        public AsciiReader(StructuredDataStructure structuredDatastructure, IOUtility iOUtility) : base(structuredDatastructure, iOUtility)
+        public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
         {
 
         }
 
-        public List<List<string>> ReadFile(Stream file, AsciiFileReaderInfo fri)
+        public List<List<string>> ReadFile(Stream file)
         {
             List<List<string>> tmp = new List<List<string>>();
 
             this.FileStream = file;
-            this.Info = fri;
-
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+                
             // Check params
             if (this.FileStream == null)
             {
@@ -63,7 +63,7 @@ namespace BExIS.IO.Transform.Input
 
                     while ((line = streamReader.ReadLine()) != null)
                     {
-                        if (index >= this.Info.Data)
+                        if (index >= Info.Data)
                         {
                             // return List of VariablesValues, and error messages
                             tmp.Add(rowToList(line, seperator));
@@ -93,14 +93,14 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure</param>
         /// <param name="datasetId">Id of the dataset</param>
         /// <returns>List of datatuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, AsciiFileReaderInfo fri, long datasetId)
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
-             // Check params
+            // Check params
             if (this.FileStream == null)
             {
                 this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
@@ -169,7 +169,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="packageSize"></param>
         /// <returns>List of datatuples</returns>
         [MeasurePerformance]
-        public List<DataTuple> ReadFile(Stream file, string fileName, AsciiFileReaderInfo fri, long datasetId, int packageSize)
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId, int packageSize)
         {
 
             // clear list of datatuples
@@ -179,8 +179,8 @@ namespace BExIS.IO.Transform.Input
 
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
             // Check params
             if (this.FileStream == null)
@@ -288,12 +288,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="variableList">List of variables</param>
         /// <param name="packageSize">size of a package</param>
         /// <returns></returns>
-        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, long datasetId, List<long> variableList, int packageSize)
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, long datasetId, List<long> variableList, int packageSize)
         {
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
             List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
@@ -411,12 +411,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fri">AsciiFileReaderInfo needed</param>
         /// <param name="sds">StructuredDataStructure</param>
         /// <param name="datasetId">Id of the dataset</param>
-        public void ValidateFile(Stream file, string fileName, AsciiFileReaderInfo fri, long datasetId)
+        public void ValidateFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
             // Check params
             if (this.FileStream == null)

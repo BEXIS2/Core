@@ -15,7 +15,7 @@ namespace BExIS.IO.Transform.Input
 {
     public class EasyUploadExcelReader : ExcelReader
     {
-        public EasyUploadExcelReader(StructuredDataStructure structuredDatastructure, IOUtility iOUtility) : base(structuredDatastructure, iOUtility)
+        public EasyUploadExcelReader(StructuredDataStructure structuredDatastructure, EasyUploadFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
         {
         }
 

@@ -122,9 +122,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                         {
                             // open FileStream
-                            ExcelReader reader = new ExcelReader(sds, new IOUtility());
+                            ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo(), new IOUtility());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
+                            reader.ValidateTemplateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
                             if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
@@ -141,9 +141,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
                             // open FileStream
-                            ExcelReader reader = new ExcelReader(sds, new IOUtility());
+                            ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], new IOUtility());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], id);
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
                             if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
@@ -159,9 +159,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
-                            AsciiReader reader = new AsciiReader(sds, new IOUtility());
+                            AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], new IOUtility());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], id);
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
                             if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))

@@ -89,7 +89,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                                 {
                                     // open FileStream
-                                    var reader = new ExcelReader(null, new IOUtility());
+                                    var reader = new ExcelReader(null, null, new IOUtility());
                                     Stream = reader.Open(filePath);
                                     //Session["Stream"] = Stream;
 
@@ -121,7 +121,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     {
 
                                         // open FileStream
-                                        var reader = new ExcelReader(null, new IOUtility());
+                                        var reader = new ExcelReader(null,null, new IOUtility());
                                         Stream = reader.Open(filePath);
                                         TaskManager.Current().SetValid(true);
                                         Stream.Close();
@@ -130,7 +130,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     else if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         // open FileStream
-                                        var reader = new AsciiReader(null, new IOUtility());
+                                        var reader = new AsciiReader(null,null,new IOUtility());
                                         Stream = reader.Open(filePath);
                                         //Session["Stream"] = Stream;
                                         TaskManager.Current().SetValid(true);

@@ -76,7 +76,7 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
         [TestCase("1|test|2.2|true|02.02.2018")]
-        public void ReadRow(string rowString)
+        public void ReadRowTest(string rowString)
         {
             //preperation
             List<string> row = new List<string>(rowString.Split('|'));
@@ -86,16 +86,12 @@ namespace BExIS.IO.Tests.Transform.Input
             ioUtilityMock.Setup(i => i.ConvertDateToCulture("2018")).Returns("2018");
 
             //prepare the variables
-            DataReader reader = new AsciiReader(dataStructure, ioUtilityMock.Object);
+            DataReader reader = new AsciiReader(dataStructure,new AsciiFileReaderInfo(), ioUtilityMock.Object);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
             reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
 
-            //set DataStructure
-            reader.SetDataStructure(dataStructure);
-
             //test
             DataTuple dt = reader.ReadRow(new List<string>(row), 1);
-
 
             //asserts
             dt.Should().NotBeNull();

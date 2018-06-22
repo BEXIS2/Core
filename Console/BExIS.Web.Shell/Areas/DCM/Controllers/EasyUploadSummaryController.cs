@@ -529,10 +529,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         int currentBatchStartRow = areaDataValues[0] + 1;
                         while (currentBatchStartRow <= areaDataValues[2] + 1) //While the end of the current data area has not yet been reached
                         {
-                            //Create a new reader each time because the reader saves ALL tuples it read and therefore the batch processing wouldn't work
-                            EasyUploadExcelReader reader = new EasyUploadExcelReader(sds, new IOUtility());
-                            // open file
-                            Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
 
                             //End row is start row plus batch size
                             int currentBatchEndRow = currentBatchStartRow + batchSize;
@@ -557,6 +553,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Offset = areaDataValues[1],
                                 Orientation = orientation
                             };
+                            //Create a new reader each time because the reader saves ALL tuples it read and therefore the batch processing wouldn't work
+                            EasyUploadExcelReader reader = new EasyUploadExcelReader(sds, fri, new IOUtility());
+                            // open file
+                            Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
 
                             //Set variable identifiers because they might differ from the variable names in the file
                             reader.setSubmittedVariableIdentifiers(identifiers);
