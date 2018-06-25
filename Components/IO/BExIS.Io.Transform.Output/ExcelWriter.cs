@@ -69,7 +69,22 @@ namespace BExIS.IO.Transform.Output
 
         #endregion
 
-        public ExcelWriter(IOUtility iOUtility, bool isTemplate = false): base(iOUtility)
+        public ExcelWriter(bool isTemplate = false)
+        {
+            Template = isTemplate;
+        }
+
+        public ExcelWriter(IOUtility iOUtility, bool isTemplate = false) :base(iOUtility)
+        {
+            Template = isTemplate;
+        }
+
+        public ExcelWriter(DatasetManager datasetManager, bool isTemplate = false) : base(datasetManager)
+        {
+            Template = isTemplate;
+        }
+
+        public ExcelWriter(IOUtility iOUtility, DatasetManager datasetManager, bool isTemplate = false) : base(iOUtility, datasetManager)
         {
             Template = isTemplate;
         }

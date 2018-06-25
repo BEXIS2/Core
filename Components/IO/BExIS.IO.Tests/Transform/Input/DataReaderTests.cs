@@ -294,6 +294,104 @@ namespace BExIS.IO.Tests.Transform.Input
 
         }
 
+        //ToDo check for Mocks in the ValidateRow Function 
+        [TestCase("var1UT|var2UT|var3UT|var4UT|var5UT")]
+        [Repeat(4)]
+        public void ValidateComparisonWithDatatstructureTest(string variableRowString)
+        {
+            //preperation
+            List<string> variableRow = new List<string>(variableRowString.Split('|'));
+
+            //prepare the variables
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
+            IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
+            List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
+
+            //test
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+            //asserts
+            errors.Should().BeNull();
+
+        }
+
+        [TestCase("var1UT|var2UT|var3UT|var4UT")]
+        [Repeat(4)]
+        public void ValidateComparisonWithDatatstructureLessVariablesTest(string variableRowString)
+        {
+            //preperation
+            List<string> variableRow = new List<string>(variableRowString.Split('|'));
+
+            //prepare the variables
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
+            List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(variableRow);
+
+            //test
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+            //asserts
+            errors.Should().NotBeNull();
+            errors.Count.Should().Equals(1);
+
+        }
+
+        [TestCase("var1UT|var2UT|var3UT|var4UT|var5UT|var6UT")]
+        [Repeat(4)]
+        public void ValidateComparisonWithDatatstructureMoreVariablesTest(string variableRowString)
+        {
+            //preperation
+            List<string> variableRow = new List<string>(variableRowString.Split('|'));
+
+            //prepare the variables
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
+            List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(variableRow.ToList());
+
+            //test
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+            //asserts
+            errors.Should().NotBeNull();
+            errors.Count.Should().Equals(1);
+
+        }
+
+        [TestCase("var1UT|var2UT|var3UT|var4UT|XYZTSRZRDZ|var6UT")]
+        [Repeat(4)]
+        public void ValidateComparisonWithDatatstructureVariablNotExistTest(string variableRowString)
+        {
+            //preperation
+            List<string> variableRow = new List<string>(variableRowString.Split('|'));
+
+            //prepare the variables
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
+            List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(variableRow.ToList());
+
+            //test
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+            //asserts
+            errors.Should().NotBeNull();
+            errors.Count.Should().Equals(1);
+
+        }
+
+        [Test]
+        [Repeat(4)]
+        public void ValidateComparisonWithDatatstructureNullTest()
+        {
+
+            //prepare the variables
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
+
+            //test
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(null);
+
+            //asserts
+            errors.Should().NotBeNull();
+            errors.Count.Should().Equals(1);
+
+        }
+
         #endregion
     }
 }

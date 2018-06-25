@@ -621,7 +621,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 //XXX put function like GetStorePathOriginalFile or GetDynamicStorePathOriginalFile
                 // the function is available in the abstract class datawriter
-                ExcelWriter excelWriter = new ExcelWriter(new IOUtility());
+                ExcelWriter excelWriter = new ExcelWriter();
                 // Move Original File to its permanent location
                 String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
                 string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
@@ -671,7 +671,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
-            ExcelWriter excelWriter = new ExcelWriter(new IOUtility());
+            ExcelWriter excelWriter = new ExcelWriter();
 
             // Move Original File to its permanent location
             String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();

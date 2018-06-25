@@ -562,7 +562,7 @@ namespace BExIS.IO.Transform.Input
 
         #region getter setter
 
-        public void SetSubmitedVariableIdentifiers(List<string> variableNames)
+        public List<VariableIdentifier> SetSubmitedVariableIdentifiers(List<string> variableNames)
         {
             SubmitedVariableIdentifiers = new List<VariableIdentifier>();
 
@@ -572,6 +572,8 @@ namespace BExIS.IO.Transform.Input
                 vi.name = s;
                 SubmitedVariableIdentifiers.Add(vi);
             }
+
+            return SubmitedVariableIdentifiers;
         }
 
         # endregion

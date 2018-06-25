@@ -35,7 +35,7 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param>NA</param>       
-        public AsciiWriter(IOUtility iOUtility):base(iOUtility)
+        public AsciiWriter()
         {
             Delimeter = TextSeperator.comma;
         }
@@ -46,7 +46,7 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="delimeter"></param>
-        public AsciiWriter(IOUtility iOUtility, TextSeperator delimeter) : base(iOUtility)
+        public AsciiWriter(TextSeperator delimeter) : base()
         {
             Delimeter = delimeter;
         }
