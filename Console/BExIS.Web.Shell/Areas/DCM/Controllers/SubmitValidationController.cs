@@ -122,7 +122,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                         {
                             // open FileStream
-                            ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo(), new IOUtility());
+                            ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                             reader.ValidateTemplateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
@@ -141,7 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
                             // open FileStream
-                            ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], new IOUtility());
+                            ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO]);
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                             reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
@@ -159,7 +159,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
-                            AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], new IOUtility());
+                            AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO]);
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                             reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;

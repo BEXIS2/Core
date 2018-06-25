@@ -435,7 +435,7 @@ namespace BExIS.Dcm.UploadWizard
                     DataStructureManager datastructureManager = new DataStructureManager();
                     StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
 
-                    ExcelReader reader = new ExcelReader(sds,new ExcelFileReaderInfo(), new IOUtility());
+                    ExcelReader reader = new ExcelReader(sds,new ExcelFileReaderInfo());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 

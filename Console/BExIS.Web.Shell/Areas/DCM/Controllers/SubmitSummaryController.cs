@@ -276,6 +276,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     workingCopy.StateInfo.State = status;
                                 }
 
+                                ExcelReader reader = null;
+                                ExcelFileReaderInfo excelFileReaderInfo = null;
+
+                                if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
+
+                                reader = new ExcelReader(sds, excelFileReaderInfo);
+                                
+                                
 
                                 do
                                 {
@@ -284,30 +293,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     counter++;
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
-                                    // open file
-                                   
-
-                                    
-
-                                    Stopwatch upload = Stopwatch.StartNew();
-                                    ExcelReader reader = null;
+                                    //open stream
+                                    Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                                  
                                     if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
-                                        ExcelFileReaderInfo excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
-                                        Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                        reader = new ExcelReader(sds, excelFileReaderInfo, new IOUtility());
-
                                         rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
                                     else
                                     {
-                                        reader = new ExcelReader(sds, null, new IOUtility());
-                                        Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                                         rows = reader.ReadTemplateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
 
-                                        upload.Stop();
-                                        Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
+                                    //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
 
                                     if (reader.ErrorMessages.Count > 0)
                                     {
@@ -320,10 +318,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         {
                                             if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
                                             {
-                                                upload = Stopwatch.StartNew();
                                                 dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                                upload.Stop();
-                                                Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
+                                                //Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
                                                 //Debug.WriteLine("----");
 
                                             }
@@ -331,10 +327,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             {
                                                 if (rows.Count() > 0)
                                                 {
-                                                    //Stopwatch split = Stopwatch.StartNew();
                                                     Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                                     splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
-                                                    //split.Stop();
                                                     //Debug.WriteLine("Split : " + counter + "  Time " + split.Elapsed.TotalSeconds.ToString());
 
                                                     //Stopwatch upload = Stopwatch.StartNew();
@@ -371,7 +365,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
-                                AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], new IOUtility());
+                                AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO]);
                                 //Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
                                 //DatasetManager dm = new DatasetManager();

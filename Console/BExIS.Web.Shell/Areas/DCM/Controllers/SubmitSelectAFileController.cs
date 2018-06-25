@@ -89,7 +89,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                                 {
                                     // open FileStream
-                                    var reader = new ExcelReader(null, null, new IOUtility());
+                                    var reader = new ExcelReader(null, null);
                                     Stream = reader.Open(filePath);
                                     //Session["Stream"] = Stream;
 
@@ -121,7 +121,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     {
 
                                         // open FileStream
-                                        var reader = new ExcelReader(null,null, new IOUtility());
+                                        var reader = new ExcelReader(null,null);
                                         Stream = reader.Open(filePath);
                                         TaskManager.Current().SetValid(true);
                                         Stream.Close();

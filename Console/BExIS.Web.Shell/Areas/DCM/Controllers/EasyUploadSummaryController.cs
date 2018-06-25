@@ -554,7 +554,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Orientation = orientation
                             };
                             //Create a new reader each time because the reader saves ALL tuples it read and therefore the batch processing wouldn't work
-                            EasyUploadExcelReader reader = new EasyUploadExcelReader(sds, fri, new IOUtility());
+                            EasyUploadExcelReader reader = new EasyUploadExcelReader(sds, fri);
                             // open file
                             Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
 
