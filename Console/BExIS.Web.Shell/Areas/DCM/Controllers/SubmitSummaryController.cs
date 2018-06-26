@@ -288,7 +288,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 do
                                 {
-                                    //Stopwatch packageTime = Stopwatch.StartNew();
 
                                     counter++;
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
@@ -316,26 +315,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         //XXX Add packagesize to excel read function
                                         if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
+                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
                                             {
                                                 dm.EditDatasetVersion(workingCopy, rows, null, null);
                                                 //Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
                                                 //Debug.WriteLine("----");
 
                                             }
+                                            else
                                             if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
                                             {
                                                 if (rows.Count() > 0)
                                                 {
                                                     Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                                     splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
-                                                    //Debug.WriteLine("Split : " + counter + "  Time " + split.Elapsed.TotalSeconds.ToString());
 
-                                                    //Stopwatch upload = Stopwatch.StartNew();
                                                     dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                                                    //    upload.Stop();
-                                                    //    Debug.WriteLine("Upload : " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
-                                                    //    Debug.WriteLine("----");
+
                                                 }
                                             }
                                         }
@@ -348,15 +344,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     Stream?.Close();
                                     
 
-                                    //packageTime.Stop();
-                                    //Debug.WriteLine("Package : " + counter + " packageTime Time " + packageTime.Elapsed.TotalSeconds.ToString());
-
                                 } while (rows.Count() > 0);
 
-                                //fullTime.Stop();
-                                //Debug.WriteLine("FullTime " + fullTime.Elapsed.TotalSeconds.ToString());
                             }
-
                             #endregion
 
                             #region ascii reader
@@ -415,12 +405,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
   
                                         if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
+                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
                                             {
 
                                                 dm.EditDatasetVersion(workingCopy, rows, null, null);
                                             }
-
+                                            else
                                             if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
                                             {
                                                 if (rows.Count() > 0)
