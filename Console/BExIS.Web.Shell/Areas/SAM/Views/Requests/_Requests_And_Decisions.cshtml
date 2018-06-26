@@ -1,0 +1,16 @@
+﻿@model long
+
+@(Html.Telerik().TabStrip()
+    .Name("tabstrip_requests_and_decisions")
+    .SelectedIndex(0)
+    .Items(tabs =>
+    {
+        tabs.Add()
+            .Text("Requests")
+            .LoadContentFrom("Requests", "Requests", new { entityId = @Model });
+
+        tabs.Add()
+            .Text("Decisions")
+            .LoadContentFrom("Decisions", "Requests", new { entityId = @Model });
+    })
+)

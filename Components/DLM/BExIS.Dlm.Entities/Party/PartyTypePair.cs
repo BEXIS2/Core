@@ -16,8 +16,8 @@ namespace BExIS.Dlm.Entities.Party
         #endregion
 
         #region Associations
-        public virtual PartyType SourceType { get; set; }
-        public virtual PartyType TargetType { get; set; }
+        public virtual PartyType SourcePartyType { get; set; }
+        public virtual PartyType TargetPartyType { get; set; }
         public virtual PartyRelationshipType PartyRelationshipType { get; set; }
         #endregion
 

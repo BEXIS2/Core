@@ -3,7 +3,7 @@
 @{
         String partyTypeTitle = "";
         if (Model.Any()) {
-            partyTypeTitle = Model.First().CustomAttribute == null ? Model.First().TypePair.SourceType.Title : Model.First().CustomAttribute.PartyType.Title;
+            partyTypeTitle = Model.First().CustomAttribute == null ? Model.First().TypePair.SourcePartyType.Title : Model.First().CustomAttribute.PartyType.Title;
         }
     }
 

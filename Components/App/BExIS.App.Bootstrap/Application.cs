@@ -50,7 +50,7 @@ namespace BExIS.App.Bootstrap
                 }
                 started = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 started = false;
             }

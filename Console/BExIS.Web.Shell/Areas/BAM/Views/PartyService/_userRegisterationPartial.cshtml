@@ -30,7 +30,7 @@
                             {
                                 <script type="text/javascript">
                                     
-                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,conditionSource:"@PartyTypePair.Value.ConditionSource",parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.TargetType.Parties.Select(item => new { item.Id, item.Name })))});
+                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,conditionSource:"@PartyTypePair.Value.ConditionSource",parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.TargetPartyType.Parties.Select(item => new { item.Id, item.Name })))});
                                 </script>
                             }
                             <script type="text/javascript">

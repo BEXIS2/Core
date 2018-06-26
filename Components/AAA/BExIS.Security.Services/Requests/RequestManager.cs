@@ -29,6 +29,31 @@ namespace BExIS.Security.Services.Requests
         public IReadOnlyRepository<Party> PartyRepository { get; }
         public IQueryable<Request> Requests => RequestRepository.Query();
 
+        public void Accept(long requestId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRequestRepository = uow.GetRepository<Request>();
+                var entityDecisionRepository = uow.GetRepository<Decision>();
+
+                var entityRequest = entityRequestRepository.Get(requestId);
+                var entityDecisions = entityDecisionRepository.Query(m => m.Request.Id == requestId).ToList();
+
+                if (entityRequest != null && )
+                {
+                    entityRequest.Status = RequestStatus.Accepted;
+                    Update(entityRequest);
+
+
+                }
+            }
+        }
+
+        public void Reject(long requestId)
+        {
+
+        }
+
         public void Create(long applicantId, long entityId, long key, int rights = 1)
         {
             using (var uow = this.GetUnitOfWork())
@@ -36,36 +61,58 @@ namespace BExIS.Security.Services.Requests
                 var requestRepository = uow.GetRepository<Request>();
                 var decisionRepository = uow.GetRepository<Decision>();
                 var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
+                var partyTypeRepository = uow.GetReadOnlyRepository<PartyType>();
                 var partyUserRepository = uow.GetReadOnlyRepository<PartyUser>();
                 var userRepository = uow.GetReadOnlyRepository<User>();
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
 
-                var firstOrDefault = partyRelationshipRepository.Query(m => m.PartyRelationshipType.Title == "Owner" && m.TargetParty.Id == key).FirstOrDefault();
+                var dataset_partyType = partyTypeRepository.Query(m => m.Title == "Dataset").FirstOrDefault();
 
-                if (firstOrDefault == null) return;
-
-                var partyUser = partyUserRepository.Get(firstOrDefault.SourceParty.Id);
-
-                var request = new Request()
+                if (dataset_partyType != null)
                 {
-                    Applicant = userRepository.Get(applicantId),
-                    Entity = entityRepository.Get(entityId),
-                    Key = key,
-                    RequestDate = DateTime.Now,
-                    Status = RequestStatus.Open
-                };
+                    var dataset_party =
+                        PartyRepository.Query(m => m.Name == key.ToString() && m.PartyType.Id == dataset_partyType.Id)
+                            .FirstOrDefault();
 
-                requestRepository.Put(request);
+                    if (dataset_party != null)
+                    {
+                        var partyRelationship =
+                            partyRelationshipRepository.Query(
+                                    m => m.PartyRelationshipType.Title == "Owner" && m.TargetParty.Id == dataset_party.Id)
+                                .FirstOrDefault();
 
-                var decision = new Decision()
-                {
-                    Status = DecisionStatus.Open,
-                    Request = request,
-                    DecisionMaker = userRepository.Get(partyUser.UserId)
-                };
+                        if (partyRelationship != null)
+                        {
+                            var partyUser =
+                                partyUserRepository.Query(m => m.Party.Id == partyRelationship.SourceParty.Id)
+                                    .FirstOrDefault();
 
-                decisionRepository.Put(decision);
-                uow.Commit();
+                            if (partyUser != null)
+                            {
+                                var request = new Request()
+                                {
+                                    Applicant = userRepository.Get(applicantId),
+                                    Entity = entityRepository.Get(entityId),
+                                    Key = key,
+                                    RequestDate = DateTime.Now,
+                                    Status = RequestStatus.Open
+                                };
+
+                                requestRepository.Put(request);
+
+                                var decision = new Decision()
+                                {
+                                    Status = DecisionStatus.Open,
+                                    Request = request,
+                                    DecisionMaker = userRepository.Get(partyUser.UserId)
+                                };
+
+                                decisionRepository.Put(decision);
+                                uow.Commit();
+                            }
+                        }
+                    }
+                }
             }
         }
 

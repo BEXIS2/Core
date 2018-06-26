@@ -53,7 +53,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         foreach (var partyRelationshipType in partyRelationshipsType)
                         {
                             //filter AssociatedPairs to allowed pairs
-                            partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourceType.Id && item.TargetType.Parties.Any()).ToList();
+                            partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourcePartyType.Id && item.TargetPartyType.Parties.Any()).ToList();
                             //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one 
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
                             if (defaultPartyTypePair == null)

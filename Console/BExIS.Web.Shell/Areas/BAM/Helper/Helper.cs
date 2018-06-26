@@ -239,7 +239,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 ////add relationship to the all targets
                 //foreach (var systemPartyTypePair in systemPartyTypePairs)
                 //{
-                //    foreach (var targetParty in systemPartyTypePair.TargetType.Parties)
+                //    foreach (var targetParty in systemPartyTypePair.TargetPartyType.Parties)
                 //    {
                 //        PartyTypePair partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Reload(systemPartyTypePair);
                 //        partyManager.AddPartyRelationship(partyManager.PartyRepository.Reload(newParty), targetParty,  "system", "", systemPartyTypePair, permission: systemPartyTypePair.PermissionTemplate);
@@ -302,7 +302,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             PartyRelationshipTypeManager partTypeManager = new PartyRelationshipTypeManager();
             try
             {
-                var typePairs = partTypeManager.PartyTypePairRepository.Get(cc => cc.SourceType.Id == partyTypeId && cc.TargetType.SystemType);
+                var typePairs = partTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyTypeId && cc.TargetPartyType.SystemType);
                 return typePairs;
             }
             finally

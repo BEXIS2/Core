@@ -48,7 +48,7 @@
     </set>
 
     <set name="PartyTypePairSources" table="PartyTypePairs" lazy="true">
-      <key column="SourceTypeRef"/>
+      <key column="SourcePartyTypeRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>
 

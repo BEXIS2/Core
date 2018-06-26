@@ -35,7 +35,7 @@ namespace BExIS.Web.Shell.Controllers
 
             try
             {
-                requestManager.Create(65536, 1, 2);
+                requestManager.Create(32768, 1, 5);
 
                 return View("Index");
             }

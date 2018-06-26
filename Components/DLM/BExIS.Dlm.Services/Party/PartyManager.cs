@@ -135,7 +135,7 @@ namespace BExIS.Dlm.Services.Party
         //    using (IUnitOfWork uow = this.GetUnitOfWork())
         //    {
         //        IRepository<PartyTypePair> repoTypePair = uow.GetRepository<PartyTypePair>();
-        //        var systemTypepairs=repoTypePair.Get(cc => cc.SourceType.Id == party.PartyType.Id && cc.TargetType.SystemType);
+        //        var systemTypepairs=repoTypePair.Get(cc => cc.SourcePartyType.Id == party.PartyType.Id && cc.TargetPartyType.SystemType);
         //        foreach (var systemTypepair in systemTypepairs)
         //        {
         //           // AddPartyRelationship(party)
@@ -344,8 +344,8 @@ namespace BExIS.Dlm.Services.Party
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyTypePair.PartyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
-                var alowedSource = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourceType.Id == firstParty.PartyType.Id);
-                var alowedTarget = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetType.Id == secondParty.PartyType.Id);
+                var alowedSource = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourcePartyType.Id == firstParty.PartyType.Id);
+                var alowedTarget = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetPartyType.Id == secondParty.PartyType.Id);
                 if (alowedSource == null || alowedTarget == null)
                     BexisException.Throw(entity, "There is not relevant 'PartyTypePair' for these types of parties.", BexisException.ExceptionType.Add);
                 partyTypePair.PartyRelationshipType.PartyRelationships.Add(entity);
@@ -417,8 +417,8 @@ namespace BExIS.Dlm.Services.Party
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyTypePair.PartyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
-                var sourceType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourceType.Id == sourceParty.PartyType.Id);
-                var targetType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetType.Id == targetParty.PartyType.Id);
+                var sourceType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourcePartyType.Id == sourceParty.PartyType.Id);
+                var targetType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetPartyType.Id == targetParty.PartyType.Id);
                 if (sourceType == null || targetType == null)
                     BexisException.Throw(entity, "There is not relevant 'PartyTypePair' for these types of parties.", BexisException.ExceptionType.Add);
                 partyTypePair.PartyRelationshipType.PartyRelationships.Add(entity);
@@ -1029,7 +1029,7 @@ namespace BExIS.Dlm.Services.Party
         public IEnumerable<PartyCustomGridColumns> GetPartyCustomGridColumns(long partyTypeId, bool all = false, long? userId = null)
         {
             //retrieve all the records for this partyId
-            var partyCustomGridColumns = PartyCustomGridColumnsRepository.Get(cc => (cc.CustomAttribute.PartyType.Id == partyTypeId || cc.TypePair.SourceType.Id == partyTypeId)
+            var partyCustomGridColumns = PartyCustomGridColumnsRepository.Get(cc => (cc.CustomAttribute.PartyType.Id == partyTypeId || cc.TypePair.SourcePartyType.Id == partyTypeId)
             && (userId.HasValue ? cc.UserId.Value == userId.Value : !cc.UserId.HasValue));
             if (!all)
                 partyCustomGridColumns = partyCustomGridColumns.Where(cc => cc.Enable).ToList();

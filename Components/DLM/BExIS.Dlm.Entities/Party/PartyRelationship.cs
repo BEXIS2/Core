@@ -4,7 +4,7 @@ using Vaiona.Entities.Common;
 namespace BExIS.Dlm.Entities.Party
 {
     /// <summary>
-    /// this.PartyRelationshipType.PartyTypePairs.SourceType MUST CONTAIN this.SourceParty.PartyRelationshipType
+    /// this.PartyRelationshipType.PartyTypePairs.SourcePartyType MUST CONTAIN this.SourceParty.PartyRelationshipType
     /// AND
     /// this.PartyRelationshipType.PartyTypePairs.AllowedAtrget MUST CONTAIN this.TargetParty.PartyRelationshipType
     /// </summary>

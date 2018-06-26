@@ -925,7 +925,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // get releaionship type id for owner
                     var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
                         p => p.AssociatedPairs.Any(
-                            ap => ap.SourceType.Title.ToLower().Equals("dataset") || ap.TargetType.Title.ToLower().Equals("dataset")
+                            ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
                             ));
 
                     #region delete relationships
@@ -937,15 +937,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
                                 r =>
-                                r.SourceParty!=null && r.SourceParty.Id.Equals(datasetid) &&
-                                r.PartyTypePair!=null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                r.SourceParty != null && r.SourceParty.Id.Equals(datasetid) &&
+                                r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
                             );
 
                         IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
 
                         foreach (PartyRelationship pr in relationships)
                         {
-                            if(!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
                         }
 
                     }
@@ -971,8 +971,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, sourceType)) ||
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                     MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)))
-                                    {
-                                        
+                                {
+
                                     // create releationship
 
                                     // create a Party for the dataset
@@ -992,17 +992,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     if (partyTpePair != null && person != null && datasetParty != null)
                                     {
-
                                         if (!uow.GetReadOnlyRepository<PartyRelationship>().Get().Any(
                                             r =>
-                                            r.SourceParty != null && r.SourceParty.Id.Equals(datasetid) &&
+                                            r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
                                             r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
-                                            r.TargetParty.Id.Equals(person.Id)
+                                            r.TargetParty.Id.Equals(datasetid)
                                         ))
                                         {
                                             partyManager.AddPartyRelationship(
-                                                datasetParty.Id,
                                                 person.Id,
+                                                datasetParty.Id,
                                                 relationship.Title,
                                                 "",
                                                 partyTpePair.Id

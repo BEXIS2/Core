@@ -397,13 +397,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var addRelationshipModel = new List<AddRelationshipModel>();
                 addRelationshipModel.Add(new AddRelationshipModel()
                 {
-                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.SourceType.Id == party.PartyType.Id)),
+                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.SourcePartyType.Id == party.PartyType.Id)),
                     SourceParty = party,
                     isAsSource = false
                 });
                 addRelationshipModel.Add(new AddRelationshipModel()
                 {
-                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.TargetType.Id == party.PartyType.Id)),
+                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.TargetPartyType.Id == party.PartyType.Id)),
                     SourceParty = party,
                     isAsSource = true
                 });

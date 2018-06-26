@@ -10,7 +10,7 @@
 @foreach (var partyRelationType in Model.PartyRelationshipTypes)
 {
     var cntRelations = (sourceParty != null && Model.isAsSource ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
-    if (partyRelationType.AssociatedPairs.Any())//cc => cc.SourceType.Id == sourceParty.PartyType.Id))
+    if (partyRelationType.AssociatedPairs.Any())//cc => cc.SourcePartyType.Id == sourceParty.PartyType.Id))
     {
         <table>
             <tr>
@@ -26,9 +26,9 @@
                     <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
                 </td>
             </tr>
-            @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.SourceType.Id == sourceParty.PartyType.Id || cc.TargetType.Id == sourceParty.PartyType.Id))
+            @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.SourcePartyType.Id == sourceParty.PartyType.Id || cc.TargetPartyType.Id == sourceParty.PartyType.Id))
             {
-                if ((partyTypePair.SourceType.Id != sourceParty.PartyType.Id) || ((partyTypePair.SourceType.Id == sourceParty.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id)))
+                if ((partyTypePair.SourcePartyType.Id != sourceParty.PartyType.Id) || ((partyTypePair.SourcePartyType.Id == sourceParty.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id)))
                 {
                     <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
                         <td>
@@ -38,9 +38,9 @@
                         </td>
                         <td style="min-width:300px;">
                             <table>
-                                @foreach (var party in (Model.isAsSource ? partyTypePair.SourceType.Parties : partyTypePair.TargetType.Parties))
+                                @foreach (var party in (Model.isAsSource ? partyTypePair.SourcePartyType.Parties : partyTypePair.TargetPartyType.Parties))
                                 {
-                                    if ((partyTypePair.SourceType.Id != party.PartyType.Id) || ((partyTypePair.SourceType.Id == party.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, party.Id)))
+                                    if ((partyTypePair.SourcePartyType.Id != party.PartyType.Id) || ((partyTypePair.SourcePartyType.Id == party.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, party.Id)))
                                     {
                                         <tr>
                                             <td class="partyRelationship">

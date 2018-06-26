@@ -197,8 +197,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             {
                                 partyTypesPairNodeAttributes.Add(att);
                             }
-                            var allowedSourceTitle = GetAttributeValue(partyTypesPairNodeAttributes, "SourceType", true);
-                            var allowedTargetTitle = GetAttributeValue(partyTypesPairNodeAttributes, "TargetType", true);
+                            var allowedSourceTitle = GetAttributeValue(partyTypesPairNodeAttributes, "SourcePartyType", true);
+                            var allowedTargetTitle = GetAttributeValue(partyTypesPairNodeAttributes, "TargetPartyType", true);
                             var allowedSource = partyTypeManager.PartyTypeRepository.Get(item => item.Title.ToLower() == allowedSourceTitle.ToLower()).FirstOrDefault();
                             if (allowedSource == null)
                                 throw new Exception("Error in importing party relationship types ! \r\n " + allowedSourceTitle + " is not a party type!!");
@@ -214,8 +214,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             var permissionsTemplate = GetAttributeValue(partyTypesPairNodeAttributes, "permissionsTemplate", false);
                             partyTypePairs.Add(new PartyTypePair()
                             {
-                                SourceType = allowedSource,
-                                TargetType = allowedTarget,
+                                SourcePartyType = allowedSource,
+                                TargetPartyType = allowedTarget,
                                 Description = typePairDescription,
                                 Title = typePairTitle,
                                 PartyRelationShipTypeDefault = typePairDefault == null ? true : Convert.ToBoolean(typePairDefault),
@@ -230,7 +230,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                         //It is mandatory to create at least one party type pair when we are creating a party type relation
                         //
                         if (partyRelationshipType == null)
-                            partyRelationshipType = partyRelationshipTypeManager.Create(title, displayName, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality), partyTypePairs.First().PartyRelationShipTypeDefault, partyTypePairs.First().SourceType, partyTypePairs.First().TargetType,
+                            partyRelationshipType = partyRelationshipTypeManager.Create(title, displayName, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality), partyTypePairs.First().PartyRelationShipTypeDefault, partyTypePairs.First().SourcePartyType, partyTypePairs.First().TargetPartyType,
             partyTypePairs.First().Title, partyTypePairs.First().Description, partyTypePairs.First().ConditionSource, partyTypePairs.First().ConditionTarget, partyTypePairs.First().PermissionTemplate);
                         else
                         {
@@ -247,7 +247,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 {
                     foreach (var partyCustomAttr in partyType.CustomAttributes)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, partyCustomAttr, null);
-                    var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourceType.Id == partyType.Id);
+                    var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id);
                     foreach (var partyTypePair in partyRelationshipTypePairs)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, null, partyTypePair);
                 }
@@ -315,9 +315,9 @@ namespace BExIS.Modules.Bam.UI.Helpers
         {
             var entity = partyRelationshipTypeManager.PartyTypePairRepository.Get(item => item.Title == partyTypePair.Title && item.PartyRelationshipType.Id == partyRelationshipType.Id).FirstOrDefault();
             if (entity != null)
-                partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.SourceType, partyTypePair.TargetType, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType, entity.PermissionTemplate);
+                partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.SourcePartyType, partyTypePair.TargetPartyType, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType, entity.PermissionTemplate);
             else
-                partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.SourceType, partyTypePair.TargetType, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType, partyTypePair.ConditionSource, partyTypePair.ConditionTarget, partyTypePair.PermissionTemplate);
+                partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.SourcePartyType, partyTypePair.TargetPartyType, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType, partyTypePair.ConditionSource, partyTypePair.ConditionTarget, partyTypePair.PermissionTemplate);
         }
 
         public void Dispose()

@@ -36,7 +36,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                     // get releaionship type id for owner
                     var releationships = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
                         p => p.AssociatedPairs.Any(
-                            ap => ap.SourceType.Title.ToLower().Equals("dataset") || ap.TargetType.Title.ToLower().Equals("dataset")
+                            ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
                             ));
 
                     foreach (XElement item in complexElements)

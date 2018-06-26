@@ -13,6 +13,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class RequestsController : Controller
     {
+        public ActionResult Decisions(long entityId)
+        {
+            return PartialView("_Decisions", entityId);
+        }
+
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Decisions_Select(long entityId, GridCommand command)
         {
@@ -22,15 +27,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var decisionManager = new DecisionManager();
 
             // Source + Transformation - Data
-            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
+            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId); //&& d.DecisionMaker.Name == HttpContext.User.Identity.Name);
 
             var results = decisions.Select(
-                m => new DecisionGridRowModel() { Id = m.Request.Id, Rights = m.Request.Rights, Status = m.Status, Applicant = m.Request.Applicant.Name });
+                m => new DecisionGridRowModel() { Id = m.Id, RequestId = m.Request.Id, Rights = m.Request.Rights, Status = m.Status, Applicant = m.Request.Applicant.Name });
 
             // Filtering
             var total = results.Count();
 
             return View(new GridModel<DecisionGridRowModel> { Data = results.ToList(), Total = total });
+        }
+
+        public ActionResult Requests_And_Decisions(long entityId)
+        {
+            return PartialView("_Requests_And_Decisions", entityId);
         }
 
         public ActionResult Index()
@@ -61,6 +71,36 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Requests", entityId);
         }
 
+        [HttpPost]
+        public void Accept(long requestId)
+        {
+            var requestManager = new RequestManager();
+
+            try
+            {
+                requestManager.FindByIdAsync(userId).Result;
+            }
+            finally
+            {
+                requestManager.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public void Reject(long requestId)
+        {
+            var requestManager = new RequestManager();
+
+            try
+            {
+                requestManager.A
+            }
+            finally
+            {
+                requestManager.Dispose();
+            }
+        }
+
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Requests_Select(long entityId, GridCommand command)
         {
@@ -70,7 +110,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var requestManager = new RequestManager();
 
             // Source + Transformation - Data
-            var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
+            var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId); // && r.Applicant.Name == HttpContext.User.Identity.Name);
 
             var results = requests.Select(
                 m => new RequestGridRowModel() { Id = m.Key, Rights = m.Rights, RequestStatus = m.Status });
