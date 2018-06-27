@@ -39,7 +39,7 @@ namespace BExIS.Security.Services.Requests
                 var entityRequest = entityRequestRepository.Get(requestId);
                 var entityDecisions = entityDecisionRepository.Query(m => m.Request.Id == requestId).ToList();
 
-                if (entityRequest != null && )
+                if (entityRequest != null)
                 {
                     entityRequest.Status = RequestStatus.Accepted;
                     Update(entityRequest);
@@ -52,6 +52,20 @@ namespace BExIS.Security.Services.Requests
         public void Reject(long requestId)
         {
 
+        }
+
+        public bool Exists(long applicantId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+
+                var request =
+                    requestRepository.Query(
+                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key).FirstOrDefault();
+
+                return request != null;
+            }
         }
 
         public void Create(long applicantId, long entityId, long key, int rights = 1)
