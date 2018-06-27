@@ -78,7 +78,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
-                requestManager.FindByIdAsync(userId).Result;
+                //requestManager.FindByIdAsync(userId).Result;
             }
             finally
             {
@@ -93,7 +93,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
-                requestManager.A
+                //requestManager.A
             }
             finally
             {
