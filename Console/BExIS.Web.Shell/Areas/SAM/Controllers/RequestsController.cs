@@ -72,32 +72,32 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public void Accept(long requestId)
+        public void Accept(long decisionId)
         {
-            var requestManager = new RequestManager();
+            var decisionManager = new DecisionManager();
 
             try
             {
-                //requestManager.FindByIdAsync(userId).Result;
+                decisionManager.Accept(decisionId, "");
             }
             finally
             {
-                requestManager.Dispose();
+                decisionManager.Dispose();
             }
         }
 
         [HttpPost]
         public void Reject(long requestId)
         {
-            var requestManager = new RequestManager();
+            var decisionManager = new DecisionManager();
 
             try
             {
-                //requestManager.A
+                decisionManager.Reject(requestId, "");
             }
             finally
             {
-                requestManager.Dispose();
+                decisionManager.Dispose();
             }
         }
 
