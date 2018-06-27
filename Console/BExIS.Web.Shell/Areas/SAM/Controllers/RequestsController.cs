@@ -27,10 +27,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var decisionManager = new DecisionManager();
 
             // Source + Transformation - Data
-            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId); //&& d.DecisionMaker.Name == HttpContext.User.Identity.Name);
+            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
 
             var results = decisions.Select(
-                m => new DecisionGridRowModel() { Id = m.Id, RequestId = m.Request.Id, Rights = m.Request.Rights, Status = m.Status, Applicant = m.Request.Applicant.Name });
+                m =>
+                    new DecisionGridRowModel()
+                    {
+                        Id = m.Id,
+                        RequestId = m.Request.Id,
+                        Rights = m.Request.Rights,
+                        Status = m.Status,
+                        Applicant = m.Request.Applicant.Name
+                    });
 
             // Filtering
             var total = results.Count();
@@ -49,9 +57,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions",
+                    Session.GetTenant());
 
-                var entities = entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+                var entities =
+                    entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
                 foreach (var entity in entities)
                 {
@@ -79,6 +89,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 decisionManager.Accept(decisionId, "");
+            }
+            catch (Exception e)
+            {
+
             }
             finally
             {
@@ -110,7 +124,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var requestManager = new RequestManager();
 
             // Source + Transformation - Data
-            var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId); // && r.Applicant.Name == HttpContext.User.Identity.Name);
+            var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
 
             var results = requests.Select(
                 m => new RequestGridRowModel() { Id = m.Key, Rights = m.Rights, RequestStatus = m.Status });
