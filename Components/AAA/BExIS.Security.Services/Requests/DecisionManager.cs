@@ -60,10 +60,8 @@ namespace BExIS.Security.Services.Requests
                     decisionRepository.Merge(decision);
                     var mergedDecision = decisionRepository.Get(decision.Id);
                     decisionRepository.Put(mergedDecision);
-                    uow.Commit();
 
-
-                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id)
+                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id).ToList()
                         .All(m => m.Status != DecisionStatus.Open))
                     {
                         var request = requestRepository.Get(decision.Request.Id);
@@ -75,10 +73,12 @@ namespace BExIS.Security.Services.Requests
                             requestRepository.Merge(request);
                             var mergedRequest = requestRepository.Get(request.Id);
                             requestRepository.Put(mergedRequest);
-                            uow.Commit();
+
                         }
                     }
                 }
+
+                uow.Commit();
             }
         }
 
