@@ -6,16 +6,17 @@
     .Columns(columns =>
     {
         columns.Bound(g => g.Id);
+        columns.Bound(g => g.RequestId);
         columns.Bound(g => g.Applicant);
         columns.Bound(g => g.Rights);
         columns.Bound(g => g.Status);
         columns.Template(@<text>
-            <button type="button" class="bx bx-grid-function bx-check" @(item.Status==0?"disabled":"")></button>
-            <button type="button" class="bx bx-grid-function bx-delete" @(item.Status==0?"disabled":"")></button>
+            <button type="button" class="bx bx-grid-function bx-check" @(item.Status!=0?"disabled":"")></button>
+            <button type="button" class="bx bx-grid-function bx-delete" @(item.Status!=0?"disabled":"")></button>
          </text>)
         .ClientTemplate(
-            "<button type=\"button\" class=\"bx bx-grid-function bx-check\" value=\"<#= Id #>\" title=\"Grant\" <#= Status==0 ? 'disabled' : '' #> ></button>" +
-            "<button type=\"button\" class=\"bx bx-grid-function bx-delete\" value=\"<#= Id #>\" title=\"Deny\" <#= Status==0 ? 'disabled' : '' #> ></button>")
+            "<button type=\"button\" class=\"bx bx-grid-function bx-check\" value=\"<#= Id #>\" title=\"Grant\" <#= Status!=0 ? 'disabled' : '' #> ></button>" +
+            "<button type=\"button\" class=\"bx bx-grid-function bx-delete\" value=\"<#= Id #>\" title=\"Deny\" <#= Status!=0 ? 'disabled' : '' #> ></button>")
         .Width(65);
     })
     .ClientEvents(events =>

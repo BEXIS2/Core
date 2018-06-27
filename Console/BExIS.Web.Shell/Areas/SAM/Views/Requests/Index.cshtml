@@ -49,7 +49,7 @@
             var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
 
             if (result) {
-                $.post('@Url.Action("Accept", "Requests")', { RequestId: $(this).attr("value") }, function (e) {
+                $.post('@Url.Action("Accept", "Requests")', { DecisionId: $(this).attr("value") }, function (e) {
                     $("#grid_decisions .t-refresh").trigger('click');
                 });
             }
@@ -59,7 +59,7 @@
             var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
 
             if (result) {
-                $.post('@Url.Action("Reject", "Requests")', { RequestId: $(this).attr("value") }, function (e) {
+                $.post('@Url.Action("Reject", "Requests")', { DecisionId: $(this).attr("value") }, function (e) {
                     $("#grid_decisions .t-refresh").trigger('click');
                 });
             }
