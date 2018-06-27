@@ -5,13 +5,38 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
 {
-    public class DecisionManager
+    public class DecisionManager : IDisposable
     {
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
+
         public DecisionManager()
         {
-            var uow = this.GetUnitOfWork();
+            _guow = this.GetIsolatedUnitOfWork();
+            DecisionRepository = _guow.GetReadOnlyRepository<Decision>();
+        }
 
-            DecisionRepository = uow.GetReadOnlyRepository<Decision>();
+        ~DecisionManager()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
+                }
+            }
         }
 
         public IReadOnlyRepository<Decision> DecisionRepository { get; }
@@ -21,16 +46,38 @@ namespace BExIS.Security.Services.Requests
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var entityDecisionRepository = uow.GetRepository<Decision>();
-                var entityDecision = entityDecisionRepository.Get(decisionId);
+                var decisionRepository = uow.GetRepository<Decision>();
+                var requestRepository = uow.GetRepository<Request>();
 
-                if (entityDecision != null)
+                var decision = decisionRepository.Get(decisionId);
+
+                if (decision != null)
                 {
-                    entityDecision.Status = DecisionStatus.Accepted;
-                    entityDecision.DecisionDate = DateTime.Now;
-                    entityDecision.Reason = reason;
+                    decision.Status = DecisionStatus.Accepted;
+                    decision.DecisionDate = DateTime.Now;
+                    decision.Reason = reason;
 
-                    Update(entityDecision);
+                    decisionRepository.Merge(decision);
+                    var mergedDecision = decisionRepository.Get(decision.Id);
+                    decisionRepository.Put(mergedDecision);
+                    uow.Commit();
+
+
+                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id)
+                        .All(m => m.Status != DecisionStatus.Open))
+                    {
+                        var request = requestRepository.Get(decision.Request.Id);
+
+                        if (request != null)
+                        {
+                            request.Status = RequestStatus.Accepted;
+
+                            requestRepository.Merge(request);
+                            var mergedRequest = requestRepository.Get(request.Id);
+                            requestRepository.Put(mergedRequest);
+                            uow.Commit();
+                        }
+                    }
                 }
             }
         }
@@ -39,16 +86,38 @@ namespace BExIS.Security.Services.Requests
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var entityDecisionRepository = uow.GetRepository<Decision>();
-                var entityDecision = entityDecisionRepository.Get(decisionId);
+                var decisionRepository = uow.GetRepository<Decision>();
+                var requestRepository = uow.GetRepository<Request>();
 
-                if (entityDecision != null)
+                var decision = decisionRepository.Get(decisionId);
+
+                if (decision != null)
                 {
-                    entityDecision.Status = DecisionStatus.Rejected;
-                    entityDecision.DecisionDate = DateTime.Now;
-                    entityDecision.Reason = reason;
+                    decision.Status = DecisionStatus.Rejected;
+                    decision.DecisionDate = DateTime.Now;
+                    decision.Reason = reason;
 
-                    Update(entityDecision);
+                    decisionRepository.Merge(decision);
+                    var mergedDecision = decisionRepository.Get(decision.Id);
+                    decisionRepository.Put(mergedDecision);
+
+
+                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id)
+                        .All(m => m.Status != DecisionStatus.Open))
+                    {
+                        var request = requestRepository.Get(decision.Request.Id);
+
+                        if (request != null)
+                        {
+                            request.Status = RequestStatus.Rejected;
+
+                            requestRepository.Merge(request);
+                            var mergedRequest = requestRepository.Get(request.Id);
+                            requestRepository.Put(mergedRequest);
+                        }
+                    }
+
+                    uow.Commit();
                 }
             }
         }
