@@ -197,8 +197,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             {
                                 partyTypesPairNodeAttributes.Add(att);
                             }
-                            var allowedSourceTitle = GetAttributeValue(partyTypesPairNodeAttributes, "SourcePartyType", true);
-                            var allowedTargetTitle = GetAttributeValue(partyTypesPairNodeAttributes, "TargetPartyType", true);
+                            var allowedSourceTitle = GetAttributeValue(partyTypesPairNodeAttributes, "SourceType", true);
+                            var allowedTargetTitle = GetAttributeValue(partyTypesPairNodeAttributes, "TargetType", true);
                             var allowedSource = partyTypeManager.PartyTypeRepository.Get(item => item.Title.ToLower() == allowedSourceTitle.ToLower()).FirstOrDefault();
                             if (allowedSource == null)
                                 throw new Exception("Error in importing party relationship types ! \r\n " + allowedSourceTitle + " is not a party type!!");

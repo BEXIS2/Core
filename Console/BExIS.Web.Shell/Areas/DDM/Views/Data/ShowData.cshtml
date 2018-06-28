@@ -59,7 +59,14 @@
                 }
                 else
                 {
-                    <button class="bx-button function bx-disabled" disabled="disabled">Download</button>
+                    if (Model.RequestExist)
+                    {
+                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
+                    }
+                    else
+                    {
+                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
+                    }
                 }
             </td>
         </tr>
@@ -240,6 +247,29 @@
 
 		$("#preloaderContainer").removePreloader();
 
-	}
+    }
+
+    $("#sendRequestBt").click(function () {
+
+        var id = $(this).attr("datasetId");
+
+        $.post("/DDM/Data/SendRequest", { id },
+            function (data, textStatus, jqXHR) {
+
+                alert(data);
+
+                if (data !== true) {
+                    alert(data)
+                }
+                else {
+                    $("#sendRequestBt").attr("disabled", "disabled");
+                    $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
+                    $("#sendRequestBt").Text("Request has been made.")
+                }
+            },
+            "dataType"
+        );
+
+    })
 
 </script>

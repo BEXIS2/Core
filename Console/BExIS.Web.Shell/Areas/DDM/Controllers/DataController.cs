@@ -10,6 +10,8 @@ using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Requests;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
@@ -80,7 +82,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             DatasetManager dm = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-
             try
             {
                 DatasetVersion dsv;
@@ -92,7 +93,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long researchPlanId = 1;
                 string dataStructureType = DataStructureType.Structured.ToString();
                 bool downloadAccess = false;
+                bool requestExist = false;
+
                 XmlDocument metadata = new XmlDocument();
+
+
 
                 if (dm.IsDatasetCheckedIn(id))
                 {
@@ -109,8 +114,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
 
+                    // check if the user has download rights
                     downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                         "Dataset", typeof(Dataset), id, RightType.Read);
+
+                    // check if a reuqest of this dataset exist
+                    if (!downloadAccess)
+                    {
+                        requestExist = HasRequest(id);
+                    }
 
                     if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                     {
@@ -1045,6 +1057,40 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion datastructure
 
+        #region request
+
+        public JsonResult SendRequest(long id)
+        {
+            RequestManager requestManager = new RequestManager();
+            SubjectManager subjectManager = new SubjectManager();
+            EntityManager entityManager = new EntityManager();
+
+            try
+            {
+                long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
+
+                // ask for read and download rights
+                if(!requestManager.Exists(userId, entityId, id))
+                    requestManager.Create(userId, entityId, id, 3);
+
+            }
+            catch(Exception e)
+            {
+                Json(e.Message, JsonRequestBehavior.AllowGet);
+            }
+            finally
+            {
+                subjectManager.Dispose();
+                requestManager.Dispose();
+                entityManager.Dispose();
+            }
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
         #region helper
 
         private List<DropDownItem> GetDownloadOptions()
@@ -1165,6 +1211,33 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
+        }
+
+        private bool HasRequest(long datasetId)
+        {
+
+            RequestManager requestManager = new RequestManager();
+            SubjectManager subjectManager = new SubjectManager();
+            EntityManager entityManager = new EntityManager();
+
+            try
+            {
+                if (HttpContext.User.Identity != null)
+                {
+                    long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                    long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
+
+                    return requestManager.Exists(userId, entityId, datasetId);
+                }
+
+                return false;
+            }
+            finally
+            {
+                subjectManager.Dispose();
+                requestManager.Dispose();
+                entityManager.Dispose();
+            }
         }
 
         #endregion helper

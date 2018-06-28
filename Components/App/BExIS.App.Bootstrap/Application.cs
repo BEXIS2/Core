@@ -53,6 +53,7 @@ namespace BExIS.App.Bootstrap
             catch (Exception ex)
             {
                 started = false;
+                throw ex;
             }
         }
 
