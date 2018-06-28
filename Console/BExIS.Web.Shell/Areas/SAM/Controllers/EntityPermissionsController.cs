@@ -7,11 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -28,6 +30,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (entityPermission == null)
                 {
                     entityPermissionManager.Create(null, entityId, instanceId, (int)RightType.Read);
+
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
+                    {
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", entityId } });
+                    }
                 }
             }
             finally
@@ -122,6 +129,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 if (entityPermission == null) return;
                 entityPermissionManager.Delete(entityPermission);
+
+                if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
+                {
+                    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", entityId } });
+                }
+
             }
             finally
             {

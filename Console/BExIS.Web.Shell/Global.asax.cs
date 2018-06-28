@@ -11,6 +11,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 using BExIS.Web.Shell.Attributes;
+using BExIS.Web.Shell.Helpers;
 
 namespace BExIS.Web.Shell
 {

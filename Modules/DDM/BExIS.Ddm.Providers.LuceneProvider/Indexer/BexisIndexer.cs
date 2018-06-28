@@ -5,6 +5,8 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -43,6 +45,18 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         public List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
 
         public bool includePrimaryData = true;
+
+        private EntityManager entityManager;
+        private EntityPermissionManager entityPermissionManager;
+        private long? entityTypeId;
+        public BexisIndexer()
+        {
+            entityPermissionManager = new EntityPermissionManager();
+
+            entityManager = new EntityManager();
+            entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+        }
         /// <summary>
         ///
         /// </summary>
@@ -351,6 +365,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             var dataset = new Document();
             List<XmlNode> facetNodes = facetXmlNodeList;
             dataset.Add(new Field("doc_id", docId, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+            ///
+            /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
+            ///
+            dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id)? "TRUE": "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
             foreach (XmlNode facet in facetNodes)
             {
