@@ -150,7 +150,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
                     GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
                     DataStructureType = dataStructureType,
-                    DownloadAccess = downloadAccess
+                    DownloadAccess = downloadAccess,
+                    RequestExist = requestExist
                 };
 
                 //set metadata in session
@@ -1064,6 +1065,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             RequestManager requestManager = new RequestManager();
             SubjectManager subjectManager = new SubjectManager();
             EntityManager entityManager = new EntityManager();
+            DatasetManager datasetManager = new DatasetManager();
 
             try
             {
@@ -1071,8 +1073,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
                 // ask for read and download rights
-                if(!requestManager.Exists(userId, entityId, id))
-                    requestManager.Create(userId, entityId, id, 3);
+                if (!requestManager.Exists(userId, entityId, id))
+                {
+                    var request = requestManager.Create(userId, entityId, id, 3);
+                   
+
+                    if (request != null)
+                    {
+                        //reload request
+                        long requestId = request.Id;
+                        request = requestManager.FindById(requestId);
+
+                        long datasetVersionId = datasetManager.GetDatasetLatestVersion(id).Id;
+                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersionId, NameAttributeValues.title);
+                        if (string.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+                        //ToDo send emails to owner & requester
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetSendRequestHeader(id),
+                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault()),
+                            emailDescionMaker
+                            );
+                    }
+                }
 
             }
             catch(Exception e)
@@ -1084,6 +1108,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 subjectManager.Dispose();
                 requestManager.Dispose();
                 entityManager.Dispose();
+                datasetManager.Dispose();
             }
 
             return Json(true, JsonRequestBehavior.AllowGet);

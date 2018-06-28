@@ -68,7 +68,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public void Create(long applicantId, long entityId, long key, int rights = 1)
+        public Request Create(long applicantId, long entityId, long key, short rights = 1)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -109,7 +109,8 @@ namespace BExIS.Security.Services.Requests
                                     Entity = entityRepository.Get(entityId),
                                     Key = key,
                                     RequestDate = DateTime.Now,
-                                    Status = RequestStatus.Open
+                                    Status = RequestStatus.Open,
+                                    Rights = rights
                                 };
 
                                 requestRepository.Put(request);
@@ -123,11 +124,15 @@ namespace BExIS.Security.Services.Requests
 
                                 decisionRepository.Put(decision);
                                 uow.Commit();
+
+                                return request;
                             }
                         }
                     }
                 }
             }
+
+            return null;
         }
 
         public void Create(Request request)
