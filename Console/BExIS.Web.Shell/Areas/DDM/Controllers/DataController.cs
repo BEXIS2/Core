@@ -322,6 +322,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
                         DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 0, 100);
+                        Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
 
                         return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
 
@@ -862,7 +863,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 ProjectionExpression projection = GridHelper.Convert(columns);
 
-                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection);
+
+                long count = datasetManager.RowCount(datasetId, filter);
+
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, 0, (int)count);
 
                 if (projection == null) table.Strip();
 
