@@ -87,6 +87,22 @@ namespace BExIS.Web.Shell.Models
         [Display(Name = "Terms and Conditions")]
         [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
         public bool TermsAndConditions { get; set; }
+
+        [Display(Name = "Inform")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool Inform { get; set; }
+
+        [Display(Name = "DOI")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool DOI { get; set; }
+
+        [Display(Name = "Credit")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool Credit { get; set; }
+
+        [Display(Name = "PHD")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool PHD { get; set; }
     }
 
     public class ResetPasswordViewModel

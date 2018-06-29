@@ -40,15 +40,52 @@
     </div>
     <div class="form-group">
         <div class="col-md-10 col-md-offset-2">
-            @Html.CheckBoxFor(m => m.TermsAndConditions)
+            @Html.CheckBoxFor(m => m.TermsAndConditions,new { @class="cb_form"})
             I accept <a href="/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
             @Html.ValidationMessageFor(m => m.TermsAndConditions)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.Inform, new { @class = "cb_form" })
+            I accept ....
+            @Html.ValidationMessageFor(m => m.Inform)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.DOI, new { @class = "cb_form" })
+            I accept ....
+            @Html.ValidationMessageFor(m => m.DOI)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.Credit, new { @class = "cb_form" })
+            I accept ....
+            @Html.ValidationMessageFor(m => m.Credit)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.PHD, new { @class = "cb_form" })
+            I accept ....
+            @Html.ValidationMessageFor(m => m.PHD)
         </div>
     </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="t-button function" value="Register" />
+            <input id="SubmitButton" type="submit" class="bx-button function bx-disabled" value="Register" />
         </div>
     </div>
 }
+
+
+<script type="text/javascript">
+
+    $(".cb_form").change(function () {
+        if ($('.cb_form:checked').length == $('.cb_form').length) {
+            //do something
+            $("#SubmitButton").removeClass("bx-disabled");
+        }
+        else {
+
+            $("#SubmitButton").addClass("bx-disabled");
+        }
+    });
+
+
+</script>
