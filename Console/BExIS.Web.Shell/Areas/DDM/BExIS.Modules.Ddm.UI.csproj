@@ -60,7 +60,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Extensions" />
@@ -158,6 +157,7 @@
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
+    <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
     <Compile Include="Models\SearchAttributeViewModel.cs" />
     <Compile Include="Models\ShowDataModel.cs" />
@@ -438,6 +438,7 @@
     <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
     <None Include="Properties\PublishProfiles\DDM21108.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
