@@ -29,7 +29,7 @@
 
     <Export tag="menubar" id="dashboard" order="1"
         title="Dashboard" description="Quick Access to User Area" icon=""
-        controller="dashboard" action="ShowMyDatasetsInFullPage"
+        controller="dashboard" action="index"
         extends="./menubarRoot" />
 
     <Export tag="lunchbar" id="helpDdm" order="1"

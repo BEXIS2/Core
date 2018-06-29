@@ -149,10 +149,13 @@ button.t-state-disabled,
 	cursor:not-allowed;
 }
 
+a {
+    cursor: pointer;
+}
+
 a.bx-grid-function {
 	margin-left:2px;
 	margin-right:2px;
-	cursor: pointer;
 }
 
 .t-grid-filter {

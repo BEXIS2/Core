@@ -958,6 +958,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (item.HasAttributes)
                         {
                             long sourceId = Convert.ToInt64(item.Attribute("roleId").Value);
+                            long id = Convert.ToInt64(item.Attribute("id").Value);
                             string type = item.Attribute("type").Value;
                             long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
 
@@ -967,8 +968,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             foreach (var relationship in relationshipTypes)
                             {
                                 // when mapping in both directions are exist
-                                if ((MappingUtils.ExistMappings(sourceId, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, sourceType)) ||
+                                if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                     MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)))
                                 {

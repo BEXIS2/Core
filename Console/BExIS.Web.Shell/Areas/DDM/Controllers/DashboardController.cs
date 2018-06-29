@@ -32,8 +32,96 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
+ 
 
-            return View(GetDefaultDashboardModel());
+            DashboardModel model = GetDefaultDashboardModel();
+
+            #region mydatasetmodel
+
+            ViewData["PageSize"] = 10;
+            ViewData["CurrentPage"] = 1;
+
+            #region header
+            List<HeaderItem> headerItems = new List<HeaderItem>();
+
+
+            HeaderItem headerItem = new HeaderItem()
+            {
+                Name = "ID",
+                DisplayName = "ID",
+                DataType = "Int64"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["Id"] = headerItem;
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Title",
+                DisplayName = "Title",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Description",
+                DisplayName = "Description",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Read",
+                DisplayName = "Read",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Download",
+                DisplayName = "Download",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Write",
+                DisplayName = "Write",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Grant",
+                DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["DefaultHeaderList"] = headerItems;
+
+            #endregion
+
+
+            model.MyDatasets = CreateDataTable(headerItems);
+
+            #endregion
+
+            return View(model);
         }
 
         private DashboardModel GetDefaultDashboardModel()
@@ -49,7 +137,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 foreach (var entity in enitites)
                 {
-                    model.Enities.Add(entity.Id, entity.Name);
+                    model.Entities.Add(entity.Id, entity.Name);
                 }
             }
 

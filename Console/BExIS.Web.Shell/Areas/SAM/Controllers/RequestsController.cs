@@ -92,7 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             catch (Exception e)
             {
-
+                throw e;
             }
             finally
             {
@@ -108,6 +108,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 decisionManager.Reject(requestId, "");
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
             finally
             {

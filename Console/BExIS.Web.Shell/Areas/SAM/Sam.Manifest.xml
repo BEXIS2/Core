@@ -67,12 +67,12 @@
       extends="" />
 
     <Export tag="internalApi" id="loadRequests"
-        title="load requests overview" description="load the overview if requests based on entity & user " icon=""
+        title="load requests overview" description="load the overview if requests based on entity and user" icon=""
         controller="requests" action="requests"
         extends="" />
 
     <Export tag="internalApi" id="loadDecisions"
-        title="load decisions overview" description="load the overview if decisions based on entity & user " icon=""
+        title="load decisions overview" description="load the overview if decisions based on entity and user" icon=""
         controller="requests" action="decisions"
         extends="" />
 
