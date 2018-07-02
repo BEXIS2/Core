@@ -432,6 +432,8 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\help\collapse.png" />
+    <Content Include="Content\Images\help\columnwise.jpg" />
+    <Content Include="Content\Images\help\Create_Dataset.jpg" />
     <Content Include="Content\Images\help\Create_Dataset.png" />
     <Content Include="Content\Images\help\expand.png" />
     <Content Include="Content\Images\help\Help_easy_upload_end.png" />
@@ -441,30 +443,24 @@
     <Content Include="Content\Images\help\Help_easy_upload_sheet_structure.png" />
     <Content Include="Content\Images\help\Help_easy_upload_summary.png" />
     <Content Include="Content\Images\help\Help_easy_upload_verification.png" />
-    <Content Include="Content\Images\help\Help_img12.jpeg" />
-    <Content Include="Content\Images\help\Help_img13.jpeg" />
-    <Content Include="Content\Images\help\Help_img14.jpeg" />
-    <Content Include="Content\Images\help\Help_img15.jpeg" />
-    <Content Include="Content\Images\help\Help_img16.jpeg" />
-    <Content Include="Content\Images\help\Help_img17.jpeg" />
-    <Content Include="Content\Images\help\Help_img22.png" />
-    <Content Include="Content\Images\help\Help_img23.png" />
-    <Content Include="Content\Images\help\Help_img24.png" />
-    <Content Include="Content\Images\help\Help_img27.png" />
-    <Content Include="Content\Images\help\Help_img3.png" />
+    <Content Include="Content\Images\help\metadata1.png" />
+    <Content Include="Content\Images\help\metadata2.png" />
+    <Content Include="Content\Images\help\metadata3.png" />
+    <Content Include="Content\Images\help\metadata4.png" />
     <Content Include="Content\Images\help\mines.png" />
     <Content Include="Content\Images\help\plus.png" />
     <Content Include="Content\Images\help\primary_key.png" />
     <Content Include="Content\Images\help\push_big_file.png" />
     <Content Include="Content\Images\help\read_xsd.png" />
     <Content Include="Content\Images\help\red_star.png" />
+    <Content Include="Content\Images\help\rowwise.jpg" />
+    <Content Include="Content\Images\help\select_file.png" />
     <Content Include="Content\Images\help\select_xsd.png" />
     <Content Include="Content\Images\help\set_xsd_parameters.png" />
     <Content Include="Content\Images\help\summary_xsd.png" />
     <Content Include="Content\Images\help\upload_data.png" />
-    <Content Include="Content\Images\help\Upload_Unstructures.png" />
+    <Content Include="Content\Images\help\upload_tabular.jpg" />
     <Content Include="Content\Images\help\up_down.png" />
-    <Content Include="Content\Images\help\Validation.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
