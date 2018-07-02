@@ -356,7 +356,7 @@ namespace BExIS.Dcm.UploadWizard
             int packageSize = 1000;
             int position = 1;
 
-            if (ext.Equals(".txt") || ext.Equals(".csv"))
+            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
             {
                 #region csv
                 do
@@ -757,8 +757,10 @@ namespace BExIS.Dcm.UploadWizard
                 return new List<string>()
                     {
                         ".xlsm",
+                        ".xlsx",
                         ".txt",
-                        ".csv"
+                        ".csv",
+                        ".tsv"
                     };
             }
 
@@ -797,6 +799,7 @@ namespace BExIS.Dcm.UploadWizard
 
             return new List<string>();
         }
+
 
         #endregion
 

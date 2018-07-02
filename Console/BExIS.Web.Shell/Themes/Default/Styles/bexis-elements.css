@@ -66,24 +66,24 @@ Green 05  #eff7f6   brigth
 }
 
 
-button, 
+button,
 .t-button,
 .bx-button,
-.t-filter-options .t-clear-button, 
+.bx-combo-button,
+.t-filter-options .t-clear-button,
 .t-filter-options .t-filter-button,
-.ui-dialog .ui-dialog-buttonpane button
-{
-	display: inline-block;
-	border-radius: 8px;
-	background: #666666;
-	text-decoration:none;
-	color: white;
-	text-align: center;
-	margin: 2px;
-	border: none;
-	padding: 10px 20px 10px 20px;
-	font-size: inherit;
-	cursor: pointer;
+.ui-dialog .ui-dialog-buttonpane button {
+    display: inline-block;
+    border-radius: 8px;
+    background: #666666;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    margin: 2px;
+    border: none;
+    padding: 10px 20px 10px 20px;
+    font-size: inherit;
+    cursor: pointer;
 }
 
 a.bx-button {
@@ -149,10 +149,13 @@ button.t-state-disabled,
 	cursor:not-allowed;
 }
 
+a {
+    cursor: pointer;
+}
+
 a.bx-grid-function {
 	margin-left:2px;
 	margin-right:2px;
-	cursor: pointer;
 }
 
 .t-grid-filter {
@@ -163,17 +166,21 @@ input[type=radio].css-checkbox {
 	background: none;
 }
 
+.bx-combo-button {
+    margin-right: -24px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
 /**Tab**/
 .bx-tab,
 .t-tabstrip .t-item,
-li.t-state-disabled .t-link
-{
-	background-color:white;
-	border-top:4px solid #afb0b1;
-	border-left:2px solid #afb0b1;
-	border-right:2px solid #afb0b1;
-	border-top-left-radius:8px;
-	border-top-right-radius:8px;
+li.t-state-disabled .t-link {
+	background-color: white;
+	border-top: 4px solid #afb0b1;
+	border-left: 2px solid #afb0b1;
+	border-right: 2px solid #afb0b1;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
 }
 
 .bx-tab-active,

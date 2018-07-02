@@ -2,19 +2,28 @@
 @using Telerik.Web.Mvc.UI
 
 @(Html.Telerik().Grid<DecisionGridRowModel>()
-              .Name("gridDecisions")
-              .Columns(columns =>
-              {
-                  columns.Bound(g => g.Id);
-                  columns.Bound(g => g.Applicant);
-                  columns.Bound(g => g.Rights);
-                  columns.Bound(g => g.Status);
-              })
-              .ClientEvents(events =>
-              {
-                  events.OnDataBound("onDataBound");
-              })
-              .DataBinding(dataBinding => dataBinding
+    .Name("grid_decisions")
+    .Columns(columns =>
+    {
+        columns.Bound(g => g.Id);
+        columns.Bound(g => g.RequestId);
+        columns.Bound(g => g.Applicant);
+        columns.Bound(g => g.Rights);
+        columns.Bound(g => g.Status);
+        columns.Template(@<text>
+            <button type="button" class="bx bx-grid-function bx-check" @(item.Status!=0?"disabled":"")></button>
+            <button type="button" class="bx bx-grid-function bx-delete" @(item.Status!=0?"disabled":"")></button>
+         </text>)
+        .ClientTemplate(
+            "<button type=\"button\" class=\"bx bx-grid-function bx-check <#= Status!=0 ? 'bx-disabled' : '' #> \" value=\"<#= Id #>\" title=\"Grant\" <#= Status!=0 ? 'disabled' : '' #> ></button>" +
+            "<button type=\"button\" class=\"bx bx-grid-function bx-delete <#= Status!=0 ? 'bx-disabled' : '' #> \" value=\"<#= Id #>\" title=\"Deny\" <#= Status!=0 ? 'disabled' : '' #> ></button>")
+        .Width(65);
+    })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("grid_decisions_onDataBound");
+    })
+    .DataBinding(dataBinding => dataBinding
                   .Ajax()
                   .OperationMode(GridOperationMode.Server)
                   .Select("Decisions_Select", "Requests", new { EntityId = Model })

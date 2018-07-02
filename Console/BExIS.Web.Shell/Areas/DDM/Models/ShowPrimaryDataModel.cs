@@ -32,7 +32,10 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public bool DownloadAccess { get; set; }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess)
+        public Dictionary<string,string> AsciiFileDownloadSupport { get; set; }
+
+
+        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string,string> supportedAsciiFileTypes)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.Data = data;
@@ -43,12 +46,13 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.CompareValuesOfDataTypes = CompareValues();
             model.DownloadAccess = downloadAccess;
             model.DisplayFormats = getDisplayFormatObjects(dataStructure as StructuredDataStructure);
+            model.AsciiFileDownloadSupport = supportedAsciiFileTypes;
 
 
             return model;
         }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess)
+        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess, Dictionary<string, string> asciiFileDownloadSupport)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.FileList = ConvertContentDiscriptorsToFileInfos(dataFileList);
@@ -58,6 +62,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.DatasetTitle = title;
             model.CompareValuesOfDataTypes = CompareValues();
             model.DownloadAccess = downloadAccess;
+            model.AsciiFileDownloadSupport = asciiFileDownloadSupport;
 
             return model;
         }

@@ -37,20 +37,7 @@
 }
 
 <div id="asciiFormularDiv">
-@*@using (Ajax.BeginForm("SaveAsciiFileInfos", "Home", new { area = "Dcm" },
-                    new AjaxOptions
-                    {
-                        ////InsertionMode = InsertionMode.Replace,
-                        HttpMethod = "POST",
-                        UpdateTargetId = "asciiFormularDiv",
-                     
-                    }))
-{
-
-*@
-@*@using (Html.BeginForm("SaveAsciiFileInfos", "Home", new { area = "Dcm" }))
-{ 
-*@<table>
+<table>
     <tr>
         <td>
            @(Html.LabelFor(m => m.Separator))
@@ -120,18 +107,8 @@
             Row (columnwise) or column (rowwise) in which the data starts.
         </td>
     </tr>
-    @*<tr>
-       <td>
-           @(Html.LabelFor(m => m.Dateformat))
-        </td>
-        <td>
-           @(Html.TextBoxFor(m => m.Dateformat , new {@class = "t-input"}))
-                      
-        </td>
-    </tr>*@
-</table>
-@*<button type="submit" value="Submit" name="submit"  class="t-button " style="border:0px;">save</button>*@
 
+</table>
 </div>
 
 <script type="text/javascript">

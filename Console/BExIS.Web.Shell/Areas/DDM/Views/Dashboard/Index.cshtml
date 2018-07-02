@@ -1,0 +1,114 @@
+﻿@model BExIS.Modules.Ddm.UI.Models.DashboardModel
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+@section LeftPane
+{
+    <h3>Datasets</h3>
+
+    <a class="datasets">my datasets</a>
+
+
+    <h3>Requests</h3>
+
+    @foreach (var item in Model.Entities)
+    {
+        <a entityid="@item.Key" class="request">@item.Value</a>
+    }
+
+    <h3>Decisions</h3>
+
+    @foreach (var item in Model.Entities)
+    {
+        <a entityid="@item.Key" class="decision">@item.Value</a>
+    }
+
+
+}
+
+<div id="dashboard_content">
+
+    @Html.Partial("_myDatasetGridView", Model.MyDatasets)
+
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+     /****Requests & Decisions*****/
+
+
+    function grid_requests_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+    function grid_decisions_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $('.bx-check').click(function () {
+            var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
+
+            if (result) {
+                $.post("/sam/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
+                    $("#grid_decisions .t-refresh").trigger('click');
+                });
+            }
+        });
+
+        $('.bx-delete').click(function () {
+            var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
+
+            if (result) {
+                $.post('/sam/request/reject', { DecisionId: $(this).attr("value") }, function (e) {
+                    $("#grid_decisions .t-refresh").trigger('click');
+                });
+            }
+        });
+    }
+
+
+    /****Dashboard*****/
+
+    $(".request").click(function () {
+        var id = $(this).attr("entityid");
+        console.log(id);
+
+        $("#dashboard_content").preloader("..loading requests");
+
+        $.get("/ddm/dashboard/requests", { id },
+            function (data, textStatus, jqXHR) {
+                $("#dashboard_content").html(data);
+            }
+        );
+    })
+
+    $(".decision").click(function () {
+        var id = $(this).attr("entityid");
+        console.log(id);
+
+        $("#dashboard_content").preloader("..loading decisions");
+
+        $.get("/ddm/dashboard/decisions", { id },
+            function (data, textStatus, jqXHR) {
+                $("#dashboard_content").html(data);
+            }
+        );
+    })
+
+    $(".datasets").click(function () {
+
+        $("#dashboard_content").preloader("..loading decisions");
+
+        $.get("/ddm/dashboard/ShowMyDatasets",
+            function (data, textStatus, jqXHR) {
+                $("#dashboard_content").html(data);
+            }
+        );
+    })
+</script>
+}
