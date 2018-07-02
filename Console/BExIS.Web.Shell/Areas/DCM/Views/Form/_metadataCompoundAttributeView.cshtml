@@ -4,8 +4,9 @@
     string contentId = stepId + "_Content";
 }
 
-<div id="@stepId" name="@Model.UsageName Container" class="createWizardStep">
+<div id="@stepId" name="@Model.UsageName Container" class="createWizardStep" title="@Model.Model.Discription">
    
+
    @if(Model.Model.StepInfo.IsInstanze == false)
    {
     <!-- CONTENT -->

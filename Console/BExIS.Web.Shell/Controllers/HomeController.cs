@@ -13,6 +13,15 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
+
+            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
+            {
+                if (!this.IsAccessibale("DDM", "Home", "Index")) return View();
+
+                var result = this.Render("DDM", "Home", "Index");
+                return Content(result.ToHtmlString(), "text/html");
+            }
+
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
             GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
             var searchLandingPage = generalSettings.GetEntryValue("searchLandingPage").ToString();
@@ -26,6 +35,9 @@ namespace BExIS.Web.Shell.Controllers
             return Content(result.ToHtmlString(), "text/html");
         }
 
+
+            return View();
+        }
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
         {

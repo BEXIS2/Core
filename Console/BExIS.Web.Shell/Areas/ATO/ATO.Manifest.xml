@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="ato" displayName="ATTO" version="1.0.0" builtin="true">
+	<Description>
+    ....
+  </Description>
+	<Assemblies>
+		<Assembly fullName="" role=""/>
+	</Assemblies>
+	<Dependencies>
+		<!--<Dependency moduleId="dcm" version="*.*.*" />-->
+	</Dependencies>
+	<Exports>
+
+    <Export tag="menubar" id="indexAto" order="1"
+						title="General Information" description="atto startseite" icon=""
+						controller="home" action="information"
+						extends="./menubarRoot/Information" />
+    
+    <Export tag="menubar" id="calendar" order="1"
+						title="Calendar" description="atto calendar" icon=""
+						controller="home" action="calendar"
+						extends="./menubarRoot/Information" />
+    
+	<!-- Settings Example-->
+		<!--<Export tag="settings" id="manageMetadata" order="1"
+						title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
+						controller="ManageMetadataStructure" action="Index" argument=""
+						extends="./settingsRoot"
+						/>-->
+	<!-- Menubar Example-->
+		<!--<Export tag="menubar" id="createDataset" order="1"
+						title="Create Dataset" description="Create new Dataset" icon=""
+						controller="CreateDataset" action="index"
+						extends="./menubarRoot/collect" />-->
+			
+		<!-- Api Example-->
+		<!-- <Export tag="api" id="tntList"
+						title="No thing" description="Change me!" icon=""
+						controller="home" action="index"
+						extends="./apiRoot"
+						/>-->
+	</Exports>
+</Manifest>
