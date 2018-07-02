@@ -10,6 +10,8 @@ using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Requests;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
@@ -80,7 +82,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             DatasetManager dm = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-
             try
             {
                 DatasetVersion dsv;
@@ -92,7 +93,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long researchPlanId = 1;
                 string dataStructureType = DataStructureType.Structured.ToString();
                 bool downloadAccess = false;
+                bool requestExist = false;
+
                 XmlDocument metadata = new XmlDocument();
+
+
 
                 if (dm.IsDatasetCheckedIn(id))
                 {
@@ -109,8 +114,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
 
+                    // check if the user has download rights
                     downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                         "Dataset", typeof(Dataset), id, RightType.Read);
+
+                    // check if a reuqest of this dataset exist
+                    if (!downloadAccess)
+                    {
+                        requestExist = HasRequest(id);
+                    }
 
                     if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                     {
@@ -138,7 +150,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
                     GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
                     DataStructureType = dataStructureType,
-                    DownloadAccess = downloadAccess
+                    DownloadAccess = downloadAccess,
+                    RequestExist = requestExist
                 };
 
                 //set metadata in session
@@ -1052,6 +1065,64 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion datastructure
 
+        #region request
+
+        public JsonResult SendRequest(long id)
+        {
+            RequestManager requestManager = new RequestManager();
+            SubjectManager subjectManager = new SubjectManager();
+            EntityManager entityManager = new EntityManager();
+            DatasetManager datasetManager = new DatasetManager();
+
+            try
+            {
+                long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
+
+                // ask for read and download rights
+                if (!requestManager.Exists(userId, entityId, id))
+                {
+                    var request = requestManager.Create(userId, entityId, id, 3);
+                   
+
+                    if (request != null)
+                    {
+                        //reload request
+                        long requestId = request.Id;
+                        request = requestManager.FindById(requestId);
+
+                        long datasetVersionId = datasetManager.GetDatasetLatestVersion(id).Id;
+                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersionId, NameAttributeValues.title);
+                        if (string.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+                        //ToDo send emails to owner & requester
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetSendRequestHeader(id),
+                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault()),
+                            emailDescionMaker
+                            );
+                    }
+                }
+
+            }
+            catch(Exception e)
+            {
+                Json(e.Message, JsonRequestBehavior.AllowGet);
+            }
+            finally
+            {
+                subjectManager.Dispose();
+                requestManager.Dispose();
+                entityManager.Dispose();
+                datasetManager.Dispose();
+            }
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
         #region helper
 
         private List<DropDownItem> GetDownloadOptions()
@@ -1172,6 +1243,33 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
+        }
+
+        private bool HasRequest(long datasetId)
+        {
+
+            RequestManager requestManager = new RequestManager();
+            SubjectManager subjectManager = new SubjectManager();
+            EntityManager entityManager = new EntityManager();
+
+            try
+            {
+                if (HttpContext.User.Identity != null)
+                {
+                    long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                    long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
+
+                    return requestManager.Exists(userId, entityId, datasetId);
+                }
+
+                return false;
+            }
+            finally
+            {
+                subjectManager.Dispose();
+                requestManager.Dispose();
+                entityManager.Dispose();
+            }
         }
 
         #endregion helper

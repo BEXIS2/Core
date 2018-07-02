@@ -1,33 +1,28 @@
-﻿using BExIS.Dim.Entities;
-using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Utils.Extensions;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Models.Export;
+using BExIS.Utils.Extensions;
+using BExIS.Xml.Helpers;
+using Ionic.Zip;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using Vaiona.Persistence.Api;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using System.Data;
-using BExIS.Modules.Dim.UI.Models.Export;
-using BExIS.Xml.Helpers;
-using BExIS.IO.Transform.Output;
-using System.Xml;
-using BExIS.IO;
-using BExIS.Dim.Services;
-using Vaiona.Utils.Cfg;
-using Ionic.Zip;
-using BExIS.Dim.Helpers;
-using Vaiona.Web.Mvc.Modularity;
 using System.Web.Routing;
-//using HtmlAgilityPack;
+using System.Xml;
+using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -41,7 +36,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="metadataFormat">name of the internal metadatastructure, if empty then </param>
         /// <param name="primaryDataFormat">mimetype like text/csv, text/plain</param>
         /// <returns></returns>
-        public ActionResult GetZipOfDatasetVersion(long datasetVersionId, string primaryDataFormat="")
+        public ActionResult GetZipOfDatasetVersion(long datasetVersionId, string primaryDataFormat = "")
         {
 
             using (var uow = this.GetUnitOfWork())
@@ -56,9 +51,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 Repository dataRepo = new Repository();
                 dataRepo.Name = "generic";
                 dataRepo.Broker = broker;
- 
+
                 GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(dataRepo);
-                Tuple<string, string>  tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                Tuple<string, string> tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
 
 
                 return File(tmp.Item1, tmp.Item2, Path.GetFileName(tmp.Item1));
@@ -80,8 +75,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dsId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
 
-                   XmlDocument document =  OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
-                            ds.Dataset.MetadataStructure.Name);
+                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
+                             ds.Dataset.MetadataStructure.Name);
 
                     string htmlPage = PartialView("SimpleMetadata", document).RenderToString();
                     byte[] content = Encoding.ASCII.GetBytes(htmlPage);
@@ -118,7 +113,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dsId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
                     DataStructure dataStructure = null;
-                    if (ds!=null) dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
+                    if (ds != null) dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
 
                     if (dataStructure != null && dataStructure.Self is StructuredDataStructure)
                     {
@@ -132,7 +127,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
-            
+
             }
             catch (Exception ex)
             {
@@ -179,7 +174,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #region primary data
 
                     // check the data sturcture type ...
-                    if (format!= null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -197,7 +192,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             default:
                                 odm.GenerateAsciiFile(id, title, format);
                                 break;
-                        } 
+                        }
 
                     }
 
@@ -254,28 +249,28 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //generate datastructure as html
                         try
                         {
-                            
-                              
-                                DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
-                                dataStructure = null;
-                                if (ds != null) dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
-
-                                if (dataStructure != null && dataStructure.Self is StructuredDataStructure)
-                                {
-
-                                    SimpleDataStructureModel model = new SimpleDataStructureModel((StructuredDataStructure)dataStructure.Self);
-
-                                    string htmlPage = PartialView("SimpleDataStructure", model).RenderToString();
-                                    byte[] content = Encoding.ASCII.GetBytes(htmlPage);
 
 
-                                    string dynamicPathOfDS = "";
-                                    dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
-                                        "datastructure", ".html");
-                                    string datastructureFilePath2 = AsciiWriter.CreateFile(dynamicPathOfDS);
+                            DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                            dataStructure = null;
+                            if (ds != null) dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
 
-                                    AsciiWriter.AllTextToFile(datastructureFilePath2, htmlPage);
-                                }
+                            if (dataStructure != null && dataStructure.Self is StructuredDataStructure)
+                            {
+
+                                SimpleDataStructureModel model = new SimpleDataStructureModel((StructuredDataStructure)dataStructure.Self);
+
+                                string htmlPage = PartialView("SimpleDataStructure", model).RenderToString();
+                                byte[] content = Encoding.ASCII.GetBytes(htmlPage);
+
+
+                                string dynamicPathOfDS = "";
+                                dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
+                                    "datastructure", ".html");
+                                string datastructureFilePath2 = AsciiWriter.CreateFile(dynamicPathOfDS);
+
+                                AsciiWriter.AllTextToFile(datastructureFilePath2, htmlPage);
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -331,7 +326,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     zip.Save(zipFilePath);
 
-                    
+
                     return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
             }

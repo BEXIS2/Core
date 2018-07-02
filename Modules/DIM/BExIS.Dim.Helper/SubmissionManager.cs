@@ -2,6 +2,7 @@
 using BExIS.Dim.Services;
 using BExIS.IO;
 using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,6 +46,10 @@ namespace BExIS.Dim.Helpers
                         Brokers.Add(createBroker(child, publicationManager));
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
             finally
             {

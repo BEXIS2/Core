@@ -5,31 +5,32 @@
 
 @section Information
 {
-	This is a detailed view on all parts of a dataset. Depending on your
-	permissions your are able to view, edit, or download either the
-	metadata, the primary data or the data structure.<br/>
-	You may also set permissions for this particular dataset
-   <p>
-	<a href="~/ddm/Help/Index/#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
-</p>
+    This is a detailed view on all parts of a dataset. Depending on your
+    permissions your are able to view, edit, or download either the
+    metadata, the primary data or the data structure.<br />
+    You may also set permissions for this particular dataset
+    <p>
+        <a href="~/ddm/Help/Index/#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 
 }
 
-@{
-	@*<script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>*@
+@section scripts
+{
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
 }
-
-
+<link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
 <div>
-	<table>
-		<tr>
-			<td>
-				<h2>@Model.Title ( @Model.Id )</h2>
-			</td>
-			<td>
-				<div id="preloaderContainer"/>
-			</td>
+    <table>
+        <tr>
+            <td>
+                <h2>@Model.Title ( @Model.Id )</h2>
+            </td>
+            <td>
+                <div id="preloaderContainer" />
+            </td>
             <td style="text-align: -webkit-right;">
 
                 @if (Model.DownloadAccess)
@@ -58,68 +59,75 @@
                 }
                 else
                 {
-                    <button class="bx-button function bx-disabled" disabled="disabled">Download</button>
+                    if (Model.RequestExist)
+                    {
+                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
+                    }
+                    else
+                    {
+                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
+                    }
                 }
             </td>
-		</tr>
-	</table>
+        </tr>
+    </table>
 </div>
 
-@if(@Model != null)
+@if (@Model != null)
 {
-	if (ViewData.ModelState.IsValid)
-	{
+    if (ViewData.ModelState.IsValid)
+    {
 
-		@(Html.Telerik().TabStrip()
-			  .Name("ShowDataTabStrip")
-			  .SelectedIndex(0)
-			  .Items(tabs =>
-			  {
+        @(Html.Telerik().TabStrip()
+                      .Name("ShowDataTabStrip")
+                      .SelectedIndex(0)
+                      .Items(tabs =>
+                      {
 
-				  //ToDo Recator Modularity -> load metadata from from dcm
+          //ToDo Recator Modularity -> load metadata from from dcm
 
-				  tabs.Add()
-					  .Text("Metadata")
-					  .LoadContentFrom("ShowMetadata", "Data", new {area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
-					  .HtmlAttributes(new {id = "metadata"})
-					  .Enabled(false);
+          tabs.Add()
+                              .Text("Metadata")
+                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
+                              .HtmlAttributes(new { id = "metadata" })
+                              .Enabled(false);
 
-				  tabs.Add()
-					  .Text("Primary Data")
-					  .LoadContentFrom("ShowPrimaryData", "Data", new {area = "ddm", datasetID = @Model.Id})
-					  .Enabled(@Model.ViewAccess)
-					  .HtmlAttributes(new {id = "primarydata"})
-					  .Enabled(false);
+                          tabs.Add()
+                              .Text("Primary Data")
+                              .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id })
+                              .Enabled(@Model.ViewAccess)
+                              .HtmlAttributes(new { id = "primarydata" })
+                              .Enabled(false);
 
-				  tabs.Add()
-					  .Text("Data Structure")
-					  .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "ddm", datasetID = @Model.Id})
-					  .HtmlAttributes(new {id = "datastructure"})
-					  .Enabled(false);
-
-
-				  tabs.Add()
-					  .Text("Dataset Permissions")
-					  .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
-					  .Enabled(false)
-					  .HtmlAttributes(new { id = "datapermissions" });
+                          tabs.Add()
+                              .Text("Data Structure")
+                              .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
+                              .HtmlAttributes(new { id = "datastructure" })
+                              .Enabled(false);
 
 
-				  tabs.Add()
-					  .Text("Publish")
-					  //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
-						.LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-						.Enabled(false)
-						.HtmlAttributes(new { id = "prepare" });
+                          tabs.Add()
+                              .Text("Dataset Permissions")
+                              .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
+                              .Enabled(false)
+                              .HtmlAttributes(new { id = "datapermissions" });
 
 
-			  })
-			  .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
-	}
-	else
-	{
-		@Html.ValidationSummary(true);
-	}
+                          tabs.Add()
+                              .Text("Publish")
+                                //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                                .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+                                .Enabled(false)
+                                .HtmlAttributes(new { id = "prepare" });
+
+
+                      })
+                      .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
+    }
+    else
+    {
+        @Html.ValidationSummary(true);
+    }
 }
 
 
@@ -239,6 +247,29 @@
 
 		$("#preloaderContainer").removePreloader();
 
-	}
+    }
+
+    $("#sendRequestBt").click(function () {
+
+        var id = $(this).attr("datasetId");
+
+        $.post("/DDM/Data/SendRequest", { id },
+            function (data, textStatus, jqXHR) {
+
+                alert(data);
+
+                if (data !== true) {
+                    alert(data)
+                }
+                else {
+                    $("#sendRequestBt").attr("disabled", "disabled");
+                    $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
+                    $("#sendRequestBt").Text("Request has been made.")
+                }
+            },
+            "dataType"
+        );
+
+    })
 
 </script>

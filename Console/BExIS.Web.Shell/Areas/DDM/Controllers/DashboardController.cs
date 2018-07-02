@@ -1,6 +1,8 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -11,15 +13,139 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Telerik.Web.Mvc;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DashboardController : Controller
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+
+
+        public ActionResult Index()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+
+ 
+
+            DashboardModel model = GetDefaultDashboardModel();
+
+            #region mydatasetmodel
+
+            ViewData["PageSize"] = 10;
+            ViewData["CurrentPage"] = 1;
+
+            #region header
+            List<HeaderItem> headerItems = new List<HeaderItem>();
+
+
+            HeaderItem headerItem = new HeaderItem()
+            {
+                Name = "ID",
+                DisplayName = "ID",
+                DataType = "Int64"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["Id"] = headerItem;
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Title",
+                DisplayName = "Title",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Description",
+                DisplayName = "Description",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Read",
+                DisplayName = "Read",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Download",
+                DisplayName = "Download",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Write",
+                DisplayName = "Write",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Grant",
+                DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["DefaultHeaderList"] = headerItems;
+
+            #endregion
+
+
+            model.MyDatasets = CreateDataTable(headerItems);
+
+            #endregion
+
+            return View(model);
+        }
+
+        private DashboardModel GetDefaultDashboardModel()
+        {
+            //load entites
+            DashboardModel model = new DashboardModel();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                // ToDo filter entites by metadata or security.
+                // maybe not all enitites in the table are requestable
+                var enitites = uow.GetReadOnlyRepository<Entity>().Get();
+
+                foreach (var entity in enitites)
+                {
+                    model.Entities.Add(entity.Id, entity.Name);
+                }
+            }
+
+            return model;
+        }
+
+
+        #region mydatasets
 
         [GridAction]
         /// <summary>
@@ -117,8 +243,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-
-        #region mydatasets
 
         /// <summary>
         /// create the model of My Dataset table
@@ -395,6 +519,48 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        #endregion
+
+        #region requests & decisions
+
+        /// <summary>
+        /// load requests of a entity type & user
+        /// </summary>
+        /// <param name="id">Id of a entity type</param>
+        /// <returns></returns>
+        public ActionResult Requests(long id)
+        {
+            if (this.IsAccessible("SAM", "Requests", "Requests"))
+            {
+
+                var view = this.Render("SAM", "Requests", "Requests", new RouteValueDictionary()
+                {
+                    { "entityId", id }
+ 
+                });
+
+                return Content(view.ToHtmlString(), "text/html");
+            }
+
+            return PartialView("Error"); ;
+        }
+
+        public ActionResult Decisions(long id)
+        {
+            if (this.IsAccessible("SAM", "Requests", "Decisions"))
+            {
+
+                var view = this.Render("SAM", "Requests", "Decisions", new RouteValueDictionary()
+                {
+                    { "entityId", id }
+                });
+
+                return Content(view.ToHtmlString(), "text/html");
+            }
+
+            return PartialView("Error"); ;
         }
 
         #endregion
