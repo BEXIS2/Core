@@ -303,13 +303,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyRelationshipManager = new PartyRelationshipTypeManager();
                 foreach (var partyRelationship in partyRelationships)
                 {
-                    // Party secondParty = partyManager.PartyRepository.Get(partyRelationship.SecondParty.Id);
+                    // Party secondParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
                    // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                     PartyTypePair partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                     //Min date value is sent from telerik date time element, if it was empty
                     if (partyRelationship.EndDate == DateTime.MinValue)
                         partyRelationship.EndDate = DateTime.MaxValue;
-                    partyManager.AddPartyRelationship(partyRelationship.FirstParty, partyRelationship.SecondParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                    partyManager.AddPartyRelationship(partyRelationship.SourceParty, partyRelationship.TargetParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
                 }
                 partyManager?.Dispose();
                 return RedirectToAction("CreateEdit", "party", new { id = partyId, relationTabAsDefault = true });
@@ -372,7 +372,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager = new PartyManager();
                 Party party = partyManager.PartyRepository.Get(id);
                 ViewBag.Party = party;
-                var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == id && cc.SecondParty.PartyType.SystemType);
+                var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.SourceParty.Id == id && cc.TargetParty.PartyType.SystemType);
                 return PartialView("~/Areas/BAM/Views/Party/_editSystemPartyTypes.cshtml", partyRelationships);
             }
             finally { partyManager?.Dispose(); }
@@ -397,13 +397,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var addRelationshipModel = new List<AddRelationshipModel>();
                 addRelationshipModel.Add(new AddRelationshipModel()
                 {
-                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.AllowedSource.Id == party.PartyType.Id)),
+                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.SourcePartyType.Id == party.PartyType.Id)),
                     SourceParty = party,
                     isAsSource = false
                 });
                 addRelationshipModel.Add(new AddRelationshipModel()
                 {
-                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.AllowedTarget.Id == party.PartyType.Id)),
+                    PartyRelationshipTypes = partyRelationshipTypes.Where(cc => cc.AssociatedPairs.Any(item => item.TargetPartyType.Id == party.PartyType.Id)),
                     SourceParty = party,
                     isAsSource = true
                 });
@@ -472,13 +472,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 int id = int.Parse(key[1]);
                 int partyTypePairId = int.Parse(key[2]);
                 string fieldName = key[0];
-                var partyRelationship = partyRelationships.FirstOrDefault(item => item.SecondParty.Id == id || item.FirstParty.Id == id);
+                var partyRelationship = partyRelationships.FirstOrDefault(item => item.TargetParty.Id == id || item.SourceParty.Id == id);
                 //In each iteratoin one field fills , so in the first iteration we need to do this
                 if (partyRelationship == null)
                 {
                     partyRelationship = new PartyRelationship();
-                    partyRelationship.SecondParty = partyManager.PartyRepository.Get(id);
-                    partyRelationship.FirstParty = sourceParty;
+                    partyRelationship.TargetParty = partyManager.PartyRepository.Get(id);
+                    partyRelationship.SourceParty = sourceParty;
                     partyRelationships.Add(partyRelationship);
                 }
                 partyRelationship.PartyTypePair = new PartyTypePair();
@@ -508,8 +508,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         case "issource":
                             if (partyRelationshipDic.Value.ToLower().Equals("true"))
                             {
-                                partyRelationship.FirstParty = partyManager.PartyRepository.Get(id);
-                                partyRelationship.SecondParty = sourceParty;
+                                partyRelationship.SourceParty = partyManager.PartyRepository.Get(id);
+                                partyRelationship.TargetParty = sourceParty;
                             }
                             break;
                     }

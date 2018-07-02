@@ -436,7 +436,7 @@ namespace BExIS.Security.Services.Authorization
         //    try
         //    {
         //        partyManager = new PartyManager();
-        //        var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == sourceParty.Id && cc.SecondParty.Id == targetparty.Id);
+        //        var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.SourceParty.Id == sourceParty.Id && cc.TargetParty.Id == targetparty.Id);
         //        if (partyRelationships.Any())
         //        {
         //            if ((partyRelationships.Sum(cc => cc.Permission) & (int)rightType) > 0)

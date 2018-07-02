@@ -13,6 +13,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class RequestsController : Controller
     {
+        public ActionResult Decisions(long entityId)
+        {
+            return PartialView("_Decisions", entityId);
+        }
+
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Decisions_Select(long entityId, GridCommand command)
         {
@@ -25,12 +30,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
 
             var results = decisions.Select(
-                m => new DecisionGridRowModel() { Id = m.Request.Id, Rights = m.Request.Rights, Status = m.Status, Applicant = m.Request.Applicant.Name });
+                m =>
+                    new DecisionGridRowModel()
+                    {
+                        Id = m.Id,
+                        RequestId = m.Request.Id,
+                        Rights = m.Request.Rights,
+                        Status = m.Status,
+                        Applicant = m.Request.Applicant.Name
+                    });
 
             // Filtering
             var total = results.Count();
 
             return View(new GridModel<DecisionGridRowModel> { Data = results.ToList(), Total = total });
+        }
+
+        public ActionResult Requests_And_Decisions(long entityId)
+        {
+            return PartialView("_Requests_And_Decisions", entityId);
         }
 
         public ActionResult Index()
@@ -39,9 +57,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions",
+                    Session.GetTenant());
 
-                var entities = entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+                var entities =
+                    entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
                 foreach (var entity in entities)
                 {
@@ -59,6 +79,44 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Requests(long entityId)
         {
             return PartialView("_Requests", entityId);
+        }
+
+        [HttpPost]
+        public void Accept(long decisionId)
+        {
+            var decisionManager = new DecisionManager();
+
+            try
+            {
+                decisionManager.Accept(decisionId, "");
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                decisionManager.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public void Reject(long requestId)
+        {
+            var decisionManager = new DecisionManager();
+
+            try
+            {
+                decisionManager.Reject(requestId, "");
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                decisionManager.Dispose();
+            }
         }
 
         [GridAction(EnableCustomBinding = true)]

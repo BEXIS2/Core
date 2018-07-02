@@ -1200,7 +1200,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
                     {
                         attrModel.Value = "";
+                        attrModel.Locked = false;
                     }
+
+                    attrModel.Locked = false;
                 }
 
                 UpdateAttribute(

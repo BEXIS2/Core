@@ -60,7 +60,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Extensions" />
@@ -158,6 +157,7 @@
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
+    <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
     <Compile Include="Models\SearchAttributeViewModel.cs" />
     <Compile Include="Models\ShowDataModel.cs" />
@@ -438,6 +438,7 @@
     <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
     <None Include="Properties\PublishProfiles\DDM21108.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -462,15 +463,15 @@
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
+      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj">
-      <Project>{E234118C-1B89-493C-B17A-6990F6B98A9F}</Project>
+      <Project>{e234118c-1b89-493c-b17a-6990f6b98a9f}</Project>
       <Name>BExIS.Dlm.Orm.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
@@ -520,10 +521,6 @@
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
       <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SAM\BExIS.Modules.Sam.UI.csproj">
-      <Project>{DEC22F9C-47BE-4146-94BE-1C9AA969AFC3}</Project>
-      <Name>BExIS.Modules.Sam.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

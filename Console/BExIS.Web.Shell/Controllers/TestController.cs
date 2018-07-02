@@ -2,26 +2,23 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
-using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
-
-using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -30,6 +27,22 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult About()
         {
             return View();
+        }
+
+        public ActionResult AddRequest()
+        {
+            var requestManager = new RequestManager();
+
+            try
+            {
+                requestManager.Create(32768, 1, 5);
+
+                return View("Index");
+            }
+            finally
+            {
+                requestManager.Dispose();
+            }
         }
 
         public void Add2UnitsAnd1Conversion()
@@ -97,7 +110,9 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult Index(Int64 id = 0)
         {
-            ViewBag.Title = PresentationModel.GetGenericViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+            ViewBag.Title = PresentationModel.GetGenericViewTitle("Test Page");
+            /*in the Vaiona.Web.Mvc.Models namespace*/
+            //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
 
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
@@ -206,7 +221,8 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
-        [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
+        [DoesNotNeedDataAccess]
+        // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
             testNHibernateSession();
@@ -238,7 +254,11 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult TestUserToGroup()
         {
             var group = new Group() { Name = $"Group{new Random().Next(1, 10000)}", Description = "Super" };
-            var user = new User() { Name = $"User{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", UserName = "test" };
+            var user = new User()
+            {
+                Name = $"User{DateTime.Now.ToString(CultureInfo.InvariantCulture)}",
+                UserName = "test"
+            };
 
             var userManager = new UserManager();
             userManager.CreateAsync(user);
@@ -309,33 +329,41 @@ namespace BExIS.Web.Shell.Controllers
             DataContainerManager dcManager = new DataContainerManager();
             var attr = dcManager.DataAttributeRepo.Get(1);
 
-            var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
+            var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US",
+                "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
             dcManager.AddConstraint(c1, attr);
             var v1 = c1.IsSatisfied(14);
 
-            var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
+            var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US",
+                "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
             dcManager.AddConstraint(c2, attr);
             var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
 
-            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" },
-                                                              new DomainItem () {Key = "B", Value = "This is B" },
-                                                              new DomainItem () {Key = "C", Value = "This is C" },
-                                                              new DomainItem () {Key = "D", Value = "This is D" },
-                                                            };
-            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);
+            List<DomainItem> items = new List<DomainItem>()
+            {
+                new DomainItem() {Key = "A", Value = "This is A"},
+                new DomainItem() {Key = "B", Value = "This is B"},
+                new DomainItem() {Key = "C", Value = "This is C"},
+                new DomainItem() {Key = "D", Value = "This is D"},
+            };
+            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US",
+                "a simple domain validation constraint", false, null, null, null, items);
             dcManager.AddConstraint(c3, attr);
             var v3 = c3.IsSatisfied("A");
             v3 = c3.IsSatisfied("E");
             c3.Negated = true;
             v3 = c3.IsSatisfied("A");
 
-            var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
-                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio, 1.25);
+            var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US",
+                "a comparison validation constraint", false, null, null, null
+                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio,
+                1.25);
             dcManager.AddConstraint(c4, attr);
             var v4 = c4.IsSatisfied(14, 10);
         }
 
-        private List<PartyRelationship> ConvertDictionaryToPartyRelationships(Dictionary<string, string> partyRelationshipsDic)
+        private List<PartyRelationship> ConvertDictionaryToPartyRelationships(
+            Dictionary<string, string> partyRelationshipsDic)
         {
             var partyRelationships = new List<PartyRelationship>();
             foreach (var partyRelationshipDic in partyRelationshipsDic)
@@ -345,11 +373,11 @@ namespace BExIS.Web.Shell.Controllers
                     continue;
                 int id = int.Parse(key[1]);
                 string fieldName = key[0];
-                var partyRelationship = partyRelationships.FirstOrDefault(item => item.SecondParty.Id == id);
+                var partyRelationship = partyRelationships.FirstOrDefault(item => item.TargetParty.Id == id);
                 if (partyRelationship == null)
                 {
                     partyRelationship = new PartyRelationship();
-                    partyRelationship.SecondParty.Id = id;
+                    partyRelationship.TargetParty.Id = id;
                     partyRelationships.Add(partyRelationship);
                 }
                 if (!string.IsNullOrEmpty(partyRelationshipDic.Value))
@@ -414,7 +442,9 @@ namespace BExIS.Web.Shell.Controllers
                 maManager.Create((MetadataSimpleAttribute)msa2);
             }
 
-            MetadataCompoundAttribute mca1 = (MetadataCompoundAttribute)maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Compound 1")).FirstOrDefault();
+            MetadataCompoundAttribute mca1 =
+                (MetadataCompoundAttribute)
+                maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Compound 1")).FirstOrDefault();
             if (mca1 == null)
             {
                 mca1 = new MetadataCompoundAttribute()
@@ -450,7 +480,9 @@ namespace BExIS.Web.Shell.Controllers
             maManager.Delete(msa1);
         }
 
-        private long createUnits(Unit incomingUnit, long dimensionId, MeasurementSystem measurementSystem, List<string> dataTypes, Dictionary<long, Dimension> dimLookup, Dictionary<string, Unit> unitLookup, Dictionary<string, DataType> datatypeLookup, Dictionary<string, MeasurementSystem> measSystemLookup)
+        private long createUnits(Unit incomingUnit, long dimensionId, MeasurementSystem measurementSystem,
+            List<string> dataTypes, Dictionary<long, Dimension> dimLookup, Dictionary<string, Unit> unitLookup,
+            Dictionary<string, DataType> datatypeLookup, Dictionary<string, MeasurementSystem> measSystemLookup)
         {
             UnitManager unitManager = null;
             //DataTypeManager dataTypeManger = new DataTypeManager();
@@ -488,7 +520,8 @@ namespace BExIS.Web.Shell.Controllers
                 }
                 else
                 {
-                    unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
+                    unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension,
+                        unit.MeasurementSystem);
                 }
 
                 // attach datatypes to units
@@ -587,7 +620,11 @@ namespace BExIS.Web.Shell.Controllers
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IReadOnlyRepository<DatasetVersion> repo = uow.GetReadOnlyRepository<DatasetVersion>();
-                var versionIds1 = repo.Query().Where(p => p.Dataset.Id == 1 && p.PriliminaryTuples.Count() >= 1).Select(p => p.Id).ToList();
+                var versionIds1 =
+                    repo.Query()
+                        .Where(p => p.Dataset.Id == 1 && p.PriliminaryTuples.Count() >= 1)
+                        .Select(p => p.Id)
+                        .ToList();
             }
         }
 
@@ -647,8 +684,13 @@ namespace BExIS.Web.Shell.Controllers
             Dataset ds = dm.GetDataset(24L);
             StructuredDataStructure sds = (ds.DataStructure.Self as StructuredDataStructure);
             ExtendedProperty exp = null;
-            try { exp = dcManager.ExtendedPropertyRepo.Get(1); }
-            catch { }
+            try
+            {
+                exp = dcManager.ExtendedPropertyRepo.Get(1);
+            }
+            catch
+            {
+            }
             //if(exp == null)
             //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().DataAttribute, null); // issue with session management
 
@@ -718,8 +760,14 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     uow.GetReadOnlyRepository<Dimension>().Get().ToList().ForEach(p => dimLookup.Add(p.Id, p));
                     uow.GetReadOnlyRepository<Unit>().Get().ToList().ForEach(p => unitLookup.Add(p.Name.ToLower(), p));
-                    uow.GetReadOnlyRepository<DataType>().Get().ToList().ForEach(p => datatypeLookup.Add(p.Name.ToLower(), p));
-                    Enum.GetValues(typeof(MeasurementSystem)).OfType<MeasurementSystem>().ToList().ForEach(p => measSystemLookup.Add(p.ToString(), p));
+                    uow.GetReadOnlyRepository<DataType>()
+                        .Get()
+                        .ToList()
+                        .ForEach(p => datatypeLookup.Add(p.Name.ToLower(), p));
+                    Enum.GetValues(typeof(MeasurementSystem))
+                        .OfType<MeasurementSystem>()
+                        .ToList()
+                        .ForEach(p => measSystemLookup.Add(p.ToString(), p));
 
                     // the for loop is inside th UOW because traversing over each unit's AssociatedDataTypes needs the DB session to remain open.
                     // this may cause 'another operation is already in progress' problem
@@ -727,7 +775,8 @@ namespace BExIS.Web.Shell.Controllers
                     {
                         Unit u = unit.Value;
                         var dataTypes = u.AssociatedDataTypes.Select(p => p.Name).ToList();
-                        createUnits(u, u.Dimension.Id, u.MeasurementSystem, dataTypes, dimLookup, unitLookup, datatypeLookup, measSystemLookup);
+                        createUnits(u, u.Dimension.Id, u.MeasurementSystem, dataTypes, dimLookup, unitLookup,
+                            datatypeLookup, measSystemLookup);
                     }
                 }
             }
@@ -745,12 +794,14 @@ namespace BExIS.Web.Shell.Controllers
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
             for (int i = 0; i < 500; i++)
             {
-                var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1,
+                    Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 3, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //var entityPermissions = entityPermissionManager.QueryEntityPermissions().Where(m => m.Entity.Id == ep.Id);
             }
-            entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+            entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1,
+                Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
             var y = x.ToList(); // it should work, while its repo is created from an isolated UoW.
         }
 
@@ -848,7 +899,8 @@ namespace BExIS.Web.Shell.Controllers
             try
             {
                 pm.AddPartyCustomAttributeValues(party4, pcavs);
-                System.Diagnostics.Debug.WriteLine("failed multiple uniqeness test doesnt have any error . add the same pcv .");
+                System.Diagnostics.Debug.WriteLine(
+                    "failed multiple uniqeness test doesnt have any error . add the same pcv .");
             }
             catch
             {
@@ -861,7 +913,8 @@ namespace BExIS.Web.Shell.Controllers
             try
             {
                 pcavs_list = pm.AddPartyCustomAttributeValues(party4, pcavs).ToList();
-                System.Diagnostics.Debug.WriteLine("success multiple uniqeness add test doesnt have any error . add the same pcv .");
+                System.Diagnostics.Debug.WriteLine(
+                    "success multiple uniqeness add test doesnt have any error . add the same pcv .");
             }
             catch
             {
@@ -872,11 +925,13 @@ namespace BExIS.Web.Shell.Controllers
                 var thisCustomAtrval = pcavs_list.Last();
                 thisCustomAtrval.Value = "mas";
                 pm.UpdatePartyCustomAttributeValues(pcavs_list);
-                System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
+                System.Diagnostics.Debug.WriteLine(
+                    "failed multiple uniqeness update test doesnt have any error . add the same pcv .");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("success multiple uniqeness  update test has errors. add the same pcv . error");
+                System.Diagnostics.Debug.WriteLine(
+                    "success multiple uniqeness  update test has errors. add the same pcv . error");
             }
             //Update single with the same without errror
             //update multiple with different value without error
@@ -885,11 +940,13 @@ namespace BExIS.Web.Shell.Controllers
             {
                 pcavs[pca2] = "mas";
                 pm.AddPartyCustomAttributeValues(party4, pcavs);
-                System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
+                System.Diagnostics.Debug.WriteLine(
+                    "failed multiple uniqeness update test doesnt have any error . add the same pcv .");
             }
             catch
             {
-                System.Diagnostics.Debug.WriteLine("success multiple uniqeness  update test has errors. add the same pcv . error");
+                System.Diagnostics.Debug.WriteLine(
+                    "success multiple uniqeness  update test has errors. add the same pcv . error");
             }
             try
             {
@@ -989,7 +1046,8 @@ namespace BExIS.Web.Shell.Controllers
 
         #region PartyCustomAttributeValue
 
-        private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(
+            Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             pm.AddPartyCustomAttributeValue(party, partyCustomAttr, "TestName");
@@ -1046,7 +1104,8 @@ namespace BExIS.Web.Shell.Controllers
 
         #region PartyCustomAttribute
 
-        private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
+        private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(
+            Dlm.Entities.Party.PartyType partyType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
             return ptm.CreatePartyCustomAttribute(partyType, "string", "Namen", "Name for test", "", "", true, true);
@@ -1069,7 +1128,7 @@ namespace BExIS.Web.Shell.Controllers
         private PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.Create("test", "", "", false, 3, 2, false, alowedSource, alowedTarget, "", "", "", "",0);
+            return pmr.Create("test", "", "", false, 3, 2, false, alowedSource, alowedTarget, "", "", "", "", 0);
         }
 
         private bool removeTestPartyRelationshipType(PartyRelationshipType partyRelationshipType)
@@ -1091,7 +1150,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyTypePair addTestPartyTypePair(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", false, null, "", "",0);
+            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", false, null, "", "", 0);
         }
 
         private bool removeTestPartyTypePair(PartyTypePair partyTypePair)

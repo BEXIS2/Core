@@ -13,7 +13,6 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
-using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -415,6 +414,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // load metadatastructure with all packages and attributes
 
+
+
             if (metadataXml != null)
             {
                 // locat path
@@ -537,7 +538,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region set releationships 
 
-                        
+
                         //todo check if dim is active
                         // todo call to  a function in dim
                         setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
@@ -922,28 +923,57 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
                     // get releaionship type id for owner
-                    var releationships = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
+                    var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
                         p => p.AssociatedPairs.Any(
-                            ap => ap.AllowedSource.Title.ToLower().Equals("dataset") || ap.AllowedTarget.Title.ToLower().Equals("dataset")
+                            ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
                             ));
+
+                    #region delete relationships
+
+                    foreach (var relationshipType in relationshipTypes)
+                    {
+                        bool exist = false;
+                        var partyTpePair = relationshipType.AssociatedPairs.FirstOrDefault();
+
+                        IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                r =>
+                                r.SourceParty != null && r.SourceParty.Id.Equals(datasetid) &&
+                                r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                            );
+
+                        IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                        foreach (PartyRelationship pr in relationships)
+                        {
+                            if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                        }
+
+                    }
+                    #endregion
+
+                    #region add relationship
 
                     foreach (XElement item in complexElements)
                     {
                         if (item.HasAttributes)
                         {
-                            long sourceId = Convert.ToInt64(item.Attribute("id").Value);
+                            long sourceId = Convert.ToInt64(item.Attribute("roleId").Value);
+                            long id = Convert.ToInt64(item.Attribute("id").Value);
                             string type = item.Attribute("type").Value;
                             long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
 
                             LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
                             if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
 
-                            foreach (var releationship in releationships)
+                            foreach (var relationship in relationshipTypes)
                             {
                                 // when mapping in both directions are exist
-                                if (MappingUtils.ExistMappings(sourceId, sourceType, releationship.Id, LinkElementType.PartyRelationshipType) &&
-                                    MappingUtils.ExistMappings(releationship.Id, LinkElementType.PartyRelationshipType, sourceId, sourceType))
+                                if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
+                                    (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)))
                                 {
+
                                     // create releationship
 
                                     // create a Party for the dataset
@@ -951,27 +981,41 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     customAttributes.Add("Name", datasetid.ToString());
                                     customAttributes.Add("Id", datasetid.ToString());
 
-                                    var datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+                                    // get or create datasetParty
+                                    Party datasetParty = partyManager.GetPartyByCustomAttributeValues(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), customAttributes).FirstOrDefault();
+                                    if (datasetParty == null) datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+
+
+                                    // Get user party
                                     var person = partyManager.GetParty(partyid);
 
-
-                                    var partyTpePair = releationship.PartyRelationships.FirstOrDefault().PartyTypePair;
+                                    var partyTpePair = relationship.AssociatedPairs.FirstOrDefault();
 
                                     if (partyTpePair != null && person != null && datasetParty != null)
                                     {
-                                        partyManager.AddPartyRelationship(
-                                            datasetParty.Id,
-                                            person.Id,
-                                            releationship.Title,
-                                            "",
-                                            partyTpePair.Id
+                                        if (!uow.GetReadOnlyRepository<PartyRelationship>().Get().Any(
+                                            r =>
+                                            r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
+                                            r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
+                                            r.TargetParty.Id.Equals(datasetid)
+                                        ))
+                                        {
+                                            partyManager.AddPartyRelationship(
+                                                person.Id,
+                                                datasetParty.Id,
+                                                relationship.Title,
+                                                "",
+                                                partyTpePair.Id
 
-                                            );
+                                                );
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
+                    #endregion //add relationship
                 }
             }
             catch (Exception ex)
