@@ -1,59 +1,70 @@
 
 @section Information
 {
-This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
+    This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
 }
 @section leftPane{
-  <div class="toc">
-  <h3> Data Collection ToC </h3>
-  <br />
-<p></p>    <a href="#_overview">1. Overview</a>
-<p></p>    <a href="#_create_dataset">2. Create Dataset</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355751">2.1. Copy an existing Dataset</a>
-<p></p>&nbsp;&nbsp; <a href="#_content">2.2. Content</a>
-<p></p>&nbsp;&nbsp; <a href="#_messages">2.3. Messages</a>
-<p></p>    <a href="#_upload_data">3. Upload Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_upload_tabular">3.1. Upload Tabular Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355758">3.2. Specify Dataset</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355759">3.3. Define Primary Key</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355760">3.4. Validation</a>
-<p></p>&nbsp;&nbsp; <a href="#_Toc468355761">3.5. Summary</a>
-<p></p>&nbsp;&nbsp; <a href="#_upload_data">3.6. Upload Data</a>
-<p></p>    <a href="#_easy_upload_import_data">4. Import Data</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_file">4.1. Select File</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_metadata">4.2. Metadata</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_sheet_structure">4.3. Sheet Structure</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_areas">4.4. Select Areas</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_verification">4.5. Verification</a>
-<p></p>&nbsp;&nbsp; <a href="#_easy_upload_summary">4.6. Summary</a>
-<p></p>    <a href="#_push_big_file">5. Push Big File</a>
-<p></p>    <a href="#_manage_metadata_structure">6. Manage Metadata Structure</a>
-<p></p>&nbsp;&nbsp; <a href="#_select_xsd">6.1. Select File</a>
-<p></p>&nbsp;&nbsp; <a href="#_read_source">6.2. Read Source</a>
-<p></p>&nbsp;&nbsp; <a href="#_set_parameters">6.3. Set Parameters</a>
-<p></p>&nbsp;&nbsp; <a href="#_summary">6.4. Summary</a>
-  </div>
+    <div class="toc">
+        <h3> Data Collection ToC </h3>
+        <br />
+        <p></p>    <a href="#_overview">1. Overview</a>
+        <p></p>    <a href="#_create_dataset">2. Create Dataset</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355751">2.1. Copy an existing Dataset</a>
+        <p></p>&nbsp;&nbsp; <a href="#_content">2.2. Content</a>
+        <p></p>&nbsp;&nbsp; <a href="#_messages">2.3. Messages</a>
+        <p></p>    <a href="#_upload_data">3. Upload Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_upload_tabular">3.1. Upload Tabular Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355758">3.2. Specify Dataset</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355759">3.3. Define Primary Key</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355760">3.4. Validation</a>
+        <p></p>&nbsp;&nbsp; <a href="#_Toc468355761">3.5. Summary</a>
+        <p></p>&nbsp;&nbsp; <a href="#_upload_data">3.6. Upload Data</a>
+        <p></p>    <a href="#_easy_upload_import_data">4. Import Data</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_file">4.1. Select File</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_metadata">4.2. Metadata</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_sheet_structure">4.3. Sheet Structure</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_select_areas">4.4. Select Areas</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_verification">4.5. Verification</a>
+        <p></p>&nbsp;&nbsp; <a href="#_easy_upload_summary">4.6. Summary</a>
+        <p></p>    <a href="#_push_big_file">5. Push Big File</a>
+        <p></p>    <a href="#_manage_metadata_structure">6. Manage Metadata Structure</a>
+        <p></p>&nbsp;&nbsp; <a href="#_select_xsd">6.1. Select File</a>
+        <p></p>&nbsp;&nbsp; <a href="#_read_source">6.2. Read Source</a>
+        <p></p>&nbsp;&nbsp; <a href="#_set_parameters">6.3. Set Parameters</a>
+        <p></p>&nbsp;&nbsp; <a href="#_summary">6.4. Summary</a>
+    </div>
 }
 
-  <style>
-      .toc {
-          position: fixed;
-          top: 100px;
-          overflow-y: auto;
-          height: 600px;
-      }
+<style>
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
 
-      :target:before {
-          content: "";
-          display: block;
-          height: 100px;
-      }
-  </style>
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
 
-<p>&#xa0;</p>
-<p>&#xa0;</p>
 
-<br/><h1><a id="_overview">1. Overview</a></h1>
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
+
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
+</style>
+
+
+<h1><a id="_overview">1. Overview</a></h1>
 <p>&#xa0;</p>
 <p>The Data Collection Module provides tools to create new datasets, enter metadata, upload data to the system, and import metadata structures (i.e. schemas). There are some workflows available under the Collect tab and also in the Setup:</p>
 <li>Create Dataset</li>
@@ -81,7 +92,7 @@ This guide will walk you through the basics of data collection including how to 
 <p>The content area is where you enter metadata describing your dataset. The forms provided here may look different and contain different attributes depending on the metadata schema (structure) you have chosen in the first step. </p>
 <p>&#xa0;</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/red_star.png" width="15" alt="Required" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Required attributes, </p>
-<p><img src="~/Areas/DCM/Content/Images/Help/plus.png" width="31"alt="Add" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add an attribute, </p>
+<p><img src="~/Areas/DCM/Content/Images/Help/plus.png" width="31" alt="Add" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add an attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/mines.png" width="31" alt="Mines" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove an attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/up_down.png" width="55" alt="Up Down" />&nbsp;&nbsp;Change order of the attribute, </p>
 <p><img src="~/Areas/DCM/Content/Images/Help/expand.png" width="20" alt="Expand" /><img src="~/Areas/DCM/Content/Images/Help/collapse.png" width="20" alt="Collapse" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expand / collapse</p>
@@ -169,18 +180,24 @@ This guide will walk you through the basics of data collection including how to 
     <figcaption>The following differences are known:</figcaption>
     <ul>
         <li>Dates and times</li>
-        <ul>
-            <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
-            <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
-        </ul>
+        <li>
+            <ul>
+                <li>Microsoft Excel users: Dates and times will be displayed as full timestamps, containing both a time and a date.</li>
+                <li>Libre Office users: Dates and times will be displayed as real numbers.</li>
+            </ul>
+        </li>
         <li>Boolean values</li>
-        <ul>
-            <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
-        </ul>
+        <li>
+            <ul>
+                <li>Libre Office users: Boolean values might be displayed as "0" and "1".</li>
+            </ul>
+        </li>
         <li>Real Numbers</li>
-        <ul>
-            <li>Real numbers might be displayed with scientific notation.</li>
-        </ul>
+        <li>
+            <ul>
+                <li>Real numbers might be displayed with scientific notation.</li>
+            </ul>
+        </li>
     </ul>
 </figure>
 <p>&#xa0;</p>
@@ -237,3 +254,5 @@ This guide will walk you through the basics of data collection including how to 
 <p>&#xa0;</p>
 <p>&#xa0;</p>
 <p>&#xa0;</p>
+
+<a href="#_overview"> Go to top</a>

@@ -22,6 +22,11 @@
             controller="home" action="index"
             extends="./menubarRoot" />
 
+    <Export tag="menubar" id="menuSearchPublic" order="2"
+            title="Public" description="Search in public datasets" icon=""
+            controller="home" action="public"
+            extends="./menubarRoot" />
+
     <Export tag="menubar" id="dashboard" order="1"
         title="Dashboard" description="Quick Access to User Area" icon=""
         controller="dashboard" action="ShowMyDatasetsInFullPage"

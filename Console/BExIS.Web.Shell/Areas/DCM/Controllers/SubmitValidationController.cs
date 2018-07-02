@@ -2,6 +2,7 @@
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -95,6 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
         [HttpPost]
+        [MeasurePerformance]
         public ActionResult ValidateFile()
         {
             DataStructureManager dsm = new DataStructureManager();
@@ -135,8 +138,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         }
 
-                        if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
-                            TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                        if (IOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                        {
+                            // open FileStream
+                            ExcelReader reader = new ExcelReader();
+                            Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                            reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
+                            model.ErrorList = reader.ErrorMessages;
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                            {
+                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                            }
+                            else
+                            {
+                                TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
+                            }
+                        }
+
+
+                        if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                         {
                             AsciiReader reader = new AsciiReader();
                             Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());

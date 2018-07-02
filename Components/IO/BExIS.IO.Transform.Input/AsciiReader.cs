@@ -9,6 +9,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using Vaiona.Logging.Aspects;
 
 /// <summary>
 ///
@@ -163,6 +164,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="datasetId">Id of the dataset</param>
         /// <param name="packageSize"></param>
         /// <returns>List of datatuples</returns>
+        [MeasurePerformance]
         public List<DataTuple> ReadFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, int packageSize)
         {
 

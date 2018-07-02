@@ -94,8 +94,7 @@ namespace BExIS.Web.Shell.Controllers
 
         //[RecordCall]
         //[LogExceptions]
-        [Diagnose]
-        [MeasurePerformance]
+
         public ActionResult Index(Int64 id = 0)
         {
             ViewBag.Title = PresentationModel.GetGenericViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
@@ -305,36 +304,6 @@ namespace BExIS.Web.Shell.Controllers
             // should be called automatically
         }
 
-        private void Add2UnitsAnd1ConversionUsingAPI()
-        {
-            UnitManager um = new UnitManager();
-            Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", null, MeasurementSystem.Metric);// null dimension should be replaced
-            Unit m = um.Create("Meter", "M", "This is the Meter", null, MeasurementSystem.Metric);// null dimension should be replaced
-            Unit cm = um.Create("Centimeter", "Cm", "This is the CentiMeter which is equal to 0.01 Meter", null, MeasurementSystem.Metric);
-            ConversionMethod cm1 = um.CreateConversionMethod("s*100", "Converts meter to centi meter", m, cm);
-            ConversionMethod cm2 = um.CreateConversionMethod("s*1000", "Converts kilometer to meter", km, m);
-            ConversionMethod cm3 = um.CreateConversionMethod("s/1000", "Converts meter to kilometer", m, km);
-            ConversionMethod cm4 = um.CreateConversionMethod("s/100", "Converts centimeter to meter", cm, m);
-
-            km.Description += "Updated";
-            cm1.Description += "Updated";
-            km.ConversionsIamTheSource.Clear(); //??
-            um.Update(km);
-            um.UpdateConversionMethod(cm1);
-
-            // Works fine: 24.07.12, Javad
-            //DataTypeManager dtManager = new DataTypeManager();
-            //DataType deci = dtManager.Create("Decimal", "A decimal data type", TypeCode.Int16);
-            //um.AddAssociatedDataType(m, deci);
-            //um.RemoveAssociatedDataType(m, deci);
-
-            um.DeleteConversionMethod(cm1);
-            um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
-
-            um.Delete(cm);
-            um.Delete(new List<Unit>() { km, m });
-        }
-
         private void addConstraintsTo()
         {
             DataContainerManager dcManager = new DataContainerManager();
@@ -408,59 +377,6 @@ namespace BExIS.Web.Shell.Controllers
                     }
             }
             return partyRelationships;
-        }
-
-        /// <summary>
-        /// create a new dataset, check it out to create the first version, add a tuple to it.
-        /// </summary>
-        /// <returns></returns>
-        private Int64 createDatasetVersion()
-        {
-            DataStructureManager dsManager = new DataStructureManager();
-            ResearchPlanManager rpManager = new ResearchPlanManager();
-            DatasetManager dm = new DatasetManager();
-
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
-
-            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
-
-            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
-            {
-                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-
-                //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-                //changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                DataTuple dt = dm.DataTupleRepo.Get(1); // its sample data
-                List<DataTuple> tuples = new List<DataTuple>();
-                for (int i = 0; i < 10000; i++)
-                {
-                    DataTuple newDt = new DataTuple();
-                    newDt.XmlAmendments = dt.XmlAmendments;
-                    newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                    newDt.Materialize();
-                    newDt.OrderNo = i;
-                    //newDt.TupleAction = TupleAction.Created;//not required
-                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-                    tuples.Add(newDt);
-                }
-                dm.EditDatasetVersion(workingCopy, tuples, null, null);
-                dm.CheckInDataset(ds.Id, "for testing purposes 1", "Javad", ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-                dm.CheckInDataset(ds.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
-                dm.SyncView(ds.Id, ViewCreationBehavior.Create);
-                dm.SyncView(ds.Id, ViewCreationBehavior.Refresh);
-                dm.SyncView(ds.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-
-                dm.DatasetVersionRepo.Evict();
-                dm.DataTupleRepo.Evict();
-                dm.DatasetRepo.Evict();
-                workingCopy.PriliminaryTuples.Clear();
-                workingCopy = null;
-            }
-            var dsId = ds.Id;
-            ds = null;
-            return (dsId);
         }
 
         private void createMetadataAttribute()
@@ -597,12 +513,6 @@ namespace BExIS.Web.Shell.Controllers
             {
                 unitManager.Dispose();
             }
-        }
-
-        private void deleteDataset(long dsId)
-        {
-            DatasetManager dm = new DatasetManager();
-            dm.DeleteDataset(dsId, "Javad", false);
         }
 
         private void deleteTupleFromDatasetVersion(long datasetId)
@@ -898,10 +808,10 @@ namespace BExIS.Web.Shell.Controllers
             var party = pm.Create(pt, "", "", null, null, partyStatusTypes.First());
             var party2 = pm.Create(pt, "", "", null, null, partyStatusTypes.First());
             Console.WriteLine("two party with the same party type created.");
-            pm.AddPartyCustomAttributeValue(ref party, pca, "a@2.com");
+            pm.AddPartyCustomAttributeValue(party, pca, "a@2.com");
             try
             {
-                pm.AddPartyCustomAttributeValue(ref party2, pca, "a@2.com");
+                pm.AddPartyCustomAttributeValue(party2, pca, "a@2.com");
                 System.Diagnostics.Debug.WriteLine("Failed single uniqeness test. add the same pcv .");
             }
             catch
@@ -911,19 +821,19 @@ namespace BExIS.Web.Shell.Controllers
             var pca2 = ptm.CreatePartyCustomAttribute(pt, "", "name", "", "", "", false, true);
             try
             {
-                pm.AddPartyCustomAttributeValue(ref party2, pca, "a@2.com");
+                pm.AddPartyCustomAttributeValue(party2, pca, "a@2.com");
                 System.Diagnostics.Debug.WriteLine("Success multiple uniqeness test. add the same pcv .");
             }
             catch
             {
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness  test. add the same pcv .");
             }
-            var pcav1 = pm.AddPartyCustomAttributeValue(ref party2, pca2, "mas");
+            var pcav1 = pm.AddPartyCustomAttributeValue(party2, pca2, "mas");
             var party3 = pm.Create(pt, "", "", null, null, partyStatusTypes.First());
             try
             {
-                pm.AddPartyCustomAttributeValue(ref party3, pca, "a@2.com");
-                pm.AddPartyCustomAttributeValue(ref party3, pca2, "mas");
+                pm.AddPartyCustomAttributeValue(party3, pca, "a@2.com");
+                pm.AddPartyCustomAttributeValue(party3, pca2, "mas");
                 System.Diagnostics.Debug.WriteLine("Success multiple uniqeness test for new party. add the same pcv .");
             }
             catch
@@ -937,7 +847,7 @@ namespace BExIS.Web.Shell.Controllers
             pcavs.Add(pca2, "mas");
             try
             {
-                pm.AddPartyCustomAttributeValues(ref party4, pcavs);
+                pm.AddPartyCustomAttributeValues(party4, pcavs);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness test doesnt have any error . add the same pcv .");
             }
             catch
@@ -950,7 +860,7 @@ namespace BExIS.Web.Shell.Controllers
             var pcavs_list = new List<PartyCustomAttributeValue>();
             try
             {
-                pcavs_list = pm.AddPartyCustomAttributeValues(ref party4, pcavs).ToList();
+                pcavs_list = pm.AddPartyCustomAttributeValues(party4, pcavs).ToList();
                 System.Diagnostics.Debug.WriteLine("success multiple uniqeness add test doesnt have any error . add the same pcv .");
             }
             catch
@@ -974,7 +884,7 @@ namespace BExIS.Web.Shell.Controllers
             try
             {
                 pcavs[pca2] = "mas";
-                pm.AddPartyCustomAttributeValues(ref party4, pcavs);
+                pm.AddPartyCustomAttributeValues(party4, pcavs);
                 System.Diagnostics.Debug.WriteLine("failed multiple uniqeness update test doesnt have any error . add the same pcv .");
             }
             catch
@@ -1082,11 +992,11 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            pm.AddPartyCustomAttributeValue(ref party, partyCustomAttr, "TestName");
+            pm.AddPartyCustomAttributeValue(party, partyCustomAttr, "TestName");
             Dictionary<PartyCustomAttribute, string> customAtts = new Dictionary<PartyCustomAttribute, string>();
             customAtts.Add(partyCustomAttr, "Dic");
-            pm.AddPartyCustomAttributeValues(ref party, customAtts);
-            return pm.AddPartyCustomAttributeValue(ref party, partyCustomAttr, "TestName updated");
+            pm.AddPartyCustomAttributeValues(party, customAtts);
+            return pm.AddPartyCustomAttributeValue(party, partyCustomAttr, "TestName updated");
         }
 
         private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
@@ -1159,7 +1069,7 @@ namespace BExIS.Web.Shell.Controllers
         private PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.Create("test", "", "", false, 3, 2, false, alowedSource, alowedTarget, "", "", "", "");
+            return pmr.Create("test", "", "", false, 3, 2, false, alowedSource, alowedTarget, "", "", "", "",0);
         }
 
         private bool removeTestPartyRelationshipType(PartyRelationshipType partyRelationshipType)
@@ -1181,7 +1091,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyTypePair addTestPartyTypePair(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", false, null, "", "");
+            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", false, null, "", "",0);
         }
 
         private bool removeTestPartyTypePair(PartyTypePair partyTypePair)

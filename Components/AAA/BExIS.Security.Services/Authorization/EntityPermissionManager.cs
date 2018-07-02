@@ -39,6 +39,11 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public IEnumerable<long> GetKeys<T>(string name, string v, Type type, RightType delete)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Create(Subject subject, Entity entity, long key, int rights)
         {
             using (var uow = this.GetUnitOfWork())
@@ -423,7 +428,27 @@ namespace BExIS.Security.Services.Authorization
                 return (rights.Aggregate(0, (left, right) => left | right) & (int)rightType) > 0;
             }
         }
-
+        //public Boolean HasPartyRight(Party sourceParty, Party targetparty, RightType rightType)
+        //{
+        //    Contract.Requires(sourceParty != null && sourceParty.Id >= 0, "Provided party entity must have a permanent ID");
+        //    Contract.Requires(targetparty != null && targetparty.Id >= 0, "Provided party entity must have a permanent ID");
+        //    PartyManager partyManager = null;
+        //    try
+        //    {
+        //        partyManager = new PartyManager();
+        //        var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.FirstParty.Id == sourceParty.Id && cc.SecondParty.Id == targetparty.Id);
+        //        if (partyRelationships.Any())
+        //        {
+        //            if ((partyRelationships.Sum(cc => cc.Permission) & (int)rightType) > 0)
+        //                return true;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        partyManager?.Dispose();
+        //    }
+        //    return false;
+        //}
         public void Update(EntityPermission entity)
         {
             using (var uow = this.GetUnitOfWork())

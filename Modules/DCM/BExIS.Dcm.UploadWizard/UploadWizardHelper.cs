@@ -11,6 +11,7 @@ using System.Linq;
 using System.Xml;
 using Vaiona.Model.MTnt;
 using Vaiona.Persistence.Api;
+using Vaiona.Logging.Aspects;
 
 /// <summary>
 ///
@@ -108,6 +109,7 @@ namespace BExIS.Dcm.UploadWizard
         }
 
         //temporary solution: norman :GetSplitDatatuples2
+        [MeasurePerformance]
         public Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -354,7 +356,7 @@ namespace BExIS.Dcm.UploadWizard
             int packageSize = 1000;
             int position = 1;
 
-            if (ext.Equals(".txt") || ext.Equals(".csv"))
+            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
             {
                 #region csv
                 do
@@ -755,8 +757,10 @@ namespace BExIS.Dcm.UploadWizard
                 return new List<string>()
                     {
                         ".xlsm",
+                        ".xlsx",
                         ".txt",
-                        ".csv"
+                        ".csv",
+                        ".tsv"
                     };
             }
 
@@ -795,6 +799,7 @@ namespace BExIS.Dcm.UploadWizard
 
             return new List<string>();
         }
+
 
         #endregion
 

@@ -19,6 +19,12 @@ namespace BExIS.IO.Transform.Output
             var numberFormats = new NumberingFormats();
             styleIndex = new List<StyleIndexStruct>();
 
+            if (styleSheet.CellFormats == null)
+            {
+                styleSheet.CellFormats = new CellFormats();
+                styleSheet.CellFormats.Count = 0;
+            }
+
             CellFormats cellFormats = styleSheet.Elements<CellFormats>().First();
 
             
@@ -34,6 +40,7 @@ namespace BExIS.IO.Transform.Output
             cellFormat.Protection = new Protection();
             cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
+            //styleIndex.Add(new StyleIndexStruct() { Name = "Number", Index = (uint)(uint)cellFormats.ChildElements.Count + 1, DisplayPattern = null });
             styleIndex.Add(new StyleIndexStruct() { Name = "Number", Index = (uint)cellFormats.Count++, DisplayPattern = null });
             //text
             cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };

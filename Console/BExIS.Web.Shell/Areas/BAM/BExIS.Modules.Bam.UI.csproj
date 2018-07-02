@@ -77,14 +77,14 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
@@ -135,7 +135,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Utils">
+    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web">
@@ -153,9 +154,10 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
-    <Compile Include="Helpers\BAMSeedDataGenerator.cs" />
-    <Compile Include="Helpers\Helper.cs" />
-    <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="Helper\BAMSeedDataGenerator.cs" />
+    <Compile Include="Helper\Helper.cs" />
+    <Compile Include="Helper\Settings.cs" />
+    <Compile Include="Models\AddRelationshipModel.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
     <Compile Include="Models\PartyModel.cs" />
@@ -164,6 +166,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Bam.Settings.xml" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\help\create_party_1.jpg" />
@@ -174,7 +179,11 @@
     <Content Include="Content\Images\help\registration.jpg" />
     <Content Include="Content\Images\help\schema.jpg" />
     <Content Include="Content\Site.css" />
-    <Content Include="Bam.Manifest.xml" />
+    <Content Include="Bam.Manifest.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PartyHelper.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
@@ -182,6 +191,12 @@
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\BAM-Pub.pubxml" />
     <None Include="Properties\PublishProfiles\BAM.pubxml" />
     <None Include="Properties\PublishProfiles\BAM21105.pubxml" />
@@ -200,6 +215,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Help\Informations.xml" />
@@ -218,6 +235,12 @@
     <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\PartyService\_customAttributesPartial.cshtml" />
     <Content Include="Views\PartyService\Edit.cshtml" />
+    <Content Include="Views\Party\View1.cshtml" />
+    <Content Include="Views\Party\_addPartyTypePair.cshtml" />
+    <Content Include="Views\Party\_partiesDynamicGridPartial.cshtml" />
+    <Content Include="Views\Party\_partyGridFields.cshtml" />
+    <Content Include="Views\Party\_templateRelationshipPartial.cshtml" />
+    <Content Include="Views\Party\_editSystemPartyTypes.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -289,6 +312,10 @@
     <Error Condition="!Exists('..\..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\BAM"
+C:\Windows\System32\xcopy "$(ProjectDir)Bam.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\BAM" /C /Y /I</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

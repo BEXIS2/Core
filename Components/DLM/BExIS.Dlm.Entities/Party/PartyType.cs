@@ -18,6 +18,7 @@ namespace BExIS.Dlm.Entities.Party
         #region Attributes
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }
+        public virtual bool SystemType { get; set; }
         private string displayName;
         public virtual string DisplayName { get { return string.IsNullOrEmpty(displayName) ? Title : displayName; } set { displayName = value; } }
         #endregion

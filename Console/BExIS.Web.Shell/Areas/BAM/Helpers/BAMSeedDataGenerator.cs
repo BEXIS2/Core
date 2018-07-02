@@ -8,10 +8,11 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {
-    public class BAMSeedDataGenerator : IDisposable
+    public class BAMSeedDataGenerator : IModuleSeedDataGenerator
     {
         public void GenerateSeedData()
         {

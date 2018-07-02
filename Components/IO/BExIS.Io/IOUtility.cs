@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace BExIS.IO
@@ -201,6 +202,64 @@ namespace BExIS.IO
             return "";
         }
 
-        
+        /// <summary>
+        /// returns true if the file is supported 
+        /// "e.g. .csv"
+        /// </summary>
+        /// <param name="extention"></param>
+        /// <returns></returns>
+        public static Dictionary<string,string> GetSupportedAsciiFiles()
+        {
+            Dictionary<string, string> tmp = new Dictionary<string, string>();
+            tmp.Add("Comma Separated", ".csv");
+            tmp.Add("Tab Separated", ".tsv");
+            tmp.Add("Text", ".txt");
+
+            return tmp;
+        }
+
+        /// <summary>
+        /// returns true if the file is supported 
+        /// "e.g. .csv"
+        /// </summary>
+        /// <param name="extention"></param>
+        /// <returns></returns>
+        public static bool IsSupportedAsciiFile(string extention)
+        {
+            if (extention.Equals(".csv") ||
+            extention.Equals(".tsv") ||
+            extention.Equals(".txt"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// returns true if the file is supported 
+        /// "e.g. .csv"
+        /// </summary>
+        /// <param name="extention"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetSupportedExcelFiles()
+        {
+            Dictionary<string, string> tmp = new Dictionary<string, string>();
+            tmp.Add("Excel up to 2013", ".xlsx");
+
+            return tmp;
+        }
+
+        public static bool IsSupportedExcelFile(string extention)
+        {
+            if (extention.Equals(".xls") ||
+            extention.Equals(".xlsx"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

@@ -16,11 +16,24 @@
 }
 
     <style>
+        a:hover {
+            background-color: #bee1da;
+            text-decoration: none;
+        }
+
         .toc {
             position: fixed;
             top: 100px;
-            overflow-y: auto;
-            height: 600px;
+            overflow: auto;
+            max-height: 64vh;
+            width: 250px;
+            max-width: 350px;
+        }
+
+
+        .scrollable {
+            overflow: auto;
+            height: 750px;
         }
 
         :target:before {
@@ -68,3 +81,5 @@
 
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
+
+<a href="#_overview"> Go to top</a>

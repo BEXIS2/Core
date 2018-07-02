@@ -21,6 +21,11 @@
             extends="./settingsRoot"
             />
 
+        <Export tag="menubar" id="collect" order="1"
+            title="Collect" description="Quick access to Data Collection Area" icon=""
+            controller="" action=""
+            extends="./menubarRoot"
+            />
     <Export tag="menubar" id="createDataset" order="1"
             title="Create Dataset" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
@@ -54,6 +59,10 @@
     <Export tag="internalApi" id="loadFromFromExternal"
             title="load Metadata Form" description="load Metadata Form" icon=""
             controller="Form" action="LoadMetadataFromExternal"
+            extends="" />
+    <Export tag="internalApi" id="loadMetadataOfflineVersion"
+            title="load Metadata Form" description="load Metadata Form" icon=""
+            controller="Form" action="LoadMetadataOfflineVersion"
             extends="" />
 
     <Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
