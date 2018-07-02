@@ -28,6 +28,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult GetFileInformation(int index)
         {
             TaskManager = (TaskManager)Session["TaskManager"];
+            IOUtility iOUtility = new IOUtility();
 
             //set current stepinfo based on index
             if (TaskManager != null)
@@ -59,19 +60,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.FILE_READER_INFO))
                 {
-                    if (IOUtility.IsSupportedAsciiFile(model.Extention))
+                    if (iOUtility.IsSupportedAsciiFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
 
-                    if (IOUtility.IsSupportedExcelFile(model.Extention))
+                    if (iOUtility.IsSupportedExcelFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
 
                 }
                 else
                 {
-                    if (IOUtility.IsSupportedAsciiFile(model.Extention))
+                    if (iOUtility.IsSupportedAsciiFile(model.Extention))
                         TaskManager.Bus[TaskManager.FILE_READER_INFO] = new AsciiFileReaderInfo();
 
-                    if (IOUtility.IsSupportedExcelFile(model.Extention))
+                    if (iOUtility.IsSupportedExcelFile(model.Extention))
                     {
                         TaskManager.Bus[TaskManager.FILE_READER_INFO] = new ExcelFileReaderInfo();
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
@@ -90,6 +91,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult GetFileInformation()
         {
+
+            IOUtility iOUtility = new IOUtility();
+
             TaskManager = (TaskManager)Session["TaskManager"];
             TaskManager.Current().SetValid(false);
 
@@ -136,10 +140,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.FILE_READER_INFO))
                 {
-                    if (IOUtility.IsSupportedAsciiFile(model.Extention))
+                    if (iOUtility.IsSupportedAsciiFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
 
-                    if (IOUtility.IsSupportedExcelFile(model.Extention))
+                    if (iOUtility.IsSupportedExcelFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
                 }
 
@@ -266,8 +270,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult ChangeAsciiFileInfo(string name, string value)
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            IOUtility iOUtility = new IOUtility();
 
-            if (IOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+            if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
             {
 
                 AsciiFileReaderInfo info = (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];

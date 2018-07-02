@@ -68,6 +68,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
             {
                 return errors;
             }
+
             return null;
         }
 

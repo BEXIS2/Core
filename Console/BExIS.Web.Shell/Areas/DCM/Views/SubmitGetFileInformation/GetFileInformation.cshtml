@@ -1,6 +1,10 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.GetFileInformationModel
 @using BExIS.Dcm.UploadWizard;
 @using BExIS.IO;
+@{ 
+    IOUtility iOUtility = new IOUtility();
+
+}
 
 <div id="Step2" class="uploadWizardStep">
     <div class="uploadWizardStep_Main">
@@ -15,12 +19,12 @@
 
         <div class="uploadWizardStep_Content stepper">
 
-            @if (IOUtility.IsSupportedAsciiFile(Model.Extention))
+            @if (iOUtility.IsSupportedAsciiFile(Model.Extention))
             {
                 @Html.Partial("_txtFormularView", @Model.FileInfoModel)
             }
 
-            @if (IOUtility.IsSupportedExcelFile(Model.Extention))
+            @if (iOUtility.IsSupportedExcelFile(Model.Extention))
             {
                 @Html.Partial("_xlsFormularView", @Model.FileInfoModel)
             }

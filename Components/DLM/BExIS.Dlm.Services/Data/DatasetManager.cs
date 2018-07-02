@@ -3130,7 +3130,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="variableId">The identifier of the variable that the value is belonging to.</param>
         /// <param name="parameterValues">If the variable has parameters attached, the parameter values are passed alongside, so that the method links them to their corresponding variable value using <paramref name="variableId"/>.</param>
         /// <returns>A transient object of type <seealso cref="VariableValue"/>.</returns>
-        public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
+        public virtual VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
             Contract.Requires(variableId > 0);

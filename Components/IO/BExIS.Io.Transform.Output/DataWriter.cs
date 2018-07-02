@@ -81,6 +81,10 @@ namespace BExIS.IO.Transform.Output
         //managers
         protected DatasetManager DatasetManager = new DatasetManager();
 
+
+        protected IOUtility IOUtility;
+
+
         //Constructor
 
         /// <summary>
@@ -89,9 +93,26 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param>NA</param>       
-        public DataWriter()
+        public DataWriter():this(new IOUtility(), new DatasetManager())
         {
-            DatasetManager = new DatasetManager();
+
+        }
+
+        public DataWriter(IOUtility iOUtility):this(iOUtility,new DatasetManager())
+        {
+
+
+        }
+
+        public DataWriter(DatasetManager datasetManager) : this(new IOUtility(), datasetManager)
+        {
+
+        }
+
+        public DataWriter(IOUtility iOUtility, DatasetManager datasetManager)
+        {
+            IOUtility = iOUtility;
+            DatasetManager = datasetManager;
         }
 
         /// <summary>
@@ -125,26 +146,26 @@ namespace BExIS.IO.Transform.Output
         }
 
 
-        public string CreateFile(string filepath)
-        {
-            string dicrectoryPath = Path.GetDirectoryName(filepath);
-            createDirectoriesIfNotExist(dicrectoryPath);
+        //public string CreateFile(string filepath)
+        //{
+        //    string dicrectoryPath = Path.GetDirectoryName(filepath);
+        //    createDirectoriesIfNotExist(dicrectoryPath);
 
-            try
-            {
-                if (!File.Exists(filepath))
-                {
-                    File.Create(filepath).Close();
-                }
+        //    try
+        //    {
+        //        if (!File.Exists(filepath))
+        //        {
+        //            File.Create(filepath).Close();
+        //        }
 
-            }
-            catch (Exception ex)
-            {
-                string message = ex.Message.ToString();
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string message = ex.Message.ToString();
+        //    }
 
-            return filepath;
-        }
+        //    return filepath;
+        //}
 
         public string CreateFile(string path, string filename)
         {

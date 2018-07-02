@@ -291,7 +291,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Session["Columns"] = null;
             Session["DownloadFullDataset"] = false;
             ViewData["DownloadOptions"] = null;
-
+            IOUtility iOUtility = new IOUtility();
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
             //permission download
@@ -324,7 +324,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, null, null, null, 0, 100);
                         Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
 
-                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, IOUtility.GetSupportedAsciiFiles()));
+                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess, iOUtility.GetSupportedAsciiFiles()));
 
                         //return PartialView(new ShowPrimaryDataModel());
                     }
@@ -333,7 +333,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         return
                             PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
-                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess, IOUtility.GetSupportedAsciiFiles()));
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess, iOUtility.GetSupportedAsciiFiles()));
                     }
                 }
                 else
