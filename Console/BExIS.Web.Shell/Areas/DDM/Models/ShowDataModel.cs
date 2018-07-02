@@ -21,5 +21,7 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public string DataStructureType { get; set; }
         public bool DownloadAccess { get; set; }
+
+        public bool RequestExist { get; set; }
     }
 }
