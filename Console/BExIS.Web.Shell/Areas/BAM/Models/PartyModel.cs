@@ -34,7 +34,7 @@ namespace BExIS.Modules.Bam.UI.Models
             {
                 if (Id != 0)
                     return new Dlm.Services.Party.PartyManager().PartyRelationshipRepository.Get
-                        (item => item.FirstParty.Id == Id || item.SecondParty.Id == Id).ToList();
+                        (item => item.SourceParty.Id == Id || item.TargetParty.Id == Id).ToList();
                 else
                     return null;
             }

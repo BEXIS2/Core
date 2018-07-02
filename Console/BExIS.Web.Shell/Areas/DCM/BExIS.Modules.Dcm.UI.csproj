@@ -180,7 +180,7 @@
     <Compile Include="Controllers\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\PushController.cs" />
     <Compile Include="Controllers\SubmitController.cs" />
-    <Compile Include="Controllers\SubmitDefinePrimaryKeyController.cs" />
+    <Compile Include="Controllers\SubmitChooseUpdateMethodController.cs" />
     <Compile Include="Controllers\SubmitGetFileInformationController.cs" />
     <Compile Include="Controllers\SubmitSelectAFileController.cs" />
     <Compile Include="Controllers\SubmitSpecifyDatasetController.cs" />
@@ -426,6 +426,7 @@
     <Content Include="Content\2013.2.611\Windows7\slider-v.gif" />
     <Content Include="Content\2013.2.611\Windows7\sprite-vertical.png" />
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
+    <Content Include="Content\bexis-metadata.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -467,6 +468,9 @@
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Dcm.Settings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -484,6 +488,9 @@
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
     <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
     <Content Include="Scripts\Form.js" />
+    <Content Include="Scripts\minimap\minimap.js" />
+    <Content Include="Scripts\minimap\minimap.min.css" />
+    <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
@@ -524,7 +531,7 @@
     <Content Include="Views\Submit\_taskListView.cshtml" />
     <Content Include="Views\Submit\_uploadWizardNav.cshtml" />
     <Content Include="Views\Submit\_useTemplateView.cshtml" />
-    <Content Include="Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
+    <Content Include="Views\SubmitChooseUpdateMethod\ChooseUpdateMethod.cshtml" />
     <Content Include="Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
     <Content Include="Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
     <Content Include="Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
@@ -546,6 +553,11 @@
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeUsageViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -556,7 +568,6 @@
   <ItemGroup>
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
@@ -688,6 +699,10 @@
     <Error Condition="!Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
     <Error Condition="Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
+C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

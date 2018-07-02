@@ -193,6 +193,9 @@
     <Content Include="Sam.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Sam.Settings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -261,6 +264,7 @@
     <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
     <Content Include="Views\UserPermissions\_Subjects.cshtml" />
     <Content Include="Views\Datasets\Sync.cshtml" />
+    <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -345,6 +349,10 @@
     <Error Condition="!Exists('..\..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\SAM"
+C:\Windows\System32\xcopy "$(ProjectDir)Sam.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\SAM" /C /Y /I</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

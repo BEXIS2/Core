@@ -102,5 +102,15 @@
         {
             return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
         }
+
+        public static string GetSendRequestHeader(long datasetid)
+        {
+            return $"Request to dataset width id  {datasetid}";
+        }
+
+        public static string GetSendRequestMessage(long datasetid, string title, string requester)
+        {
+            return  $"User \"{requester}\" send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+        }
     }
 }

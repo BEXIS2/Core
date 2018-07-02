@@ -49,24 +49,40 @@
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 
+    <!-- internal api -->
+
     <Export tag="internalApi" id="userPermissions_subjects"
         title="User Permissions - Subjects" description="User Permissions - Subjects" icon=""
         controller="UserPermissions" action="Subjects"
         extends="" />
 
     <Export tag="internalApi" id="entityPermissions_add"
-    title="Entity Permissions - Subjects" description="Entity Permissions - Add" icon=""
-    controller="EntityPermissions" action="AddRightToEntityPermission"
-    extends="" />
+      title="Entity Permissions - Subjects" description="Entity Permissions - Add" icon=""
+      controller="EntityPermissions" action="AddRightToEntityPermission"
+      extends="" />
 
     <Export tag="internalApi" id="entityPermissions_remove"
-title="Entity Permissions - Subjects" description="Entity Permissions - Remove" icon=""
-controller="EntityPermissions" action="RemoveRightFromEntityPermission"
-extends="" />
+      title="Entity Permissions - Subjects" description="Entity Permissions - Remove" icon=""
+      controller="EntityPermissions" action="RemoveRightFromEntityPermission"
+      extends="" />
 
+    <Export tag="internalApi" id="loadRequests"
+        title="load requests overview" description="load the overview if requests based on entity and user" icon=""
+        controller="requests" action="requests"
+        extends="" />
+
+    <Export tag="internalApi" id="loadDecisions"
+        title="load decisions overview" description="load the overview if decisions based on entity and user" icon=""
+        controller="requests" action="decisions"
+        extends="" />
+
+    <!-- api -->
+    
     <Export tag="api" id="tntList"
             title="List Tenants" description="List tenants and their status" icon=""
             controller="tenants" action="index"
             extends="./apiRoot" />
+
+    
   </Exports>
 </Manifest>
