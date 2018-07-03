@@ -46,7 +46,7 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="delimeter"></param>
-        public AsciiWriter(TextSeperator delimeter)
+        public AsciiWriter(TextSeperator delimeter) : base()
         {
             Delimeter = delimeter;
         }

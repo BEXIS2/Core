@@ -2,7 +2,7 @@
 @using Telerik.Web.Mvc.UI
 @model IEnumerable<EntityTreeViewItemModel>
 @(Html.Telerik().TreeView()
-        .Name("treeViewEntities")
+        .Name("treeView_entities")
         .BindTo(Model, mappings =>
         {
             mappings.For<EntityTreeViewItemModel>(binding => binding
@@ -16,41 +16,12 @@
                 .Children(feature => feature.Children));
         })
         .ClientEvents(events => events
-            .OnSelect("OnSelect")
+            .OnSelect("treeView_entities_onSelect")
         )
 
         .ExpandAll(true)
 )
-<script type="text/javascript">
 
-    $("#treeViewEntities li div").click(function (e) {
-        $(e.target).find(".t-in").trigger("click");
-    });
-
-    function GetTreeView() {
-        return $('#treeViewEntities').data('tTreeView');
-    }
-
-    function OnSelect(e) {
-        var entityId = GetTreeView().getItemValue(e.item);
-        var prevSelectedDiv = $(".bx-selected");
-        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
-
-        var selectedDiv = $(e.item).find("div")[0];
-        $(selectedDiv).addClass("bx-selected");
-
-        $('#permissions').empty();
-
-        $.get('@Url.Action("Permissions", "EntityPermissions")',
-            { EntityId: entityId },
-            function (contentData) {
-
-                $('#permissions').html(contentData);
-
-                truncateTitle();
-            });
-    }
-</script>
 <style type="text/css">
     #treeViewEntities .t-minus {
         padding-top: 2px;

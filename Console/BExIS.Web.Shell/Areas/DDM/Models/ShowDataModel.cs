@@ -18,5 +18,10 @@ namespace BExIS.Modules.Ddm.UI.Models
         public bool ViewAccess { get; set; }
         public bool GrantAccess { get; set; }
         public bool IsCheckedIn { get; set; }
+
+        public string DataStructureType { get; set; }
+        public bool DownloadAccess { get; set; }
+
+        public bool RequestExist { get; set; }
     }
 }

@@ -449,6 +449,11 @@ namespace BExIS.Xml.Helpers
             return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
         }
 
+        public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, XDocument xDoc)
+        {
+            return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null);
+        }
+
         public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, string value, XDocument xDoc)
         {
             return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));

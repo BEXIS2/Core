@@ -1,89 +1,180 @@
-﻿@model List<BExIS.Dlm.Entities.Party.PartyRelationshipType>
-@{ var hasParty = false;
+﻿@model List<BExIS.Modules.Bam.UI.Models.AddRelationshipModel>
+@{
+    var hasParty = false;
     var sourceParty = (BExIS.Dlm.Entities.Party.Party)ViewBag.sourceParty;
+    var subModels = new Dictionary<IEnumerable<BExIS.Dlm.Entities.Party.PartyRelationshipType>, BExIS.Dlm.Entities.Party.Party>();
+    //subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.SourcePartyType.Id == sourceParty.PartyType.Id)), sourceParty);
+    // subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.TargetPartyType.Id == sourceParty.PartyType.Id)), sourceParty);
+
     var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
 }
-<h2>Relationships:</h2>
+
 <div style="max-height:420px;overflow:auto;">
     <form action="/BAM/Party/CreatePartyRelationships" method="post" id="frmRelationship">
         <input type="hidden" name="partyId" id="PartyRelationWindowPartyId" value="" />
         @*Find all the allowed partyRelationType*@
-        @foreach (var partyRelationType in Model)
-        {
-            if (!partyRelationType.AssociatedPairs.Any(item => item.AllowedTarget.Parties.Any()))
-            {
-                continue;
-            }
-            else
-            {
-                hasParty = true;
-            }
-            var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
-            <table>
-                <tr>
-                    <td colspan="2">
-                        <input type="checkbox" onclick="togglePartyRelDetail(@partyRelationType.Id,this)" @(cntRelations >= partyRelationType.MaxCardinality && (partyRelationType.MaxCardinality != -1) ? "disabled" : "") class="chkPartyRelationshipType" /><label>
-                            <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3>
-                        </label>
+               
 
-                        @if (partyRelationType.MaxCardinality != -1)
-                        {
-                            @Html.Raw("(<span style=" + (cntRelations >= partyRelationType.MaxCardinality ? "color:red;" : "") + ">" + cntRelations + " of " + partyRelationType.MaxCardinality + "</span>)");
-                        }
-                        <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
-                    </td>
-                </tr>
-                @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.AllowedSource.Id == sourceParty.PartyType.Id))
+        @(Html.Telerik().TabStrip()
+                .Name("ShowDataTabStripPartyTypes").Items(tabs =>
                 {
-                    if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
+                    tabs.Add().Text(sourceParty.Name + " as source").Selected(true).Content(@<text> @Html.Partial("_templateRelationshipPartial", Model.First())</text>);
+                    tabs.Add().Text(sourceParty.Name + " as source").Content(@<text>@Html.Partial("_templateRelationshipPartial", Model.Last())</text>);
+                }))
+
+        @*@(Html.Telerik().TabStrip()
+                            .Name("ShowDataTabStripPartyTypes").Items(tabs =>
+                            {
+                            tabs.Add().Text(sourceParty.Name + " as source").Selected(true).Content(@<text>
+                    @foreach (var partyRelationType in Model)
                     {
-                        <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
-                            <td>
-                                <label>
-                                    <b> @partyTypePair.Title</b>
-                                </label>
-                            </td>
-                            <td style="min-width:300px;">
-                                <table>
-                                    @foreach (var party in partyTypePair.AllowedTarget.Parties)
+             var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
+                    if (partyRelationType.AssociatedPairs.Any(cc => cc.SourcePartyType.Id == sourceParty.PartyType.Id))
+                    {
+                        <table>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="checkbox" onclick="togglePartyRelDetail(@partyRelationType.Id,this)" @(cntRelations >= partyRelationType.MaxCardinality && (partyRelationType.MaxCardinality != -1) ? "disabled" : "") class="chkPartyRelationshipType" /><label>
+                                        <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3>
+                                    </label>
+
+                                    @if (partyRelationType.MaxCardinality != -1)
                                     {
-                                        <tr>
-                                            <td class="partyRelationship">
-                                                <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@(party.StartDate.Date==DateTime.MinValue.Date?DateTime.Now.ToShortDateString():party.StartDate.ToShortDateString())" endDate="@(party.EndDate.Date==DateTime.MaxValue.Date?DateTime.Now.AddMonths(1).ToShortDateString():party.EndDate.ToShortDateString())" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
-                                                <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
-                                            </td>
-                                        </tr>
+                                        @Html.Raw("(<span style=" + (cntRelations >= partyRelationType.MaxCardinality ? "color:red;" : "") + ">" + cntRelations + " of " + partyRelationType.MaxCardinality + "</span>)");
                                     }
-                                </table>
-                            </td>
-                        </tr>
+                                    <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
+                                </td>
+                            </tr>
+                            @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.SourcePartyType.Id == sourceParty.PartyType.Id))
+                            {
+                                if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
+                                {
+                                    <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                                        <td>
+                                            <label>
+                                                <b> @partyTypePair.Title</b>
+                                            </label>
+                                        </td>
+                                        <td style="min-width:300px;">
+                                            <table>
+                                                @foreach (var party in partyTypePair.TargetPartyType.Parties)
+                                                {
+                                                    <tr>
+                                                        <td class="partyRelationship">
+                                                            <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" isSource="false" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@(party.StartDate.Date == DateTime.MinValue.Date ? DateTime.Now.ToShortDateString() : party.StartDate.ToShortDateString())" endDate="@(party.EndDate.Date == DateTime.MaxValue.Date ? DateTime.Now.AddMonths(1).ToShortDateString() : party.EndDate.ToShortDateString())" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
+                                                            <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </table>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                                        <td>
+                                            <label>
+                                                <b>@partyTypePair.Title</b>
+                                            </label>
+                                        </td>
+                                        <td style="min-width:300px;">
+                                            <label style="color:red;">
+                                                Some conditions are required to have this relationship type!<br />
+                                                If you changed some attributes please save it and reopen this section.
+                                            </label>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            </table>
                     }
                     else
                     {
-                        <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
-                            <td>
-                                <label style="color:red;">
-                                    Some conditions are required to have this relationship type!<br />
-                                    If you changed some attributes please save it and reopen this section.
-                                </label>
-                            </td>
-                            <td style="min-width:300px;"></td>
-                        </tr>
+                        <div id="divRelationshipNotFoundTitle"> There is not any allowed related parties for making relationship!</div>
                     }
+                    }
+                     </text>);
+                            tabs.Add().Text(sourceParty.Name + " as target").Content(@<text>
+            @foreach (var partyRelationType in Model)
+            {
+
+                var cntRelations = (sourceParty != null ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
+
+                if (partyRelationType.AssociatedPairs.Any(cc => cc.TargetPartyType.Id == sourceParty.PartyType.Id))
+                {
+                       <table>
+                        <tr>
+                            <td colspan="2">
+                                <input type="checkbox" onclick="togglePartyRelDetail(@partyRelationType.Id,this)" @(cntRelations >= partyRelationType.MaxCardinality && (partyRelationType.MaxCardinality != -1) ? "disabled" : "") class="chkPartyRelationshipType" /><label>
+                                    <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3>
+                                </label>
+
+                                @if (partyRelationType.MaxCardinality != -1)
+                                {
+                                    @Html.Raw("(<span style=" + (cntRelations >= partyRelationType.MaxCardinality ? "color:red;" : "") + ">" + cntRelations + " of " + partyRelationType.MaxCardinality + "</span>)");
+                                }
+                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
+                            </td>
+                        </tr>
+                        @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.TargetPartyType.Id == sourceParty.PartyType.Id))
+                        {
+                            if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
+                            {
+                                <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                                    <td>
+                                        <label>
+                                            <b> @partyTypePair.Title</b>
+                                        </label>
+                                    </td>
+                                    <td style="min-width:300px;">
+                                        <table>
+                                            @foreach (var party in partyTypePair.SourcePartyType.Parties)
+                                            {
+                                                <tr>
+                                                    <td class="partyRelationship">
+                                                        <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" isSource="true" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@(party.StartDate.Date == DateTime.MinValue.Date ? DateTime.Now.ToShortDateString() : party.StartDate.ToShortDateString())" endDate="@(party.EndDate.Date == DateTime.MaxValue.Date ? DateTime.Now.AddMonths(1).ToShortDateString() : party.EndDate.ToShortDateString())" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
+                                                        <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                                    <td>
+                                        <label>
+                                            <b>@partyTypePair.Title</b>
+                                        </label>
+                                    </td>
+                                    <td style="min-width:300px;">
+                                        <label style="color:red;">
+                                            Some conditions are required to have this relationship type!<br />
+                                            If you changed some attributes please save it and reopen this section.
+                                        </label>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
                 }
-            </table>
-        }
-        @if (hasParty)
-        {
-            <div class="bx-footer right" >
-                <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Save</button>
-                <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
-            </div>
-        }
-        else
-        {
-            <div id="divRelationshipNotFoundTitle">There is not any allowed related parties for making relationship!</div>
-        }
+                else
+                {
+                    <div id="divRelationshipNotFoundTitle"> There is not any allowed related parties for making relationship!</div>
+                }
+            } </text>);
+                            }))*@
+
+
+
+        <div class="bx-footer right">
+        <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Save</button>
+        <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
+</div>
+
     </form>
 </div>
 <script type="text/javascript">
@@ -119,6 +210,7 @@
     });
     $(".chkPartyRelationship").on("click", function () {
         str = $('#partyRelationshipTemplate').html();
+        str = str.replace(/{isSource}/gi, $(this).attr("isSource"));
         str = str.replace(/{partyId}/gi, $(this).attr("partyId"));
         str = str.replace(/{PartyRelationshipTypeId}/gi, $(this).attr("partyRelationshipTypeId"));
         str = str.replace(/{partyTypepairId}/gi, $(this).attr("partyTypepairId"));
@@ -146,15 +238,22 @@
 <script id="partyRelationshipTemplate" type="text/html">
     <table>
         <tr>
-            <td style="width:200px">Title</td>
+            <td style="width:200px">
+                Title
+            </td>
             <td>
                 <input type="hidden" name="partyRelationshipsDic[PartyRelationshipTypeId_{partyId}_{partyTypepairId}]" value="{PartyRelationshipTypeId}" />
+                <input type="hidden" name="partyRelationshipsDic[isSource_{partyId}_{partyTypepairId}]" value="{isSource}" />
                 <input type="text" name="partyRelationshipsDic[Title_{partyId}_{partyTypepairId}]" class="t-input bx-input" value="{PartyRelationshipTitle}" data-val="true" data-val-required="This field is required." />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship title" />*@
             </td>
         </tr>
         <tr>
-            <td style="width:200px">Description</td>
-            <td><input type="text" name="partyRelationshipsDic[Description_{partyId}_{partyTypepairId}]" class="t-input bx-input" value="" />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship description" />*@</td>
+            <td style="width:200px">
+                Description
+            </td>
+            <td>
+                <input type="text" name="partyRelationshipsDic[Description_{partyId}_{partyTypepairId}]" class="t-input bx-input" value="" />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship description" />*@
+            </td>
         </tr>
         <tr>
             <td style="width:200px">Start Date</td>
@@ -178,8 +277,12 @@
             <td colspan="2"> <span class="dateWarning" style="color:orange"></span></td>
         </tr>
         <tr>
-            <td style="width:200px">Scope</td>
-            <td><input type="text" name="partyRelationshipsDic[Scope_{partyId}_{partyTypepairId}]" value="" class="t-input bx-input" />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship scope" />*@</td>
+            <td style="width:200px">
+                Scope
+            </td>
+            <td>
+                <input type="text" name="partyRelationshipsDic[Scope_{partyId}_{partyTypepairId}]" value="" class="t-input bx-input" />@*<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Relationship scope" />*@
+            </td>
         </tr>
     </table>
 </script>

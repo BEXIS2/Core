@@ -50,12 +50,12 @@
                                 @Html.ActionLink(" ", "DownloadSchema", "ManageMetadataStructure", new { id = @item.Id }, new { @class = "bx bx-grid-function bx-download " + className, title = "Download xsd schema", disabled })
 
 
-                                 @if (Html.IsAccessibale("DIM", "Mapping", "Index"))
+                                 @if (Html.IsAccessible("DIM", "Mapping", "Index"))
                                  {
                                      @Html.ActionLink(" ", "Index", "Mapping", new {area = "DIM", sourceId = @item.Id}, new {@class = "bx bx-grid-function fa-arrow-right ", title = "Mapping to system"})
                                  }
 
-                                @if (Html.IsAccessibale("DIM", "Mapping", "Mapping"))
+                                @if (Html.IsAccessible("DIM", "Mapping", "Mapping"))
                                 {
                                     @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType= "System", targetType = "MetadataStructure" }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
                                 }

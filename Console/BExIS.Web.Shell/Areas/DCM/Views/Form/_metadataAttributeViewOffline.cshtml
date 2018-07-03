@@ -1,0 +1,99 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.MetadataAttributeModel
+@using BExIS.Modules.Dcm.UI.Models
+@using BExIS.Utils.WebHelpers
+@using Telerik.Web.Mvc.UI
+@{
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
+    string idInput = id + "_Input";
+    string idAdd = id + "_Add";
+    string idRemove = id + "_Remove";
+    string idUp = id + "_Up";
+    string idDown = id + "_Down";
+
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
+    string lockedClass = "";
+    bool locked = false;
+    bool showOptional = false;
+
+    string displayName = "";
+    char tmp = ' ';
+
+    foreach (char letter in Model.DisplayName)
+    {
+        if (Model.DisplayName.First() == letter)
+        {
+            tmp = letter;
+            displayName += letter;
+        }
+        else
+        {
+            if (Char.IsUpper(letter) && Char.IsLower(tmp))
+            {
+                displayName += " " + letter;
+            }
+            else
+            {
+                displayName += letter;
+            }
+
+            tmp = letter;
+        }
+    }
+
+}
+
+@if (Model.Number > 1)
+{
+    displayName += " " + Model.Number;
+}
+
+@if (ViewData.Keys.Contains("Locked") || Model.Locked)
+{
+    // check global locked
+    if (ViewData.Keys.Contains("Locked")) { locked = (bool)ViewData["Locked"]; }
+    // check attr locked
+    if (!locked && Model.Locked) { locked = Model.Locked; }
+
+    lockedClass = "bx-disabled";
+}
+
+<div id="@id" class="metadataAttributeContent">
+        <table>
+            <tr>
+                <td class="metadataAttributeLabel">
+                    @if (Model.MinCardinality > 0)
+{
+                        <b title="This field is required" style="color:red">*</b>
+                    }
+
+                    <b title="@Model.Discription">@displayName</b>
+
+                </td>
+                <td class="metadataAttributeInput">
+
+                    @if (Model.Value != null)
+                    {
+                        @Html.DisplayWithLinksFor(m => m.Value)
+                    }
+
+                    
+                </td>
+                <td class="metadataAttributeOption">
+
+                    <table id="attributeOptionTable">
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(Model.Discription))
+                                {
+                                    <button type="button" title="@Model.Discription" class="bx-function bx-disabled">?</button>
+                                }
+
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+</div>

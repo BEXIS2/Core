@@ -32,7 +32,11 @@
       <key column="PartyTypeRef"/>
       <one-to-many class="Party"/>
     </set>
-
+    
+    <property name="SystemType" type="yes_no" >
+      <column name="SystemType"  />
+    </property>
+    
     <set name="CustomAttributes" table="PartyCustomAttributes" lazy="true">
       <key column="PartyTypeRef"/>
       <one-to-many class="PartyCustomAttribute"/>
@@ -44,12 +48,12 @@
     </set>
 
     <set name="PartyTypePairSources" table="PartyTypePairs" lazy="true">
-      <key column="AlowedSourceRef"/>
+      <key column="SourcePartyTypeRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>
 
     <set name="PartyTypePairTargets" table="PartyTypePairs" lazy="true">
-      <key column="AlowedTargetRef"/>
+      <key column="TargetTypeRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>
     

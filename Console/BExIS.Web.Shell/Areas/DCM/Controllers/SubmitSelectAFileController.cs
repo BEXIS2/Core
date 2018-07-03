@@ -3,6 +3,7 @@ using BExIS.Dcm.Wizard;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult SelectAFile(object[] data)
         {
+            IOUtility iOUtility = new IOUtility();
 
             var model = new SelectFileViewModel();
 
@@ -87,7 +89,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                                 {
                                     // open FileStream
-                                    var reader = new ExcelReader();
+                                    var reader = new ExcelReader(null, null);
                                     Stream = reader.Open(filePath);
                                     //Session["Stream"] = Stream;
 
@@ -115,22 +117,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
                                     TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
                                     // excel FileStream
-                                    if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xls"))
+                                    if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
 
                                         // open FileStream
-                                        var reader = new ExcelReader();
+                                        var reader = new ExcelReader(null,null);
                                         Stream = reader.Open(filePath);
-                                        //Session["Stream"] = Stream;
                                         TaskManager.Current().SetValid(true);
-
                                         Stream.Close();
                                     }
                                     // text ór csv FileStream
-                                    else if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") || TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                                    else if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         // open FileStream
-                                        var reader = new AsciiReader();
+                                        var reader = new AsciiReader(null,null,new IOUtility());
                                         Stream = reader.Open(filePath);
                                         //Session["Stream"] = Stream;
                                         TaskManager.Current().SetValid(true);

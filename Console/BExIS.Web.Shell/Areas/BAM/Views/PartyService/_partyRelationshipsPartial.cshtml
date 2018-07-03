@@ -11,20 +11,22 @@
         <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
     </div>
 }
-@(Html.Telerik().Grid(Model.PartyRelationships.AsEnumerable())
-            .Name("PartyRelationshipsGrid")
-            .Sortable()
-            .Filterable()
-            .Columns(columns =>
-            {
-        columns.Bound(c => c.Title);
-        columns.Bound(c => c.FirstParty.Name).Title("First Party");
-        columns.Bound(c => c.SecondParty.Name).Title("Second Party");
-        columns.Bound(c => c.StartDate).Title("Start date");
-        columns.Bound(c => c.EndDate).Title("End date");
-        columns.Bound(c => c.Description);
-        columns.Bound(c => c.PartyRelationshipType.DisplayName).Title("Type"); //(String.IsNullOrWhiteSpace(c.PartyRelationshipType.DisplayName) ? c.PartyRelationshipType.DisplayName : c.PartyRelationshipType.Title)).Title("Realtionship Type Title");
-        columns.Template(
+@if (Model.PartyRelationships != null)
+{
+@(Html.Telerik().Grid(Model.PartyRelationships.Where(cc => !cc.TargetParty.PartyType.SystemType).AsEnumerable())
+                .Name("PartyRelationshipsGrid")
+                .Sortable()
+                .Filterable()
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Title);
+                    columns.Bound(c => c.SourceParty.Name).Title("First Party");
+                    columns.Bound(c => c.TargetParty.Name).Title("Second Party");
+                    columns.Bound(c => c.StartDate).Title("Start date");
+                    columns.Bound(c => c.EndDate).Title("End date");
+                    columns.Bound(c => c.Description);
+                    columns.Bound(c => c.PartyRelationshipType.DisplayName).Title("Type"); //(String.IsNullOrWhiteSpace(c.PartyRelationshipType.DisplayName) ? c.PartyRelationshipType.DisplayName : c.PartyRelationshipType.Title)).Title("Realtionship Type Title");
+                    columns.Template(
                 @<text>
                     <div>
                         @if (actionName != "edit")
@@ -38,9 +40,9 @@
                         }
                     </div>
                 </text>
-);
-            }))
-
+        );
+                }))
+}
 <div id="dialog"></div>
 @*<div style="position:absolute; left:calc(50% - 508px); top:10%;height: 50%; overflow: scroll; width: 40%;" >*@
 @{ Html.Telerik().Window().Name("PartyRelationWindow").HtmlAttributes(new { style = "min-width: 40%;" })
