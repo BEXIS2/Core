@@ -1,0 +1,158 @@
+﻿@section Information
+{
+    Each dataset has additional support files
+    <p>
+        More information
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
+    </p>
+}
+
+@using Telerik.Web.Mvc.UI;
+@using System.Web.Configuration;
+@model BExIS.Modules.Dcm.UI.Models.Push.SendBigFilesToServerModel
+
+@{
+    int mbMax = Model.FileSize;
+    long datasetId = (long)(ViewBag.datasetId);
+    string fileExtListAsString = "";
+
+    foreach (string s in Model.SupportedFileExtentions)
+    {
+        if (fileExtListAsString != "")
+        {
+            fileExtListAsString += "," + s;
+        }
+        else
+        {
+            fileExtListAsString = s;
+        }
+    }
+}
+<table>
+    <tr>
+        <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 300px; max-width: 350px; vertical-align: top;">
+        <div id="view_files" >
+            <div id="FileList" class="bx-trunc-parent">
+                <h4>Your Files</h4>
+                <div style="width: 100%;overflow-x: hidden" >
+                    @foreach (BExIS.IO.BasicFileInfo x in Model.ServerFileList)
+                    {
+                        <div>@Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @x.Name }, new { @class = "bx-trash bx-function" }) @Html.ActionLink(@x.Name,"Download","Attachments",new { datasetId=@datasetId,fileName=@x.Name},null)</div>
+                    }
+                </div>
+            </div>
+            </div>
+        </td><td style="width: 20pt; border: none" />
+        <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
+            <div id="upload_files" >
+                <h3></h3>
+
+                <div class="push_Header stepper">
+
+                    <h3>Send files to server</h3>
+                </div>
+
+                <div class="push_Description stepper">
+                    <p>Please select one or more data files to be uploaded to the system.</p>
+                    <p>
+                        Note:  Large data files may take several minutes or hours to transfer, depending on your network speed.<br />
+                        The system is freezed until the file has been transfered completely. Please be patient!
+                    </p>
+                    <p>Maximum file size: @mbMax MB</p>
+                </div>
+
+                @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
+                                             FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
+                {
+                    <div><span>Description:</span><input type="text" name="description" /></div>
+    @(Html.Telerik().Upload()
+            .Name("attachments")
+            .Multiple(true)
+            .ShowFileList(true)
+            .ClientEvents(events => events
+                    .OnSelect("Push_OnSelect")
+                    //.OnComplete("OnComplete")
+                    .OnRemove("Push_OnRemove")
+                ))
+
+    <br />
+
+    <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled">Push</button>
+    }
+            </div>
+        </td>
+        <td></td>
+    </tr>
+</table>
+<script type="text/javascript">
+
+    function Push_OnSelect(e) {
+
+
+        var maxsize = '@mbMax';
+
+        if (e.files.length == 0) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
+        }
+
+        for (var i = 0; i < e.files.length; i = i + 1) {
+
+            var file = e.files[i];
+            @*//console.log(file.extension);
+            if (!IsExtentionValid(file.extension)) {
+
+                alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
+                e.preventDefault();
+                return false;
+            } else {*@
+
+                //alert(file.size);
+                //alert(maxsize);
+
+                if (file.size > (maxsize * 1024)) {
+
+                    alert("Max file : " +
+                        maxsize +
+                        " MB is supported. Please contact your administrator to upload bigger files.");
+                    e.preventDefault();
+                    return false;
+               // }
+            }
+        }
+    }
+
+    /*
+    Is Extention from selected file
+    in list of supported files
+    */
+    function IsExtentionValid(fileExtention) {
+        var extListAsString = '@fileExtListAsString';
+        var extList = extListAsString.split(',');
+
+        for (var i = 0; i < extList.length; i++) {
+            if (fileExtention.toLowerCase() == extList[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function Push_OnRemove(e) {
+
+        var tmp = $(".t-upload .t-file");
+        if (tmp.length <= 1) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
+        }
+    }
+
+</script>

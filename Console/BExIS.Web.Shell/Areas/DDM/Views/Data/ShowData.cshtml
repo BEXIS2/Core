@@ -87,13 +87,13 @@
                       .Items(tabs =>
                       {
 
-          //ToDo Recator Modularity -> load metadata from from dcm
+                          //ToDo Recator Modularity -> load metadata from from dcm
 
-          tabs.Add()
-                              .Text("Metadata")
-                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
-                              .HtmlAttributes(new { id = "metadata" })
-                              .Enabled(false);
+                          tabs.Add()
+                                              .Text("Metadata")
+                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
+                                              .HtmlAttributes(new { id = "metadata" })
+                                              .Enabled(false);
 
                           tabs.Add()
                               .Text("Primary Data")
@@ -122,7 +122,10 @@
                                 .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
                                 .Enabled(false)
                                 .HtmlAttributes(new { id = "prepare" });
-
+                          tabs.Add()
+                              .Text("Attachements")
+                              .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id })
+                              .Enabled(true);
 
                       })
                       .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
@@ -135,120 +138,120 @@
 
 
 <script type="text/javascript">
-	function grid_subjects_onDataBound() {
-		addTooltips();
-		resetAllTelerikIconTitles();
+    function grid_subjects_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
 
-		$("#grid_subjects tbody input:checkbox").click(function () {
-			if ($(this).is(':checked')) {
-				$.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
+        $("#grid_subjects tbody input:checkbox").click(function () {
+            if ($(this).is(':checked')) {
+                $.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
 					{ SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
 					function () {
-						$("#grid_subjects .t-refresh").trigger('click');
+					    $("#grid_subjects .t-refresh").trigger('click');
 					});
-			} else {
-				$.post('@Url.Action("RemoveRightFromEntityPermission", "UserPermissions", new { area = "sam" })',
+            } else {
+                $.post('@Url.Action("RemoveRightFromEntityPermission", "UserPermissions", new { area = "sam" })',
 					{ SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
 					function () {
-						$("#grid_subjects .t-refresh").trigger('click');
+					    $("#grid_subjects .t-refresh").trigger('click');
 					});
-			}
-		});
-	}
+            }
+        });
+    }
 
-	$("#MetadataEditor").ready(function() {
-
-
-	});
-
-	$(document).ready(function () {
-
-		$("#preloaderContainer").preloader(20, "Loading...");
-		resetAllTelerikIconTitles();
-
-		$(document).bind("MetadataFormIsReady", function () {
-			//alert("m is ready");
-			var viewAccess = '@Model.ViewAccess';
-			var grantAccess = '@Model.GrantAccess';
-
-			var tabStrip = $(".t-tabstrip");
-			//console.log(tabStrip);
-			//console.log(viewAccess);
-			//console.log(grantAccess);
+    $("#MetadataEditor").ready(function () {
 
 
-			$("li#datastructure").removeClass("t-state-disabled");
-			//console.log($(tabStrip).find("li #datastructure"));
+    });
 
-			if (viewAccess === "True") {
-				$("li#primarydata").removeClass("t-state-disabled");
-				$("li#prepare").removeClass("t-state-disabled");
-			}
+    $(document).ready(function () {
 
-			if (grantAccess === "True") {
-				$(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
-			}
+        $("#preloaderContainer").preloader(20, "Loading...");
+        resetAllTelerikIconTitles();
 
-			//console.log($("li", tabStrip.element));
-			var items = $("li", tabStrip.element);
-			//console.log(items);
-			//tabStrip.enable(items);
+        $(document).bind("MetadataFormIsReady", function () {
+            //alert("m is ready");
+            var viewAccess = '@Model.ViewAccess';
+            var grantAccess = '@Model.GrantAccess';
 
-			$("#preloaderContainer").removePreloader();
-		});
-
-	});
+            var tabStrip = $(".t-tabstrip");
+            //console.log(tabStrip);
+            //console.log(viewAccess);
+            //console.log(grantAccess);
 
 
-	function existsRightType(rights, rightType) {
-		if (jQuery.inArray(rightType, rights) != -1) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+            $("li#datastructure").removeClass("t-state-disabled");
+            //console.log($(tabStrip).find("li #datastructure"));
 
-	function OnSelectShowDataTabStrip(e) {
-		if (e.item.id == "metadata") {
+            if (viewAccess === "True") {
+                $("li#primarydata").removeClass("t-state-disabled");
+                $("li#prepare").removeClass("t-state-disabled");
+            }
 
-			setTimeout(function () {
-				bindMinimap(true);
+            if (grantAccess === "True") {
+                $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+            }
 
-				$(window).resize(function () {
+            //console.log($("li", tabStrip.element));
+            var items = $("li", tabStrip.element);
+            //console.log(items);
+            //tabStrip.enable(items);
 
-						setTimeout(function () {
-							//alert("r");
-							bindMinimap();
-						}, 120);
-					});
+            $("#preloaderContainer").removePreloader();
+        });
 
-			}, 120);
+    });
 
 
-		}
-		else {
-			$(".miniregion").remove();
-			$(".minimap").remove();
+    function existsRightType(rights, rightType) {
+        if (jQuery.inArray(rightType, rights) != -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
-			$(window).off('resize');
-		}
+    function OnSelectShowDataTabStrip(e) {
+        if (e.item.id == "metadata") {
 
-		if (e.item.id == "prepare") {
+            setTimeout(function () {
+                bindMinimap(true);
 
-			var tabStrip = $("#ShowDataTabStrip").data("tTabStrip");
-			tabStrip.reload($("#" + e.item.id));
-		}
-	}
+                $(window).resize(function () {
 
-	function download(id, format) {
+                    setTimeout(function () {
+                        //alert("r");
+                        bindMinimap();
+                    }, 120);
+                });
+
+            }, 120);
 
 
-		$("#preloaderContainer").preloader(20, "Preparing zip file...");
+        }
+        else {
+            $(".miniregion").remove();
+            $(".minimap").remove();
 
-		window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id})';
+            $(window).off('resize');
+        }
 
-		$("#preloaderContainer").removePreloader();
+        if (e.item.id == "prepare") {
+
+            var tabStrip = $("#ShowDataTabStrip").data("tTabStrip");
+            tabStrip.reload($("#" + e.item.id));
+        }
+    }
+
+    function download(id, format) {
+
+
+        $("#preloaderContainer").preloader(20, "Preparing zip file...");
+
+        window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id})';
+
+        $("#preloaderContainer").removePreloader();
 
     }
 
