@@ -1,0 +1,26 @@
+﻿@model IEnumerable<BExIS.Modules.Ato.UI.Models.CategoryModel>
+
+<div>
+    @foreach (var category in Model)
+    {
+
+        <a name="@category.Name" style="padding-top:60px">
+
+            <h2>@category.Name</h2>
+        </a>
+        <p>@category.Description</p>
+
+        foreach (var file in category.FileModels)
+        {
+            <h3>@Html.Raw(file.Header)</h3>
+            @file.InfoText
+            <br>
+
+            <br>
+            @Html.ActionLink(string.Concat(file.Name), "Download", new { fileName = file.FileName }, htmlAttributes: new { @class = "t-button action", id = "file.FileName", target = "_blank" })
+            <br>
+            <br>
+        }
+        <hr />
+    }
+</div>

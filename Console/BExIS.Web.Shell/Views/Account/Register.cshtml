@@ -50,18 +50,42 @@
             @Html.ValidationMessageFor(m => m.Credit)
         </div>
         <div class="col-md-10 col-md-offset-2">
-            @Html.CheckBoxFor(m => m.Inform, new { @class = "cb_form" })
-            I agree to inform the data owners about access to data and the planned use of the data by sending an email.
-            @Html.ValidationMessageFor(m => m.Inform)
+            <br\>
+                <h3>Specifically as A DATA CONTRIBUTOR, I agree to:</h3>
+                @Html.CheckBoxFor(m => m.Metadata, new { @class = "cb_form" })
+                Provide metadata for each set of data collected and derived, including appropriate acknowledgments.
+                @Html.ValidationMessageFor(m => m.Inform)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.Verify, new { @class = "cb_form" })
+            Provide verification of data quality according to the adopted standard method or recommended protocol.
+            @Html.ValidationMessageFor(m => m.Credit)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.Data, new { @class = "cb_form" })
+            Make the data available to ATTO collaborators as fast as possible; laws indicate data should be make publicly available within 6 months.  The only exceptions are for data needed for student theses - these should be made public within 6 months after the thesis defense.
+            @Html.ValidationMessageFor(m => m.Credit)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            <br\>
+                <h3>As a DATA USER, I agree to:</h3>
+                @Html.CheckBoxFor(m => m.Inform, new { @class = "cb_form" })
+                Inform the researcher who contributed the data about how I intend to use data before I start using it;  if the data are not public, I agree to communicate with the data provider so that they can contribute scientifically to any research product.
+                @Html.ValidationMessageFor(m => m.Inform)
         </div>
         <div class="col-md-10 col-md-offset-2">
             @Html.CheckBoxFor(m => m.DOI, new { @class = "cb_form" })
-            I identify the data used by citing the DOI and acknowledge the ATTO project in any publication where the data are utilized.
+            Recognize the data by citing the relevant DOI or article (s), and acknowledging ATTO support.
+            @Html.ValidationMessageFor(m => m.DOI)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.Forward, new { @class = "cb_form" })
+            To not forward downloaded data to third parties.
             @Html.ValidationMessageFor(m => m.DOI)
         </div>
         <div class="col-md-10 col-md-offset-2">
             @Html.CheckBoxFor(m => m.PHD, new { @class = "cb_form" })
-            I accept that data which where collected as part of a dissertation are granted specific protection and might not be freely available in special cases.
+            That data which where collected as part of a dissertation are granted specific protection and might not be freely available in special cases.
             @Html.ValidationMessageFor(m => m.PHD)
         </div>
     </div>
