@@ -9,74 +9,90 @@
         <br />
         <p></p> <a href="#_overview">           1. Overview</a>
         <p></p> <a href="#_manage_parties">     2. Manage Parties</a>
-        <p></p>&nbsp;&nbsp; <a href="#_create_and_edit">       2.1. Create and Edit</a>
-        <p></p>&nbsp;&nbsp; <a href="#_manage_relationship">2.2. Manage Relationship</a>
-        <p></p> <a href="#_account_registration">3. Account registration</a>
+        <p></p>&nbsp;&nbsp; <a href="#_create_and_edit">        2.1. Create and Edit</a>
+        <p></p>&nbsp;&nbsp; <a href="#_manage_relationship">    2.2. Manage Relationship</a>
+        <p></p> <a href="#_account_registration">3. Party creates while registration</a>
     </div>
 }
 
-    <style>
-        a:hover {
-            background-color: #bee1da;
-            text-decoration: none;
-        }
+<style>
+    a:hover {
+        background-color: #bee1da;
+        text-decoration: none;
+    }
 
-        .toc {
-            position: fixed;
-            top: 100px;
-            overflow: auto;
-            max-height: 64vh;
-            width: 250px;
-            max-width: 350px;
-        }
-
-
-        .scrollable {
-            overflow: auto;
-            height: 750px;
-        }
-
-        :target:before {
-            content: "";
-            display: block;
-            height: 100px;
-        }
-    </style>
+    .toc {
+        position: fixed;
+        top: 100px;
+        overflow: auto;
+        max-height: 64vh;
+        width: 250px;
+        max-width: 350px;
+    }
 
 
-<p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
+
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
+</style>
+
 
 <h1><a id="_overview"><span>1. Overview</span></a></h1>
 <p><span>&#xa0;</span></p>
-<p>Party package is managing all kinds of entities such as people, organizations, projects and etc. it is also managing the relationship between them. For example, one person is a part of a project for a certain duration. Furthermore, it is able to connect to the other modules which now it is connected to the security module and also it is able to import the definitions such as “partytypes”, “customattributes” and “relationshiptype” from an XML file.</p>
+<p>Party package is available via Setup (Cog button) to manage all kinds of entities such as people, organizations, projects etc. it is also managing the relationship between them. For example, one person is a part of a project for a certain duration. Furthermore, it is able to connect to the other modules, which now connects to the security module and it is able to import the definitions such as “partytypes”, “customattributes” and “relationshiptype” from an XML file.</p>
+<!--<p><img src="~/Areas/BAM/Content/Images/Help/schema.jpg" width="600" alt="Schema_img" /><span>&#xa0;</span></p>-->
 <p><span>&#xa0;</span></p>
-<p><img src="~/Areas/BAM/Content/Images/Help/schema.jpg" width="600" alt="Schema_img" /><span>&#xa0;</span></p>
 <h1><a id="_manage_parties"><span>2. Manage Parties</span></a></h1>
 <p><span>&#xa0;</span></p>
-<p>Through Manage Parties you can see all the available entities, create, edit and delete theme. The red warning icon in action required column shows that this party needs some relationships to be valid.</p>
+<p>
+    Through Manage Parties, you can see all the available entities, create, edit and delete them.
+    The red warning icon in action-required column shows that this party needs some relationships to be valid.
+</p>
+<br />
 <p><img src="~/Areas/BAM/Content/Images/Help/manage_parties.jpg" width="900" alt="Manage_Parties_img" /><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<br /><p><span>&#xa0;</span></p>
-<h2><a id="__create_and_edit"><span>2.1. Create and Edit</span></a></h2>
+<h2><a id="_create_and_edit"><span>2.1. Create and Edit</span></a></h2>
 <p><span>&#xa0;</span></p>
-<p>After click on Create Party in Manage Parties in first step you should select party type and its date range. Click on Next you will navigate to the next step.</p>
-<p><img src="~/Areas/BAM/Content/Images/Help/create_party_1.jpg" width="900" alt="create_party_1_img" /><span>&#xa0;</span></p>
-<p>Here depends on the selected party type you will see some additional attributes. You have to fill the required fields.</p>
-<p>To edit a party you will navigate to this page again. You are able to change all the fields except party type.</p>
-<h2><a id="_manage_relationship"><span>2.2. Manage Relationship</span></a></h2>
-<p>Every party could have some relationships with the other parties. If you don’t define relationships, the party will be saved but it’s not valid. You can add relationship later as well.</p>
-<p>Party relationships tab in edit or create party is to manage these relationships.</p>
-<p><img src="~/Areas/BAM/Content/Images/Help/create_party_2.jpg" width="600" alt="create_party_2_img" /><span>&#xa0;</span></p>
-<p>To create a new relationship, click on create and you see the following window. Here you see all the available party relationship types depend on the definitions which we already defined. The numbers in parentheses shows the number of current relationships and the maximum relationships that this party to this relationship type can have. </p>
-<p><img src="~/Areas/BAM/Content/Images/Help/new_party_relation.jpg" width="600" alt="new_party_relation_img" /><span>&#xa0;</span></p>
-<p>Clicking on one of them, you see some more options and available parties to make relationship. </p>
-<p>Selecting a party it asks you to enter some information and by default it fills some of the fields. Title here is the title of this relationship, start and end date are important and will set the duration of this relationship. This duration should be fit to the duration of source party and the target party otherwise you will face to an error.</p>
+<p>
+    After clicking on Create Party in Manage Parties in the first step, you should select party type and its date range. Click on Next you will navigate to the next step.<br />
+    Here depends on the selected party type you will see some additional attributes. You have to fill the required fields.<br />
+    To edit later a party you will navigate to this page again. You will able to change all the fields except party type.
+<br />
+<p><img src="~/Areas/BAM/Content/Images/Help/create_party_1.jpg" width="900" alt="create_party_1_img" /></p>
+<p><span>&#xa0;</span></p>
+<h2><a id="_manage_relationship">2.2. Manage Relationship</a></h2>
+<p>
+    Every party could have some relationships with the other parties. If you do not define relationships, the party will save but it is not valid. You can add relationship later as well.<br/>
+    Party relationships tab in the edit, or create party is to manage these relationships.<br/>
+    To create a new relationship, click on create and you see the following window. Here you see all the available party relationship types depend on the definitions, which we already defined. The numbers in parentheses show the number of current relationships and the maximum relationships that this party to this relationship type can have.<br/>
+    Clicking on one of them, you see some more options and available parties to make a relationship.<br/>
+</p>
+<!--<br />-->
+<!--<p><img src="~/Areas/BAM/Content/Images/Help/create_party_2.jpg" width="900" alt="create_party_2_img" /></p>-->
+<!--<br />-->
+<br />
+<p><img src="~/Areas/BAM/Content/Images/Help/new_party_relation.jpg" width="400" alt="new_party_relation_img" /><span>&#xa0;</span></p>
+<br />
+<p>Selecting a party, it asks you to enter some information and by default, it fills some of the fields. The title here is the title of the relationship. Start and end dates are important and will set the duration of the relationship. This duration should fit the duration of a source party and the target party; otherwise, you will face an error.</p>
 <p><img src="~/Areas/BAM/Content/Images/Help/new_party_relation2.jpg" width="600" alt="new_party_relation2_img" /><span>&#xa0;</span></p>
-<p>Clicking on edit icon (pencil figure) on last column of each relationships, you are able to edit the relationship. And clicking on the view icon (eye figure), you are able to see the detail of a relationship.</p>
-<p>Clicking on delete icon (trash figure) on last column of each relationships, you are able to delete a relationship if the minimum cardinality of its relationship type preserved.</p>
-<h1><a id="_account_registration"><span>3. Account Registration</span></a></h1>
-<p>After creating an account, other information of user will save in party package . Before using this page we shoud set some configuration to clear the allowed party types which are related to the account and also the relationships which you want to ask user in registration page.</p>
+<p>
+    Click on the edit icon <!--(pencil figure)--> on the last column of each relationship make you able to edit the relationship.<br />
+    Click on the view icon <!--(eye figure)--> make you able to see the detail of a relationship.<br />
+    Click on delete icon <!--(trash figure)--> make you able to delete a relationship if the minimum cardinality of its relationship types preserved.
+</p>
+<p><span>&#xa0;</span></p>
+<h1><a id="_account_registration"><span>3. Party creates while registration </span></a></h1>
+<br />
+<p> A party type Person is created while registration. User guides to fill information fields needed for its party.
+    This page is available in tab "Additional attributes" during edit a party type Person.</p>
+<p><span>&#xa0;</span></p>
 <p><img src="~/Areas/BAM/Content/Images/Help/registration.jpg" width="600" alt="registration_img" /><span>&#xa0;</span></p>
 
 <p><span>&#xa0;</span></p>

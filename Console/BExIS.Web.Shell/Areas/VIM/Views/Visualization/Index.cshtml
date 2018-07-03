@@ -1,6 +1,12 @@
 ﻿@model BExIS.Modules.Vim.UI.Models.VisualizationModels
 @using Telerik.Web.Mvc.UI;
 
+@section Information
+{
+    Visualization provides diagrams depend on the selected data in specific range of time.
+}
+
+
 @*<style>
 
         .chart div {
@@ -29,10 +35,6 @@
     string deletedDatasets = String.Join(",", Model.deletedDatasets);
 }
 
-@section Information
-{
-    In this page you can see visual informations.
-}
 
 <div>
     <!--Drop Down List to select datasets by status-->
