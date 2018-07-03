@@ -11,9 +11,29 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
+using BExIS.Dlm.Orm.NH.Qurying;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using Vaiona.Logging.Aspects;
 
+namespace System.Data
+{
+    public static class DataTableExtensionsForDataset
+    {
+        public static void Strip(this DataTable table)
+        {
+            if (table.Columns.Contains("id")) { table.Columns.Remove("id"); }
+            if (table.Columns.Contains("orderno")) { table.Columns.Remove("orderno"); }
+            if (table.Columns.Contains("timestamp")) { table.Columns.Remove("timestamp"); }
+            if (table.Columns.Contains("versionid")) { table.Columns.Remove("versionid"); }
+        }
+    }
+}
+
+/// <summary>
+/// The BExIS.Dlm.Services.Data namespace provides classes and interfaces that enable access to the datasets managed by the system.
+/// This includes creating a <see cref="BExIS.Dlm.Entities.Dataset"/>, a <see cref="BExIS.Dlm.Entities.Version"/> of a dataset, or manipulating data tuples associated with a specific version.
+/// </summary>
 namespace BExIS.Dlm.Services.Data
 {
     /// <summary>
@@ -292,7 +312,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="comment">A free form text to describe what has changed with this check-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>      
-        //[Diagnose]
+        [MeasurePerformance]
         public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
             checkInDataset(datasetId, comment, username, false, viewCreationBehavior);
@@ -807,6 +827,11 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        {
+            return queryMaterializedView(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+        }
+
         /// <summary>
         /// Returns one page of the data tuples of the dataset version requested. See <see cref="GetDatasetVersionEffectiveTuples"/> for more details about the effective tuples of a dataset.
         /// </summary>
@@ -826,6 +851,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersion">The object representing the data set version requested</param>
         /// <returns>The list of identifiers of the specified version</returns>
+        [MeasurePerformance]
         public List<Int64> GetDatasetVersionEffectiveTupleIds(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleIds(datasetVersion);
@@ -1344,6 +1370,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="deletedTuples">The list of existing tuples to be deleted from the working copy.</param>
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns>The working copy having the changes applied on it.</returns>
+        [MeasurePerformance]
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             List<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
@@ -2472,7 +2499,7 @@ namespace BExIS.Dlm.Services.Data
                     refreshMaterializedView(datasetId);
                     // update the the last synced information on the data set. It is used in the dataset maintenance UI logic
                     // check if the view is actually refreshed, by comparing the records in the view to the records in tuples.
-                    long noOfViewRecords = countRowsOfMaterializedView(datasetId);
+                    long noOfViewRecords = RowCount(datasetId);
 
                     if(noOfViewRecords < numberOfTuples)
                     {
@@ -2540,10 +2567,16 @@ namespace BExIS.Dlm.Services.Data
             mvHelper.Refresh(datasetId);
         }
 
-        private long countRowsOfMaterializedView(long datasetId)
+        public long RowCount(long datasetId)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             return mvHelper.Count(datasetId);
+        }
+
+        public long RowCount(long datasetId, FilterExpression filter)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            return mvHelper.Count(datasetId, filter);
         }
 
         private bool existsMaterializedView(long datasetId)
@@ -2591,6 +2624,11 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        private DataTable queryMaterializedView(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            return mvHelper.Retrieve(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+        }
 
         // in some cases maybe another attribute of the user is used like its ID, email or the IP address
         private string getUserIdentifier(string username)
@@ -3092,7 +3130,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="variableId">The identifier of the variable that the value is belonging to.</param>
         /// <param name="parameterValues">If the variable has parameters attached, the parameter values are passed alongside, so that the method links them to their corresponding variable value using <paramref name="variableId"/>.</param>
         /// <returns>A transient object of type <seealso cref="VariableValue"/>.</returns>
-        public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
+        public virtual VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
             Contract.Requires(variableId > 0);

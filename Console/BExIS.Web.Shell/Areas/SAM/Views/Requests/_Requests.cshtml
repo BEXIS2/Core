@@ -3,7 +3,7 @@
 
 @(Html.Telerik().Grid<RequestGridRowModel>
               ()
-              .Name("gridRequests")
+              .Name("grid_requests")
               .Columns(columns =>
               {
                   columns.Bound(g => g.Id);
@@ -12,7 +12,7 @@
               })
               .ClientEvents(events =>
               {
-                  events.OnDataBound("onDataBound");
+                  events.OnDataBound("grid_requests_onDataBound");
               })
               .DataBinding(dataBinding => dataBinding
                   .Ajax()

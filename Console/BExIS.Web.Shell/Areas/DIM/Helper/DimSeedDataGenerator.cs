@@ -17,10 +17,11 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
-    public class DimSeedDataGenerator : IDisposable
+    public class DimSeedDataGenerator : IModuleSeedDataGenerator
     {
         public void GenerateSeedData()
         {

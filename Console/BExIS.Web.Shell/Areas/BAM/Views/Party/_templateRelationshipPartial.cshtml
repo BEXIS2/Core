@@ -1,0 +1,92 @@
+﻿@model BExIS.Modules.Bam.UI.Models.AddRelationshipModel
+@{
+    var sourceParty = Model.SourceParty;
+    var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
+}
+@if (!Model.PartyRelationshipTypes.Any())
+{<div id="divRelationshipNotFoundTitle"> There is not any allowed related parties for making relationship!</div>
+}
+
+@foreach (var partyRelationType in Model.PartyRelationshipTypes)
+{
+    var cntRelations = (sourceParty != null && Model.isAsSource ? BExIS.Modules.Bam.UI.Helpers.Helper.CountRelations(sourceParty.Id, partyRelationType) : 0);
+    if (partyRelationType.AssociatedPairs.Any())//cc => cc.SourcePartyType.Id == sourceParty.PartyType.Id))
+    {
+        <table>
+            <tr>
+                <td colspan="2">
+                    <input type="checkbox" onclick="togglePartyRelDetail(@partyRelationType.Id,this)" @(cntRelations >= partyRelationType.MaxCardinality && (partyRelationType.MaxCardinality != -1) ? "disabled" : "") class="chkPartyRelationshipType" /><label>
+                        <h3>@BExIS.Modules.Bam.UI.Helpers.Helper.GetDisplayName(partyRelationType) </h3>
+                    </label>
+
+                    @if (partyRelationType.MaxCardinality != -1 && Model.isAsSource)
+                    {
+                        @Html.Raw("(<span style=" + (cntRelations >= partyRelationType.MaxCardinality ? "color:red;" : "") + ">" + cntRelations + " of " + partyRelationType.MaxCardinality + "</span>)");
+                    }
+                    <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party relationship type" />
+                </td>
+            </tr>
+            @foreach (var partyTypePair in partyRelationType.AssociatedPairs.Where(cc => cc.SourcePartyType.Id == sourceParty.PartyType.Id || cc.TargetPartyType.Id == sourceParty.PartyType.Id))
+            {
+                if ((partyTypePair.SourcePartyType.Id != sourceParty.PartyType.Id) || ((partyTypePair.SourcePartyType.Id == sourceParty.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id)))
+                {
+                    <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                        <td>
+                            <label>
+                                <b> @partyTypePair.Title</b>
+                            </label>
+                        </td>
+                        <td style="min-width:300px;">
+                            <table>
+                                @foreach (var party in (Model.isAsSource ? partyTypePair.SourcePartyType.Parties : partyTypePair.TargetPartyType.Parties))
+                                {
+                                    if ((partyTypePair.SourcePartyType.Id != party.PartyType.Id) || ((partyTypePair.SourcePartyType.Id == party.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, party.Id)))
+                                    {
+                                        <tr>
+                                            <td class="partyRelationship">
+                                                <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" isSource="@Model.isAsSource" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@(party.StartDate.Date == DateTime.MinValue.Date ? DateTime.Now.ToShortDateString() : party.StartDate.ToShortDateString())" endDate="@(party.EndDate.Date == DateTime.MaxValue.Date ? DateTime.Now.AddMonths(1).ToShortDateString() : party.EndDate.ToShortDateString())" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
+                                                <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                                           
+                                            <td style="min-width:300px;">
+                                                <label style="color:red;">
+                                                    Some conditions are required to have this relationship type!<br />
+                                                    If you changed some attributes please save it and reopen this section.
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+                        <td>
+                            <label>
+                                <b>@partyTypePair.Title</b>
+                            </label>
+                        </td>
+                        <td style="min-width:300px;">
+                            <label style="color:red;">
+                                Some conditions are required to have this relationship type!<br />
+                                If you changed some attributes please save it and reopen this section.
+                            </label>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    }
+    else
+    {
+        <div id="divRelationshipNotFoundTitle"> There is not any allowed related parties for making relationship!</div>
+    }
+}

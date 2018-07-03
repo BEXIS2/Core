@@ -1,4 +1,6 @@
 ﻿@using BExIS.Utils.Models;
+@using System.Linq;
+
 @model BExIS.Utils.Models.SearchModel
            
 <div id="breadCrumb">       
@@ -9,7 +11,7 @@
 
     if (sc.SearchCriteriaList.Count > 0)
     {
-        foreach (var item in sc.SearchCriteriaList)
+        foreach (var item in sc.SearchCriteriaList.Where(p => p.SearchComponent.IsVisible).ToList() )
         {
         <text>
     

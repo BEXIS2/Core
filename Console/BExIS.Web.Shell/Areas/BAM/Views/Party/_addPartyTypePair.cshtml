@@ -1,0 +1,40 @@
+﻿@model BExIS.Dlm.Entities.Party.PartyTypePair
+    if (partyManager.CheckCondition(partyTypePair.ConditionSource, sourceParty.Id))
+    {
+<tr class="PartyRelationTypeDetails_@Model.Id" style="display:none">
+    <td>
+        <label>
+            <b> @Model.Title</b>
+        </label>
+    </td>
+    <td style="min-width:300px;">
+        <table>
+            @foreach (var party in Model.TargetPartyType.Parties)
+            {
+                <tr>
+                    <td class="partyRelationship">
+                        <input type="checkbox" @(cntRelations >= partyTypePair.PartyRelationshipType.MaxCardinality && (@partyTypePair.PartyRelationshipType.MaxCardinality != -1) ? "disabled" : "") partyId="@party.Id" partyTypepairId="@partyTypePair.Id" partyRelationshipTitle="@partyTypePair.PartyRelationshipType.Title" partyRelationshipTypeId="@partyTypePair.PartyRelationshipType.Id" class="chkPartyRelationship" startDate="@(party.StartDate.Date==DateTime.MinValue.Date?DateTime.Now.ToShortDateString():party.StartDate.ToShortDateString())" endDate="@(party.EndDate.Date==DateTime.MaxValue.Date?DateTime.Now.AddMonths(1).ToShortDateString():party.EndDate.ToShortDateString())" /><label id="lblPartyName">@party.Name</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;
+                        <div class="divPartyRelationship" id="@Html.Raw("divPartyRelationship" + party.Id)" startDate="@party.StartDate" endDate="@party.EndDate"></div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </td>
+</tr>
+    }
+    else
+    {
+<tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
+    <td>
+        <label>
+            <b>@partyTypePair.Title</b>
+        </label>
+    </td>
+    <td style="min-width:300px;">
+        <label style="color:red;">
+            Some conditions are required to have this relationship type!<br />
+            If you changed some attributes please save it and reopen this section.
+        </label>
+    </td>
+</tr>
+    }

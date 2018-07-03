@@ -31,6 +31,10 @@
     <property name="EndDate" type="DateTime" >
       <column name="EndDate"  />
     </property>
+    
+    <property name="Permission" type="int" not-null="false" >
+      <column name="Permission"  />
+    </property>
 
     <property name="Scope" type="String" >
       <column name="Scope"  />
@@ -40,9 +44,9 @@
 
     <many-to-one name="PartyTypePair" class="BExIS.Dlm.Entities.Party.PartyTypePair"  not-null="false" column="PartyRelationshipTypePairRef"/>
 
-    <many-to-one name="FirstParty" class="BExIS.Dlm.Entities.Party.Party"  not-null="true" column="FirstPartyRef"/>
+    <many-to-one name="SourceParty" class="BExIS.Dlm.Entities.Party.Party"  not-null="true" column="SourcePartyRef"/>
 
-    <many-to-one name="SecondParty" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="SecondPartyRef"/>
+    <many-to-one name="TargetParty" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="TargetPartyRef"/>
 
   </class>
 </hibernate-mapping>

@@ -2,9 +2,9 @@
 @model BExIS.Utils.Models.SearchModel
 
 <div class="searchHeader">           
-@using (Html.BeginForm("Index", "Home"))
-{ 
-     
+@using (Html.BeginForm(Session["SubmissionAction"].ToString(), "Home"))
+{
+
    <div id="search_Components"> 
        <table>
            <tr>

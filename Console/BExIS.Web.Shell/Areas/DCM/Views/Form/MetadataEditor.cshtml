@@ -7,11 +7,9 @@
 
 @using Telerik.Web.Mvc.UI;
 @using Vaiona.Web.Mvc.Modularity
+@using System.Web.Optimization
 
 @{
-
-    <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
-
 
     string lockedClass = "";
     bool locked = false;
@@ -72,163 +70,174 @@
 }
 
 
+@section scripts
+{
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+}
+<link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
+
+
+
 @section Information
 {
-    <p>Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
-    Mandatory fields are indicated with an red asterisk.</p>
+    <p>
+        Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
+        Mandatory fields are indicated with an red asterisk.
+    </p>
     <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
 
     <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+        More information
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
     </p>
 }
 
 
-<div id="MetadataEditor" style="width: 89%" >
-<div>
-    <table>
-        <tr>
-            @if (locked)
-            {
-                <td style="width:300px;">
-                    @if (Model.EditRight && Model.EditAccessRight)
-                    {
-                        <button onclick="edit()" class="bx-button function">Edit</button>
-
-                        if (copy.IsComplete())
+<div id="MetadataEditor" style="width: 89%">
+    <div>
+        <table>
+            <tr>
+                @if (locked)
+                {
+                    <td style="width:300px;">
+                        @if (Model.EditRight && Model.EditAccessRight)
                         {
-                            @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
-                        }
-                    }
-                    else
-                    {
-                        string tooltip = "";
-
-                        if (!Model.EditRight)
-                        {
-                            tooltip += " You do not have permission to edit or copy this dataset.";
-                        }
-
-                        if (!Model.EditAccessRight)
-                        {
-                            tooltip += " You do not have permission for this function.";
-                        }
-
-                        if ((!Model.EditAccessRight && !Model.EditRight) == false)
-                        {
-                            <button onclick="edit()" class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Edit</button>
+                            <button onclick="edit()" class="bx-button function">Edit</button>
 
                             if (copy.IsComplete())
                             {
-                                <button class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Copy</button>
+                                @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new { area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })
                             }
                         }
-                    }
+                        else
+                        {
+                            string tooltip = "";
+
+                            if (!Model.EditRight)
+                            {
+                                tooltip += " You do not have permission to edit or copy this dataset.";
+                            }
+
+                            if (!Model.EditAccessRight)
+                            {
+                                tooltip += " You do not have permission for this function.";
+                            }
+
+                            if ((!Model.EditAccessRight && !Model.EditRight) == false)
+                            {
+                                <button onclick="edit()" class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Edit</button>
+
+                                if (copy.IsComplete())
+                                {
+                                    <button class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Copy</button>
+                                }
+                            }
+                        }
 
 
-                    @Html.CheckBox("showAll", @showOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
+                        @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
 
-                    <b>show all fields</b>
+                        <b>show all fields</b>
 
-                </td>
-
-
-            }
+                    </td>
 
 
-            @if (!Model.Created && !locked && Model.Import)
-            {
-                <td style="width: 100px">
-                    @(Html.Telerik().Upload()
-                          .Name("SelectFileUploader")
-                          .Multiple(false)
-                          .ShowFileList(false)
-                          .HtmlAttributes(new {title = "Import from xml", accept = ".xml"})
-                          .ClientEvents(events => events
-                              .OnSuccess("OnSuccess")
-                              .OnSelect("SelectFileProcess_OnSelect")
-                              .OnLoad("SelectFileUploader_OnLoad"))
-                          .Async(async => async
-                              .Save("SelectFileProcess", "Form")
-                              .AutoUpload(true))
-                            
-                          )
-                </td>
-            }
+                }
 
 
-            <td id="form_message_container_Column" style="text-align: right">
-                <span id="form_message"></span>
-                <div id="preloader_cotainer">
-                    <script type="text/javascript"> $("#preloader_cotainer").preloader(20,"Loading metadata...")</script>
-                </div>
-            </td>
-            
-
-            @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
-            {
-
-                <td>You successfully created dataset: <br/><b>@Model.DatasetTitle</b></td>
-                <td>
-                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null,new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
-                    to add primary data to this dataset.
-                </td>
-
-                if (Html.IsAccessibale("DDM", "Data", "ShowData"))
+                @if (!Model.Created && !locked && Model.Import)
                 {
-                    if (@Model.DatasetId > 0)
-                    {
-                        <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
+                    <td style="width: 100px">
+                        @(Html.Telerik().Upload()
+                                              .Name("SelectFileUploader")
+                                              .Multiple(false)
+                                              .ShowFileList(false)
+                                              .HtmlAttributes(new { title = "Import from xml", accept = ".xml" })
+                                              .ClientEvents(events => events
+                                                  .OnSuccess("OnSuccess")
+                                                  .OnSelect("SelectFileProcess_OnSelect")
+                                                  .OnLoad("SelectFileUploader_OnLoad"))
+                                              .Async(async => async
+                                                  .Save("SelectFileProcess", "Form")
+                                                  .AutoUpload(true))
 
+                        )
+                    </td>
+                }
+
+
+                <td id="form_message_container_Column" style="text-align: right">
+                    <span id="form_message"></span>
+                    <div id="preloader_cotainer">
+                        <script type="text/javascript">    $("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
+                    </div>
+                </td>
+
+
+                @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
+                {
+
+                    <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
+                    <td>
+                        Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
+                        to add primary data to this dataset.
+                    </td>
+
+                    if (Html.IsAccessible("DDM", "Data", "ShowData"))
+                    {
+                        if (@Model.DatasetId > 0)
+                        {
+                            <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
+
+                        }
                     }
                 }
-            }
-        </tr>
-    </table>
+            </tr>
+        </table>
 
-</div>
+    </div>
 
-<div id="root" style="background-color: white">
+    <div id="root" style="background-color: white">
 
-    @foreach (var element in Model.StepModelHelpers)
-    {
-        if (element.Model is MetadataPackageModel)
+        @foreach (var element in Model.StepModelHelpers)
         {
-            <div style="width: 100%; height: 1px; background-color: white"></div>
-            @Html.Partial("_metadataCompoundAttributeView", element)
+            if (element.Model is MetadataPackageModel)
+            {
+                <div style="width: 100%; height: 1px; background-color: white"></div>
+                @Html.Partial("_metadataCompoundAttributeView", element)
+            }
         }
+
+    </div>
+
+    @if (!locked)
+    {
+        <div class="bx-footer right">
+
+            <!-- only from editmode you have the option to reset-->
+            <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+
+            @*@if (@Model.FromEditMode)
+                {
+                    <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
+                }*@
+
+            @if (@submit.IsComplete())
+            {
+                <button onclick="submit()" class="bx-button action">Save</button>
+            }
+
+            @if (@Model.FromEditMode)
+            {
+                <button onclick="cancel()" class="bx-button action">Cancel</button>
+            }
+        </div>
     }
 
-</div>
-
-@if (!locked)
-{
-    <div class="bx-footer right">
-
-        <!-- only from editmode you have the option to reset-->
-        <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
-
-        @*@if (@Model.FromEditMode)
-            {
-                <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
-            }*@
-
-        @if (@submit.IsComplete())
-        {
-            <button onclick="submit()" class="bx-button action">Save</button>
-        }
-
-        @if (@Model.FromEditMode)
-        {
-            <button onclick="cancel()" class="bx-button action">Cancel</button>
-        }
-    </div>
-}
 
 
-
-<script>
+    <script>
 
     $("#MetadataEditor")
         .ready(function() {
@@ -481,5 +490,5 @@ function OnSuccess(e) {
     }
 
 
-</script>
+    </script>
 </div>

@@ -49,7 +49,7 @@ namespace BExIS.Dlm.Services.Party
 
         #region PartyType
 
-        public PartyType Create(string title, string description, string displayName, List<PartyStatusType> statusTypes)
+        public PartyType Create(string title, string description, string displayName, List<PartyStatusType> statusTypes,bool systemType=false)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(statusTypes != null && statusTypes.Count() > 0); // there should be at least one status defined for each party type --> status type 
@@ -60,7 +60,8 @@ namespace BExIS.Dlm.Services.Party
                 Title = title,
                 Description = description,
                 DisplayName = displayName,
-                StatusTypes = statusTypes
+                StatusTypes = statusTypes,
+                SystemType  = systemType
             };
             statusTypes.ForEach(item => item.PartyType = entity);
             using (IUnitOfWork uow = this.GetUnitOfWork())

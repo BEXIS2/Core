@@ -53,7 +53,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         foreach (var partyRelationshipType in partyRelationshipsType)
                         {
                             //filter AssociatedPairs to allowed pairs
-                            partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.AllowedSource.Id && item.AllowedTarget.Parties.Any()).ToList();
+                            partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourcePartyType.Id && item.TargetPartyType.Parties.Any()).ToList();
                             //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one 
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
                             if (defaultPartyTypePair == null)
@@ -116,10 +116,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     foreach (var partyRelationship in partyRelationships)
                     {
                         //the duration is from current datetime up to the end of target party date
-                        var secondParty = partyManager.PartyRepository.Get(partyRelationship.SecondParty.Id);
-                        var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
+                        var secondParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
+                       // var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                         var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
-                        partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
+                        partyManager.AddPartyRelationship(party, secondParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
                     }
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
@@ -203,7 +203,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 if (partyModel.Id == 0)
                     return RedirectToAction("Index", "Home");
                 else
-                    party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues);
+                    party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues,null);
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             finally

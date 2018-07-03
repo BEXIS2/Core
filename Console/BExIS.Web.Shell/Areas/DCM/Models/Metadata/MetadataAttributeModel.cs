@@ -27,6 +27,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }
+        public bool Locked { get; set; }
 
         public string ConstraintDescription { get; set; }
 
@@ -75,7 +76,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 last = false,
                 MetadataAttributeId = this.MetadataAttributeId,
                 ParentStepId = this.ParentStepId,
-                Errors = null
+                Errors = null,
+                Locked = false
             };
         }
 

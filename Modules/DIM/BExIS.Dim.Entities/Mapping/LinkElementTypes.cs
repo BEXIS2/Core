@@ -30,7 +30,8 @@
         PartyType = 9,
         PartyCustomType = 10,
         Key = 11,
-        Role = 12
+        Role = 12,
+        PartyRelationshipType = 13
     }
 
 
