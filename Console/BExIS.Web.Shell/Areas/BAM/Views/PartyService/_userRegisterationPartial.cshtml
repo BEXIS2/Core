@@ -83,10 +83,10 @@
         relations=[];
         $(".partyTypeRelation:visible").each(function(index,item)
         {
-            secondPartyId=parseInt($(this).find("option:selected").val());
-            if(secondPartyId!=-1)
+            TargetPartyId=parseInt($(this).find("option:selected").val());
+            if(TargetPartyId!=-1)
             {
-                relations.push({SecondParty:{Id:secondPartyId},
+                relations.push({TargetParty:{Id:TargetPartyId},
                     PartyRelationshipType:{Id:parseInt($(item).attr("partyrelationshipid"))},
                     PartyTypePair:{Id:parseInt($(item).attr("partyTypePairId"))},
                     Title:$(this).find("label").text(),

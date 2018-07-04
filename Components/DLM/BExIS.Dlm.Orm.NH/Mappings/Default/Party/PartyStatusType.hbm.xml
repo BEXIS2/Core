@@ -28,7 +28,7 @@
       <column name="DisplayOrder"  />
     </property>
     
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="PartyTypeRef"/>
+    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="false" column="PartyTypeRef"/>
     
     <set name="Statuses" table="PartyStatuses" lazy="true" >
       <key column="PartyStatusTypeRef"/>

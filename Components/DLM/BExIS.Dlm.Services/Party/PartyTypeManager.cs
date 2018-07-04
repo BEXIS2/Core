@@ -49,7 +49,7 @@ namespace BExIS.Dlm.Services.Party
 
         #region PartyType
 
-        public PartyType Create(string title, string description, string displayName, List<PartyStatusType> statusTypes,bool systemType=false)
+        public PartyType Create(string title, string description, string displayName, List<PartyStatusType> statusTypes, bool systemType = false)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(statusTypes != null && statusTypes.Count() > 0); // there should be at least one status defined for each party type --> status type 
@@ -61,7 +61,7 @@ namespace BExIS.Dlm.Services.Party
                 Description = description,
                 DisplayName = displayName,
                 StatusTypes = statusTypes,
-                SystemType  = systemType
+                SystemType = systemType
             };
             statusTypes.ForEach(item => item.PartyType = entity);
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -104,10 +104,10 @@ namespace BExIS.Dlm.Services.Party
                 repoCA.Delete(partyType.CustomAttributes);
                 // remove all associations between the entity and its history items
                 // the status types must also be deleted, not just the association between them and the party type.
-                partyType.StatusTypes.ToList().ForEach(a => a.PartyType = null);
+                // partyType.StatusTypes.ToList().ForEach(a => a.PartyType=null);
                 partyType.StatusTypes.Clear();
                 // the custmom attributes must be also deleted.
-                partyType.CustomAttributes.ToList().ForEach(a => a.PartyType = null);
+                //partyType.CustomAttributes.ToList().ForEach(a => a.PartyType = null);
                 partyType.CustomAttributes.Clear();
                 //delete the entity
                 repo.Delete(partyType);
@@ -172,7 +172,7 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region PartyCustomAttribute
-        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, string validValues,string condition, bool isValueOptional = true, bool isUnique = false, bool isMain = false, int? displayOrder = null)
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, string validValues, string condition, bool isValueOptional = true, bool isUnique = false, bool isMain = false, int? displayOrder = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(partyType != null);
@@ -189,7 +189,7 @@ namespace BExIS.Dlm.Services.Party
                 IsUnique = isUnique,
                 IsMain = isMain,
                 Name = name,
-                Condition=condition
+                Condition = condition
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -235,7 +235,7 @@ namespace BExIS.Dlm.Services.Party
                 IsUnique = partyCustomeAttribute.IsUnique,
                 IsMain = partyCustomeAttribute.IsMain,
                 Name = partyCustomeAttribute.Name,
-                Condition=partyCustomeAttribute.Condition
+                Condition = partyCustomeAttribute.Condition
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

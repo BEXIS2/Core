@@ -1,14 +1,14 @@
 ﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Ext.Model;
-using NCalc;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text.RegularExpressions;
+using BExIS.Ext.Model;
 using Vaiona.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
+using System.Text.RegularExpressions;
+using NCalc;
+using System.Data;
 
 namespace BExIS.Dlm.Services.Party
 {
@@ -129,21 +129,6 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
 
-        //private void addSystemRelationships(PartyX party)
-        //{
-        //    Contract.Requires(party != null);
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<PartyTypePair> repoTypePair = uow.GetRepository<PartyTypePair>();
-        //        var systemTypepairs=repoTypePair.Get(cc => cc.SourcePartyType.Id == party.PartyType.Id && cc.TargetPartyType.SystemType);
-        //        foreach (var systemTypepair in systemTypepairs)
-        //        {
-        //           // AddPartyRelationship(party)
-        //        }
-
-        //    }
-        //}
-
         /// <summary>
         /// create a party with custom attribute values
         /// </summary>
@@ -158,8 +143,9 @@ namespace BExIS.Dlm.Services.Party
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
             AddPartyCustomAttributeValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
-            return party;
+            return PartyRepository.Reload(party);
         }
+
         /// <summary>
         /// create a party with custom attribute values
         /// </summary>
@@ -174,7 +160,7 @@ namespace BExIS.Dlm.Services.Party
             var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
             var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
             AddPartyCustomAttributeValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
-            return party;
+            return PartyRepository.Reload(party);
         }
 
         public bool Delete(PartyX entity)
@@ -359,7 +345,8 @@ namespace BExIS.Dlm.Services.Party
 
         }
 
-        public PartyRelationship AddPartyRelationship(PartyX sourceParty, PartyX targetParty, string title, string description, PartyTypePair partyTypePair, DateTime? startDate = null, DateTime? endDate = null, string scope = "", int? permission = null)
+        public PartyRelationship AddPartyRelationship(PartyX sourceParty, PartyX targetParty,
+                                    string title, string description, PartyTypePair partyTypePair, DateTime? startDate = null, DateTime? endDate = null, string scope = "", int? permission = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(sourceParty != null);
@@ -376,7 +363,7 @@ namespace BExIS.Dlm.Services.Party
             if (endDate == null)
                 endDate = DateTime.MaxValue;
             if (startDate > endDate)
-                BexisException.Throw(null, "End date should be greater than start date.");
+                BexisException.Throw(sourceParty, "End date should be greater than start date.");
 
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -410,13 +397,15 @@ namespace BExIS.Dlm.Services.Party
                 //if(!repoRelType.IsLoaded(partyRelationshipType))
                 //    partyRelationshipType = repoRelType.Reload(partyRelationshipType);
                 var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyTypePair.PartyRelationshipType.Id)
-                                        && (item.SourceParty != null && item.SourceParty.Id == sourceParty.Id)
-                                         && (item.TargetParty != null && item.TargetParty.Id == targetParty.Id)).Where(item => item.EndDate > startDate).Count();
+                                    && (item.SourceParty != null && item.SourceParty.Id == sourceParty.Id)
+                                     && (item.TargetParty != null && item.TargetParty.Id == targetParty.Id)).Where(item => item.EndDate > startDate).Count();
                 //Check maximun cardinality
                 if (partyTypePair.PartyRelationshipType.MaxCardinality != -1 && partyTypePair.PartyRelationshipType.MaxCardinality <= cnt)
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyTypePair.PartyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
+                // var sourceType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourcePartyType.Id == sourceParty.PartyType.Id || item.SourcePartyType.Id == targetParty.PartyType.Id);
+                // var targetType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetPartyType.Id == sourceParty.PartyType.Id || item.TargetPartyType.Id == targetParty.PartyType.Id);
                 var sourceType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.SourcePartyType.Id == sourceParty.PartyType.Id);
                 var targetType = partyTypePair.PartyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.TargetPartyType.Id == targetParty.PartyType.Id);
                 if (sourceType == null || targetType == null)
@@ -425,11 +414,11 @@ namespace BExIS.Dlm.Services.Party
                 repoPR.Put(entity);
                 uow.Commit();
 
+
+                //update the source party to check if relationship rules are satisfied and changed the istemp field
                 Update(entity.SourceParty);
                 return (entity);
             }
-            //update the source party to check if relationship rules are satisfied and changed the istemp field
-
         }
 
         public Boolean UpdatePartyRelationship(long id, string title = null, string description = null, DateTime? startDate = null, DateTime? endDate = null, string scope = null, int? permission = null)
@@ -931,7 +920,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return requiredPartyRelationTypeCount;
         }
-
+        
         public bool CheckCondition(String condition, long partyId)
         {
             if (string.IsNullOrEmpty(condition))
