@@ -208,38 +208,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         #region Remote Validation
 
-        public JsonResult ValidateUsername(string username, long id = 0)
-        {
-            var userManager = new UserManager();
-
-            try
-            {
-                var user = userManager.FindByNameAsync(username);
-
-                if (user == null)
-                {
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    if (user.Id == id)
-                    {
-                        return Json(true, JsonRequestBehavior.AllowGet);
-                    }
-                    else
-                    {
-                        var error = string.Format(CultureInfo.InvariantCulture, "The username exists already.", username);
-
-                        return Json(error, JsonRequestBehavior.AllowGet);
-                    }
-                }
-            }
-            finally
-            {
-                userManager.Dispose();
-            }
-        }
-
         public JsonResult ValidateEmail(string email, long id = 0)
         {
             var userManager = new UserManager();
@@ -261,6 +229,38 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     else
                     {
                         var error = string.Format(CultureInfo.InvariantCulture, "The email address exists already.", email);
+
+                        return Json(error, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            finally
+            {
+                userManager.Dispose();
+            }
+        }
+
+        public JsonResult ValidateUsername(string username, long id = 0)
+        {
+            var userManager = new UserManager();
+
+            try
+            {
+                var user = userManager.FindByNameAsync(username);
+
+                if (user == null)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (user.Id == id)
+                    {
+                        return Json(true, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        var error = string.Format(CultureInfo.InvariantCulture, "The username exists already.", username);
 
                         return Json(error, JsonRequestBehavior.AllowGet);
                     }

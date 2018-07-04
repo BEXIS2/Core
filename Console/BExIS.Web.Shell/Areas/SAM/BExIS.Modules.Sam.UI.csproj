@@ -265,6 +265,7 @@
     <Content Include="Views\UserPermissions\_Subjects.cshtml" />
     <Content Include="Views\Datasets\Sync.cshtml" />
     <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
+    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
