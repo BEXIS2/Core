@@ -25,8 +25,8 @@ namespace BExIS.Security.Services.Requests
             Dispose(true);
         }
 
-        public IReadOnlyRepository<Request> RequestRepository { get; }
         public IReadOnlyRepository<Party> PartyRepository { get; }
+        public IReadOnlyRepository<Request> RequestRepository { get; }
         public IQueryable<Request> Requests => RequestRepository.Query();
 
         public void Accept(long requestId)
@@ -43,28 +43,7 @@ namespace BExIS.Security.Services.Requests
                 {
                     entityRequest.Status = RequestStatus.Accepted;
                     Update(entityRequest);
-
-
                 }
-            }
-        }
-
-        public void Reject(long requestId)
-        {
-
-        }
-
-        public bool Exists(long applicantId, long entityId, long key)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var requestRepository = uow.GetReadOnlyRepository<Request>();
-
-                var request =
-                    requestRepository.Query(
-                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key).FirstOrDefault();
-
-                return request != null;
             }
         }
 
@@ -155,9 +134,32 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public bool Exists(long applicantId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+
+                var request =
+                    requestRepository.Query(
+                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key).FirstOrDefault();
+
+                return request != null;
+            }
+        }
+
         public Request FindById(long id)
         {
             return RequestRepository.Get(id);
+        }
+
+        public void Reject(long requestId)
+        {
         }
 
         public void Update(Request entity)
@@ -170,11 +172,6 @@ namespace BExIS.Security.Services.Requests
                 repo.Put(merged);
                 uow.Commit();
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
 
         protected void Dispose(bool disposing)

@@ -2,7 +2,6 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
@@ -17,8 +16,6 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-
-
     /// <summary>
     /// Manages all funactions an authorized user can do with datasets and their versions
     /// </summary>
@@ -32,40 +29,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Checkout(int id)
         {
             return View();
-        }
-
-        public ActionResult SyncAll()
-        {
-            var datasetManager = new DatasetManager();
-            var datasetIds = datasetManager.GetDatasetLatestIds();
-            try
-            {
-                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-                // if the viewData has a model error, the redirect forgets about it.
-                return RedirectToAction("Index", new { area = "Sam" });
-            }
-            catch (Exception ex)
-            {
-                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
-                return View("Sync");
-            }
-        }
-
-        public ActionResult Sync(long id)
-        {
-            var datasetManager = new DatasetManager();
-
-            try
-            {
-                datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-                // if the viewData has a model error, the redirect forgets about it.
-                return RedirectToAction("Index", new { area = "Sam" });
-            }
-            catch (Exception ex)
-            {
-                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
-                return View();
-            }
         }
 
         /// <summary>
@@ -98,6 +61,49 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             return View();
             //return RedirectToAction("List");
+        }
+
+        public ActionResult FlipDateTime(long id, long variableid)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+
+            try
+            {
+                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(id);
+                IEnumerable<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(dsv);
+
+                foreach (var tid in datatupleIds)
+                {
+                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(tid);
+                    dataTuple.Materialize();
+                    bool needUpdate = false;
+
+                    foreach (var vv in dataTuple.VariableValues)
+                    {
+                        string systemType = vv.DataAttribute.DataType.SystemType;
+                        if (systemType.Equals(typeof(DateTime).Name) && vv.VariableId.Equals(variableid))
+                        {
+                            string value = vv.Value.ToString();
+                            vv.Value = flip(value, out needUpdate);
+                        }
+                    }
+
+                    if (needUpdate)
+                    {
+                        dataTuple.Dematerialize();
+                        datasetManager.UpdateDataTuple(dataTuple);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+
+            return RedirectToAction("Index");
         }
 
         /// <summary>
@@ -179,6 +185,40 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult Sync(long id)
+        {
+            var datasetManager = new DatasetManager();
+
+            try
+            {
+                datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View();
+            }
+        }
+
+        public ActionResult SyncAll()
+        {
+            var datasetManager = new DatasetManager();
+            var datasetIds = datasetManager.GetDatasetLatestIds();
+            try
+            {
+                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View("Sync");
+            }
+        }
+
         /// <summary>
         /// Shows the content of a specific dataset version
         /// </summary>
@@ -220,62 +260,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(versions);
         }
 
-        public ActionResult FlipDateTime(long id, long variableid)
-        {
-            DatasetManager datasetManager = new DatasetManager();
-            
-            try
-            {
-                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(id);
-                IEnumerable<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(dsv);
-
-                foreach (var tid in datatupleIds)
-                {
-                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(tid);
-                    dataTuple.Materialize();
-                    bool needUpdate = false;
-
-                    foreach (var vv in dataTuple.VariableValues)
-                    {
-                        string systemType = vv.DataAttribute.DataType.SystemType;
-                        if (systemType.Equals(typeof(DateTime).Name) && vv.VariableId.Equals(variableid))
-                        {
-                            string value = vv.Value.ToString();
-                            vv.Value = flip(value,out needUpdate);
-
-
-                        }
-                    }
-
-                    if (needUpdate)
-                    {
-                        dataTuple.Dematerialize();
-                        datasetManager.UpdateDataTuple(dataTuple);
-                    }
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
-
-            return RedirectToAction("Index");
-        }
-
-
         private string flip(string dateTime, out bool needUpdate)
         {
             string newDt = "";
 
             DateTime dt;
 
-            if(DateTime.TryParse(dateTime, new CultureInfo("en-us"),DateTimeStyles.NoCurrentDateDefault,out dt))
+            if (DateTime.TryParse(dateTime, new CultureInfo("en-us"), DateTimeStyles.NoCurrentDateDefault, out dt))
             {
                 int day = dt.Day;
                 int month = dt.Month;
@@ -285,7 +276,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     needUpdate = true;
                     //1/1/2017 12:00:00 AM
                     return day + "/" + month + "/" + dt.Year + " " + dt.TimeOfDay;
-
                 }
             }
 
@@ -293,6 +283,5 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             return dateTime;
         }
-        
     }
 }

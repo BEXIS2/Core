@@ -1,0 +1,49 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using BExIS.Security.Entities.Authorization
+@model BExIS.Modules.Sam.UI.Models.SubjectInstanceModel
+
+@(Html.Telerik().Grid<ReferredEntityPermissionGridRowModel>()
+    .Name("grid_permissions")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(m => m.Name);
+        columns.Bound(m => m.Type);
+
+        foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+        {
+            columns.Bound(m => m.Rights)
+                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> disabled />")
+                               .Title(rightType.ToString())
+                               .Width(64)
+                               .Filterable(false)
+                               .Sortable(false)
+                               .HtmlAttributes(new { style = "text-align:center" });
+        }
+    })
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+          .OperationMode(GridOperationMode.Server)
+          .Select("Permissions_Select", "EntityPermissions", new { Model.SubjectId, Model.EntityId, Model.InstanceId })
+      )
+      .Filterable()
+      .Pageable(pageable =>
+      {
+          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+          pageable.Position(GridPagerPosition.Bottom);
+      })
+      .Sortable(sortable => sortable
+          .OrderBy(orderby => orderby
+              .Add(m => m.Name)
+              .Ascending()
+          )
+      )
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("grid_permissions_onDataBound");
+    })
+)
