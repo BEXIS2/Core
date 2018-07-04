@@ -268,7 +268,6 @@ namespace BExIS.Security.Services.Subjects
 
                 return Task.FromResult(0);
             }
-
         }
 
         #endregion IUserLoginStore
@@ -417,7 +416,7 @@ namespace BExIS.Security.Services.Subjects
                 //// but with "Load" or "Reload" it changed to
                 ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
                 //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
-                /// 
+                ///
                 user = userRepository.Get(user.Id);
                 if (group == null) return Task.FromResult(0);
                 user.Groups.Add(group);

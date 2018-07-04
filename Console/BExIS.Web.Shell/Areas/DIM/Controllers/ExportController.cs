@@ -214,8 +214,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                     }
 
-
-
                     // add datastructure
                     //ToDo put that functiom to the outputDatatructureManager
 

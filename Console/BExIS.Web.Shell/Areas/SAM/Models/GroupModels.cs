@@ -1,12 +1,18 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateGroupModel
     {
         public string Description { get; set; }
+
+        [Required]
+        [Remote("ValidateGroupname", "Groups")]
         public string Name { get; set; }
+
         public int Type { get; set; }
     }
 
@@ -77,6 +83,9 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public int GroupType { get; set; }
         public long Id { get; set; }
+
+        [Required]
+        [Remote("ValidateGroupname", "Groups", AdditionalFields = "Id")]
         public string Name { get; set; }
 
         public static UpdateGroupModel Convert(Group group)
