@@ -167,7 +167,6 @@
     <Content Include="Content\Images\Help\create_variable.png" />
     <Content Include="Content\Images\Help\delete_button.png" />
     <Content Include="Content\Images\Help\edit_button.png" />
-    <Content Include="Content\Images\Help\enableMacro.png" />
     <Content Include="Content\Images\Help\main_menu.png" />
     <Content Include="Content\Images\Help\manage_data_type.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

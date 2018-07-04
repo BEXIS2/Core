@@ -6,7 +6,7 @@ using BExIS.IO.Transform.Input;
 
 namespace BExIS.IO.Transform.Input
 {
-    public class EasyUploadFileReaderInfo : FileReaderInfo
+    public class EasyUploadFileReaderInfo : ExcelFileReaderInfo
     {
         public int VariablesStartRow { get; set; }
 

@@ -7,7 +7,7 @@ namespace BExIS.IO
     public class IOUtility
     {
 
-        public static bool IsDate(string value)
+        public bool IsDate(string value)
         {
             DateTime dateTime;
 
@@ -34,7 +34,7 @@ namespace BExIS.IO
             return false;
         }
 
-        public static bool IsDate(string value, out DateTime dateTime)
+        public bool IsDate(string value, out DateTime dateTime)
         {
  
             if (DateTime.TryParse(value, out dateTime))
@@ -81,7 +81,7 @@ namespace BExIS.IO
         /// <param name="dateTime"></param>
         /// <param name="cultureInfo"></param>
         /// <returns>true or false and out datetime</returns>
-        public static bool IsDate(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
+        public bool IsDate(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
         {
             if (cultureInfo == null) cultureInfo = CultureInfo.InvariantCulture;
 
@@ -100,7 +100,7 @@ namespace BExIS.IO
         /// <param name="dateAsString"></param>
         /// <param name="culture">new CultureInfo("en-US", false)</param>
         /// <returns></returns>
-        public static string ConvertDateToCulture(string dateAsString)
+        public virtual string ConvertDateToCulture(string dateAsString)
         {
             DateTime dateTime;
 
@@ -149,7 +149,7 @@ namespace BExIS.IO
         /// <param name="dateAsString"></param>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        public static string ConvertToDateUS(string dateAsString, string pattern, CultureInfo cultureInfo = null)
+        public string ConvertToDateUS(string dateAsString, string pattern, CultureInfo cultureInfo = null)
         {
             DateTime tmp;
             if (cultureInfo == null) cultureInfo = CultureInfo.InvariantCulture;
@@ -162,7 +162,7 @@ namespace BExIS.IO
             return "";
         }
 
-        public static bool ConvertToDate(string dateAsString, string pattern, out DateTime dateTime ,CultureInfo cultureInfo = null)
+        public bool ConvertToDate(string dateAsString, string pattern, out DateTime dateTime ,CultureInfo cultureInfo = null)
         {
             if (cultureInfo == null) cultureInfo = CultureInfo.InvariantCulture;
 
@@ -191,7 +191,7 @@ namespace BExIS.IO
             return false;
         }
 
-        public static string ExportDateTimeString(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
+        public string ExportDateTimeString(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
         {
      
             if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.NoCurrentDateDefault, out dateTime))
@@ -208,7 +208,7 @@ namespace BExIS.IO
         /// </summary>
         /// <param name="extention"></param>
         /// <returns></returns>
-        public static Dictionary<string,string> GetSupportedAsciiFiles()
+        public Dictionary<string,string> GetSupportedAsciiFiles()
         {
             Dictionary<string, string> tmp = new Dictionary<string, string>();
             tmp.Add("Comma Separated", ".csv");
@@ -224,7 +224,7 @@ namespace BExIS.IO
         /// </summary>
         /// <param name="extention"></param>
         /// <returns></returns>
-        public static bool IsSupportedAsciiFile(string extention)
+        public bool IsSupportedAsciiFile(string extention)
         {
             if (extention.Equals(".csv") ||
             extention.Equals(".tsv") ||
@@ -242,7 +242,7 @@ namespace BExIS.IO
         /// </summary>
         /// <param name="extention"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> GetSupportedExcelFiles()
+        public Dictionary<string, string> GetSupportedExcelFiles()
         {
             Dictionary<string, string> tmp = new Dictionary<string, string>();
             tmp.Add("Excel up to 2013", ".xlsx");
@@ -250,7 +250,7 @@ namespace BExIS.IO
             return tmp;
         }
 
-        public static bool IsSupportedExcelFile(string extention)
+        public bool IsSupportedExcelFile(string extention)
         {
             if (extention.Equals(".xls") ||
             extention.Equals(".xlsx"))

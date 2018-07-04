@@ -827,6 +827,21 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
+        public DataTable GetDatasetVersionTuples(long versionId, int pageNumber, int pageSize)
+        {
+
+            // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
+            var version = this.GetDatasetVersion(versionId);
+            var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
+            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            {
+                DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
+                return table;
+            }
+            
+            return null;
+        }
+
         public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
         {
             return queryMaterializedView(datasetId, filter, orderBy, projection, pageNumber, pageSize);
@@ -3130,7 +3145,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="variableId">The identifier of the variable that the value is belonging to.</param>
         /// <param name="parameterValues">If the variable has parameters attached, the parameter values are passed alongside, so that the method links them to their corresponding variable value using <paramref name="variableId"/>.</param>
         /// <returns>A transient object of type <seealso cref="VariableValue"/>.</returns>
-        public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
+        public virtual VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
             Contract.Requires(variableId > 0);

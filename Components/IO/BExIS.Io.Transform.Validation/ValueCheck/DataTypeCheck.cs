@@ -22,6 +22,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         private string dataType = "";
         private DecimalCharacter decimalCharacter;
         private string pattern;
+        public IOUtility IOUtility = new IOUtility();
 
         #region get
 

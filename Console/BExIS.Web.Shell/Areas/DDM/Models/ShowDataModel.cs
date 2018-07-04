@@ -9,6 +9,9 @@ namespace BExIS.Modules.Ddm.UI.Models
     public class ShowDataModel
     {
         public long Id { get; set; }
+        public long VersionId { get; set; }
+        public int Version { get; set; }
+        public bool LatestVersion { get; set; }
 
         public long MetadataStructureId { get; set; }
         public long DataStructureId { get; set; }

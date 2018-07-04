@@ -74,6 +74,21 @@ namespace BExIS.IO.Transform.Output
             Template = isTemplate;
         }
 
+        public ExcelWriter(IOUtility iOUtility, bool isTemplate = false) :base(iOUtility)
+        {
+            Template = isTemplate;
+        }
+
+        public ExcelWriter(DatasetManager datasetManager, bool isTemplate = false) : base(datasetManager)
+        {
+            Template = isTemplate;
+        }
+
+        public ExcelWriter(IOUtility iOUtility, DatasetManager datasetManager, bool isTemplate = false) : base(iOUtility, datasetManager)
+        {
+            Template = isTemplate;
+        }
+
         /// <summary>
         /// Convert a Datatuple to a Row
         /// </summary>
@@ -190,8 +205,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
-
-
+ 
             using (var uow = this.GetUnitOfWork())
             {
                 DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();

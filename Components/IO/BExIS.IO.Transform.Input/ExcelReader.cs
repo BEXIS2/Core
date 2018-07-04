@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
@@ -28,7 +29,7 @@ namespace BExIS.IO.Transform.Input
     /// this class is used to read and validate excel files
     /// </summary>
     /// <remarks></remarks>     
-    public class ExcelReader : DataReader
+    public class ExcelReader : DataReader 
     {
         public static List<string> SUPPORTED_APPLICATIONS = new List<string>() { "Microsoft Excel" };
 
@@ -54,9 +55,18 @@ namespace BExIS.IO.Transform.Input
         public string Application = "";
         public string ApplicationVersion = "";
 
-        public ExcelReader()
+        public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
-            this.Info = new ExcelFileReaderInfo();
+            NumberOfRows = 0;
+        }
+
+        public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
+        {
+            NumberOfRows = 0;
+        }
+
+        public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
+        {
             NumberOfRows = 0;
         }
 
@@ -140,13 +150,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId)
+        public List<DataTuple> ReadFile(Stream file, string fileName,long datasetId)
         {
 
             this.FileStream = file;
             this.FileName = fileName;
 
-            this.StructuredDataStructure = sds;
             //this.info = efri;
             this.DatasetId = datasetId;
 
@@ -204,7 +213,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
         [MeasurePerformance]
-        public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, int packageSize)
+        public List<DataTuple> ReadTemplateFile(Stream file, string fileName, long datasetId, int packageSize)
         {
 
             this.FileStream = file;
@@ -213,7 +222,7 @@ namespace BExIS.IO.Transform.Input
             // clear lsit of datatuples for the next package
             this.DataTuples = new List<DataTuple>();
 
-            this.StructuredDataStructure = sds;
+            //this.StructuredDataStructure = sds;
             //this.info = efri;
             this.DatasetId = datasetId;
 
@@ -286,83 +295,80 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, FileReaderInfo fri, StructuredDataStructure sds, long datasetId)
-        {
-            this.FileStream = file;
-            this.FileName = fileName;
+        //public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId)
+        //{
+        //    this.FileStream = file;
+        //    this.FileName = fileName;
+        //    this.DatasetId = datasetId;
 
-            this.StructuredDataStructure = sds;
-            this.Info = fri;
-            this.DatasetId = datasetId;
+        //    // Check params
+        //    if (this.FileStream == null)
+        //    {
+        //        this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+        //    }
+        //    if (!this.FileStream.CanRead)
+        //    {
+        //        this.ErrorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+        //    }
+        //    if (this.Info.Variables <= 0)
+        //    {
+        //        this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+        //    }
+        //    if (this.Info.Data <= 0)
+        //    {
+        //        this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+        //    }
 
-            // Check params
-            if (this.FileStream == null)
-            {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
-            }
-            if (!this.FileStream.CanRead)
-            {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
-            }
-            if (this.Info.Variables <= 0)
-            {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
-            }
-            if (this.Info.Data <= 0)
-            {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
-            }
+        //    if (this.ErrorMessages.Count == 0)
+        //    {
+        //        // open excel file
+        //        spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
 
-            if (this.ErrorMessages.Count == 0)
-            {
-                // open excel file
-                spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
+        //        // get workbookpart
+        //        WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
-                // get workbookpart
-                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+        //        SheetDimension dimension = workbookPart.WorksheetParts.First().Worksheet.GetFirstChild<SheetDimension>();
 
-                SheetDimension dimension = workbookPart.WorksheetParts.First().Worksheet.GetFirstChild<SheetDimension>();
+        //        string s = dimension.Reference.Value;
 
-                string s = dimension.Reference.Value;
-
-                string[] references = s.Split(':');
+        //        string[] references = s.Split(':');
 
 
-                // get all the defined area 
-                //List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+        //        // get all the defined area 
+        //        //List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
 
 
-                // Get intergers for reading data
-                startColumn = GetColumnNumber(GetColumnName(references[0]));
-                endColumn = GetColumnNumber(GetColumnName(references[1]));
+        //        // Get intergers for reading data
+        //        startColumn = GetColumnNumber(GetColumnName(references[0]));
+        //        endColumn = GetColumnNumber(GetColumnName(references[1]));
 
-                numOfColumns = (endColumn - startColumn) + 1;
-                offset = this.Info.Offset;
+        //        numOfColumns = (endColumn - startColumn) + 1;
+        //        offset = this.Info.Offset;
 
-                int endRowData = GetRowNumber(references[1]);
+        //        int endRowData = GetRowNumber(references[1]);
 
-                // select worksheetpart by selected defined name area like data in sheet
-                // sheet where data area is inside
-                WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
+        //        // select worksheetpart by selected defined name area like data in sheet
+        //        // sheet where data area is inside
+        //        WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
 
-                // get styleSheet
-                _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+        //        // get styleSheet
+        //        _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
-                // Get shared strings
-                _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+        //        // Get shared strings
+        //        _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
-                if (GetSubmitedVariableIdentifier(worksheetPart, this.Info.Variables, this.Info.Variables) != null)
-                {
-                    ReadRows(worksheetPart, this.Info.Data, endRowData);
-                }
+        //        if (GetSubmitedVariableIdentifier(worksheetPart, this.Info.Variables, this.Info.Variables) != null)
+        //        {
+        //            ReadRows(worksheetPart, this.Info.Data, endRowData);
+        //        }
 
-                return this.DataTuples;
+        //        return this.DataTuples;
 
 
-            }
+        //    }
 
-            return this.DataTuples;
-        }
+        //    return this.DataTuples;
+        //}
 
         /// <summary>
         /// Read a Excel row by row
@@ -377,17 +383,16 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, ExcelFileReaderInfo fri, StructuredDataStructure sds, long datasetId, int packageSize)
+        public List<DataTuple> ReadFile(Stream file, string fileName,long datasetId, int packageSize)
         {
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
-            this.Info = fri;
             this.DatasetId = datasetId;
 
             // clear list of datatuples for the next package
             this.DataTuples = new List<DataTuple>();
+
+            ExcelFileReaderInfo fri = (ExcelFileReaderInfo)Info;
 
             // Check params
             if (this.FileStream == null)
@@ -473,15 +478,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="variableList"></param>
         /// <param name="packageSize"></param>
         /// <returns></returns>
-        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, List<long> variableList, int packageSize)
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, long datasetId, List<long> variableList, int packageSize)
         {
             List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
-            //this.Info = efri;
             this.DatasetId = datasetId;
 
             // open excel file
@@ -666,12 +668,11 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fileName">Name of the file</param>
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
-        public void ValidateFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId)
+        public void ValidateTemplateFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
 
-            this.StructuredDataStructure = sds;
             //this.Info = efri;
             this.DatasetId = datasetId;
 
@@ -728,14 +729,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fileName">Name of the file</param>
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
-        public void ValidateFile(Stream file, string fileName, ExcelFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public void ValidateFile(Stream file, string fileName,long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
-            this.Info = fri;
             this.DatasetId = datasetId;
+            ExcelFileReaderInfo fri = (ExcelFileReaderInfo)Info;
 
             // open excel file
             spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);

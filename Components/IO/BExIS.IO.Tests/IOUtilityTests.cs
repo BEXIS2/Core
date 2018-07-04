@@ -52,10 +52,12 @@ namespace BExIS.IO.Tests
         [Test()]
         public void ConvertStringToDateTimeWithPatternTest()
         {
+            IOUtility iOUtility = new IOUtility();
+
             foreach (var dt in DateTimeCases)
             {
                 DateTime result;
-                IOUtility.ConvertToDate(dt.InputDateTimeString, dt.Pattern,out result, dt.CultureInfo);
+                iOUtility.ConvertToDate(dt.InputDateTimeString, dt.Pattern,out result, dt.CultureInfo);
 
                 if (dt.ItMatch)
                 {
