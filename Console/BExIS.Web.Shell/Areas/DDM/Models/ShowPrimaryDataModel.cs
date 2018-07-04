@@ -18,6 +18,10 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public long DatasetId { get; set; }
 
+        public int VersionId { get; set; }
+
+        public bool LatestVersion { get; set; }
+
         public String DatasetTitle { get; set; }
 
         public List<BasicFileInfo> FileList { get; set; }
@@ -35,11 +39,12 @@ namespace BExIS.Modules.Ddm.UI.Models
         public Dictionary<string,string> AsciiFileDownloadSupport { get; set; }
 
 
-        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string,string> supportedAsciiFileTypes)
+        public static ShowPrimaryDataModel Convert(long datasetId,int versionId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string,string> supportedAsciiFileTypes, bool latestVersion)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.Data = data;
             model.DatasetId = datasetId;
+            model.VersionId = versionId;
             model.DataStructure = dataStructure;
             model.DataStructureType = DataStructureType.Structured;
             model.DatasetTitle = title;
@@ -47,22 +52,25 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.DownloadAccess = downloadAccess;
             model.DisplayFormats = getDisplayFormatObjects(dataStructure as StructuredDataStructure);
             model.AsciiFileDownloadSupport = supportedAsciiFileTypes;
+            model.LatestVersion = latestVersion;
 
 
             return model;
         }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess, Dictionary<string, string> asciiFileDownloadSupport)
+        public static ShowPrimaryDataModel Convert(long datasetId, int versionId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess, Dictionary<string, string> asciiFileDownloadSupport, bool latestVersion)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.FileList = ConvertContentDiscriptorsToFileInfos(dataFileList);
             model.DatasetId = datasetId;
+            model.VersionId = versionId;
             model.DataStructure = dataStructure;
             model.DataStructureType = DataStructureType.Unstructured;
             model.DatasetTitle = title;
             model.CompareValuesOfDataTypes = CompareValues();
             model.DownloadAccess = downloadAccess;
             model.AsciiFileDownloadSupport = asciiFileDownloadSupport;
+            model.LatestVersion = latestVersion;
 
             return model;
         }
