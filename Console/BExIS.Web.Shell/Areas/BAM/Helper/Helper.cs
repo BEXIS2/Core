@@ -179,14 +179,14 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 //{
                 //    foreach (var systemPartyRel in systemPartyRelationships.Where(item => item.Id != long.MaxValue))
                 //    {
-                //        var firstParty = partyManager.PartyRepository.Reload(party);
-                //        var secondParty = partyManager.PartyRepository.Get(systemPartyRel.TargetParty.Id);
+                //        var SourceParty = partyManager.PartyRepository.Reload(party);
+                //        var TargetParty = partyManager.PartyRepository.Get(systemPartyRel.TargetParty.Id);
                 //        var partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(systemPartyRel.PartyTypePair.Id);
                 //        //update
                 //        if (systemPartyRel.Id > 0)
                 //            partyManager.UpdatePartyRelationship(systemPartyRel.Id, permission: systemPartyRel.Permission);
                 //        else if (systemPartyRel.Id == 0)
-                //            partyManager.AddPartyRelationship(firstParty, secondParty, "system", "", partyTypePair, permission: systemPartyRel.Permission);
+                //            partyManager.AddPartyRelationship(SourceParty, TargetParty, "system", "", partyTypePair, permission: systemPartyRel.Permission);
                 //        else {
                 //            PartyRelationship partyRelationship = partyManager.PartyRelationshipRepository.Get(-1 * systemPartyRel.Id);
                 //            //remove if id is negative
@@ -234,7 +234,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 //Create party
                 newParty = partyManager.Create(partyType, "", description, startDate, endDate, partyStatusType, requiredPartyRelationTypes.Any());
                 partyManager.AddPartyCustomAttributeValues(newParty, toPartyCustomAttributeValues(partyCustomAttributeValuesDict, partyTypeId));
-                // partyManager.AddPartyRelationship(null,secondpartyId,PartyTypePairid)
+                // partyManager.AddPartyRelationship(null,TargetPartyId,PartyTypePairid)
                 //var systemPartyTypePairs = GetSystemTypePairs(newParty.PartyType.Id);
                 ////add relationship to the all targets
                 //foreach (var systemPartyTypePair in systemPartyTypePairs)

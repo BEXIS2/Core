@@ -221,7 +221,7 @@
         <Position X="-0.838" Y="0.373" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="FirstParty" Type="BExIS.Dlm.Entities.Party.Party" FixedFromPoint="true">
+    <AssociationLine Name="SourceParty" Type="BExIS.Dlm.Entities.Party.Party" FixedFromPoint="true">
       <Path>
         <Point X="8" Y="8.519" />
         <Point X="13.281" Y="8.519" />
@@ -231,7 +231,7 @@
         <Position X="-0.086" Y="0.37" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="SecondParty" Type="BExIS.Dlm.Entities.Party.Party">
+    <AssociationLine Name="TargetParty" Type="BExIS.Dlm.Entities.Party.Party">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.308" Y="-0.086" />
       </MemberNameLabel>
@@ -242,8 +242,8 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PartyRelationshipType" />
-      <Property Name="FirstParty" />
-      <Property Name="SecondParty" />
+      <Property Name="SourceParty" />
+      <Property Name="TargetParty" />
     </ShowAsAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />

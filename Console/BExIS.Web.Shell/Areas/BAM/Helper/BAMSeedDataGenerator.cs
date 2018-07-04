@@ -234,7 +234,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             partyTypePairs.First().Title, partyTypePairs.First().Description, partyTypePairs.First().ConditionSource, partyTypePairs.First().ConditionTarget, partyTypePairs.First().PermissionTemplate);
                         else
                         {
-                            partyRelationshipType = partyRelationshipTypeManager.Update(partyRelationshipType.Id, title, description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality));
+                            partyRelationshipType = partyRelationshipTypeManager.Update(partyRelationshipType.Id, title, "", description, (indicatesHierarchy == null ? false : Convert.ToBoolean(indicatesHierarchy)), maxCardinality == null ? -1 : int.Parse(maxCardinality), minCardinality == null ? 0 : int.Parse(minCardinality));
                             UpdateOrCreatePartyTypePair(partyTypePairs.First(), partyRelationshipType, partyRelationshipTypeManager);
                         }
                         //If there are more than one partyTypepair exist
@@ -315,7 +315,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
         {
             var entity = partyRelationshipTypeManager.PartyTypePairRepository.Get(item => item.Title == partyTypePair.Title && item.PartyRelationshipType.Id == partyRelationshipType.Id).FirstOrDefault();
             if (entity != null)
-                partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.SourcePartyType, partyTypePair.TargetPartyType, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType, entity.PermissionTemplate);
+                partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.SourcePartyType, partyTypePair.TargetPartyType, partyTypePair.Description, "", "", partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType, entity.PermissionTemplate);
             else
                 partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.SourcePartyType, partyTypePair.TargetPartyType, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType, partyTypePair.ConditionSource, partyTypePair.ConditionTarget, partyTypePair.PermissionTemplate);
         }
