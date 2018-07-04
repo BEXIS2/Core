@@ -51,6 +51,7 @@
 
 	@if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
 	{
+
 		<button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
 
 		<button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>
@@ -64,7 +65,7 @@
 
 				@foreach (KeyValuePair<string, string> fileType in Model.AsciiFileDownloadSupport)
 				{
-					<li><a class="file-type-download-entry" ext="@fileType.Value"> @fileType.Key</a></li>
+					<li><a class="file-type-download-entry" ext="@fileType.Value" > @fileType.Key</a></li>
 				}
 
 			</ul>
@@ -95,79 +96,82 @@
 </div>
 <br />
 @(Html.Telerik().Grid(Model.Data)
-		.Name("PrimaryDataResultGrid")
-			.DataBinding(dataBinding => dataBinding
-					.Ajax()
-					.Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "ddm" }, { "datasetID", id } })
-					.OperationMode(GridOperationMode.Server)
-				 )
+        .Name("PrimaryDataResultGrid")
+            .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "ddm" }, { "datasetId", id }, { "versionId", Model.VersionId } })
+                    .OperationMode(GridOperationMode.Server)
+                 )
 
-				.EnableCustomBinding(true)
-				.HtmlAttributes(new { @class = "primaryDataResultGrid" })
-				.ClientEvents(events => events
-						 .OnLoad("PrimaryDataResultGrid_OnLoad")
-						 .OnDataBound("PrimaryData_OnCommand")
-						 .OnColumnHide("PrimaryData_OnCommand")
-						 .OnColumnShow("PrimaryData_OnCommand")
-					)
-			.Columns(columns =>
-			{
-				for (int i = 0; i < Model.Data.Columns.Count; i++)
-				{
+                .EnableCustomBinding(true)
+                .HtmlAttributes(new { @class = "primaryDataResultGrid" })
+                .ClientEvents(events => events
+                         .OnLoad("PrimaryDataResultGrid_OnLoad")
+                         .OnDataBound("PrimaryData_OnCommand")
+                         .OnColumnHide("PrimaryData_OnCommand")
+                         .OnColumnShow("PrimaryData_OnCommand")
+                    )
+            .Columns(columns =>
+            {
+                for (int i = 0; i < Model.Data.Columns.Count; i++)
+                {
 
-					DataColumn column = Model.Data.Columns[i];
+                    DataColumn column = Model.Data.Columns[i];
 
-					string title;
-					bool visible = false;
-
-
-
-					if (column.Caption == "")
-					{
-						title = column.ColumnName;
-					}
-					else
-					{
-						title = column.Caption;
-					}
-
-					if (column.ColumnName.ToLower().StartsWith("var"))
-					{
-						visible = true;
-
-						DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
-
-						string format = "";
-
-						if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
-						{
-							//string unit = "";
-							//if (dfo.Unit != "None") unit = dfo.Unit;
-
-							format = "{0:" + dfo.Format + "}";
-
-							columns.Bound(column.DataType, column.ColumnName)
-							   .Title(title).Format(format).Hidden(!visible);
-						}
-						else
-						{
-							columns.Bound(column.DataType, column.ColumnName)
-							   .Title(title).Hidden(!visible);
-						}
-					}
-				}
-			})
+                    string title;
+                    bool visible = false;
 
 
-			.Pageable(paging =>
-				paging.PageSize(100,new int[]{10,20,50,100,500})
-					.Style(pagerStyles)
-					.Position(GridPagerPosition.Both)
-					.Total(total)
-					)
+
+                    if (column.Caption == "")
+                    {
+                        title = column.ColumnName;
+                    }
+                    else
+                    {
+                        title = column.Caption;
+                    }
+
+                    if (column.ColumnName.ToLower().StartsWith("var"))
+                    {
+                        visible = true;
+
+                        DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
+
+                        string format = "";
+
+                        if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+                        {
+                            //string unit = "";
+                            //if (dfo.Unit != "None") unit = dfo.Unit;
+
+                            format = "{0:" + dfo.Format + "}";
+
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title).Format(format).Hidden(!visible);
+                        }
+                        else
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title).Hidden(!visible);
+                        }
+                    }
+                }
+            })
+
+
+            .Pageable(paging =>
+                paging.PageSize(100,new int[]{10,20,50,100,500})
+                    .Style(pagerStyles)
+                    .Position(GridPagerPosition.Both)
+                    .Total(total)
+                    )
+
+           
 			.Sortable()
-			.Filterable()
-			.ColumnContextMenu()
+            .Filterable()
+            .ColumnContextMenu()
+            
 //.Groupable()
 
 )
@@ -270,17 +274,16 @@
 
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 
-		window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})'+"?ext="+ext;
 
 		$.ajax({
-			url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })'+"?ext=" + ext,
+			url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })'+"?ext=" + ext+"&versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function(e) {
 
 				if (e) {
-					window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})'+"?ext="+ext;
+					window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})'+"?ext=" + ext+"&versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion';
 				}
 				else {
 					alert(e);
@@ -297,14 +300,14 @@
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
-			url: '@Url.Action("PrepareExcelTemplateData", "Data", new { id = @Model.DatasetId })',
+			url: '@Url.Action("PrepareExcelTemplateData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function(e) {
 
 				if (e) {
-					window.location = '@Url.Action("DownloadAsExcelTemplateData", "Data", new { id = @Model.DatasetId })';
+					window.location = '@Url.Action("DownloadAsExcelTemplateData", "Data", new { id = @Model.DatasetId })' + "?versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion';
 				}
 				else {
 					alert(e);
@@ -319,14 +322,14 @@
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
-			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })',
+			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function(e) {
 
 				if (e) {
-					window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })';
+					window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion';
 				}
 				else {
 					alert(e);
@@ -335,58 +338,6 @@
 				$("#preloaderContainer").removePreloader();
 			}
 		})}
-
-	function downloadCsv(id) {
-
-		$("#preloaderContainer").preloader(20, "Preparing csv file...");
-		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
-		$.ajax({
-			url: '@Url.Action("PrepareCsvData", "Data", new { id = @Model.DatasetId })',
-			contentType: 'application/json; charset=utf-8',
-			datatype: 'json',
-			type: "GET",
-			success: function (e) {
-
-				if (e) {
-					window.location = '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })';
-				}
-				else {
-					alert(e);
-				}
-
-
-				$("#preloaderContainer").removePreloader();
-			}
-		})
-	}
-
-	function downloadText(id) {
-
-		$("#preloaderContainer").preloader(20, "Preparing txt file...");
-		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
-		$.ajax({
-			url: '@Url.Action("PrepareTxtData", "Data", new { id = @Model.DatasetId })',
-			contentType: 'application/json; charset=utf-8',
-			datatype: 'json',
-			type: "GET",
-			success: function (e) {
-
-				if (e) {
-					window.location = '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })';
-				}
-				else {
-					alert(e);
-				}
-
-				$("#preloaderContainer").removePreloader();
-			}
-		})
-	}
-
-	//function onDownloadEnd(e) {
-	//    console.log(e);
-	//    $("#preloaderContainer").removePreloader();
-	//}
 
 </script>
 

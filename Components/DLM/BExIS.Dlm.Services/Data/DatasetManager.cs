@@ -827,6 +827,21 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
+        public DataTable GetDatasetVersionTuples(long versionId, int pageNumber, int pageSize)
+        {
+
+            // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
+            var version = this.GetDatasetVersion(versionId);
+            var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
+            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            {
+                DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
+                return table;
+            }
+            
+            return null;
+        }
+
         public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
         {
             return queryMaterializedView(datasetId, filter, orderBy, projection, pageNumber, pageSize);
