@@ -6,7 +6,7 @@ namespace BExIS.Security.Entities.Objects
     {
         public virtual string Action { get; set; }
         public virtual string Controller { get; set; }
-        public virtual string Module { get; set; }
         public virtual Feature Feature { get; set; }
+        public virtual string Module { get; set; }
     }
 }
