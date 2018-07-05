@@ -1,6 +1,8 @@
-﻿    using BExIS.Dcm.UploadWizard;
+﻿using BExIS.Dcm.UploadWizard;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Models.Push;
 using System;
@@ -20,7 +22,55 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Attachments
         public ActionResult Index()
         {
+            CreateADataStructure();
             return View();
+        }
+
+        /// <summary>
+        /// just for test
+        /// </summary>
+        /// <returns></returns>
+        public StructuredDataStructure CreateADataStructure()
+        {
+            var unitManager = new UnitManager();
+            var dataTypeManager = new DataTypeManager();
+            var attributeManager = new DataContainerManager();
+            var dsManager = new DataStructureManager();
+            try
+            {
+                var dim = unitManager.Create("TestDimnesion", "For Unit Testing", "");
+                var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, Dlm.Entities.DataStructure.MeasurementSystem.Metric);
+
+                var intType = dataTypeManager.Create("Integer", "Integer", TypeCode.Int32);
+                var strType = dataTypeManager.Create("String", "String", TypeCode.String);
+
+                var dataAttribute1 = attributeManager.CreateDataAttribute(
+                    "att1UT", "att1UT", "Attribute for Unit testing",
+                    false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
+                    "", intType, unit,
+                    null, null, null, null, null, null
+                    );
+
+                var dataAttribute2 = attributeManager.CreateDataAttribute(
+                    "att2UT", "att1UT", "Attribute for Unit testing",
+                    false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
+                    "", strType, unit,
+                    null, null, null, null, null, null
+                    );
+
+                StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
+                dsManager.AddVariableUsage(dataStructure, dataAttribute1, true, "var1UT", "", "", "Used for unit testing");
+                dsManager.AddVariableUsage(dataStructure, dataAttribute2, true, "var2UT", "", "", "Used for unit testing");
+                return dataStructure;
+            }
+            catch { return null; }
+            finally
+            {
+                unitManager.Dispose();
+                dataTypeManager.Dispose();
+                attributeManager.Dispose();
+                dsManager.Dispose();
+            }
         }
 
         public ActionResult DatasetAttachements(long datasetId)
