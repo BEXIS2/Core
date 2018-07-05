@@ -583,6 +583,7 @@
     <None Include="Properties\PublishProfiles\DIM.pubxml" />
     <None Include="Properties\PublishProfiles\DIM21105.pubxml" />
     <None Include="Properties\PublishProfiles\DIM21108.pubxml" />
+    <None Include="Properties\PublishProfiles\VIM FTP 2001.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
