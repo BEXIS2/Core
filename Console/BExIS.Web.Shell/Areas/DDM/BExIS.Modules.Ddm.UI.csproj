@@ -394,6 +394,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\211 Ddm.pubxml" />
     <None Include="Properties\PublishProfiles\BPP211_ddm.pubxml" />
+    <None Include="Properties\PublishProfiles\DDM FTP 2001.pubxml" />
     <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\ddm.js" />

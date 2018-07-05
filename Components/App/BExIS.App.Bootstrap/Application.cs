@@ -1,19 +1,19 @@
-﻿using System;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Ext.Services;
+using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
-using Vaiona.Web.Mvc.Modularity;
 using System.Web.Http;
 using System.Web.Mvc;
+using System.Web.Routing;
+using Vaiona.IoC;
+using Vaiona.Logging;
+using Vaiona.Model.MTnt;
+using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
-using System.IO;
-using Vaiona.Logging;
-using System.Collections.Generic;
-using Vaiona.IoC;
-using Vaiona.MultiTenancy.Api;
-using System.Web.Routing;
-using Vaiona.Model.MTnt;
-using BExIS.Ext.Services;
-using System.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.App.Bootstrap
 {
@@ -28,7 +28,7 @@ namespace BExIS.App.Bootstrap
         private bool started = false;
 
         public bool Started { get { return started; } }
-        public Application(RunStage runStage= RunStage.Production)
+        public Application(RunStage runStage = RunStage.Production)
         {
             this.runStage = runStage;
         }
@@ -140,7 +140,7 @@ namespace BExIS.App.Bootstrap
         private void initPersistence(bool configureModules = true)
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
-            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, 
+            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString,
                 AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries, configureModules);
 
             if (AppConfiguration.CreateDatabase)
@@ -231,7 +231,7 @@ namespace BExIS.App.Bootstrap
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
 #if !DEBUG
-            filters.Add(new BExIS.Web.Shell.Attributes.BExISAuthorizeAttribute());
+            filters.Add(new BExISAuthorizeAttribute());
 #endif
             //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
