@@ -1030,10 +1030,10 @@ namespace BExIS.Web.Shell.Controllers
 
         #region PartyRelationship
 
-        //private Dlm.Entities.Party.PartyRelationship addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty, PartyRelationshipType prt)
+        //private Dlm.Entities.Party.PartyRelationship addTestPartyRelationship(Dlm.Entities.Party.Party SourceParty, Dlm.Entities.Party.Party TargetParty, PartyRelationshipType prt)
         //{
         //    Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-        //    return pm.AddPartyRelationship(firstParty, secondParty, prt, "test Rel", "test relationship", DateTime.Now);
+        //    return pm.AddPartyRelationship(SourceParty, TargetParty, prt, "test Rel", "test relationship", DateTime.Now);
         //}
 
         private bool removePartyRelationship(Dlm.Entities.Party.PartyRelationship partyRelationship)

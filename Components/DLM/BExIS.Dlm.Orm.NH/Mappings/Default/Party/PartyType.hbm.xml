@@ -48,12 +48,12 @@
     </set>
 
     <set name="PartyTypePairSources" table="PartyTypePairs" lazy="true">
-      <key column="SourcePartyTypeRef"/>
+      <key column="AlowedSourceRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>
 
     <set name="PartyTypePairTargets" table="PartyTypePairs" lazy="true">
-      <key column="TargetTypeRef"/>
+      <key column="AlowedTargetRef"/>
       <one-to-many class="PartyTypePair"/>
     </set>
     

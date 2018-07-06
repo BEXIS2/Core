@@ -288,7 +288,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="partyRelationshipsDic">should be filled like PartyRelationship[FiledName_@secondPartyId]=Value in view </param>
+        /// <param name="partyRelationshipsDic">should be filled like PartyRelationship[FiledName_@TargetPartyId]=Value in view </param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult CreatePartyRelationships(int partyId, Dictionary<string, string> partyRelationshipsDic)
@@ -303,7 +303,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyRelationshipManager = new PartyRelationshipTypeManager();
                 foreach (var partyRelationship in partyRelationships)
                 {
-                    // Party secondParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
+                    // Party TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
                    // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                     PartyTypePair partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                     //Min date value is sent from telerik date time element, if it was empty
@@ -472,7 +472,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 int id = int.Parse(key[1]);
                 int partyTypePairId = int.Parse(key[2]);
                 string fieldName = key[0];
-                var partyRelationship = partyRelationships.FirstOrDefault(item => item.TargetParty.Id == id || item.SourceParty.Id == id);
+                var partyRelationship = partyRelationships.FirstOrDefault(item => item.SourceParty.Id == id || item.TargetParty.Id == id);
                 //In each iteratoin one field fills , so in the first iteration we need to do this
                 if (partyRelationship == null)
                 {

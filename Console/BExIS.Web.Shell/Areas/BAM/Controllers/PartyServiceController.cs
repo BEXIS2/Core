@@ -116,10 +116,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     foreach (var partyRelationship in partyRelationships)
                     {
                         //the duration is from current datetime up to the end of target party date
-                        var secondParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
+                        var TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
                        // var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                         var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
-                        partyManager.AddPartyRelationship(party, secondParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, secondParty.EndDate, partyRelationship.Scope);
+                        partyManager.AddPartyRelationship(party, TargetParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, TargetParty.EndDate, partyRelationship.Scope);
                     }
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
