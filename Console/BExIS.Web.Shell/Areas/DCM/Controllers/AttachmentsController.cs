@@ -50,13 +50,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             var model = new SendBigFilesToServerModel
             {
-                ServerFileList = GetDatasetFileList(datasetId),
-                SupportedFileExtentions = new List<string>()
-                    {
-                        ".pdf",
-                        ".txt",
-                        ".csv" }
-                    ,
+                ServerFileList = GetDatasetFileList(datasetId),              
                 FileSize = this.Session.GetTenant().MaximumUploadSize
             };
 

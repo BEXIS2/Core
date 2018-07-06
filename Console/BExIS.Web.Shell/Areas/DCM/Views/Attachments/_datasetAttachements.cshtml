@@ -48,7 +48,7 @@
                 @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
                                          FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
                 {
-                    <div><span>Description:</span><input type="text" name="description" /></div>
+                    <div style="display:none"><span>Description:</span><input type="text" name="description" /></div>
                     @(Html.Telerik().Upload()
             .Name("attachments")
             .Multiple(true)
