@@ -22,57 +22,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Attachments
         public ActionResult Index()
         {
-            CreateADataStructure();
             return View();
         }
 
-        /// <summary>
-        /// just for test
-        /// </summary>
-        /// <returns></returns>
-        public StructuredDataStructure CreateADataStructure()
-        {
-            var unitManager = new UnitManager();
-            var dataTypeManager = new DataTypeManager();
-            var attributeManager = new DataContainerManager();
-            var dsManager = new DataStructureManager();
-            try
-            {
-                var dim = unitManager.Create("TestDimnesion", "For Unit Testing", "");
-                var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, Dlm.Entities.DataStructure.MeasurementSystem.Metric);
-
-                var intType = dataTypeManager.Create("Integer", "Integer", TypeCode.Int32);
-                var strType = dataTypeManager.Create("String", "String", TypeCode.String);
-
-                var dataAttribute1 = attributeManager.CreateDataAttribute(
-                    "att1UT", "att1UT", "Attribute for Unit testing",
-                    false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-                    "", intType, unit,
-                    null, null, null, null, null, null
-                    );
-
-                var dataAttribute2 = attributeManager.CreateDataAttribute(
-                    "att2UT", "att1UT", "Attribute for Unit testing",
-                    false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-                    "", strType, unit,
-                    null, null, null, null, null, null
-                    );
-
-                StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
-                dsManager.AddVariableUsage(dataStructure, dataAttribute1, true, "var1UT", "", "", "Used for unit testing");
-                dsManager.AddVariableUsage(dataStructure, dataAttribute2, true, "var2UT", "", "", "Used for unit testing");
-                return dataStructure;
-            }
-            catch { return null; }
-            finally
-            {
-                unitManager.Dispose();
-                dataTypeManager.Dispose();
-                attributeManager.Dispose();
-                dsManager.Dispose();
-            }
-        }
-
+       
         public ActionResult DatasetAttachements(long datasetId)
         {
             ViewBag.datasetId = datasetId;
@@ -81,13 +34,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Download(long datasetId,String fileName)
         {
-            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(),fileName);
+            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
             return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
         }
 
         public ActionResult Delete(long datasetId, String fileName)
         {
-            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), fileName);
+            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
             FileHelper.Delete(filePath);
             //TODO: What about descriptors 
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
@@ -117,7 +70,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<BasicFileInfo> GetDatasetFileList(long datasetId)
         {
             var fileList = new List<BasicFileInfo>();
-            var datasetDataPath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
+            var datasetDataPath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments");
 
             // if folder not exist
             if (!Directory.Exists(datasetDataPath))
@@ -163,7 +116,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var fileName = Path.GetFileName(file.FileName);
                 filemNames += fileName.ToString() + ",";
                 var dataPath = AppConfiguration.DataPath;
-                var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), fileName);                
+                if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
+                    Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
+                var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);                
                 file.SaveAs(destinationPath);
                 AddFileInContentDiscriptor(datasetVersion, fileName,description);
             }
@@ -177,7 +132,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             
             string dataPath = AppConfiguration.DataPath; 
-            string storePath = Path.Combine(dataPath, "Datasets", datasetVersion.Dataset.Id.ToString());
+            string storePath = Path.Combine(dataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments");
             int lastOrderContentDescriptor = 0;
             if(datasetVersion.ContentDescriptors.Any())
                 datasetVersion.ContentDescriptors.Max(cc => cc.OrderNo);            
