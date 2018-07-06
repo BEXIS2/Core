@@ -263,3 +263,4 @@ paket-files/
 /Console/*.zip
 /Console/Workspace_
 /Console/WorkspaceOld
+/CodeMaid.config
