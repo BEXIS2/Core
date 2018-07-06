@@ -227,20 +227,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 DataTypeManager dataTypeManger = null;
                 try
                 {
-                    dataTypeManger = new DataTypeManager();
-                       
-                    List<DataType> existingDataTypes = unit.AssociatedDataTypes.ToList();
+                    dataTypeManger = new DataTypeManager();                      
                     List<DataType> newDataTypes = newDataTypeIds == null ? new List<DataType>() : dataTypeManger.GetUnitOfWork().GetReadOnlyRepository<DataType>().Query().Where(p => newDataTypeIds.Contains(p.Id)).ToList();
-                    List<DataType> tobeAddedDataTypes = newDataTypes.Except(existingDataTypes).ToList();
 
-                    if (tobeAddedDataTypes != null && tobeAddedDataTypes.Count > 0)
-                        unitManager.AddAssociatedDataType(unit, tobeAddedDataTypes);
-
-                        
-                    existingDataTypes = unit.AssociatedDataTypes.ToList();
-                    List<DataType> toBeRemoved = existingDataTypes.Except(newDataTypes).ToList();
-                    if (toBeRemoved != null && toBeRemoved.Count() > 0)
-                        unitManager.RemoveAssociatedDataType(unit, toBeRemoved);
+                    unit.AssociatedDataTypes = newDataTypes;
+                    unitManager.Update(unit);
 
                     return unit.AssociatedDataTypes.ToList();
                                      

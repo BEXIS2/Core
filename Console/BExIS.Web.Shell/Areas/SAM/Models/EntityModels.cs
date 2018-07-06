@@ -38,12 +38,6 @@ namespace BExIS.Modules.Sam.UI.Models
         }
     }
 
-    public class EntityInstanceModel
-    {
-        public long EntityId { get; set; }
-        public long InstanceId { get; set; }
-    }
-
     public class EntityTreeViewItemModel
     {
         public List<EntityTreeViewItemModel> Children { get; set; }

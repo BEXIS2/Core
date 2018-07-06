@@ -1,5 +1,7 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -119,6 +121,71 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
+        public ActionResult Permissions(long subjectId, long entityId, long instanceId)
+        {
+            return PartialView("_Permissions", new SubjectInstanceModel() { SubjectId = subjectId, EntityId = entityId, InstanceId = instanceId });
+        }
+
+        [GridAction]
+        public ActionResult Permissions_Select(long subjectId, long entityId, long instanceId)
+        {
+            var entityPermissionManager = new EntityPermissionManager();
+            var subjectManager = new SubjectManager();
+            var partyManager = new PartyManager();
+            var entityManager = new EntityManager();
+
+            try
+            {
+                var subject = subjectManager.SubjectRepository.Get(subjectId);
+
+                var entityPermissions = new List<ReferredEntityPermissionGridRowModel>();
+
+                // User & Group Permissions
+                if (subject is User)
+                {
+                    var user = subject as User;
+
+                    // Group Permissions
+                    foreach (var group in user.Groups)
+                    {
+                        entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert(group.Name, "Group", entityPermissionManager.GetRights(group.Id, entityId, instanceId)));
+                    }
+
+                    // Party Relationships
+                    var userParty = partyManager.GetPartyByUser(user.Id);
+
+                    if (userParty != null)
+                    {
+                        var entityParty = partyManager.Parties.FirstOrDefault(m => m.PartyType.Title == entityManager.FindById(entityId).Name && m.Name == instanceId.ToString());
+
+                        if (entityParty != null)
+                        {
+                            var partyRelationships = partyManager.PartyRelationships.Where(m => m.SourceParty.Id == userParty.Id && m.TargetParty.Id == entityParty.Id);
+
+                            foreach (var partyRelationship in partyRelationships)
+                            {
+                                entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert("Party Relationship", partyRelationship.Title, partyRelationship.Permission));
+                            }
+                        }
+                    }
+                }
+
+                // Public Permission
+                var publicRights = entityPermissionManager.GetRights(null, entityId, instanceId);
+                if (publicRights > 0)
+                {
+                    entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert("Public Dataset", "", publicRights));
+                }
+
+                return View(new GridModel<ReferredEntityPermissionGridRowModel> { Data = entityPermissions });
+            }
+            finally
+            {
+                subjectManager.Dispose();
+                entityPermissionManager.Dispose();
+            }
+        }
+
         public void RemoveInstanceFromPublic(long entityId, long instanceId)
         {
             var entityPermissionManager = new EntityPermissionManager();
@@ -134,7 +201,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", entityId } });
                 }
-
             }
             finally
             {

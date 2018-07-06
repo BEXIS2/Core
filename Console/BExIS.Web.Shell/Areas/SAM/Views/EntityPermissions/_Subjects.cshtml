@@ -5,8 +5,14 @@
 @model EntityInstanceModel
 
 <style>
-    i {
-        cursor: pointer;
+    #grid_subjects tbody > tr:hover {
+    background-color: #eff7f6;
+    }
+
+    #grid_subjects tbody > tr:active,
+    #grid_subjects tbody > tr.t-state-selected
+    {
+        background-color: #d2e8e3;
     }
 </style>
 
@@ -22,10 +28,10 @@
         columns.Bound(m => m.SubjectName);
         columns.Bound(m => m.SubjectType);
 
-        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+        foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
         {
-            columns.Bound(m => m.Rights)
-                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> />")
+            columns.Bound(m => m.EffectiveRights)
+                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> /> <input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (EffectiveRights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> disabled />")
                                .Title(rightType.ToString())
                                .Width(64)
                                .Filterable(false)
@@ -51,7 +57,10 @@
               .Ascending()
           )
       )
-      .ClientEvents(events =>
-      {
-          events.OnDataBound("grid_subjects_onDataBound");
-      }))
+    .ClientEvents(events =>
+    {
+        events.OnRowSelect("grid_subjects_onRowSelect");
+        events.OnDataBound("grid_subjects_onDataBound");
+    })
+    .Selectable()
+)

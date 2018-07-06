@@ -618,6 +618,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\BPP211_Dim.pubxml" />
+    <None Include="Properties\PublishProfiles\DIM FTP 2001.pubxml" />
     <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
     <None Include="Properties\PublishProfiles\DIM.pubxml" />
     <None Include="Properties\PublishProfiles\DIM21105.pubxml" />

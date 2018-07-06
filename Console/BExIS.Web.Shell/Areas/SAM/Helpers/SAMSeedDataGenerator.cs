@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using System;
 using System.Linq;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -9,6 +8,11 @@ namespace BExIS.Modules.Sam.UI.Helpers
 {
     public class SamSeedDataGenerator : IModuleSeedDataGenerator
     {
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
+        }
+
         public void GenerateSeedData()
         {
             // Javad:
@@ -56,10 +60,12 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 var userPermissionFeature = featureManager.FindByName("User Permissions") ?? featureManager.Create("User Permissions", "", administrationFeature);
                 var userPermissionOperation = operationManager.Find("SAM", "UserPermissions", "*") ?? operationManager.Create("SAM", "UserPermissions", "*", userPermissionFeature);
 
-
                 // Dataset Management
                 var datasetManagementFeature = featureManager.FindByName("Dataset Management") ?? featureManager.Create("Dataset Management", "", administrationFeature);
                 var datasetManagementOperation = operationManager.Find("SAM", "Datasets", "*") ?? operationManager.Create("SAM", "Datasets", "*", datasetManagementFeature);
+
+                // Request
+                var RequestOperation = operationManager.Find("SAM", "Requests", "*") ?? operationManager.Create("SAM", "Requests", "*");
 
                 // Help
                 var helpOperation = operationManager.Find("SAM", "Help", "*") ?? operationManager.Create("SAM", "Help", "*");
@@ -74,11 +80,6 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 featureManager?.Dispose();
                 operationManager?.Dispose();
             }
-        }
-
-        public void Dispose()
-        {
-            //throw new NotImplementedException();
         }
     }
 }

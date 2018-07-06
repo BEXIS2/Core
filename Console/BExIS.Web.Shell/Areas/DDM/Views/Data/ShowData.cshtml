@@ -5,277 +5,278 @@
 
 @section Information
 {
-    This is a detailed view on all parts of a dataset. Depending on your
-    permissions your are able to view, edit, or download either the
-    metadata, the primary data or the data structure.<br />
-    You may also set permissions for this particular dataset
-    <p>
-        <a href="~/ddm/Help/Index/#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
-    </p>
+	This is a detailed view on all parts of a dataset. Depending on your
+	permissions your are able to view, edit, or download either the
+	metadata, the primary data or the data structure.<br />
+	You may also set permissions for this particular dataset
+	<p>
+		<a href="~/ddm/Help/Index/#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
+	</p>
 
 }
 
 @*load sctipts from dcm for the metadata. *@
 @section scripts
 {
-    <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+	<script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
+	<script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
 }
 <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
 
 
 <div>
-    <table>
-        <tr>
+	<table>
+		<tr>
             <td>
-                <h2>@Model.Title ( @Model.Id )</h2>
+                <h1>@Model.Title</h1>
+                <br />
+                <p><b>Id: </b> @Model.Id</p>
+                <p><b>Version: </b> @Model.Version</p>
+                <p><b>Latest: </b> @Model.LatestVersion</p>
             </td>
-            <td>
-                <div id="preloaderContainer" />
-            </td>
-            <td style="text-align: -webkit-right;">
+			<td>
+				<div id="preloaderContainer" />
+			</td>
+			<td style="text-align: -webkit-right;">
 
-                @if (Model.DownloadAccess)
-                {
+				@if (Model.DownloadAccess)
+				{
 
-                    if (Model.DataStructureType.ToLower().Equals("structured"))
-                    {
-                        <span class="dropdown">
-                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                Download Dataset
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm" })">... with Template</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx" })">... with Excel</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv" })">... with CSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv" })">... with TSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain" })">... with TXT</a></li>
-                            </ul>
-                        </span>
-                    }
-                    else
-                    {
-                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
-                    }
-                }
-                else
-                {
-                    if (Model.RequestExist)
-                    {
-                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
-                    }
-                    else
-                    {
-                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
-                    }
-                }
-            </td>
-        </tr>
-    </table>
+					if (Model.DataStructureType.ToLower().Equals("structured"))
+					{
+						<span class="dropdown">
+							<button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+								Download Dataset
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+								<li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId  })">... with Template</a></li>
+								<li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+								<li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+								<li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+								<li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+							</ul>
+						</span>
+					}
+					else
+					{
+						<a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
+					}
+				}
+				else
+				{
+					if (Model.RequestExist)
+					{
+						<button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
+					}
+					else
+					{
+						<button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
+					}
+				}
+			</td>
+		</tr>
+	</table>
 </div>
 
 @if (@Model != null)
 {
-    if (ViewData.ModelState.IsValid)
-    {
+	if (ViewData.ModelState.IsValid)
+	{
 
-        @(Html.Telerik().TabStrip()
-                      .Name("ShowDataTabStrip")
-                      .SelectedIndex(0)
-                      .Items(tabs =>
-                      {
+		@(Html.Telerik().TabStrip()
+					  .Name("ShowDataTabStrip")
+					  .SelectedIndex(0)
+					  .Items(tabs =>
+					  {
 
-                          //ToDo Recator Modularity -> load metadata from from dcm
+		  //ToDo Recator Modularity -> load metadata from from dcm
 
-                          tabs.Add()
-                                              .Text("Metadata")
-                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
-                                              .HtmlAttributes(new { id = "metadata" })
-                                              .Enabled(false);
+		  tabs.Add()
+							  .Text("Metadata")
+							  .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
+							  .HtmlAttributes(new { id = "metadata" })
+							  .Enabled(false);
 
-                          tabs.Add()
-                              .Text("Primary Data")
-                              .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id })
-                              .Enabled(@Model.ViewAccess)
-                              .HtmlAttributes(new { id = "primarydata" })
-                              .Enabled(false);
+						  tabs.Add()
+							  .Text("Primary Data")
+							  .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
+							  .Enabled(@Model.ViewAccess)
+							  .HtmlAttributes(new { id = "primarydata" })
+							  .Enabled(false);
 
-                          tabs.Add()
-                              .Text("Data Structure")
-                              .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
-                              .HtmlAttributes(new { id = "datastructure" })
-                              .Enabled(false);
-
-
-                          tabs.Add()
-                              .Text("Dataset Permissions")
-                              .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
-                              .Enabled(false)
-                              .HtmlAttributes(new { id = "datapermissions" });
+						  tabs.Add()
+							  .Text("Data Structure")
+							  .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
+							  .HtmlAttributes(new { id = "datastructure" })
+							  .Enabled(false);
 
 
-                          tabs.Add()
-                              .Text("Publish")
-                                //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
-                                .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-                                .Enabled(false)
-                                .HtmlAttributes(new { id = "prepare" });
-                          tabs.Add()
-                              .Text("Attachements")
-                              .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id })
-                              .Enabled(true);
+						  tabs.Add()
+							  .Text("Dataset Permissions")
+							  .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
+							  .Enabled(false)
+							  .HtmlAttributes(new { id = "datapermissions" });
 
-                      })
-                      .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
-    }
-    else
-    {
-        @Html.ValidationSummary(true);
-    }
+
+						  tabs.Add()
+							  .Text("Publish")
+								//.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+								.LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+								.Enabled(false)
+								.HtmlAttributes(new { id = "prepare" });
+
+
+					  })
+					  .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
+	}
+	else
+	{
+		@Html.ValidationSummary(true);
+	}
 }
 
 
 <script type="text/javascript">
-    function grid_subjects_onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
+	function grid_subjects_onDataBound() {
+		addTooltips();
+		resetAllTelerikIconTitles();
 
-        $("#grid_subjects tbody input:checkbox").click(function () {
-            if ($(this).is(':checked')) {
-                $.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
+		$("#grid_subjects tbody input:checkbox").click(function () {
+			if ($(this).is(':checked')) {
+				$.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
 					{ SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
 					function () {
-					    $("#grid_subjects .t-refresh").trigger('click');
+						$("#grid_subjects .t-refresh").trigger('click');
 					});
-            } else {
-                $.post('@Url.Action("RemoveRightFromEntityPermission", "UserPermissions", new { area = "sam" })',
+			} else {
+				$.post('@Url.Action("RemoveRightFromEntityPermission", "UserPermissions", new { area = "sam" })',
 					{ SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
 					function () {
-					    $("#grid_subjects .t-refresh").trigger('click');
+						$("#grid_subjects .t-refresh").trigger('click');
 					});
-            }
-        });
-    }
+			}
+		});
+	}
 
-    $("#MetadataEditor").ready(function () {
-
-
-    });
-
-    $(document).ready(function () {
-
-        $("#preloaderContainer").preloader(20, "Loading...");
-        resetAllTelerikIconTitles();
-
-        $(document).bind("MetadataFormIsReady", function () {
-            //alert("m is ready");
-            var viewAccess = '@Model.ViewAccess';
-            var grantAccess = '@Model.GrantAccess';
-
-            var tabStrip = $(".t-tabstrip");
-            //console.log(tabStrip);
-            //console.log(viewAccess);
-            //console.log(grantAccess);
+	$("#MetadataEditor").ready(function() {
 
 
-            $("li#datastructure").removeClass("t-state-disabled");
-            //console.log($(tabStrip).find("li #datastructure"));
+	});
 
-            if (viewAccess === "True") {
-                $("li#primarydata").removeClass("t-state-disabled");
-                $("li#prepare").removeClass("t-state-disabled");
-            }
+	$(document).ready(function () {
 
-            if (grantAccess === "True") {
-                $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
-            }
+		$("#preloaderContainer").preloader(20, "Loading...");
+		resetAllTelerikIconTitles();
 
-            //console.log($("li", tabStrip.element));
-            var items = $("li", tabStrip.element);
-            //console.log(items);
-            //tabStrip.enable(items);
+		$(document).bind("MetadataFormIsReady", function () {
+			//alert("m is ready");
+			var viewAccess = '@Model.ViewAccess';
+			var grantAccess = '@Model.GrantAccess';
 
-            $("#preloaderContainer").removePreloader();
-        });
-
-    });
+			var tabStrip = $(".t-tabstrip");
+			//console.log(tabStrip);
+			//console.log(viewAccess);
+			//console.log(grantAccess);
 
 
-    function existsRightType(rights, rightType) {
-        if (jQuery.inArray(rightType, rights) != -1) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+			$("li#datastructure").removeClass("t-state-disabled");
+			//console.log($(tabStrip).find("li #datastructure"));
 
-    function OnSelectShowDataTabStrip(e) {
-        if (e.item.id == "metadata") {
+			if (viewAccess === "True") {
+				$("li#primarydata").removeClass("t-state-disabled");
+				$("li#prepare").removeClass("t-state-disabled");
+			}
 
-            setTimeout(function () {
-                bindMinimap(true);
+			if (grantAccess === "True") {
+				$(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+			}
 
-                $(window).resize(function () {
+			//console.log($("li", tabStrip.element));
+			var items = $("li", tabStrip.element);
+			//console.log(items);
+			//tabStrip.enable(items);
 
-                    setTimeout(function () {
-                        //alert("r");
-                        bindMinimap();
-                    }, 120);
-                });
+			$("#preloaderContainer").removePreloader();
+		});
 
-            }, 120);
+	});
 
 
-        }
-        else {
-            $(".miniregion").remove();
-            $(".minimap").remove();
+	function existsRightType(rights, rightType) {
+		if (jQuery.inArray(rightType, rights) != -1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
-            $(window).off('resize');
-        }
+	function OnSelectShowDataTabStrip(e) {
+		if (e.item.id == "metadata") {
 
-        if (e.item.id == "prepare") {
+			setTimeout(function () {
+				bindMinimap(true);
 
-            var tabStrip = $("#ShowDataTabStrip").data("tTabStrip");
-            tabStrip.reload($("#" + e.item.id));
-        }
-    }
+				$(window).resize(function () {
 
-    function download(id, format) {
+						setTimeout(function () {
+							//alert("r");
+							bindMinimap();
+						}, 120);
+					});
+
+			}, 120);
 
 
-        $("#preloaderContainer").preloader(20, "Preparing zip file...");
+		}
+		else {
+			$(".miniregion").remove();
+			$(".minimap").remove();
 
-        window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id})';
+			$(window).off('resize');
+		}
 
-        $("#preloaderContainer").removePreloader();
+		if (e.item.id == "prepare") {
 
-    }
+			var tabStrip = $("#ShowDataTabStrip").data("tTabStrip");
+			tabStrip.reload($("#" + e.item.id));
+		}
+	}
 
-    $("#sendRequestBt").click(function () {
+	function download(id, format) {
 
-        var id = $(this).attr("datasetId");
 
-        $.post("/DDM/Data/SendRequest", { id },
-            function (data, textStatus, jqXHR) {
+		$("#preloaderContainer").preloader(20, "Preparing zip file...");
 
-                alert(data);
+		window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id})';
 
-                if (data !== true) {
-                    alert(data)
-                }
-                else {
-                    $("#sendRequestBt").attr("disabled", "disabled");
-                    $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
-                    $("#sendRequestBt").Text("Request has been made.")
-                }
-            },
-            "dataType"
-        );
+		$("#preloaderContainer").removePreloader();
 
-    })
+	}
+
+	$("#sendRequestBt").click(function () {
+
+		var id = $(this).attr("datasetId");
+
+		$.post("/DDM/Data/SendRequest", { id },
+			function (data, textStatus, jqXHR) {
+
+				alert(data);
+
+				if (data !== true) {
+					alert(data)
+				}
+				else {
+					$("#sendRequestBt").attr("disabled", "disabled");
+					$("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
+					$("#sendRequestBt").Text("Request has been made.")
+				}
+			},
+			"dataType"
+		);
+
+	})
 
 </script>

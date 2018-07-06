@@ -279,8 +279,8 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyTypePair> repoPR = uow.GetRepository<PartyTypePair>();
                 IRepository<PartyRelationshipType> repoRel = uow.GetRepository<PartyRelationshipType>();
                 var entity = repoPR.Reload(partyTypePair);
-                //if (entity.PartyRelationshipType.PartyRelationships.Count() > 0)
-                if (repoRel.Get(item => item.AssociatedPairs.Contains(partyTypePair)).Count() > 0)
+                if (entity.PartyRelationshipType.PartyRelationships.Count() > 0)
+                    //if (repoRel.Get(item => item.AssociatedPairs.Contains(partyTypePair)).Count() > 0)
                     BexisException.Throw(entity, "There are some relations between this entity and 'PartyRelationshipType'.", BexisException.ExceptionType.Delete);
 
                 repoPR.Delete(entity);

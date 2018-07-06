@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using BExIS.Security.Entities.Subjects;
-using Vaiona.Persistence.Api;
+﻿using BExIS.Security.Entities.Subjects;
+using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.DirectoryServices.Protocols;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using Microsoft.AspNet.Identity.Owin;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authentication
 {
@@ -14,15 +13,6 @@ namespace BExIS.Security.Services.Authentication
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
-
-        private string baseDn { get; }
-        private string host { get; }
-        private int port { get; }
-        private bool secureSocket { get; }
-        private string authUid { get; }
-        private int protocolVersion { get; }
-
-        private IReadOnlyRepository<User> UserRepository { get; }
 
         public LdapAuthenticationManager(string connectionString)
         {
@@ -41,21 +31,27 @@ namespace BExIS.Security.Services.Authentication
                     case "ldapBaseDn":
                         baseDn = entry.Value;
                         break;
+
                     case "ldapHost":
                         host = entry.Value;
                         break;
+
                     case "ldapPort":
                         port = Convert.ToInt32(entry.Value);
                         break;
+
                     case "ldapSecure":
                         secureSocket = Convert.ToBoolean(entry.Value);
                         break;
+
                     case "ldapAuthUid":
                         authUid = entry.Value;
                         break;
+
                     case "ldapProtocolVersion":
                         protocolVersion = Convert.ToInt32(entry.Value);
                         break;
+
                     default:
                         break;
                 }
@@ -67,22 +63,60 @@ namespace BExIS.Security.Services.Authentication
             Dispose(true);
         }
 
+        private string authUid { get; }
+        private string baseDn { get; }
+        private string host { get; }
+        private int port { get; }
+        private int protocolVersion { get; }
+        private bool secureSocket { get; }
+        private IReadOnlyRepository<User> UserRepository { get; }
+
         public void Dispose()
         {
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing)
+        public User GetUser(string username, string password)
         {
-            if (!_isDisposed)
+            var ldapUser = new User();
+
+            try
             {
-                if (disposing)
+                var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port));
+                ldap.SessionOptions.ProtocolVersion = protocolVersion;
+                ldap.AuthType = AuthType.Anonymous;
+                ldap.SessionOptions.SecureSocketLayer = secureSocket;
+                ldap.Bind();
+
+                ldap.AuthType = AuthType.Basic;
+                var searchRequest = new SearchRequest(
+                    baseDn,
+                    string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
+                    SearchScope.Subtree
+                );
+
+                var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
+                if (1 == searchResponse.Entries.Count)
                 {
-                    if (_guow != null)
-                        _guow.Dispose();
-                    _isDisposed = true;
+                    ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
+
+                    var attributes = searchResponse.Entries[0].Attributes;
+
+                    ldapUser.Name = Convert.ToString(((DirectoryAttribute)attributes["cn"])[0]);
+                    ldapUser.Email = Convert.ToString(((DirectoryAttribute)attributes["mail"])[0]);
+                }
+                else
+                {
+                    throw new Exception("User not found");
                 }
             }
+            catch (Exception e)
+            {
+                //Todo: Pass error to logging framework instead of console!
+                Console.WriteLine(e.Message);
+                ldapUser = null;
+            }
+            return ldapUser;
         }
 
         public SignInStatus ValidateUser(string username, string password)
@@ -121,48 +155,17 @@ namespace BExIS.Security.Services.Authentication
             return SignInStatus.Success;
         }
 
-        public User GetUser(string username, string password)
+        protected virtual void Dispose(bool disposing)
         {
-            var ldapUser = new User();
-
-            try
+            if (!_isDisposed)
             {
-                var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port));
-                ldap.SessionOptions.ProtocolVersion = protocolVersion;
-                ldap.AuthType = AuthType.Anonymous;
-                ldap.SessionOptions.SecureSocketLayer = secureSocket;
-                ldap.Bind();
-
-                ldap.AuthType = AuthType.Basic;
-                var searchRequest = new SearchRequest(
-                    baseDn,
-                    string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
-                    SearchScope.Subtree
-                );
-
-                var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
-                if (1 == searchResponse.Entries.Count)
+                if (disposing)
                 {
-                    ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
-
-                    var attributes = searchResponse.Entries[0].Attributes;
-
-                    ldapUser.Name = Convert.ToString(((DirectoryAttribute)attributes["cn"])[0]);
-                    ldapUser.Email = Convert.ToString(((DirectoryAttribute)attributes["mail"])[0]);
-
-                }
-                else
-                {
-                    throw new Exception("User not found");
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
                 }
             }
-            catch (Exception e)
-            {
-                //Todo: Pass error to logging framework instead of console!
-                Console.WriteLine(e.Message);
-                ldapUser = null;
-            }
-            return ldapUser;
         }
     }
 }

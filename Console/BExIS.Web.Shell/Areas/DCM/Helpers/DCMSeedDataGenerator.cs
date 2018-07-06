@@ -141,7 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Submit", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "SubmitDefinePrimaryKey", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "SubmitChooseUpdateMethod", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitGetFileInformation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitSelectAFile", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", DatasetUploadFeature);

@@ -13,6 +13,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class RequestsController : Controller
     {
+        [HttpPost]
+        public void Accept(long decisionId)
+        {
+            var decisionManager = new DecisionManager();
+
+            try
+            {
+                decisionManager.Accept(decisionId, "");
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                decisionManager.Dispose();
+            }
+        }
+
         public ActionResult Decisions(long entityId)
         {
             return PartialView("_Decisions", entityId);
@@ -46,11 +65,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(new GridModel<DecisionGridRowModel> { Data = results.ToList(), Total = total });
         }
 
-        public ActionResult Requests_And_Decisions(long entityId)
-        {
-            return PartialView("_Requests_And_Decisions", entityId);
-        }
-
         public ActionResult Index()
         {
             var entityManager = new EntityManager();
@@ -76,30 +90,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        public ActionResult Requests(long entityId)
-        {
-            return PartialView("_Requests", entityId);
-        }
-
-        [HttpPost]
-        public void Accept(long decisionId)
-        {
-            var decisionManager = new DecisionManager();
-
-            try
-            {
-                decisionManager.Accept(decisionId, "");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
-            }
-        }
-
         [HttpPost]
         public void Reject(long requestId)
         {
@@ -117,6 +107,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 decisionManager.Dispose();
             }
+        }
+
+        public ActionResult Requests(long entityId)
+        {
+            return PartialView("_Requests", entityId);
+        }
+
+        public ActionResult Requests_And_Decisions(long entityId)
+        {
+            return PartialView("_Requests_And_Decisions", entityId);
         }
 
         [GridAction(EnableCustomBinding = true)]
