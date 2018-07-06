@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{A24A6801-2ECC-4F47-8284-8C93277D3030}"
 EndProject
@@ -130,8 +130,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.App.Testing", "Components\App\BExIS.App.Testing\BExIS.App.Testing.csproj", "{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.IO.Tests", "Components\IO\BExIS.IO.Tests\BExIS.IO.Tests.csproj", "{5F913230-E704-4143-8B4B-B214590AEA3C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Dcm.UI.Tests", "Modules\DCM\BExIS.Modules.Dcm.UI.Tests\BExIS.Modules.Dcm.UI.Tests.csproj", "{D6C134EC-6F38-48DB-846F-855AEB899094}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VIM", "VIM", "{9A962207-D10C-472C-995B-A2519760F29A}"
 EndProject
@@ -645,18 +643,6 @@ Global
 		{5F913230-E704-4143-8B4B-B214590AEA3C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5F913230-E704-4143-8B4B-B214590AEA3C}.Release|x86.ActiveCfg = Release|Any CPU
 		{5F913230-E704-4143-8B4B-B214590AEA3C}.Release|x86.Build.0 = Release|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Debug|x86.Build.0 = Debug|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Release|x86.ActiveCfg = Release|Any CPU
-		{D6C134EC-6F38-48DB-846F-855AEB899094}.Release|x86.Build.0 = Release|Any CPU
 		{15821863-0273-485B-A9AB-D7C1E1011ADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{15821863-0273-485B-A9AB-D7C1E1011ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15821863-0273-485B-A9AB-D7C1E1011ADE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -744,14 +730,13 @@ Global
 		{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760} = {38F8BC2F-DA69-499F-9A27-092AA27901EF}
 		{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2} = {38F8BC2F-DA69-499F-9A27-092AA27901EF}
 		{5F913230-E704-4143-8B4B-B214590AEA3C} = {A83D7DBD-986A-482F-A24C-EA581E3FD8F2}
-		{D6C134EC-6F38-48DB-846F-855AEB899094} = {6C18F986-A56C-4366-88A4-7046E8901929}
 		{9A962207-D10C-472C-995B-A2519760F29A} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
 		{15821863-0273-485B-A9AB-D7C1E1011ADE} = {9A962207-D10C-472C-995B-A2519760F29A}
 		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3} = {946EB891-B5C8-4E03-B953-69583E886E57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

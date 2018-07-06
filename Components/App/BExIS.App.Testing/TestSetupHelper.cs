@@ -1,21 +1,16 @@
 ﻿using BExIS.App.Bootstrap;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.MultiTenancy.Api;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.App.Testing
 {
-    public class TestSetupHelper: IDisposable
+    public class TestSetupHelper : IDisposable
     {
         protected Application app = null;
 
@@ -50,7 +45,7 @@ namespace BExIS.App.Testing
             httpSessionMock.Setup(x => x["CurrentTenant"]).Returns(tenantResolver.DefaultTenant);
             httpCtxMock.Setup(ctx => ctx.Session).Returns(httpSessionMock.Object);
 
-            if(!string.IsNullOrWhiteSpace(userName))
+            if (!string.IsNullOrWhiteSpace(userName))
             {
                 var validPrincipal = new ClaimsPrincipal(
                    new[]
