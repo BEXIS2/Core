@@ -392,11 +392,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\211 Ddm.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP211_ddm.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM FTP 2001.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Properties\PublishProfiles\DDM FTP 2001.pubxml.user" />
     <Content Include="Scripts\ddm.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
@@ -435,11 +432,8 @@
     <Content Include="Views\Home\_windowCheckBoxList.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <None Include="Properties\PublishProfiles\DDM.pubxml" />
-    <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM21108.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\DDM FTP 2001.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
