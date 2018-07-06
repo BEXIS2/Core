@@ -1,14 +1,17 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateUserModel
     {
+        [Remote("ValidateEmail", "Users")]
         [Required]
         public string Email { get; set; }
 
+        [Remote("ValidateUsername", "Users")]
         [Required]
         public string UserName { get; set; }
     }
@@ -21,10 +24,13 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class UpdateUserModel
     {
+        [Remote("ValidateEmail", "Users", AdditionalFields = "Id")]
         [Required]
         public string Email { get; set; }
 
         public long Id { get; set; }
+
+        [Remote("ValidateUsername", "Users", AdditionalFields = "Id")]
         public string UserName { get; set; }
 
         public static UpdateUserModel Convert(User user)

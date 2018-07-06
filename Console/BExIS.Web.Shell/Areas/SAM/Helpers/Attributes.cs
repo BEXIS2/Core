@@ -23,7 +23,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
         {
             if ((bool)value)
                 return ValidationResult.Success;
-            return new ValidationResult(String.Format(ErrorMessageString, validationContext.DisplayName));
+            return new ValidationResult(string.Format(ErrorMessageString, validationContext.DisplayName));
         }
     }
 }

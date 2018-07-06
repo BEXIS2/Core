@@ -1,31 +1,15 @@
 ﻿@model BExIS.Modules.Vim.UI.Models.VisualizationModels
 @using Telerik.Web.Mvc.UI;
 
+@{
+    ViewBag.Title = "Visualization";
+}
+
 @section Information
 {
     Visualization provides diagrams depend on the selected data in specific range of time.
 }
 
-
-@*<style>
-
-        .chart div {
-            font: 10px sans-serif;
-            background-color: steelblue;
-            text-align: right;
-            padding: 3px;
-            margin: 1px;
-            color: white;
-        }
-    </style>
-    <div class="chart">
-        <div style="width: 40px; background-color: red">4</div>
-        <div style="width: 80px;">8</div>
-        <div style="width: 150px;">15</div>
-        <div style="width: 160px;">16</div>
-        <div style="width: 230px;">23</div>
-        <div style="width: 420px;">42</div>
-    </div>*@
 
 @{
     //string modelValues = String.Join(",", Model.);
@@ -88,37 +72,8 @@
                 timeSelector.add(option);
             }
 
-            ////document.getElementById("columnchart_material").style = "width: 600px; height: 400px;";
         google.charts.load('current', { 'packages': ['bar'] });
         google.charts.setOnLoadCallback(function () { myChart() });
-
-            //var status = document.getElementById('statusSelector').value;
-            //var time = document.getElementById('timeSelector').value;
-            //var chartName = "";
-            //var colors = ['#388670', '#f24c24', '#ffbb52', '#009cdf'];
-            //var myData = [];
-
-            //if (status == "all") {
-            //    if (time == "all") { myData = allDataByYear(); }
-            //    else { myData = allDataByMonth(time); }
-            //    google.charts.setOnLoadCallback(function () { drawChart(myData, colors[0])});
-            //}
-
-            //else { //if (status == created, checkedIn, checkedOut, deleted)
-            //    if (time == "all") {
-            //        myData = dataByYear(status);
-            //    }
-            //    else { myData = dataByMonth(status, time); }
-
-            //    if (status == "checkedIn") {
-            //        drawChart(myData, colors[0]);
-            //    }
-            //    if (status == "checkedOut") { drawChart(myData, colors[1]); }
-            //    if (status == "deleted") { drawChart(myData, colors[2]); }
-            //    if (status == "created") { drawChart(myData, colors[3]); }
-            //}
-
-
         }
 
     });

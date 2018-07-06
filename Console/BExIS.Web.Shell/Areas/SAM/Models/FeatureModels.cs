@@ -44,8 +44,8 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public string FeatureName { get; set; }
         public long Id { get; set; }
-        public long? ParentId { get; set; }
         public bool IsPublic { get; set; }
+        public long? ParentId { get; set; }
 
         public static FeatureTreeViewModel Convert(Feature feature, bool isPublic, long? parentId)
         {

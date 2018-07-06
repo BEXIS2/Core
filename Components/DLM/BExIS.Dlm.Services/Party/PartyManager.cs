@@ -39,6 +39,7 @@ namespace BExIS.Dlm.Services.Party
         public IReadOnlyRepository<PartyX> PartyRepository { get; }
         public IReadOnlyRepository<PartyCustomGridColumns> PartyCustomGridColumnsRepository { get; }
         public IQueryable<PartyX> Parties => PartyRepository.Query();
+        public IQueryable<PartyRelationship> PartyRelationships => PartyRelationshipRepository.Query();
 
         public void Dispose()
         {
