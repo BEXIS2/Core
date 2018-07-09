@@ -4,10 +4,10 @@
     @foreach (var category in Model)
     {
 
-        <div name="@category.Name" style="padding-top:60px">
+        <a name="@category.Name" style="padding-top:60px">
 
             <h2>@category.Name</h2>
-        </div>
+        </a>
         <p>@category.Description</p>
 
         foreach (var file in category.FileModels)
