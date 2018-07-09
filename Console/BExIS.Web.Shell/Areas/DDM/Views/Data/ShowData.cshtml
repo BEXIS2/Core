@@ -86,50 +86,53 @@
 	{
 
 		@(Html.Telerik().TabStrip()
-					  .Name("ShowDataTabStrip")
-					  .SelectedIndex(0)
-					  .Items(tabs =>
-					  {
+                      .Name("ShowDataTabStrip")
+                      .SelectedIndex(0)
+                      .Items(tabs =>
+                      {
 
-		  //ToDo Recator Modularity -> load metadata from from dcm
+                          //ToDo Recator Modularity -> load metadata from from dcm
 
-		  tabs.Add()
-							  .Text("Metadata")
-							  .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
-							  .HtmlAttributes(new { id = "metadata" })
-							  .Enabled(false);
+                          tabs.Add()
+                                              .Text("Metadata")
+                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
+                                              .HtmlAttributes(new { id = "metadata" })
+                                              .Enabled(false);
 
-						  tabs.Add()
-							  .Text("Primary Data")
-							  .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
-							  .Enabled(@Model.ViewAccess)
-							  .HtmlAttributes(new { id = "primarydata" })
-							  .Enabled(false);
+                          tabs.Add()
+                              .Text("Primary Data")
+                              .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
+                              .Enabled(@Model.ViewAccess)
+                              .HtmlAttributes(new { id = "primarydata" })
+                              .Enabled(false);
 
-						  tabs.Add()
-							  .Text("Data Structure")
-							  .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
-							  .HtmlAttributes(new { id = "datastructure" })
-							  .Enabled(false);
-
-
-						  tabs.Add()
-							  .Text("Dataset Permissions")
-							  .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
-							  .Enabled(false)
-							  .HtmlAttributes(new { id = "datapermissions" });
+                          tabs.Add()
+                              .Text("Data Structure")
+                              .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
+                              .HtmlAttributes(new { id = "datastructure" })
+                              .Enabled(false);
 
 
-						  tabs.Add()
-							  .Text("Publish")
-								//.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
-								.LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-								.Enabled(false)
-								.HtmlAttributes(new { id = "prepare" });
+                          tabs.Add()
+                              .Text("Dataset Permissions")
+                              .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
+                              .Enabled(false)
+                              .HtmlAttributes(new { id = "datapermissions" });
 
 
-					  })
-					  .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
+                          tabs.Add()
+                              .Text("Publish")
+                                //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                                .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+                                .Enabled(false)
+                                .HtmlAttributes(new { id = "prepare" });
+                          tabs.Add()
+                              .Text("Attachements")
+                              .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id })
+                              .Enabled(true);
+
+                      })
+                      .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
 	}
 	else
 	{
