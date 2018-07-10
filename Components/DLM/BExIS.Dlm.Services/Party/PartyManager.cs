@@ -1,14 +1,14 @@
 ﻿using BExIS.Dlm.Entities.Party;
+using BExIS.Ext.Model;
+using NCalc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using BExIS.Ext.Model;
+using System.Text.RegularExpressions;
 using Vaiona.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
-using System.Text.RegularExpressions;
-using NCalc;
-using System.Data;
 
 namespace BExIS.Dlm.Services.Party
 {
@@ -787,7 +787,7 @@ namespace BExIS.Dlm.Services.Party
             }
         }
 
-        public long GetUserIdByParty(int partyId)
+        public long GetUserIdByParty(long partyId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -921,7 +921,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return requiredPartyRelationTypeCount;
         }
-        
+
         public bool CheckCondition(String condition, long partyId)
         {
             if (string.IsNullOrEmpty(condition))
