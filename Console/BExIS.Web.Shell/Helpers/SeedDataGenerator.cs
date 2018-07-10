@@ -19,6 +19,7 @@ namespace BExIS.Web.Shell.Helpers
             var o4 = operationManager.Find("Shell", "Terms", "*") ?? operationManager.Create("Shell", "Terms", "*");
             var o5 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
             var o6 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
+            var o7 = operationManager.Find("Shell", "DataPolicy", "*") ?? operationManager.Create("Shell", "DataPolicy", "*");
         }
     }
 }
