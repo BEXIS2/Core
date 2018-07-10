@@ -18,26 +18,36 @@
 <div id="footer">
     <footer>
         Powered by
-        <br/><br/>
+        <br /><br />
         <a href="http://bexis2.uni-jena.de" target="_blank">
-            <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" class="desaturate" title=@(System.Configuration.ConfigurationManager.AppSettings["ApplicationName"]+System.Configuration.ConfigurationManager.AppSettings["ApplicationVersion"])/>
+            <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" class="desaturate" title=@(System.Configuration.ConfigurationManager.AppSettings["ApplicationName"]+System.Configuration.ConfigurationManager.AppSettings["ApplicationVersion"]) />
         </a>
 
-        <br/><br/>
+        <br /><br />
         @if (!string.IsNullOrEmpty(Html.GetTenant().PolicyFileNamePath))
-        {
-            @Html.ActionLink("Privacy Policy", "policy", "footer", new { area = "" }, null)
-        }
+    {
+        @Html.ActionLink("Privacy Policy", "policy", "footer", new { area = "" }, null)
+}
 
         @if (!string.IsNullOrEmpty(Html.GetTenant().ContactUsFileNamePath))
-        {
-            @Html.ActionLink("Contact Us", "contactus", "footer", new { area = "" }, null)
-        }
+    {
+        @Html.ActionLink("Contact Us", "contactus", "footer", new { area = "" }, null)
+}
 
         @if (!string.IsNullOrEmpty(Html.GetTenant().ImprintFileNamePath))
-        {
-            @Html.ActionLink("Imprint", "imprint", "footer", new { area = "" }, null)
-        }
+    {
+        @Html.ActionLink("Imprint", "imprint", "footer", new { area = "" }, null)
+}
         <br />
+        <br />
+        <img src="~/Content/Images/MPI-BGC_logo_EN.png" style="width: 10%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/MPIC_MPG_Logo_2015_engl.jpg" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/INPA_logo.png" style="width: 4.5%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/logo_uea.jpg" style="width: 3.5%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/BMBF_gefoerdert_2017_en.jpg" style="width: 7.5%; margin-right: 0.5%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/template-300x300-ministerio-1.png" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/finep_marca.jpg" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/fapeam-408x440.jpg" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" />
+        <img src="~/Content/Images/logoInstituicao_FEA.jpg" style="width: 7.5%; margin-right: 2%; margin-bottom: 0.5em;" />
     </footer>
 </div>
