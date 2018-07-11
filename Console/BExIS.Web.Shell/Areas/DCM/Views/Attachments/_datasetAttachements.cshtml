@@ -9,24 +9,14 @@
 
 @using Telerik.Web.Mvc.UI;
 @using System.Web.Configuration;
-@model BExIS.Modules.Dcm.UI.Models.Push.SendBigFilesToServerModel
+@model BExIS.Modules.Dcm.UI.Models.Attachments.DatasetFilesModel
 
 @{
     int mbMax = Model.FileSize;
     long datasetId = (long)(ViewBag.datasetId);
     string fileExtListAsString = "";
 
-    foreach (string s in Model.SupportedFileExtentions)
-    {
-        if (fileExtListAsString != "")
-        {
-            fileExtListAsString += "," + s;
-        }
-        else
-        {
-            fileExtListAsString = s;
-        }
-    }
+
 }
 <table>
     <tr>
@@ -69,9 +59,9 @@
             <div id="FileList" class="bx-trunc-parent">
                 <h4>Your Files</h4>
                 <div style="width: 100%;overflow-x: hidden" >
-                    @foreach (BExIS.IO.BasicFileInfo x in Model.ServerFileList)
+                    @foreach (var serverFile in Model.ServerFileList)
                     {
-                        <div>@Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @x.Name }, new { @class = "bx-trash bx-function" }) @Html.ActionLink(@x.Name,"Download","Attachments",new { datasetId=@datasetId,fileName=@x.Name},null)</div>
+                        <div>@Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @serverFile.Key.Name }, new { @class = "bx-trash bx-function" }) @Html.ActionLink(@serverFile.Key.Name,"Download","Attachments",new { datasetId=@datasetId,fileName= @serverFile.Key.Name},null)</div>
                     }
                 </div>
             </div>
