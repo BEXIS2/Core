@@ -192,7 +192,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //Calculate similarity metric
                     //Accept suggestion if the similarity is greater than some threshold
                     double threshold = 0.5;
-                    IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold);
+                    IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold).OrderBy(att => similarity(att.Name, model.HeaderFields[i]));
 
                     //Order the suggestions according to the similarity
                     List<DataAttribute> ordered = suggestions.ToList<DataAttribute>();
