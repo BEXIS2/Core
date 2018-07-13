@@ -96,9 +96,9 @@ namespace BExIS.Web.Shell.Models
         [MustBeTrue(ErrorMessage = ".......")]
         public bool DOI { get; set; }
 
-        [Display(Name = "Credit")]
+        [Display(Name = "Data Policy")]
         [MustBeTrue(ErrorMessage = ".......")]
-        public bool Credit { get; set; }
+        public bool DataPolicy { get; set; }
 
         [Display(Name = "PHD")]
         [MustBeTrue(ErrorMessage = ".......")]

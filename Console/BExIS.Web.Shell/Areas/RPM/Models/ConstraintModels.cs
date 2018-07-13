@@ -85,10 +85,12 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class DomainConstraintModel:ConstraintModel
     {
         public string Terms { get; set; }
+        public string DataPolicy { get; set; }
 
         public DomainConstraintModel()
         {
             Terms= "";
+            DataPolicy = "";
             AttributeId = 0;
             List<DomainItem> ldi = new List<DomainItem>();
             ldi.Add(new DomainItem());
@@ -98,6 +100,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public DomainConstraintModel(long attributeId)
         {
             Terms = "";
+            DataPolicy = "";
             AttributeId = attributeId;
             List<DomainItem> ldi = new List<DomainItem>();
             ldi.Add(new DomainItem());
@@ -129,14 +132,37 @@ namespace BExIS.Modules.Rpm.UI.Models
                     }
                 }
             }
-         
+
+            string datapolicy = "";
+            if (domainConstraint.Items != null)
+            {
+                foreach (DomainItem i in domainConstraint.Items)
+                {
+                    if (String.IsNullOrEmpty(i.Value))
+                    {
+                        if (datapolicy == "")
+                            datapolicy = i.Key;
+                        else
+                            datapolicy = datapolicy + ", " + i.Key;
+                    }
+                    else
+                    {
+                        if (datapolicy == "")
+                            datapolicy = i.Key + ", " + i.Value;
+                        else
+                            datapolicy = datapolicy + "; " + i.Key + ", " + i.Value;
+                    }
+                }
+            }
+
             return new DomainConstraintModel(attributeId)
             {
                 Id = domainConstraint.Id,
                 Negated = domainConstraint.Negated,
                 Description = domainConstraint.Description,
                 Terms = terms,
-                FormalDescription = domainConstraint.FormalDescription
+                FormalDescription = domainConstraint.FormalDescription,
+                DataPolicy = datapolicy
             };
         }
 

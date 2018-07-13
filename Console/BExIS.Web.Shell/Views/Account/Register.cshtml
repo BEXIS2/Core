@@ -45,9 +45,9 @@
             @Html.ValidationMessageFor(m => m.TermsAndConditions)
         </div>
         <div class="col-md-10 col-md-offset-2">
-            @Html.CheckBoxFor(m => m.Credit, new { @class = "cb_form" })
+            @Html.CheckBoxFor(m => m.DataPolicy, new { @class = "cb_form" })
             I agree to the <a href="/DataPolicy/Index" title="See Data Policy" target="_blank">ATTO data Policy</a>.
-            @Html.ValidationMessageFor(m => m.Credit)
+            @Html.ValidationMessageFor(m => m.DataPolicy)
         </div>
         <div class="col-md-10 col-md-offset-2">
             <br\>
