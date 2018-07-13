@@ -96,13 +96,30 @@ namespace BExIS.Web.Shell.Models
         [MustBeTrue(ErrorMessage = ".......")]
         public bool DOI { get; set; }
 
-        [Display(Name = "Credit")]
+        [Display(Name = "Data Policy")]
         [MustBeTrue(ErrorMessage = ".......")]
-        public bool Credit { get; set; }
+        public bool DataPolicy { get; set; }
 
         [Display(Name = "PHD")]
         [MustBeTrue(ErrorMessage = ".......")]
         public bool PHD { get; set; }
+
+        [Display(Name = "Forward")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool Forward { get; set; }
+
+        [Display(Name = "Metadata")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool Metadata { get; set; }
+
+        [Display(Name = "Verify")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool Verify { get; set; }
+
+        [Display(Name = "Data")]
+        [MustBeTrue(ErrorMessage = ".......")]
+        public bool Data { get; set; }
+
     }
 
     public class ResetPasswordViewModel
