@@ -15,7 +15,7 @@
     <RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
     <AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -558,6 +558,7 @@
     <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
     <Content Include="Views\Attachments\Index.cshtml" />
     <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
+    <Content Include="Views\EasyUploadVerification\Row.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -49,7 +49,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager != null)
             {
                 // set SHEET_FORMAT
-                TaskManager.AddToBus(EasyUploadTaskManager.SHEET_FORMAT, "LeftRight");
+                TaskManager.AddToBus(EasyUploadTaskManager.SHEET_FORMAT, "TopDown");
                 TaskManager.Current().SetValid(true);
 
                 if (TaskManager.Current().IsValid())

@@ -1,0 +1,153 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.RowModel
+
+@using BExIS.Modules.Dcm.UI.Helpers;
+@using BExIS.Modules.Dcm.UI.Models;
+
+
+<tr class="eu-row" >
+    <td class="name" varName="@Html.Name(Model.Name)" index=@Model.Index>@Html.Name(Model.Name)</td>
+
+    <td>
+        <!--Datatype Selector-->
+        <select class="bx-dropdown datatype" name="Datatype" headerfieldId="@(Model.Index)" onchange="change(this)" onfocus="deselect(this)" onblur="reselect(this)">
+            @{
+                <option value="0" title="">- not selected -</option>
+
+                foreach (DataTypeInfo dataTypeInfo in Model.AvailableDataTypes)
+                {
+                    string selected = "";
+
+                    if (Model.SelectedDataType!=null && Model.SelectedDataType.DataTypeId == dataTypeInfo.DataTypeId)
+                    {
+                        selected = "selected";
+                    }
+
+                    <option @Html.Raw(selected) 
+                            value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" 
+                            title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
+                }
+
+                @*Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
+                    string datatypeDescription = "";
+
+                    <option @Html.Raw("selected") value="0" title="">- not selected -</option>
+
+                    if (tupleBla != null && tupleBla.Item3.UnitId >= 0)
+                    {
+                        foreach (DataTypeInfo dataTypeInfo in ((UnitInfo)tupleBla.Item3).DataTypeInfos)
+                        {
+                            string selected = "";
+
+                            if (tupleBla.Item3.SelectedDataTypeId == dataTypeInfo.DataTypeId)
+                            {
+                                selected = "selected";
+                                datatypeDescription = dataTypeInfo.Description;
+                            }
+
+                            <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="none" title="Please select a unit">Please select an unit</option>
+                    }*@
+            }
+        </select>
+        <span class="preloader"></span>
+
+    </td>
+    <td>
+        <!--Unit Selector-->
+        <select class="bx-dropdown unit" style="width: 80%" name="Unit" headerfieldId="@Model.Index" onchange="change(this)" onfocus="deselect(this)" onblur="reselect(this)">
+
+            <option value="0" title="">- not selected -</option>
+
+            @foreach (UnitInfo unit in Model.AvailableUnits)
+            {
+                string selected = "";
+
+                if (Model.SelectedUnit != null)
+                {
+
+                    if (Model.SelectedUnit!=null && Model.SelectedUnit.UnitId == unit.UnitId)
+                    {
+                        selected = "selected";
+                    }
+
+                }
+                <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(unit.UnitId))" title="@Html.Name(unit.Description)">@Html.Name(unit.Name) (@Html.Name(unit.Abbreviation))</option>
+            }
+        </select>
+        <span class="preloader"></span>
+
+    </td>
+
+    <td varName="@Html.Name(Model.Name)" index="@Model.Index">
+        <i class="fa" aria-hidden="true" title=""></i>
+
+        <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
+        <select class="bx-dropdown dataattribute" style="width: 80%" name="Suggestions" onchange="change(this)" headerfieldId="@Model.Index" >
+
+            <!--The default option is the name of the column in the submitted table-->
+            @*<option data-unit="@ViewData["defaultUnitID"]" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>*@
+
+            <!--Create an option for each variable in the respective suggestions
+            make sure that the one that is registered as selected is actually shown as selected in the list-->
+
+            <option value="0" title="">- not selected -</option>
+
+            @{
+                bool set = false;
+
+                if (Model.Suggestions!=null && Model.Suggestions.Count > 0)
+                {
+                    <optgroup label="Suggestions">
+                        @foreach (EasyUploadSuggestion sug in Model.Suggestions)
+                        {
+                            if (@sug.show)
+                            {
+                                string selected = "";
+
+                                if (Model.Name == sug.attributeName &&
+                                    Model.SelectedUnit !=null && Model.SelectedUnit.UnitId == sug.unitID && Model.SelectedUnit.SelectedDataTypeId == sug.dataTypeID )
+                                {
+                                    selected = "selected";
+                                    set = true;
+                                }
+
+                                <option @Html.Raw(selected) data-attribute="@sug.Id" data-unit="@sug.unitID" data-datatype="@sug.dataTypeID" value="@sug.Id">@sug.attributeName</option>
+                            }
+                        }
+                    </optgroup>
+                }
+
+                if (Model.AvailableDataAttributes!=null && Model.AvailableDataAttributes.Count > 0)
+                {
+                    <optgroup label="All">
+                        @foreach (var attr in Model.AvailableDataAttributes.OrderBy(d => d.Name))
+                        {
+
+                            string selected = "";
+
+                            if (Model.SelectedDataAttribute!=null && Model.SelectedDataAttribute.Id == attr.Id && !set)
+                            {
+                                selected = "selected";
+                            }
+
+                            <option @Html.Raw(selected) data-attribute="@attr.Id" data-unit="@attr.UnitId" data-datatype="@attr.DataTypeId" value="@attr.Id">@attr.Name</option>
+
+                        }
+                    </optgroup>
+                }
+
+                <optgroup label="Others">
+                    <option value="-1">Unknown</option>
+                    <option value="-1">Not found</option>
+                </optgroup>
+            }
+        </select>
+
+        <span class="preloader"></span>
+
+    </td>
+</tr>

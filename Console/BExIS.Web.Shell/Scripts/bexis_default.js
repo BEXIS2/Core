@@ -128,7 +128,7 @@ function addTooltips() {
 	$(".t-grid > table > tbody > tr > td , .t-grid > table > thead > tr > th").each(function ()
 	{
 		var $this = $(this);
-        var text = this.innerText;
+		var text = this.innerText;
 		$this.attr("title", text);
 	});
 }

@@ -3,8 +3,6 @@
 @using Telerik.Web.Mvc.Resources;
 @using BExIS.Modules.Dcm.UI.Models;
 @using BExIS.Dlm.Entities.DataStructure;
-@using BExIS.Web.Shell.Areas.DCM.Helpers;
-
 
 
 <div id="Step5" class="uploadWizardStep">
@@ -15,113 +13,29 @@
         </div>
 
         <div class="uploadWizardStep_Description stepper">
+          
         </div>
 
         <div class="uploadWizardStep_Content stepper" style="height: inherit; width: 800px;">
             <table>
                 <thead>
                     <tr>
-                        <th>Variable name</th>
-                        <th>Unit</th>
-                        <th>Datatype</th>
-                        <th>Datatype description</th>
+                        <th class="first-header">Variable name</th>
+                        <th class="first-header">Datatype</th>
+                        <th class="first-header">Unit</th>
+                        <th class="first-header">Means</th>
+                    </tr>
+                    <tr>
+                        <th class="second-header">The variable [Name]</th>
+                        <th class="second-header">is of [Datatype]</th>
+                        <th class="second-header">has [Unit]</th>
+                        <th class="second-header">and means [Attribute]</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 0; i < Model.HeaderFields.Length; i++)
+                    @foreach (var row in Model.Rows)
                     {
-                        <tr>
-                            <td varName="@Html.Name(Model.HeaderFields[i])" index=@i>
-                                <i class="fa" aria-hidden="true" title=""></i>
-
-                                <!--Dropdown-Menu to choose a suggested Attribute from - unit and datatype stored in html-Attributes for usage in javascript-->
-                                <select  style="width: 80%" id="suggestionSelect" name="Suggestions" headerfieldId="@(i)" onchange="suggestionSelected(this, @i)">
-
-                                    <!--The default option is the name of the column in the submitted table-->
-                                    <option data-unit="@ViewData["defaultUnitID"]" data-datatype="@ViewData["defaultDatatypeID"]" value="@Html.Name(Model.HeaderFields[i])">@Html.Name(Model.HeaderFields[i])</option>
-
-                                    <!--Create an option for each variable in the respective suggestions
-                                        make sure that the one that is registered as selected is actually shown as selected in the list-->
-                                    @foreach (EasyUploadSuggestion sug in Model.Suggestions[i])
-                                    {
-                                        if (@sug.show)
-                                        {
-                                            string selected = "";
-                                            if (Model.AssignedHeaderUnits.Count > 0)
-                                            {
-                                                Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => (t.Item1 == i) &&
-                                                                                                                    (t.Item2 == sug.attributeName) &&
-                                                                                                                    (t.Item3.UnitId == sug.unitID) &&
-                                                                                                                    (t.Item3.SelectedDataTypeId == sug.dataTypeID)).FirstOrDefault();
-                                                if (tuple != null)
-                                                {
-                                                    selected = "selected";
-                                                }
-                                            }
-
-                                            string display = sug.attributeName + " - " + sug.unitName + " - " + sug.datatypeName;
-
-                                            <option @Html.Raw(selected) data-unit="@sug.unitID" data-datatype="@sug.dataTypeID" value="@sug.attributeName">@display</option>
-                                        }
-                                    }
-                                </select>
-                            </td>
-
-                            <td>
-                                <!--Unit Selector-->
-                                <select style="width: 80%" name="Unit" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
-                                    @foreach (UnitInfo unit in Model.AvailableUnits)
-                                    {
-                                        string selected = "";
-
-                                        if (Model.AssignedHeaderUnits.Count > 0)
-                                        {
-                                            Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => t.Item3.UnitId == unit.UnitId && t.Item1 == i).FirstOrDefault();
-
-                                            if (tuple != null)
-                                            {
-                                                selected = "selected";
-                                            }
-
-                                        }
-                                        <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(unit.UnitId))" title="@Html.Name(unit.Description)">@Html.Name(unit.Name) (@Html.Name(unit.Abbreviation))</option>
-                                    }
-                                </select>
-                            </td>
-                            <td>
-                                <!--Datatype Selector-->
-                                <select style="width: 80%" name="Datatype" headerfieldId="@(i)"  onfocus="deselect(this)" onblur="reselect(this)">
-                                    @{
-
-                                        Tuple<int, String, UnitInfo> tupleBla = Model.AssignedHeaderUnits.Where(t => t.Item1 == i).FirstOrDefault();
-                                        string datatypeDescription = "";
-
-                                        if (tupleBla != null && tupleBla.Item3.UnitId >= 0)
-                                        {
-                                            foreach (DataTypeInfo dataTypeInfo in ((UnitInfo)tupleBla.Item3).DataTypeInfos)
-                                            {
-                                                string selected = "";
-
-                                                if (tupleBla.Item3.SelectedDataTypeId == dataTypeInfo.DataTypeId)
-                                                {
-                                                    selected = "selected";
-                                                    datatypeDescription = dataTypeInfo.Description;
-                                                }
-
-                                                <option @Html.Raw(selected) value="@Html.Name(Convert.ToString(dataTypeInfo.DataTypeId))" title="@Html.Name(dataTypeInfo.Description)">@Html.Name(dataTypeInfo.Name)</option>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <option value="none" title="Please select a unit">Please select an unit</option>
-                                        }
-                                    }
-                                </select>
-                            </td>
-                            <td class="datatypeinfo">
-                                @Html.Raw(datatypeDescription)
-                            </td>
-                        </tr>
+                        @Html.Partial("Row", row);
                     }
                 </tbody>
             </table>
@@ -147,6 +61,17 @@
 </div>
 
 <style>
+
+    .first-header {
+        min-width:150px;
+        border-bottom:none;
+    }
+
+    .second-header {
+        font-size: 12px;
+        border-top: 1px solid;
+    }
+
     .fa-exclamation-triangle {
         color: darkorange;
     }
@@ -235,52 +160,64 @@
             hot.destroy();
             hotActive = false;
         }
-        
-        $('select[name="Unit"]').change(function () {
-            if ($(this).val() != null && $(this).val() != '') {
-                var selectOptionId = $(this).val();
-                var selectId = $(this).attr('headerfieldId');
 
-                // send to bus
-                $.post('@Url.Action("SaveUnitSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { selectFieldId: selectId, selectOptionId: selectOptionId }, function (response) {
-                    $('#StepView > div').first().html(response);
-                });
-            }
-        });
-
-        $('select[name="Datatype"]').change(function () {
-            var selectedDataTypeId = $(this).val();
-            var headerfieldId = $(this).attr('headerfieldId');
-
-            // send to bus
-            $.post('@Url.Action("SaveDataTypeSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', { headerfieldId: headerfieldId, selectedDataTypeId: selectedDataTypeId }, function (response) {
-                $('#StepView > div').first().html(response);
-            });
-        });
     });
 
-    function suggestionSelected(suggestionSelectObject, i) {
-        //Find the selected option object
-        var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
+    function change(e){
 
-        var selectedVariableName = selectedOption.value;
-        //Now grab the unitID and datatype from the html attributes of the selected option element
-        var unitID = selectedOption.getAttribute("data-unit");
-        var datatypeID = selectedOption.getAttribute("data-datatype");
-        var selectedVariableId = selectedOption.getAttribute("data-attributeid");
+   
+            var index = 0;
+            var selectedUnit = 0;
+            var selectedDataType = 0;
+            var selectedAttribute = 0;
+            var varName = "";
 
-        //Send selection to Bus
-        $.post('@Url.Action("SaveSuggestionSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })',
-            {
-                headerfieldId: i,
-                selectedVariableName: selectedVariableName,
-                selectedVariableId: selectedVariableId,
-                selectedUnitId: unitID,
-                selectedDataTypeId: datatypeID
+            //set unit id
+
+            console.log($(e).parents("tr.eu-row"));
+
+            var parent = $(e).parents("tr.eu-row")[0]
+
+            var dataTypeContainer = $(parent).find('select.datatype');
+            var unitContainer = $(parent).find('select.unit');
+            var dataAttrContainer = $(parent).find('select.dataattribute');
+
+            selectedDataType = $($(dataTypeContainer).find(":selected")[0]).val();
+            selectedUnit = $($(unitContainer).find(":selected")[0]).val();
+            selectedAttribute = $($(dataAttrContainer).find(":selected")[0]).val();
+            varName = $($(parent).find(".name")[0]).attr("varName");
+            index = $($(parent).find(".name")[0]).attr("index");
+
+            console.log(selectedDataType);
+            console.log(selectedUnit);
+            console.log(selectedAttribute);
+            console.log(varName);
+            console.log(index);
+
+            $(parent).find(".preloader").each(function () {
+                $(this).preloader(12,".");
+            })
+
+
+            $.post('@Url.Action("SaveSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {
+                index,
+                selectedUnit,
+                selectedDataType,
+                selectedAttribute,
+                varName
             }, function (response) {
-                $('#StepView > div').first().html(response);
+
+
+                console.log("back from server");
+                console.log(response);
+                console.log(parent);
+
+                $(parent).replaceWith(response);
             });
-    }
+
+
+        }
+
 
     //Necessary to trigger onChange even when the same option is selected again
     function deselect(select) {
@@ -294,5 +231,7 @@
             select.selectedIndex = $(select).data('storedIndex');
         }
     }
+
+
 
 </script>
