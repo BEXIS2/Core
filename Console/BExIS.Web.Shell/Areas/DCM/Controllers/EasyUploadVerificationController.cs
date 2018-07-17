@@ -307,15 +307,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (selectedDataType == 0) dataTypeInfos = dataTypeInfos.Where(d => currentUnit.DataTypeInfos.Any(ud => ud.DataTypeId.Equals(d.DataTypeId))).ToList();
                 else
-                {
                     dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
-
-                    // not checkt
-                    var datatype = dataAttributeInfos.First();
-                    var unit = unitInfos.First();
-
-                    unit.SelectedDataTypeId = datatype.Id;
-                }
             }
 
             if (currentDataTypeInfo != null)

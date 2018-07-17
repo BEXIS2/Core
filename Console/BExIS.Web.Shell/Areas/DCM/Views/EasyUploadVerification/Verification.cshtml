@@ -173,14 +173,16 @@
             var varName = "";
 
             //set unit id
+            console.log($(e).attr("name"));
 
-            console.log($(e).parents("tr.eu-row"));
+            //console.log($(e).parents("tr.eu-row"));
 
             var parent = $(e).parents("tr.eu-row")[0]
 
             var dataTypeContainer = $(parent).find('select.datatype');
             var unitContainer = $(parent).find('select.unit');
             var dataAttrContainer = $(parent).find('select.dataattribute');
+            var lastSelection = $(e).attr("name");
 
             selectedDataType = $($(dataTypeContainer).find(":selected")[0]).val();
             selectedUnit = $($(unitContainer).find(":selected")[0]).val();
@@ -188,11 +190,11 @@
             varName = $($(parent).find(".name")[0]).attr("varName");
             index = $($(parent).find(".name")[0]).attr("index");
 
-            console.log(selectedDataType);
-            console.log(selectedUnit);
-            console.log(selectedAttribute);
-            console.log(varName);
-            console.log(index);
+            //console.log(selectedDataType);
+            //console.log(selectedUnit);
+            //console.log(selectedAttribute);
+            //console.log(varName);
+            //console.log(index);
 
             $(parent).find(".preloader").each(function () {
                 $(this).preloader(12,".");
@@ -204,13 +206,15 @@
                 selectedUnit,
                 selectedDataType,
                 selectedAttribute,
-                varName
+                varName,
+                lastSelection
+
             }, function (response) {
 
 
-                console.log("back from server");
-                console.log(response);
-                console.log(parent);
+                //console.log("back from server");
+                //console.log(response);
+                //console.log(parent);
 
                 $(parent).replaceWith(response);
             });
