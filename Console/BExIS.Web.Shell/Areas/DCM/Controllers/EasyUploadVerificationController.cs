@@ -8,6 +8,7 @@ using BExIS.IO.Transform.Validation.ValueCheck;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Utils.Models;
+using F23.StringSimilarity;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
@@ -250,7 +251,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveSelection(int index, long selectedUnit, long selectedDataType, long selectedAttribute, string varName)
+        public ActionResult SaveSelection(int index, long selectedUnit, long selectedDataType, long selectedAttribute, string varName, string lastSelection)
         {
 
             List<DataTypeInfo> dataTypeInfos = new List<DataTypeInfo>();
@@ -294,30 +295,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #region filtering
 
-            if (currentDataAttrInfo != null)
-            {
-                // is the seletced currentDataAttrInfo a suggestion then overrigth all selected items
-                if (suggestions.Any(s => s.attributeName.Equals(currentDataAttrInfo.Name)))
-                {
-                    dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
-                    unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
-                    dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
-                }
-                else
-                {
 
-                    dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
-
-                    //filtering units when data attr is selected, if id or dimension is the same
-                    if (selectedUnit == 0) unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
-                    else unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentUnit.UnitId) || u.DimensionId.Equals(currentUnit.DimensionId)).ToList();
-
-                    if (selectedDataType == 0) dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
-                    else dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
-
-
-                }
-            }
 
             if (currentUnit != null)
             {
@@ -352,6 +330,37 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
 
+            if (currentDataAttrInfo != null)
+            {
+                // is the seletced currentDataAttrInfo a suggestion then overrigth all selected items
+                if (suggestions.Any(s => s.attributeName.Equals(currentDataAttrInfo.Name)))
+                {
+                    dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
+                    unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
+                    dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+
+                    if (lastSelection == "Suggestions")
+                    {
+                        currentUnit = unitInfos.FirstOrDefault(u => u.UnitId.Equals(dataAttributeInfos.First().UnitId));
+                        currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(dataAttributeInfos.First().DataTypeId));
+                    }
+
+                }
+                else
+                {
+
+                    dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
+
+                    //filtering units when data attr is selected, if id or dimension is the same
+                    if (selectedUnit == 0) unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
+                    else unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentUnit.UnitId) || u.DimensionId.Equals(currentUnit.DimensionId)).ToList();
+
+                    if (selectedDataType == 0) dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+                    else dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
+
+                }
+            }
+
 
 
             #endregion
@@ -371,109 +380,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //update row in the bus of the taskmanager
             UpdateRowInBus(model);
-
-            ///*
-            // * Find the selected unit and adjust the AssignedHeaderUnits
-            // * Also resets the Variable name
-            // * */
-            //if (selectFieldId != null && selectedUnitId != null && selectedUnitId > 0)
-            //{
-            //    List<UnitInfo> availableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
-            //    string[] headerFields = (string[])TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_HEADERFIELDS];
-
-            //    string currentHeader = headerFields.ElementAt((int)selectFieldId);
-            //    UnitInfo currentUnit = availableUnits.Where(u => u.UnitId == selectedUnitId).FirstOrDefault();
-
-            //    Tuple<int, string, UnitInfo> existingTuple = model.AssignedHeaderUnits.Where(t => t.Item1 == (int)selectFieldId).FirstOrDefault();
-            //    if (existingTuple != null)
-            //    {
-            //        model.AssignedHeaderUnits.Remove(existingTuple);
-            //    }
-            //    model.AssignedHeaderUnits.Add(new Tuple<int, string, UnitInfo>((int)selectFieldId, currentHeader, currentUnit));
-
-            //    //Set the Datatype to the first one suitable for the selected unit
-            //    if (currentUnit.SelectedDataTypeId < 0)
-            //    {
-            //        currentUnit.SelectedDataTypeId = currentUnit.DataTypeInfos.FirstOrDefault().DataTypeId;
-            //    }
-
-            //    //Filter the suggestions to only show those, that use the selected unit
-            //    int index = selectFieldId ?? -1;
-            //    List<EasyUploadSuggestion> suggestionList = null;
-            //    if (model.Suggestions.TryGetValue(index, out suggestionList))
-            //    {
-            //        if (suggestionList != null)
-            //        {
-            //            foreach (EasyUploadSuggestion suggestion in suggestionList)
-            //            {
-            //                suggestion.show = (suggestion.unitID == selectedUnitId);
-
-            //                if (selectedAttributeId > 0)
-            //                    suggestion.show = (suggestion.Id == selectedAttributeId);
-            //                else
-            //                {
-            //                    if (selectedDataTypeId > 0)
-            //                        suggestion.show = (suggestion.dataTypeID == selectedDataTypeId && suggestion.unitID == selectedUnitId);
-            //                    else
-            //                        suggestion.show = (suggestion.unitID == selectedUnitId);
-            //                }
-            //            }
-            //        }
-            //    }
-
-            //    //filter data attributes based on selection
-
-            //    if (model.AvailableDataAttributes != null)
-            //    {
-            //        if (selectedAttributeId > 0)
-            //            model.AvailableDataAttributes = model.AvailableDataAttributes.Where(d => d.Id.Equals(selectedAttributeId)).ToList();
-            //        else
-            //        {
-            //            if (selectedDataTypeId > 0)
-            //            {
-            //                if (selectedUnitId > 0) model.AvailableDataAttributes = model.AvailableDataAttributes.Where(d => d.DataTypeId.Equals(selectedDataTypeId) && d.UnitId.Equals(selectedUnitId)).ToList();
-            //                else model.AvailableDataAttributes = model.AvailableDataAttributes.Where(d => d.DataTypeId.Equals(selectedDataTypeId)).ToList();
-            //            }
-            //            else
-            //            {
-            //                if (selectedUnitId > 0)
-            //                    model.AvailableDataAttributes = model.AvailableDataAttributes.Where(d => d.UnitId.Equals(selectedUnitId)).ToList();
-            //            }
-            //        }
-            //    }
-            //}
-
-            //TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
-
-            //if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS))
-            //{
-            //    model.HeaderFields = (string[])TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_HEADERFIELDS];
-            //}
-
-            //if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS))
-            //{
-            //    model.AvailableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
-            //}
-
-
-            //Session["TaskManager"] = TaskManager;
-
-
-            ////create Model
-            //model.StepInfo = TaskManager.Current();
-
-            ////Submit default datatype id
-            ////Default unit should be "none" if it exists, otherwise just take the first unit
-            //UnitInfo currentUnitInfo = model.AvailableUnits.FirstOrDefault(u => u.Name.ToLower() == "none");
-            //if (currentUnitInfo != null)
-            //{
-            //    currentUnitInfo = (UnitInfo)currentUnitInfo.Clone();
-            //}
-            //else
-            //{
-            //    currentUnitInfo = (UnitInfo)model.AvailableUnits.FirstOrDefault().Clone();
-            //}
-
 
             return PartialView("Row", model);
 
@@ -684,116 +590,116 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        /// <summary>
-        /// Calcualtes the Levenshtein distance between two strings
-        /// </summary>
-        /// Source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.23
-        /// Explanation: https://en.wikipedia.org/wiki/Levenshtein_distance
-        private Int32 levenshtein(String a, String b)
-        {
+        ///// <summary>
+        ///// Calcualtes the Levenshtein distance between two strings
+        ///// </summary>
+        ///// Source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.23
+        ///// Explanation: https://en.wikipedia.org/wiki/Levenshtein_distance
+        //private Int32 levenshtein(String a, String b)
+        //{
 
-            if (string.IsNullOrEmpty(a))
-            {
-                if (!string.IsNullOrEmpty(b))
-                {
-                    return b.Length;
-                }
-                return 0;
-            }
+        //    if (string.IsNullOrEmpty(a))
+        //    {
+        //        if (!string.IsNullOrEmpty(b))
+        //        {
+        //            return b.Length;
+        //        }
+        //        return 0;
+        //    }
 
-            if (string.IsNullOrEmpty(b))
-            {
-                if (!string.IsNullOrEmpty(a))
-                {
-                    return a.Length;
-                }
-                return 0;
-            }
+        //    if (string.IsNullOrEmpty(b))
+        //    {
+        //        if (!string.IsNullOrEmpty(a))
+        //        {
+        //            return a.Length;
+        //        }
+        //        return 0;
+        //    }
 
-            Int32 cost;
-            Int32[,] d = new int[a.Length + 1, b.Length + 1];
-            Int32 min1;
-            Int32 min2;
-            Int32 min3;
+        //    Int32 cost;
+        //    Int32[,] d = new int[a.Length + 1, b.Length + 1];
+        //    Int32 min1;
+        //    Int32 min2;
+        //    Int32 min3;
 
-            for (Int32 i = 0; i <= d.GetUpperBound(0); i += 1)
-            {
-                d[i, 0] = i;
-            }
+        //    for (Int32 i = 0; i <= d.GetUpperBound(0); i += 1)
+        //    {
+        //        d[i, 0] = i;
+        //    }
 
-            for (Int32 i = 0; i <= d.GetUpperBound(1); i += 1)
-            {
-                d[0, i] = i;
-            }
+        //    for (Int32 i = 0; i <= d.GetUpperBound(1); i += 1)
+        //    {
+        //        d[0, i] = i;
+        //    }
 
-            for (Int32 i = 1; i <= d.GetUpperBound(0); i += 1)
-            {
-                for (Int32 j = 1; j <= d.GetUpperBound(1); j += 1)
-                {
-                    cost = Convert.ToInt32(!(a[i - 1] == b[j - 1]));
+        //    for (Int32 i = 1; i <= d.GetUpperBound(0); i += 1)
+        //    {
+        //        for (Int32 j = 1; j <= d.GetUpperBound(1); j += 1)
+        //        {
+        //            cost = Convert.ToInt32(!(a[i - 1] == b[j - 1]));
 
-                    min1 = d[i - 1, j] + 1;
-                    min2 = d[i, j - 1] + 1;
-                    min3 = d[i - 1, j - 1] + cost;
-                    d[i, j] = Math.Min(Math.Min(min1, min2), min3);
-                }
-            }
+        //            min1 = d[i - 1, j] + 1;
+        //            min2 = d[i, j - 1] + 1;
+        //            min3 = d[i - 1, j - 1] + cost;
+        //            d[i, j] = Math.Min(Math.Min(min1, min2), min3);
+        //        }
+        //    }
 
-            return d[d.GetUpperBound(0), d.GetUpperBound(1)];
+        //    return d[d.GetUpperBound(0), d.GetUpperBound(1)];
 
-        }
+        //}
 
-        /// <summary>
-        /// String-similarity computed with levenshtein-distance
-        /// </summary>
-        private double similarityLevenshtein(string a, string b)
-        {
-            if (a.Equals(b))
-            {
-                return 1.0;
-            }
-            else
-            {
-                if (!(a.Length == 0 || b.Length == 0))
-                {
-                    double sim = 1 - (levenshtein(a, b) / Convert.ToDouble(Math.Min(a.Length, b.Length)));
-                    return sim;
-                }
-                else
-                    return 0.0;
-            }
-        }
+        ///// <summary>
+        ///// String-similarity computed with levenshtein-distance
+        ///// </summary>
+        //private double similarityLevenshtein(string a, string b)
+        //{
+        //    if (a.Equals(b))
+        //    {
+        //        return 1.0;
+        //    }
+        //    else
+        //    {
+        //        if (!(a.Length == 0 || b.Length == 0))
+        //        {
+        //            double sim = 1 - (levenshtein(a, b) / Convert.ToDouble(Math.Min(a.Length, b.Length)));
+        //            return sim;
+        //        }
+        //        else
+        //            return 0.0;
+        //    }
+        //}
 
-        /// <summary>
-        /// String-similarity computed with Dice Coefficient
-        /// </summary>
-        /// Source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Dice%27s_coefficient#C.23
-        /// Explanation: https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
-        private double similarityDiceCoefficient(string a, string b)
-        {
-            //Workaround for |a| == |b| == 1
-            if (a.Length <= 1 && b.Length <= 1)
-            {
-                if (a.Equals(b))
-                    return 1.0;
-                else
-                    return 0.0;
-            }
+        ///// <summary>
+        ///// String-similarity computed with Dice Coefficient
+        ///// </summary>
+        ///// Source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Dice%27s_coefficient#C.23
+        ///// Explanation: https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+        //private double similarityDiceCoefficient(string a, string b)
+        //{
+        //    //Workaround for |a| == |b| == 1
+        //    if (a.Length <= 1 && b.Length <= 1)
+        //    {
+        //        if (a.Equals(b))
+        //            return 1.0;
+        //        else
+        //            return 0.0;
+        //    }
 
-            HashSet<string> setA = new HashSet<string>();
-            HashSet<string> setB = new HashSet<string>();
+        //    HashSet<string> setA = new HashSet<string>();
+        //    HashSet<string> setB = new HashSet<string>();
 
-            for (int i = 0; i < a.Length - 1; ++i)
-                setA.Add(a.Substring(i, 2));
+        //    for (int i = 0; i < a.Length - 1; ++i)
+        //        setA.Add(a.Substring(i, 2));
 
-            for (int i = 0; i < b.Length - 1; ++i)
-                setB.Add(b.Substring(i, 2));
+        //    for (int i = 0; i < b.Length - 1; ++i)
+        //        setB.Add(b.Substring(i, 2));
 
-            HashSet<string> intersection = new HashSet<string>(setA);
-            intersection.IntersectWith(setB);
+        //    HashSet<string> intersection = new HashSet<string>(setA);
+        //    intersection.IntersectWith(setB);
 
-            return (2.0 * intersection.Count) / (setA.Count + setB.Count);
-        }
+        //    return (2.0 * intersection.Count) / (setA.Count + setB.Count);
+        //}
 
         /// <summary>
         /// Combines multiple String-similarities with equal weight
@@ -803,8 +709,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<double> similarities = new List<double>();
             double output = 0.0;
 
-            similarities.Add(similarityLevenshtein(a, b));
-            similarities.Add(similarityDiceCoefficient(a, b));
+            var l = new NormalizedLevenshtein();
+            similarities.Add(l.Similarity(a, b));
+            var jw = new JaroWinkler();
+            similarities.Add(jw.Similarity(a, b));
+            var jac = new Jaccard();
+            similarities.Add(jac.Similarity(a, b));
 
             foreach (double sim in similarities)
             {
@@ -822,7 +732,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //Calculate similarity metric
             //Accept suggestion if the similarity is greater than some threshold
-            double threshold = 0.3;
+            double threshold = 0.4;
             IEnumerable<DataAttrInfo> suggestionAttrs = allDataAttributes.Where(att => similarity(att.Name, varName) >= threshold);
 
             //Order the suggestions according to the similarity
