@@ -394,8 +394,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             DataAttribute CurrentDataAttribute = new DataAttribute();
                             //If possible, map the chosen variable name, unit and datatype to an existing DataAttribute (Exact match)
                             DataAttribute existingDataAttribute = allDataAttributes.Where(da => da.Name.ToLower().Equals(TrimAndLimitString(header.SelectedDataAttribute.Name).ToLower()) &&
-                                                                                                da.DataType.Id == dataType.Id &&
-                                                                                                da.Unit.Id == CurrentSelectedUnit.Id).FirstOrDefault();
+                                                                                                da.Unit.Dimension == CurrentSelectedUnit.Dimension).FirstOrDefault();
                             if (existingDataAttribute != null)
                             {
                                 CurrentDataAttribute = existingDataAttribute;
@@ -403,7 +402,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             else
                             {
                                 //No matching DataAttribute => Create a new one
-                                CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(header.Name), header.Name, "", false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
+                                CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(header.Name), header.Name, header.SelectedDataAttribute.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
                             }
 
                             Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, header.Name, "", "", "");
@@ -693,14 +692,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             DataType datatype = null;
 
-                            if (mappedHeader.SelectedDataType.DataTypeId == -1)
-                            {
-                                datatype = dtm.Repo.Get(mappedHeader.SelectedUnit.DataTypeInfos.FirstOrDefault().DataTypeId);
-                            }
-                            else
-                            {
-                                datatype = dtm.Repo.Get(mappedHeader.SelectedDataType.DataTypeId);
-                            }
+                            datatype = dtm.Repo.Get(mappedHeader.SelectedDataType.DataTypeId);
 
                             string datatypeName = datatype.SystemType;
 

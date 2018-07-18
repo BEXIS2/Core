@@ -27,13 +27,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private EasyUploadTaskManager TaskManager;
 
-        private static string UNIT_ID = "UNIT_ID";
-        private static string ATTRIBUTE_ID = "ATTRIBUTE_ID";
-        private static string DATATYPE_ID = "DATATYPE_ID";
-
-        //
-        // GET: /DCM/SubmitSelectAreas/
-
         [HttpGet]
         public ActionResult Verification(int index)
         {
@@ -161,40 +154,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 headers = GetExcelHeaderFields(firstWorksheet, sheetFormat, selectedHeaderAreaJson);
 
-                if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS))
-                {
-                    TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS, headers);
-                }
-
-
                 suggestions = new List<EasyUploadSuggestion>();
 
-                foreach (string varName in headers)
+                if (!model.Rows.Any())
                 {
-                    #region suggestions
 
-                    //Add a variable to the suggestions if the names are similar
-                    suggestions = getSuggestions(varName, dataAttributeInfos);
+                    foreach (string varName in headers)
+                    {
+                        #region suggestions
 
-                    #endregion
+                        //Add a variable to the suggestions if the names are similar
+                        suggestions = getSuggestions(varName, dataAttributeInfos);
 
-                    //set rowmodel
-                    RowModel row = new RowModel(
-                        headers.IndexOf(varName),
-                        varName,
-                        null,
-                        null,
-                        null,
-                        suggestions,
-                        unitInfos,
-                        dataAttributeInfos,
-                        dataTypeInfos
-                        );
+                        #endregion
 
-                    model.Rows.Add(row);
+                        //set rowmodel
+                        RowModel row = new RowModel(
+                            headers.IndexOf(varName),
+                            varName,
+                            null,
+                            null,
+                            null,
+                            suggestions,
+                            unitInfos,
+                            dataAttributeInfos,
+                            dataTypeInfos
+                            );
 
-                    TaskManager.AddToBus(EasyUploadTaskManager.ROWS, model.Rows);
-                    TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, RowsToTuples());
+                        model.Rows.Add(row);
+
+                        TaskManager.AddToBus(EasyUploadTaskManager.ROWS, model.Rows);
+                        TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, RowsToTuples());
+                    }
                 }
 
                 TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, headers);
@@ -217,12 +208,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 TaskManager.Current().SetValid(false);
 
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS))
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ROWS))
                 {
-                    List<Tuple<int, String, UnitInfo>> mappedHeaderUnits = RowsToTuples();
-                    TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, mappedHeaderUnits);
+                    List<RowModel> rows = (List<RowModel>)TaskManager.Bus[EasyUploadTaskManager.ROWS];
+                    model.Rows = rows;
+                    bool allSelectionMade = true;
 
-                    TaskManager.Current().SetValid(true);
+                    foreach (var r in rows)
+                    {
+                        if (r.SelectedDataAttribute == null ||
+                            r.SelectedDataType == null ||
+                            r.SelectedUnit == null)
+                        {
+                            allSelectionMade = false;
+                            model.ErrorList.Add(new Error(ErrorType.Other, "Some Areas are not selected."));
+                            break;
+                        }
+                    }
+
+                    TaskManager.Current().SetValid(allSelectionMade);
                 }
                 else
                 {
@@ -253,6 +257,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult SaveSelection(int index, long selectedUnit, long selectedDataType, long selectedAttribute, string varName, string lastSelection)
         {
+            /**
+             * if selectedAttribute == -1 == Unknown
+                  selectedAttribute == -2 ==  Not found
+             * 
+             */
+
 
             List<DataTypeInfo> dataTypeInfos = new List<DataTypeInfo>();
             List<UnitInfo> unitInfos = new List<UnitInfo>();
@@ -289,7 +299,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             UnitInfo currentUnit = unitInfos.FirstOrDefault(u => u.UnitId == selectedUnit);
             DataTypeInfo currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(selectedDataType));
-            DataAttrInfo currentDataAttrInfo = dataAttributeInfos.FirstOrDefault(da => da.Id.Equals(selectedAttribute));
+
+            DataAttrInfo currentDataAttrInfo = null;
+            if (selectedAttribute > 0) currentDataAttrInfo = dataAttributeInfos.FirstOrDefault(da => da.Id.Equals(selectedAttribute));
+            if (selectedAttribute == -1) currentDataAttrInfo = new DataAttrInfo(-1, 0, 0, "Unknown", "Unknow", 1);
+            if (selectedAttribute == -2) currentDataAttrInfo = new DataAttrInfo(-2, 0, 0, "Not found", "Not found", 1); ;
 
             #endregion
 
@@ -325,31 +339,47 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (currentDataAttrInfo != null)
             {
                 // is the seletced currentDataAttrInfo a suggestion then overrigth all selected items
-                if (suggestions.Any(s => s.attributeName.Equals(currentDataAttrInfo.Name)))
+                if (currentDataAttrInfo.Id > 0)
                 {
-                    dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
-                    unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
-                    dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+                    #region existing selected dataset
 
-                    if (lastSelection == "Suggestions")
+                    if (suggestions.Any(s => s.attributeName.Equals(currentDataAttrInfo.Name)))
                     {
-                        currentUnit = unitInfos.FirstOrDefault(u => u.UnitId.Equals(dataAttributeInfos.First().UnitId));
-                        currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(dataAttributeInfos.First().DataTypeId));
+                        dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
+                        unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
+                        dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+
+                        if (lastSelection == "Suggestions")
+                        {
+                            currentUnit = unitInfos.FirstOrDefault(u => u.UnitId.Equals(dataAttributeInfos.First().UnitId));
+                            currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(dataAttributeInfos.First().DataTypeId));
+                        }
+
+                    }
+                    else
+                    {
+
+                        dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
+
+                        //filtering units when data attr is selected, if id or dimension is the same
+                        if (selectedUnit == 0) unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
+                        else unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentUnit.UnitId) || u.DimensionId.Equals(currentUnit.DimensionId)).ToList();
+
+                        if (selectedDataType == 0) dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+                        else dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
                     }
 
+                    #endregion existing selected dataset
                 }
                 else
+                if (currentDataAttrInfo.Id == -1) //unknow
                 {
-
-                    dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
-
-                    //filtering units when data attr is selected, if id or dimension is the same
-                    if (selectedUnit == 0) unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
-                    else unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentUnit.UnitId) || u.DimensionId.Equals(currentUnit.DimensionId)).ToList();
-
-                    if (selectedDataType == 0) dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
-                    else dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
-
+                    // do nothing
+                }
+                else
+                if (currentDataAttrInfo.Id == -2) //not found
+                {
+                    // do nothing
                 }
             }
 
