@@ -221,8 +221,7 @@ li.t-state-disabled .t-link
 .t-autocomplete,
 .t-datepicker .t-picker-wrap input
 {
-	-webkit-appearance: none;  /*Removes default chrome and safari style*/
-	-moz-appearance: none; /* Removes Default Firefox style*/
+	
 	width: 100px; /*Width of select dropdown to give space for arrow image*/
 	text-indent: 0.01px; /* Removes default arrow from firefox*/
 	text-overflow: "";  /*Removes default arrow from firefox*/
@@ -235,11 +234,18 @@ li.t-state-disabled .t-link
 }
 
 .bx-input,
-.bx-textarea,
-.t-autocomplete
-
+.t-autocomplete,
+.t-datepicker .t-picker-wrap input 
 {
-	width: 372px;
+    -webkit-appearance: none; /*Removes default chrome and safari style*/
+    -moz-appearance: none; /* Removes Default Firefox style*/
+}
+
+
+.bx-input,
+.bx-textarea,
+.t-autocomplete {
+    width: 372px;
 }
 
 .bx-input,
