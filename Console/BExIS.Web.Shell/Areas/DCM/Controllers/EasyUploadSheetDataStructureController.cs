@@ -15,6 +15,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public ActionResult SheetDataStructure(int index)
         {
+
+            /* SKIP BECAUSE ONLY ONE SELECTION IS POSSIBLE
+
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
             //set current stepinfo based on index
@@ -39,8 +42,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             model.StepInfo = TaskManager.Current();
+            */
 
-            return PartialView(model);
+            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            if (TaskManager != null)
+            {
+                // set SHEET_FORMAT
+                TaskManager.AddToBus(EasyUploadTaskManager.SHEET_FORMAT, "TopDown");
+                TaskManager.Current().SetValid(true);
+
+                if (TaskManager.Current().IsValid())
+                {
+                    TaskManager.GoToNext();
+                    Session["TaskManager"] = TaskManager;
+                    ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                    return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                }
+            }
+
+
+            return PartialView(new SelectSheetFormatModel());
 
         }
 

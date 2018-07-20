@@ -217,7 +217,9 @@ h2{
 }
 
 .bx-rpm-dropdown {
-    background:none;
+    background: none;
+    -webkit-appearance: none; /*Removes default chrome and safari style*/
+    -moz-appearance: none; /* Removes Default Firefox style*/
 }
 
 .bx-rpm-attributeheader {
