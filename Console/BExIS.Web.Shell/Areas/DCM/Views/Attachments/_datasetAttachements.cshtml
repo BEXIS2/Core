@@ -9,35 +9,24 @@
 
 @using Telerik.Web.Mvc.UI;
 @using System.Web.Configuration;
-@model BExIS.Modules.Dcm.UI.Models.Push.SendBigFilesToServerModel
+@model BExIS.Modules.Dcm.UI.Models.Attachments.DatasetFilesModel
 
 @{
     int mbMax = Model.FileSize;
     long datasetId = (long)(ViewBag.datasetId);
-    string fileExtListAsString = "";
-
-    foreach (string s in Model.SupportedFileExtentions)
-    {
-        if (fileExtListAsString != "")
-        {
-            fileExtListAsString += "," + s;
-        }
-        else
-        {
-            fileExtListAsString = s;
-        }
-    }
+    short fileIndex = 0;
 }
 <table>
     <tr>
-        <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;padding-left:20px">
-            <div id="upload_files">
+       @if (Model.UploadAccess)
+       { <td style="width:50%;border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;padding-left:20px">
+                     <div id="upload_files">
                 <h3></h3>
                 <div class="push_Header stepper">
-                    <h3>Send files to server</h3>
+                    <h3>Attach files to this dataset</h3>
                 </div>
                 <div class="push_Description stepper">
-                    <p>Please select one or more data files to be uploaded to the system.</p>
+                    <p>Please select one or more data files to be uploaded to this dataset. If you upload multiple files with one description, they all will have one description.</p>
                     <p>
                         Note:  Large data files may take several minutes or hours to transfer, depending on your network speed.<br />
                         The system is freezed until the file has been transfered completely. Please be patient!
@@ -46,38 +35,61 @@
                 </div>
 
                 @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
-                                         FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
+FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
                 {
-                    <div style="display:none"><span>Description:</span><input type="text" name="description" /></div>
-                    @(Html.Telerik().Upload()
-            .Name("attachments")
-            .Multiple(true)
-            .ShowFileList(true)
-            .ClientEvents(events => events
-                    .OnSelect("Push_OnSelect")
-                    //.OnComplete("OnComplete")
-                    .OnRemove("Push_OnRemove")
-                ))
-
-                    <br />
-
-                    <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled">Push</button>
-                }
+                    <div style="display:inline-block;width:50%"><span style="font-weight:bold">Description:</span><br /><textarea style="width:69%;" name="description" rows="4"></textarea></div><div style="display:inline-block;width:40%">
+                        <span style="font-weight:bold">Files:</span><br />
+                        @(Html.Telerik().Upload()
+           .Name("attachments")
+           .Multiple(true)
+           .ShowFileList(true)
+           .ClientEvents(events => events
+                   .OnSelect("Push_OnSelect")
+                   //.OnComplete("OnComplete")
+                   .OnRemove("Push_OnRemove")
+               ))  <br />
+                        <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled">Push</button>
+                    </div>   }
             </div>
-        </td><td style="width: 20pt; border: none" /><td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0;min-width:300px; vertical-align: top;">
-        <div id="view_files" >
-            <div id="FileList" class="bx-trunc-parent">
-                <h4>Your Files</h4>
-                <div style="width: 100%;overflow-x: hidden" >
-                    @foreach (BExIS.IO.BasicFileInfo x in Model.ServerFileList)
-                    {
-                        <div>@Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @x.Name }, new { @class = "bx-trash bx-function" }) @Html.ActionLink(@x.Name,"Download","Attachments",new { datasetId=@datasetId,fileName=@x.Name},null)</div>
-                    }
+          
+        </td>
+        <td style="width: 20pt; border: none" ></td> }
+        <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0;min-width:300px; vertical-align: top; padding-left: 20px;">
+            <div id="view_files">
+                <div id="FileList" class="bx-trunc-parent">
+                    <h3>Your Files</h3>
+                    <div style="width: 100%;overflow-x: hidden">
+                        <table>
+                            <thead>
+                                <tr><th>Id</th><th>File name</th><th>Type</th><th>Size</th><th></th></tr>
+                            </thead>
+                            <tbody>
+                               
+                                    @foreach (var serverFile in Model.ServerFileList)
+                                    {
+                                        fileIndex++;
+                                        <tr>
+                                            <td>@fileIndex</td>
+                                            <td style="max-width: 200px; overflow: hidden;">
+                                                @(Model.DownloadAccess && serverFile.Key.Uri !="delete" ?
+                                                        Html.ActionLink(@serverFile.Key.Name, "Download", "Attachments", new { datasetId = @datasetId, fileName = serverFile.Key.Name }, null)
+                                                        : Html.Raw(string.Format("<span>{0}</span><span id='deletedFile' style='color:#980000;padding-left:5px;' >{1}</span>", serverFile.Key.Name, serverFile.Key.Uri == "delete"? "[deleted]" : ""))
+                                                         )
+                                            </td>
+                                            <td class="filetype" fileName="@serverFile.Key.Name" style="font-size: 20pt;"></td>
+                                            <td class="fileSize" size="@serverFile.Key.FileSize"></td>
+                                            <td>@(Model.DeleteAccess ? Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @serverFile.Key.Name }, new { @class = "bx-trash bx-function" })
+                                                                     : Html.Raw(""))
+                                            @(string.IsNullOrEmpty(serverFile.Value) ? Html.Raw("") : Html.Raw("<span class='bx-info bx-function' data-toggle='tooltip' style='margin-left: 10px;' title='" + @serverFile.Value + "' ></span>"))</td>
+                                        </tr>
+                                    }
+                                
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            </div>
         </td>
-        
         <td></td>
     </tr>
 </table>
@@ -86,19 +98,19 @@
     function Push_OnSelect(e) {
 
 
-        var maxsize = '@mbMax';
+                                    var maxsize = '@mbMax';
 
-        if (e.files.length == 0) {
+                                    if (e.files.length == 0) {
             $('#push_submitBt').addClass("bx-disabled");
             $('#push_submitBt').attr("disabled", "disabled");
-        } else {
+                                    } else {
             $('#push_submitBt').removeClass("bx-disabled");
             $('#push_submitBt').removeAttr("disabled");
-        }
+                                    }
 
-        for (var i = 0; i < e.files.length; i = i + 1) {
+                                    for (var i = 0; i < e.files.length; i = i + 1) {
 
-            var file = e.files[i];
+                                        var file = e.files[i];
             @*//console.log(file.extension);
             if (!IsExtentionValid(file.extension)) {
 
@@ -107,36 +119,54 @@
                 return false;
             } else {*@
 
-                //alert(file.size);
-                //alert(maxsize);
+            //alert(file.size);
+            //alert(maxsize);
 
-                if (file.size > (maxsize * 1024)) {
+            if (file.size > (maxsize * 1024)) {
 
-                    alert("Max file : " +
-                        maxsize +
-                        " MB is supported. Please contact your administrator to upload bigger files.");
-                    e.preventDefault();
-                    return false;
-               // }
+                alert("Max file : " +
+                    maxsize +
+                    " MB is supported. Please contact your administrator to upload bigger files.");
+                e.preventDefault();
+                return false;
+                // }
             }
         }
     }
-
-    /*
-    Is Extention from selected file
-    in list of supported files
-    */
-    function IsExtentionValid(fileExtention) {
-        var extListAsString = '@fileExtListAsString';
-        var extList = extListAsString.split(',');
-
-        for (var i = 0; i < extList.length; i++) {
-            if (fileExtention.toLowerCase() == extList[i]) {
-                return true;
-            }
-        }
-
-        return false;
+    function bytesToSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    };
+    function Get_fontawesome(fileName) {
+        var extension = fileName.split('.').pop();
+        var picture = ["bmp", "dib", "gif", "jpg", "jpeg", "jpe", "jif", "jfif", "jfi", "png", "apng", "crw", "cr2", "raw", "rw2", "nef", "nrw", "orf", "tiff", "tif", "jp2", "j2c", "j2k", "jpx", "jpf", "j2c", "j2k", "webp", "svg", "svgz", "eps", "epsi", "epsf", "pct", "pict", "pic", "pcx", "psd", "pdd", "tga", "wmf", "emf", "wmz", "emz"];
+        var powerpoint = ["pot", "potm", "potm", "ppa", "ppam", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx"];
+        var sound = ["aa", "aac", "aax", "act", "aiff", "amr", "ape", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "iklax", "ivs", "mmf", "mp3", "mpc", "msv", "nsf", "ogg", "", "oga", "", "mogg", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "8svx"];
+        var text = ["tex", "txt"];
+        var video = ["3g2", "3gp", "avi", "flv", "h264", "m4v", "mkv", "mov", "mp4", "mpg", "mpeg", "rm", "swf", "vob", "wmv"];
+        var doc = ["doc", "docx", "rtf"];
+        var compress = ["7z", "arj", "deb", "pkg", "rar", "rpm", "tar.gz", "z", "zip"];
+        if (extension == "pdf")
+            fontAweSome = "file-pdf-o";
+        else if (picture.indexOf(extension) != -1)
+            fontAweSome = "file-photo-o";
+        else if (powerpoint.indexOf(extension) != -1)
+            fontAweSome = "file-powerpoint-o";
+        else if (sound.indexOf(extension) != -1)
+            fontAweSome = "file-sound-o";
+        else if (text.indexOf(extension) != -1)
+            fontAweSome = "file-text";
+        else if (video.indexOf(extension) != -1)
+            fontAweSome = "file-video-o";
+        else if (doc.indexOf(extension) != -1)
+            fontAweSome = "file-word-o";
+        else if (compress.indexOf(extension) != -1)
+            fontAweSome = "file-zip-o";
+        else
+            fontAweSome = "file";
+        return fontAweSome;
     }
 
     function Push_OnRemove(e) {
@@ -151,5 +181,14 @@
             $('#push_submitBt').removeAttr("disabled");
         }
     }
-
+    $(document).ready(function () {
+        $("td .filetype").each(function (index, element) {
+            ext = Get_fontawesome($(element).attr("fileName"))
+            $(element).append("<i class='fa fa-" + ext + "' ></i>")
+        });
+        $("td .fileSize").each(function (index, element) {
+            size = bytesToSize($(element).attr("size"))
+            $(element).append(size)
+        });
+    });
 </script>

@@ -128,8 +128,9 @@
                                 .HtmlAttributes(new { id = "prepare" });
                           tabs.Add()
                               .Text("Attachements")
-                              .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id })
-                              .Enabled(true);
+                              .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
+                              .Enabled(false)
+                              .HtmlAttributes(new { id = "attachements" });
 
                       })
                       .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
@@ -190,10 +191,12 @@
 			if (viewAccess === "True") {
 				$("li#primarydata").removeClass("t-state-disabled");
 				$("li#prepare").removeClass("t-state-disabled");
+				$("li#attachements").removeClass("t-state-disabled");
 			}
 
 			if (grantAccess === "True") {
-				$(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+			    $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+			    $("li#attachements").removeClass("t-state-disabled");
 			}
 
 			//console.log($("li", tabStrip.element));
