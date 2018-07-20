@@ -203,6 +203,7 @@
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
+    <Compile Include="Models\Attachments\DatasetFileModel.cs" />
     <Compile Include="Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Models\CreateDatasetViewModel.cs" />
     <Compile Include="Models\CreateDataset\MetadataEditorModel.cs" />
