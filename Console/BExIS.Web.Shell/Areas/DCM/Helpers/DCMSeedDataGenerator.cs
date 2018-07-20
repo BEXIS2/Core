@@ -120,6 +120,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
                 if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
 
+                Feature ImportDataFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Import Data"));
+                if (ImportDataFeature == null) ImportDataFeature = featureManager.Create("Import Data", "Easy way to load data into bexis", DataCollectionFeature);
+
+
                 Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
                 if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
 
@@ -139,7 +143,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Update Dataset Workflow
 
-                operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Submit", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitChooseUpdateMethod", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitGetFileInformation", "*", DatasetUploadFeature);
@@ -148,17 +151,24 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "SubmitSummary", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitValidation", "*", DatasetUploadFeature);
 
+                //Attachments
+                operationManager.Create("DCM", "Attachments", "*", DatasetUploadFeature);
+
+                //Load files to server
+                operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
+
+
                 #endregion
 
                 #region Easy Upload
 
-                operationManager.Create("DCM", "EasyUpload", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "EasyUploadSelectAFile", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "EasyUploadSelectAreas", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "EasyUploadSheetDataStructure", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "EasyUploadSheetSelectMetaData", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "EasyUploadSummary", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "EasyUploadVerification", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "EasyUpload", "*", ImportDataFeature);
+                operationManager.Create("DCM", "EasyUploadSelectAFile", "*", ImportDataFeature);
+                operationManager.Create("DCM", "EasyUploadSelectAreas", "*", ImportDataFeature);
+                operationManager.Create("DCM", "EasyUploadSheetDataStructure", "*", ImportDataFeature);
+                operationManager.Create("DCM", "EasyUploadSheetSelectMetaData", "*", ImportDataFeature);
+                operationManager.Create("DCM", "EasyUploadSummary", "*", ImportDataFeature);
+                operationManager.Create("DCM", "EasyUploadVerification", "*", ImportDataFeature);
 
                 #endregion
 
