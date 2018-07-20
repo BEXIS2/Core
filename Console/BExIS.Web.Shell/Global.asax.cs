@@ -1,5 +1,7 @@
 ﻿using BExIS.App.Bootstrap;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using System;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -92,5 +94,21 @@ namespace BExIS.Web.Shell
             Response.Headers.Remove("X-AspNetMvc-Version");
             Response.Headers.Remove("X-Powered-By");
         }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            HttpUnhandledException httpUnhandledException =
+               new HttpUnhandledException(Server.GetLastError().Message, Server.GetLastError());
+            //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
+
+            ErrorHelper.SendEmailWithErrors(
+                httpUnhandledException.GetHtmlErrorMessage()
+                );
+
+            ErrorHelper.Log(Server.GetLastError().Message);
+
+        }
+
+
     }
 }
