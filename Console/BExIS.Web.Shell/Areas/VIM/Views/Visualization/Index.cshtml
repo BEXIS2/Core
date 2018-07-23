@@ -19,29 +19,50 @@
     string deletedDatasets = String.Join(",", Model.deletedDatasets);
 }
 
+@section leftPane{
 
-<div>
-    <!--Drop Down List to select datasets by status-->
-    <select id="statusSelector" onchange="myChart()" style="width:200px;">
-        <option value="all">All Datasets</option>
-        <option value="created">Created Datasets</option>
-        <option value="checkedIn">CheckedIn Datasets</option>
-        <option value="checkedOut">Checkedout Datasets</option>
-        <option value="deleted">Deleted Datasets</option>
-    </select>
+    <div>
+        <!--Drop Down List to select datasets by status-->
+        <select id="statusSelector" onchange="myChart()" style="width:200px;">
+            <option value="all" label="Select a category">All Datasets</option>
+            <!--<option value="all">All Datasets</option>-->
+            <option value="created" label="Created Datasets">Created Datasets</option>
+            <option value="checkedIn" label="CheckedIn Datasets">CheckedIn Datasets</option>
+            <option value="checkedOut" label="CheckedOut Datasets">CheckedOut Datasets</option>
+            <option value="deleted" label="Deleted Datasets">Deleted Datasets</option>
+        </select>
+    </div>
+    <br />
+    <div>
+        <!--Drop Down List to select a Year-->
+        <select id="timeSelector" onchange="myChart()" style="width:200px;">
+            <!--this.value-->
+            <option value="all" label="Select a year">Select a year</option>
+        </select>
+    </div>
+    <br />
+    <!---------- Warning Message ---------->
+    <div id="Warning" style="color:gray"></div><br />
 
-    <!--Drop Down List to select a Year-->
-    <select id="timeSelector" onchange="myChart()" style="width:200px;">
-        <!--this.value-->
-        <option value="all">Select time</option>
-    </select>
-</div>
-<br />
-<!---------- Warning Message ---------->
-<div id="Warning" style="color:gray"></div><br />
+    <!---------- SLIDER ---------->
+    <br />
+    Range: <span id="rangeYear"></span>
+    <br /><br />
+    <div id="slider"></div>
+    <br />
+    <!--
+    <label for="minYear">Minimum Year: </label>
+    <input type="text" id="minYear" />
+    <label for="maxYear">Maximum Year: </label>
+    <input type="text" id="maxYear" />
+    <br />-->
+}
 <!---------- Chart is there ---------->
 <div id="columnchart_material" style="height: 400px;"></div><br />
 
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 <!--GOOGLE CHART-->
 <!--<script type="text/javascript" src="~/Scripts/googleChartLoader.js"></script>--> <!--Google Chart Library from uploaded script-->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!--Google Chart Library-->
@@ -58,12 +79,16 @@
         }
 
         var allD = '@allDatasets'.split(",");       //Count of All Datasets over Time
+        //console.log(allD);
         if (allD == '') {
             messageNoData("at all.");
         }
         else {
             //fill time selector
             var y = years();
+            var minYear = y[0];
+            var maxYear = y[y.length - 1];
+
             var timeSelector = document.getElementById("timeSelector");
             for (var i = 0; i < y.length; i++) {
                 var option = document.createElement("option");
@@ -71,6 +96,44 @@
                 option.value = y[i];
                 timeSelector.add(option);
             }
+            ///////  SLIDER
+            var outputSpan = $('#rangeYear');
+            var sliderElement = $('#slider');
+
+            //console.log("BEFOR: minYear, maxYear: " + minYear + ", " + maxYear);
+            //console.log("maxYear - minYear = " + (maxYear - minYear));
+            minYear = parseInt(minYear);
+            maxYear = parseInt(maxYear);
+            sliderElement.slider({
+                range: true,
+                min: minYear,
+                max: maxYear,
+                values: [minYear, maxYear],
+                slide: function (event, ui) {
+                    outputSpan.html(ui.values[0] + ' - ' + ui.values[1]);
+                    //console.log("ui.values: " + ui.values[0] + ' - ' + ui.values[1]);
+                },
+                stop: function (event, ui) {
+                    var minY = ui.values[0];
+                    var maxY = ui.values[1];
+                    if (ui.values[0] == ui.values[1]) {
+                        document.getElementById("timeSelector").value = minY;
+                        if (document.getElementById("timeSelector").value == "") {
+                            //console.log("NOW!");
+                            document.getElementById("timeSelector").value = "all";
+                        }
+
+                    }
+                    else {
+                        document.getElementById("timeSelector").value = "all";
+                    }
+
+                    myChart();
+                }
+            });
+
+            outputSpan.html(sliderElement.slider('values', 0) + ' - ' + sliderElement.slider('values', 1));
+            ////// END OF SLIDER
 
         google.charts.load('current', { 'packages': ['bar'] });
         google.charts.setOnLoadCallback(function () { myChart() });
@@ -92,6 +155,7 @@
             }
         }
 
+        //console.log("years: " + time);
         return (time);
     }
 
@@ -131,6 +195,8 @@
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
 
         myData[0] = ['Date', 'Count'];
+        var minY = $("#slider").slider("values")[0];
+        var maxY = $("#slider").slider("values")[1];
 
         for (var j = 0; j < t.length; ++j) {
             var y = t[j];
@@ -143,16 +209,19 @@
                     count += c;
                 }
             }
-            myData.push([y, count]);
+            if (y >= minY && y <= maxY) {
+                myData.push([y, count]);
+            }
         }
 
 
-        var firstY = t[0];
-        var lastY = t[t.length - 1];
-        if ((lastY - firstY) < 4) {
-            firstY = firstY - 1;
+        var firstY = minY; //t[0];
+        var lastY = maxY; //t[t.length - 1];
+        //console.log("y: " + firstY + ", " + lastY);
+        //if ((lastY - firstY) < 4) {
+          //  firstY = firstY - 1;
             myData = inYearRange(myData, firstY, lastY);
-        }
+        //}
         return (myData);
     }
 
@@ -165,14 +234,18 @@
         var myDeletedData = dataByYear("deleted");
 
         var myData = [];
-        myData[0] = ["Date", "CheckedIn", "Checkedout", "Deletet"];
+        myData[0] = ["Date", "CheckedIn", "CheckedOut", "Deletet"];
 
         for (var i = 1; i < myCheckedInData.length; ++i) {
             var year = myCheckedInData[i][0];
             var checkedIn = myCheckedInData[i][1];
             var checkedOut = myCheckedOutData[i][1];
             var deleted = myDeletedData[i][1];
-            myData.push([year, checkedIn, checkedOut, deleted]);
+            var minY = $("#slider").slider("values")[0];
+            var maxY = $("#slider").slider("values")[1];
+            if (year >= minY || year <= maxY) {
+                myData.push([year, checkedIn, checkedOut, deleted]);
+            }
         }
 
         return (myData);
@@ -246,7 +319,7 @@
         var status = document.getElementById('statusSelector').value;
 
         var myData = [];
-        myData[0] = ["Date", "CheckedIn", "Checkedout", "Deletet"];
+        myData[0] = ["Date", "CheckedIn", "CheckedOut", "Deletet"];
 
         for (var i = 1; i < myCheckedInData.length; ++i) {
             var year = myCheckedInData[i][0];
@@ -266,7 +339,7 @@
         for (var i = 0; i < dataset.length; i= i + 2) {
             var count = parseInt(dataset[i + 1].replace(']', ""));
             if (count > max) { max = count; }
-            console.log("count, max: "+ count+ ", "+max);
+            //console.log("count, max: "+ count+ ", "+max);
         }
         return (max);
     }
@@ -275,7 +348,7 @@
     //Create a title for the chart. Check if diagram is empty.
     //return title and subtitle for chart
     function createTitle(myData) {
-        console.log(myData);
+        //console.log(myData);
         var status = document.getElementById('statusSelector');
         var time = document.getElementById('timeSelector').value;
 
@@ -337,8 +410,8 @@
         var groupWidth = '30%';
 
         if (status == "all") {
-            width = 1000;
-            legendPosition = "top";
+            width = 950;
+            legendPosition = "right";
             groupWidth = '90%';
         }
 
