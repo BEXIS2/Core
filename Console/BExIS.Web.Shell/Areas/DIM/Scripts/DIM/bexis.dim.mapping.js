@@ -152,7 +152,6 @@ function enableAddicons(key) {
 
 }
 
-
 function updateSaveOptionOnNewContainer() {
     //alert("updateSaveOptionOnNewContainer");
     if ($("#emptySourceContainer").length === 0 && $("#emptyTargetContainer").length === 0) {
@@ -307,7 +306,7 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
     var ruleId = $(rule).attr("id");
     ////console.log(ruleId);
 
-    if (ruleId  !== null) {
+    if (ruleId !== null && ruleId !== undefined) {
         trId = ruleId.split("_")[0];
     }
    
@@ -686,8 +685,8 @@ function reloadAllConnections() {
 
     //jsPlumb.repaintEverything();
 
-    console.log("RELOAD CONNECTIONS");
-    console.log(connections);
+    //console.log("RELOAD CONNECTIONS");
+    //console.log(connections);
 
     // go to each parent
     for (var i = 0; i < connections.length; i++) {
@@ -828,6 +827,7 @@ function changeViewOfTransformationRule(conn) {
     var rule = findRuleFromConn(conn);
 
     $(rule).find(".toogle-icon").trigger("click");
+
 
     //setTimeout(function () {
     //    var ruleContent = $(rule).find(".mapping-container-transformation-rule-content")[0];
@@ -1102,13 +1102,20 @@ $(".mapping-container").dblclick(function () {
     var parent = $(this);
     var parentid = $(parent).attr("id");
 
-    if (parentid  !== "mapping_container_0") {
+    if (parentid !== "mapping_container_0") {
+
         $($(parent).find(".mapping-container-expand")).toggle();
         $($(parent).find(".mapping-container-collapse")).toggle();
 
         $($(parent).find(".jtk-overlay")).toggle();
 
-        reloadAllConnections();
+        setTimeout(reloadAllConnections, 300);
     }
     
 })
+
+function toggleArrows() {
+
+    $(".jtk-endpoint").toggle();
+    $(".jtk-connector").toggle();
+}
