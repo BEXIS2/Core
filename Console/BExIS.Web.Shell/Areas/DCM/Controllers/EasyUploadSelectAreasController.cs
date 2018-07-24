@@ -3,7 +3,6 @@ using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.UI.Helpers;
-using BExIS.Utils.Helpers;
 using BExIS.Utils.Models;
 using Newtonsoft.Json;
 using System;
@@ -11,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.Script.Serialization;
 using Vaiona.Logging;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -34,14 +32,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.RemoveExecutedStep(TaskManager.Current());
             }
 
-            
+
             //Use the given file and the given sheet format to create a json-table
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
             string jsonTable = "[]";
 
             SelectAreasModel model = new SelectAreasModel();
-            
+
             try
             {
                 //FileStream for the users file
@@ -70,7 +68,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //Save the worksheet uris to the model
                 model.SheetUriDictionary = EUEReader.GetWorksheetUris();
-                
+
                 if (!String.IsNullOrEmpty(jsonTable))
                 {
                     TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
@@ -90,7 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     fis.Close();
                 }
             }
-            
+
             // Check if the areas have already been selected, if yes, use them (Important when jumping back to this step)
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
             {
@@ -220,6 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS);
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS);
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS);
+            TaskManager.Bus.Remove(EasyUploadTaskManager.ROWS);
             #endregion
 
             #region Generate table for selected sheet
@@ -355,7 +354,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
 
                 //Get the worksheet uris and save them to the model
-                model.SheetUriDictionary = EUEReader.GetWorksheetUris();                
+                model.SheetUriDictionary = EUEReader.GetWorksheetUris();
             }
             catch (Exception ex)
             {

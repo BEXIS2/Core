@@ -1,17 +1,15 @@
 ﻿using BExIS.App.Bootstrap;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using System;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Vaiona.IoC;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
-using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc.Modularity;
-using BExIS.Web.Shell.Attributes;
-using BExIS.Web.Shell.Helpers;
 
 namespace BExIS.Web.Shell
 {
@@ -96,5 +94,21 @@ namespace BExIS.Web.Shell
             Response.Headers.Remove("X-AspNetMvc-Version");
             Response.Headers.Remove("X-Powered-By");
         }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            HttpUnhandledException httpUnhandledException =
+               new HttpUnhandledException(Server.GetLastError().Message, Server.GetLastError());
+            //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
+
+            ErrorHelper.SendEmailWithErrors(
+                httpUnhandledException.GetHtmlErrorMessage()
+                );
+
+            ErrorHelper.Log(Server.GetLastError().Message);
+
+        }
+
+
     }
 }
