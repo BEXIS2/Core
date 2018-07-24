@@ -1,7 +1,9 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
@@ -10,7 +12,7 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Sam.UI.Helpers
 {
-    public class FileManager: IDisposable
+    public class FileManager : IDisposable
     {
         private string catalogPath = "";
         private XElement catalog = null;
@@ -59,14 +61,14 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 throw new DirectoryNotFoundException($"Path is empty.");
 
             // decompose the path
-            List<string> tokens = path.Split('.').Skip(1).ToList(); // skip the root, as the catalog object already refers to the root
+            List<string> tokens = path.Split('|').Skip(1).ToList(); // skip the root, as the catalog object already refers to the root
 
             //if (tokens.Count <=1)
             //    throw new DirectoryNotFoundException($"Path {path.Replace(".", "/")} does not exist.");
 
             // the first token should be equal to the tenant name as in the root of the catalog
-            if (!path.Split('.').Take(1).Single().Equals(catalog.Attribute("name").Value, StringComparison.InvariantCultureIgnoreCase))
-                throw new DirectoryNotFoundException($"Path {path.Replace(".", "/")} is not correct.");
+            if (!path.Split('|').Take(1).Single().Equals(catalog.Attribute("name").Value, StringComparison.InvariantCultureIgnoreCase))
+                throw new DirectoryNotFoundException($"Path {path.Replace("|", "/")} is not correct.");
 
             var folderElement = catalog;
             for (int i = 0; i < tokens.Count(); i++)
@@ -116,15 +118,26 @@ namespace BExIS.Modules.Sam.UI.Helpers
             return children;
         }
 
+        public byte[] GetCompressedFile(string directoryPath)
+        {
+            using (ZipFile zip = new ZipFile())
+            {
+                zip.AddDirectory(directoryPath);
+                MemoryStream output = new MemoryStream();
+                zip.Save(output);
+                return output.ToArray();
+            }
+        }
+
         public void AddFolder(string name, string displayName, string description, string path)
         {
             XElement parent = this.GetElementByPath(path);
             if (parent == null)
-                throw new DirectoryNotFoundException($"Path {path.Replace(".", "/")} does not exist.");
+                throw new DirectoryNotFoundException($"Path {path.Replace("|", "/")} does not exist.");
             // ctrate the folder if does not exist
             try
             {
-                string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('.', Path.DirectorySeparatorChar), name);
+                string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('|', Path.DirectorySeparatorChar), name);
                 // Creates all directories and subdirectories as specified by path
                 Directory.CreateDirectory(physicalPath);
 
@@ -147,26 +160,26 @@ namespace BExIS.Modules.Sam.UI.Helpers
         {
             XElement parent = this.GetElementByPath(path);
             if (parent == null)
-                throw new DirectoryNotFoundException($"Path {path.Replace(".", "/")} does not exist.");
+                throw new DirectoryNotFoundException($"Path {path.Replace("|", "/")} does not exist.");
             // ctrate the folder if does not exist
             try
             {
-                string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('.', Path.DirectorySeparatorChar));
+                string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('|', Path.DirectorySeparatorChar));
                 // make sure all parent path components exist
                 Directory.CreateDirectory(physicalPath);
                 physicalPath = Path.Combine(physicalPath, name);
                 // check for file exsistence
-                if(File.Exists(physicalPath))
+                if (File.Exists(physicalPath))
                     throw new InvalidOperationException($"File '{name}' already exists.");
                 //save the file
                 file.SaveAs(physicalPath);
-
                 XElement fileElement = new XElement("Item",
                         new XAttribute("type", "FILE"),
-                        new XAttribute("name", name),
+                          new XAttribute("name", name),
                         new XAttribute("displayName", displayName),
                         new XAttribute("description", description),
-                        new XAttribute("mimeType", mimeType)
+                        new XAttribute("mimeType", mimeType),
+                        new XAttribute("size", file.ContentLength)
                     );
                 parent.Add(fileElement);
                 catalog.Save(catalogPath);
@@ -188,25 +201,63 @@ namespace BExIS.Modules.Sam.UI.Helpers
             {
                 if (element.Attribute("type").Value.Equals("FILE", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    File.Delete(path.Replace('.', Path.DirectorySeparatorChar));
+                    string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('|', Path.DirectorySeparatorChar));
+
+                    File.Delete(physicalPath);
                     element.Remove();
+                    catalog.Save(catalogPath);
                 }
                 else if (element.Attribute("type").Value.Equals("FOLDER", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Directory.Delete(path.Replace('.', Path.DirectorySeparatorChar));
+                    string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('|', Path.DirectorySeparatorChar));
+
+                    Directory.Delete(physicalPath);
                     element.Remove();
+                    catalog.Save(catalogPath);
 
                 }
             }
         }
+        /// <summary>
+        /// Deletes the file od the folder specified by path
+        /// </summary>
+        /// <param name="path">the full dor separated path from the tenant to the target element (file or folder)</param>
+        public void DeleteFileByXPath(string path)
+        {
+            var element = GetElementByPath(path, false);
+            if (element != null)
+            {
+                if (element.Attribute("type").Value.Equals("FILE", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path);
 
+                    File.Delete(physicalPath);
+                    element.Remove();
+                    catalog.Save(catalogPath);
+                }
+                else if (element.Attribute("type").Value.Equals("FOLDER", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Directory.Delete(path.Replace('|', Path.DirectorySeparatorChar));
+                    element.Remove();
+                    catalog.Save(catalogPath);
+                }
+            }
+        }
         /// <summary>
         /// Renames the file or folder specified by path to the new string specified by name
         /// </summary>
         /// <param name="path">the full dot separated path of the lement conatining the name</param>
         /// <param name="name">the name only component that should be replaced in the path and on the file system</param>
-        public void Rename(string path, string name)
-        { }
+        private void Rename(string path, string name)
+        {
+            var newFileNamePath = Path.Combine(AppConfiguration.DataPath, "tenantsData", Path.GetDirectoryName(path), name);
+            path = Path.Combine(AppConfiguration.DataPath, "tenantsData", path);
+            FileAttributes attr = System.IO.File.GetAttributes(path);
+            if (attr.HasFlag(FileAttributes.Directory))
+                Directory.Move(path, newFileNamePath);
+            else
+                File.Move(path, newFileNamePath);
+        }
 
         /// <summary>
         /// updates the file or folder specified by path using the information in model
@@ -216,7 +267,17 @@ namespace BExIS.Modules.Sam.UI.Helpers
         /// <remarks>Does not update the path, hence does not change the name.</remarks>
         public void Update(string path, FileOrFolderModel model)
         {
-
+            var element = GetElementByPath(path,false);
+            if (element == null)
+                throw new DirectoryNotFoundException($"Path {path.Replace("|", "/")} does not exist.");
+            if (!element.Attribute("name").Value.Equals(model.Name))
+            {
+                element.SetAttributeValue("name", model.Name);
+                Rename(model.XPath, model.Name);
+            }
+            element.SetAttributeValue("description", model.Description);
+            element.SetAttributeValue("displayName", model.DisplayName);
+            catalog.Save(catalogPath);
         }
         public void Dispose()
         {

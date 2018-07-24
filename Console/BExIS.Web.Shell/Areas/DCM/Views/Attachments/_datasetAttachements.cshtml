@@ -140,33 +140,12 @@ FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
     function Get_fontawesome(fileName) {
+        if (fileName == "FOLDER")
+            return "fa fa-folder-open";
         var extension = fileName.split('.').pop();
-        var picture = ["bmp", "dib", "gif", "jpg", "jpeg", "jpe", "jif", "jfif", "jfi", "png", "apng", "crw", "cr2", "raw", "rw2", "nef", "nrw", "orf", "tiff", "tif", "jp2", "j2c", "j2k", "jpx", "jpf", "j2c", "j2k", "webp", "svg", "svgz", "eps", "epsi", "epsf", "pct", "pict", "pic", "pcx", "psd", "pdd", "tga", "wmf", "emf", "wmz", "emz"];
-        var powerpoint = ["pot", "potm", "potm", "ppa", "ppam", "pps", "ppsm", "ppsx", "ppt", "pptm", "pptx"];
-        var sound = ["aa", "aac", "aax", "act", "aiff", "amr", "ape", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "iklax", "ivs", "mmf", "mp3", "mpc", "msv", "nsf", "ogg", "", "oga", "", "mogg", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "8svx"];
-        var text = ["tex", "txt"];
-        var video = ["3g2", "3gp", "avi", "flv", "h264", "m4v", "mkv", "mov", "mp4", "mpg", "mpeg", "rm", "swf", "vob", "wmv"];
-        var doc = ["doc", "docx", "rtf"];
-        var compress = ["7z", "arj", "deb", "pkg", "rar", "rpm", "tar.gz", "z", "zip"];
-        if (extension == "pdf")
-            fontAweSome = "file-pdf-o";
-        else if (picture.indexOf(extension) != -1)
-            fontAweSome = "file-photo-o";
-        else if (powerpoint.indexOf(extension) != -1)
-            fontAweSome = "file-powerpoint-o";
-        else if (sound.indexOf(extension) != -1)
-            fontAweSome = "file-sound-o";
-        else if (text.indexOf(extension) != -1)
-            fontAweSome = "file-text";
-        else if (video.indexOf(extension) != -1)
-            fontAweSome = "file-video-o";
-        else if (doc.indexOf(extension) != -1)
-            fontAweSome = "file-word-o";
-        else if (compress.indexOf(extension) != -1)
-            fontAweSome = "file-zip-o";
-        else
-            fontAweSome = "file";
-        return fontAweSome;
+        var relatedClass = "bx bx-file ";
+        return relatedClass + extension;
+
     }
 
     function Push_OnRemove(e) {
@@ -184,7 +163,7 @@ FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
     $(document).ready(function () {
         $("td .filetype").each(function (index, element) {
             ext = Get_fontawesome($(element).attr("fileName"))
-            $(element).append("<i class='fa fa-" + ext + "' ></i>")
+            $(element).append("<i class='" + ext + "' ></i>")
         });
         $("td .fileSize").each(function (index, element) {
             size = bytesToSize($(element).attr("size"))
