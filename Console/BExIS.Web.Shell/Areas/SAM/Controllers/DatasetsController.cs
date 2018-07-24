@@ -135,7 +135,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             foreach (Dataset ds in datasets)
             {
                 long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
-                long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
+                long noRows = 0; //ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
                 bool synced = false;
                 if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
                         && ds.StateInfo?.Timestamp != null
@@ -219,6 +219,31 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
+        public ActionResult CountRows(long id)
+        {
+            int number = 0;
+
+            DatasetManager dm = new DatasetManager();
+
+
+            try
+            {
+                if (id > 0)
+                {
+                    Dataset ds = dm.GetDataset(id);
+                    number = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0;
+                }
+
+                return Json(number, JsonRequestBehavior.AllowGet);
+
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+
+        }
+
         /// <summary>
         /// Shows the content of a specific dataset version
         /// </summary>
@@ -283,5 +308,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             return dateTime;
         }
+
+
+
+
     }
 }
