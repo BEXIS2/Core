@@ -831,17 +831,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
 
                     //create root mapping
-                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id,
+                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id,
                         metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
 
                     //create system mapping
                     LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System,
                         LinkElementComplexity.None);
 
-                    #region mapping ABCD BASIC to System Keys
+                    #region mapping GFBIO to System Keys
 
-                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null, mappingManager);
-                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null, mappingManager);
+                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(gbifRoot, system, 0, null, null, mappingManager);
+                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, gbifRoot, 0, null, null, mappingManager);
 
                     // create mapping for paryttypes
 
