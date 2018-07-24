@@ -167,7 +167,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
                     fileManger.AddFile(file.FileName, model.DisplayName, model.Description, model.MimeType, model.Path, file);
-                    return Json(new { success = true });
+                    //return Json(new { success = true });
+                    return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {

@@ -279,6 +279,7 @@
     <Content Include="Views\Files\_CreateFolder.cshtml" />
     <Content Include="Views\Files\_UploadFile.cshtml" />
     <Content Include="Views\Files\_EditFileFolder.cshtml" />
+    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
