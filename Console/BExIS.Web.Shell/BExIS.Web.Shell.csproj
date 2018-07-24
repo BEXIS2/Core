@@ -591,6 +591,7 @@
     <Content Include="Themes\Default\Layouts\_Layout.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Themes\Default\Styles\bexis-font-awesome-file-extension.css" />
     <Content Include="Themes\Default\Styles\bexis-jquery-ui.css" />
     <Content Include="Themes\Default\Styles\bexis-metadata.css" />
     <Content Include="Themes\Default\Styles\bexis-telerik.css" />

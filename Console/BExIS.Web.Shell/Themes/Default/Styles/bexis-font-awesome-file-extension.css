@@ -1,0 +1,35 @@
+﻿.fa-file {
+    content: "\f15b";
+}
+
+    .fa-file .pdf {
+        content: "\f1c1";
+    }
+
+    .fa-file .bmp, .dib, .gif, .jpg, .jpeg, .jpe, .jif, .jfif, .jfi, .png, .apng, .crw, .cr2, .raw, .rw2, .nef, .nrw, .orf, .tiff, .tif, .jp2, .j2c, .j2k, .jpx, .jpf, .j2c, .j2k, .webp, .svg, .svgz, .eps, .epsi, .epsf, .pct, .pict, .pic, .pcx, .psd, .pdd, .tga, .wmf, .emf, .wmz, .emz {
+        content: "\f1c5";
+    }
+
+    .fa-file .pot, .potm, .potm, .ppa, .ppam, .pps, .ppsm, .ppsx, .ppt, .pptm, .pptx {
+        content: "\f1c4";
+    }
+
+    .fa-file .aa, .aac, .aax, .act, .aiff, .amr, .ape, .au, .awb, .dct, .dss, .dvf, .flac, .gsm, .iklax, .ivs, .mmf, .mp3, .mpc, .msv, .nsf, .ogg, .oga, .mogg, .opus, .ra, .rm, .raw, .sln, .tta, .vox, .wav, .wma, .wv, .8svx {
+        content: "\f1c7";
+    }
+
+    .fa-file .tex, .txt {
+        content: "\f1c9";
+    }
+
+    .fa-file .3g2, .3gp, .avi, .flv, .h264, .m4v, .mkv, .mov, .mp4, .mpg, .mpeg, .rm, .swf, .vob, .wmv {
+        content: "\f1c8";
+    }
+
+    .fa-file .doc, .docx, .rtf {
+        content: "\f1c2";
+    }
+
+    .fa-file .7z, .arj, .deb, .pkg, .rar, .rpm, .tar.gz, .z, .zip {
+        content: "\f1c6";
+    }

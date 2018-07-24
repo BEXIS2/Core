@@ -2506,3 +2506,40 @@
 .fa-medium:before {
     content: "\f23a";
 }
+
+/*File extension icons*/
+.bx-file:before {
+       content: "\f15b";
+}
+
+    .bx-file.pdf:before {
+        content: "\f1c1";
+    }
+
+    .bx-file.bmp:before, .dib:before, .gif:before, .jpg:before, .jpeg:before, .jpe:before, .jif:before, .jfif:before, .jfi:before, .png:before, .apng:before, .crw:before, .cr2:before, .raw:before, .rw2:before, .nef:before, .nrw:before, .orf:before, .tiff:before, .tif:before, .jp2:before, .j2c:before, .j2k:before, .jpx:before, .jpf:before, .j2c:before, .j2k:before, .webp:before, .svg:before, .svgz:before, .eps:before, .epsi:before, .epsf:before, .pct:before, .pict:before, .pic:before, .pcx:before, .psd:before, .pdd:before, .tga:before, .wmf:before, .emf:before, .wmz:before, .emz:before {
+        content: "\f1c5";
+    }
+
+    .bx-file.pot:before, .potm:before, .potm:before, .ppa:before, .ppam:before, .pps:before, .ppsm:before, .ppsx:before, .ppt:before, .pptm:before, .pptx:before {
+        content: "\f1c4";
+    }
+
+    .bx-file.aa:before, .aac:before, .aax:before, .act:before, .aiff:before, .amr:before, .ape:before, .au:before, .awb:before, .dct:before, .dss:before, .dvf:before, .flac:before, .gsm:before, .iklax:before, .ivs:before, .mmf:before, .mp3:before, .mpc:before, .msv:before, .nsf:before, .ogg:before, .oga:before, .mogg:before, .opus:before, .ra:before, .rm:before, .raw:before, .sln:before, .tta:before, .vox:before, .wav:before, .wma:before, .wv:before, .8svx:before {
+        content: "\f1c7";
+    }
+
+    .bx-file.tex:before, .txt:before {
+        content: "\f15c";
+    }
+
+    .bx-file.avi:before, .flv:before, .h264:before, .m4v:before, .mkv:before, .mov:before, .mp4:before, .mpg:before, .mpeg:before, .rm:before, .swf:before, .vob:before, .wmv:before {
+        content: "\f1c8";
+    }
+
+    .bx-file.doc:before, .docx:before, .rtf:before {
+        content: "\f1c2";
+    }
+
+    .bx-file.zip:before, .arj:before, .deb:before, .pkg:before, .rar:before, .rpm:before, .tar.gz:before, .z:before, .zip:before {
+        content: "\f1c6";
+    }
