@@ -134,21 +134,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var filemNames = "";
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
-            var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-            foreach (var file in attachments)
+           // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
-                var fileName = Path.GetFileName(file.FileName);
-                filemNames += fileName.ToString() + ",";
-                var dataPath = AppConfiguration.DataPath;
-                if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
-                    Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
-                var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
-                file.SaveAs(destinationPath);
-                AddFileInContentDiscriptor(datasetVersion, fileName, description);
+                DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);                
+                foreach (var file in attachments)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    filemNames += fileName.ToString() + ",";
+                    var dataPath = AppConfiguration.DataPath;
+                    if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
+                        Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
+                    var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+                    file.SaveAs(destinationPath);
+                    AddFileInContentDiscriptor(datasetVersion, fileName, description);
+                }
+                dm.EditDatasetVersion(datasetVersion, null, null, null);
+                dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
             }
-            dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
-            dm.EditDatasetVersion(datasetVersion, null, null, null);
-            dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
             dm?.Dispose();
         }
 
