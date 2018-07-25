@@ -29,11 +29,11 @@
 	<table>
 		<tr>
             <td>
-                <h1>@Model.Title</h1>
+                <h1 title="Id: @Model.Id">@Model.Title</h1>
                 <br />
-                <p><b>Id: </b> @Model.Id</p>
+                <p>@*<b>Id: </b>*@ @Model.Id</p>
                 <p><b>Version: </b> @Model.Version</p>
-                <p><b>Latest: </b> @Model.LatestVersion</p>
+                @*<p><b>Latest: </b> @Model.LatestVersion</p>*@
             </td>
 			<td>
 				<div id="preloaderContainer" />
