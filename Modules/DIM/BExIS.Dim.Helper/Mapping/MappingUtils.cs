@@ -20,7 +20,7 @@ namespace BExIS.Dim.Helpers.Mapping
         public static bool ExistMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
         {
             try
-            { 
+            {
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
@@ -31,7 +31,7 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Source.Type.Equals(sourceType)
                         ).ToList();
 
-                    
+
                     return mappings.Any();
                 }
             }
@@ -41,7 +41,7 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        
+
 
         public static List<Entities.Mapping.Mapping> GetMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
         {
@@ -57,7 +57,7 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Source.Type.Equals(sourceType)
                         ).ToList();
 
-                    if(mappings.Any()) return mappings;
+                    if (mappings.Any()) return mappings;
 
                     return new List<Entities.Mapping.Mapping>();
                 }
@@ -228,7 +228,7 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        public static bool ExistMappingWithParty(long targetId, LinkElementType targetType,long partyId)
+        public static bool ExistMappingWithParty(long targetId, LinkElementType targetType, long partyId)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace BExIS.Dim.Helpers.Mapping
                         .Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
-                            m.Parent!=null &&
+                            m.Parent != null &&
                             m.Parent.Source.ElementId.Equals(partyId)
                         ).ToList();
 
@@ -317,10 +317,10 @@ namespace BExIS.Dim.Helpers.Mapping
                                 partyManager.PartyCustomAttributeValueRepository.Get()
                                     .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
                                     .FirstOrDefault();
-                            
+
                             List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
                             string placeHolderName = attrValue.CustomAttribute.Name;
-                            
+
                             mask = setOrReplace(mask, regExResultList, placeHolderName);
 
                             resultObject.Value = mask;
@@ -410,12 +410,12 @@ namespace BExIS.Dim.Helpers.Mapping
                 {
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
-      
+
                     //Select all mappings where the target is mapped to a party custom attr with the party id 
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
                         .Where(m =>
                             m.Target.ElementId.Equals(targetElementId) &&
-                            m.Target.Type.Equals(targetElementType) && 
+                            m.Target.Type.Equals(targetElementType) &&
                             m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
                             m.Parent != null
                         );
@@ -425,7 +425,7 @@ namespace BExIS.Dim.Helpers.Mapping
                         if (mapping != null)
                         {
                             PartyCustomAttribute pca = uow.GetReadOnlyRepository<PartyCustomAttribute>().Get(mapping.Source.ElementId);
-                            if (pca != null && pca.IsMain==true) return true;
+                            if (pca != null && pca.IsMain == true) return true;
                         }
                     }
                     return false;
@@ -559,7 +559,9 @@ namespace BExIS.Dim.Helpers.Mapping
                         if (mask.Contains(completePlaceHolderName))
                             mask = mask.Replace(completePlaceHolderName, r);
                         else
-                            mask += r;
+                        {
+                            mask = string.IsNullOrEmpty(mask) ? mask = r : mask += " " + r;
+                        }
                     }
 
                     return mask;

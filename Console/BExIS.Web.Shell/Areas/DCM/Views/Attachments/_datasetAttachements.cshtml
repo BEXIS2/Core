@@ -1,0 +1,173 @@
+﻿@section Information
+{
+    Each dataset has additional support files
+    <p>
+        More information
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
+    </p>
+}
+
+@using Telerik.Web.Mvc.UI;
+@using System.Web.Configuration;
+@model BExIS.Modules.Dcm.UI.Models.Attachments.DatasetFilesModel
+
+@{
+    int mbMax = Model.FileSize;
+    long datasetId = (long)(ViewBag.datasetId);
+    short fileIndex = 0;
+}
+<table>
+    <tr>
+       @if (Model.UploadAccess)
+       { <td style="width:50%;border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;padding-left:20px">
+                     <div id="upload_files">
+                <h3></h3>
+                <div class="push_Header stepper">
+                    <h3>Attach files to this dataset</h3>
+                </div>
+                <div class="push_Description stepper">
+                    <p>Please select one or more data files to be uploaded to this dataset. If you upload multiple files with one description, they all will have one description.</p>
+                    <p>
+                        Note:  Large data files may take several minutes or hours to transfer, depending on your network speed.<br />
+                        The system is freezed until the file has been transfered completely. Please be patient!
+                    </p>
+                    <p>Maximum file size: @mbMax MB</p>
+                </div>
+
+                @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
+FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
+                {
+                    <div style="display:inline-block;width:50%"><span style="font-weight:bold">Description:</span><br /><textarea style="width:69%;" name="description" rows="4"></textarea></div><div style="display:inline-block;width:40%">
+                        <span style="font-weight:bold">Files:</span><br />
+                        @(Html.Telerik().Upload()
+           .Name("attachments")
+           .Multiple(true)
+           .ShowFileList(true)
+           .ClientEvents(events => events
+                   .OnSelect("Push_OnSelect")
+                   //.OnComplete("OnComplete")
+                   .OnRemove("Push_OnRemove")
+               ))  <br />
+                        <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled">Push</button>
+                    </div>   }
+            </div>
+          
+        </td>
+        <td style="width: 20pt; border: none" ></td> }
+        <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0;min-width:300px; vertical-align: top; padding-left: 20px;">
+            <div id="view_files">
+                <div id="FileList" class="bx-trunc-parent">
+                    <h3>Your Files</h3>
+                    <div style="width: 100%;overflow-x: hidden">
+                        <table>
+                            <thead>
+                                <tr><th>Id</th><th>File name</th><th>Type</th><th>Size</th><th></th></tr>
+                            </thead>
+                            <tbody>
+                               
+                                    @foreach (var serverFile in Model.ServerFileList)
+                                    {
+                                        fileIndex++;
+                                        <tr>
+                                            <td>@fileIndex</td>
+                                            <td style="max-width: 200px; overflow: hidden;">
+                                                @(Model.DownloadAccess && serverFile.Key.Uri !="delete" ?
+                                                        Html.ActionLink(@serverFile.Key.Name, "Download", "Attachments", new { datasetId = @datasetId, fileName = serverFile.Key.Name }, null)
+                                                        : Html.Raw(string.Format("<span>{0}</span><span id='deletedFile' style='color:#980000;padding-left:5px;' >{1}</span>", serverFile.Key.Name, serverFile.Key.Uri == "delete"? "[deleted]" : ""))
+                                                         )
+                                            </td>
+                                            <td class="filetype" fileName="@serverFile.Key.Name" style="font-size: 20pt;"></td>
+                                            <td class="fileSize" size="@serverFile.Key.FileSize"></td>
+                                            <td>@(Model.DeleteAccess ? Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @serverFile.Key.Name }, new { @class = "bx-trash bx-function" })
+                                                                     : Html.Raw(""))
+                                            @(string.IsNullOrEmpty(serverFile.Value) ? Html.Raw("") : Html.Raw("<span class='bx-info bx-function' data-toggle='tooltip' style='margin-left: 10px;' title='" + @serverFile.Value + "' ></span>"))</td>
+                                        </tr>
+                                    }
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td></td>
+    </tr>
+</table>
+<script type="text/javascript">
+
+    function Push_OnSelect(e) {
+
+
+                                    var maxsize = '@mbMax';
+
+                                    if (e.files.length == 0) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+                                    } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
+                                    }
+
+                                    for (var i = 0; i < e.files.length; i = i + 1) {
+
+                                        var file = e.files[i];
+            @*//console.log(file.extension);
+            if (!IsExtentionValid(file.extension)) {
+
+                alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
+                e.preventDefault();
+                return false;
+            } else {*@
+
+            //alert(file.size);
+            //alert(maxsize);
+
+            if (file.size > (maxsize * 1024)) {
+
+                alert("Max file : " +
+                    maxsize +
+                    " MB is supported. Please contact your administrator to upload bigger files.");
+                e.preventDefault();
+                return false;
+                // }
+            }
+        }
+    }
+    function bytesToSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    };
+    function Get_fontawesome(fileName) {
+        if (fileName == "FOLDER")
+            return "fa fa-folder-open";
+        var extension = fileName.split('.').pop();
+        var relatedClass = "bx bx-file ";
+        return relatedClass + extension;
+
+    }
+
+    function Push_OnRemove(e) {
+
+        var tmp = $(".t-upload .t-file");
+        if (tmp.length <= 1) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
+        }
+    }
+    $(document).ready(function () {
+        $("td .filetype").each(function (index, element) {
+            ext = Get_fontawesome($(element).attr("fileName"))
+            $(element).append("<i class='" + ext + "' ></i>")
+        });
+        $("td .fileSize").each(function (index, element) {
+            size = bytesToSize($(element).attr("size"))
+            $(element).append(size)
+        });
+    });
+</script>

@@ -15,7 +15,7 @@
     <RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
     <AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -56,6 +56,9 @@
       <HintPath>..\..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="F23.StringSimilarity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\F23.StringSimilarity.3.0.0\lib\netstandard1.0\F23.StringSimilarity.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -79,11 +82,17 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
@@ -162,6 +171,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AttachmentsController.cs" />
     <Compile Include="Controllers\CreateDatasetController.cs" />
     <Compile Include="Controllers\EasyUploadController.cs" />
     <Compile Include="Controllers\EasyUploadSelectAFileController.cs" />
@@ -193,6 +203,7 @@
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
+    <Compile Include="Models\Attachments\DatasetFileModel.cs" />
     <Compile Include="Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Models\CreateDatasetViewModel.cs" />
     <Compile Include="Models\CreateDataset\MetadataEditorModel.cs" />
@@ -473,13 +484,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\Bpp211_dcm.pubxml" />
-    <None Include="Properties\PublishProfiles\DCM FTP 2001.pubxml" />
-    <None Include="Properties\PublishProfiles\DCM.pubxml" />
-    <None Include="Properties\PublishProfiles\DCM211.pubxml" />
-    <None Include="Properties\PublishProfiles\DCM21105.pubxml" />
-    <None Include="Properties\PublishProfiles\DCM21108.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
@@ -555,6 +559,10 @@
     <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeUsageViewOffline.cshtml" />
     <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
+    <Content Include="Views\Attachments\Index.cshtml" />
+    <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
+    <Content Include="Views\EasyUploadVerification\Row.cshtml" />
+    <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

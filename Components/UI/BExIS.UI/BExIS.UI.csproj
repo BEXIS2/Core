@@ -49,6 +49,7 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -64,6 +65,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
@@ -72,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\BexisUIHelper.cs" />
+    <Compile Include="Helpers\ErrorHelper.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Wizard\AbstractTaskManager.cs" />
     <Compile Include="Wizard\ActionInfo.cs" />
@@ -83,6 +90,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>

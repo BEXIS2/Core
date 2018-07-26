@@ -5,6 +5,7 @@
 @{
     string id = /*Model.Type +*/ "_"+Model.ElementId+"_"+ @Model.Position+"_"+@Model.Name;
     string c = "le-simple-" + @Model.Position;
+
 }
 
 
@@ -36,17 +37,19 @@
                     </div>
                 </td>
                 <td class="le-simple-selector-container">
+                    <button class="fa fa-info bx-button small bx-disabled" disabled title="Is type of: @Model.Type.ToString()"></button>
                     <span class="bx bx-next bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
                 </td>
             }
             else
             {
                 <td class="le-simple-selector-container">
+                    <button class="fa fa-info bx-button small bx-disabled" disabled title="Is type of: @Model.Type.ToString()"></button>
                     <span class="bx bx-previous bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
                 </td>
                 <td class="le-simple-header-td">
                     <div class="le-simple-header">
-                        @Model.Name
+                         @Model.Name 
                     </div>
                     <div class="le-simple-path" value="@Model.XPath">
                         @Model.XPath.Replace("/", "/ ")
@@ -58,3 +61,10 @@
  
    
 </div>
+<style type="text/css">
+    .bx-info {
+        cursor: help !important;
+        border:none;
+    }
+
+</style>

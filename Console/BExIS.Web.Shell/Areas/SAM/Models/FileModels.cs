@@ -40,24 +40,56 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Path { get; set; }
         public string Type { get; protected set; }
 
+        /// <summary>
+        /// Length of file in bytes
+        /// Folders have size of zero
+        /// </summary>
+        [Display(Name = "Size")]
+        public long Size { get; set; }
+
         public string XPath
         {
-            get { return !string.IsNullOrEmpty(Path) ? string.Concat("./", Path.Replace(".", "/")) : string.Empty; }
+
+
+            get
+            {
+                //if (Type == "FILE" && Name.Contains(".") && !string.IsNullOrEmpty(Path))
+                //{
+                //    var path = Path.Replace(Name, "").Replace(".","/") + Name;
+                //    return string.Concat("./", path);
+                //}
+                //else
+                    return !string.IsNullOrEmpty(Path) ? string.Concat("./", Path.Replace("|", "/")) : string.Empty;
+            }
         }
 
         public static string InferPath(XElement element)
         {
-            return string.Join(".", (from el in element.AncestorsAndSelf() select el.Attribute("name").Value).Reverse());
-            
+            return string.Join("|", (from el in element.AncestorsAndSelf() select el.Attribute("name").Value).Reverse());
+
             // debug version
             //string path = string.Empty;
             //IEnumerable<XElement> anssestorReverseList = from el in element.AncestorsAndSelf() select el;
             //path = string.Join(".", anssestorReverseList.ToList().Select(e => e.Name));
             //return path;
         }
+        public static FileOrFolderModel Convert(XElement element)
+        {
+            
+            string name = element.Attribute("name").Value;
+            string displayName = element.Attribute("displayName").Value;
+            string description = element.Attribute("description").Value;
 
+            return new FolderModel()
+            {
+                Name = name,
+                DisplayName = string.IsNullOrWhiteSpace(displayName) ? name : displayName,
+                Description = string.IsNullOrWhiteSpace(description) ? displayName : description,
+                Path = InferPath(element)
+            };
+        }
     }
-    public class FileModel: FileOrFolderModel
+    public class FileModel : FileOrFolderModel
     {
         public FileModel()
         {
@@ -78,21 +110,22 @@ namespace BExIS.Modules.Sam.UI.Models
             string displayName = element.Attribute("displayName").Value;
             string description = element.Attribute("description").Value;
             string mimeType = element.Attribute("mimeType").Value;
-
+            string size = element.Attribute("size").Value;
             return new FileModel()
             {
                 Name = name,
                 DisplayName = string.IsNullOrWhiteSpace(displayName) ? name : displayName,
                 Description = string.IsNullOrWhiteSpace(description) ? displayName : description,
                 MimeType = string.IsNullOrWhiteSpace(mimeType) ? "application/text" : mimeType,
-                Path = FileOrFolderModel.InferPath(element)
+                Path = FileOrFolderModel.InferPath(element),
+                Size = string.IsNullOrWhiteSpace(size) ? 0 : long.Parse(size)
             };
         }
 
 
     }
 
-    public class FolderModel: FileOrFolderModel
+    public class FolderModel : FileOrFolderModel
     {
         public FolderModel()
         {
@@ -117,7 +150,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 DisplayName = string.IsNullOrWhiteSpace(displayName) ? name : displayName,
                 Description = string.IsNullOrWhiteSpace(description) ? displayName : description,
                 Path = FileOrFolderModel.InferPath(element),
-                Children = includeChildren == true? ConvertChildren(element.Elements()): new List<FolderModel>(), //(from c in element.Elements().Select(p=> ConvertChild(p)).ToList() where (c != null) select c).ToList(), // recursively converts all files and folders belonging to the current folder.
+                Children = includeChildren == true ? ConvertChildren(element.Elements()) : new List<FolderModel>(), //(from c in element.Elements().Select(p=> ConvertChild(p)).ToList() where (c != null) select c).ToList(), // recursively converts all files and folders belonging to the current folder.
             };
         }
 

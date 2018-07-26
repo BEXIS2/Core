@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Ionic.Zip.1.9.1.8\lib\Ionic.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -208,13 +212,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM FTP 2001.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
-    <None Include="Properties\PublishProfiles\SAM21108.pubxml" />
+    <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -230,6 +229,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\sam-datasets.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
@@ -274,6 +274,8 @@
     <Content Include="Views\Files\Index.cshtml" />
     <Content Include="Views\Files\_CreateFolder.cshtml" />
     <Content Include="Views\Files\_UploadFile.cshtml" />
+    <Content Include="Views\Files\_EditFileFolder.cshtml" />
+    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

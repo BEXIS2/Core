@@ -26,13 +26,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
-
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
-
- 
 
             DashboardModel model = GetDefaultDashboardModel();
 
@@ -42,8 +38,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["CurrentPage"] = 1;
 
             #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
 
+            List<HeaderItem> headerItems = new List<HeaderItem>();
 
             HeaderItem headerItem = new HeaderItem()
             {
@@ -103,7 +99,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
-
             headerItem = new HeaderItem()
             {
                 Name = "Grant",
@@ -114,12 +109,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ViewData["DefaultHeaderList"] = headerItems;
 
-            #endregion
-
+            #endregion header
 
             model.MyDatasets = CreateDataTable(headerItems);
 
-            #endregion
+            #endregion mydatasetmodel
 
             return View(model);
         }
@@ -144,7 +138,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return model;
         }
 
-
         #region mydatasets
 
         [GridAction]
@@ -153,7 +146,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="ShowMyDatasets"/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns>model</returns>
         public ActionResult _CustomMyDatasetBinding()
         {
@@ -163,23 +156,21 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["CurrentPage"] = 1;
 
             #region header
+
             List<HeaderItem> headerItems = CreateHeaderItems();
             ViewData["DefaultHeaderList"] = headerItems;
 
-            #endregion
+            #endregion header
 
             model = CreateDataTable(headerItems);
-
 
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             UserManager userManager = new UserManager();
             EntityManager entityManager = new EntityManager();
 
-
             try
             {
-
                 var entity = entityManager.FindByName("Dataset");
                 var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
@@ -234,6 +225,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 return View(new GridModel(model));
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             finally
             {
                 datasetManager.Dispose();
@@ -243,13 +238,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-
         /// <summary>
         /// create the model of My Dataset table
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns>model</returns>
         public ActionResult ShowMyDatasets()
         {
@@ -260,10 +254,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["PageSize"] = 10;
             ViewData["CurrentPage"] = 1;
 
-
             #region header
-            List<HeaderItem> headerItems = new List<HeaderItem>();
 
+            List<HeaderItem> headerItems = new List<HeaderItem>();
 
             HeaderItem headerItem = new HeaderItem()
             {
@@ -323,7 +316,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
-
             headerItem = new HeaderItem()
             {
                 Name = "Grant",
@@ -334,7 +326,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ViewData["DefaultHeaderList"] = headerItems;
 
-            #endregion
+            #endregion header
 
             model = CreateDataTable(headerItems);
 
@@ -346,7 +338,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns>model</returns>
         public ActionResult ShowMyDatasetsInFullPage()
         {
@@ -357,13 +349,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["PageSize"] = 10;
             ViewData["CurrentPage"] = 1;
 
-
             #region header
+
             List<HeaderItem> headerItems = CreateHeaderItems();
 
             ViewData["DefaultHeaderList"] = headerItems;
 
-            #endregion
+            #endregion header
 
             model = CreateDataTable(headerItems);
 
@@ -431,7 +423,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 DataType = "String"
             };
             headerItems.Add(headerItem);
-
 
             headerItem = new HeaderItem()
             {
@@ -521,7 +512,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        #endregion
+        #endregion mydatasets
 
         #region requests & decisions
 
@@ -534,11 +525,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (this.IsAccessible("SAM", "Requests", "Requests"))
             {
-
                 var view = this.Render("SAM", "Requests", "Requests", new RouteValueDictionary()
                 {
                     { "entityId", id }
- 
                 });
 
                 return Content(view.ToHtmlString(), "text/html");
@@ -551,7 +540,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (this.IsAccessible("SAM", "Requests", "Decisions"))
             {
-
                 var view = this.Render("SAM", "Requests", "Decisions", new RouteValueDictionary()
                 {
                     { "entityId", id }
@@ -563,6 +551,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("Error"); ;
         }
 
-        #endregion
+        #endregion requests & decisions
     }
 }

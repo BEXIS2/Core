@@ -44,7 +44,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         public List<XmlNode> generalXmlNodeList = new List<XmlNode>();
         public List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
 
-        public bool includePrimaryData = true;
+        public bool includePrimaryData = false;
 
         private EntityManager entityManager;
         private EntityPermissionManager entityPermissionManager;
@@ -368,7 +368,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             ///
             /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
             ///
-            dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id)? "TRUE": "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+            dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id) ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
             foreach (XmlNode facet in facetNodes)
             {
@@ -490,7 +490,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 if (!category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
                 {
-                  
+
                     String multivalued = category.Attributes.GetNamedItem("multivalued").Value;
                     String storing = category.Attributes.GetNamedItem("store").Value;
 
@@ -523,10 +523,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     }
 
                 }
+                else
+                {
+                    //if the primary data index exist in the config - this means the primary data should be indexed
+                    includePrimaryData = true;
+                }
             }
 
             indexPrimaryData(id, categoryNodes, ref dataset, docId, metadataDoc);
-            
+
             List<XmlNode> generalNodes = generalXmlNodeList;
 
             foreach (XmlNode general in generalNodes)
@@ -576,7 +581,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         private void indexPrimaryData(long id, List<XmlNode> categoryNodes, ref Document dataset, string docId, XmlDocument metadataDoc)
         {
-            
+
 
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();

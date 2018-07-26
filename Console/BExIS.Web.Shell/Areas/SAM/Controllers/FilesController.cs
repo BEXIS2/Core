@@ -6,10 +6,13 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
@@ -94,6 +97,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
                 fileManger.Delete(path);
+                //fileManger.DeleteFileByXPath(path.Replace("./",""));
                 return Json(new { success = true });
             }
             catch (Exception ex)
@@ -106,6 +110,39 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             FileModel model = new FileModel() { Name = "empty", Path = path, MimeType = "application/text" };
             return PartialView("_UploadFile", model);
+        }
+
+        public ActionResult DownloadFile(string path)
+        {
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path);
+
+            FileAttributes attr =System.IO.File.GetAttributes(physicalPath);
+            if (attr.HasFlag(FileAttributes.Directory))
+            {
+                var folderName = Path.GetFileName(physicalPath);
+                var output = fileManger.GetCompressedFile(physicalPath);
+              
+                return File(output, "application/zip", folderName + ".zip");
+            }
+            else
+                return File(physicalPath, MimeMapping.GetMimeMapping(physicalPath), Path.GetFileName(physicalPath));
+        }
+        
+        public ActionResult EditFileFolder(string path)
+        {
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            var element=fileManger.GetElementByPath(path,false);
+            return PartialView("_EditFileFolder", FileOrFolderModel.Convert(element));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditFileFolder(FileOrFolderModel fileOrFolderModel)
+        {
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            fileManger.Update(fileOrFolderModel.Path, fileOrFolderModel);
+            return PartialView("_EditFileFolder");
         }
 
         [HttpPost]
@@ -130,7 +167,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
                     fileManger.AddFile(file.FileName, model.DisplayName, model.Description, model.MimeType, model.Path, file);
-                    return Json(new { success = true });
+                    //return Json(new { success = true });
+                    return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {

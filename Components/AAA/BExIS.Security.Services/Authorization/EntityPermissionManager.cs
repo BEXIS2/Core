@@ -245,10 +245,13 @@ namespace BExIS.Security.Services.Authorization
 
                         var entityParty = partyRepository.Query(m => m.PartyType.Title == entityRepository.Get(entityId).Name && m.Name == key.ToString()).FirstOrDefault();
 
-                        var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
-                        var partyRelationships = partyRelationshipRepository.Query(m => m.SourceParty.Id == userParty.Id && m.TargetParty.Id == entityParty.Id);
+                        if (userParty != null && entityParty != null)
+                        {
+                            var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
+                            var partyRelationships = partyRelationshipRepository.Query(m => m.SourceParty.Id == userParty.Id && m.TargetParty.Id == entityParty.Id);
 
-                        rights.AddRange(partyRelationships.Select(m => m.Permission));
+                            rights.AddRange(partyRelationships.Select(m => m.Permission));
+                        }
                     }
 
                     var user = subject as User;

@@ -28,13 +28,13 @@
 <div>
 	<table>
 		<tr>
-            <td>
-                <h1>@Model.Title</h1>
-                <br />
-                <p><b>Id: </b> @Model.Id</p>
-                <p><b>Version: </b> @Model.Version</p>
-                <p><b>Latest: </b> @Model.LatestVersion</p>
-            </td>
+			<td>
+				<h1 title="Id: @Model.Id">@Model.Title</h1>
+				<br />
+				<p>@*<b>Id: </b>*@ @Model.Id</p>
+				<p><b>Version: </b> @Model.Version</p>
+				@*<p><b>Latest: </b> @Model.LatestVersion</p>*@
+			</td>
 			<td>
 				<div id="preloaderContainer" />
 			</td>
@@ -91,13 +91,13 @@
 					  .Items(tabs =>
 					  {
 
-		  //ToDo Recator Modularity -> load metadata from from dcm
+						  //ToDo Recator Modularity -> load metadata from from dcm
 
-		  tabs.Add()
-							  .Text("Metadata")
-							  .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
-							  .HtmlAttributes(new { id = "metadata" })
-							  .Enabled(false);
+						  tabs.Add()
+											  .Text("Metadata")
+											  .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
+											  .HtmlAttributes(new { id = "metadata" })
+											  .Enabled(false);
 
 						  tabs.Add()
 							  .Text("Primary Data")
@@ -126,7 +126,11 @@
 								.LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
 								.Enabled(false)
 								.HtmlAttributes(new { id = "prepare" });
-
+						  tabs.Add()
+							  .Text("Attachments")
+							  .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
+							  .Enabled(false)
+							  .HtmlAttributes(new { id = "attachements" });
 
 					  })
 					  .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
@@ -187,10 +191,12 @@
 			if (viewAccess === "True") {
 				$("li#primarydata").removeClass("t-state-disabled");
 				$("li#prepare").removeClass("t-state-disabled");
+				$("li#attachements").removeClass("t-state-disabled");
 			}
 
 			if (grantAccess === "True") {
 				$(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+				$("li#attachements").removeClass("t-state-disabled");
 			}
 
 			//console.log($("li", tabStrip.element));

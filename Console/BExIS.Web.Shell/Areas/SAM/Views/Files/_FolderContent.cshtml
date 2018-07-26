@@ -9,15 +9,25 @@
                   })
                   .Columns(columns =>
                   {
-                  columns.Bound(m => m.Type).Width(60).Filterable(false); // should be an icon based on type and mime
-                  columns.Bound(m => m.Name).Width(250);
-                  columns.Bound(m => m.DisplayName).Width(250);
-                  columns.Bound(m => m.Description).Width(400); // should take a wider width
-                                                                //columns.Command(p => p.Delete());
-                  columns.Template(@<text><button type="button" class="bx bx-grid-function bx-trash"></button></text>)
-                                .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Path #>\" title=\"Delete\"></button>")
+                  columns.Template(
+                        @<text>
+<span><script>Get_fontawesome((item.Type == "FOLDER" ? "FOLDER" : item.Name), this)</script>
+</span>
+                        </text>).Width(30).Title("").ClientTemplate("<span fileName='<#= Type=='FOLDER' ? 'FOLDER':Name #>'></span>");
+
+columns.Bound(m => m.Type).Width(60).Filterable(false); // should be an icon based on type and mime
+//columns.Bound(m => m.Name).Width(100);
+columns.Bound(m => m.DisplayName).Width(130);
+columns.Bound(m => m.Size).Width(70).HtmlAttributes(new { fileSize = 0 });// this attribute helps us to convert bytes into a userfriendly file size in grid_files_onDataBound function
+
+columns.Bound(m => m.Description).Width(350); // should take a wider width
+                                              //columns.Command(p => p.Delete());
+columns.Template(@<text><button type="button" class="bx bx-grid-function bx-trash"></button>
+<button type="button" class="bx bx-grid-function bx-download"></button>
+    <button type = "button" class="bx bx-grid-function bx-rename"></button></text>)
+                                .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Path #>\" title=\"Delete\" onClick='removeFile(this)'></button><button type=\"button\" class=\"bx bx-grid-function bx-download\" value=\"<#= XPath #>\" title=\"Download\" onClick='downloadFile(this)'></button><button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Path #>\" title=\"Rename\" onClick='editFile(this)'></button>")
                                 .Width(110);
-            })
+                  })
 .DataBinding(dataBinding => dataBinding
     .Ajax()
     .Select("FolderContent_Select", "Files", new { path = Model })

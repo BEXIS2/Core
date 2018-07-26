@@ -3,11 +3,14 @@
 
 @model BExIS.Modules.Sam.UI.Models.FileModel
 
-@using (Ajax.BeginForm("UploadFile", "Files", 
+@*@using (Ajax.BeginForm("UploadFile", "Files", 
     new { id = "uploadFile" }, 
     new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_uploadFile", OnSuccess = "uploadFile_onSuccess" }, 
     new { enctype = "multipart/form-data" }
  ))
+{*@
+@using (Html.BeginForm("UploadFile", "Files", new { area = "Sam" },
+                                     FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -31,7 +34,7 @@
             </td>
             <td>
                 @Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.Description)
+             
             </td>
         </tr>
         <tr>
