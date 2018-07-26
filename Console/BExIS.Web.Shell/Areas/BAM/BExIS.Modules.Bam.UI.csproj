@@ -183,7 +183,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Properties\PublishProfiles\DCM FTP 2001.pubxml.user" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PartyHelper.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
@@ -198,7 +197,15 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\DCM FTP 2001.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM FTP 2001.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM-Pub.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\BAM21108.pubxml" />
+    <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP211_bam.pubxml" />
+    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

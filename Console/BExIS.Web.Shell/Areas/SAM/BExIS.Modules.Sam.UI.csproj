@@ -193,7 +193,6 @@
     <Content Include="Content\Images\Help\users.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Properties\PublishProfiles\SAM FTP 2001.pubxml.user" />
     <Content Include="Sam.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -209,7 +208,13 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\Bpp211_Sam.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\SAM FTP 2001.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM21108.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

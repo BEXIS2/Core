@@ -170,7 +170,6 @@
     <Content Include="Content\Images\Help\main_menu.png" />
     <Content Include="Content\Images\Help\manage_data_type.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Properties\PublishProfiles\RPM FTP 2001.pubxml.user" />
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -178,6 +177,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
     <Content Include="Rpm.Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -216,7 +216,12 @@
     <Content Include="Scripts\draggabilly.pkgd.js" />
     <Content Include="Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
-    <None Include="Properties\PublishProfiles\RPM FTP 2001.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP211_Rpm.pubxml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\RPM.pubxml" />
+    <None Include="Properties\PublishProfiles\RPM21105.pubxml" />
+    <None Include="Properties\PublishProfiles\RPM21108.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

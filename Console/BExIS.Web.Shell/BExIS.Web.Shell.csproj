@@ -451,7 +451,6 @@
     <Content Include="General.Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Properties\PublishProfiles\Website 2001.pubxml.user" />
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.grid.backup.js" />
     <Content Include="Scripts\autosize\autosize.js" />
@@ -474,6 +473,18 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
+    <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
+    <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
+    <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP211.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP21105.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP21108.pubxml" />
+    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\SITE.pubxml" />
     <None Include="Properties\PublishProfiles\Website 2001.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\handsontable\handsontable.full.js" />
@@ -483,6 +494,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <None Include="Properties\PublishProfiles\T1.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
