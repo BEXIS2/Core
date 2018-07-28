@@ -36,11 +36,30 @@ namespace BExIS.Modules.Sam.UI.Controllers
             fileManger.Load();
             return View(new List<FolderModel>() { fileManger.TreeRoot });
         }
+        public ActionResult FileList()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("File Manager", this.Session.GetTenant());
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            fileManger.Load();
+            return View(new List<FolderModel>() { fileManger.TreeRoot });
+        }
+
+       
 
         public ActionResult FolderContent(string path)
         {
-            return PartialView("_FolderContent", path);
+            return PartialView( "_FolderContent", path);
         }
+
+
+        public ActionResult FolderContentAsList(string path)
+        {
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            List<FileOrFolderModel> rows = fileManger.GetDirectChildrenByFolderPath(path);
+            ViewBag.rootFolder = FolderModel.Convert(fileManger.GetElementByPath(path, true));
+            return PartialView("_FolderContentAsList" , rows);
+        }
+
 
         public ActionResult FolderTree()
         {
