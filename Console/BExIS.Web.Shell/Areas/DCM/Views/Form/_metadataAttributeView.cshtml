@@ -22,24 +22,25 @@
 
     foreach (char letter in Model.DisplayName)
     {
-        if (Model.DisplayName.First() == letter)
-        {
-            tmp = letter;
-            displayName += letter;
-        }
-        else
-        {
-            if (Char.IsUpper(letter) && Char.IsLower(tmp))
-            {
-                displayName += " " + letter;
-            }
-            else
-            {
-                displayName += letter;
-            }
+        // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+        displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
 
-            tmp = letter;
+        // split at " "
+        string[] wordList = displayName.Split(new char[0]);
+
+        // lowercase all words, except of uppercase abbreviations (e.g. URL)  
+        for (int i = 0; i < wordList.Length; i++)
+        {
+            if (wordList[i].ToUpper() != wordList[i])
+            {
+                wordList[i] = wordList[i].ToLower();
+            }
         }
+
+        displayName = String.Join(" ", wordList);
+
+        // Make first char uppercase
+        displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);`
     }
 
 }
