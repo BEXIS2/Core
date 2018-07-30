@@ -2,6 +2,8 @@
 @using BExIS.Modules.Dcm.UI.Models
 @using BExIS.Utils.WebHelpers
 @using Telerik.Web.Mvc.UI
+@using System.Text.RegularExpressions
+
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idInput = id + "_Input";
@@ -20,28 +22,26 @@
     string displayName = "";
     char tmp = ' ';
 
-    foreach (char letter in Model.DisplayName)
+    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+    displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
+
+    // split at " "
+    string[] wordList = displayName.Split(new char[0]);
+
+    // lowercase all words, except of uppercase abbreviations (e.g. URL)  
+    for (int i = 0; i < wordList.Length; i++)
     {
-        // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
-        displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
-
-        // split at " "
-        string[] wordList = displayName.Split(new char[0]);
-
-        // lowercase all words, except of uppercase abbreviations (e.g. URL)  
-        for (int i = 0; i < wordList.Length; i++)
+        if (wordList[i].ToUpper() != wordList[i])
         {
-            if (wordList[i].ToUpper() != wordList[i])
-            {
-                wordList[i] = wordList[i].ToLower();
-            }
+            wordList[i] = wordList[i].ToLower();
         }
-
-        displayName = String.Join(" ", wordList);
-
-        // Make first char uppercase
-        displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);`
     }
+
+    displayName = String.Join(" ", wordList);
+
+    // Make first char uppercase
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+    
 
 }
 
