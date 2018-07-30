@@ -69,5 +69,10 @@
             title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
             controller="Form" action="SetAdditionalFunctions"
             extends="" />
+
+    <Export tag="internalApi" id="StartMetadataEditor"
+                title="load Metadata Form" description="load Metadata Form" icon=""
+                controller="Form" action="StartMetadataEditor"
+                extends="" />
   </Exports>
 </Manifest>
