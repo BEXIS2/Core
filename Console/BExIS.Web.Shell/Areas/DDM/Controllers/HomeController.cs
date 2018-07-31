@@ -241,7 +241,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel); 
+            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel);
         }
 
         //+++++++++++++++++++++ TreeView onSelect Action +++++++++++++++++++++++++++

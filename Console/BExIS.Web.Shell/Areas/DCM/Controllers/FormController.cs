@@ -179,6 +179,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
 
+
+            //save with errors?
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+            {
+                Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+            {
+                Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.LOCKED))
+            {
+                ViewData["Locked"] = (bool)TaskManager.Bus[CreateTaskmanager.LOCKED];
+            }
+
             return PartialView("MetadataEditor", Model);
         }
 
@@ -313,6 +330,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
+
+            //save with errors?
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+            {
+                Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+            {
+                Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
 
             return PartialView("MetadataEditor", Model);
         }
@@ -476,8 +504,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = show;
 
+
+
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, false);
+
             var stepInfoModelHelpers = new List<StepModelHelper>();
 
             foreach (var stepInfo in TaskManager.StepInfos)
@@ -534,9 +567,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
 
+            //save with errors?
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+            {
+                Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+            {
+                Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
+
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
+
 
             //set title
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
@@ -615,6 +660,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //set addtionaly functions
                 Model.Actions = getAddtionalActions();
+
+                //save with errors?
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+                {
+                    Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+                }
+
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+                {
+                    Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+                }
             }
 
             return View("MetadataEditor", Model);
@@ -2258,7 +2314,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // WORKAROUND: return always an empty list
 
 
-            return new JsonResult { Data = new SelectList(x.Select(e => e.Value+" ("+e.PartyId+")")) };
+            return new JsonResult { Data = new SelectList(x.Select(e => e.Value + " (" + e.PartyId + ")")) };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
@@ -2358,7 +2414,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return stepModelHelper;
         }
 
-        
+
 
         #endregion Attribute
 
