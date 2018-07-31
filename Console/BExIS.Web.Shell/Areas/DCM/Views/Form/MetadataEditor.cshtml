@@ -438,9 +438,15 @@ function OnSuccess(e) {
                 if (errors.length == 0) {
                     callSubmitAction(true);
                 } else {
-                    if (
-                        confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
-                        callSubmitAction(false);
+
+                    console.log('@Model.SaveWithErrors');
+
+                    if ('@Model.SaveWithErrors' == "True" ||'@Model.SaveWithErrors' == "true") {
+
+                        console.log("inside");
+                        if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
+                            callSubmitAction(false);
+                        }
                     }
                 }
             })
