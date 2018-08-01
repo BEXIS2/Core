@@ -32,6 +32,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
+            Session["Controller"] = "Home";
+
 
             try
             {
@@ -69,6 +71,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
+            Session["Controller"] = "Home";
+
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 

@@ -1,0 +1,51 @@
+﻿@using Telerik.Web.Mvc.UI;
+
+@model BExIS.Utils.Models.Property
+
+@{
+   string controller = Session["Controller"].ToString();
+
+}
+
+<div>
+<br />
+@Model.DisplayTitle
+<br />           
+@(Html.Telerik().RangeSlider<double>()
+                .Name(Model.DataSourceKey)
+                .Min(1)//.Min(item.min)
+                .Max(200)//.Max(item.max)
+                .SmallStep(1)
+                .LargeStep(1)
+                .ClientEvents(events => events
+                       .OnChange("onChangeRangeSlider")
+                   )
+
+        )
+</div>
+ <script type="text/javascript">
+     function onChangeRangeSlider(e) {
+         var start = e.values[0];
+         var end = e.values[1];
+         var id = e.currentTarget.id;
+
+
+         $.post('@Url.Action("FilterByRangeSlider", @controller, new RouteValueDictionary { { "area", "ddm" } })', { start: start, end: end, parent: id }, function (response) {
+             // alert(response);
+             $(".searchBreadcrumbNavigation").html(response);
+         });
+
+         $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+             $("#resultContent").html(response);
+
+         })
+
+         $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+             $("#searchTreeView").html(response);
+         })
+        
+
+         refreshGrid();
+     }
+
+</script>

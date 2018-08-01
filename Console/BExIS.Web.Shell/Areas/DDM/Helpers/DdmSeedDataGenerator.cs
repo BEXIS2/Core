@@ -80,7 +80,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 // I had to remove the feature to get dashboard running without DDM feature permissions.
                 // We have to think about how we can fix it in a long run. Maybe "DDM/Home" is not the proper
                 // place for dashboard!?
-                operationManager.Create("DDM", "PublicSearch", "*", SearchFeature);
+                operationManager.Create("DDM", "PublicSearch", "*");
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
                 operationManager.Create("DDM", "Data", "*", SearchFeature);
 

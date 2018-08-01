@@ -415,22 +415,22 @@
     <Content Include="Views\Data\_structuredDataView.cshtml" />
     <Content Include="Views\Data\_unstructuredDataView.cshtml" />
     <Content Include="Views\Help\Index.cshtml" />
-    <Content Include="Views\Home\_dropBoxView.cshtml" />
-    <Content Include="Views\Home\_metaDataResultGridView.cshtml" />
+    <Content Include="Views\Shared\_dropBoxView.cshtml" />
+    <Content Include="Views\Shared\_metaDataResultGridView.cshtml" />
     <Content Include="Views\Dashboard\_myDatasetGridView.cshtml" />
-    <Content Include="Views\Home\_radioButtonsView.cshtml" />
-    <Content Include="Views\Home\_rangeSliderView.cshtml" />
-    <Content Include="Views\Home\_resultGridView.cshtml" />
-    <Content Include="Views\Home\_resultListElementView.cshtml" />
-    <Content Include="Views\Home\_resultListView.cshtml" />
-    <Content Include="Views\Home\_searchBreadcrumb.cshtml" />
-    <Content Include="Views\Home\_searchContent.cshtml" />
-    <Content Include="Views\Home\_searchFacets.cshtml" />
-    <Content Include="Views\Home\_searchHeader.cshtml" />
-    <Content Include="Views\Home\_searchProperties.cshtml" />
-    <Content Include="Views\Home\_sliderView.cshtml" />
-    <Content Include="Views\Home\_windowCheckBoxList.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_radioButtonsView.cshtml" />
+    <Content Include="Views\Shared\_rangeSliderView.cshtml" />
+    <Content Include="Views\Shared\_resultGridView.cshtml" />
+    <Content Include="Views\Shared\_resultListElementView.cshtml" />
+    <Content Include="Views\Shared\_resultListView.cshtml" />
+    <Content Include="Views\Shared\_searchBreadcrumb.cshtml" />
+    <Content Include="Views\Shared\_searchContent.cshtml" />
+    <Content Include="Views\Shared\_searchFacets.cshtml" />
+    <Content Include="Views\Shared\_searchHeader.cshtml" />
+    <Content Include="Views\Shared\_searchProperties.cshtml" />
+    <Content Include="Views\Shared\_sliderView.cshtml" />
+    <Content Include="Views\Shared\_windowCheckBoxList.cshtml" />
+    <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <None Include="Properties\PublishProfiles\To BPP212.pubxml">
@@ -445,8 +445,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Export\" />
+    <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />
-    <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
