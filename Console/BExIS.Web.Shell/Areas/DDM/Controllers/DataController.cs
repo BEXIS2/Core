@@ -213,7 +213,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
 
-                return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
+                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "format", format } });
+
+                //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
             }
 
             return Json(false);
