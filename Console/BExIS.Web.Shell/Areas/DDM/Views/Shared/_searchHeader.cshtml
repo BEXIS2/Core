@@ -4,6 +4,8 @@
 @{
     string controller = Session["Controller"].ToString();
 
+    bool onlyPublic = ((string)Session["Controller"]) == "PublicSearch" ? true:false;
+
  }
 
 <div class="searchHeader">           
@@ -50,11 +52,22 @@
                 </td>
                <td>
 
-                        <button type="submit" class="bx-button small function">Search</button>
+                   <button type="submit" class="bx-button small function">Search</button>
   
                </td>
   
            </tr>
+
+           @if (HttpContext.Current.User != null &&
+               HttpContext.Current.User.Identity != null &&
+               !string.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
+           {
+           <tr>
+               <td>
+                   @Html.CheckBox("OnlyPublic", @onlyPublic, new { onclick = "onShowOnlyPublicChanged(this)" }) <b style="vertical-align:top">public only</b>
+               </td>
+           </tr>
+           }
        </table>
   </div>      
      
@@ -78,6 +91,33 @@
 
      function changeSearchType(e) {
          $.post('@Url.Action("ChangeSearchValuesACBySearchType", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: e.value }, function (response) { });
+     }
+
+     function onShowOnlyPublicChanged(e) {
+
+         var value;
+
+         if ($("#" + e.id).attr('checked')) {
+             value = true;
+         } else {
+             value = false;
+         }
+
+         console.log($("#" + e.id));
+         console.log(value);
+
+         if (value === true) {
+             //redirect to public search 
+             //console.log("public");
+             window.location.href = '@Url.Action("Public", "PublicSearch", new RouteValueDictionary { { "area", "ddm" } })';
+             
+         }
+         else {
+             //redirect to search
+             //console.log("not public");
+             window.location.href='@Url.Action("Index", "Home", new RouteValueDictionary { { "area", "ddm" } })';
+         }
+
      }
 
 

@@ -258,7 +258,7 @@ function OnChangeTextInput(e) {
         console.log("after change");
         var parent = $("#" + ParentStepID)[0];
         console.log(parent);
-        if ($(parent).attr("partyid") != null && afterClosed == false) {
+        if ($(parent).attr("partyid") !== null && afterClosed === false) {
 
             console.log(ParentStepID);
             console.log(ParentModelNumber);
@@ -304,7 +304,7 @@ function OnChange(e) {
             var newId = e.id.substr(0, index);
 
             $("#" + newId).replaceWith(response);
-            if ($('textarea') != null) {
+            if ($('textarea') !== null) {
                 autosize($('textarea'));
             }
         });
@@ -534,7 +534,7 @@ function OnClickRemove(e) {
 
     var value = $("#" + e.id).closest(".ValueClass").value;
 
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -576,7 +576,7 @@ function OnClickRemove(e) {
 function OnClickUp(e) {
     //alert(value);
     var value = $("#" + e.id).closest(".ValueClass").value;
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -606,7 +606,7 @@ function OnClickUp(e) {
 function OnClickDown(e) {
 
     var value = $("#" + e.id).closest(".ValueClass").value;
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -659,7 +659,7 @@ function OnClose(e) {
             console.log("parent");
             console.log(parent);
 
-            if (parent != null) {
+            if (parent !== null) {
 
                 var parentid = $(parent).attr("id");
                 var number = $(parent).attr("number");
