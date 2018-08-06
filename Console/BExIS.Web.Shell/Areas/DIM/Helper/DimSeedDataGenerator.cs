@@ -899,24 +899,23 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                         #region owner relationship
 
-                        //Metadata/creator/creatorType/individualName 
-
+                        //Metadata/creator/creatorType/individualName
                         PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.DisplayName.ToLower().Equals("owner"));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
-                                "individualName", LinkElementType.MetadataNestedAttributeUsage,
-                                "creator", LinkElementType.MetadataNestedAttributeUsage,
+                                "givenName", LinkElementType.MetadataNestedAttributeUsage,
+                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
                                 partyRelationshipType, rootTo, metadataRef,
                                 mappingManager,
-                                new TransformationRule(@"\w+", "FullName[0]"));
+                                new TransformationRule());
 
                             createFromPartyReleationMapping(
-                                "individualName", LinkElementType.MetadataNestedAttributeUsage,
-                                "creator", LinkElementType.MetadataNestedAttributeUsage,
+                                "givenName", LinkElementType.MetadataNestedAttributeUsage,
+                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
                                 partyRelationshipType, rootFrom, metadataRef,
                                 mappingManager,
-                                new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                                new TransformationRule());
                         }
 
                         #endregion

@@ -143,6 +143,42 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return null;
         }
 
+        public ActionResult SimpleDataStructure(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+            DataStructureManager dsm = new DataStructureManager();
+
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    long dsId = dm.GetDatasetLatestVersion(id).Id;
+                    DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    DataStructure dataStructure = null;
+                    if (ds != null) dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
+
+                    if (dataStructure != null && dataStructure.Self is StructuredDataStructure)
+                    {
+                        SimpleDataStructureModel model = new SimpleDataStructureModel((StructuredDataStructure)dataStructure.Self);
+
+                        return PartialView("SimpleDataStructure", model);
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                dm.Dispose();
+                dsm.Dispose();
+
+            }
+        }
+
         public ActionResult GenerateZip(long id, string format)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -250,25 +286,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
                             DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
-                            dataStructure = null;
-                            if (ds != null) dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
-
-                            if (dataStructure != null && dataStructure.Self is StructuredDataStructure)
-                            {
-
-                                SimpleDataStructureModel model = new SimpleDataStructureModel((StructuredDataStructure)dataStructure.Self);
-
-                                string htmlPage = PartialView("SimpleDataStructure", model).RenderToString();
-                                byte[] content = Encoding.ASCII.GetBytes(htmlPage);
+                            generateDataStructureHtml(ds);
 
 
-                                string dynamicPathOfDS = "";
-                                dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
-                                    "datastructure", ".html");
-                                string datastructureFilePath2 = AsciiWriter.CreateFile(dynamicPathOfDS);
-
-                                AsciiWriter.AllTextToFile(datastructureFilePath2, htmlPage);
-                            }
                         }
                         catch (Exception ex)
                         {
@@ -424,6 +444,27 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string dynamicPathOfMD = "";
             dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(datasetId, dsv,
                 "metadata", ".html");
+            string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
+
+            AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());
+        }
+
+        private void generateDataStructureHtml(DatasetVersion dsv)
+        {
+
+
+            var view = this.Render("DIM", "Export", "SimpleDataStructure", new RouteValueDictionary()
+            {
+                { "id", dsv.Dataset.Id }
+            });
+
+
+            byte[] content = Encoding.ASCII.GetBytes(view.ToString());
+
+
+            string dynamicPathOfMD = "";
+            dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(dsv.Dataset.Id, dsv,
+                "datastructure", ".html");
             string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());

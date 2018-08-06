@@ -644,10 +644,12 @@ function OnClose(e) {
 
     console.log(e.target.value);
     var value = e.target.value;
-    if (~value.indexOf("(")) {
+    if (~value.indexOf("(") && ~value.indexOf(")")) {
 
-        var start = value.indexOf("(");
-        var partyid = value.substr(start+1, 1);
+        var start = value.lastIndexOf("(")+1;
+        var end = value.lastIndexOf(")");
+        var partyid = value.substr(start, end - start);
+
         console.log("partyid = " + partyid);
 
         if (partyid !== "0") {

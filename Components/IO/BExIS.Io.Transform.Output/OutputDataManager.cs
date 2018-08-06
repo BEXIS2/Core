@@ -1,12 +1,9 @@
 ﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -55,6 +52,13 @@ namespace BExIS.IO.Transform.Output
                             contentDescriptorTitle = "generatedCSV";
                             ext = ".csv";
                             textSeperator = TextSeperator.semicolon;
+                            break;
+                        }
+                    case "text/tsv":
+                        {
+                            contentDescriptorTitle = "generatedTSV";
+                            ext = ".tsv";
+                            textSeperator = TextSeperator.tab;
                             break;
                         }
                     default:
@@ -190,12 +194,12 @@ namespace BExIS.IO.Transform.Output
         /// <param name="table"></param>
         /// <param name="title"></param>
         /// <returns></returns>
-        public string GenerateExcelFile(string ns, DataTable table, string title, long dsId, string ext=".xlsm")
+        public string GenerateExcelFile(string ns, DataTable table, string title, long dsId, string ext = ".xlsm")
         {
             ExcelWriter writer = new ExcelWriter();
             string path = createDownloadFile(ns, dsId, title, ext, writer);
 
-            
+
 
             writer.AddDataTuplesToFile(table, path, dsId);
 
@@ -228,7 +232,7 @@ namespace BExIS.IO.Transform.Output
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                 ExcelWriter writer = new ExcelWriter(createAsTemplate);
-                
+
 
                 string path = "";
 
@@ -260,7 +264,7 @@ namespace BExIS.IO.Transform.Output
                 #region FileStream not exist
 
                 if (data == null)
-                { 
+                {
                     DatasetManager dm = new DatasetManager();
                     data = dm.GetLatestDatasetVersionTuples(id);
                     data.Strip();
@@ -281,13 +285,14 @@ namespace BExIS.IO.Transform.Output
                 else
                 {
                     path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
+                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
                     writer.AddData(data, path, datastuctureId);
                 }
 
                 return path;
 
                 #endregion
-                
+
             }
             catch (Exception ex)
             {
@@ -301,7 +306,7 @@ namespace BExIS.IO.Transform.Output
 
         private string createDownloadFile(long id, long datasetVersionOrderNo, long dataStructureId, string title, string ext, DataWriter writer, string[] columns = null)
         {
-            if (ext.Equals(".csv") || ext.Equals(".txt"))
+            if (ext.Equals(".csv") || ext.Equals(".txt") || ext.Equals(".tsv"))
             {
                 AsciiWriter asciiwriter = (AsciiWriter)writer;
                 return asciiwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, "data", ext);
@@ -382,10 +387,22 @@ namespace BExIS.IO.Transform.Output
                     mimeType = "text/plain";
                 }
 
+                if (ext.Contains("tsv"))
+                {
+                    name = "generatedTSV";
+                    mimeType = "text/tsv";
+                }
+
                 if (ext.Contains("xlsm"))
                 {
                     name = "generated";
                     mimeType = "application/xlsm";
+                }
+
+                if (ext.Contains("xlsx"))
+                {
+                    name = "generatedExcel";
+                    mimeType = "application/xlsx";
                 }
 
                 // create the generated FileStream and determine its location
@@ -460,7 +477,7 @@ namespace BExIS.IO.Transform.Output
 
         public static void ClearTempDirectory()
         {
-            string path = Path.Combine(AppConfiguration.DataPath,"Datasets", "Temp");
+            string path = Path.Combine(AppConfiguration.DataPath, "Datasets", "Temp");
             if (Directory.Exists(path))
             {
                 System.IO.DirectoryInfo di = new DirectoryInfo(path);
