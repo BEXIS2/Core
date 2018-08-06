@@ -418,11 +418,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (dm.IsDatasetCheckedIn(datasetId))
                 {
                     DatasetVersion dsv = dm.GetDatasetVersion(versionId);
+                    long latestDatasetVersionId = dm.GetDatasetLatestVersionId(datasetId);
 
                     DataTable table = null;
 
                     // get primarydata from latest version with table
-                    if (versionId == 0)
+                    if (versionId == latestDatasetVersionId)
                     {
                         FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
                         OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
