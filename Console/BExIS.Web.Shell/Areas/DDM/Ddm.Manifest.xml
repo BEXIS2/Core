@@ -19,7 +19,7 @@
 
     <Export tag="menubar" id="menuSearch" order="2"
             title="Search" description="Search datasets" icon=""
-            controller="home" action="index"
+            controller="publicsearch" action="public"
             extends="./menubarRoot" />
 
     <!--<Export tag="menubar" id="menuSearchPublic" order="2"

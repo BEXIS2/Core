@@ -60,12 +60,16 @@ Green 05  #eff7f6 brigth
     font-size: 15px;
 }
 
-/*.t-grid td {padding-left: 30px;}
+.t-grid th {
+    overflow-x: hidden;
+    padding-right: 30px;
+}
 
-.t-grid-without-filter th
-{
-    padding-left:30px;
-}*/
+.t-grid th .t-grid-filter{
+    margin-left: 100%;
+    margin-right: -28px;
+    margin-top: -26px
+}
 
 /* GRID TOOLBAR*/
 .t-grid-bottom,

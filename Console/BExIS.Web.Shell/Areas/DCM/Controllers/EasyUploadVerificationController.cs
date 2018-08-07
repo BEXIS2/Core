@@ -362,10 +362,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
 
                         //filtering units when data attr is selected, if id or dimension is the same
-                        if (selectedUnit == 0) unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
+                        if (selectedUnit == 0)
+                        {
+                            unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentDataAttrInfo.UnitId) || u.DimensionId.Equals(currentDataAttrInfo.DimensionId)).ToList();
+                            currentUnit = unitInfos.FirstOrDefault(u => u.UnitId.Equals(currentDataAttrInfo.UnitId));
+                        }
                         else unitInfos = unitInfos.Where(u => u.UnitId.Equals(currentUnit.UnitId) || u.DimensionId.Equals(currentUnit.DimensionId)).ToList();
 
-                        if (selectedDataType == 0) dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+                        if (selectedDataType == 0)
+                        {
+                            dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
+
+                            currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(currentDataAttrInfo.DataTypeId));
+
+                        }
                         else dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
                     }
 

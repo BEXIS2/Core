@@ -226,6 +226,7 @@ table {
 
     table th, table td {
         border-right: solid 4px white;
+
     }
 
     table tr {
@@ -238,6 +239,7 @@ table {
         font-weight: bold;
         margin-right: 5px;
     }
+
 
 
 /* MISC  
