@@ -243,11 +243,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             UpdateOrCreatePartyTypePair(partyTypePair, partyRelationshipType, partyRelationshipTypeManager);// 
                     }
                 //Add all the custom Attribute names ao custom grid column of default user
-                foreach (var partyType in partyTypeManager.PartyTypeRepository.Get())
+                foreach (var partyType in partyTypeManager.PartyTypeRepository.Get(cc=>!cc.SystemType))
                 {
                     foreach (var partyCustomAttr in partyType.CustomAttributes)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, partyCustomAttr, null);
-                    var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id);
+                    var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id && !cc.TargetPartyType.SystemType);
                     foreach (var partyTypePair in partyRelationshipTypePairs)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, null, partyTypePair);
                 }
