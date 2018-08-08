@@ -264,11 +264,11 @@ function OnChangeTextInput(e) {
         var partyidConverted = TryParseInt(partyid, null)
         console.log("tryparse:" + partyidConverted)
 
+        //delete party informations when a party was selected before
         if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
 
             console.log(ParentStepID);
             console.log(ParentModelNumber);
-
 
             UpdateWithParty(ParentStepID, ParentModelNumber, 0);
         }
