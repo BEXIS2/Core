@@ -371,6 +371,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\ddm.css" />
     <Content Include="Content\Images\Help\delete_button.png" />
     <Content Include="Content\Images\Help\edit_button.png" />
     <Content Include="Content\Images\Help\help_img1.png" />
@@ -433,6 +434,7 @@
     <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\To BPP212.pubxml">
       <SubType>Designer</SubType>
     </None>
