@@ -258,7 +258,13 @@ function OnChangeTextInput(e) {
         console.log("after change");
         var parent = $("#" + ParentStepID)[0];
         console.log(parent);
-        if ($(parent).attr("partyid") !== null && afterClosed === false) {
+        var partyid = $(parent).attr("partyid");
+        console.log(partyid);
+
+        var partyidConverted = TryParseInt(partyid, null)
+        console.log("tryparse:" + partyidConverted)
+
+        if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
 
             console.log(ParentStepID);
             console.log(ParentModelNumber);
@@ -775,9 +781,6 @@ function Activate(e) {
             console.log(response);
 
             $('#' + stepid).replaceWith(response);
-
-            
-
             if (!active) {
                 $('html, body').animate({
                     scrollTop: $('#' + stepid).offset().top - 80
@@ -829,4 +832,16 @@ function showHideClick(e) {
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
     bindMinimap(true);
+}
+
+function TryParseInt(str, defaultValue) {
+    var retValue = defaultValue;
+    if (str !== null && str != undefined) {
+        if (str.length > 0) {
+            if (!isNaN(str)) {
+                retValue = parseInt(str);
+            }
+        }
+    }
+    return retValue;
 }
