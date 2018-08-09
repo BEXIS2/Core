@@ -807,7 +807,8 @@ function ActivateFromChoice(e) {
     },
 
     function (response) {
-                
+
+
         $('#' + stepid).replaceWith(response);
 
         if (!active)
