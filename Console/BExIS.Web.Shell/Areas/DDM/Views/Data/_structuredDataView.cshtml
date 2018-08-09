@@ -296,28 +296,22 @@
 
             })
 
+        setTimeout(function () {
+            var tablewidth = $("#PrimaryDataResultGrid table").width()
+            var rowwidth = $("#PrimaryDataResultGrid table tr").width()
+
+            console.log("rowwidth < tablewidth | " + rowwidth + "<" + tablewidth)
+
+
+            if (rowwidth < tablewidth) {
+                console.log("inside baby")
+                $("#PrimaryDataResultGrid").addClass("fit_to_screen");
+                $("#PrimaryDataResultGrid").removeClass("scroll_in_screen");
+                $('#FitToScreen').attr("checked", "checked");
+            }
+
+        }, 200);
         
-
-        //console.log("set width");
-        //$('#PrimaryDataResultGrid th').each(function () {
-
-        //    console.log(this);
-        //    console.log($(this).width());
-
-        //    var t = $(this).width() + 35;
-        //    if (t > 200) {
-        //        t = 200;
-        //    }
-        //    $(this).css("min-width", t + "px");
-
-        //    if ($(this).find('a').width() > $(this).width() - 40) {
-        //        t = $(this).width() - 40;
-        //        $(this).find('a').css("max-width", "10px");
-        //    }           
-        //    console.log("t : " + t);
-
-        //});
-
 	}
 
 	$(".file-type-download-entry").click(function (id) {
