@@ -154,6 +154,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 headers = GetExcelHeaderFields(firstWorksheet, sheetFormat, selectedHeaderAreaJson);
 
+                headers = makeHeaderUnique(headers);
+
                 suggestions = new List<EasyUploadSuggestion>();
 
                 if (!model.Rows.Any())
@@ -833,6 +835,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.AddToBus(EasyUploadTaskManager.ROWS, rows);
             }
 
+        }
+
+        private List<string> makeHeaderUnique(List<string> header)
+        {
+            List<string> temp = new List<string>();
+
+            foreach (string s in header)
+            {
+                if (temp.Contains(s))
+                {
+                    string tmp;
+                    int i = 1;
+                    do
+                    {
+                        tmp = s + " (" + i + ")";
+                        i++;
+                    }
+                    while (temp.Contains(tmp));
+                    temp.Add(tmp);
+                }
+                else
+                {
+                    temp.Add(s);
+                }
+            }
+            return (temp);
         }
 
         #endregion
