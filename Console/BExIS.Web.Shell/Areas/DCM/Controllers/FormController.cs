@@ -2133,6 +2133,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return null;
         }
 
+        //private StepModelHelper updateStepModelHelper(StepModelHelper stepModelHelper)
+        //{
+        //    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
+        //    {
+        //        var x = ((List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER]).Where(s => s.StepId.Equals(stepModelHelper.StepId)).FirstOrDefault();
+        //        x = stepModelHelper;
+
+        //        return x;
+        //    }
+
+        //    return null;
+        //}
+
 
         private bool IsImportAvavilable(long metadataStructureId)
         {
@@ -2593,6 +2607,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // select the attributeModel and change the value
                 selectedMetadatAttributeModel.Value = model.Value;
                 selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
+
+                Session["CreateDatasetTaskmanager"] = TaskManager;
+
                 return PartialView("_metadataAttributeView", selectedMetadatAttributeModel);
             }
             else
@@ -2649,42 +2666,52 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private void ValidateModels(List<StepModelHelper> stepModelHelpers)
         {
-            foreach (var stepModeHelper in stepModelHelpers)
+            List<Error> tmp = new List<Error>();
+
+            foreach (var stepModelHelper in stepModelHelpers)
             {
-                // if model exist then validate attributes
-                if (stepModeHelper.Model != null)
+                //only check if step is a instance
+                if (stepModelHelper.Model.StepInfo.IsInstanze)
                 {
-                    foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
+                    // if model exist then validate attributes
+                    if (stepModelHelper.Model != null)
                     {
-                        metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
-                        //if (metadataAttrModel.Errors.Count > 0)
-                        //    step.stepStatus = StepStatus.error;
+                        foreach (var metadataAttrModel in stepModelHelper.Model.MetadataAttributeModels)
+                        {
+                            metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
+
+
+                            if (metadataAttrModel.Errors != null) tmp.AddRange(metadataAttrModel.Errors);
+
+                            //if (metadataAttrModel.Errors.Count > 0)
+                            //    step.stepStatus = StepStatus.error;
+                        }
                     }
-                }
-                // else check for required elements
-                else
-                {
-                    if (metadataStructureUsageHelper.HasUsagesWithSimpleType(stepModeHelper.UsageId, stepModeHelper.UsageType))
+                    // else check for required elements
+                    else
                     {
-                        //foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
-                        //{
-                        //    metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
-                        //    if (metadataAttrModel.Errors.Count>0)
-                        //        step.stepStatus = StepStatus.error;
-                        //}
+                        if (metadataStructureUsageHelper.HasUsagesWithSimpleType(stepModelHelper.UsageId, stepModelHelper.UsageType))
+                        {
+                            //foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
+                            //{
+                            //    metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
+                            //    if (metadataAttrModel.Errors.Count>0)
+                            //        step.stepStatus = StepStatus.error;
+                            //}
 
-                        //if(MetadataStructureUsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
-                        //{
-                        //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
-                        //    if (step != null && step.IsInstanze)
-                        //    {
-                        //        Error error = new Error(ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
+                            //if(MetadataStructureUsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
+                            //{
+                            //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
+                            //    if (step != null && step.IsInstanze)
+                            //    {
+                            //        Error error = new Error(ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
 
-                        //        errors.Add(new Tuple<StepInfo, List<Error>>(step, tempErrors));
+                            //        errors.Add(new Tuple<StepInfo, List<Error>>(step, tempErrors));
 
-                        //        step.stepStatus = StepStatus.error;
-                        //    }
-                        //}
+                            //        step.stepStatus = StepStatus.error;
+                            //    }
+                            //}
+                        }
                     }
                 }
             }
