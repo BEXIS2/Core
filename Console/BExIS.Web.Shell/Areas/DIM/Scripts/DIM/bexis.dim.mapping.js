@@ -683,11 +683,6 @@ function getInstance(parentid) {
  */
 function reloadAllConnections() {
 
-    //jsPlumb.repaintEverything();
-
-    //console.log("RELOAD CONNECTIONS");
-    //console.log(connections);
-
     // go to each parent
     for (var i = 0; i < connections.length; i++) {
 
@@ -1104,12 +1099,17 @@ $(".mapping-container").dblclick(function () {
 
     if (parentid !== "mapping_container_0") {
 
-        $($(parent).find(".mapping-container-expand")).toggle();
-        $($(parent).find(".mapping-container-collapse")).toggle();
+        
 
-        $($(parent).find(".jtk-overlay")).toggle();
+        $($("#" + parentid).find(".mapping-container-expand")).toggle();
+        $($("#" + parentid).find(".mapping-container-collapse")).toggle();
+        $($("#" + parentid).find(".jtk-overlay")).toggle();
+        $($("#" + parentid).find(".jtk-connector")).toggle();
+        $($("#" + parentid).find(".jtk-endpoint")).toggle();
 
-        setTimeout(reloadAllConnections, 300);
+        setTimeout(reloadAllConnections, 100);
+
+        
     }
     
 })
