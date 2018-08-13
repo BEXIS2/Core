@@ -13,6 +13,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public bool FromEditMode { get; set; }
         public bool Changed { get; set; }
         public bool Import { get; set; }
+        public bool SaveWithErrors { get; set; }
+
         public List<StepModelHelper> StepModelHelpers { get; set; }
         public Dictionary<string, ActionInfo> Actions { get; set; }
 
@@ -24,6 +26,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             FromEditMode = false;
             Changed = false;
             Import = false;
+            SaveWithErrors = true;
 
             EditRight = false;
             EditAccessRight = false;

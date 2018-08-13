@@ -21,7 +21,6 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -104,7 +103,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (dm.IsDatasetCheckedIn(id))
                 {
                     //get latest version
-                    if (version == 0){
+                    if (version == 0)
+                    {
                         versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
                         //get current version number
                         version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
@@ -112,12 +112,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         latestVersion = true;
                     }
                     // get specific version
-                    else {
-                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d=>d.Id).FirstOrDefault();
+                    else
+                    {
+                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
                         latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
                     }
 
-                   
+
                     dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
                     metadataStructureId = dsv.Dataset.MetadataStructure.Id;
@@ -212,7 +213,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
 
-                return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary()  { { "area","DIM"}, { "id", id }, { "format", format } });
+                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "format", format } });
+
+                //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
             }
 
             return Json(false);
@@ -333,7 +336,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                         "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
-                    
+
 
                     //TITLE
                     string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
@@ -359,14 +362,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
 
 
-                        
+
                         return PartialView(ShowPrimaryDataModel.Convert(
-                            datasetID, 
-                            versionId, 
-                            title, 
-                            sds, 
-                            table, 
-                            downloadAccess, 
+                            datasetID,
+                            versionId,
+                            title,
+                            sds,
+                            table,
+                            downloadAccess,
                             iOUtility.GetSupportedAsciiFiles(),
                             latestVersion));
                     }
@@ -374,12 +377,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
                     {
                         return
-                            PartialView(ShowPrimaryDataModel.Convert(datasetID, 
-                            versionId, 
-                            title, 
+                            PartialView(ShowPrimaryDataModel.Convert(datasetID,
+                            versionId,
+                            title,
                             ds,
-                            SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), 
-                            downloadAccess, 
+                            SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
+                            downloadAccess,
                             iOUtility.GetSupportedAsciiFiles(),
                             latestVersion));
                     }
@@ -415,11 +418,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (dm.IsDatasetCheckedIn(datasetId))
                 {
                     DatasetVersion dsv = dm.GetDatasetVersion(versionId);
+                    long latestDatasetVersionId = dm.GetDatasetLatestVersionId(datasetId);
 
                     DataTable table = null;
 
                     // get primarydata from latest version with table
-                    if (versionId == 0)
+                    if (versionId == latestDatasetVersionId)
                     {
                         FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
                         OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
@@ -454,7 +458,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
-        public JsonResult PrepareAscii(long id, string ext,long versionid,bool latest)
+        public JsonResult PrepareAscii(long id, string ext, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -469,7 +473,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string path = "";
 
                     string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
-                                                    datasetVersion.Id,ext);
+                                                    datasetVersion.Id, ext);
                     //create a history dátaset
                     if (!latest)
                     {
@@ -542,7 +546,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DataTable datatable = getHistoryData(versionid);
                         path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
 
-                        return File(path, mimetype, title+"_v"+versionNumber + ext);
+                        return File(path, mimetype, title + "_v" + versionNumber + ext);
 
                     }
                     else
@@ -636,7 +640,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = getFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title+"_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
 
                         LoggerFactory.LogCustom(message);
 
@@ -691,7 +695,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         datasetVersion.Id);
 
                     OutputDataManager outputDataManager = new OutputDataManager();
-              
+
 
                     //create a history dátaset
                     if (!latest)
@@ -876,7 +880,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = getFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile(id,title, true, datatable);
+                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
 
                         LoggerFactory.LogCustom(message);
 
@@ -951,13 +955,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if ((command != null && (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0)) || columns.Count() > 0)
                     {
                         return true;
-                    }                }
+                    }
+                }
             }
 
             return false;
         }
 
-        private DataTable getFilteredData( long datasetId)
+        private DataTable getFilteredData(long datasetId)
         {
 
             DatasetManager datasetManager = new DatasetManager();
@@ -1000,7 +1005,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private DataTable getHistoryData(long versionId)
         {
             DatasetManager dm = new DatasetManager();
-           
+
             try
             {
                 DatasetVersion dsv = dm.GetDatasetVersion(versionId);
@@ -1038,7 +1043,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return uow.GetReadOnlyRepository<DatasetVersion>().Get()
                     .Where(dsv => dsv.Dataset.Id.Equals(datasetId))
                     .OrderBy(d => d.Timestamp)
-                    .Select(d => d.Id).ToList().IndexOf(versionId)+1;
+                    .Select(d => d.Id).ToList().IndexOf(versionId) + 1;
             }
         }
 
@@ -1229,7 +1234,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (!requestManager.Exists(userId, entityId, id))
                 {
                     var request = requestManager.Create(userId, entityId, id, 3);
-                   
+
 
                     if (request != null)
                     {
@@ -1252,7 +1257,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Json(e.Message, JsonRequestBehavior.AllowGet);
             }
@@ -1400,7 +1405,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                if (HttpContext.User.Identity != null)
+                if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
                 {
                     long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
                     long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;

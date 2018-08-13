@@ -23,6 +23,8 @@
     bool locked = false;
     bool hideOptional = false;
 
+    string displayName = "";
+    displayName = char.ToUpper(Model.DisplayName()[0]) + Model.DisplayName().Substring(1);
 
     string lvl = Model.Level.ToString();
     if (Model.Level >= 9)
@@ -55,8 +57,15 @@
 
         <div class="header @headerClass ">
             <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
+                @if (Model.Activated)
+                {
+                    <span id="@id_button_view" class="bx fa-angle-double-down"></span>
+                }
+
                 <b>
-                    @Model.DisplayName()
+                    @displayName
+
+
 
                     @if (Model.Model.MaxCardinality > 1)
                     {
@@ -70,17 +79,14 @@
                     <b title="Required" style="color: red">*</b>
                 }
 
-                @if (Model.Activated)
-                {
-                    <span id="@id_button_view" class="bx bx-angle-double-up "></span>
-                }
+
             </div>
 
-            <div class="optionContainer">
-                @if (Model.Activated)
+            @if (Model.Activated)
+            {
+                if (!Model.Choice)
                 {
-                    if (!Model.Choice)
-                    {
+                    <div class="optionContainer">
                         <table>
                             <tr>
                                 @if (Model.Model.MaxCardinality > 1 && !locked)
@@ -90,46 +96,46 @@
                                              && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
                                              && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
                                         {
-                                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add"/>
+                                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add" />
                                         }
                                         else
                                         {
-                                            <button id="@id_add" onclick="Add(this)" disabled="disabled" class="bx-function bx-add bx-disabled"/>
+                                            <button id="@id_add" onclick="Add(this)" disabled="disabled" class="bx-function bx-add bx-disabled" />
                                         }
                                     </td>
                                     <td>
                                         @if (Model.Model.StepInfo.Parent.Children.Count > 1)
                                         {
-                                            <button id="@id_remove" onclick="Remove(this)" class="bx-function bx-delete"/>
+                                            <button id="@id_remove" onclick="Remove(this)" class="bx-function bx-delete" />
                                         }
                                         else
                                         {
-                                            <button class="bx-function bx-delete bx-disabled"/>
+                                            <button class="bx-function bx-delete bx-disabled" />
                                         }
                                     </td>
                                     <td>
                                         @if (Model.Number < Model.Model.StepInfo.Parent.Children.Count)
                                         {
-                                            <button id="@id_down" class="bx-function bx-down" onclick="Down(this)"/>
+                                            <button id="@id_down" class="bx-function bx-down" onclick="Down(this)" />
                                         }
                                         else
                                         {
-                                            <button class="bx-function bx-down bx-disabled"/>
+                                            <button class="bx-function bx-down bx-disabled" />
                                         }
                                     </td>
                                     <td>
                                         @if (Model.Number > 1)
                                         {
-                                            <button id="@id_up" class="bx-function bx-up" onclick="Up(this)"/>
+                                            <button id="@id_up" class="bx-function bx-up" onclick="Up(this)" />
                                         }
                                         else
                                         {
-                                            <button class="bx-function bx-up bx-disabled"/>
+                                            <button class="bx-function bx-up bx-disabled" />
 
                                         }
                                     </td>
 
-                                    
+
 
                                 }
                                 <td>
@@ -149,48 +155,14 @@
                                 </td>
                             </tr>
                         </table>
-                    }
-                    else
-                    {
-                        if(Model.ChoiceMax <= 1)
-                        { 
-                        <div class="metadata-choice-container">
-                            @if (!locked)
-                            {
-                                foreach (var element in Model.Childrens)
-                                {
-                                    string choiceId = element.StepId + "_choice";
-
-                                    if (element.Activated)
-                                    {
-                                        <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
-                                    }
-                                    else
-                                    {
-                                        <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
-                                    }
-
-                                    @element.DisplayName()
-                                }
-                            }
-                            else
-                            {
-                                foreach (var element in Model.Childrens)
-                                {
-                                    if (element.Activated)
-                                    {
-                                        @element.DisplayName()
-                                    }
-                                }
-                            }
-                        </div>
-                        }
-                    }
-
+                    </div>
                 }
-                else
-                {
-                    if (Model.Model.MinCardinality == 0 && !locked)
+
+            }
+            else
+            {
+                <div class="optionContainer">
+                    @if (Model.Model.MinCardinality == 0 && !locked)
                     {
                         <table>
                             <tr>
@@ -202,14 +174,67 @@
                                 </td>
                             </tr>
                         </table>
-
                     }
-                }
-
-
-            </div>
+                </div>
+            }
 
         </div>
+        if (Model.Activated && Model.Choice)
+        {
+
+            if (Model.ChoiceMax <= 1 && !locked)
+            {
+                <div class="contentContainer">
+                    <div class="metadataAttributeContent">
+                        <table style="background-color:white;">
+                            <tbody>
+                                <tr>
+                                    <td class="metadataAttributeLabel">
+
+
+                                        @if (Model.Model.MinCardinality > 0)
+                                        {
+                                            <b title="Required" style="color: red">*</b>
+                                            <b>Please select:</b>
+                                        }
+                                        else
+                                        {
+                                            <span>Please select:</span>
+                                        }
+                                    </td>
+                                    <td class="metadataAttributeInput">
+
+                                        @foreach (var element in Model.Childrens)
+                                        {
+                                            string choiceId = element.StepId + "_choice";
+
+                                            if (element.Activated)
+                                            {
+                                                <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
+                                            }
+                                            else
+                                            {
+                                                <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
+                                            }
+
+                                            @element.DisplayName()
+                                        }
+
+                                    </td>
+                                    <td class="metadataAttributeOption"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+
+
+
+
+
+
         if (Model.Activated)
         {
             <div id="@id_container" class="contentContainer">

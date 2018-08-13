@@ -251,6 +251,8 @@
             //alert("start triggering");
             $(document).trigger("MetadataFormIsReady");
 
+            $("#form_message").text("x")
+
         });
 
     $(window).resize(function () {
@@ -367,20 +369,30 @@ function OnSuccess(e) {
         $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
             function(response) {
 
+                console.log(response);
+
+                $("#form_message")
+                    .text("");
+
                 $('#MetadataEditor').replaceWith(response);
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
 
-                var errors = $('.bx-input-error');
+                setTimeout(function () {
 
-                if (errors.length > 0) {
-                    $("#form_message")
-                        .text("The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
-                    $("#form_message").css("color", "#f24c24");
+                    var errors = $('.bx-input-error');
 
-                } else {
-                    $("#form_message").text("Validation successful");
-                    $("#form_message").css("color", "#388670");
-                }
+                    console.log(errors);
+
+                    if (errors.length > 0) {
+                        $("#form_message")
+                            .text("xyz_The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
+                        $("#form_message").css("color", "#f24c24");
+
+                    } else {
+                        $("#form_message").text("Validation successful");
+                        $("#form_message").css("color", "#388670");
+                    }
+                },200)  
 
                 bindMinimap(true);
             });
@@ -438,9 +450,15 @@ function OnSuccess(e) {
                 if (errors.length == 0) {
                     callSubmitAction(true);
                 } else {
-                    if (
-                        confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
-                        callSubmitAction(false);
+
+                    console.log('@Model.SaveWithErrors');
+
+                    if ('@Model.SaveWithErrors' == "True" ||'@Model.SaveWithErrors' == "true") {
+
+                        console.log("inside");
+                        if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
+                            callSubmitAction(false);
+                        }
                     }
                 }
             })

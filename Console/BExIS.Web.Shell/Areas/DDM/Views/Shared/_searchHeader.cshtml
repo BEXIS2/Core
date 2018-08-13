@@ -1,0 +1,134 @@
+﻿@using Telerik.Web.Mvc.UI;
+@model BExIS.Utils.Models.SearchModel
+
+@{
+    string controller = Session["Controller"].ToString();
+
+    bool onlyPublic = ((string)Session["Controller"]) == "PublicSearch" ? true:false;
+
+ }
+
+<div class="searchHeader">           
+@using (Html.BeginForm(Session["SubmissionAction"].ToString(), @controller))
+{
+
+   <div id="search_Components"> 
+       <table>
+           <tr>
+                <td></td>
+                <td>
+
+                </td>
+           </tr>
+           <tr>
+                <td>
+                    @(Html.Telerik().DropDownList()
+                         .Name("FilterList")
+                         .SelectedIndex((int)Session["SelectedIndexFilterAC"])
+                         .DropDownHtmlAttributes(new { style = "height: 200px;" })
+                         .HtmlAttributes(new { style="top:2px;" })
+                         .ClientEvents(events => events
+                               .OnChange("onChangeFilterList"))
+                        .BindTo(new SelectList(Model.SearchComponent.Categories, "Value", "DisplayName"))
+
+                    )
+                </td>
+                <td>
+                        @(Html.Telerik().AutoComplete()
+                                .Name("autoComplete")
+                                .Encode(false)
+                                .HtmlAttributes(new {title= "Search requests that include only special character, are not supported." })
+                                .DataBinding(dataBinding => dataBinding
+                                    .Ajax().Select("_AutoCompleteAjaxLoading", @controller)
+                                    .Cache(false))
+
+                                .Filterable(filtering =>
+                                {
+                                    filtering.FilterMode(AutoCompleteFilterMode.Contains);
+                                    filtering.MinimumChars(3);
+
+                                })
+                       )
+                </td>
+               <td>
+
+                   <button type="submit" class="bx-button small function">Search</button>
+  
+               </td>
+  
+           </tr>
+
+           @if (HttpContext.Current.User != null &&
+               HttpContext.Current.User.Identity != null &&
+               !string.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
+           {
+           <tr>
+               <td>
+                   @Html.CheckBox("OnlyPublic", @onlyPublic, new { onclick = "onShowOnlyPublicChanged(this)" }) <b style="vertical-align:top">public only</b>
+               </td>
+           </tr>
+           }
+       </table>
+  </div>      
+     
+   <div class="search_Summery">
+
+        @*<b>@Model.ResultComponent.NumberOfHits results for search "" in
+        Category   </b> *@
+
+   </div>
+}
+</div>
+
+ <script type="text/javascript">
+     function onChangeFilterList(e) {
+         //alert(e.value);
+         var data = e.value;
+         var index = $(':selected').val();
+         $.post('@Url.Action("FilterByDropDownList", @controller, new RouteValueDictionary { { "area", "ddm" } })', { SelectedFilter: data }, function (response) { });
+
+     }
+
+     function changeSearchType(e) {
+         $.post('@Url.Action("ChangeSearchValuesACBySearchType", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: e.value }, function (response) { });
+     }
+
+     function onShowOnlyPublicChanged(e) {
+
+         var value;
+
+         if ($("#" + e.id).attr('checked')) {
+             value = true;
+         } else {
+             value = false;
+         }
+
+         console.log($("#" + e.id));
+         console.log(value);
+
+         if (value === true) {
+             //redirect to public search 
+             //console.log("public");
+             window.location.href = '@Url.Action("Public", "PublicSearch", new RouteValueDictionary { { "area", "ddm" } })';
+             
+         }
+         else {
+             //redirect to search
+             //console.log("not public");
+             window.location.href='@Url.Action("Index", "Home", new RouteValueDictionary { { "area", "ddm" } })';
+         }
+
+     }
+
+
+</script>
+<style type="text/css">
+
+    
+    #search_Components table
+    {
+        width:auto;
+    }
+
+
+</style>

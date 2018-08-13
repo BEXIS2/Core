@@ -50,6 +50,12 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
 
         public static string ERROR_DIC = "Error_Dic";
+        public static string SAVE_WITH_ERRORS = "SAVE_WITH_ERRORS";
+
+        //Action in Form
+        public static string NO_IMPORT_ACTION = "NO_IMPORT_ACTION";
+        public static string LOCKED = "LOCKED";
+
 
         private int MaxStepId;
 

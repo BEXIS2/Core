@@ -258,11 +258,17 @@ function OnChangeTextInput(e) {
         console.log("after change");
         var parent = $("#" + ParentStepID)[0];
         console.log(parent);
-        if ($(parent).attr("partyid") != null && afterClosed == false) {
+        var partyid = $(parent).attr("partyid");
+        console.log(partyid);
+
+        var partyidConverted = TryParseInt(partyid, null)
+        console.log("tryparse:" + partyidConverted)
+
+        //delete party informations when a party was selected before
+        if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
 
             console.log(ParentStepID);
             console.log(ParentModelNumber);
-
 
             UpdateWithParty(ParentStepID, ParentModelNumber, 0);
         }
@@ -304,7 +310,7 @@ function OnChange(e) {
             var newId = e.id.substr(0, index);
 
             $("#" + newId).replaceWith(response);
-            if ($('textarea') != null) {
+            if ($('textarea') !== null) {
                 autosize($('textarea'));
             }
         });
@@ -534,7 +540,7 @@ function OnClickRemove(e) {
 
     var value = $("#" + e.id).closest(".ValueClass").value;
 
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -576,7 +582,7 @@ function OnClickRemove(e) {
 function OnClickUp(e) {
     //alert(value);
     var value = $("#" + e.id).closest(".ValueClass").value;
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -606,7 +612,7 @@ function OnClickUp(e) {
 function OnClickDown(e) {
 
     var value = $("#" + e.id).closest(".ValueClass").value;
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -644,10 +650,12 @@ function OnClose(e) {
 
     console.log(e.target.value);
     var value = e.target.value;
-    if (~value.indexOf("(")) {
+    if (~value.indexOf("(") && ~value.indexOf(")")) {
 
-        var start = value.indexOf("(");
-        var partyid = value.substr(start+1, 1);
+        var start = value.lastIndexOf("(")+1;
+        var end = value.lastIndexOf(")");
+        var partyid = value.substr(start, end - start);
+
         console.log("partyid = " + partyid);
 
         if (partyid !== "0") {
@@ -657,7 +665,7 @@ function OnClose(e) {
             console.log("parent");
             console.log(parent);
 
-            if (parent != null) {
+            if (parent !== null) {
 
                 var parentid = $(parent).attr("id");
                 var number = $(parent).attr("number");
@@ -773,9 +781,6 @@ function Activate(e) {
             console.log(response);
 
             $('#' + stepid).replaceWith(response);
-
-            
-
             if (!active) {
                 $('html, body').animate({
                     scrollTop: $('#' + stepid).offset().top - 80
@@ -802,7 +807,8 @@ function ActivateFromChoice(e) {
     },
 
     function (response) {
-                
+
+
         $('#' + stepid).replaceWith(response);
 
         if (!active)
@@ -827,4 +833,16 @@ function showHideClick(e) {
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
     bindMinimap(true);
+}
+
+function TryParseInt(str, defaultValue) {
+    var retValue = defaultValue;
+    if (str !== null && str != undefined) {
+        if (str.length > 0) {
+            if (!isNaN(str)) {
+                retValue = parseInt(str);
+            }
+        }
+    }
+    return retValue;
 }

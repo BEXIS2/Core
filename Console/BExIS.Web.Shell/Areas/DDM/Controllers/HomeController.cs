@@ -32,6 +32,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
+            Session["Controller"] = "Home";
+
 
             try
             {
@@ -69,6 +71,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
+            Session["Controller"] = "Home";
+
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
@@ -241,7 +245,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel); 
+            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel);
         }
 
         //+++++++++++++++++++++ TreeView onSelect Action +++++++++++++++++++++++++++
