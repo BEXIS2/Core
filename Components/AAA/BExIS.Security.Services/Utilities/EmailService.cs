@@ -33,7 +33,7 @@ namespace BExIS.Security.Services.Utilities
             }
         }
 
-        public void Send(string subject, string body, List<string> destinations, List<string> ccs, List<string> bccs, List<string> replyToList)
+        public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyToLists = null)
         {
             var mail = new MailMessage()
             {
@@ -41,7 +41,7 @@ namespace BExIS.Security.Services.Utilities
                 To = { string.Join(",", destinations) },
                 CC = { string.Join(",", ccs) },
                 Bcc = { string.Join(",", bccs) },
-                ReplyToList = { string.Join(",", replyToList) },
+                ReplyToList = { string.Join(",", replyToLists) },
                 Subject = subject,
                 Body = body
             };
