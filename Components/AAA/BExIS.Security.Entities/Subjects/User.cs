@@ -16,6 +16,8 @@ namespace BExIS.Security.Entities.Subjects
         public virtual int AccessFailedCount { get; set; }
         public virtual string Email { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
+        public virtual bool HasPrivacyPolicyAccepted { get; set; }
+        public virtual bool HasTermsAndConditionsAccepted { get; set; }
         public virtual bool IsEmailConfirmed { get; set; }
         public virtual bool IsPhoneNumberConfirmed { get; set; }
         public virtual bool IsTwoFactorEnabled { get; set; }
