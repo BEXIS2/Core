@@ -18,5 +18,7 @@
     <property name="IsPhoneNumberConfirmed" type="yes_no" />
     <property name="SecurityStamp" type="string" />
     <property name="IsTwoFactorEnabled" type="yes_no" />
+    <property name="HasPrivacyPolicyAccepted" type="yes_no" />
+    <property name="HasTermsAndConditionsAccepted" type="yes_no" />
   </union-subclass>
 </hibernate-mapping>
