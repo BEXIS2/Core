@@ -9,13 +9,13 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Controllers
 {
-    public class TermsController : Controller
+    public class PrivacyPolicyController : Controller
     {
-        // GET: terms
+        // GET: PrivacyPolicy
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Terms and conditions", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Privacy Policy", this.Session.GetTenant());
             return View();
         }
     }
