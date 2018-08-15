@@ -20,5 +20,6 @@
     <property name="IsTwoFactorEnabled" type="yes_no" />
     <property name="HasPrivacyPolicyAccepted" type="yes_no" />
     <property name="HasTermsAndConditionsAccepted" type="yes_no" />
+    <property name="RegistrationDate" type="DateTime" />
   </union-subclass>
 </hibernate-mapping>
