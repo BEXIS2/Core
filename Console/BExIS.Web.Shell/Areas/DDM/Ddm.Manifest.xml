@@ -75,5 +75,10 @@
             controller="home" action="index"
             extends="" />
 
+    <Export tag="internalApi" id="showPublicDatasets"
+            title="Show public datasets" description="Shows the public datasets" icon=""
+            controller="publicSearch" action="index"
+            extends="" />
+
   </Exports>
 </Manifest>
