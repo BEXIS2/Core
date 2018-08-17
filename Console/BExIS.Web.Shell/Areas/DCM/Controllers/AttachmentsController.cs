@@ -52,9 +52,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
             var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-            var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item=>item.Name==fileName);
+            var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
             if (contentDescriptor == null)
-                throw new Exception("There is not any content descriptor having file name '"+fileName+"'. ");
+                throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
             dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
             dm.EditDatasetVersion(datasetVersion, null, null, null);
@@ -105,10 +105,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var contentDescriptorName = contentDescriptor.Name;
                 long fileLength = 0;
-                if (!System.IO.File.Exists(contentDescriptor.URI))
-                    //contentDescriptorName += "<span id='deletedFile' style='color:#980000;padding-left:5px;' >[deleted]</span>";
-                    contentDescriptor.URI = "delete";
-                else
+                if (System.IO.File.Exists(contentDescriptor.URI))
+                    //TODO: In case a file is deleted physically from dataset folder, user should be inform maybe
+                    //    //contentDescriptorName += "<span id='deletedFile' style='color:#980000;padding-left:5px;' >[deleted]</span>";
+                    //    contentDescriptor.URI = "delete";
+                    //else
                     fileLength = new FileInfo(contentDescriptor.URI).Length;
                 fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
             }
@@ -134,10 +135,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var filemNames = "";
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
-           // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
             if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
-                DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);                
+                DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
                 foreach (var file in attachments)
                 {
                     var fileName = Path.GetFileName(file.FileName);

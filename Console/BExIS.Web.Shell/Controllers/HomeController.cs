@@ -14,15 +14,11 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-            var searchLandingPage = generalSettings.GetEntryValue("searchLandingPage").ToString();
-            string[] elements = searchLandingPage.Split(',');
-            var moduleName = elements[0].Trim();
-            var controllerName = elements[1].Trim();
-            var actionName = elements[2].Trim();
-            if (!this.IsAccessible(moduleName, controllerName, actionName))
+
+            var landingPage = this.Session.GetTenant().LandingPageTuple;
+            if (!this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
                 return View();
-            var result = this.Render(moduleName, controllerName, actionName);
+            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
             return Content(result.ToHtmlString(), "text/html");
         }
 

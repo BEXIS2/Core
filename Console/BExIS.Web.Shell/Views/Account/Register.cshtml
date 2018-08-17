@@ -41,8 +41,15 @@
     <div class="form-group">
         <div class="col-md-10 col-md-offset-2">
             @Html.CheckBoxFor(m => m.TermsAndConditions)
-            I accept <a href="/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
+            I accept <a href="/TermsAndConditions/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
             @Html.ValidationMessageFor(m => m.TermsAndConditions)
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.PrivacyPolicy)
+            I accept <a href="/PrivacyPolicy/Index" title="See Privacy Policy" target="_blank">Privacy Policy</a>.
+            @Html.ValidationMessageFor(m => m.PrivacyPolicy)
         </div>
     </div>
 
