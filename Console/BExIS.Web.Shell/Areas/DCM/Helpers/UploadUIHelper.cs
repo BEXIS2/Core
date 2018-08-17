@@ -1,5 +1,4 @@
 ﻿using BExIS.IO.DataType.DisplayPattern;
-using BExIS.Utils.Models;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -10,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -134,30 +132,34 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         {
                                             uint numberFormatId = cellFormat.NumberFormatId.Value;
 
-                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
-
-                                            //
-                                            if (numberFormat != null)
+                                            if (_stylesheet.NumberingFormats != null)
                                             {
-                                                if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+
+                                                NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+
+                                                //
+                                                if (numberFormat != null)
                                                 {
-                                                    string formatCode = numberFormat.FormatCode.Value;
-                                                    if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
-                                                        (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
-                                                        (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
-                                                        (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
-                                                        (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
-                                                        )
+                                                    if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
                                                     {
-                                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                        //value = dateTime.ToString(new CultureInfo("en-us"));
-                                                        //get c# display pattern
+                                                        string formatCode = numberFormat.FormatCode.Value;
+                                                        if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
+                                                            (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
+                                                            (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
+                                                            (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
+                                                            (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
+                                                            )
+                                                        {
+                                                            DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                            //value = dateTime.ToString(new CultureInfo("en-us"));
+                                                            //get c# display pattern
 
-                                                        DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
-                                                        value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.StringPattern) : dateTime.ToString(new CultureInfo("en-us"));
+                                                            DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
+                                                            value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.StringPattern) : dateTime.ToString(new CultureInfo("en-us"));
 
-                                                        //Debug.WriteLine("----");
-                                                        //Debug.WriteLine(formatCode);
+                                                            //Debug.WriteLine("----");
+                                                            //Debug.WriteLine(formatCode);
+                                                        }
                                                     }
                                                 }
                                             }

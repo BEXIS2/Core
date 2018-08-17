@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Services.Utilities;
 using System.Configuration;
 using Vaiona.Logging;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.UI.Helpers
 {
@@ -10,8 +11,15 @@ namespace BExIS.UI.Helpers
         {
             try
             {
+                string AppId = "";
+                if (!string.IsNullOrEmpty(AppConfiguration.ApplicationName) && !string.IsNullOrEmpty(AppConfiguration.ApplicationVersion))
+                {
+                    AppId = AppConfiguration.ApplicationName + " (" + AppConfiguration.ApplicationVersion + ") - ";
+                }
+
                 var es = new EmailService();
-                es.Send("Error in system",
+                var subject = AppId + "Error in system";
+                es.Send(subject,
                     result,
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );

@@ -14,7 +14,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class PublicSearchController : Controller
     {
-        public ActionResult Public()
+        public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
             Session["SubmissionAction"] = "Public";
@@ -44,10 +44,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Public(string autoComplete, string FilterList, string searchType)
+        public ActionResult Index(string autoComplete, string FilterList, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
-            Session["SubmissionAction"] = "Public";
+            Session["SubmissionAction"] = "Index";
             Session["Controller"] = "PublicSearch";
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -77,7 +77,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SetSearchType("basedon");
 
-            return View("Index", provider);
+            return View(provider);
         }
 
         #region SearchHeader

@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
@@ -29,7 +28,7 @@ namespace BExIS.IO.Transform.Input
     /// this class is used to read and validate excel files
     /// </summary>
     /// <remarks></remarks>     
-    public class ExcelReader : DataReader 
+    public class ExcelReader : DataReader
     {
         public static List<string> SUPPORTED_APPLICATIONS = new List<string>() { "Microsoft Excel" };
 
@@ -124,14 +123,14 @@ namespace BExIS.IO.Transform.Input
             // open excel file
             spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
 
-            if(spreadsheetDocument != null)
+            if (spreadsheetDocument != null)
             {
-                if(spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
+                if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
                 {
                     Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
                 }
-                
-                if(spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+
+                if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
                 {
                     ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
                 }
@@ -150,7 +149,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName,long datasetId)
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId)
         {
 
             this.FileStream = file;
@@ -383,7 +382,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName,long datasetId, int packageSize)
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId, int packageSize)
         {
             this.FileStream = file;
             this.FileName = fileName;
@@ -432,6 +431,12 @@ namespace BExIS.IO.Transform.Input
                 // select worksheetpart by selected defined name area like data in sheet
                 // sheet where data area is inside
                 WorksheetPart worksheetPart = workbookPart.WorksheetParts.First(); //GetWorkSheetPart(workbookPart, this._areaOfData);
+
+                if (!string.IsNullOrEmpty(fri.WorksheetUri))
+                {
+                    worksheetPart = workbookPart.WorksheetParts.Where(ws => ws.Uri.ToString() == fri.WorksheetUri).FirstOrDefault();
+                }
+
 
                 // get styleSheet
                 _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
@@ -729,7 +734,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fileName">Name of the file</param>
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
-        public void ValidateFile(Stream file, string fileName,long datasetId)
+        public void ValidateFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
@@ -742,7 +747,7 @@ namespace BExIS.IO.Transform.Input
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
-  
+
             startColumn = fri.DataStartColumn;
             endColumn = fri.DataEndColumn;
 
@@ -904,7 +909,7 @@ namespace BExIS.IO.Transform.Input
                             //    if (cellFormat != null && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
                             //    {
                             //        uint numberFormatId = cellFormat.NumberFormatId.Value;
- 
+
                             //        NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
 
                             //        //
@@ -1152,13 +1157,13 @@ namespace BExIS.IO.Transform.Input
                         }
                         else
                         {
-                          
+
                             foreach (string s in l)
                             {
                                 if (!string.IsNullOrEmpty(s))
                                 {
                                     int id = 0;
-                                    if (int.TryParse(s,out id))
+                                    if (int.TryParse(s, out id))
                                     {
                                         int index = l.IndexOf(s);
                                         SubmitedVariableIdentifiers.ElementAt(index).id = id;
@@ -1318,7 +1323,7 @@ namespace BExIS.IO.Transform.Input
 
             return true;
         }
-        
+
 
         #endregion
 
