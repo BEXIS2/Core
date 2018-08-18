@@ -27,11 +27,11 @@
                 columns.Bound(partyCustomGridColumn.TypePair.Title.Replace(" ", "_")).Title(partyCustomGridColumn.TypePair.Title).HtmlAttributes(new { @class = "relatioshipGridColumn" }).Width("115px");
             columns.Template(@<text>
         <div>
-            @Html.ActionLink(" ", "View", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-show", @style = "color:white;", title = "View Party \"" + item.Row.ItemArray[0] + "\"" })
-            @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-edit", @style = "color:white;", title = "Edit Party \"" + item.Row.ItemArray[0] + "\"" })
-            @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-trash ", @style = "color:white;", title = "Delete Party \"" + item.Row.ItemArray[0] + "\"" })
+            @Html.ActionLink(" ", "View", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-show", @style = "color:white;", title = "View Party" })
+            @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-edit", @style = "color:white;", title = "Edit Party" })
+            @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-trash ", @style = "color:white;", title = "Delete Party" })
         </div>
-            </text>).ClientTemplate("<div><a title=\"View Party\" style=\"color: white; \" href=\"/BAM/Party/View/<#= PartyId #>\" class=\"bx bx-grid-function bx-show\"> </a><a title=\"Edit Party\" style=\"color:white;\" href=\"/BAM/Party/CreateEdit/<#= PartyId #>\" class=\"bx bx-grid-function bx-edit\"> </a><a title=\"Delete Party\" style=\"color:white;\" href=\"/BAM/Party/DeleteConfirm/<#= PartyId #>\" class=\"bx bx-grid-function bx-trash\"></a></div>").Width("90px");
+            </text>).ClientTemplate("<div>\n<a title=\"View Party\" style=\"color: white; \" href=\"/BAM/Party/View/<#= PartyId #>\" class=\"bx bx-grid-function bx-show\">&nbsp;</a>\n<a title=\"Edit Party\" style=\"color:white;\" href=\"/BAM/Party/CreateEdit/<#= PartyId #>\" class=\"bx bx-grid-function bx-edit\">&nbsp;</a>\n<a title=\"Delete Party\" style=\"color:white;\" href=\"/BAM/Party/DeleteConfirm/<#= PartyId #>\" class=\"bx bx-grid-function bx-trash\">&nbsp;</a>\n</div>").Width("90px");
 
             })
     )
