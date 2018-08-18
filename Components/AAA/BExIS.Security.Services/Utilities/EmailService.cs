@@ -82,7 +82,7 @@ namespace BExIS.Security.Services.Utilities
                 {
                     Body = message.Body,
                     IsBodyHtml = true,
-                    Subject = AppId + message.Subject
+                    Subject = message.Subject
                 };
 
                 try
@@ -105,7 +105,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 Body = message.Body,
                 IsBodyHtml = true,
-                Subject = message.Subject
+                Subject = AppId + message.Subject
             };
 
             try
@@ -132,7 +132,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 Body = message.Body,
                 IsBodyHtml = true,
-                Subject = message.Subject
+                Subject = AppId + message.Subject
             };
 
             try
