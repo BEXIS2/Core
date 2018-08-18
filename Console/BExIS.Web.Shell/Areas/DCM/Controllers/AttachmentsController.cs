@@ -79,10 +79,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //Parse user right
 
             var entity = entityManager.EntityRepository.Query(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant() && e.EntityType == typeof(Dataset)).FirstOrDefault();
+
             var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             userTask.Wait();
             var user = userTask.Result;
-            int rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
+            int rights = 0;
+            if (user == null)
+                rights = entityPermissionManager.GetEffectiveRights(null, entity.Id, datasetVersion.Dataset.Id);
+            else
+                rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
             model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
             model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
             model.DownloadAccess = ((rights & (int)RightType.Download) > 0 || ((rights & (int)RightType.Grant) > 0));
