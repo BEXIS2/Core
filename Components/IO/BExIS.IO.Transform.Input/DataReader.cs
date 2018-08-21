@@ -134,10 +134,10 @@ namespace BExIS.IO.Transform.Input
         IList<Variable> variableList;
         #endregion
 
-    
-        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo):this(structuredDatastructure, fileReaderInfo, new IOUtility(), new DatasetManager())
+
+        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo) : this(structuredDatastructure, fileReaderInfo, new IOUtility(), new DatasetManager())
         {
-            
+
         }
 
         public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo, IOUtility iOUtility) : this(structuredDatastructure, fileReaderInfo, iOUtility, new DatasetManager())
@@ -190,73 +190,73 @@ namespace BExIS.IO.Transform.Input
         /// <returns>DataTuple</returns>
         public DataTuple ReadRow(List<string> row, int indexOfRow)
         {
-            if(row == null) return null;
-            if(row.Count == 1 && string.IsNullOrEmpty(row.ElementAt(0))) return null;
-            if(row.Count > this.StructuredDataStructure.Variables.Count || row.Count < this.StructuredDataStructure.Variables.Count) throw new Exception("Number of values different then the number of values.");
+            if (row == null) return null;
+            if (row.Count == 1 && string.IsNullOrEmpty(row.ElementAt(0))) return null;
+            if (row.Count > this.StructuredDataStructure.Variables.Count || row.Count < this.StructuredDataStructure.Variables.Count) throw new Exception("Number of values different then the number of values.");
 
             DataTuple dt = new DataTuple();
             string value = "";
 
-          
-                // convert row to List<VariableValue>
-                for (int i = 0; i < row.Count(); i++)
+
+            // convert row to List<VariableValue>
+            for (int i = 0; i < row.Count(); i++)
+            {
+
+                VariableIdentifier variableIdentifier = this.SubmitedVariableIdentifiers.ElementAt(i);
+                long variableId = 0;
+                if (variableIdentifier.id > 0)
+                    variableId = this.SubmitedVariableIdentifiers.ElementAt(i).id;
+                else
+                    variableId = getVariableUsage(variableIdentifier).Id;
+
+
+
+                // if variable from systemtype datatime
+                // maybee needs to convert into the default datetime culture format
+                if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("DateTime"))
                 {
+                    Dlm.Entities.DataStructure.DataType dataType = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType;
 
-                    VariableIdentifier variableIdentifier = this.SubmitedVariableIdentifiers.ElementAt(i);
-                    long variableId = 0;
-                    if (variableIdentifier.id > 0)
-                        variableId = this.SubmitedVariableIdentifiers.ElementAt(i).id;
-                    else
-                        variableId = getVariableUsage(variableIdentifier).Id;
-
-
-
-                    // if variable from systemtype datatime
-                    // maybee needs to convert into the default datetime culture format
-                    if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("DateTime"))
+                    if (dataType != null && dataType.Extra != null)
                     {
-                        Dlm.Entities.DataStructure.DataType dataType = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType;
-
-                        if (dataType != null && dataType.Extra != null)
-                        {
-                            DataTypeDisplayPattern dp = DataTypeDisplayPattern.Materialize(dataType.Extra);
-                            if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
-                            else value = IOUtility.ConvertDateToCulture(row[i]);
-                        }
-                        else
-                        {
-                            value = IOUtility.ConvertDateToCulture(row[i]);
-                        }
+                        DataTypeDisplayPattern dp = DataTypeDisplayPattern.Materialize(dataType.Extra);
+                        if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
+                        else value = IOUtility.ConvertDateToCulture(row[i]);
                     }
                     else
                     {
-                        if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Double") ||
-                            this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Decimal") ||
-                            this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Float"))
-                        {
-                            value = row[i];
-
-                            if (Info.Decimal.Equals(DecimalCharacter.comma))
-                            {
-                                if (value.Contains(".")) value = value.Replace(".", "");
-                                if (value.Contains(",")) value = value.Replace(',', '.');
-                            }
-
-                            if (Info.Decimal.Equals(DecimalCharacter.point))
-                            {
-                                if (value.Contains(",")) value = value.Remove(',');
-                            }
-
-                        }
-                        else
-                        {
-                            value = row[i];
-                        }
+                        value = IOUtility.ConvertDateToCulture(row[i]);
                     }
-
-                    dt.VariableValues.Add(DatasetManager.CreateVariableValue(value, "", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
                 }
-            
+                else
+                {
+                    if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Double") ||
+                        this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Decimal") ||
+                        this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Float"))
+                    {
+                        value = row[i];
+
+                        if (Info.Decimal.Equals(DecimalCharacter.comma))
+                        {
+                            if (value.Contains(".")) value = value.Replace(".", "");
+                            if (value.Contains(",")) value = value.Replace(',', '.');
+                        }
+
+                        if (Info.Decimal.Equals(DecimalCharacter.point))
+                        {
+                            if (value.Contains(",")) value = value.Remove(',');
+                        }
+
+                    }
+                    else
+                    {
+                        value = row[i];
+                    }
+                }
+
+                dt.VariableValues.Add(DatasetManager.CreateVariableValue(value, "", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
+            }
+
 
             return dt;
 
@@ -469,7 +469,7 @@ namespace BExIS.IO.Transform.Input
         {
             string pattern = "";
 
-            if (variable != null && variable.DataType != null && variable.DataType.Extra!=null)
+            if (variable != null && variable.DataType != null && variable.DataType.Extra != null)
             {
                 DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(variable.DataType.Extra);
                 if (displayPattern != null) pattern = displayPattern.StringPattern;
