@@ -847,11 +847,11 @@
     <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Ldap\Login.cshtml" />
     <Content Include="Views\TermsAndConditions\Index.cshtml" />
+    <Content Include="Views\PrivacyPolicy\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="Views\PrivacyPolicy\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
