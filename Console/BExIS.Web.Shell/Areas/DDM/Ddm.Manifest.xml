@@ -21,7 +21,7 @@
             title="Search" description="Search datasets" icon=""
             controller="publicsearch" action="index"
             extends="./menubarRoot" />
-
+    
     <!--<Export tag="menubar" id="menuSearchPublic" order="2"
             title="Public" description="Search in public datasets" icon=""
             controller="publicsearch" action="public"
@@ -75,10 +75,6 @@
             controller="home" action="index"
             extends="" />
 
-    <Export tag="internalApi" id="showPublicDatasets"
-            title="Show public datasets" description="Shows the public datasets" icon=""
-            controller="publicSearch" action="index"
-            extends="" />
 
   </Exports>
 </Manifest>
