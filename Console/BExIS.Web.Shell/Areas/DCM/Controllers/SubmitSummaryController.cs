@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -254,7 +253,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
 
                                 int counter = 0;
-                                
+
 
                                 //schleife
                                 dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
@@ -283,8 +282,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
 
                                 reader = new ExcelReader(sds, excelFileReaderInfo);
-                                
-                                
 
                                 do
                                 {
@@ -294,7 +291,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     //open stream
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                  
+
                                     if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
@@ -342,7 +339,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     }
                                     Stream?.Close();
-                                    
+
 
                                 } while (rows.Count() > 0);
 
@@ -391,7 +388,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(),  id, packageSize);
+                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id, packageSize);
                                         Stream.Close();
 
                                         if (reader.ErrorMessages.Count > 0)
@@ -402,7 +399,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             }
                                             //return temp;
                                         }
-  
+
                                         if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
                                             if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))

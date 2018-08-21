@@ -45,6 +45,8 @@ namespace BExIS.IO.Transform.Input
         protected int numOfColumns = 0;
         protected int offset = 0;
 
+        protected DecimalCharacter decimalCharacter = 0;
+
         protected int rows = 0;
 
         protected char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -246,6 +248,9 @@ namespace BExIS.IO.Transform.Input
 
             numOfColumns = (endColumn - startColumn) + 1;
             offset = GetColumnNumber(GetColumnName(this._areaOfData.StartColumn)) - 1;
+
+            if (Info == null) Info = new FileReaderInfo();
+            Info.Decimal = DecimalCharacter.point;
 
             // select worksheetpart by selected defined name area like data in sheet
             // sheet where data area is inside

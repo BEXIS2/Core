@@ -3,7 +3,6 @@ using BExIS.Dcm.Wizard;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -99,6 +98,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     {
                                         TaskManager.Current().SetValid(true);
                                         TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "true");
+                                        TaskManager.AddToBus(TaskManager.FILE_READER_INFO, new ExcelFileReaderInfo()
+                                        {
+                                            Offset = 1,
+                                            Variables = 1,
+                                            Data = 13,
+                                            Decimal = DecimalCharacter.point
+                                        });
                                     }
                                     else
                                     {
@@ -121,7 +127,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     {
 
                                         // open FileStream
-                                        var reader = new ExcelReader(null,null);
+                                        var reader = new ExcelReader(null, null);
                                         Stream = reader.Open(filePath);
                                         TaskManager.Current().SetValid(true);
                                         Stream.Close();
@@ -130,7 +136,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     else if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         // open FileStream
-                                        var reader = new AsciiReader(null,null,new IOUtility());
+                                        var reader = new AsciiReader(null, null, new IOUtility());
                                         Stream = reader.Open(filePath);
                                         //Session["Stream"] = Stream;
                                         TaskManager.Current().SetValid(true);
