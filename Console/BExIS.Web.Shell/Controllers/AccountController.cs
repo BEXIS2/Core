@@ -313,7 +313,7 @@ namespace BExIS.Web.Shell.Controllers
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "Welcome! Confirm your email address.");
+                    await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
@@ -402,7 +402,7 @@ namespace BExIS.Web.Shell.Controllers
                 var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account",
                    new { userId, code }, Request.Url.Scheme);
-                await identityUserService.SendEmailAsync(userId, subject, $"Please confirm your account email address by clicking <a href=\"{callbackUrl}\">here</a>");
+                await identityUserService.SendEmailAsync(userId, subject, $"please confirm your mail address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>. Once you finished the registration a system administrator will decide based on your provided information about your assigned permissions. This process can take up to 3 days.");
 
                 return callbackUrl;
             }
