@@ -322,7 +322,7 @@ namespace BExIS.Web.Shell.Controllers
                         );
 
 
-                    ViewBag.Message = "Check your emails and confirm your email address before you are able to log in.";
+                    ViewBag.Message = "Before you can log in to complete your registration please check your email and verify your email address.";
 
                     return View("Info");
                 }
