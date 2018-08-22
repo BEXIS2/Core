@@ -183,7 +183,7 @@ namespace BExIS.IO.Transform.Output
 
                 Cell cell = new Cell();
                 cell.CellReference = new StringValue(cellRef);
-                cell.DataType = CellValues.InlineString;
+                cell.DataType = CellValues.String;
                 //cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
                 cell.CellValue = new CellValue(variable.Caption);
 
