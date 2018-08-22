@@ -90,6 +90,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 var group = identityGroupService.FindByIdAsync(groupId).Result;
+
+                foreach (var user in group.Users)
+                {
+                    await RemoveUserFromGroup(user.Id, @group.Name);
+                }
+
                 var result = await identityGroupService.DeleteAsync(group);
                 return result.Succeeded;
             }
