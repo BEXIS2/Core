@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -24,17 +25,37 @@ namespace BExIS.App.Bootstrap
     }
     public class Application
     {
+        // keep on instance per run stage
+        private static Dictionary<RunStage, Application> instances = new Dictionary<RunStage, Application>();
+
+        private Application(): this(RunStage.Production)
+        {
+        }
+
+        private Application(RunStage runStage = RunStage.Production)
+        {
+            this.runStage = runStage;
+        }
+        public static Application GetInstance(RunStage runStage = RunStage.Production)
+        {
+            if (!instances.ContainsKey(runStage) || instances[runStage] == null)
+            {
+                var instance = new Application(runStage);
+                instances.Add(runStage, instance);
+            }
+            return instances[runStage];
+        }
+
         private RunStage runStage = RunStage.Production;
         private bool started = false;
 
         public bool Started { get { return started; } }
-        public Application(RunStage runStage = RunStage.Production)
-        {
-            this.runStage = runStage;
-        }
+
 
         public void Start(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
+            if (started)
+                return;
             try
             {
                 switch (runStage)
@@ -59,11 +80,14 @@ namespace BExIS.App.Bootstrap
 
         public void Stop()
         {
-            ModuleManager.ShutdownModules();
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            pManager.Shutdown(); // release all data access related resources!
-            IoCFactory.ShutdownContainer();
-            started = false;
+            if (runStage == RunStage.Production)
+            {
+                ModuleManager.ShutdownModules();
+                IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+                pManager.Shutdown(); // release all data access related resources!
+                IoCFactory.ShutdownContainer();
+                started = false;
+            }
         }
 
         private void runForProduction(Action<HttpConfiguration> configurationCallback, bool configureModules)
@@ -73,6 +97,8 @@ namespace BExIS.App.Bootstrap
 
         private void runForTest(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
+            if (started)
+                return;
             //ModuleInitializer.Initialize();
             try
             {
@@ -120,6 +146,9 @@ namespace BExIS.App.Bootstrap
 
         private void initIoC()
         {
+            string path = Path.Combine(AppConfiguration.AppRoot, "IoC.config");
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"IoC.config file expected but was not found in '{path}'.");
             try
             {
                 IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer");
@@ -240,13 +269,22 @@ namespace BExIS.App.Bootstrap
         private void registerRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
-            routes.MapRoute(
-               "Default", // Route name
-               "{controller}/{action}/{id}", // URL with parameters
-               new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
-               , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
-           );
+            //if (!routes.Any(p => ((Route)p).DataTokens["__RouteName"].ToString().Equals("Default", StringComparison.InvariantCultureIgnoreCase)))
+            try
+            {
+                routes.MapRoute(
+                   "Default", // Route name
+                   "{controller}/{action}/{id}", // URL with parameters
+                   new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
+                   , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
+               );
+            }
+            // It should be a duplicate route or a double registration! It can happen during unit testing as the Application.Start may get called several times.
+            catch (Exception ex)
+            {
+                if (this.runStage == RunStage.Production)
+                    throw ex;
+            } 
         }
 
     }
