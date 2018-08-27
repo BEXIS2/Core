@@ -36,38 +36,51 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         public void CreateAMeasurementUnitTest()
         {
             UnitManager um = new UnitManager();
-            var dummyDimension = um.DimensionRepo.Query().First();
-            Unit km = um.Create("KilometerTest", "KmTest", "This is the Kilometer", dummyDimension, MeasurementSystem.Metric);
+            try
+            {
+                var dummyDimension = um.DimensionRepo.Query().First();
+                Unit km = um.Create("KilometerTest", "KmTest", "This is the Kilometer", dummyDimension, MeasurementSystem.Metric);
 
-            km.Should().NotBeNull();
-            km.Id.Should().BeGreaterThan(0);
-            var fetchedKm = um.Repo.Get(km.Id);
-            km.Abbreviation.Should().BeEquivalentTo(fetchedKm.Abbreviation);
-            km.Name.Should().BeEquivalentTo(fetchedKm.Name);
+                km.Should().NotBeNull();
+                km.Id.Should().BeGreaterThan(0);
+                var fetchedKm = um.Repo.Get(km.Id);
+                km.Abbreviation.Should().BeEquivalentTo(fetchedKm.Abbreviation);
+                km.Name.Should().BeEquivalentTo(fetchedKm.Name);
 
-            um.Delete(km); // cleanup the DB
+                um.Delete(km); // cleanup the DB
+            }
+            finally
+            {
+                um.Dispose();
+            }
         }
 
         [Test()]
         public void CreateConversionsBetweenUnitsTest()
         {
             UnitManager um = new UnitManager();
-            var dummyDimension = um.DimensionRepo.Query().First();
+            try
+            {
+                var dummyDimension = um.DimensionRepo.Query().First();
 
-            Unit km = um.Create("KilometerTest", "KmTest", "This is the Kilometer", dummyDimension, MeasurementSystem.Metric);
-            Unit m = um.Create("MeterTest", "MTest", "This is the Meter", dummyDimension, MeasurementSystem.Metric);
+                Unit km = um.Create("KilometerTest", "KmTest", "This is the Kilometer", dummyDimension, MeasurementSystem.Metric);
+                Unit m = um.Create("MeterTest", "MTest", "This is the Meter", dummyDimension, MeasurementSystem.Metric);
 
-            ConversionMethod cm2 = um.CreateConversionMethod("s*1000", "Converts kilometer to meter", km, m);
-            ConversionMethod cm3 = um.CreateConversionMethod("s/1000", "Converts meter to kilometer", m, km);
+                ConversionMethod cm2 = um.CreateConversionMethod("s*1000", "Converts kilometer to meter", km, m);
+                ConversionMethod cm3 = um.CreateConversionMethod("s/1000", "Converts meter to kilometer", m, km);
 
-            km.ConversionsIamTheSource.First().Target.Should().BeEquivalentTo(m);
-            cm3.Source.Name.Should().BeEquivalentTo(m.Name);
-            cm3.Target.Name.Should().BeEquivalentTo(cm2.Source.Name);
+                km.ConversionsIamTheSource.First().Target.Should().BeEquivalentTo(m);
+                cm3.Source.Name.Should().BeEquivalentTo(m.Name);
+                cm3.Target.Name.Should().BeEquivalentTo(cm2.Source.Name);
 
-            // cleanup the DB.
-            um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
-            um.Delete(new List<Unit>() { km, m });
-
+                // cleanup the DB.
+                um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
+                um.Delete(new List<Unit>() { km, m });
+            }
+            finally
+            {
+                um.Dispose();
+            }
 
         }
     }

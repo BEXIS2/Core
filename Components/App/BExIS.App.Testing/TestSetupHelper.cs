@@ -18,7 +18,7 @@ namespace BExIS.App.Testing
 
         public TestSetupHelper(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
-            app = new Application(RunStage.Test);
+            app = Application.GetInstance(RunStage.Test);
             app.Start(configurationCallback, configureModules);
         }
 
@@ -40,10 +40,18 @@ namespace BExIS.App.Testing
             var httpCtxMock = new Mock<HttpContextBase>();
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            var tenant = tenantResolver.DefaultTenant;
+
+            // setting the landing page for the current session
+            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+            var landingPage = generalSettings.GetEntryValue("landingPage").ToString();
+            tenant.LandingPage = landingPage; // checks and sets
 
             var httpSessionMock = new Mock<HttpSessionStateBase>();
-            httpSessionMock.Setup(x => x["CurrentTenant"]).Returns(tenantResolver.DefaultTenant);
+            httpSessionMock.Setup(x => x["CurrentTenant"]).Returns(tenant);
             httpCtxMock.Setup(ctx => ctx.Session).Returns(httpSessionMock.Object);
+
+
 
             if (!string.IsNullOrWhiteSpace(userName))
             {

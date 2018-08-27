@@ -23,84 +23,98 @@ namespace BExIS.Dlm.Tests.Services.Data
     public class DatasetManagerTests
     {
         private TestSetupHelper helper = null;
-        private StructuredDataStructure dataStructure;
-        private ResearchPlan researchPlan;
-        DatasetHelper dsHelper = null;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-            dsHelper = new DatasetHelper();
+            var dsHelper = new DatasetHelper();
             dsHelper.PurgeAllDatasets();
             dsHelper.PurgeAllDataStructures();
-
-            dataStructure = dsHelper.CreateADataStructure();
-            researchPlan = dsHelper.CreateResearchPlan();
-
-
+            dsHelper.PurgeAllResearchPlans();
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            var dsHelper = new DatasetHelper();
             dsHelper.PurgeAllDatasets();
             dsHelper.PurgeAllDataStructures();
-
+            dsHelper.PurgeAllResearchPlans();
             helper.Dispose();
         }
 
         [Test()]
         public void CreateEmptyDatasetTest()
         {
-             DatasetManager dm = new DatasetManager();
+            var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            try
+            {
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-            dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
-            var rp = rsm.Repo.Query().First();
-            rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-            var mds = mdm.Repo.Query().First();
-            mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
 
-            Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                dataset.Should().NotBeNull();
+                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
-            dataset.Should().NotBeNull();
-            dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
-            dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
-            dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-            dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
-
-            dm.PurgeDataset(dataset.Id);
+                dm.PurgeDataset(dataset.Id);
+            }
+            finally
+            {
+                dm?.Dispose();
+                rsm?.Dispose();
+                mdm?.Dispose();
+            }
         }
 
         [Test()]
         public void DeleteDatasetTest()
         {
-            DatasetManager dm = new DatasetManager();
+            var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            try
+            {
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-            dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
-            var rp = rsm.Repo.Query().First();
-            rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-            var mds = mdm.Repo.Query().First();
-            mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                dm.DeleteDataset(dataset.Id, "Javad", false);
 
-            Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-            dm.DeleteDataset(dataset.Id, "Javad", false);
+                dataset.Should().NotBeNull();
+                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
 
-            dataset.Should().NotBeNull();
-            dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
-            dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
-            dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-            dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
-
-            dm.PurgeDataset(dataset.Id);
+                dm.PurgeDataset(dataset.Id);
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+            }
         }
 
 
@@ -114,9 +128,11 @@ namespace BExIS.Dlm.Tests.Services.Data
 
             try
             {
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                var rp = rsm.Repo.Query().First();
+                var rp = dsHelper.CreateResearchPlan();
                 rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
                 var mds = mdm.Repo.Query().First();
@@ -153,6 +169,10 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void CreateAndExpressionForQueryingTest()
         {
+            var dsHelper = new DatasetHelper();
+            StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+            dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
             string var1Name = "var" + dataStructure.Variables.First().Id;
             string var2Name = "var" + dataStructure.Variables.Skip(1).First().Id;
 
@@ -202,7 +222,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                var rp = rsm.Repo.Query().First();
+                var rp = dsHelper.CreateResearchPlan();
                 rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
                 var mds = mdm.Repo.Query().First();
@@ -243,6 +263,10 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void ProjectExpressionTest()
         {
+            var dsHelper = new DatasetHelper();
+            StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+            dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
             string var1Name = "var" + dataStructure.Variables.First().Id;
             string var3Name = "var" + dataStructure.Variables.Skip(2).First().Id;
 
@@ -263,7 +287,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                var rp = rsm.Repo.Query().First();
+                var rp = dsHelper.CreateResearchPlan();
                 rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
                 var mds = mdm.Repo.Query().First();
@@ -286,7 +310,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, null, null, projectionExpression, 1, 3);
                 dst.Should().NotBeNull();
                 dst.Rows.Count.Should().BeLessOrEqualTo(3);
-                dst.Columns.Count.Should().BeLessOrEqualTo(3, "Projection fails, false number of columns");
+                dst.Columns.Count.Should().BeLessOrEqualTo(3, "Projection failed, wrong number of columns");
 
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
@@ -305,8 +329,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
 
         }
-
-        
     }
 
 }

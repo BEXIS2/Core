@@ -45,6 +45,20 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
+        public void PurgeAllResearchPlans()
+        {
+            var manager = new ResearchPlanManager();
+            try
+            {
+                var plans = manager.Repo.Query().ToList();
+                manager.Delete(plans);
+            }
+            finally
+            {
+                manager.Dispose();
+            }
+        }
+
         public StructuredDataStructure CreateADataStructure()
         {
             var unitManager = new UnitManager();
