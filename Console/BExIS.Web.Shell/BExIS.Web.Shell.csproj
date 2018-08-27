@@ -848,6 +848,7 @@
     <Content Include="Views\Ldap\Login.cshtml" />
     <Content Include="Views\TermsAndConditions\Index.cshtml" />
     <Content Include="Views\PrivacyPolicy\Index.cshtml" />
+    <Content Include="Views\Ldap\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

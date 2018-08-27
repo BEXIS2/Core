@@ -40,13 +40,21 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        var result = ldapAuthenticationManager.ValidateUser(model.UserName, model.Password);
+                        SignInStatus result = ldapAuthenticationManager.ValidateUser(model.UserName, model.Password);
                         switch (result)
                         {
                             case SignInStatus.Success:
                                 var identity = await identityUserService.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
                                 AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
-                                return RedirectToLocal(returnUrl);
+                                if (!user.HasTermsAndConditionsAccepted || !user.HasPrivacyPolicyAccepted)
+                                {
+                                    return RedirectToAction("Confirm", returnUrl);
+                                }
+                                else
+                                {
+                                    return RedirectToLocal(returnUrl);
+                                }
+                                
 
                             default:
                                 ModelState.AddModelError("", "Invalid login attempt.");
@@ -70,7 +78,7 @@ namespace BExIS.Web.Shell.Controllers
                             await userManager.AddLoginAsync(ldapUser, new UserLoginInfo("Ldap", ""));
                             var identity = await identityUserService.CreateIdentityAsync(ldapUser, DefaultAuthenticationTypes.ApplicationCookie);
                             AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
-                            return RedirectToLocal(returnUrl);
+                            return Confirm(returnUrl);
 
                         default:
                             ModelState.AddModelError("", "Invalid login attempt.");
@@ -83,6 +91,52 @@ namespace BExIS.Web.Shell.Controllers
                 ldapAuthenticationManager.Dispose();
                 userManager.Dispose();
                 signInManager.Dispose();
+            }
+        }
+
+        public ActionResult Confirm(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Confirm(LoginConfirmModel model, string returnUrl)
+        {
+            var userManager = new UserManager();
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+
+                if (user != null)
+                {
+                    if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
+                    {
+                        user.HasPrivacyPolicyAccepted = true;
+                        user.HasTermsAndConditionsAccepted = true;
+
+                        await userManager.UpdateAsync(user);
+
+                        return RedirectToLocal(returnUrl);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Invalid user - no ldap authentication.");
+                        return View(model);
+                    }
+                }
+
+                return RedirectToLocal(returnUrl);
+            }
+            finally
+            {
+                userManager.Dispose();
             }
         }
 
