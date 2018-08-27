@@ -30,8 +30,8 @@ namespace BExIS.Modules.Vim.UI.Models
 
     public class VisualizationModels
     {
-        //public Dictionary<string, int> createdDatasets = new Dictionary<string, int>();
         public Dictionary<string, int> allDatasets = new Dictionary<string, int>();
+        public Dictionary<string, int> createdDatasets = new Dictionary<string, int>();
         //public Dictionary<string, int> checkedInDatasets = new Dictionary<string, int>();
         //public Dictionary<string, int> checkedOutDatasets = new Dictionary<string, int>();
         public Dictionary<string, int> deletedDatasets = new Dictionary<string, int>();

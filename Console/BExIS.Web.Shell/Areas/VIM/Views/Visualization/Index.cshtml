@@ -13,8 +13,8 @@
 
 @{
     //string modelValues = String.Join(",", Model.);
-    string allDatasets = String.Join(",", Model.allDatasets);
-    string createdDatasets = String.Join(",", Model.allDatasets);
+    string allDatasets = String.Join(",", Model.createdDatasets);
+    string createdDatasets = String.Join(",", Model.createdDatasets);
     //string checkedOutDatasets = String.Join(",", Model.allDatasets);
     string deletedDatasets = String.Join(",", Model.deletedDatasets);
 }
@@ -27,7 +27,7 @@
             <option value="all" label="Select a category">All Datasets</option>
             <!--<option value="all">All Datasets</option>-->
             <option value="created" label="Created Datasets">Created Datasets</option>
-            <option value="created" label="System Activity">System Activity</option> <!--count created datasets-->
+            <!--<option value="created" label="System Activity">System Activity</option>--> <!--count created datasets-->
             <!--<option value="created" label="created Datasets">created Datasets</option>-->
             <!--<option value="checkedOut" label="CheckedOut Datasets">CheckedOut Datasets</option>-->
             <option value="deleted" label="Deleted Datasets">Deleted Datasets</option>
@@ -190,7 +190,7 @@
         var myData = [];
         var t = years(); //list of all years
 
-        if (status == "created") { var dataset = '@allDatasets'.split(","); }
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
         if (status == "created") { var dataset = '@createdDatasets'.split(","); }
         //if (status == "checkedOut") { var dataset = 'checkedOutDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
@@ -259,7 +259,7 @@
     function dataByMonth(status, time) {
         var myData = [];
 
-        if (status == "created") { var dataset = '@allDatasets'.split(","); }
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
         if (status == "created") { var dataset = '@createdDatasets'.split(","); }
         //if (status == "checkedOut") { var dataset = 'checkedOutDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
@@ -320,7 +320,7 @@
         var status = document.getElementById('statusSelector').value;
 
         var myData = [];
-        myData[0] = ["Date", "created", "Deleted"];
+        myData[0] = ["Date", "Created", "Deleted"];
 
         for (var i = 1; i < mycreatedData.length; ++i) {
             var year = mycreatedData[i][0];
@@ -393,10 +393,10 @@
             if (time == "all") { myData = dataByYear(status); }
             else { myData = dataByMonth(status, time); }
 
-            if (status == "created") { drawChart(myData, colors[0]); }
+            if (status == "all") { drawChart(myData, colors[0]); }
             //if (status == "checkedOut") { drawChart(myData, colors[1]); }
-            if (status == "deleted") { drawChart(myData, colors[2]); }
             if (status == "created") { drawChart(myData, colors[3]); }
+            if (status == "deleted") { drawChart(myData, colors[2]); }
         }
     }
 
