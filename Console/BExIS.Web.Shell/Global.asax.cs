@@ -20,10 +20,10 @@ namespace BExIS.Web.Shell
     public class MvcApplication : HttpApplication
     {
 
-        private Application app = null;
+        private BExIS.App.Bootstrap.Application app = null;
         protected void Application_Start()
         {
-            app = new Application(RunStage.Production);
+            app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);

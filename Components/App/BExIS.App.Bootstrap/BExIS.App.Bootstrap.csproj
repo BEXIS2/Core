@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
+    <Compile Include="GeneralSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

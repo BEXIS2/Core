@@ -120,23 +120,33 @@ namespace BExIS.Dlm.Tests.Services.Party
         [Test()]         public void DeleteListOfPartyRelationshipTest()         {
             PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            var partyStatusTypes = new List<PartyStatusType>();
-            partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
-            var sourcePartyType = partyTypeManager.Create("sourceTestType", "", "", partyStatusTypes);
-            var targetPartyType = partyTypeManager.Create("targetTestType", "", "", partyStatusTypes);
-            //create relationshiptype and one "typePair"
-            var partyRelationshipType = partyRelationshipTypeManager.Create("title", "T i t l e", "Descr", false, 100, -1, false, sourcePartyType, targetPartyType, "typepairTitle", "", "", "", 0);
-            long partyRelationshipTypeId = partyRelationshipType.Id;
-            var partyRelationshipType2 = partyRelationshipTypeManager.Create("title2", "T i t l e2", "Descr", false, 100, -1, false, sourcePartyType, targetPartyType, "typepairTitle", "", "", "", 0);
-            long partyRelationshipType2Id = partyRelationshipType2.Id;
-            List<PartyRelationshipType> partyRelationshipTypes = new List<PartyRelationshipType>();
-            partyRelationshipTypes.Add(partyRelationshipType);
-            partyRelationshipTypes.Add(partyRelationshipType2);
-            partyRelationshipTypeManager.Delete(partyRelationshipTypes);
-            PartyRelationshipType partyRelationshipType1AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
-            PartyRelationshipType partyRelationshipType2AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipType2Id).FirstOrDefault();
-            partyRelationshipType1AfterDelete.Should().BeNull();
-            partyRelationshipType2AfterDelete.Should().BeNull();
+            try
+            {
+                var partyStatusTypes = new List<PartyStatusType>();
+                partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
+                var sourcePartyType = partyTypeManager.Create("sourceTestType", "", "", partyStatusTypes);
+                var targetPartyType = partyTypeManager.Create("targetTestType", "", "", partyStatusTypes);
+                //create relationshiptype and one "typePair"
+                var partyRelationshipType = partyRelationshipTypeManager.Create("title", "T i t l e", "Descr", false, 100, -1, false, sourcePartyType, targetPartyType, "typepairTitle", "", "", "", 0);
+                long partyRelationshipTypeId = partyRelationshipType.Id;
+
+                var partyRelationshipType2 = partyRelationshipTypeManager.Create("title2", "T i t l e2", "Descr", false, 100, -1, false, sourcePartyType, targetPartyType, "typepairTitle", "", "", "", 0);
+                long partyRelationshipType2Id = partyRelationshipType2.Id;
+                List<PartyRelationshipType> partyRelationshipTypes = new List<PartyRelationshipType>();
+                partyRelationshipTypes.Add(partyRelationshipType);
+                partyRelationshipTypes.Add(partyRelationshipType2);
+
+                partyRelationshipTypeManager.Delete(partyRelationshipTypes);
+                PartyRelationshipType partyRelationshipType1AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
+                PartyRelationshipType partyRelationshipType2AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipType2Id).FirstOrDefault();
+                partyRelationshipType1AfterDelete.Should().BeNull();
+                partyRelationshipType2AfterDelete.Should().BeNull();
+            }
+            finally
+            {
+                partyRelationshipTypeManager.Dispose();
+                partyTypeManager.Dispose();
+            }
         }
 
         [Test()]         public void GetAllPartyRelationshipTypesTest()

@@ -170,6 +170,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 foreach (var entity in entities)
                 {
+                    variableRepo.Evict();
+                    paramRepo.Evict();
                     var latest = repo.Reload(entity);
                     if (datasetRepo.Query(p => p.DataStructure.Id == latest.Id).Count() > 0)
                     {

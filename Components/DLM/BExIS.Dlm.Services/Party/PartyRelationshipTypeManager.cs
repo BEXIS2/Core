@@ -158,20 +158,23 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (PartyRelationshipType e) => e != null));
             Contract.Requires(Contract.ForAll(entities, (PartyRelationshipType e) => e.Id >= 0));
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationshipType> repoPR = uow.GetRepository<PartyRelationshipType>();
+                repoPR.Evict();
+
                 IRepository<PartyType> repoType = uow.GetRepository<PartyType>();
                 foreach (var entity in entities)
                 {
                     var latest = repoPR.Reload(entity);
                     //If there is a relation between entity and a party we couldn't delete it
-                    if (entity.PartyRelationships.Count() > 0)
-                        BexisException.Throw(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", BexisException.ExceptionType.Delete, true);
+                    if (latest.PartyRelationships.Count() > 0)
+                        BexisException.Throw(latest, "There are some relations between this 'PartyRelationshipType' and 'Party'", BexisException.ExceptionType.Delete, true);
                     // remove all associations between the entity and AssociatedPairs
-                    entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
-                    entity.AssociatedPairs.Clear();
-                    repoPR.Delete(entity);
+                    latest.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
+                    latest.AssociatedPairs.Clear();
+                    repoPR.Delete(latest);
                 }
                 uow.Commit();
             }
