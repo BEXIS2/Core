@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
@@ -94,6 +95,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 string dataStructureType = DataStructureType.Structured.ToString();
                 bool downloadAccess = false;
                 bool requestExist = false;
+                bool requestAble = false;
                 bool latestVersion = false;
 
                 XmlDocument metadata = new XmlDocument();
@@ -139,6 +141,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (!downloadAccess)
                     {
                         requestExist = HasRequest(id);
+                        requestAble = HasRequestMapping(id);
                     }
 
                     if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
@@ -171,7 +174,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
                     DataStructureType = dataStructureType,
                     DownloadAccess = downloadAccess,
-                    RequestExist = requestExist
+                    RequestExist = requestExist,
+                    RequestAble = requestAble
                 };
 
                 //set metadata in session
@@ -1419,6 +1423,44 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 subjectManager.Dispose();
                 requestManager.Dispose();
+                entityManager.Dispose();
+            }
+        }
+
+        private bool HasRequestMapping(long datasetId)
+        {
+
+            EntityManager entityManager = new EntityManager();
+            PartyManager partyManager = new PartyManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
+
+            try
+            {
+                var datasetPartyType = partyTypeManager.PartyTypes.Where(pt => pt.DisplayName.ToLower().Equals("dataset")).FirstOrDefault();
+
+                long partyId = partyManager.Parties.Where(p => p.PartyType.Id.Equals(datasetPartyType.Id) && p.Name.Equals(datasetId.ToString())).FirstOrDefault().Id;
+
+                var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.ToLower().Equals("owner")).FirstOrDefault();
+                if (ownerPartyRelationshipType == null) return false;
+
+                var ownerRelationships = partyManager.PartyRelationships.Where(p =>
+                p.TargetParty.Id.Equals(partyId) &&
+                p.PartyRelationshipType.Id.Equals(ownerPartyRelationshipType.Id));
+
+                if (ownerRelationships == null) return false;
+
+                var exist = ownerRelationships.Count() > 0 ? true : false;
+                return exist;
+
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                partyManager.Dispose();
                 entityManager.Dispose();
             }
         }

@@ -67,13 +67,21 @@
                 }
                 else
                 {
-                    if (Model.RequestExist)
+                    if (Model.RequestAble)
                     {
-                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
+
+                        if (Model.RequestExist)
+                        {
+                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
+                        }
+                        else
+                        {
+                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
+                        }
                     }
                     else
                     {
-                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
+                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
                     }
                 }
             </td>
