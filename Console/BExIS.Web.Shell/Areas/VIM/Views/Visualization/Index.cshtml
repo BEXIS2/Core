@@ -24,7 +24,7 @@
     <div>
         <!--Drop Down List to select datasets by status-->
         <select id="statusSelector" onchange="myChart()" style="width:200px;">
-            <option value="created" label="Select a category">Select a category</option>
+            <!--<option value="created" label="Select a category">Select a category</option>-->
             <!--<option value="all">All Datasets</option>-->
             <option value="created" label="Created Datasets">Created Datasets</option>
             <!--<option value="created" label="System Activity">System Activity</option>--> <!--count created datasets-->
@@ -395,7 +395,7 @@
 
             if (status == "all") { drawChart(myData, colors[0]); }
             //if (status == "checkedOut") { drawChart(myData, colors[1]); }
-            if (status == "created") { drawChart(myData, colors[3]); }
+            if (status == "created") { drawChart(myData, colors[0]); }
             if (status == "deleted") { drawChart(myData, colors[2]); }
         }
     }
