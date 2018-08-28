@@ -522,6 +522,10 @@
       <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
+      <Project>{CAC933A2-6849-4C61-82B4-CBF4052210CC}</Project>
+      <Name>BExIS.Dim.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

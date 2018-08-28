@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Xml;
-
-namespace BExIS.Modules.Ddm.UI.Models
+﻿namespace BExIS.Modules.Ddm.UI.Models
 {
     public class ShowDataModel
     {
@@ -26,5 +20,6 @@ namespace BExIS.Modules.Ddm.UI.Models
         public bool DownloadAccess { get; set; }
 
         public bool RequestExist { get; set; }
+        public bool RequestAble { get; set; }
     }
 }
