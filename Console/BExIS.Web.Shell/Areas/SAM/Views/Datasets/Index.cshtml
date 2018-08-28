@@ -70,13 +70,13 @@
                 }
                 else if (entity.Status == DatasetStatus.Deleted)
                 {
-                    <td class="number-of-rows">@(entity.NoOfRows)</td>
-                    <td>@(entity.NoOfCols)</td>
                     <td style="color: red">@(entity.Status.ToString())</td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>                    
                     <td>
                         @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
                         @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" })
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
                         <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
                     </td>
                 }
