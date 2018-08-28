@@ -1,12 +1,8 @@
-﻿using NHibernate.Cfg;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Web;
 using Vaiona.Utils.Cfg;
 
-namespace BExIS.Web.Shell.Helpers
+namespace BExIS.App.Bootstrap
 {
     /// <summary>
     /// Contains all the general settings of the shell.

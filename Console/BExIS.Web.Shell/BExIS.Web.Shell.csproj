@@ -26,7 +26,8 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <IISExpressSSLPort>44345</IISExpressSSLPort>
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -405,7 +406,6 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
-    <Compile Include="Helpers\GeneralSettings.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
@@ -848,6 +848,7 @@
     <Content Include="Views\Ldap\Login.cshtml" />
     <Content Include="Views\TermsAndConditions\Index.cshtml" />
     <Content Include="Views\PrivacyPolicy\Index.cshtml" />
+    <Content Include="Views\Ldap\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

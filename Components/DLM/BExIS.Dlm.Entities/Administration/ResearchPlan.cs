@@ -13,6 +13,10 @@ namespace BExIS.Dlm.Entities.Administration
     /// <remarks></remarks>        
     public class ResearchPlan: BaseEntity
     {
+        public ResearchPlan()
+        {
+            this.Datasets = new List<Dataset>();
+        }
         /// <summary>
         ///
         /// </summary>
