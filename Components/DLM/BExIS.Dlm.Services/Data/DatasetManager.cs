@@ -56,7 +56,7 @@ namespace BExIS.Dlm.Services.Data
     ///         <item><description>There is an automatic and transparent authorization based result set trimming in place, that may reduce the matching entities based on the current user access rights.</description></item>
     ///     </list>
     /// </remarks>
-    public class DatasetManager : IDisposable, IEntityStore
+    public class DatasetManager : IDisposable
     {
         public const long BIG_DATASET_SIZE_THRESHOLD = 5000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
         public int PreferedBatchSize { get; set; }
@@ -3414,16 +3414,5 @@ namespace BExIS.Dlm.Services.Data
         }
 
         #endregion
-
-        public List<EntityStoreItem> GetEntities()
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var repo = uow.GetReadOnlyRepository<Dataset>();
-
-                var entities = repo.Query().Select(x => new EntityStoreItem() { Id = x.Id, Title = "Not Available" });
-                return entities.ToList();
-            }
-        }
     }
 }
