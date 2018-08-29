@@ -13,9 +13,9 @@
 
 @{
     //string modelValues = String.Join(",", Model.);
-    string allDatasets = String.Join(",", Model.allDatasets);
-    string checkedInDatasets = String.Join(",", Model.checkedInDatasets);
-    string checkedOutDatasets = String.Join(",", Model.checkedOutDatasets);
+    string allDatasets = String.Join(",", Model.createdDatasets);
+    string createdDatasets = String.Join(",", Model.createdDatasets);
+    //string checkedOutDatasets = String.Join(",", Model.allDatasets);
     string deletedDatasets = String.Join(",", Model.deletedDatasets);
 }
 
@@ -24,11 +24,12 @@
     <div>
         <!--Drop Down List to select datasets by status-->
         <select id="statusSelector" onchange="myChart()" style="width:200px;">
-            <option value="all" label="Select a category">All Datasets</option>
+            <!--<option value="created" label="Select a category">Select a category</option>-->
             <!--<option value="all">All Datasets</option>-->
             <option value="created" label="Created Datasets">Created Datasets</option>
-            <option value="checkedIn" label="CheckedIn Datasets">CheckedIn Datasets</option>
-            <option value="checkedOut" label="CheckedOut Datasets">CheckedOut Datasets</option>
+            <!--<option value="created" label="System Activity">System Activity</option>--> <!--count created datasets-->
+            <!--<option value="created" label="created Datasets">created Datasets</option>-->
+            <!--<option value="checkedOut" label="CheckedOut Datasets">CheckedOut Datasets</option>-->
             <option value="deleted" label="Deleted Datasets">Deleted Datasets</option>
         </select>
     </div>
@@ -184,14 +185,14 @@
 
     //Function dataByYear(status)
     //return dataset for a range of years. firstYear and lastYear will produce inside of the function.
-    //status: all, checkedIn, checkedOut, Deleted
+    //status: all, created, checkedOut, Deleted
     function dataByYear(status) {
         var myData = [];
         var t = years(); //list of all years
 
-        if (status == "created") { var dataset = '@allDatasets'.split(","); }
-        if (status == "checkedIn") { var dataset = '@checkedInDatasets'.split(","); }
-        if (status == "checkedOut") { var dataset = '@checkedOutDatasets'.split(","); }
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "created") { var dataset = '@createdDatasets'.split(","); }
+        //if (status == "checkedOut") { var dataset = 'checkedOutDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
 
         myData[0] = ['Date', 'Count'];
@@ -226,25 +227,25 @@
     }
 
     //Function allDataByYear()
-    //return dataset includes data tuples of checkedIn, checkedOut and Deleted datasets in each year.
+    //return dataset includes data tuples of created, checkedOut and Deleted datasets in each year.
     //It uses function dataByYear(status)
     function allDataByYear() {
-        var myCheckedInData = dataByYear("checkedIn");
-        var myCheckedOutData = dataByYear("checkedOut");
+        var mycreatedData = dataByYear("created");
+        //var myCheckedOutData = dataByYear("checkedOut");
         var myDeletedData = dataByYear("deleted");
 
         var myData = [];
-        myData[0] = ["Date", "CheckedIn", "CheckedOut", "Deletet"];
+        myData[0] = ["Date", "created", "Deletet"];
 
-        for (var i = 1; i < myCheckedInData.length; ++i) {
-            var year = myCheckedInData[i][0];
-            var checkedIn = myCheckedInData[i][1];
-            var checkedOut = myCheckedOutData[i][1];
+        for (var i = 1; i < mycreatedData.length; ++i) {
+            var year = mycreatedData[i][0];
+            var created = mycreatedData[i][1];
+            //var checkedOut = myCheckedOutData[i][1];
             var deleted = myDeletedData[i][1];
             var minY = $("#slider").slider("values")[0];
             var maxY = $("#slider").slider("values")[1];
             if (year >= minY || year <= maxY) {
-                myData.push([year, checkedIn, checkedOut, deleted]);
+                myData.push([year, created, deleted]);
             }
         }
 
@@ -254,13 +255,13 @@
     //Function dataByMonth(status, time)
     //return dataset in a year and from a defined status
     //time: Year
-    //status: all, checkedIn, checkedOut, Deleted
+    //status: all, created, checkedOut, Deleted
     function dataByMonth(status, time) {
         var myData = [];
 
-        if (status == "created") { var dataset = '@allDatasets'.split(","); }
-        if (status == "checkedIn") { var dataset = '@checkedInDatasets'.split(","); }
-        if (status == "checkedOut") { var dataset = '@checkedOutDatasets'.split(","); }
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "created") { var dataset = '@createdDatasets'.split(","); }
+        //if (status == "checkedOut") { var dataset = 'checkedOutDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
 
         myData[0] = ['Date', 'Count'];
@@ -312,21 +313,21 @@
 
     function allDataByMonth(time) {
         var year = time;
-        var myCheckedInData = dataByMonth("checkedIn", time);
-        var myCheckedOutData = dataByMonth("checkedOut", time);
+        var mycreatedData = dataByMonth("created", time);
+        //var myCheckedOutData = dataByMonth("checkedOut", time);
         var myDeletedData = dataByMonth("deleted", time);
 
         var status = document.getElementById('statusSelector').value;
 
         var myData = [];
-        myData[0] = ["Date", "CheckedIn", "CheckedOut", "Deletet"];
+        myData[0] = ["Date", "Created", "Deleted"];
 
-        for (var i = 1; i < myCheckedInData.length; ++i) {
-            var year = myCheckedInData[i][0];
-            var checkedIn = myCheckedInData[i][1];
-            var checkedOut = myCheckedOutData[i][1];
+        for (var i = 1; i < mycreatedData.length; ++i) {
+            var year = mycreatedData[i][0];
+            var created = mycreatedData[i][1];
+            //var checkedOut = myCheckedOutData[i][1];
             var deleted = myDeletedData[i][1];
-            if (status == "all") { myData.push([year, checkedIn, checkedOut, deleted]); }
+            if (status == "all") { myData.push([year, created, deleted]); }
 
         }
 
@@ -388,14 +389,14 @@
             drawChart(myData, colors[0]);
         }
 
-        else { //if (status == created, checkedIn, checkedOut, deleted)
+        else { //if (status == created, created, checkedOut, deleted)
             if (time == "all") { myData = dataByYear(status); }
             else { myData = dataByMonth(status, time); }
 
-            if (status == "checkedIn") { drawChart(myData, colors[0]); }
-            if (status == "checkedOut") { drawChart(myData, colors[1]); }
+            if (status == "all") { drawChart(myData, colors[0]); }
+            //if (status == "checkedOut") { drawChart(myData, colors[1]); }
+            if (status == "created") { drawChart(myData, colors[0]); }
             if (status == "deleted") { drawChart(myData, colors[2]); }
-            if (status == "created") { drawChart(myData, colors[3]); }
         }
     }
 
