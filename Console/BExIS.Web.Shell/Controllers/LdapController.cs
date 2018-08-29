@@ -40,21 +40,25 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
+                        if(string.IsNullOrEmpty(user.Email))
+                        {
+                            ViewBag.ReturnUrl = returnUrl;
+                            return View("Confirm", LoginConfirmModel.Convert(user));
+                        }
+
+                        if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
+                        {
+                            ViewBag.ErrorMessage = "You must have a confirmed email address to log in.";
+                            return View("Error");
+                        }
+
                         SignInStatus result = ldapAuthenticationManager.ValidateUser(model.UserName, model.Password);
                         switch (result)
                         {
                             case SignInStatus.Success:
                                 var identity = await identityUserService.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
                                 AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
-                                if (!user.HasTermsAndConditionsAccepted || !user.HasPrivacyPolicyAccepted)
-                                {
-                                    return RedirectToAction("Confirm", returnUrl);
-                                }
-                                else
-                                {
-                                    return RedirectToLocal(returnUrl);
-                                }
-                                
+                                return RedirectToLocal(returnUrl);
 
                             default:
                                 ModelState.AddModelError("", "Invalid login attempt.");
@@ -76,9 +80,9 @@ namespace BExIS.Web.Shell.Controllers
                             var ldapUser = new User() { Name = model.UserName, SecurityStamp = Guid.NewGuid().ToString() };
                             await userManager.CreateAsync(ldapUser);
                             await userManager.AddLoginAsync(ldapUser, new UserLoginInfo("Ldap", ""));
-                            var identity = await identityUserService.CreateIdentityAsync(ldapUser, DefaultAuthenticationTypes.ApplicationCookie);
-                            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
-                            return Confirm(returnUrl);
+
+                            ViewBag.ReturnUrl = returnUrl;
+                            return View("Confirm", LoginConfirmModel.Convert(ldapUser));
 
                         default:
                             ModelState.AddModelError("", "Invalid login attempt.");
@@ -94,16 +98,11 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
-        public ActionResult Confirm(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
-        }
-
         [HttpPost]
         public async Task<ActionResult> Confirm(LoginConfirmModel model, string returnUrl)
         {
             var userManager = new UserManager();
+            var identityUserService = new IdentityUserService();
 
             try
             {
@@ -112,18 +111,24 @@ namespace BExIS.Web.Shell.Controllers
                     return View(model);
                 }
 
-                var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                var user = await userManager.FindByIdAsync(model.Id);
 
                 if (user != null)
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        user.HasPrivacyPolicyAccepted = true;
-                        user.HasTermsAndConditionsAccepted = true;
+                        user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
+                        user.HasTermsAndConditionsAccepted = model.TermsAndConditions;
+                        user.Email = model.Email;
 
                         await userManager.UpdateAsync(user);
 
-                        return RedirectToLocal(returnUrl);
+                        var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
+                        await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
+
+                        ViewBag.Message = "Before you can log in to complete your registration please check your email and verify your email address.";
+
+                        return View("Info");
                     }
                     else
                     {
@@ -137,6 +142,25 @@ namespace BExIS.Web.Shell.Controllers
             finally
             {
                 userManager.Dispose();
+            }
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
+        {
+            var identityUserService = new IdentityUserService();
+
+            try
+            {
+                var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                    new { userId, code }, Request.Url.Scheme);
+                await identityUserService.SendEmailAsync(userId, subject, $"please confirm your mail address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>. Once you finished the registration a system administrator will decide based on your provided information about your assigned permissions. This process can take up to 3 days.");
+
+                return callbackUrl;
+            }
+            finally
+            {
+                identityUserService.Dispose();
             }
         }
 
