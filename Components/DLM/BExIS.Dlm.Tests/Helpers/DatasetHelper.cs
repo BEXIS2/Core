@@ -34,10 +34,12 @@ namespace BExIS.Dlm.Tests.Helpers
             try
             {
                 var sts = manager.StructuredDataStructureRepo.Query().ToList();
-                manager.DeleteStructuredDataStructure(sts);
+                sts.ForEach(p => manager.DeleteStructuredDataStructure(p));
+                //manager.DeleteStructuredDataStructure(sts); // Does not delete all the entities of the list!!!! Javad, 29.08.2018
 
                 var unsts = manager.UnStructuredDataStructureRepo.Query().ToList();
-                manager.DeleteUnStructuredDataStructure(unsts);
+                unsts.ForEach(p => manager.DeleteUnStructuredDataStructure(p));
+                //manager.DeleteUnStructuredDataStructure(unsts);
             }
             finally
             {

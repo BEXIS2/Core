@@ -5,6 +5,8 @@ namespace BExIS.Security.Services.Objects
     public interface IEntityStore
     {
         List<EntityStoreItem> GetEntities();
+
+        string GetTitleById(long id);
     }
 
     public class EntityStoreItem
