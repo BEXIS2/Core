@@ -387,7 +387,8 @@ namespace BExIS.Dlm.Services.Data
                     datasetRepo.Put(entity);
                     uow.Commit();
                     // if any problem was detected during the commit, an exception will be thrown!
-                    dropMaterializedView(datasetId);
+                    if ((entity.DataStructure is StructuredDataStructure))
+                        dropMaterializedView(datasetId);
                     return (true);
                 }
                 catch (Exception ex)
@@ -565,6 +566,13 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        /// <summary>
+        /// Physically deletes the whole dataset, including its versions and data tuples, from the database.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
+        /// <param name="forced">purge even if checked out, ...</param>
+        /// <returns>True if the dataset is purged, False otherwise.</returns>
+        /// <remarks>There is no way to recover the dataset after this method has successfully purged it.</remarks>
         public bool PurgeDataset(Int64 datasetId, bool forced) // forced is not used, it is just an indicator for now
         {
             // this varient create smaller units of work and commits changes as the purging progresses. So the dataset is in a wrong state during this operation
@@ -2477,7 +2485,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true, bool throwExceptionOnUnstructured = false)
         {
             if (behavior == ViewCreationBehavior.None) // do not use this one! (behavior.HasFlag(ViewCreationBehavior.None))
                 return;
@@ -2492,14 +2500,18 @@ namespace BExIS.Dlm.Services.Data
                 throw new Exception($"Dataset '{datasetId}' must be in the checked-in status.");
 
             if (!(dataset.DataStructure.Self is StructuredDataStructure))
+            {
+                if (throwExceptionOnUnstructured)
                     throw new Exception($"Dataset '{datasetId}' is not structured.");
+                return;
+            }
 
-                // check the size and threshold            
-                long numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
-                int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
-                long size = numberOfTuples * numberOfVariables;
-                if (enforceSizeCheck && size > BIG_DATASET_SIZE_THRESHOLD)
-                    return;
+            // check the size and threshold            
+            long numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
+            int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
+            long size = numberOfTuples * numberOfVariables;
+            if (enforceSizeCheck && size > BIG_DATASET_SIZE_THRESHOLD)
+                return;
             //}
             
             if (behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
