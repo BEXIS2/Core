@@ -13,7 +13,8 @@
 
 @{
     //string modelValues = String.Join(",", Model.);
-    string allDatasets = String.Join(",", Model.createdDatasets);
+    string activities = String.Join(",", Model.allActivities);
+    string allDatasets = String.Join(",", Model.allDatasets);
     string createdDatasets = String.Join(",", Model.createdDatasets);
     //string checkedOutDatasets = String.Join(",", Model.allDatasets);
     string deletedDatasets = String.Join(",", Model.deletedDatasets);
@@ -24,8 +25,8 @@
     <div>
         <!--Drop Down List to select datasets by status-->
         <select id="statusSelector" onchange="myChart()" style="width:200px;">
-            <!--<option value="created" label="Select a category">Select a category</option>-->
-            <!--<option value="all">All Datasets</option>-->
+            <option value="all" label="Select a category">All Datasets</option>
+            <option value="activities" label="System Activities">System Activities</option>
             <option value="created" label="Created Datasets">Created Datasets</option>
             <!--<option value="created" label="System Activity">System Activity</option>--> <!--count created datasets-->
             <!--<option value="created" label="created Datasets">created Datasets</option>-->
@@ -155,7 +156,7 @@
                 time.push((allD[i].replace('[', "")).split("/")[1]);
             }
         }
-
+        time.sort();
         //console.log("years: " + time);
         return (time);
     }
@@ -191,6 +192,7 @@
         var t = years(); //list of all years
 
         if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "activities") { var dataset = '@activities'.split(","); }
         if (status == "created") { var dataset = '@createdDatasets'.split(","); }
         //if (status == "checkedOut") { var dataset = 'checkedOutDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
@@ -239,9 +241,11 @@
 
         for (var i = 1; i < mycreatedData.length; ++i) {
             var year = mycreatedData[i][0];
-            var created = mycreatedData[i][1];
+            try { var created = mycreatedData[i][1];}
+            catch { var created = 0;}
             //var checkedOut = myCheckedOutData[i][1];
-            var deleted = myDeletedData[i][1];
+            try { var deleted = myDeletedData[i][1];}
+            catch { var deleted = 0;}
             var minY = $("#slider").slider("values")[0];
             var maxY = $("#slider").slider("values")[1];
             if (year >= minY || year <= maxY) {
@@ -260,55 +264,45 @@
         var myData = [];
 
         if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "activities") { var dataset = '@activities'.split(","); }
         if (status == "created") { var dataset = '@createdDatasets'.split(","); }
         //if (status == "checkedOut") { var dataset = 'checkedOutDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
-
+        console.log("length: " + dataset.length);
+        console.log("status: " + status);
         myData[0] = ['Date', 'Count'];
-            var j = 1;
-            for (var i = 0; i < dataset.length; i = i + 2) {
-                var year = (dataset[i].replace('[', "")).split("/")[1];
-                if (time == year) {
-                    var month = (dataset[i].replace('[', "")).split("/")[0];
-                    var count = parseInt(dataset[i + 1].replace(']', ""));
-                    //add key and value to the object "dataPoints". Remove brackets. convert value to int.
-                    myData[j] = [dataset[i].replace('[', ""), count];
-                    j += 1;
+        var j = 1;
+        for (var i = 0; i < dataset.length; i = i + 2) {
+            var year = (dataset[i].replace('[', "")).split("/")[1];
+            if (time == year) {
+                var month = (dataset[i].replace('[', "")).split("/")[0];
+                var count = parseInt(dataset[i + 1].replace(']', ""));
+                //add key and value to the object "dataPoints". Remove brackets. convert value to int.
+                myData[j] = [dataset[i].replace('[', ""), count];
+                j += 1;
 
-                }
-            }
-
-        //fill all 12 month
-        var data12 = [];
-        data12.push(myData[0]);
-
-        if (myData.length == 1) {                 // Fill the titles
-            for (var i = 1; i <= 12; ++i) {
-                data12.push([(i + "/" + time), 0]);
             }
         }
 
-        else if (myData.length > 0) {
-            var j = 1;
-            for (var i = 1; i <= 12; ++i) {
-                if ((myData[j])) { var month = ((myData[j][0]).split("/"))[0]; }
-                else { month = 13; }
-
-                if (i == month) {
-                    data12.push(myData[j]);
-                    j++;
-                }
-                else if (i < month) {
-                    while (i < month) {
-                        if (myData[0][2]) { data12.push([(i + "/" + time), 0, 0]); }
-                        else { data12.push([(i + "/" + time), 0]); }
-                        i++;
+        var d12 = [];
+        d12.push(myData[0]);
+        for (var i = 1; i < 13; ++i) {      //fill Titles
+            d12.push([(i + "/" + time), 0]);
+        }
+        console.log(myData);                //Fill count
+        if (myData.length > 0) {
+            for (var j = 1; j < myData.length; ++j) {
+                for (var i = 1; i < 13; ++i) {
+                    console.log("d12, myData: " + d12[i][0] + ", " + myData[j][0]);
+                    if (d12[i][0] == myData[j][0]) {
+                        console.log("Here are the same.");
+                        d12[i][1] = myData[j][1];
+                        break;
                     }
-                    i--;
                 }
             }
         }
-        return (data12);
+        return (d12);
     }
 
     function allDataByMonth(time) {
@@ -324,9 +318,12 @@
 
         for (var i = 1; i < mycreatedData.length; ++i) {
             var year = mycreatedData[i][0];
-            var created = mycreatedData[i][1];
+            try { var created = mycreatedData[i][1]; }
+            catch { var created = 0; }
             //var checkedOut = myCheckedOutData[i][1];
-            var deleted = myDeletedData[i][1];
+            try { var deleted = myDeletedData[i][1]; }
+            catch { var deleted = 0; }
+
             if (status == "all") { myData.push([year, created, deleted]); }
 
         }
@@ -378,6 +375,9 @@
     function myChart() {
         var status = document.getElementById('statusSelector').value;
         var time = document.getElementById('timeSelector').value;
+        if (time != "all") {
+            //console.log("hahahaha");
+        }
         var chartName = "";
         var colors = ['#388670', '#f24c24', '#ffbb52', '#009cdf'];
         var myData = [];
@@ -394,9 +394,9 @@
             else { myData = dataByMonth(status, time); }
 
             if (status == "all") { drawChart(myData, colors[0]); }
-            //if (status == "checkedOut") { drawChart(myData, colors[1]); }
+            if (status == "activities") { drawChart(myData, colors[3]); }
             if (status == "created") { drawChart(myData, colors[0]); }
-            if (status == "deleted") { drawChart(myData, colors[2]); }
+            if (status == "deleted") { drawChart(myData, colors[1]); }
         }
     }
 

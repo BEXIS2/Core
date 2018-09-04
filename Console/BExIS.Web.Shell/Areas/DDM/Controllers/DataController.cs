@@ -356,8 +356,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         if (latestVersion)
                         {
-                            table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 100);
+                            try
+                            {
+
+                                table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 100);
+                            }
+                            catch
+                            {
+                                ModelState.AddModelError(string.Empty, "Data is not available, please ask the administrator for syncing.");
+                            }
+
                             Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
+
                         }
                         else
                         {
