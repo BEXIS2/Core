@@ -30,11 +30,9 @@
     <table>
         <tr>
             <td>
-                <h1 title="Id: @Model.Id">@Model.Title</h1>
+                <h1 title="Id: @Model.Id"><b>Title:</b> @Model.Title</h1>
                 <br />
-                <p>@*<b>Id: </b>*@ @Model.Id</p>
-                <p><b>Version: </b> @Model.Version</p>
-                @*<p><b>Latest: </b> @Model.LatestVersion</p>*@
+                <p><b>Id: </b> @Model.Id, <b>Version: </b> @Model.Version</p>
             </td>
             <td>
                 <div id="preloaderContainer" />
@@ -72,11 +70,11 @@
 
                         if (Model.RequestExist)
                         {
-                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request has been made</button>
+                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
                         }
                         else
                         {
-                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Send request</button>
+                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
                         }
                     }
                     else
