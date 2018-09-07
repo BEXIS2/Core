@@ -32,7 +32,7 @@
       <column name="Label" index="idx_Variables_label"/>
     </property>
 
-    <property name="Description" type="String">
+    <property name="Description" type="StringClob">
       <column name="Description" />
     </property>
 
