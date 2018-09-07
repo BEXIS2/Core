@@ -64,6 +64,11 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 var datasetManagementFeature = featureManager.FindByName("Dataset Management") ?? featureManager.Create("Dataset Management", "", administrationFeature);
                 var datasetManagementOperation = operationManager.Find("SAM", "Datasets", "*") ?? operationManager.Create("SAM", "Datasets", "*", datasetManagementFeature);
 
+                // Document Management
+                var documentManagementFeature = featureManager.FindByName("Document Management") ?? featureManager.Create("Document Management", "", administrationFeature);
+                var documentManagementOperation = operationManager.Find("SAM", "Files", "*") ?? operationManager.Create("SAM", "Files", "*", documentManagementFeature);
+
+
                 // Request
                 var requestOperation = operationManager.Find("SAM", "Requests", "*") ?? operationManager.Create("SAM", "Requests", "*");
 
