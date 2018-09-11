@@ -16,6 +16,7 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Terms and conditions", this.Session.GetTenant());
+            //return View(Session.GetTenant().TermsAndConditionsFileName);
             return View();
         }
     }
