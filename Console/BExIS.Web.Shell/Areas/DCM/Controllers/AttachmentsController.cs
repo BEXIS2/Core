@@ -110,13 +110,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var contentDescriptorName = contentDescriptor.Name;
                 long fileLength = 0;
-                if (System.IO.File.Exists(contentDescriptor.URI))
+                String filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", contentDescriptor.DatasetVersion.Dataset.Id.ToString(), "Attachments",contentDescriptor.Name);
+                if (new FileInfo(filepath).Exists)
+                {  // if (System.IO.File.Exists(contentDescriptor.URI))
                     //TODO: In case a file is deleted physically from dataset folder, user should be inform maybe
                     //    //contentDescriptorName += "<span id='deletedFile' style='color:#980000;padding-left:5px;' >[deleted]</span>";
                     //    contentDescriptor.URI = "delete";
                     //else
-                    fileLength = new FileInfo(contentDescriptor.URI).Length;
-                fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
+                    fileLength = new FileInfo(filepath).Length;
+                    fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
+                }
             }
             return fileList;
         }
@@ -175,7 +178,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 OrderNo = lastOrderContentDescriptor + 1,
                 Name = fileName,
                 MimeType = MimeMapping.GetMimeMapping(fileName),
-                URI = Path.Combine(storePath, fileName),
+                URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
                 DatasetVersion = datasetVersion,
 
             };
