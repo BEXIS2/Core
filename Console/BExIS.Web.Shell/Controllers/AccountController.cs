@@ -402,7 +402,15 @@ namespace BExIS.Web.Shell.Controllers
                 var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account",
                    new { userId, code }, Request.Url.Scheme);
-                await identityUserService.SendEmailAsync(userId, subject, $"please confirm your mail address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>. Once you finished the registration a system administrator will decide based on your provided information about your assigned permissions. This process can take up to 3 days.");
+
+                var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
+                var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
+
+                await identityUserService.SendEmailAsync(userId, subject,
+                    $"<p>please confirm your mail address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>." +
+                    $" Once you finished the registration a system administrator will decide based on your provided information about your assigned permissions. " +
+                    $"This process can take up to 3 days.</p>" +
+                    $"<p>You agreed on our <a href=\"{policyUrl}\">data policy</a> and <a href=\"{termsUrl}\">terms and conditions</a>.</p>");
 
                 return callbackUrl;
             }

@@ -19,7 +19,7 @@
                 .Name("ShowDataTabStripPartyTypes").Items(tabs =>
                 {
                     tabs.Add().Text(sourceParty.Name + " as source").Selected(true).Content(@<text> @Html.Partial("_templateRelationshipPartial", Model.First())</text>);
-                    tabs.Add().Text(sourceParty.Name + " as source").Content(@<text>@Html.Partial("_templateRelationshipPartial", Model.Last())</text>);
+                    tabs.Add().Text(sourceParty.Name + " as target").Content(@<text>@Html.Partial("_templateRelationshipPartial", Model.Last())</text>);
                 }))
 
         @*@(Html.Telerik().TabStrip()

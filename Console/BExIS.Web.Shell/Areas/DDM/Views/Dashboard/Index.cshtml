@@ -1,5 +1,11 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.DashboardModel
 
+<style>
+    .bold-option {
+        font-weight: bolder;
+    }
+</style>
+
 @section LeftPane
 {
     @foreach (var item in Model.Entities)
@@ -61,41 +67,52 @@
 
         /****Dashboard*****/
 
-        $(".request").click(function () {
+        $(".request").click(function() {
             var id = $(this).attr("entityid");
             console.log(id);
+
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
 
             $("#dashboard_content").preloader("..loading requests");
 
-            $.get("/ddm/dashboard/requests", { id },
-                function (data, textStatus, jqXHR) {
+            $.get("/ddm/dashboard/requests",
+                { id },
+                function(data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
-        })
+        });
 
-        $(".decision").click(function () {
+        $(".decision").click(function() {
             var id = $(this).attr("entityid");
             console.log(id);
 
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
+
             $("#dashboard_content").preloader("..loading decisions");
 
-            $.get("/ddm/dashboard/decisions", { id },
-                function (data, textStatus, jqXHR) {
+            $.get("/ddm/dashboard/decisions",
+                { id },
+                function(data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
-        })
+        });
 
-        $(".dataset").click(function () {
+        $(".dataset").click(function() {
+
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
 
             $("#dashboard_content").preloader("..loading decisions");
 
             $.get("/ddm/dashboard/ShowMyDatasets",
-                function (data, textStatus, jqXHR) {
+                function(data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
-        })
+        });
     </script>
 }

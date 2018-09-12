@@ -556,6 +556,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (newDataset)
                         {
+                            /*
+                            * ToDo | sventhiel | 2018-09-11 | 15:27
+                            *
+                            * I added an automatic "Sync" call after creating the metadata.
+                            * Otherwise, primary data of empty datasets are not shown in "ShowData".
+                            * This is just an quick fix to fulfill the requirements.
+                            */
+                            dm.SyncView(datasetId, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+
                             var es = new EmailService();
                             es.Send(MessageHelper.GetCreateDatasetHeader(),
                                 MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
