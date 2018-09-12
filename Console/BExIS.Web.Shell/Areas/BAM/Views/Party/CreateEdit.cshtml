@@ -81,7 +81,7 @@
                             <label for="StartDate">Start Date</label>
                         </td>
                         <td>
-                            @(Html.Telerik().DatePickerFor(m => m.StartDate)
+                            @(Html.Telerik().DatePickerFor(m => m.StartDate).Format("yyyy-MM-dd")
                                     .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
                             )
 
@@ -93,7 +93,7 @@
                             <label for="EndDate">End Date</label>
                         </td>
                         <td>
-                            @(Html.Telerik().DatePickerFor(m => m.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
+                            @(Html.Telerik().DatePickerFor(m => m.EndDate).Format("yyyy-MM-dd").HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
                             <div id="divDatesError"></div>
                         </td>
                     </tr>
