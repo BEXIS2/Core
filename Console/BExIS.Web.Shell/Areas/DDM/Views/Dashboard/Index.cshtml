@@ -6,13 +6,23 @@
     }
 </style>
 
+@section Information
+{
+    In this page you can see all datasets, created by you as a current logged on user or owned by you or you sent a request to have access on it. You are also able to manage the requests of other users, who wants to have access to your datasets.
+    
+    By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.
+    
+    To view more details of a dataset, click the View details button available in each row.    
+}
+
+
 @section LeftPane
 {
     @foreach (var item in Model.Entities)
     {
         <h3>@item.Value</h3>
         <ul>
-            
+
             <li><a class="@item.Value.ToLower()">My @{@item.Value}s</a></li>
             <li><a entityid="@item.Key" class="request">Requests</a></li>
             <li><a entityid="@item.Key" class="decision">Decisions</a></li>
@@ -67,7 +77,7 @@
 
         /****Dashboard*****/
 
-        $(".request").click(function() {
+        $(".request").click(function () {
             var id = $(this).attr("entityid");
             console.log(id);
 
@@ -78,13 +88,13 @@
 
             $.get("/ddm/dashboard/requests",
                 { id },
-                function(data, textStatus, jqXHR) {
+                function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
         });
 
-        $(".decision").click(function() {
+        $(".decision").click(function () {
             var id = $(this).attr("entityid");
             console.log(id);
 
@@ -95,13 +105,13 @@
 
             $.get("/ddm/dashboard/decisions",
                 { id },
-                function(data, textStatus, jqXHR) {
+                function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
         });
 
-        $(".dataset").click(function() {
+        $(".dataset").click(function () {
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
@@ -109,7 +119,7 @@
             $("#dashboard_content").preloader("..loading decisions");
 
             $.get("/ddm/dashboard/ShowMyDatasets",
-                function(data, textStatus, jqXHR) {
+                function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
