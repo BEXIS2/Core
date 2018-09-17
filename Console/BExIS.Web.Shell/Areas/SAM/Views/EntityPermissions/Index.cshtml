@@ -9,13 +9,23 @@
     }
 </style>
 
+@section Information
+{
+    This page assist you to manage the entity permissions.
+
+    A dataset could be public or you are able to give some permission to access a dataset to a specific user or group.
+    <p>
+        <a href="/SAM/Help/Index/#_datasets" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
 @section LeftPane
 {
     @Html.Partial("_Entities")
 }
 <div class="row">
-    <div id="content_instances" class="col-md-6"></div>
-    <div id="content_subjects" class="col-md-6"></div>
+    <div id="content_instances" class="col-md-4"></div>
+    <div id="content_subjects" class="col-md-8"></div>
 </div>
 
 @section Scripts

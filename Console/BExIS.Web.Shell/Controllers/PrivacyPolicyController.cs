@@ -16,7 +16,7 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Privacy Policy", this.Session.GetTenant());
-            return View();
+            return View("Index", null, this.Session.GetTenant().PolicyFileNamePath);
         }
     }
 }

@@ -22,8 +22,8 @@
                     columns.Bound(c => c.Title);
                     columns.Bound(c => c.SourceParty.Name).Title("First Party");
                     columns.Bound(c => c.TargetParty.Name).Title("Second Party");
-                    columns.Bound(c => c.StartDate).Title("Start date");
-                    columns.Bound(c => c.EndDate).Title("End date");
+                    columns.Bound(c => c.StartDate).Format("{0:yyyy-MM-dd}").Title("Start date");
+                    columns.Bound(c => c.EndDate).Format("{0:yyyy-MM-dd}").Title("End date");
                     columns.Bound(c => c.Description);
                     columns.Bound(c => c.PartyRelationshipType.DisplayName).Title("Type"); //(String.IsNullOrWhiteSpace(c.PartyRelationshipType.DisplayName) ? c.PartyRelationshipType.DisplayName : c.PartyRelationshipType.Title)).Title("Realtionship Type Title");
                     columns.Template(

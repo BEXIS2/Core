@@ -35,7 +35,7 @@
                                 <label for="StartDate">Start Date</label>
                             </td>
                             <td>
-                                <span>@Model.StartDate</span>
+                                <span>@(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("yyyy-MM-dd") : "-")</span>
                             </td>
                         </tr>
                         <tr>
@@ -44,7 +44,7 @@
                                 <label for="EndDate">End Date</label>
                             </td>
                             <td>
-                                <span>@Model.EndDate</span>
+                                <span>@(Model.EndDate.HasValue?Model.EndDate.Value.ToString("yyyy-MM-dd"):"-")</span>
                             </td>
                         </tr>
                         <tr>

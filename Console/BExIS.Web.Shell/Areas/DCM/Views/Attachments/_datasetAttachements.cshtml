@@ -79,7 +79,7 @@ FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
                                         <td class="filetype" fileName="@serverFile.Key.Name" style="font-size: 20pt;"></td>
                                         <td class="fileSize" size="@serverFile.Key.FileSize"></td>
                                         <td>
-                                            @(Model.DeleteAccess ? Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @serverFile.Key.Name }, new { @class = "bx-trash bx-function" })
+                                            @(Model.DeleteAccess ? Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @serverFile.Key.Name }, new { @class = "bx-trash bx-function", @onclick = "return confirm('The selected file will be deleted permanently. Are you sure?')" })
                                                                      : Html.Raw(""))
                                         @(string.IsNullOrEmpty(serverFile.Value) ? Html.Raw("") : Html.Raw("<span class='bx-info bx-function' data-toggle='tooltip' style='margin-left: 10px;' title='" + @serverFile.Value + "' ></span>"))
                                     </td>

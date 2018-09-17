@@ -30,13 +30,13 @@
                     if (Model.StartDate.Date != DateTime.MinValue.Date)
                     {
                         <text>
-                            @Model.StartDate.ToString()
+                            @Model.StartDate.ToString("yyyy-MM-dd")
                         </text>
                     }
                 }
                 else
                 {
-                    @Html.Telerik().DatePicker().Name("EditRelStartDate").Value(Model.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
+                    @Html.Telerik().DatePicker().Name("EditRelStartDate").Format("yyyy-MM-dd").Value(Model.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
                 }
             </td>
         </tr>
@@ -48,13 +48,13 @@
                     if (Model.EndDate.Date != DateTime.MaxValue.Date)
                     {
                         <text>
-                            @Model.EndDate.ToString()
+                            @Model.EndDate.ToString("yyyy-MM-dd")
                         </text>
                     }
                 }
                 else
                 {
-                    @Html.Telerik().DatePicker().Name("EditRelEndDate").Value(Model.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
+                    @Html.Telerik().DatePicker().Name("EditRelEndDate").Format("yyyy-MM-dd").Value(Model.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
                 }
             </td>
         </tr>

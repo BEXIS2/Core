@@ -13,8 +13,8 @@
                // columns.Bound(c => c.Id);
                 columns.Bound(c => c.Name);
                 columns.Bound(c => c.PartyTypeTitle).Title("Type");
-                columns.Bound(c => c.StartDate).Title("Start date");
-                columns.Bound(c => c.EndDate).Title("End date");
+                columns.Bound(c => c.StartDate).Format("{0:yyyy-MM-dd}").Title("Start date");
+                columns.Bound(c => c.EndDate).Format("{0:yyyy-MM-dd}").Title("End date");
                 columns.Template(
                     @<text>
                         <div>
