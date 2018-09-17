@@ -4,7 +4,7 @@
 
     @Html.HiddenFor(m => m.Id)
 }
-@using (Html.BeginForm("", "", new { area = "BAM" }, FormMethod.Post, new { id = "frmEditPartyRelationsip" }))
+@using (Html.BeginForm("", "", new { area = "BAM" } , FormMethod.Post, new { id = "frmEditPartyRelationsip" }))
 {
     <table id="tblRelationship">
         <tr>
@@ -36,7 +36,7 @@
                 }
                 else
                 {
-                    @Html.Telerik().DatePicker().Name("EditRelStartDate").Format("yyyy-MM-dd").Value(Model.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" });
+                    @Html.Telerik().DatePicker().Name("EditRelStartDate").Format("yyyy-MM-dd").Value(Model.StartDate).HtmlAttributes(new { @Style = "border:none;display: inline-block; width:398px" });
                 }
             </td>
         </tr>
@@ -68,16 +68,9 @@
     <div id="" class="bx-footer right">
         @if (!viewMode)
         {
-
-            <button type="button" value="Save" id="savePartyRelationship" class="bx-button action" style="border:0px;">Save</button>
-            <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
-
+            <button type="button" value="Save" id="savePartyRelationship" class="bx-button action" >Save</button>
         }
-        else
-        {
-            <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
-
-        }
+        <button type="button" value="Cancel" name="cancel" class="bx-button action" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
     </div>
 }
 <script>
@@ -110,5 +103,4 @@
     $(document).ready(function(){
         resetAllTelerikIconTitles();
     });
-
 </script>
