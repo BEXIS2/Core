@@ -17,8 +17,6 @@ namespace BExIS.Modules.Vim.UI.Controllers
         {
             //ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", Session.GetTenant());
             VisualizationModels visModel = new VisualizationModels();
-            //DataInfo infModel = new DataInfo();
-            //Dictionary<string, int> allDatasets = new Dictionary<string, int>();
             Dictionary<string, int> allActivities = new Dictionary<string, int>();
             Dictionary<string, int> createdDatasets = new Dictionary<string, int>();
             Dictionary<string, int> deletedDatasets = new Dictionary<string, int>();
@@ -104,10 +102,7 @@ namespace BExIS.Modules.Vim.UI.Controllers
             visModel.allActivities = allActivities;
             visModel.allDatasets = allActivities;
             visModel.createdDatasets = createdDatasets;
-            //visModel.checkedInDatasets = checkedInDatasets;
-            //visModel.checkedOutDatasets = checkedOutDatasets;
             visModel.deletedDatasets = deletedDatasets;
-
             
             return View(visModel);
         }

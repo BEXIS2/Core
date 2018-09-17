@@ -269,27 +269,18 @@
 
 	}
 
-	$("#sendRequestBt").click(function () {
+	$("#sendRequestBt").click(function() {
 
-		var id = $(this).attr("datasetId");
+	    var id = $(this).attr("datasetId");
 
-		$.post("/DDM/Data/SendRequest", { id },
-			function (data, textStatus, jqXHR) {
+	    $.post("/DDM/Data/SendRequest", { Id: id }, function(data) {
+	        if (data === true) {
+	            $("#sendRequestBt").prop("disabled", "disabled");
+	            $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
+	            $("#sendRequestBt").text("Request has been made.");
+	        }
+	    });
 
-				alert(data);
-
-				if (data !== true) {
-					alert(data)
-				}
-				else {
-					$("#sendRequestBt").attr("disabled", "disabled");
-					$("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
-					$("#sendRequestBt").Text("Request has been made.")
-				}
-			},
-			"dataType"
-		);
-
-	})
+	});
 
 </script>
