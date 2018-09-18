@@ -534,7 +534,10 @@
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\help\all.png" />
+    <Content Include="Content\Images\help\ui.png" />
+    <Content Include="Content\Images\help\ui_category.png" />
+    <Content Include="Content\Images\help\ui_slider.png" />
+    <Content Include="Content\Images\help\ui_year.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Vim.Settings.xml">
