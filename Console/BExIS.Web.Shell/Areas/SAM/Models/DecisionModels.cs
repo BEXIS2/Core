@@ -12,6 +12,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public long RequestId { get; set; }
         public short Rights { get; set; }
         public string Title { get; set; }
-        public DecisionStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

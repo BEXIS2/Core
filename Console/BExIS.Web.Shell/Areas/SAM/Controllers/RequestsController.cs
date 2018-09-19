@@ -56,7 +56,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         Id = m.Id,
                         RequestId = m.Request.Id,
                         Rights = m.Request.Rights,
-                        Status = m.Status,
+                        Status = Enum.GetName(typeof(DecisionStatus), m.Status),
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
                         Applicant = m.Request.Applicant.Name
