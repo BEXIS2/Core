@@ -17,7 +17,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
-            Session["SubmissionAction"] = "Public";
+            Session["SubmissionAction"] = "Index";
             Session["Controller"] = "PublicSearch";
 
             try
