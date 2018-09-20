@@ -66,17 +66,11 @@
                                         {
                                 @Html.ActionLink(" ", "Index", "Mapping", new { area = "DIM", sourceId = @item.Id }, new { @class = "bx bx-grid-function fa-arrow-right ", title = "Mapping to system" })
                                         }
-                            /**/
-                            /**/
-
+                                                        
                             @if (Html.IsAccessible("DIM", "Mapping", "Mapping"))
                                         {
                                 @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType = "System", targetType = "MetadataStructure" }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
-                                        }
-                            /**/
-                            /**/
-
-
+                                        }                                                        
 
                         </text>)
 
