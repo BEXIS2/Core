@@ -103,7 +103,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    AddErrors(new string[] { ex.Message });
+                    AddErrors(new string[] { ex.Message+"\n"+(ex.InnerException!=null?ex.InnerException.Message:"") });
                 }
             }
             return PartialView("_CreateFolder", model);
@@ -186,8 +186,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
                     fileManger.AddFile(file.FileName, model.DisplayName, model.Description, model.MimeType, model.Path, file);
-                    //return Json(new { success = true });
-                    return RedirectToAction("Index");
+                    return Json("Your file has been successfully uploaded.", JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception ex)
                 {
@@ -195,6 +194,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
             }
             return PartialView("_UploadFile", model);
+           
         }
 
         private string determineMimeType(string contentType, string fileName)
