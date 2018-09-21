@@ -255,7 +255,7 @@ namespace BExIS.Dlm.Services.Party
             return (party);
         }
 
-        public bool TempPartyToPermanent(int partyId)
+        public bool TempPartyToPermanent(long partyId)
         {
             Contract.Requires(partyId >= 0, "Provided entity must have a permanent ID");
 

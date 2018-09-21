@@ -138,6 +138,8 @@ namespace BExIS.Modules.Sam.UI.Helpers
             try
             {
                 string physicalPath = Path.Combine(AppConfiguration.DataPath, "tenantsData", path.Replace('|', Path.DirectorySeparatorChar), name);
+                if (Directory.Exists(physicalPath))
+                    throw new Exception($"Folder '{name}' is already exist.");
                 // Creates all directories and subdirectories as specified by path
                 Directory.CreateDirectory(physicalPath);
 
