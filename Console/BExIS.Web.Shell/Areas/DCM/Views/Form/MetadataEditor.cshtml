@@ -170,7 +170,7 @@
                 <td id="form_message_container_Column" style="text-align: right">
                     <span id="form_message"></span>
                     <div id="preloader_cotainer">
-                        <script type="text/javascript">    $("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
+                        <script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
                     </div>
                 </td>
 
@@ -250,9 +250,6 @@
                 120);
             //alert("start triggering");
             $(document).trigger("MetadataFormIsReady");
-
-            $("#form_message").text("x")
-
         });
 
     $(window).resize(function () {
@@ -453,7 +450,7 @@ function OnSuccess(e) {
 
                     console.log('@Model.SaveWithErrors');
 
-                    if ('@Model.SaveWithErrors' == "True" ||'@Model.SaveWithErrors' == "true") {
+                    if ('@Model.SaveWithErrors.ToString().ToLowerInvariant()' == "true") {
 
                         console.log("inside");
                         if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
