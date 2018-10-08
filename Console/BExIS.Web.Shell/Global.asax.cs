@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using BExIS.Web.Shell.Helpers;
 using System;
 using System.Web;
 using System.Web.Optimization;
@@ -19,10 +20,10 @@ namespace BExIS.Web.Shell
     public class MvcApplication : HttpApplication
     {
 
-        private Application app = null;
+        private BExIS.App.Bootstrap.Application app = null;
         protected void Application_Start()
         {
-            app = new Application(RunStage.Production);
+            app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -58,6 +59,12 @@ namespace BExIS.Web.Shell
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             Tenant tenant = tenantResolver.Resolve(this.Request);
+            
+            // if the tenant has no landing page, set the application's default landing page for it.
+            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+            var landingPage = generalSettings.GetEntryValue("landingPage").ToString();
+            tenant.LandingPage = landingPage; // checks and sets
+
             this.Session.SetTenant(tenant);
         }
 

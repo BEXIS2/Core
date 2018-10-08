@@ -9,7 +9,8 @@
     var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
     var partyCustomGridColumns = partyManager.GetPartyCustomGridColumns(partyTypeId);
 }
-@(Html.Telerik().Grid(partyDataTable)
+<div style="overflow:auto;">
+    @(Html.Telerik().Grid(partyDataTable)
             .Name("partiesGrid").DataBinding(dataBinding => dataBinding
         .Ajax().OperationMode(GridOperationMode.Client))
             .Pageable(paging => paging.Enabled(true).PageSize(10).Position(GridPagerPosition.Both).PageTo(1))
@@ -17,19 +18,19 @@
             .Columns(columns =>
             {
             // columns.Bound("PartyId");
-            columns.Bound("PartyName");
-            columns.Bound("PartyTypeTitle").Title("Type");
-            foreach (var partyCustomGridColumn in partyCustomGridColumns.Where(cc=>cc.TypePair==null))
-                columns.Bound(partyCustomGridColumn.CustomAttribute.Name.Replace(" ", "_")).Title(partyCustomGridColumn.CustomAttribute.DisplayName);
-            foreach (var partyCustomGridColumn in partyCustomGridColumns.Where(cc => cc.CustomAttribute == null))
-                columns.Bound(partyCustomGridColumn.TypePair.Title.Replace(" ", "_")).Encoded(false).Title(partyCustomGridColumn.TypePair.Title).HtmlAttributes(new { @class = "relatioshipGridColumn" });
-            columns.Template(@<text>
-    <div>
-        @Html.ActionLink(" ", "View", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-show", @style = "color:white;", title = "View Party \"" + item.Row.ItemArray[0] + "\"" })
-        @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-edit", @style = "color:white;", title = "Edit Party \"" + item.Row.ItemArray[0] + "\"" })
-        @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-trash ", @style = "color:white;", title = "Delete Party \"" + item.Row.ItemArray[0] + "\"" })
-    </div>
-</text>).ClientTemplate("<div><a title=\"View Party\" style=\"color: white; \" href=\"/BAM/Party/View/<#= PartyId #>\" class=\"bx bx-grid-function bx-show\"> </a><a title=\"Edit Party\" style=\"color:white;\" href=\"/BAM/Party/CreateEdit/<#= PartyId #>\" class=\"bx bx-grid-function bx-edit\"> </a><a title=\"Delete Party\" style=\"color:white;\" href=\"/BAM/Party/DeleteConfirm/<#= PartyId #>\" class=\"bx bx-grid-function bx-trash \"> </a></div>");
+            columns.Bound("PartyName").Width("105px");
+            columns.Bound("PartyTypeTitle").Title("Type").Width("80px");
 
+            foreach (var partyCustomGridColumn in partyCustomGridColumns.Where(cc => cc.TypePair == null))
+                columns.Bound(partyCustomGridColumn.CustomAttribute.Name.Replace(" ", "_")).Title(partyCustomGridColumn.CustomAttribute.DisplayName).Width("90px");
+            foreach (var partyCustomGridColumn in partyCustomGridColumns.Where(cc => cc.CustomAttribute == null))
+                columns.Bound(partyCustomGridColumn.TypePair.Title.Replace(" ", "_")).Title(partyCustomGridColumn.TypePair.Title).HtmlAttributes(new { @class = "relatioshipGridColumn" }).Width("115px");
+            columns.Template(@<text>
+        <div>
+            @Html.ActionLink(" ", "View", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-show  whiteText", title = "View Party" })  @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-edit whiteText", title = "Edit Party" })   @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Row.ItemArray[0] }, new { @class = "bx bx-grid-function bx-trash whiteText", title = "Delete Party" })
+        </div>
+            </text>).ClientTemplate(
+                "<div><a title=\"View Party\" href=\"/BAM/Party/View/<#= PartyId #>\" class=\"bx bx-grid-function bx-show whiteText\"></a>\n<a title=\"Edit Party\" href=\"/BAM/Party/CreateEdit/<#= PartyId #>\" class=\"bx bx-grid-function bx-edit whiteText\"></a>\n<a title=\"Delete Party\" href=\"/BAM/Party/DeleteConfirm/<#= PartyId #>\" class=\"bx bx-grid-function bx-trash whiteText\"></a>\n</div>").Width("110px");
             })
-)
+    )
+</div>

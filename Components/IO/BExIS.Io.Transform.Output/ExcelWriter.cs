@@ -4,7 +4,6 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -74,7 +73,7 @@ namespace BExIS.IO.Transform.Output
             Template = isTemplate;
         }
 
-        public ExcelWriter(IOUtility iOUtility, bool isTemplate = false) :base(iOUtility)
+        public ExcelWriter(IOUtility iOUtility, bool isTemplate = false) : base(iOUtility)
         {
             Template = isTemplate;
         }
@@ -150,7 +149,7 @@ namespace BExIS.IO.Transform.Output
             columnIndex += offset;
 
             // need to add this empty cell to add cells to the right place
-            if(Template) row.AppendChild(GetEmptyCell(rowIndex, 0));
+            if (Template) row.AppendChild(GetEmptyCell(rowIndex, 0));
 
             foreach (object variable in src.ItemArray)
             {
@@ -171,20 +170,22 @@ namespace BExIS.IO.Transform.Output
         protected Row DataColumnCollectionToRow(DataColumnCollection src)
         {
             Row row = new Row();
-  
-            int columnIndex = 1;
+            row.RowIndex = 1;
+            int columnIndex = 0;
             columnIndex += offset;
+
 
             foreach (DataColumn variable in src)
             {
 
-                string cellRef = getColumnIndex(columnIndex);
+                string cellRef = getColumnIndex(columnIndex) + row.RowIndex;
                 string type = typeof(string).Name;
 
                 Cell cell = new Cell();
                 cell.CellReference = new StringValue(cellRef);
-                cell.DataType = CellValues.InlineString;
-                cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
+                cell.DataType = CellValues.String;
+                //cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
+                cell.CellValue = new CellValue(variable.Caption);
 
 
                 row.AppendChild(cell);
@@ -205,17 +206,17 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
- 
+
             using (var uow = this.GetUnitOfWork())
             {
                 DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
 
-              
+
 
                 string message = "row :" + rowIndex + "column:" + columnIndex;
                 Debug.WriteLine(message);
 
-                string cellRef = getColumnIndex(columnIndex);
+                string cellRef = getColumnIndex(columnIndex) + rowIndex;
 
                 Cell cell = new Cell();
                 cell.CellReference = cellRef;
@@ -267,18 +268,18 @@ namespace BExIS.IO.Transform.Output
                                     }
                                     else
                                     {
-                                        if(IOUtility.IsDate(value.ToString(), out dt))
-                                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                                        if (IOUtility.IsDate(value.ToString(), out dt))
+                                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
                                     }
 
                                 }
                                 else
                                 {
-                                    if(IOUtility.IsDate(value.ToString(),out dt))
-                                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                                    if (IOUtility.IsDate(value.ToString(), out dt))
+                                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
                                 }
 
-                               
+
                             }
                         }
                         catch (Exception ex)
@@ -310,10 +311,11 @@ namespace BExIS.IO.Transform.Output
         protected Cell VariableValueToCell(object value, int rowIndex, int columnIndex)
         {
 
-            string cellRef = getColumnIndex(columnIndex);
+            string cellRef = getColumnIndex(columnIndex) + rowIndex;
             string type = value.GetType().Name;
 
             Cell cell = new Cell();
+            cell.CellReference = cellRef;
             cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(type, styleIndex);
 
             CellValues cellValueType = getExcelType(type);
@@ -493,8 +495,8 @@ namespace BExIS.IO.Transform.Output
                     /// call templateprovider from rpm
                     ExcelTemplateProvider provider = new ExcelTemplateProvider();
 
-                    string path =ns;
-                    string newTitle = title+extension;
+                    string path = ns;
+                    string newTitle = title + extension;
 
 
                     provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
@@ -511,7 +513,7 @@ namespace BExIS.IO.Transform.Output
             return dataPath;
         }
 
-        private bool createTemplateFile(string dataPath, long dataStructureId, string extension )
+        private bool createTemplateFile(string dataPath, long dataStructureId, string extension)
         {
 
             try
@@ -537,14 +539,14 @@ namespace BExIS.IO.Transform.Output
             {
                 throw new Exception("Can´t create excel template file.", ex);
             }
-   
+
         }
 
         private bool createEmptyFile(string dataPath, string extension)
         {
             try
             {
-                string emptyExcelTemplatePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"),"Template","empty"+extension);
+                string emptyExcelTemplatePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Template", "empty" + extension);
 
                 SpreadsheetDocument emptyTemplate = SpreadsheetDocument.Open(emptyExcelTemplatePath, true);
                 SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
@@ -1122,7 +1124,7 @@ namespace BExIS.IO.Transform.Output
 
 
             // get sheetData object for adding data to
-            if (worksheetPart!=null && !worksheetPart.Worksheet.HasChildren)
+            if (worksheetPart != null && !worksheetPart.Worksheet.HasChildren)
                 worksheetPart.Worksheet.AppendChild(new SheetData());
 
             sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();

@@ -86,6 +86,9 @@
     <Reference Include="Vaiona.Persistence.Api">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Utils">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\LdapAuthenticationManager.cs" />

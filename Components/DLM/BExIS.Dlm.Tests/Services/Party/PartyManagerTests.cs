@@ -175,18 +175,77 @@ namespace BExIS.Dlm.Tests.Services.Party
             partyManager.Delete(party);
             partyTypeManager.Delete(partyTypeTest);
         }
-        [Test()]
-        public void TempPartyToPermanentTest() { }
+       
+
+        public void TempPartyToPermanentTest() {
+            PartyManager partyManager = new PartyManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            var partyStatusTypes = new List<PartyStatusType>();
+            partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
+            var partyTypeTest = partyTypeManager.Create("partyTypeTitle", "", "", partyStatusTypes);
+            var partyStatusType = partyTypeManager.GetStatusType(partyTypeTest, "Created");
+            //create cstom attributes
+            var partyCustomAttribute1 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "FirstName", "", "", "", isMain: true);
+            var partyCustomAttribute2 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "LastName", "", "", "", isMain: true);
+            var partyCustomAttribute3 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "Int", "Age", "", "", "");
+            //create with CustomAttributeValues<Id,value>
+            Dictionary<long, String> customAttributeValues = new Dictionary<long, string>();
+            customAttributeValues.Add(partyCustomAttribute1.Id, "Masoud");
+            customAttributeValues.Add(partyCustomAttribute2.Id, "Allahyari");
+            customAttributeValues.Add(partyCustomAttribute3.Id, "31");
+            var party = partyManager.Create(partyTypeTest, "description test", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(10), customAttributeValues);
+            party.IsTemp.Should().Be(true);
+            partyManager.TempPartyToPermanent(party.Id);
+            var party_=partyManager.GetParty(party.Id);
+            party_.IsTemp.Should().Be(false);
+            partyManager.Delete(party);
+            partyTypeManager.Delete(partyTypeTest);
+
+        }
+
         public void AddPartyRelationshipTest() {
+            PartyManager partyManager = new PartyManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            var partyStatusTypes = new List<PartyStatusType>();
+            partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
+            var partyTypeTest = partyTypeManager.Create("partyTypeTitle", "", "", partyStatusTypes);
+            var partyTypeTest2 = partyTypeManager.Create("partyTypeTitle2", "", "", partyStatusTypes);
+            var partyStatusType = partyTypeManager.GetStatusType(partyTypeTest, "Created");
+            //create cstom attributes
+            var partyCustomAttribute1 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "FirstName", "", "", "", isMain: true);
+            var partyCustomAttribute2 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "LastName", "", "", "", isMain: true);
+            var partyCustomAttribute3 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "Int", "Age", "", "", "");
+            //create with CustomAttributeValues<Id,value>
+            Dictionary<long, String> customAttributeValues = new Dictionary<long, string>();
+            customAttributeValues.Add(partyCustomAttribute1.Id, "Masoud");
+            customAttributeValues.Add(partyCustomAttribute2.Id, "Allahyari");
+            customAttributeValues.Add(partyCustomAttribute3.Id, "31");
+            var party = partyManager.Create(partyTypeTest2, "description test", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(10), customAttributeValues);
+            //create with CustomAttributeValues<Id,value>
+            customAttributeValues = new Dictionary<long, string>();
+            customAttributeValues.Add(partyCustomAttribute1.Id, "Ali");
+            customAttributeValues.Add(partyCustomAttribute2.Id, "Wandern");
+            customAttributeValues.Add(partyCustomAttribute3.Id, "37");
+            var party2 = partyManager.Create(partyTypeTest, "description test", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(10), customAttributeValues);
+           
+            //party type pair
+            var prtManager = new PartyRelationshipTypeManager();
+            prtManager.Create("relationship test", "", "", true, 10, 0, true, partyTypeTest, partyTypeTest2, "type pair test", "", "", "", 0);
+            
+           // partyManager.AddPartyRelationship(party,party2,"relation test","",)
             //add relationship 
+
             //test maximun and minimum cardinality
         }
+
         public void UpdatePartyRelationshipTest()
         {
         }
+
         public void RemovePartyRelationshipTest()
         {// alone and list
         }
+
         public void AddPartyCustomAttributeValueTest() {
             //test one, test dict<id,value>, test dict<object,value>
         }

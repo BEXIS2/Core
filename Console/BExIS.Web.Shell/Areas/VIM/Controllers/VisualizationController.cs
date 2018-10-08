@@ -17,50 +17,93 @@ namespace BExIS.Modules.Vim.UI.Controllers
         {
             //ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", Session.GetTenant());
             VisualizationModels visModel = new VisualizationModels();
-            Dictionary<string, int> allDatasets = new Dictionary<string, int>();
-            Dictionary<string, int> checkedInDatasets = new Dictionary<string, int>();
-            Dictionary<string, int> checkedOutDatasets = new Dictionary<string, int>();
+            Dictionary<string, int> allActivities = new Dictionary<string, int>();
+            Dictionary<string, int> createdDatasets = new Dictionary<string, int>();
             Dictionary<string, int> deletedDatasets = new Dictionary<string, int>();
+            List<string> helpCountCreated = new List<string>(); //It is later used to save date of creation of a dataset (or similar for other types). It helps to save dates to count them later.
+            List<string> helpCountDeleted = new List<string>();
+            List<string> helpCountActivity = new List<string>();
 
+            //--------
+            
             DatasetManager dm = new DatasetManager();
             var entityPermissionManager = new EntityPermissionManager();
 
             List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+            List<long> datasetIds = datasets.Select(p => p.Id).ToList();
 
-            var groupsByYear = datasets.GroupBy(p => p.LastCheckIOTimestamp.Year);
-            foreach (var year in groupsByYear)
+            foreach (var id in datasetIds)
             {
-                var groupsByMonth = year.GroupBy(p => p.LastCheckIOTimestamp.Month);
+                Dataset dataset = dm.GetDataset(id);
 
-                foreach (var month in groupsByMonth)
+                List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
+
+                List<long> datasetVersionId = versions.Select(p => p.Id).ToList();
+
+                //extract the timestamp of version id = 1. This is the time of the creation of a dataset.
+                var createTime = versions.First().Timestamp.Month + "/" + versions.First().Timestamp.Year;
+                helpCountCreated.Add(createTime);
+
+                //extract the timestamp of the last version. This is the time of the deletion of a dataset.
+                // if(dataset.Status == DatasetStatus.Deleted) -- BY DAVID
+                if (dataset.Status == DatasetStatus.Deleted)
                 {
-                    var countGroup = month.Count();
-                    var monthOfGroup = month.First().LastCheckIOTimestamp.Month;
-                    var yearOfGroup = month.First().LastCheckIOTimestamp.Year;
-                    string dateOfGroup = monthOfGroup + "/" + yearOfGroup;
-                    allDatasets.Add(dateOfGroup, countGroup);
-
-                    var groupsByStatus = month.GroupBy(p => p.Status);
-                    foreach (var status in groupsByStatus)
-                    {
-                        countGroup = status.Count();
-                        string statusofGroup = status.First().Status.ToString();
-                        if (statusofGroup == "CheckedIn")
-                        { checkedInDatasets.Add(dateOfGroup, countGroup); }
-                        if (statusofGroup == "CheckedOut")
-                        { checkedOutDatasets.Add(dateOfGroup, countGroup); }
-                        if (statusofGroup == "Deleted")
-                        { deletedDatasets.Add(dateOfGroup, countGroup); }
-                    }
-
+                    var deleteTime = versions.Last().Timestamp.Month + "/" + versions.Last().Timestamp.Year;
+                    helpCountDeleted.Add(deleteTime);
                 }
+
+                foreach (var version in versions)
+                {
+                    var activityTime = version.Timestamp.Month + "/" + version.Timestamp.Year;
+                    helpCountActivity.Add(activityTime);
+                    
+                }
+
             }
 
-            visModel.allDatasets = allDatasets;
-            visModel.checkedInDatasets = checkedInDatasets;
-            visModel.checkedOutDatasets = checkedOutDatasets;
-            visModel.deletedDatasets = deletedDatasets;
+            ///Create the list of created datasets
+            var createdItems = from tt in helpCountCreated
+                               group tt by tt into g
+                               let count = g.Count()
+                               orderby count ascending
+                               select new { Value = g.Key, Count = count };
 
+            foreach (var t in createdItems)
+            {
+                createdDatasets.Add(t.Value, t.Count);
+            }
+
+            //createdDatasets.OrderBy(order => order.Value).ToList();
+
+            ///Create the list of deleted datasets
+            var deletedItems = from tt in helpCountDeleted
+                               group tt by tt into g
+                               let count = g.Count()
+                               orderby count ascending
+                               select new { Value = g.Key, Count = count };
+
+            foreach (var t in deletedItems)
+            {
+                deletedDatasets.Add(t.Value, t.Count);
+            }
+
+            ///Create the list of all activities includes create, update and delete
+            var activityItems = from tt in helpCountActivity
+                                group tt by tt into g
+                                let count = g.Count()
+                                orderby count ascending
+                                select new { Value = g.Key, Count = count };
+
+            foreach (var t in activityItems)
+            {
+                allActivities.Add(t.Value, t.Count);
+            }
+
+            visModel.allActivities = allActivities;
+            visModel.allDatasets = allActivities;
+            visModel.createdDatasets = createdDatasets;
+            visModel.deletedDatasets = deletedDatasets;
+            
             return View(visModel);
         }
     }

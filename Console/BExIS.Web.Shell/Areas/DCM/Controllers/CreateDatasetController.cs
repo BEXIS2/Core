@@ -536,14 +536,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-                        #region set releationships 
+#region set releationships 
 
 
                         //todo check if dim is active
                         // todo call to  a function in dim
                         setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
-                        #endregion
+#endregion
 
                         if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
@@ -592,12 +592,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
 
-            #endregion create dataset
+#endregion create dataset
 
             return -1;
         }
 
-        #region Options
+#region Options
 
         public ActionResult Cancel()
         {
@@ -719,11 +719,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
         }
 
-        #endregion Options
+#endregion Options
 
-        #endregion Submit And Create And Finish And Cancel and Reset
+#endregion Submit And Create And Finish And Cancel and Reset
 
-        #region Helper
+#region Helper
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
@@ -928,7 +928,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
                             ));
 
-                    #region delete relationships
+#region delete relationships
 
                     foreach (var relationshipType in relationshipTypes)
                     {
@@ -949,9 +949,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
 
                     }
-                    #endregion
+#endregion
 
-                    #region add relationship
+#region add relationship
 
                     foreach (XElement item in complexElements)
                     {
@@ -1017,7 +1017,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
 
-                    #endregion //add relationship
+#endregion //add relationship
                 }
             }
             catch (Exception ex)
@@ -1031,6 +1031,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        #endregion Helper
+#endregion Helper
     }
 }

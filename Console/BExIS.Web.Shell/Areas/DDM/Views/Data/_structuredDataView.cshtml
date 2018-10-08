@@ -7,25 +7,35 @@
 
 
 @{
-	ViewBag.Title = "Primary Data";
+    ViewBag.Title = "Primary Data";
 
-	bool fullDataset = false;
+    bool fullDataset = false;
 
-	long id = Model.DatasetId;
-	StructuredDataStructure dataStructure = (StructuredDataStructure)Model.DataStructure;
+    long id = Model.DatasetId;
+    StructuredDataStructure dataStructure = (StructuredDataStructure)Model.DataStructure;
 
-	GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
-	pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
-	pagerStyles |= GridPagerStyles.Numeric;
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
 
 
-	int total = 0;
-	if (Session["gridTotal"] != null)
-	{
-		total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
-	}
+    int total = 0;
+    if (Session["gridTotal"] != null)
+    {
+        total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
+    }
 
-	string compareValues = String.Join(",", Model.CompareValuesOfDataTypes.ToArray());
+    string compareValues = String.Join(",", Model.CompareValuesOfDataTypes.ToArray());
+
+    bool fitToScreen = true;
+
+    string tableClass = "fit_to_screen";
+
+    if (Model.Data.Columns.Count > 8)
+    {
+        fitToScreen = false;
+        tableClass = "scroll_in_screen";
+    }
 
 
 }
@@ -49,50 +59,65 @@
 }
 <div id="downloadOptions" style="text-align:left;">
 
-	@if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
-	{
+    @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
+    {
 
-		<button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
+        @*<button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
 
-		<button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>
+            <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>*@
 
-		<span class="dropdown">
-			<button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				Download Text
-				<span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <span class="dropdown">
+            <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Download Excel
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li><a id="downloadExcelTemplateButton" onclick="downloadExcelTemplate(@Model.DatasetId)">Template (.xlsm)</a></li>
+                <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)">Excel (.xlsx)</a></li>
+            </ul>
+        </span>
 
-				@foreach (KeyValuePair<string, string> fileType in Model.AsciiFileDownloadSupport)
-				{
-					<li><a class="file-type-download-entry" ext="@fileType.Value" > @fileType.Key</a></li>
-				}
+        <span class="dropdown">
+            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Download Text
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 
-			</ul>
-		</span>
+                @foreach (KeyValuePair<string, string> fileType in Model.AsciiFileDownloadSupport)
+                {
+                    <li><a class="file-type-download-entry" ext="@fileType.Value"> @fileType.Key (@fileType.Value)</a></li>
+                }
 
-		@Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")
+            </ul>
+        </span>
 
-	}
-	else
-	{
 
-		<button title="Download Excel"
-				name="Download Excel"
-				class="t-button t-state-disabled margin"
-				disabled="disabled">
-			Download Excel
-		</button>
-		<button title="Download Comma Separated"
-				name="Download Comma Separated"
-				class="t-button t-state-disabled margin"
-				disabled="disabled">
-			Download Text
-		</button>
-		@*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
-	}
+    }
+    else
+    {
 
-	<span id="preloaderContainer" style="float: right"></span>
+        <button title="Download Excel"
+                name="Download Excel"
+                class="t-button t-state-disabled margin"
+                disabled="disabled">
+            Download Excel
+        </button>
+        <button title="Download Comma Separated"
+                name="Download Comma Separated"
+                class="t-button t-state-disabled margin"
+                disabled="disabled">
+            Download Text
+        </button>
+        @*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
+    }
+
+
+
+    @Html.CheckBox("FitToScreen", fitToScreen, new { text = "Fit table to screen", @id = "FitToScreen" }) @Html.Label("Fit table to screen")
+
+
+    <span id="preloaderContainer" style="float: right"></span>
 </div>
 <br />
 @(Html.Telerik().Grid(Model.Data)
@@ -104,13 +129,14 @@
                  )
 
                 .EnableCustomBinding(true)
-                .HtmlAttributes(new { @class = "primaryDataResultGrid" })
+                .HtmlAttributes(new { @class = "primaryDataResultGrid "+ @tableClass })
                 .ClientEvents(events => events
                          .OnLoad("PrimaryDataResultGrid_OnLoad")
                          .OnDataBound("PrimaryData_OnCommand")
                          .OnColumnHide("PrimaryData_OnCommand")
                          .OnColumnShow("PrimaryData_OnCommand")
                     )
+
             .Columns(columns =>
             {
                 for (int i = 0; i < Model.Data.Columns.Count; i++)
@@ -167,11 +193,10 @@
                     .Total(total)
                     )
 
-           
-			.Sortable()
+            .Sortable()
             .Filterable()
             .ColumnContextMenu()
-            
+
 //.Groupable()
 
 )
@@ -187,12 +212,17 @@
 		OnDataBound();
 	})
 
-	$("#fullDatasetDownload").change(function () {
-		var subset = $('#fullDatasetDownload').is(":checked");
+	$("#FitToScreen").change(function () {
+		var fitToScreen = $('#FitToScreen').is(":checked");
 
-		$.post('@Url.Action("SetFullDatasetDownload", "Data", new RouteValueDictionary { { "area", "ddm" } })', { subset: subset }, function (response) {
-
-		})
+		if (fitToScreen === true) {
+			$("#PrimaryDataResultGrid").addClass("fit_to_screen");
+			$("#PrimaryDataResultGrid").removeClass("scroll_in_screen");
+		}
+		else {
+			$("#PrimaryDataResultGrid").removeClass("fit_to_screen");
+			$("#PrimaryDataResultGrid").addClass("scroll_in_screen");
+		}
 	});
 
 	function PrimaryDataResultGrid_OnLoad(e) {
@@ -264,8 +294,24 @@
 					}
 				}
 
-			})
+            })
 
+        setTimeout(function () {
+            var tablewidth = $("#PrimaryDataResultGrid table").width()
+            var rowwidth = $("#PrimaryDataResultGrid table tr").width()
+
+            console.log("rowwidth < tablewidth | " + rowwidth + "<" + tablewidth)
+
+
+            if (rowwidth < tablewidth) {
+                console.log("inside baby")
+                $("#PrimaryDataResultGrid").addClass("fit_to_screen");
+                $("#PrimaryDataResultGrid").removeClass("scroll_in_screen");
+                $('#FitToScreen').attr("checked", "checked");
+            }
+
+        }, 200);
+        
 	}
 
 	$(".file-type-download-entry").click(function (id) {
@@ -340,28 +386,3 @@
 		})}
 
 </script>
-
-<style type="text/css">
-
-	.primaryDataResultGrid .t-grid-content
-	{
-		height : auto !important;
-	   
-	}
-
-	.primaryDataResultGrid .t-grid-content td
-	{
-		padding-left:0;
-		text-align:left;
-	}
-
-	.margin
-	{
-		margin-left:2px;
-	}
-
-</style>    
-
-
-
-

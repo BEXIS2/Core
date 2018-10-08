@@ -1,4 +1,10 @@
-﻿@model BExIS.Modules.Vim.UI.Models.VisualizationModels
+﻿<!--
+    Author: Nafiseh Navabpour
+    Create: Release 2.12
+    Update: 14.09.2018
+    -->
+
+@model BExIS.Modules.Vim.UI.Models.VisualizationModels
 @using Telerik.Web.Mvc.UI;
 
 @{
@@ -8,48 +14,59 @@
 @section Information
 {
     Visualization provides diagrams depend on the selected data in specific range of time.
+    <p>
+        <a href="/vim/Help/index#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 }
 
 
 @{
-    //string modelValues = String.Join(",", Model.);
+    string activities = String.Join(",", Model.allActivities);
     string allDatasets = String.Join(",", Model.allDatasets);
-    string checkedInDatasets = String.Join(",", Model.checkedInDatasets);
-    string checkedOutDatasets = String.Join(",", Model.checkedOutDatasets);
+    string createdDatasets = String.Join(",", Model.createdDatasets);
     string deletedDatasets = String.Join(",", Model.deletedDatasets);
 }
 
+@section leftPane{
 
-<div>
-    <!--Drop Down List to select datasets by status-->
-    <select id="statusSelector" onchange="myChart()" style="width:200px;">
-        <option value="all">All Datasets</option>
-        <option value="created">Created Datasets</option>
-        <option value="checkedIn">CheckedIn Datasets</option>
-        <option value="checkedOut">Checkedout Datasets</option>
-        <option value="deleted">Deleted Datasets</option>
-    </select>
+    <div>
+        <!--Drop Down List to select datasets by status-->
+        <select id="statusSelector" onchange="myChart()" style="width:200px;">
+            <option value="all" label="Select a category">All Datasets</option>
+            <option value="activities" label="System Activities">System Activities</option>
+            <option value="created" label="Created Datasets">Created Datasets</option>
+            <option value="deleted" label="Deleted Datasets">Deleted Datasets</option>
+        </select>
+    </div>
+    <br />
+    <div>
+        <!--Drop Down List to select a Year-->
+        <select id="timeSelector" onchange="myChart()" style="width:200px;">
+            <!--this.value-->
+            <option value="all" label="Select a year">Select a year</option>
+        </select>
+    </div>
+    <br />
+    <!---------- Warning Message ---------->
+    <div id="Warning" style="color:gray"></div><br />
 
-    <!--Drop Down List to select a Year-->
-    <select id="timeSelector" onchange="myChart()" style="width:200px;">
-        <!--this.value-->
-        <option value="all">Select time</option>
-    </select>
-</div>
-<br />
-<!---------- Warning Message ---------->
-<div id="Warning" style="color:gray"></div><br />
+    <!---------- SLIDER ---------->
+    <br />
+    Range: <span id="rangeYear"></span>
+    <br /><br />
+    <div id="slider"></div>
+    <br />
+}
 <!---------- Chart is there ---------->
 <div id="columnchart_material" style="height: 400px;"></div><br />
 
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 <!--GOOGLE CHART-->
 <!--<script type="text/javascript" src="~/Scripts/googleChartLoader.js"></script>--> <!--Google Chart Library from uploaded script-->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!--Google Chart Library-->
 <script type="text/javascript">
-
-    //google.charts.load('current', { 'packages': ['bar'] });
-    //google.charts.setOnLoadCallback(function () { drawStuff() });
-    //google.charts.setOnLoadCallback(function () { myChart() });
 
     $(document).ready(function () {
 
@@ -58,12 +75,16 @@
         }
 
         var allD = '@allDatasets'.split(",");       //Count of All Datasets over Time
+        //console.log(allD);
         if (allD == '') {
             messageNoData("at all.");
         }
         else {
             //fill time selector
             var y = years();
+            var minYear = y[0];
+            var maxYear = y[y.length - 1];
+
             var timeSelector = document.getElementById("timeSelector");
             for (var i = 0; i < y.length; i++) {
                 var option = document.createElement("option");
@@ -71,6 +92,40 @@
                 option.value = y[i];
                 timeSelector.add(option);
             }
+            ///////  SLIDER
+            var outputSpan = $('#rangeYear');
+            var sliderElement = $('#slider');
+
+            minYear = parseInt(minYear);
+            maxYear = parseInt(maxYear);
+            sliderElement.slider({
+                range: true,
+                min: minYear,
+                max: maxYear,
+                values: [minYear, maxYear],
+                slide: function (event, ui) {
+                    outputSpan.html(ui.values[0] + ' - ' + ui.values[1]);
+                },
+                stop: function (event, ui) {
+                    var minY = ui.values[0];
+                    var maxY = ui.values[1];
+                    if (ui.values[0] == ui.values[1]) {
+                        document.getElementById("timeSelector").value = minY;
+                        if (document.getElementById("timeSelector").value == "") {
+                            document.getElementById("timeSelector").value = "all";
+                        }
+
+                    }
+                    else {
+                        document.getElementById("timeSelector").value = "all";
+                    }
+
+                    myChart();
+                }
+            });
+
+            outputSpan.html(sliderElement.slider('values', 0) + ' - ' + sliderElement.slider('values', 1));
+            ////// END OF SLIDER
 
         google.charts.load('current', { 'packages': ['bar'] });
         google.charts.setOnLoadCallback(function () { myChart() });
@@ -91,7 +146,7 @@
                 time.push((allD[i].replace('[', "")).split("/")[1]);
             }
         }
-
+        time.sort();
         return (time);
     }
 
@@ -120,17 +175,19 @@
 
     //Function dataByYear(status)
     //return dataset for a range of years. firstYear and lastYear will produce inside of the function.
-    //status: all, checkedIn, checkedOut, Deleted
+    //status: all, created, checkedOut, Deleted
     function dataByYear(status) {
         var myData = [];
         var t = years(); //list of all years
 
-        if (status == "created") { var dataset = '@allDatasets'.split(","); }
-        if (status == "checkedIn") { var dataset = '@checkedInDatasets'.split(","); }
-        if (status == "checkedOut") { var dataset = '@checkedOutDatasets'.split(","); }
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "activities") { var dataset = '@activities'.split(","); }
+        if (status == "created") { var dataset = '@createdDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
 
         myData[0] = ['Date', 'Count'];
+        var minY = $("#slider").slider("values")[0];
+        var maxY = $("#slider").slider("values")[1];
 
         for (var j = 0; j < t.length; ++j) {
             var y = t[j];
@@ -143,36 +200,39 @@
                     count += c;
                 }
             }
-            myData.push([y, count]);
+            if (y >= minY && y <= maxY) {
+                myData.push([y, count]);
+            }
         }
 
 
-        var firstY = t[0];
-        var lastY = t[t.length - 1];
-        if ((lastY - firstY) < 4) {
-            firstY = firstY - 1;
-            myData = inYearRange(myData, firstY, lastY);
-        }
+        var firstY = minY;
+        var lastY = maxY; 
+        myData = inYearRange(myData, firstY, lastY);
         return (myData);
     }
 
     //Function allDataByYear()
-    //return dataset includes data tuples of checkedIn, checkedOut and Deleted datasets in each year.
+    //return dataset includes data tuples of created, checkedOut and Deleted datasets in each year.
     //It uses function dataByYear(status)
     function allDataByYear() {
-        var myCheckedInData = dataByYear("checkedIn");
-        var myCheckedOutData = dataByYear("checkedOut");
+        var mycreatedData = dataByYear("created");
         var myDeletedData = dataByYear("deleted");
 
         var myData = [];
-        myData[0] = ["Date", "CheckedIn", "Checkedout", "Deletet"];
+        myData[0] = ["Date", "created", "Deletet"];
 
-        for (var i = 1; i < myCheckedInData.length; ++i) {
-            var year = myCheckedInData[i][0];
-            var checkedIn = myCheckedInData[i][1];
-            var checkedOut = myCheckedOutData[i][1];
-            var deleted = myDeletedData[i][1];
-            myData.push([year, checkedIn, checkedOut, deleted]);
+        for (var i = 1; i < mycreatedData.length; ++i) {
+            var year = mycreatedData[i][0];
+            try { var created = mycreatedData[i][1];}
+            catch { var created = 0;}
+            try { var deleted = myDeletedData[i][1];}
+            catch { var deleted = 0;}
+            var minY = $("#slider").slider("values")[0];
+            var maxY = $("#slider").slider("values")[1];
+            if (year >= minY || year <= maxY) {
+                myData.push([year, created, deleted]);
+            }
         }
 
         return (myData);
@@ -181,79 +241,69 @@
     //Function dataByMonth(status, time)
     //return dataset in a year and from a defined status
     //time: Year
-    //status: all, checkedIn, checkedOut, Deleted
+    //status: all, created, checkedOut, Deleted
     function dataByMonth(status, time) {
         var myData = [];
 
-        if (status == "created") { var dataset = '@allDatasets'.split(","); }
-        if (status == "checkedIn") { var dataset = '@checkedInDatasets'.split(","); }
-        if (status == "checkedOut") { var dataset = '@checkedOutDatasets'.split(","); }
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "activities") { var dataset = '@activities'.split(","); }
+        if (status == "created") { var dataset = '@createdDatasets'.split(","); }
         if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
-
+        console.log("length: " + dataset.length);
+        console.log("status: " + status);
         myData[0] = ['Date', 'Count'];
-            var j = 1;
-            for (var i = 0; i < dataset.length; i = i + 2) {
-                var year = (dataset[i].replace('[', "")).split("/")[1];
-                if (time == year) {
-                    var month = (dataset[i].replace('[', "")).split("/")[0];
-                    var count = parseInt(dataset[i + 1].replace(']', ""));
-                    //add key and value to the object "dataPoints". Remove brackets. convert value to int.
-                    myData[j] = [dataset[i].replace('[', ""), count];
-                    j += 1;
+        var j = 1;
+        for (var i = 0; i < dataset.length; i = i + 2) {
+            var year = (dataset[i].replace('[', "")).split("/")[1];
+            if (time == year) {
+                var month = (dataset[i].replace('[', "")).split("/")[0];
+                var count = parseInt(dataset[i + 1].replace(']', ""));
+                //add key and value to the object "dataPoints". Remove brackets. convert value to int.
+                myData[j] = [dataset[i].replace('[', ""), count];
+                j += 1;
 
-                }
-            }
-
-        //fill all 12 month
-        var data12 = [];
-        data12.push(myData[0]);
-
-        if (myData.length == 1) {                 // Fill the titles
-            for (var i = 1; i <= 12; ++i) {
-                data12.push([(i + "/" + time), 0]);
             }
         }
 
-        else if (myData.length > 0) {
-            var j = 1;
-            for (var i = 1; i <= 12; ++i) {
-                if ((myData[j])) { var month = ((myData[j][0]).split("/"))[0]; }
-                else { month = 13; }
-
-                if (i == month) {
-                    data12.push(myData[j]);
-                    j++;
-                }
-                else if (i < month) {
-                    while (i < month) {
-                        if (myData[0][2]) { data12.push([(i + "/" + time), 0, 0]); }
-                        else { data12.push([(i + "/" + time), 0]); }
-                        i++;
+        var d12 = [];
+        d12.push(myData[0]);
+        for (var i = 1; i < 13; ++i) {      //fill Titles
+            d12.push([(i + "/" + time), 0]);
+        }
+        console.log(myData);                //Fill count
+        if (myData.length > 0) {
+            for (var j = 1; j < myData.length; ++j) {
+                for (var i = 1; i < 13; ++i) {
+                    console.log("d12, myData: " + d12[i][0] + ", " + myData[j][0]);
+                    if (d12[i][0] == myData[j][0]) {
+                        console.log("Here are the same.");
+                        d12[i][1] = myData[j][1];
+                        break;
                     }
-                    i--;
                 }
             }
         }
-        return (data12);
+        return (d12);
     }
 
     function allDataByMonth(time) {
         var year = time;
-        var myCheckedInData = dataByMonth("checkedIn", time);
-        var myCheckedOutData = dataByMonth("checkedOut", time);
+        var mycreatedData = dataByMonth("created", time);
         var myDeletedData = dataByMonth("deleted", time);
 
         var status = document.getElementById('statusSelector').value;
 
         var myData = [];
-        myData[0] = ["Date", "CheckedIn", "Checkedout", "Deletet"];
+        myData[0] = ["Date", "Created", "Deleted"];
 
-        for (var i = 1; i < myCheckedInData.length; ++i) {
-            var year = myCheckedInData[i][0];
-            var checkedIn = myCheckedInData[i][1];
-            var checkedOut = myCheckedOutData[i][1];
-            var deleted = myDeletedData[i][1];
-            if (status == "all") { myData.push([year, checkedIn, checkedOut, deleted]); }
+        for (var i = 1; i < mycreatedData.length; ++i) {
+            var year = mycreatedData[i][0];
+            try { var created = mycreatedData[i][1]; }
+            catch { var created = 0; }
+            try { var deleted = myDeletedData[i][1]; }
+            catch { var deleted = 0; }
+
+            if (status == "all") { myData.push([year, created, deleted]); }
 
         }
 
@@ -262,11 +312,10 @@
 
     function maxValue() {
         var dataset = '@allDatasets'.split(",");
-        var max = 0; //Math.max(dataset);
+        var max = 0; 
         for (var i = 0; i < dataset.length; i= i + 2) {
             var count = parseInt(dataset[i + 1].replace(']', ""));
             if (count > max) { max = count; }
-            console.log("count, max: "+ count+ ", "+max);
         }
         return (max);
     }
@@ -275,7 +324,6 @@
     //Create a title for the chart. Check if diagram is empty.
     //return title and subtitle for chart
     function createTitle(myData) {
-        console.log(myData);
         var status = document.getElementById('statusSelector');
         var time = document.getElementById('timeSelector').value;
 
@@ -304,6 +352,8 @@
     function myChart() {
         var status = document.getElementById('statusSelector').value;
         var time = document.getElementById('timeSelector').value;
+        if (time != "all") {
+        }
         var chartName = "";
         var colors = ['#388670', '#f24c24', '#ffbb52', '#009cdf'];
         var myData = [];
@@ -315,14 +365,14 @@
             drawChart(myData, colors[0]);
         }
 
-        else { //if (status == created, checkedIn, checkedOut, deleted)
+        else { //if (status == created, created, checkedOut, deleted)
             if (time == "all") { myData = dataByYear(status); }
             else { myData = dataByMonth(status, time); }
 
-            if (status == "checkedIn") { drawChart(myData, colors[0]); }
-            if (status == "checkedOut") { drawChart(myData, colors[1]); }
-            if (status == "deleted") { drawChart(myData, colors[2]); }
-            if (status == "created") { drawChart(myData, colors[3]); }
+            if (status == "all") { drawChart(myData, colors[0]); }
+            if (status == "activities") { drawChart(myData, colors[3]); }
+            if (status == "created") { drawChart(myData, colors[0]); }
+            if (status == "deleted") { drawChart(myData, colors[1]); }
         }
     }
 
@@ -337,8 +387,8 @@
         var groupWidth = '30%';
 
         if (status == "all") {
-            width = 1000;
-            legendPosition = "top";
+            width = 950;
+            legendPosition = "right";
             groupWidth = '90%';
         }
 
@@ -374,6 +424,3 @@
     }
 
 </script>
-
-<!--<div id="chartArea" style="width: 800px; height: 400px;"></div>-->
-<!--<div id="columnchart_material" style="width: 600px; height: 400px;"></div>-->

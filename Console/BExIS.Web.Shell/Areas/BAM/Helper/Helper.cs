@@ -113,11 +113,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     foreach (var customAttributeValue in party.CustomAttributeValues)
                         if (partyCustomGridColumnsRepository.Any(cc => cc.CustomAttribute != null && (cc.CustomAttribute.Id == (customAttributeValue.CustomAttribute.Id))))
                             row[customAttributeValue.CustomAttribute.DisplayName.Replace(" ", "_")] = customAttributeValue.Value;
-                    var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => (cc.SourceParty.Id == party.Id));
+                    var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => (cc.SourceParty.Id == party.Id && !cc.PartyTypePair.TargetPartyType.SystemType));
                     foreach (var partyRelationship in partyRelationships)
                     {
                         if (partyCustomGridColumnsRepository.Any(cc => cc.TypePair != null && cc.TypePair.Id == (partyRelationship.PartyTypePair.Id)))
-                            row[partyRelationship.PartyTypePair.Title.Replace(" ", "_")] += partyRelationship.TargetParty.Name + "<br/>";
+                            row[partyRelationship.PartyTypePair.Title.Replace(" ", "_")] += "["+partyRelationship.TargetParty.Name + "] ";
                     }
 
                     table.Rows.Add(row);

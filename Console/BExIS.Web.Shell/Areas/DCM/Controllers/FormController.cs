@@ -179,6 +179,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
 
+
+            //save with errors?
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+            {
+                Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+            {
+                Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.LOCKED))
+            {
+                ViewData["Locked"] = (bool)TaskManager.Bus[CreateTaskmanager.LOCKED];
+            }
+
             return PartialView("MetadataEditor", Model);
         }
 
@@ -313,6 +330,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
+
+            //save with errors?
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+            {
+                Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+            {
+                Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
 
             return PartialView("MetadataEditor", Model);
         }
@@ -476,8 +504,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = show;
 
+
+
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
+
             var stepInfoModelHelpers = new List<StepModelHelper>();
 
             foreach (var stepInfo in TaskManager.StepInfos)
@@ -501,6 +534,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var Model = new MetadataEditorModel();
             Model.StepModelHelpers = stepInfoModelHelpers;
+            Model.SaveWithErrors = Model.StepModelHelpers.Any(s => s.Model.ErrorList.Count() > 0);
 
             #region security permissions and authorisations check
 
@@ -534,9 +568,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
 
+            //save with errors?
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+            {
+                Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+            }
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+            {
+                Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
+
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
+
 
             //set title
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
@@ -615,6 +661,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //set addtionaly functions
                 Model.Actions = getAddtionalActions();
+
+                //save with errors?
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+                {
+                    Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+                }
+
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+                {
+                    Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+                }
             }
 
             return View("MetadataEditor", Model);
@@ -799,10 +856,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
             var stepModelHelper = GetStepModelhelper(id);
-            //StepModelHelper parentStepModelHelper = GetStepModelhelper(parentStepId);
 
             var active = stepModelHelper.Activated ? false : true;
             stepModelHelper.Activated = active;
@@ -815,20 +870,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
             pStepModelHelper.Activated = active;
 
-            // update stepmodel to dictionary
-            //AddStepModelhelper(newStepModelhelper);
 
             //update stepModel to parentStepModel
             for (var i = 0; i < pStepModelHelper.Childrens.Count; i++)
             {
-                var child = pStepModelHelper.Childrens.ElementAt(i);
-                var childStepModelHelper = GetStepModelhelper(child.StepId);
-                child.Activated = child.StepId.Equals(id);
-                childStepModelHelper.Activated = child.StepId.Equals(id);
+                var usage = pStepModelHelper.Childrens.ElementAt(i);
+                var childStepModelHelper = GetStepModelhelper(usage.StepId);
+                usage.Activated = usage.StepId.Equals(id);
+                childStepModelHelper.Activated = usage.StepId.Equals(id);
 
-                var childOfChild = child.Childrens.FirstOrDefault();
-                if (childOfChild != null)
-                    childOfChild.Activated = child.StepId.Equals(id);
+                var type = usage.Childrens.FirstOrDefault();
+                if (type != null)
+                {
+                    type.Activated = usage.Activated;
+
+                    if (!usage.Activated) ClearXml(type.XPath);
+                }
             }
 
 
@@ -2077,6 +2134,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return null;
         }
 
+        //private StepModelHelper updateStepModelHelper(StepModelHelper stepModelHelper)
+        //{
+        //    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
+        //    {
+        //        var x = ((List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER]).Where(s => s.StepId.Equals(stepModelHelper.StepId)).FirstOrDefault();
+        //        x = stepModelHelper;
+
+        //        return x;
+        //    }
+
+        //    return null;
+        //}
+
 
         private bool IsImportAvavilable(long metadataStructureId)
         {
@@ -2146,70 +2217,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        //private StepModelHelper GetStepModelhelper(long usageId, int number)
-        //{
-        //    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
-        //    {
-        //        return ((List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER]).Where(s => s.Usage.Id.Equals(usageId) && s.Number.Equals(number)).FirstOrDefault();
-        //    }
-
-        //    return null;
-        //}
-
-        //private int GetNumberOfUsageInStepModelHelper(long usageId)
-        //{
-        //    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
-        //    {
-        //        return ((List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER]).Where(s => s.Usage.Id.Equals(usageId)).Count() - 1;
-        //    }
-
-        //    return 0;
-        //}
-
-        //private void GenerateModelsForChildrens(StepModelHelper modelHelper, long metadataStructureId)
-        //{
-        //    foreach (StepModelHelper item in modelHelper.Childrens)
-        //    {
-        //        if (item.Childrens.Count() > 0)
-        //        {
-        //            GenerateModelsForChildrens(item, metadataStructureId);
-        //        }
-
-        //        if (item.Model == null)
-        //        {
-        //            BaseUsage u = LoadUsage(item.Usage);
-        //            if (u is MetadataAttributeUsage || u is MetadataNestedAttributeUsage)
-        //            {
-        //                item.Model = MetadataCompoundAttributeModel.ConvertToModel(u, item.Number);
-        //                ((MetadataCompoundAttributeModel)item.Model).ConvertMetadataAttributeModels(u, metadataStructureId, item.StepId);
-        //            }
-
-        //            if (u is MetadataPackageUsage)
-        //            {
-        //                item.Model = MetadataPackageModel.Convert(u, item.Number);
-        //                ((MetadataPackageModel)item.Model).ConvertMetadataAttributeModels(u, metadataStructureId, item.StepId);
-        //            }
-        //        }
-        //    }
-
-        //}
-
-        //private StepModelHelper GenerateModelsForChildrens(StepInfo stepInfo, long metadataStructureId)
-        //{
-        //    StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
-
-        //    if (stepModelHelper.Model == null)
-        //    {
-        //        if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
-        //            stepModelHelper.Model = CreatePackageModel(stepInfo.Id, false);
-
-        //        if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
-        //            stepModelHelper.Model = CreateCompoundModel(stepInfo.Id, false);
-
-        //        getChildModelsHelper(stepModelHelper);
-        //    }
 
         #endregion Helper
 
@@ -2258,7 +2265,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // WORKAROUND: return always an empty list
 
 
-            return new JsonResult { Data = new SelectList(x.Select(e => e.Value+" ("+e.PartyId+")")) };
+            return new JsonResult { Data = new SelectList(x.Select(e => e.Value + " (" + e.PartyId + ")")) };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
@@ -2358,7 +2365,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return stepModelHelper;
         }
 
-        
+
 
         #endregion Attribute
 
@@ -2465,6 +2472,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
             metadataXml = xmlMetadataWriter.Remove(metadataXml, xpath);
+
+            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+        }
+
+        private void ClearXml(string xpath)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            metadataXml = xmlMetadataWriter.Clean(metadataXml, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2589,6 +2608,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // select the attributeModel and change the value
                 selectedMetadatAttributeModel.Value = model.Value;
                 selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
+
+                Session["CreateDatasetTaskmanager"] = TaskManager;
+
                 return PartialView("_metadataAttributeView", selectedMetadatAttributeModel);
             }
             else
@@ -2645,42 +2667,52 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private void ValidateModels(List<StepModelHelper> stepModelHelpers)
         {
-            foreach (var stepModeHelper in stepModelHelpers)
+            List<Error> tmp = new List<Error>();
+
+            foreach (var stepModelHelper in stepModelHelpers)
             {
-                // if model exist then validate attributes
-                if (stepModeHelper.Model != null)
+                //only check if step is a instance
+                if (stepModelHelper.Model.StepInfo.IsInstanze)
                 {
-                    foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
+                    // if model exist then validate attributes
+                    if (stepModelHelper.Model != null)
                     {
-                        metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
-                        //if (metadataAttrModel.Errors.Count > 0)
-                        //    step.stepStatus = StepStatus.error;
+                        foreach (var metadataAttrModel in stepModelHelper.Model.MetadataAttributeModels)
+                        {
+                            metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
+
+
+                            if (metadataAttrModel.Errors != null) tmp.AddRange(metadataAttrModel.Errors);
+
+                            //if (metadataAttrModel.Errors.Count > 0)
+                            //    step.stepStatus = StepStatus.error;
+                        }
                     }
-                }
-                // else check for required elements
-                else
-                {
-                    if (metadataStructureUsageHelper.HasUsagesWithSimpleType(stepModeHelper.UsageId, stepModeHelper.UsageType))
+                    // else check for required elements
+                    else
                     {
-                        //foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
-                        //{
-                        //    metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
-                        //    if (metadataAttrModel.Errors.Count>0)
-                        //        step.stepStatus = StepStatus.error;
-                        //}
+                        if (metadataStructureUsageHelper.HasUsagesWithSimpleType(stepModelHelper.UsageId, stepModelHelper.UsageType))
+                        {
+                            //foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
+                            //{
+                            //    metadataAttrModel.Errors = validateAttribute(metadataAttrModel);
+                            //    if (metadataAttrModel.Errors.Count>0)
+                            //        step.stepStatus = StepStatus.error;
+                            //}
 
-                        //if(MetadataStructureUsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
-                        //{
-                        //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
-                        //    if (step != null && step.IsInstanze)
-                        //    {
-                        //        Error error = new Error(ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
+                            //if(MetadataStructureUsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
+                            //{
+                            //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
+                            //    if (step != null && step.IsInstanze)
+                            //    {
+                            //        Error error = new Error(ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
 
-                        //        errors.Add(new Tuple<StepInfo, List<Error>>(step, tempErrors));
+                            //        errors.Add(new Tuple<StepInfo, List<Error>>(step, tempErrors));
 
-                        //        step.stepStatus = StepStatus.error;
-                        //    }
-                        //}
+                            //        step.stepStatus = StepStatus.error;
+                            //    }
+                            //}
+                        }
                     }
                 }
             }

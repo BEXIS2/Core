@@ -24,16 +24,19 @@
     })
     .Columns(columns =>
     {
-        columns.Bound(m => m.SubjectId);
-        columns.Bound(m => m.SubjectName);
-        columns.Bound(m => m.SubjectType);
+        columns.Bound(m => m.SubjectId)
+            .Width("15%");
+        columns.Bound(m => m.SubjectName)
+            .Width("15%");
+        columns.Bound(m => m.SubjectType)
+            .Width("15%");
 
         foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
         {
             columns.Bound(m => m.EffectiveRights)
                         .ClientTemplate("<input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> /> <input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (EffectiveRights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> disabled />")
                                .Title(rightType.ToString())
-                               .Width(64)
+                               .Width("11%")
                                .Filterable(false)
                                .Sortable(false)
                                .HtmlAttributes(new { style = "text-align:center" });
@@ -47,7 +50,7 @@
       .Filterable()
       .Pageable(pageable =>
       {
-          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.PageSize(20, new[] { 10, 20, 50, 100 });
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })

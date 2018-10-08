@@ -31,7 +31,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             customAttrs.Add("Name", "test resource");
             Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Resource").First().Id, customAttrs);
         }
-        private void createSecuritySeedData()
+        private bool createSecuritySeedData()
         {
             // Javad:
             // 1) all the create operations should check for existence of the record
@@ -48,13 +48,17 @@ namespace BExIS.Modules.Bam.UI.Helpers
             var featureManager = new FeatureManager();
 
             var root = featureManager.FindRoots().FirstOrDefault();
-
+            if (featureManager.Exists("Business administration module (BAM)", root))
+               return false;
             var bamFeature = featureManager.Create("Business administration module (BAM)", "", root);
-
+            if (featureManager.Exists("Party", bamFeature))
+               return true;
             var partyFeature = featureManager.Create("Party", "", bamFeature);
+           
             var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
             var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
             var partyHelp = operationManager.Create("BAM", "Help", "*");
+            return true;
         }
 
         /// <summary>
@@ -243,11 +247,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             UpdateOrCreatePartyTypePair(partyTypePair, partyRelationshipType, partyRelationshipTypeManager);// 
                     }
                 //Add all the custom Attribute names ao custom grid column of default user
-                foreach (var partyType in partyTypeManager.PartyTypeRepository.Get())
+                foreach (var partyType in partyTypeManager.PartyTypeRepository.Get(cc=>!cc.SystemType))
                 {
                     foreach (var partyCustomAttr in partyType.CustomAttributes)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, partyCustomAttr, null);
-                    var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id);
+                    var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id && !cc.TargetPartyType.SystemType);
                     foreach (var partyTypePair in partyRelationshipTypePairs)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, null, partyTypePair);
                 }

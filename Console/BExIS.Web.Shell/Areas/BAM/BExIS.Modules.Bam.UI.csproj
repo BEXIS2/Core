@@ -197,15 +197,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\BAM FTP 2001.pubxml" />
-    <None Include="Properties\PublishProfiles\BAM-Pub.pubxml" />
-    <None Include="Properties\PublishProfiles\BAM.pubxml" />
-    <None Include="Properties\PublishProfiles\BAM21105.pubxml" />
-    <None Include="Properties\PublishProfiles\BAM21108.pubxml" />
-    <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP211_bam.pubxml" />
-    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -236,7 +229,6 @@
     <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\PartyService\_customAttributesPartial.cshtml" />
     <Content Include="Views\PartyService\Edit.cshtml" />
-    <Content Include="Views\Party\View1.cshtml" />
     <Content Include="Views\Party\_addPartyTypePair.cshtml" />
     <Content Include="Views\Party\_partiesDynamicGridPartial.cshtml" />
     <Content Include="Views\Party\_partyGridFields.cshtml" />

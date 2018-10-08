@@ -48,5 +48,10 @@
                 controller="export" action="GenerateZip"
                 extends=""
             />
+    <Export tag="internalAction" id="simplaeDataStructure" order="1"
+                title="Get a simple data structure html view" description="" icon=""
+                controller="export" action="SimpleDataStructure"
+                extends=""
+            />
   </Exports>
 </Manifest>
