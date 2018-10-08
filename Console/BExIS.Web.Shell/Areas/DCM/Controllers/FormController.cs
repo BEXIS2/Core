@@ -509,7 +509,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, false);
+            TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
 
@@ -534,6 +534,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var Model = new MetadataEditorModel();
             Model.StepModelHelpers = stepInfoModelHelpers;
+            Model.SaveWithErrors = Model.StepModelHelpers.Any(s => s.Model.ErrorList.Count() > 0);
 
             #region security permissions and authorisations check
 

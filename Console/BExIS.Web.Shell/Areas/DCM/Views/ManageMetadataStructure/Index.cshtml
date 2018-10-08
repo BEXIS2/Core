@@ -35,9 +35,9 @@
               .ColumnContextMenu()
               .Columns(columns =>
               {
-                  columns.Bound(c => c.Id).ReadOnly().Width(55);
-                  columns.Bound(c => c.Name);
-                  columns.Bound(c => c.Entity.Name).Width(110);
+                  columns.Bound(c => c.Id).ReadOnly().Width("5%");
+                  columns.Bound(c => c.Name).Width("20%");
+                  columns.Bound(c => c.Entity.Name).Width("15%");
                   columns.Bound(c => c.Entity.ClassPath).Hidden(true);
                   columns.Template(@<text>
                     @{
@@ -47,10 +47,10 @@
                         </table>
                     }
 
-                </text>).Title("Info References");
+                </text>).Title("Info References").Width("45%");
 
 
-                        columns.Bound(c => c.Active).Width(90);
+                        columns.Bound(c => c.Active).Width("5%");
                         columns.Template(@<text>
                             @{
                                             string className = item.HasSchema ? "" : "bx-disabled";
@@ -81,7 +81,7 @@
                                                     "@Html.ActionLink(\" \", \"Index\", \"Mapping\", new { area = \"DIM\", sourceId = @item.Id }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-right \" + className, title = \"Mapping to system\", disabled })}" +
                                                     "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Switch\")){" +
                                                     "@Html.ActionLink(\" \", \"Mapping\", \"Mapping\", new { area = \"DIM\", sourceId = 0, targetId = @item.Id, sourceType= \"MetadataStructure\" }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-left \" + className, title = \"Mapping to system\", disabled })}")
-                                    .Width(170);
+                                    .Width("10%");
 
                             })
 
