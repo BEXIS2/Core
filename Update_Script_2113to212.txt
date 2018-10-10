@@ -1,3 +1,6 @@
+BEGIN TRANSACTION;  
+-- ROLLBACK TRANSACTION;
+
 ALTER TABLE public.partyrelationships RENAME COLUMN firstpartyref TO sourcepartyref;
 ALTER TABLE public.partyrelationships RENAME COLUMN secondpartyref TO targetpartyref;
 ALTER TABLE public.partyrelationships ADD permission int4 NULL;
@@ -22,3 +25,5 @@ CREATE TABLE public.partycustomgridcolumns (
 	CONSTRAINT fkb9edbdce69a94133 FOREIGN KEY (customattributeref) REFERENCES partycustomattributes(id),
 	CONSTRAINT fkb9edbdcec3d67554 FOREIGN KEY (typepairref) REFERENCES partytypepairs(id)
 );
+
+COMMIT;
