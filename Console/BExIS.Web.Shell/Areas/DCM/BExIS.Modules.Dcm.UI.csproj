@@ -442,11 +442,13 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\help\ChooseUpdateMethod.png" />
     <Content Include="Content\Images\help\collapse.png" />
     <Content Include="Content\Images\help\columnwise.jpg" />
     <Content Include="Content\Images\help\Create_Dataset.jpg" />
     <Content Include="Content\Images\help\Create_Dataset.png" />
     <Content Include="Content\Images\help\expand.png" />
+    <Content Include="Content\Images\help\GetFileInformations.png" />
     <Content Include="Content\Images\help\Help_easy_upload_end.png" />
     <Content Include="Content\Images\help\Help_easy_upload_metadata.png" />
     <Content Include="Content\Images\help\Help_easy_upload_select_areas.png" />
@@ -454,6 +456,7 @@
     <Content Include="Content\Images\help\Help_easy_upload_sheet_structure.png" />
     <Content Include="Content\Images\help\Help_easy_upload_summary.png" />
     <Content Include="Content\Images\help\Help_easy_upload_verification.png" />
+    <Content Include="Content\Images\help\messages.png" />
     <Content Include="Content\Images\help\metadata1.png" />
     <Content Include="Content\Images\help\metadata2.png" />
     <Content Include="Content\Images\help\metadata3.png" />
