@@ -88,7 +88,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        protected DatasetManager DatasetManager = new DatasetManager();
+        protected DatasetManager DatasetManager;
 
         /// <summary>
         ///
@@ -125,25 +125,41 @@ namespace BExIS.IO.Transform.Input
         /// <seealso cref=""/>        
         protected Dictionary<long, ValueValidationManager> ValueValidationManagerDic = new Dictionary<long, ValueValidationManager>();
 
+
+        protected IOUtility IOUtility;
+
         #endregion
 
         #region private 
         IList<Variable> variableList;
         #endregion
 
-        //Contructor
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param></param>       
-        public DataReader()
+        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo) : this(structuredDatastructure, fileReaderInfo, new IOUtility(), new DatasetManager())
         {
-            this.ErrorMessages = new List<Error>();
+
+        }
+
+        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo, IOUtility iOUtility) : this(structuredDatastructure, fileReaderInfo, iOUtility, new DatasetManager())
+        {
+
+        }
+
+        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo, DatasetManager datasetManager) : this(structuredDatastructure, fileReaderInfo, new IOUtility(), datasetManager)
+        {
+
+        }
+
+        public DataReader(StructuredDataStructure structuredDatastructure, FileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager)
+        {
+            DatasetManager = datasetManager;
+            IOUtility = iOUtility;
+            StructuredDataStructure = structuredDatastructure;
+            Info = fileReaderInfo;
+            ErrorMessages = new List<Error>();
             Position = 1;
         }
+
 
         #region IDataReader Member
 
@@ -174,8 +190,13 @@ namespace BExIS.IO.Transform.Input
         /// <returns>DataTuple</returns>
         public DataTuple ReadRow(List<string> row, int indexOfRow)
         {
+            if (row == null) return null;
+            if (row.Count == 1 && string.IsNullOrEmpty(row.ElementAt(0))) return null;
+            if (row.Count > this.StructuredDataStructure.Variables.Count || row.Count < this.StructuredDataStructure.Variables.Count) throw new Exception("Number of values different then the number of values.");
+
             DataTuple dt = new DataTuple();
             string value = "";
+
 
             // convert row to List<VariableValue>
             for (int i = 0; i < row.Count(); i++)
@@ -238,6 +259,7 @@ namespace BExIS.IO.Transform.Input
 
 
             return dt;
+
         }
 
         /// <summary>
@@ -447,7 +469,7 @@ namespace BExIS.IO.Transform.Input
         {
             string pattern = "";
 
-            if (variable != null && variable.DataType != null && variable.DataType.Extra!=null)
+            if (variable != null && variable.DataType != null && variable.DataType.Extra != null)
             {
                 DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(variable.DataType.Extra);
                 if (displayPattern != null) pattern = displayPattern.StringPattern;
@@ -537,6 +559,24 @@ namespace BExIS.IO.Transform.Input
         }
 
         #endregion
+
+        #region getter setter
+
+        public List<VariableIdentifier> SetSubmitedVariableIdentifiers(List<string> variableNames)
+        {
+            SubmitedVariableIdentifiers = new List<VariableIdentifier>();
+
+            foreach (string s in variableNames)
+            {
+                VariableIdentifier vi = new VariableIdentifier();
+                vi.name = s;
+                SubmitedVariableIdentifiers.Add(vi);
+            }
+
+            return SubmitedVariableIdentifiers;
+        }
+
+        # endregion
 
     }
 }

@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Security.Services.Utilities
 {
     public class EmailService : IIdentityMessageService
     {
         private readonly SmtpClient _smtp;
+        private string AppId = "";
 
         public EmailService()
         {
@@ -30,6 +33,35 @@ namespace BExIS.Security.Services.Utilities
                 _smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["Email_Account"],
                     ConfigurationManager.AppSettings["Email_Password"]);
             }
+
+            if (!string.IsNullOrEmpty(AppConfiguration.ApplicationName) && !string.IsNullOrEmpty(AppConfiguration.ApplicationVersion))
+            {
+                AppId = AppConfiguration.ApplicationName + " (" + AppConfiguration.ApplicationVersion + ") - ";
+            }
+
+        }
+
+        public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyToLists = null)
+        {
+            var mail = new MailMessage()
+            {
+                From = new MailAddress(ConfigurationManager.AppSettings["Email_From"]),
+                To = { string.Join(",", destinations) },
+                CC = { string.Join(",", ccs) },
+                Bcc = { string.Join(",", bccs) },
+                ReplyToList = { string.Join(",", replyToLists) },
+                Subject = AppId + subject,
+                Body = body
+            };
+
+            try
+            {
+                _smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
+            }
         }
 
         public void Send(string subject, string body, string destination)
@@ -38,7 +70,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 IdentityMessage message = new IdentityMessage()
                 {
-                    Subject = subject,
+                    Subject = AppId + subject,
                     Body = body,
                     Destination = destination
                 };
@@ -73,7 +105,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 Body = message.Body,
                 IsBodyHtml = true,
-                Subject = message.Subject
+                Subject = AppId + message.Subject
             };
 
             try
@@ -100,7 +132,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 Body = message.Body,
                 IsBodyHtml = true,
-                Subject = message.Subject
+                Subject = AppId + message.Subject
             };
 
             try

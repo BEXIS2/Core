@@ -3,12 +3,13 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
-    public class DdmSeedDataGenerator
+    public class DdmSeedDataGenerator : IModuleSeedDataGenerator
     {
-        public static void GenerateSeedData()
+        public void GenerateSeedData()
         {
             FeatureManager featureManager = new FeatureManager();
             OperationManager operationManager = new OperationManager();
@@ -79,7 +80,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 // I had to remove the feature to get dashboard running without DDM feature permissions.
                 // We have to think about how we can fix it in a long run. Maybe "DDM/Home" is not the proper
                 // place for dashboard!?
-                operationManager.Create("DDM", "Home", "*"); //, SearchFeature);
+                operationManager.Create("DDM", "PublicSearch", "*");
+                operationManager.Create("DDM", "Home", "*", SearchFeature);
                 operationManager.Create("DDM", "Data", "*", SearchFeature);
 
                 #endregion
@@ -106,5 +108,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
 
         }
+
+        public void Dispose()
+        {
+        }
+
     }
 }

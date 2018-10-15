@@ -2,9 +2,15 @@
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Modules.Dcm.UI.Models;
 
-@section Scripts{
+<link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
 
-    <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
+@section Information
+{
+    This wizard will assist you in uploading an excel file to the system, creating a metadata structure based on the data table
+    and add it to a dataset.
+    <p>
+        <a href="/dcm/Help/index#_easy_upload_import_data" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 }
 
 @section LeftPane
@@ -15,8 +21,6 @@
 
 
 }
-
-
 <div id="StepView">
     @Html.ValidationSummary(true)
 </div>
@@ -38,7 +42,7 @@
         var SelectedDataStrutureTitle;
         var Parameters = new Array();
 
-        $(document).ready(function () {
+        $(document).on("ready",function () {
 
             var index = '@Model.GetCurrentStepInfoIndex()';
 
@@ -54,7 +58,10 @@
 
                 NavigationRefresh();
                 TaskListRefresh();
+
             });
+
+
         })
 
     </script>

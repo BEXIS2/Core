@@ -27,9 +27,12 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <IISExpressSSLPort>44345</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
+    <IISExpressAnonymousAuthentication>
+    </IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>
+    </IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>
+    </IISExpressUseClassicPipelineMode>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
@@ -156,9 +159,8 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
@@ -175,7 +177,6 @@
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
@@ -188,9 +189,8 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -389,14 +389,14 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LdapController.cs" />
-    <Compile Include="Controllers\TermsController.cs" />
+    <Compile Include="Controllers\PrivacyPolicyController.cs" />
+    <Compile Include="Controllers\TermsAndConditionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -405,7 +405,6 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
-    <Compile Include="Helpers\SeedDataGenerator.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
@@ -452,6 +451,9 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="General.Settings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.grid.backup.js" />
     <Content Include="Scripts\autosize\autosize.js" />
@@ -474,18 +476,8 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
-    <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
-    <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
-    <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP211.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP21105.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP21108.pubxml" />
-    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP212.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\SITE.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\handsontable\handsontable.full.js" />
     <Content Include="Scripts\handsontable\handsontable.full.min.js" />
@@ -494,7 +486,6 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <None Include="Properties\PublishProfiles\T1.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -833,7 +824,6 @@
     <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
-    <Content Include="Views\Terms\Index.cshtml" />
     <Content Include="Views\Footer\Content.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
@@ -855,6 +845,9 @@
     <Content Include="Views\Shared\NotAuthorized.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Ldap\Login.cshtml" />
+    <Content Include="Views\TermsAndConditions\Index.cshtml" />
+    <Content Include="Views\PrivacyPolicy\Index.cshtml" />
+    <Content Include="Views\Ldap\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -942,6 +935,10 @@
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
+      <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
+      <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
@@ -1147,6 +1144,7 @@
   <PropertyGroup>
     <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
 C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)General.Settings.xml" "$(SolutionDir)Console\Workspace\General" /C /Y /I
 rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
 C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>

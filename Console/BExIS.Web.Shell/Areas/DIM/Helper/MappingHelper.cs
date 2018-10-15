@@ -263,6 +263,7 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
             //get all parties - complex
             PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
 
             try
             {
@@ -289,7 +290,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                        "");
 
 
-
+                #region get party types
                 IEnumerable<PartyType> partyTypes = partyTypeManager.PartyTypeRepository.Get();
 
                 foreach (var pt in partyTypes)
@@ -300,6 +301,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                     model.LinkElements.AddRange(createLinkElementModelPartyCustomType(pt, model, ptModel, mappingManager));
                 }
 
+                #endregion
+
+                #region keys
                 //get all keys -> simple
                 foreach (Key value in Key.GetValues(typeof(Key)))
                 {
@@ -316,6 +320,34 @@ namespace BExIS.Modules.Dim.UI.Helper
                     model.LinkElements.Add(LEModel);
 
                 }
+
+                #endregion
+
+                #region get all relationships
+
+                IEnumerable<PartyRelationshipType> relationshipTypes = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get();
+
+                foreach (PartyRelationshipType partyRelationshipType in relationshipTypes)
+                {
+                    long value = partyRelationshipType.Id;
+                    long linkElementId = GetId(partyRelationshipType.Id, LinkElementType.Key, mappingManager);
+
+                    LinkElementModel LEModel = new LinkElementModel(
+                            linkElementId,
+                            partyRelationshipType.Id,
+                            LinkElementType.PartyRelationshipType, 
+                            partyRelationshipType.DisplayName, 
+                            "", 
+                            model.Position, 
+                            LinkElementComplexity.Simple, 
+                            "");
+
+                    LEModel.Parent = LEParent;
+
+                    model.LinkElements.Add(LEModel);
+                }
+
+                #endregion
 
                 //create container
                 model = CreateLinkElementContainerModels(model);

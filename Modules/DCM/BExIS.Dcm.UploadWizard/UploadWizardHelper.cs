@@ -11,6 +11,8 @@ using System.Linq;
 using System.Xml;
 using Vaiona.Model.MTnt;
 using Vaiona.Persistence.Api;
+using Vaiona.Logging.Aspects;
+using BExIS.IO;
 
 /// <summary>
 ///
@@ -108,6 +110,7 @@ namespace BExIS.Dcm.UploadWizard
         }
 
         //temporary solution: norman :GetSplitDatatuples2
+        [MeasurePerformance]
         public Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -354,27 +357,30 @@ namespace BExIS.Dcm.UploadWizard
             int packageSize = 1000;
             int position = 1;
 
-            if (ext.Equals(".txt") || ext.Equals(".csv"))
+            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
             {
                 #region csv
                 do
                 {
                     primaryValuesAsOneString = new List<string>();
 
-                    AsciiReader reader = new AsciiReader();
+                    DataStructureManager datastructureManager = new DataStructureManager();
+                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+                    AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
+
+                    AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
-                    AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
+                    
 
-                    DataStructureManager datastructureManager = new DataStructureManager();
-                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+                   
                     // get a list of values for each row
                     // e.g.
                     // primarky keys id, name
                     // 1 [1][David]
                     // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys, packageSize);
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
 
                     // convert List of Lists to list of strings
                     // 1 [1][David] = 1David
@@ -426,18 +432,19 @@ namespace BExIS.Dcm.UploadWizard
                     //reset
                     primaryValuesAsOneString = new List<string>();
 
-                    ExcelReader reader = new ExcelReader();
+                    DataStructureManager datastructureManager = new DataStructureManager();
+                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+
+                    ExcelReader reader = new ExcelReader(sds,new ExcelFileReaderInfo());
                     reader.Position = position;
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
-                    DataStructureManager datastructureManager = new DataStructureManager();
-                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
                     // get a list of values for each row
                     // e.g.
                     // primarky keys id, name
                     // 1 [1][David]
                     // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, sds, datasetId, primaryKeys, packageSize);
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename,datasetId, primaryKeys, packageSize);
 
                     // convert List of Lists to list of strings
                     // 1 [1][David] = 1David
@@ -755,8 +762,10 @@ namespace BExIS.Dcm.UploadWizard
                 return new List<string>()
                     {
                         ".xlsm",
+                        ".xlsx",
                         ".txt",
-                        ".csv"
+                        ".csv",
+                        ".tsv"
                     };
             }
 
@@ -795,6 +804,7 @@ namespace BExIS.Dcm.UploadWizard
 
             return new List<string>();
         }
+
 
         #endregion
 

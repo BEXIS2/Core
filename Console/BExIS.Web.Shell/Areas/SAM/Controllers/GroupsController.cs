@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -89,6 +90,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 var group = identityGroupService.FindByIdAsync(groupId).Result;
+
+                foreach (var user in group.Users)
+                {
+                    await RemoveUserFromGroup(user.Id, @group.Name);
+                }
+
                 var result = await identityGroupService.DeleteAsync(group);
                 return result.Succeeded;
             }
@@ -239,5 +246,41 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         #endregion Hilfsprogramme
+
+        #region Remote Validation
+
+        public JsonResult ValidateGroupname(string username, long id = 0)
+        {
+            var groupManager = new GroupManager();
+
+            try
+            {
+                var group = groupManager.FindByNameAsync(username);
+
+                if (group == null)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (group.Id == id)
+                    {
+                        return Json(true, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        var error = string.Format(CultureInfo.InvariantCulture, "The groupname exists already.", username);
+
+                        return Json(error, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            finally
+            {
+                groupManager.Dispose();
+            }
+        }
+
+        #endregion Remote Validation
     }
 }

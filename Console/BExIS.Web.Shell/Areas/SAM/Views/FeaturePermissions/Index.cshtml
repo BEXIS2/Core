@@ -47,7 +47,7 @@
             $.post('@Url.Action("RemoveFeatureFromPublic", "FeaturePermissions")',
                 { FeatureId: getTreeView().getItemValue(e.item)}, function() {
                     $("#grid_subjects .t-refresh").trigger('click');
-                });          
+                });
         }
     }
 

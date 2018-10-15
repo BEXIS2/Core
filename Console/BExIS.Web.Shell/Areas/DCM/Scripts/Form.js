@@ -7,7 +7,7 @@ $(document).ready(function (e) {
           //do something special
           //console.log("doc ready before autosize");
           //console.log($('textarea'));
-          if ($('textarea') != null) {
+          if ($('textarea') !== null) {
 
               $($('textarea')).each(function (index, element) {
                   // element == this
@@ -212,6 +212,9 @@ function textareaToInput(textarea) {
     return input;
 }
 
+
+var afterClosed = false;
+
 function OnChangeTextInput(e) {
 
     var substr = e.target.id.split('_');
@@ -247,8 +250,32 @@ function OnChangeTextInput(e) {
         //console.log(newId);
 
         $("#" + newId).replaceWith(response);
+
         //alert("test");
         autosize($('textarea'));
+
+        //check if the parent is set to a party
+        console.log("after change");
+        var parent = $("#" + ParentStepID)[0];
+        console.log(parent);
+        var partyid = $(parent).attr("partyid");
+        console.log(partyid);
+
+        var partyidConverted = TryParseInt(partyid, null)
+        console.log("tryparse:" + partyidConverted)
+
+        //delete party informations when a party was selected before
+        if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
+
+            console.log(ParentStepID);
+            console.log(ParentModelNumber);
+
+            UpdateWithParty(ParentStepID, ParentModelNumber, 0);
+        }
+        else {
+            afterClosed = false;
+        }
+
     })
 }
 
@@ -283,7 +310,7 @@ function OnChange(e) {
             var newId = e.id.substr(0, index);
 
             $("#" + newId).replaceWith(response);
-            if ($('textarea') != null) {
+            if ($('textarea') !== null) {
                 autosize($('textarea'));
             }
         });
@@ -513,7 +540,7 @@ function OnClickRemove(e) {
 
     var value = $("#" + e.id).closest(".ValueClass").value;
 
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -555,7 +582,7 @@ function OnClickRemove(e) {
 function OnClickUp(e) {
     //alert(value);
     var value = $("#" + e.id).closest(".ValueClass").value;
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -585,7 +612,7 @@ function OnClickUp(e) {
 function OnClickDown(e) {
 
     var value = $("#" + e.id).closest(".ValueClass").value;
-    if (value != "") {
+    if (value !== "") {
 
         var substr = e.id.split('_');
         var id = substr[0];
@@ -619,9 +646,70 @@ function OnClickDown(e) {
     }
 }
 
+function OnClose(e) {
+
+    console.log(e.target.value);
+    var value = e.target.value;
+    if (~value.indexOf("(") && ~value.indexOf(")")) {
+
+        var start = value.lastIndexOf("(")+1;
+        var end = value.lastIndexOf(")");
+        var partyid = value.substr(start, end - start);
+
+        console.log("partyid = " + partyid);
+
+        if (partyid !== "0") {
+            // find parent
+
+            var parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
+            console.log("parent");
+            console.log(parent);
+
+            if (parent !== null) {
+
+                var parentid = $(parent).attr("id");
+                var number = $(parent).attr("number");
+                UpdateWithParty(parentid, number, partyid);
+            }
+
+            afterClosed = true;
+        }
+    }
+}
+
 /******************************************
  ********* Component************************
  ******************************************/
+function UpdateWithParty(componentId, number, partyid) {
+
+    console.log("update with party");
+    console.log(componentId + "-" + number + "-" + partyid);
+
+    
+
+    $("#" + componentId).find(".metadataAttributeInput").each(function () {
+        $(this).preloader(12, "...loading");
+    })
+
+    $.post('/DCM/Form/UpdateComplexUsageWithParty',
+        {
+            stepId: componentId,
+            number:number,
+            partyId: partyid
+        },
+        function (response) {
+
+            console.log(componentId);
+            //console.log(response);
+
+            $("#" + componentId).replaceWith(response);
+            // update party id to component
+            $("#" + componentId).attr("partyid", partyid);
+            //alert("test");
+            autosize($('textarea'));
+        })
+}
+
 
 function Add(e) {
     var temp = e.id;
@@ -693,9 +781,6 @@ function Activate(e) {
             console.log(response);
 
             $('#' + stepid).replaceWith(response);
-
-            
-
             if (!active) {
                 $('html, body').animate({
                     scrollTop: $('#' + stepid).offset().top - 80
@@ -722,7 +807,8 @@ function ActivateFromChoice(e) {
     },
 
     function (response) {
-                
+
+
         $('#' + stepid).replaceWith(response);
 
         if (!active)
@@ -747,4 +833,16 @@ function showHideClick(e) {
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
     bindMinimap(true);
+}
+
+function TryParseInt(str, defaultValue) {
+    var retValue = defaultValue;
+    if (str !== null && str != undefined) {
+        if (str.length > 0) {
+            if (!isNaN(str)) {
+                retValue = parseInt(str);
+            }
+        }
+    }
+    return retValue;
 }

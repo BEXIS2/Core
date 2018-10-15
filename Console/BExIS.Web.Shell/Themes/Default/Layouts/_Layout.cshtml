@@ -11,7 +11,7 @@
 <head>
     <title>@ViewBag.Title</title>
 
-     @Html.Favicon(Html.GetTenant().FavIconPath)
+    @Html.Favicon(Html.GetTenant().FavIconPath)
 
     <style>
         .t-window-content {
@@ -24,21 +24,21 @@
     @Scripts.Render("~/bundles/modernizr")
 
     @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
-                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
+                                                                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
 
-                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
-                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
-                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
-                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))
-                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
+                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
+                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
+                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
+                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))
+                                                        //.Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
 
-        //.Add("telerik.common.css")
-        //.Add("~" + Themes.GetResourcePath("Styles", "Copy of telerik.default.min.css"))
-        //.Add("~" + Themes.GetResourcePath("Styles", "telerik.default.min.css"))
-        //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
-        // add RTL support when internationalization is enabled
-        .Combined(true)
-        .Compress(true)))
+                                                        //.Add("telerik.common.css")
+                                                        //.Add("~" + Themes.GetResourcePath("Styles", "Copy of telerik.default.min.css"))
+                                                        //.Add("~" + Themes.GetResourcePath("Styles", "telerik.default.min.css"))
+                                                        //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
+                                                        // add RTL support when internationalization is enabled
+                                                        .Combined(true)
+                                                        .Compress(true)))
 
     @Scripts.Render("~/bundles/modernizr")
 
@@ -50,6 +50,7 @@
     @Scripts.Render("~/bundles/switchery")
     @Scripts.Render("~/bundles/handsontable")
     @Scripts.Render("~/bundles/bexis")
+
 </head>
 
 <body>
@@ -57,7 +58,7 @@
         @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
         @Html.RenderAuto("Menu")
 
-        <div class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
+        <div id="information-container" class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
             <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
             <div class="collapse" id="information">
                 <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
@@ -105,15 +106,16 @@
         </table>
     </div>
     @(Html.Telerik().ScriptRegistrar()
-            .DefaultGroup(group => group.Combined(true).Compress(true)
-            //.DefaultPath("~/Scripts/2013.2.611/")
-            )
-            .jQuery(false)
+                    .DefaultGroup(group => group.Combined(true).Compress(true)
+                    //.DefaultPath("~/Scripts/2013.2.611/")
+                    )
+                    .jQuery(false)
     )
 
     @Html.RenderAuto("Footer")
 
     @RenderSection("Scripts", false)
+
 </body>
 </html>
 

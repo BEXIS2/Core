@@ -1,4 +1,6 @@
 ﻿using BExIS.IO;
+using System;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
@@ -34,6 +36,12 @@ namespace BExIS.Modules.Dcm.UI.Models
 
         public TextMarker TextMarker { get; set; }
 
+        //select area for excel
+        public List<string> DataArea { get; set; }
+        public string HeaderArea { get; set; }
+        public Dictionary<Uri, String> SheetUriDictionary { get; set; }
+        public string activeSheetUri { get; set; }
+
         public FileInfoModel()
         {
             Extention = "";
@@ -44,6 +52,10 @@ namespace BExIS.Modules.Dcm.UI.Models
             Data = 2;
             Dateformat = "";
             TextMarker = TextMarker.quotes;
+            DataArea = new List<string>();
+            HeaderArea = "";
+            SheetUriDictionary = new Dictionary<Uri, string>();
+            activeSheetUri = "";
         }
   
     }

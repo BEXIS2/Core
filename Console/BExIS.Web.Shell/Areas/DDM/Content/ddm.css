@@ -1,0 +1,37 @@
+﻿.primaryDataResultGrid .t-grid-content
+{
+	height : auto !important;
+
+}
+
+.primaryDataResultGrid .t-grid-content td
+{
+	padding-left:0;
+	text-align:left;
+}
+
+.margin
+{
+	margin-left:2px;
+}
+
+
+.fit_to_screen table {
+
+}
+
+.scroll_in_screen {
+    width: 100%;
+    /*overflow-x: hidden;*/
+}
+
+.scroll_in_screen table {
+    width: 100%;
+    display: block;
+    overflow: auto;
+}
+
+.scroll_in_screen table th, .scroll_in_screen table td {
+    max-width: 200px;
+
+}

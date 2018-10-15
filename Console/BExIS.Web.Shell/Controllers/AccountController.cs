@@ -43,7 +43,7 @@ namespace BExIS.Web.Shell.Controllers
                     );
 
 
-                return this.IsAccessibale("bam", "PartyService", "UserRegistration")
+                return this.IsAccessible("bam", "PartyService", "UserRegistration")
                     ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
             }
@@ -242,7 +242,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
                     {
-                        ViewBag.errorMessage = "You must have a confirmed email to log in.";
+                        ViewBag.errorMessage = "You must have a confirmed email address to log in.";
                         return View("Error");
                     }
                 }
@@ -313,7 +313,7 @@ namespace BExIS.Web.Shell.Controllers
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                    await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
@@ -322,7 +322,7 @@ namespace BExIS.Web.Shell.Controllers
                         );
 
 
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in.";
+                    ViewBag.Message = "Before you can log in to complete your registration please check your email and verify your email address.";
 
                     return View("Info");
                 }
@@ -402,7 +402,15 @@ namespace BExIS.Web.Shell.Controllers
                 var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
                 var callbackUrl = Url.Action("ConfirmEmail", "Account",
                    new { userId, code }, Request.Url.Scheme);
-                await identityUserService.SendEmailAsync(userId, subject, $"Please confirm your account by clicking <a href=\"{callbackUrl}\">here</a>");
+
+                var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
+                var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
+
+                await identityUserService.SendEmailAsync(userId, subject,
+                    $"<p>please confirm your mail address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>." +
+                    $" Once you finished the registration a system administrator will decide based on your provided information about your assigned permissions. " +
+                    $"This process can take up to 3 days.</p>" +
+                    $"<p>You agreed on our <a href=\"{policyUrl}\">data policy</a> and <a href=\"{termsUrl}\">terms and conditions</a>.</p>");
 
                 return callbackUrl;
             }
