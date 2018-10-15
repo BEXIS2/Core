@@ -38,86 +38,61 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Units", this.Session.GetTenant());
 
+            Model.Unit.Name = cutSpaces(Model.Unit.Name);
+            Model.Unit.Abbreviation = cutSpaces(Model.Unit.Abbreviation);
+            Model.Unit.Description = cutSpaces(Model.Unit.Description);
+            Model.Unit.Dimension.Name = cutSpaces(Model.Unit.Dimension.Name);
+            Model.Unit.Dimension.Specification = cutSpaces(Model.Unit.Dimension.Specification);
+
+            
             UnitManager unitManager = null;
             try
             {
                 unitManager = new UnitManager();
 
-                Model.Unit.Name = cutSpaces(Model.Unit.Name);
-                Model.Unit.Abbreviation = cutSpaces(Model.Unit.Abbreviation);
-                Model.Unit.Description = cutSpaces(Model.Unit.Description);
-                Model.Unit.Dimension.Name = cutSpaces(Model.Unit.Dimension.Name);
-                Model.Unit.Dimension.Specification = cutSpaces(Model.Unit.Dimension.Specification);
-
-                if (Model.Unit.Id == 0)
+                if (unitValidation(Model.Unit, checkedRecords, unitManager))
                 {
-                    if (unitValidation(Model.Unit, checkedRecords))
+                    if (Model.Unit.Dimension.Id == 0)
                     {
+                        if (String.IsNullOrEmpty(Model.Unit.Dimension.Name))
+                            Model.Unit.Dimension.Name = "no Name";
+
+                        Model.Unit.Dimension = unitManager.Create(Model.Unit.Dimension.Name, Model.Unit.Dimension.Name, Model.Unit.Dimension.Specification);
+                    }
+
+                    if (Model.Unit.Id == 0)
+                    {
+                        unitManager = new UnitManager();
+                        Model.Unit = unitManager.Create(Model.Unit.Name, Model.Unit.Abbreviation, Model.Unit.Description, Model.Unit.Dimension, Model.Unit.MeasurementSystem);
+                    }
+
+                    Unit unit = unitManager.Repo.Get(Model.Unit.Id);
+
+                    if (!(unit.DataContainers.Count() > 0))
+                    {
+                        unit.Name = Model.Unit.Name;
+                        unit.Description = Model.Unit.Description;
+                        unit.Abbreviation = Model.Unit.Abbreviation;
                         foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
                         {
                             if (msCheck.ToString().Equals(measurementSystem))
                             {
-                                Model.Unit.MeasurementSystem = msCheck;
+                                unit.MeasurementSystem = msCheck;
+                                break;
                             }
                         }
-                        if (Model.Unit.Dimension.Id != 0)
-                            Model.Unit.Dimension = unitManager.DimensionRepo.Get(Model.Unit.Dimension.Id);
-                        else
-                        {
-                            if (!String.IsNullOrEmpty(Model.Unit.Dimension.Name))
-                                Model.Unit.Dimension.Name = "no Name";
-                            Model.Unit.Dimension = unitManager.Create(Model.Unit.Dimension.Name, Model.Unit.Dimension.Name, Model.Unit.Dimension.Specification);
-                        }
-                        Model.Unit = unitManager.Create(Model.Unit.Name, Model.Unit.Abbreviation, Model.Unit.Description, Model.Unit.Dimension, Model.Unit.MeasurementSystem);
-
-                        updataAssociatedDataType(Model.Unit, checkedRecords, unitManager);
-                    }
-                    else
-                    {
-                        Session["Window"] = true;
-
-                        return View("UnitManager", new UnitManagerModel(0));
+                  
+                        unit.Dimension = unitManager.DimensionRepo.Get(Model.Unit.Dimension.Id);                       
+                        unit = updataAssociatedDataType(unit, checkedRecords);
+                        unit = unitManager.Update(unit);                      
                     }
                 }
                 else
                 {
-                    if (unitValidation(Model.Unit, checkedRecords))
-                    {
-                        Unit unit = unitManager.Repo.Get(Model.Unit.Id);
-
-                        if (!(unit.DataContainers.Count() > 0))
-                        {
-                            unit.Name = Model.Unit.Name;
-                            unit.Description = Model.Unit.Description;
-                            unit.Abbreviation = Model.Unit.Abbreviation;
-                            foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
-                            {
-                                if (msCheck.ToString().Equals(measurementSystem))
-                                {
-                                    unit.MeasurementSystem = msCheck;
-                                }
-                            }
-
-                            if (Model.Unit.Dimension.Id != 0)
-                                unit.Dimension = unitManager.DimensionRepo.Get(Model.Unit.Dimension.Id);
-                            else
-                            {
-                                if (!String.IsNullOrEmpty(unit.Dimension.Name))
-                                    unit.Dimension.Name = "no Name";
-                                unit.Dimension = unitManager.Create(Model.Unit.Dimension.Name, Model.Unit.Dimension.Name, Model.Unit.Dimension.Specification);
-                            }
-                            unit = unitManager.Update(unit);
-                            List<long> DataTypelIdList = new List<long>();
-
-                            updataAssociatedDataType(unit, checkedRecords, unitManager);
-                        }
-                    }
-                    else
-                    {
-                        Session["Window"] = true;
-                        return View("UnitManager", new UnitManagerModel(Model.Unit.Id));
-                    }
+                    Session["Window"] = true;
+                    return View("UnitManager", new UnitManagerModel(Model.Unit.Id));
                 }
+                
             }
             finally
             {
@@ -129,98 +104,91 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         }
 
-        private bool unitValidation(Unit unit, long[] checkedRecords)
+        private bool unitValidation(Unit unit, long[] checkedRecords, UnitManager unitManager)
         {
             bool check = true;
-            UnitManager unitManager = null;
-            try
+  
+            List<Unit> unitList = unitManager.Repo.Get().ToList(); ;
+
+            if (unit.Name == null || unit.Name == "")
             {
-                unitManager = new UnitManager();
-
-                List<Unit> unitList = unitManager.Repo.Get().ToList(); ;
-
-                if (unit.Name == null || unit.Name == "")
+                Session["nameMsg"] = "invalid Name";
+                check = false;
+            }
+            else
+            {
+                bool nameExist = !(unitList.Where(p => p.Name.ToLower().Equals(unit.Name.ToLower())).Count().Equals(0));
+                if (nameExist)
                 {
-                    Session["nameMsg"] = "invalid Name";
-                    check = false;
-                }
-                else
-                {
-                    bool nameExist = !(unitList.Where(p => p.Name.ToLower().Equals(unit.Name.ToLower())).Count().Equals(0));
-                    if (nameExist)
+                    Unit tempUnit = unitList.Where(p => p.Name.ToLower().Equals(unit.Name.ToLower())).ToList().First();
+                    if (unit.Id != tempUnit.Id)
                     {
-                        Unit tempUnit = unitList.Where(p => p.Name.ToLower().Equals(unit.Name.ToLower())).ToList().First();
-                        if (unit.Id != tempUnit.Id)
-                        {
-                            Session["nameMsg"] = "Name already exist";
-                            check = false;
-                        }
-                        else
-                        {
-                            Session["nameMsg"] = null;
-                        }
+                        Session["nameMsg"] = "Name already exist";
+                        check = false;
                     }
                     else
                     {
                         Session["nameMsg"] = null;
                     }
                 }
-
-                if (unit.Abbreviation == null || unit.Abbreviation == "")
-                {
-                    Session["abbrMsg"] = "invalid Abbreviation";
-                    check = false;
-                }
                 else
                 {
-                    bool abbreviationExist = !(unitList.Where(p => p.Abbreviation.ToLower().Equals(unit.Abbreviation.ToLower())).Count().Equals(0));
-                    if (abbreviationExist)
+                    Session["nameMsg"] = null;
+                }
+            }
+
+            if (unit.Abbreviation == null || unit.Abbreviation == "")
+            {
+                Session["abbrMsg"] = "invalid Abbreviation";
+                check = false;
+            }
+            else
+            {
+                bool abbreviationExist = !(unitList.Where(p => p.Abbreviation.ToLower().Equals(unit.Abbreviation.ToLower())).Count().Equals(0));
+                if (abbreviationExist)
+                {
+                    Unit tempUnit = unitList.Where(p => p.Abbreviation.ToLower().Equals(unit.Abbreviation.ToLower())).ToList().First();
+                    if (unit.Id != tempUnit.Id)
                     {
-                        Unit tempUnit = unitList.Where(p => p.Abbreviation.ToLower().Equals(unit.Abbreviation.ToLower())).ToList().First();
-                        if (unit.Id != tempUnit.Id)
-                        {
-                            Session["abbrMsg"] = "Abbreviation already exist";
-                            check = false;
-                        }
-                        else
-                        {
-                            Session["abbrMsg"] = null;
-                        }
+                        Session["abbrMsg"] = "Abbreviation already exist";
+                        check = false;
                     }
                     else
                     {
                         Session["abbrMsg"] = null;
                     }
                 }
-
-                if (checkedRecords != null)
-                {
-                    Session["dataTypeMsg"] = null;
-                }
                 else
                 {
-                    Session["dataTypeMsg"] = "Choose at least one Data Type.";
-                    check = false;
-                }
-
-                if (!String.IsNullOrEmpty(unit.Dimension.Name) && unit.Dimension.Name != "Select or Enter")
-                {
-                    Session["dimensionMsg"] = null;
-                }
-                else
-                {
-                    Session["dimensionMsg"] = "Select or create an Dimension.";
-                    check = false;
+                    Session["abbrMsg"] = null;
                 }
             }
-            finally
+
+            if (checkedRecords != null)
             {
-                unitManager.Dispose();
+                Session["dataTypeMsg"] = null;
             }
+            else
+            {
+                Session["dataTypeMsg"] = "Choose at least one Data Type.";
+                check = false;
+            }
+
+            if (!String.IsNullOrEmpty(unit.Dimension.Name) && unit.Dimension.Name != "Select or Enter")
+            {
+                Session["dimensionMsg"] = null;
+            }
+            else
+            {
+                Session["dimensionMsg"] = "Select or create an Dimension.";
+                check = false;
+            }
+            
+            
             return check;
         }
 
-        private List<DataType> updataAssociatedDataType(Unit unit, long[] newDataTypeIds, UnitManager unitManager)
+        private Unit updataAssociatedDataType(Unit unit, long[] newDataTypeIds)
         {
             if (unit != null)
             {
@@ -231,9 +199,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     List<DataType> newDataTypes = newDataTypeIds == null ? new List<DataType>() : dataTypeManger.GetUnitOfWork().GetReadOnlyRepository<DataType>().Query().Where(p => newDataTypeIds.Contains(p.Id)).ToList();
 
                     unit.AssociatedDataTypes = newDataTypes;
-                    unitManager.Update(unit);
 
-                    return unit.AssociatedDataTypes.ToList();
+                    return unit;
                                      
                 }
                 finally

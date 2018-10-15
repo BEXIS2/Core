@@ -1,30 +1,33 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.DashboardModel
 
-@{
-    ViewBag.Title = "Dashboard";
+<style>
+    .bold-option {
+        font-weight: bolder;
+    }
+</style>
+
+@section Information
+{
+    In this page you can see all datasets, created by you as a current logged on user or owned by you or you sent a request to have access on it. You are also able to manage the requests of other users, who wants to have access to your datasets.
+    
+    By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.
+    
+    To view more details of a dataset, click the View details button available in each row.    
 }
+
 
 @section LeftPane
 {
-    <h3>Datasets</h3>
-
-    <a class="datasets">my datasets</a>
-
-
-    <h3>Requests</h3>
-
     @foreach (var item in Model.Entities)
     {
-        <a entityid="@item.Key" class="request">@item.Value</a>
+        <h3>@item.Value</h3>
+        <ul>
+
+            <li><a class="@item.Value.ToLower()">My @{@item.Value}s</a></li>
+            <li><a entityid="@item.Key" class="request">Requests</a></li>
+            <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+        </ul>
     }
-
-    <h3>Decisions</h3>
-
-    @foreach (var item in Model.Entities)
-    {
-        <a entityid="@item.Key" class="decision">@item.Value</a>
-    }
-
 
 }
 
@@ -38,77 +41,88 @@
 {
     <script type="text/javascript">
 
-     /****Requests & Decisions*****/
+        /****Requests & Decisions*****/
 
 
-    function grid_requests_onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-    }
+        function grid_requests_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+        }
 
-    function grid_decisions_onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
+        function grid_decisions_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
 
-        $('.bx-check').click(function () {
-            var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
+            $('.bx-check').click(function () {
+                var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
 
-            if (result) {
-                $.post("/sam/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
-                    $("#grid_decisions .t-refresh").trigger('click');
-                });
-            }
+                if (result) {
+                    $.post("/sam/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
+                        $("#grid_decisions .t-refresh").trigger('click');
+                    });
+                }
+            });
+
+            $('.bx-delete').click(function () {
+                var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
+
+                if (result) {
+                    $.post('/sam/request/reject', { DecisionId: $(this).attr("value") }, function (e) {
+                        $("#grid_decisions .t-refresh").trigger('click');
+                    });
+                }
+            });
+        }
+
+
+        /****Dashboard*****/
+
+        $(".request").click(function () {
+            var id = $(this).attr("entityid");
+            console.log(id);
+
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
+
+            $("#dashboard_content").preloader("..loading requests");
+
+            $.get("/ddm/dashboard/requests",
+                { id },
+                function (data, textStatus, jqXHR) {
+                    $("#dashboard_content").html(data);
+                }
+            );
         });
 
-        $('.bx-delete').click(function () {
-            var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
+        $(".decision").click(function () {
+            var id = $(this).attr("entityid");
+            console.log(id);
 
-            if (result) {
-                $.post('/sam/request/reject', { DecisionId: $(this).attr("value") }, function (e) {
-                    $("#grid_decisions .t-refresh").trigger('click');
-                });
-            }
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
+
+            $("#dashboard_content").preloader("..loading decisions");
+
+            $.get("/ddm/dashboard/decisions",
+                { id },
+                function (data, textStatus, jqXHR) {
+                    $("#dashboard_content").html(data);
+                }
+            );
         });
-    }
 
+        $(".dataset").click(function () {
 
-    /****Dashboard*****/
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
 
-    $(".request").click(function () {
-        var id = $(this).attr("entityid");
-        console.log(id);
+            $("#dashboard_content").preloader("..loading decisions");
 
-        $("#dashboard_content").preloader("..loading requests");
-
-        $.get("/ddm/dashboard/requests", { id },
-            function (data, textStatus, jqXHR) {
-                $("#dashboard_content").html(data);
-            }
-        );
-    })
-
-    $(".decision").click(function () {
-        var id = $(this).attr("entityid");
-        console.log(id);
-
-        $("#dashboard_content").preloader("..loading decisions");
-
-        $.get("/ddm/dashboard/decisions", { id },
-            function (data, textStatus, jqXHR) {
-                $("#dashboard_content").html(data);
-            }
-        );
-    })
-
-    $(".datasets").click(function () {
-
-        $("#dashboard_content").preloader("..loading decisions");
-
-        $.get("/ddm/dashboard/ShowMyDatasets",
-            function (data, textStatus, jqXHR) {
-                $("#dashboard_content").html(data);
-            }
-        );
-    })
-</script>
+            $.get("/ddm/dashboard/ShowMyDatasets",
+                function (data, textStatus, jqXHR) {
+                    $("#dashboard_content").html(data);
+                }
+            );
+        });
+    </script>
 }

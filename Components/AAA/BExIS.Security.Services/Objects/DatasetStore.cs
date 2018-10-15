@@ -15,5 +15,10 @@ namespace BExIS.Security.Services.Objects
 
             return datasets;
         }
+
+        public string GetTitleById(long id)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

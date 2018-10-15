@@ -81,7 +81,7 @@
                             <label for="StartDate">Start Date</label>
                         </td>
                         <td>
-                            @(Html.Telerik().DatePickerFor(m => m.StartDate)
+                            @(Html.Telerik().DatePickerFor(m => m.StartDate).Format("yyyy-MM-dd")
                                     .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
                             )
 
@@ -93,7 +93,7 @@
                             <label for="EndDate">End Date</label>
                         </td>
                         <td>
-                            @(Html.Telerik().DatePickerFor(m => m.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
+                            @(Html.Telerik().DatePickerFor(m => m.EndDate).Format("yyyy-MM-dd").HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" }))
                             <div id="divDatesError"></div>
                         </td>
                     </tr>
@@ -124,7 +124,7 @@
     )<span style="color:red" id="errorsMsgSpan">@errorMessage</span>
 
     <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
-        <button type="submit" id="submitBtn" class="bx-button action" style="border:0px;" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
+        <button type="submit" id="submitBtn" class="bx-button action" onclick="return submitClick();">@(createMode ? "Next" : "Save")</button>
         @Html.ActionLink("Back to party manager", "Index", "Party", new { area = "BAM", @class = "bx-button action" })
     </div>
 }

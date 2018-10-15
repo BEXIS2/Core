@@ -534,7 +534,10 @@
     <Content Include="Content\2013.2.611\Windows7\sprite.png" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\help\all.png" />
+    <Content Include="Content\Images\help\ui.png" />
+    <Content Include="Content\Images\help\ui_category.png" />
+    <Content Include="Content\Images\help\ui_slider.png" />
+    <Content Include="Content\Images\help\ui_year.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Vim.Settings.xml">
@@ -548,12 +551,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\BPP211_Dim.pubxml" />
-    <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\DIM.pubxml" />
-    <None Include="Properties\PublishProfiles\DIM21105.pubxml" />
-    <None Include="Properties\PublishProfiles\DIM21108.pubxml" />
-    <None Include="Properties\PublishProfiles\VIM FTP 2001.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

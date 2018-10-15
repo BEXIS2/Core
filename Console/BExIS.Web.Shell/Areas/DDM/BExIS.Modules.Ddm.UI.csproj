@@ -150,6 +150,7 @@
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PublicSearchController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
@@ -370,16 +371,22 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\Help\delete_button.png" />
-    <Content Include="Content\Images\Help\edit_button.png" />
-    <Content Include="Content\Images\Help\help_img1.png" />
-    <Content Include="Content\Images\Help\help_img11.png" />
-    <Content Include="Content\Images\Help\help_img2.png" />
-    <Content Include="Content\Images\Help\help_img3.png" />
-    <Content Include="Content\Images\Help\help_img5.png" />
-    <Content Include="Content\Images\Help\help_img6.png" />
-    <Content Include="Content\Images\Help\help_img7.png" />
-    <Content Include="Content\Images\Help\help_img8.png" />
+    <Content Include="Content\ddm.css" />
+    <Content Include="Content\Images\Help\image001.png" />
+    <Content Include="Content\Images\Help\image002.jpg" />
+    <Content Include="Content\Images\Help\image003.jpg" />
+    <Content Include="Content\Images\Help\image004.png" />
+    <Content Include="Content\Images\Help\image005.jpg" />
+    <Content Include="Content\Images\Help\image006.jpg" />
+    <Content Include="Content\Images\Help\image007.jpg" />
+    <Content Include="Content\Images\Help\image008.jpg" />
+    <Content Include="Content\Images\Help\image009.jpg" />
+    <Content Include="Content\Images\Help\image010.png" />
+    <Content Include="Content\Images\Help\image011.jpg" />
+    <Content Include="Content\Images\Help\image012.jpg" />
+    <Content Include="Content\Images\Help\image013.jpg" />
+    <Content Include="Content\Images\Help\image014.jpg" />
+    <Content Include="Content\Images\Help\image015.jpg" />
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -392,10 +399,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\211 Ddm.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP211_ddm.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM FTP 2001.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM Publish.pubxml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\ddm.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
@@ -418,28 +421,28 @@
     <Content Include="Views\Data\_structuredDataView.cshtml" />
     <Content Include="Views\Data\_unstructuredDataView.cshtml" />
     <Content Include="Views\Help\Index.cshtml" />
-    <Content Include="Views\Home\_dropBoxView.cshtml" />
-    <Content Include="Views\Home\_metaDataResultGridView.cshtml" />
+    <Content Include="Views\Shared\_dropBoxView.cshtml" />
+    <Content Include="Views\Shared\_metaDataResultGridView.cshtml" />
     <Content Include="Views\Dashboard\_myDatasetGridView.cshtml" />
-    <Content Include="Views\Home\_radioButtonsView.cshtml" />
-    <Content Include="Views\Home\_rangeSliderView.cshtml" />
-    <Content Include="Views\Home\_resultGridView.cshtml" />
-    <Content Include="Views\Home\_resultListElementView.cshtml" />
-    <Content Include="Views\Home\_resultListView.cshtml" />
-    <Content Include="Views\Home\_searchBreadcrumb.cshtml" />
-    <Content Include="Views\Home\_searchContent.cshtml" />
-    <Content Include="Views\Home\_searchFacets.cshtml" />
-    <Content Include="Views\Home\_searchHeader.cshtml" />
-    <Content Include="Views\Home\_searchProperties.cshtml" />
-    <Content Include="Views\Home\_sliderView.cshtml" />
-    <Content Include="Views\Home\_windowCheckBoxList.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_radioButtonsView.cshtml" />
+    <Content Include="Views\Shared\_rangeSliderView.cshtml" />
+    <Content Include="Views\Shared\_resultGridView.cshtml" />
+    <Content Include="Views\Shared\_resultListElementView.cshtml" />
+    <Content Include="Views\Shared\_resultListView.cshtml" />
+    <Content Include="Views\Shared\_searchBreadcrumb.cshtml" />
+    <Content Include="Views\Shared\_searchContent.cshtml" />
+    <Content Include="Views\Shared\_searchFacets.cshtml" />
+    <Content Include="Views\Shared\_searchHeader.cshtml" />
+    <Content Include="Views\Shared\_searchProperties.cshtml" />
+    <Content Include="Views\Shared\_sliderView.cshtml" />
+    <Content Include="Views\Shared\_windowCheckBoxList.cshtml" />
+    <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <None Include="Properties\PublishProfiles\DDM.pubxml" />
-    <None Include="Properties\PublishProfiles\DDm21105.pubxml" />
-    <None Include="Properties\PublishProfiles\DDM21108.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\To BPP212.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -449,7 +452,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Export\" />
-    <Folder Include="Views\Shared\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="Views\PublicSearch\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -522,6 +526,10 @@
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
       <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
+      <Project>{CAC933A2-6849-4C61-82B4-CBF4052210CC}</Project>
+      <Name>BExIS.Dim.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

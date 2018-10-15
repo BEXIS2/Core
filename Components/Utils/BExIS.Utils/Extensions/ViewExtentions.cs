@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
@@ -35,7 +32,7 @@ namespace BExIS.Utils.Extensions
             {
                 using (var tw = new HtmlTextWriter(sw))
                 {
-                    view.Render(new ViewContext(controllerContext, view, partialView.ViewData, partialView.TempData, tw), tw);
+                    view?.Render(new ViewContext(controllerContext, view, partialView.ViewData, partialView.TempData, tw), tw);
                 }
             }
 

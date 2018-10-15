@@ -36,11 +36,30 @@ namespace BExIS.Modules.Sam.UI.Controllers
             fileManger.Load();
             return View(new List<FolderModel>() { fileManger.TreeRoot });
         }
+        public ActionResult FileList()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("File Manager", this.Session.GetTenant());
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            fileManger.Load();
+            return View(new List<FolderModel>() { fileManger.TreeRoot });
+        }
+
+       
 
         public ActionResult FolderContent(string path)
         {
-            return PartialView("_FolderContent", path);
+            return PartialView( "_FolderContent", path);
         }
+
+
+        public ActionResult FolderContentAsList(string path)
+        {
+            FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
+            List<FileOrFolderModel> rows = fileManger.GetDirectChildrenByFolderPath(path);
+            ViewBag.rootFolder = FolderModel.Convert(fileManger.GetElementByPath(path, true));
+            return PartialView("_FolderContentAsList" , rows);
+        }
+
 
         public ActionResult FolderTree()
         {
@@ -84,7 +103,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    AddErrors(new string[] { ex.Message });
+                    AddErrors(new string[] { ex.Message+"\n"+(ex.InnerException!=null?ex.InnerException.Message:"") });
                 }
             }
             return PartialView("_CreateFolder", model);
@@ -167,8 +186,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     FileManager fileManger = new FileManager(this.Session.GetTenant().Id);
                     fileManger.AddFile(file.FileName, model.DisplayName, model.Description, model.MimeType, model.Path, file);
-                    //return Json(new { success = true });
-                    return RedirectToAction("Index");
+                    return Json("Your file has been successfully uploaded.", JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception ex)
                 {
@@ -176,6 +194,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
             }
             return PartialView("_UploadFile", model);
+           
         }
 
         private string determineMimeType(string contentType, string fileName)

@@ -34,7 +34,7 @@ namespace BExIS.Dlm.Entities.Party
 
         #region Associations
 
-        public virtual PartyType PartyType { get; set; }
+        public virtual  PartyType PartyType { get; set; }
         public virtual ICollection<PartyCustomAttributeValue> CustomAttributeValues { get; set; }
         
         #endregion

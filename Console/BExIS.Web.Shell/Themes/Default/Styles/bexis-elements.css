@@ -120,6 +120,10 @@ button.action,
 	background: #00876F;
 }
 
+.whiteText {
+	color: white !important;
+}
+
 button.function,
 .t-button.function, 
 .bx-button.function,

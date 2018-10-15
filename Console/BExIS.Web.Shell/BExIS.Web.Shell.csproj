@@ -27,9 +27,12 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <IISExpressSSLPort>44345</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
-    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
+    <IISExpressAnonymousAuthentication>
+    </IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>
+    </IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>
+    </IISExpressUseClassicPipelineMode>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
@@ -392,7 +395,8 @@
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LdapController.cs" />
-    <Compile Include="Controllers\TermsController.cs" />
+    <Compile Include="Controllers\PrivacyPolicyController.cs" />
+    <Compile Include="Controllers\TermsAndConditionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -401,7 +405,6 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
-    <Compile Include="Helpers\GeneralSettings.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
@@ -473,19 +476,8 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
-    <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
-    <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
-    <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP211.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP21105.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP21108.pubxml" />
-    <None Include="Properties\PublishProfiles\FileSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP212.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\SITE.pubxml" />
-    <None Include="Properties\PublishProfiles\Website 2001.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\handsontable\handsontable.full.js" />
     <Content Include="Scripts\handsontable\handsontable.full.min.js" />
@@ -494,7 +486,6 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <None Include="Properties\PublishProfiles\T1.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -833,7 +824,6 @@
     <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
-    <Content Include="Views\Terms\Index.cshtml" />
     <Content Include="Views\Footer\Content.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
@@ -855,6 +845,9 @@
     <Content Include="Views\Shared\NotAuthorized.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Ldap\Login.cshtml" />
+    <Content Include="Views\TermsAndConditions\Index.cshtml" />
+    <Content Include="Views\PrivacyPolicy\Index.cshtml" />
+    <Content Include="Views\Ldap\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

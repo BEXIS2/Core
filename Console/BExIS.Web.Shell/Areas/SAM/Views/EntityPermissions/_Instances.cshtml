@@ -25,12 +25,15 @@
         {
             columns.Bound(i => i.IsPublic)
             .ClientTemplate("<input type='checkbox' name='selectedInstances' data-instanceid='<#= Id #>' data-entityid='" + Model + "' <#= IsPublic ? checked='checked' : '' #> />")
-                   .Title("IsPublic")
-                   .Width(64)
-                   .Filterable(false)
-                   .HtmlAttributes(new { style = "text-align:center" });
-            columns.Bound(d => d.Id);
-            columns.Bound(d => d.Title);
+                .Title("IsPublic")
+                .Filterable(false)
+                .HtmlAttributes(new { style = "text-align:center" })
+                .Width("20%");
+            columns.Bound(d => d.Id)
+                .Width("20%");
+            columns.Bound(d => d.Title)
+                .Width("60%");
+
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()
@@ -47,7 +50,7 @@
                 .Add(r => r.Id).Descending()))
       .Pageable(pageable =>
       {
-          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.PageSize(20, new[] { 10, 20, 50, 100 });
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })

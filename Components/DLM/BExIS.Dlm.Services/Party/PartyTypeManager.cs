@@ -321,12 +321,13 @@ namespace BExIS.Dlm.Services.Party
             {
                 IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
                 IRepository<PartyCustomAttributeValue> repoCAV = uow.GetRepository<PartyCustomAttributeValue>();
+                repo.Evict();
                 foreach (var entity in entities)
                 {
                     var latest = repo.Reload(entity);
                     //Prevent of deleting if there is a 'customAttributeVaue' for this entity
-                    if (entity.CustomAttributeValues.Count() > 0)
-                        BexisException.Throw(entity, "There is one or more 'customAttributeVaue' for this entity.", BexisException.ExceptionType.Delete, true);
+                    if (latest.CustomAttributeValues.Count() > 0)
+                        BexisException.Throw(latest, "There is one or more 'customAttributeVaue' for this entity.", BexisException.ExceptionType.Delete, true);
 
                     //delete the entity
                     repo.Delete(latest);

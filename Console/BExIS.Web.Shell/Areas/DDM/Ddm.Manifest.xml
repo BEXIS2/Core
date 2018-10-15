@@ -19,13 +19,13 @@
 
     <Export tag="menubar" id="menuSearch" order="2"
             title="Search" description="Search datasets" icon=""
-            controller="home" action="index"
+            controller="publicsearch" action="index"
             extends="./menubarRoot" />
-
-    <Export tag="menubar" id="menuSearchPublic" order="2"
+    
+    <!--<Export tag="menubar" id="menuSearchPublic" order="2"
             title="Public" description="Search in public datasets" icon=""
-            controller="home" action="public"
-            extends="./menubarRoot" />
+            controller="publicsearch" action="public"
+            extends="./menubarRoot" />-->
 
     <Export tag="menubar" id="dashboard" order="1"
         title="Dashboard" description="Quick Access to User Area" icon=""
@@ -37,10 +37,10 @@
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
     
-    <Export tag="api" id="tntList"
+    <!--<Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""
-            controller="home" action="index"
-            extends="./apiRoot" />
+            controller="publicsearch" action="public"
+            extends="./apiRoot" />-->
     
     
     <!-- INTERNAL-->
@@ -74,6 +74,7 @@
             title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""
             controller="home" action="index"
             extends="" />
+
 
   </Exports>
 </Manifest>

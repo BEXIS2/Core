@@ -11,7 +11,7 @@
         <p></p>    <a href="#_create_dataset">2. Create Dataset</a>
         <p></p>&nbsp;&nbsp; <a href="#_Copy_Dataset">2.1. Copy an existing Dataset</a>
         <p></p>&nbsp;&nbsp; <a href="#_content">2.2. Content</a>
-        <!--<p></p>&nbsp;&nbsp; <a href="#_messages">2.3. Messages</a>-->
+        <p></p>&nbsp;&nbsp; <a href="#_messages">2.3. Messages</a>
         <p></p>    <a href="#_upload_data">3. Upload Data</a>
         <p></p>&nbsp;&nbsp; <a href="#_upload_tabular">3.1. Upload Tabular Data</a>
         <!--<p></p>&nbsp;&nbsp; <a href="#_Toc468355758">3.2. Specify Dataset</a>
@@ -103,6 +103,12 @@
 <h2><a id="_messages">2.3. Messages</a></h2>-->
 <p>When an input is faulty, the input field is highlighted in red. If you go with the mouse over the box, you get information about what is wrong.</p>
 <!--<p><img src="~/Areas/DCM/Content/Images/Help/Help_img10.png" width="600" height="175" alt="img10" />&#xa0;</p>-->
+
+<h2><a id="_messages">2.3. Messages</a></h2>
+<p>The content area is where you enter metadata describing your dataset. The forms provided here may look different and contain different attributes depending on the metadata schema (structure) you have chosen in the first step. </p>
+
+<p><img src="~/Areas/DCM/Content/Images/Help/messages.png" width="624" alt="messages" /></p>
+
 <p>&#xa0;</p>
 <h1><a id="_upload_data">3. Upload Data</a></h1>
 <p>&#xa0;</p>
@@ -131,6 +137,13 @@
 <h2>Get File Information</h2>
 <p>
     For all Microsoft Excel files using a BEXIS2 template the file information and data structure is automatically extracted and this step is omitted. Please refer to the <a href="~/rpm/Help/index#_overview">Data Planning User Guide</a> for more details on how to create such a template.
+</p>
+<p>
+    For all other Excel files, users need to provide the information by selection the data on the screen.
+</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/GetFileInformations.png" width="624" alt="Upload_Tabular" />&#xa0;</p>
+
+<p>
     For all ASCII files users need to provide information on the file structure and formatting.
 </p>
 <p>First, please choose a separator that is being used to separate data values from each other in your ASCII file. </p>
@@ -148,11 +161,14 @@
 <!--<p><img src="~/Areas/DCM/Content/Images/Help/Help_img17.jpeg" width="600" height="331" alt="Upload_Tabular_2" />&#xa0;</p>
 <p>&#xa0;</p>-->
 <!--<h2><a id="_Toc468355759">3.3. Define Primary Key</a></h2>-->
-<h2>Define Primary Key</h2>
-<p>While adding data to an existing dataset you need to specify a unique identifier (e.g. primary key) for each tuple (i.e. row) in your dataset. If your dataset already contains a variable with such a key please select it. Otherwise a primary key can be created by combining available variables. Please click the Check button to verify whether the selected combination is unique. If you go back and change something in the process of uploading, you need to check the primary key again.</p>
-<!--<p><img src="~/Areas/DCM/Content/Images/Help/primary_key.png" width="600" height="328" alt="Primary Key" />&#xa0;</p>
+<h2>Choose Update Method</h2>
+<p> While adding data to an existing dataset you need to specify how you want to update.</p>
+<p>
+    By Update the user need to specify a unique identifier (e.g. primary key) for each tuple (i.e. row) in your dataset. If your dataset already contains a variable with such a key, please select it. Otherwise, a primary key can be created by combining available variables. Please click the Check button to verify whether the selected combination is unique. If you go back and change something in the process of uploading, you need to check the primary key again.
+</p>
+<p><img src="~/Areas/DCM/Content/Images/Help/ChooseUpdateMethod.png" width="624" alt="Choose Update Method" />&#xa0;</p>
+<p>By Append, the lines are uploaded directly to the data without checking for duplication.</p>
 <p>&#xa0;</p>
-<h2><a id="_Toc468355760">3.4. Validation</a></h2>-->
 <h2>Validation</h2>
 <p>With this step, the selected data file is validated against the selected data structure. Both, the structure of the data (e.g. variable properties) and whether the data values fit to the specified structure (e.g. data type, value range) is evaluated. </p>
 <p>Click on Validate button to validate the data file.</p>
@@ -169,8 +185,9 @@
 <p>The Maximum acceptable file size up to now is: 1024 MB.</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/select_file.png" width="600" alt="Select File" /></p>
 <p>&#xa0;</p>
+
 <h1><a id="_easy_upload_import_data">4. Import Data</a></h1>
-<p>The Import Data wizard enables you to import both a tabular datastructure and data in a single workflow. Import a file follows the following steps.</p>
+<p>The Import Data wizard enables you to import both a tabular data structure and data in a single workflow. Import a file follows the following steps.</p>
 <p>&#xa0;</p>
 <!--<h2><a id="_easy_upload_select_file">4.1. Select File</a></h2>-->
 <h2>Select File</h2>
@@ -183,12 +200,6 @@
 <p>This step allows you to select the metadata schema that you would like to use for the dataset. There is no need to enter any metadata yet - after the last step you will be redirected to a page that allows you to enter the metadata. You can, however, change the title of the dataset. If you don't wish to change it, it will default to the name of the file you are using. Once you have selected a schema, click the Next button to proceed to the next step.</p>
 <p>&#xa0;</p>
 <p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_metadata.png" width="600" height="450" alt="Metadata Schema" /></p>
-<p>&#xa0;</p>
-<!--<h2><a id="_easy_upload_sheet_structure">4.3. Sheet Structure</a></h2>-->
-<h2>Sheet Structure</h2>
-<p>In this step you have to select the structure of your file. Red area represents the names of the variables of your dataset while green area represents the actual data. Currently we only support files that contain all variables in a single row (without gaps) and the data in rows as well. Select the structure to proceed to the next step.</p>
-<p>&#xa0;</p>
-<p><img src="~/Areas/DCM/Content/Images/Help/Help_easy_upload_sheet_structure.png" width="600" height="450" alt="Sheet Strcture" /></p>
 <p>&#xa0;</p>
 <!--<h2><a id="_easy_upload_select_areas">4.4. Select Areas</a></h2>-->
 <h2>Select Areas</h2>

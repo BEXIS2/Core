@@ -897,6 +897,29 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 new TransformationRule());
                         }
 
+                        #region owner relationship
+
+                        //Metadata/creator/creatorType/individualName
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.DisplayName.ToLower().Equals("owner"));
+                        if (partyRelationshipType != null)
+                        {
+                            createToPartyReleationMapping(
+                                "givenName", LinkElementType.MetadataNestedAttributeUsage,
+                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                partyRelationshipType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+
+                            createFromPartyReleationMapping(
+                                "givenName", LinkElementType.MetadataNestedAttributeUsage,
+                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                partyRelationshipType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        #endregion
+
                     }
                     #endregion
 

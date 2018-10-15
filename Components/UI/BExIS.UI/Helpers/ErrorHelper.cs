@@ -10,8 +10,10 @@ namespace BExIS.UI.Helpers
         {
             try
             {
+
                 var es = new EmailService();
-                es.Send("Error in system",
+                var subject = "Error in system";
+                es.Send(subject,
                     result,
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );

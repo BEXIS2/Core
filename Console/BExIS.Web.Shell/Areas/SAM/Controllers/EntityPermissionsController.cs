@@ -35,7 +35,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                     {
-                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", entityId } });
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
                     }
                 }
             }
@@ -199,7 +199,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                 {
-                    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", entityId } });
+                    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
                 }
             }
             finally

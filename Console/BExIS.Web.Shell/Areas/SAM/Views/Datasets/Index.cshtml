@@ -24,7 +24,7 @@
         DatasetIds = ViewData["DatasetIds"] as List<long>;
     }
 }
-<h2>The dataset management functions accessible from here may have unrecoverable effets! Use them with care.</h2>
+<h2>The dataset management functions accessible from here may have unrecoverable effects! Use them with care.</h2>
 <h3>Datasets</h3>
 <p style="width:100%; text-align: -webkit-right;">
     @Html.ActionLink("Sync All", "SyncAll", new { area = "Sam" }, new { @class = "bx-button function"})
@@ -70,13 +70,13 @@
                 }
                 else if (entity.Status == DatasetStatus.Deleted)
                 {
-                    <td class="number-of-rows">@(entity.NoOfRows)</td>
-                    <td>@(entity.NoOfCols)</td>
                     <td style="color: red">@(entity.Status.ToString())</td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>                    
                     <td>
                         @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
                         @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" })
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
                         <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
                     </td>
                 }

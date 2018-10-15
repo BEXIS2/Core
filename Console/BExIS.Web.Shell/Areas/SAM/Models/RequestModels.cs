@@ -14,5 +14,7 @@ namespace BExIS.Modules.Sam.UI.Models
         public long Id { get; set; }
         public RequestStatus RequestStatus { get; set; }
         public short Rights { get; set; }
+        public string Title { get; set; }
+        public long InstanceId { get; set; }
     }
 }

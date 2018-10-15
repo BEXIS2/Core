@@ -52,9 +52,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
             var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-            var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item=>item.Name==fileName);
+            var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
             if (contentDescriptor == null)
-                throw new Exception("There is not any content descriptor having file name '"+fileName+"'. ");
+                throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
             dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
             dm.EditDatasetVersion(datasetVersion, null, null, null);
@@ -79,10 +79,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //Parse user right
 
             var entity = entityManager.EntityRepository.Query(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant() && e.EntityType == typeof(Dataset)).FirstOrDefault();
+
             var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             userTask.Wait();
             var user = userTask.Result;
-            int rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
+            int rights = 0;
+            if (user == null)
+                rights = entityPermissionManager.GetEffectiveRights(null, entity.Id, datasetVersion.Dataset.Id);
+            else
+                rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
             model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
             model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
             model.DownloadAccess = ((rights & (int)RightType.Download) > 0 || ((rights & (int)RightType.Grant) > 0));
@@ -105,12 +110,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var contentDescriptorName = contentDescriptor.Name;
                 long fileLength = 0;
-                if (!System.IO.File.Exists(contentDescriptor.URI))
-                    //contentDescriptorName += "<span id='deletedFile' style='color:#980000;padding-left:5px;' >[deleted]</span>";
-                    contentDescriptor.URI = "delete";
-                else
-                    fileLength = new FileInfo(contentDescriptor.URI).Length;
-                fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
+                String filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", contentDescriptor.DatasetVersion.Dataset.Id.ToString(), "Attachments",contentDescriptor.Name);
+                if (new FileInfo(filepath).Exists)
+                {  // if (System.IO.File.Exists(contentDescriptor.URI))
+                    //TODO: In case a file is deleted physically from dataset folder, user should be inform maybe
+                    //    //contentDescriptorName += "<span id='deletedFile' style='color:#980000;padding-left:5px;' >[deleted]</span>";
+                    //    contentDescriptor.URI = "delete";
+                    //else
+                    fileLength = new FileInfo(filepath).Length;
+                    fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
+                }
             }
             return fileList;
         }
@@ -134,21 +143,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var filemNames = "";
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
-            var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-            foreach (var file in attachments)
+            // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
-                var fileName = Path.GetFileName(file.FileName);
-                filemNames += fileName.ToString() + ",";
-                var dataPath = AppConfiguration.DataPath;
-                if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
-                    Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
-                var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
-                file.SaveAs(destinationPath);
-                AddFileInContentDiscriptor(datasetVersion, fileName, description);
+                DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+                foreach (var file in attachments)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    filemNames += fileName.ToString() + ",";
+                    var dataPath = AppConfiguration.DataPath;
+                    if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
+                        Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
+                    var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+                    file.SaveAs(destinationPath);
+                    AddFileInContentDiscriptor(datasetVersion, fileName, description);
+                }
+                dm.EditDatasetVersion(datasetVersion, null, null, null);
+                dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
             }
-            dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
-            dm.EditDatasetVersion(datasetVersion, null, null, null);
-            dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
             dm?.Dispose();
         }
 
@@ -166,7 +178,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 OrderNo = lastOrderContentDescriptor + 1,
                 Name = fileName,
                 MimeType = MimeMapping.GetMimeMapping(fileName),
-                URI = Path.Combine(storePath, fileName),
+                URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
                 DatasetVersion = datasetVersion,
 
             };
