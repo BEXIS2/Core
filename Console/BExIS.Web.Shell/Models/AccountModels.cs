@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
+﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.Filters;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Models
 {
@@ -119,6 +118,10 @@ namespace BExIS.Web.Shell.Models
         [Display(Name = "Terms and Conditions")]
         [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
         public bool TermsAndConditions { get; set; }
+
+        [Display(Name = "Privacy Policy")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
+        public bool PrivacyPolicy { get; set; }
 
         [Display(Name = "Inform")]
         [MustBeTrue(ErrorMessage = ".......")]

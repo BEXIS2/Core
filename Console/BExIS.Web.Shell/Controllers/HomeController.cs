@@ -1,10 +1,8 @@
 ﻿using System.Web.Mvc;
-using Vaiona.Web.Mvc.Data;
-using Vaiona.Web.Mvc.Modularity;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
-using BExIS.Web.Shell.Helpers;
-using Vaiona.IoC;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -15,15 +13,20 @@ namespace BExIS.Web.Shell.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
 
-            var landingPage = this.Session.GetTenant().LandingPageTuple;
-            if (!this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
-                return View();
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
-            return Content(result.ToHtmlString(), "text/html");
-        }
+
+            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
+            {
+                var landingPage = this.Session.GetTenant().LandingPageTuple;
+                if (!this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
+                    return View();
+                var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
+                return Content(result.ToHtmlString(), "text/html");
+            }
 
             return View();
         }
+
+
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
         {

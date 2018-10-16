@@ -45,6 +45,11 @@
             @Html.ValidationMessageFor(m => m.TermsAndConditions)
         </div>
         <div class="col-md-10 col-md-offset-2">
+            @Html.CheckBoxFor(m => m.PrivacyPolicy)
+            I accept <a href="/PrivacyPolicy/Index" title="See Privacy Policy" target="_blank">Privacy Policy</a>.
+            @Html.ValidationMessageFor(m => m.PrivacyPolicy)
+        </div>
+        <div class="col-md-10 col-md-offset-2">
             @Html.CheckBoxFor(m => m.DataPolicy, new { @class = "cb_form" })
             I agree to the <a href="/DataPolicy/Index" title="See Data Policy" target="_blank">ATTO data Policy</a>.
             @Html.ValidationMessageFor(m => m.DataPolicy)
@@ -89,14 +94,7 @@
             @Html.ValidationMessageFor(m => m.PHD)
         </div>
     </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10 col-md-offset-2">
-            @Html.CheckBoxFor(m => m.PrivacyPolicy)
-            I accept <a href="/PrivacyPolicy/Index" title="See Privacy Policy" target="_blank">Privacy Policy</a>.
-            @Html.ValidationMessageFor(m => m.PrivacyPolicy)
-        </div>
-    </div>
+
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
