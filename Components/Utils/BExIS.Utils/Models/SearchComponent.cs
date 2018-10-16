@@ -70,6 +70,11 @@ namespace BExIS.Utils.Models
                         if (this.ContainsProperty(name)) return this.GetProperty(name);
                         break;
                     }
+                case SearchComponentBaseType.General:
+                    {
+                        if (this.ContainsGeneral(name)) return this.GetGeneral(name);
+                        break;
+                    }
             }
             return null;
         }
@@ -133,6 +138,20 @@ namespace BExIS.Utils.Models
         }
 
         #endregion Facets
+
+        #region General
+        public IEnumerable<General> Generals{ get; set; }
+
+        public bool ContainsGeneral(string name)
+        {
+            return Generals.Where(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Count() > 0;
+        }
+
+        public General GetGeneral(string name)
+        {
+            return (Generals.Where(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault());
+        }
+        #endregion
 
         #region Category
 

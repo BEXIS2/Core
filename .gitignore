@@ -262,3 +262,5 @@ paket-files/
 /Console/BExIS.Web.Shell/Areas/SAM/Content/Images/Help
 /Console/*.zip
 /Console/Workspace_
+/Console/WorkspaceOld
+/CodeMaid.config

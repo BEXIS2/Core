@@ -11,10 +11,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
-    public class RPMSeedDataGenerator: IDisposable
+    public class RPMSeedDataGenerator: IModuleSeedDataGenerator
     {
         public void GenerateSeedData()
         {

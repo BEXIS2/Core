@@ -93,23 +93,30 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(indexerType != DataStructureCategory.Generic ? (indexer != null) : true);
             Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
 
-            StructuredDataStructure e = new StructuredDataStructure()
-            {
-                Name = name,
-                Description = description,
-                XsdFileName = xsdFileName,
-                XslFileName = xslFileName,
-                IndexerType = indexerType,
-                // Indexer = indexer, // how its possible to have the indexer before assigning variable to the structure
-            };
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                repo.Put(e);
-                uow.Commit();
+                IRepository<UnStructuredDataStructure> sRepo = uow.GetRepository<UnStructuredDataStructure>();
+                if (
+                        (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0) && 
+                        (sRepo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
+                    )
+                {
+                    StructuredDataStructure e = new StructuredDataStructure()
+                    {
+                        Name = name,
+                        Description = description,
+                        XsdFileName = xsdFileName,
+                        XslFileName = xslFileName,
+                        IndexerType = indexerType,
+                        // Indexer = indexer, // how its possible to have the indexer before assigning variable to the structure
+                    };
+                    repo.Put(e);
+                    uow.Commit();
+                    return (e);
+                }
             }
-            return (e);
+            return (null);
         }
 
         /// <summary>
@@ -122,24 +129,29 @@ namespace BExIS.Dlm.Services.DataStructure
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
+
             IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
             if (datasetRepo.Query(p => p.DataStructure.Id == entity.Id).Count() > 0)
                 throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", entity.Id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                // delete associated variables and thier parameters
+                IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
                 IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+
+                variableRepo.Evict();
+                paramRepo.Evict();
+
+                entity = repo.Reload(entity);
+                // delete associated variables and thier parameters
                 foreach (var usage in entity.Variables)
                 {
-                    variableRepo.Delete(usage);
-                    paramRepo.Delete(usage.Parameters.ToList());
-
+                    var localVar = variableRepo.Reload(usage);
+                    paramRepo.Delete(localVar.Parameters.ToList());
+                    variableRepo.Delete(localVar);
                 }
                 //uow.Commit(); //  should not be needed
-                IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                entity = repo.Reload(entity);
                 repo.Delete(entity);
 
                 uow.Commit();
@@ -170,6 +182,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 foreach (var entity in entities)
                 {
+                    variableRepo.Evict();
+                    paramRepo.Evict();
                     var latest = repo.Reload(entity);
                     if (datasetRepo.Query(p => p.DataStructure.Id == latest.Id).Count() > 0)
                     {
@@ -180,8 +194,9 @@ namespace BExIS.Dlm.Services.DataStructure
                     // delete associated variables and thier parameters
                     foreach (var usage in latest.Variables)
                     {
-                        variableRepo.Delete(usage);
-                        paramRepo.Delete(usage.Parameters.ToList());
+                        var localVar = variableRepo.Reload(usage);
+                        paramRepo.Delete(localVar.Parameters.ToList());
+                        variableRepo.Delete(localVar);
                     }
                     //uow.Commit(); //  should not be needed
 
@@ -229,19 +244,27 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Ensures(Contract.Result<UnStructuredDataStructure>() != null && Contract.Result<UnStructuredDataStructure>().Id >= 0);
 
-            UnStructuredDataStructure e = new UnStructuredDataStructure()
-            {
-                Name = name,
-                Description = description,
-            };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
-                repo.Put(e);
-                uow.Commit();
+                IRepository<StructuredDataStructure> sRepo = uow.GetRepository<StructuredDataStructure>();
+                if (
+                        (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0) &&
+                        (sRepo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
+                   )
+                {
+                    UnStructuredDataStructure e = new UnStructuredDataStructure()
+                    {
+                        Name = name,
+                        Description = description,
+                    };
+                    repo.Put(e);
+                    uow.Commit();
+                    return (e);
+                }
             }
-            return (e);
+            return (null);
         }
 
         /// <summary>

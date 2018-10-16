@@ -30,7 +30,7 @@
                             {
                                 <script type="text/javascript">
                                     
-                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,conditionSource:"@PartyTypePair.Value.ConditionSource",parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.AllowedTarget.Parties.Select(item => new { item.Id, item.Name })))});
+                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,conditionSource:"@PartyTypePair.Value.ConditionSource",parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.TargetPartyType.Parties.Select(item => new { item.Id, item.Name })))});
                                 </script>
                             }
                             <script type="text/javascript">
@@ -55,7 +55,7 @@
     <div id="divPartyRelationships"></div>
     <div class="form-group">
         <div class="">
-            <button type="submit" id="submitRegisteration" name="submit" value="saveDataset" onclick="return submitForm()" class="t-button function" style="border:0px;">Save</button>
+            <button type="submit" id="submitRegisteration" name="submit" value="saveDataset" onclick="return submitForm()" class="t-button function" >Save</button>
         </div>
     </div>
 
@@ -83,10 +83,10 @@
         relations=[];
         $(".partyTypeRelation:visible").each(function(index,item)
         {
-            secondPartyId=parseInt($(this).find("option:selected").val());
-            if(secondPartyId!=-1)
+            TargetPartyId=parseInt($(this).find("option:selected").val());
+            if(TargetPartyId!=-1)
             {
-                relations.push({SecondParty:{Id:secondPartyId},
+                relations.push({TargetParty:{Id:TargetPartyId},
                     PartyRelationshipType:{Id:parseInt($(item).attr("partyrelationshipid"))},
                     PartyTypePair:{Id:parseInt($(item).attr("partyTypePairId"))},
                     Title:$(this).find("label").text(),

@@ -177,9 +177,17 @@ footer, #footer {
         line-height: 1.8em;
     }
 
+/* Information 
+-----------------------------------------------------------*/
+
+#information-container {
+    background-color: black;
+    color: white;
+    top:50px;
+}
+
 /* FORM LAYOUT ELEMENTS   
 ----------------------------------------------------------*/
-
 fieldset {
     border: 1px solid #ddd;
     padding: 0 1.4em 1.4em 1.4em;
@@ -226,6 +234,7 @@ table {
 
     table th, table td {
         border-right: solid 4px white;
+
     }
 
     table tr {
@@ -238,6 +247,7 @@ table {
         font-weight: bold;
         margin-right: 5px;
     }
+
 
 
 /* MISC  

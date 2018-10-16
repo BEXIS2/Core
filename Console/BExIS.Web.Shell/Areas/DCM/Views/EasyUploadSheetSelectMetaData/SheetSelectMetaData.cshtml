@@ -23,7 +23,7 @@
                     <tr>
                         <td>Metadata Schema</td>
                         <td>
-                            <select name="MetaDataSchema">
+                            <select name="MetaDataSchema" class="bx-dropdown">
                                 @if (Model.SelectedMetaDataId <= 0)
                                 {
                                     <option selected value="-1" title="Please select...">Please select...</option>
@@ -45,7 +45,7 @@
                     </tr>
                     <tr>
                         <td>Title</td>
-                        <td>@(Html.TextBoxFor(m => m.DescriptionTitle, new { @class = "t-input asciiFormularField" }))</td>
+                        <td>@(Html.TextBoxFor(m => m.DescriptionTitle, new { @class = "t-input asciiFormularField bx-input" }))</td>
                     </tr>
                 </table>
                                     }

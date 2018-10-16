@@ -1,13 +1,18 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using System;
 using System.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Helpers
 {
-    public class SamSeedDataGenerator : IDisposable
+    public class SamSeedDataGenerator : IModuleSeedDataGenerator
     {
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
+        }
+
         public void GenerateSeedData()
         {
             // Javad:
@@ -55,10 +60,16 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 var userPermissionFeature = featureManager.FindByName("User Permissions") ?? featureManager.Create("User Permissions", "", administrationFeature);
                 var userPermissionOperation = operationManager.Find("SAM", "UserPermissions", "*") ?? operationManager.Create("SAM", "UserPermissions", "*", userPermissionFeature);
 
-
                 // Dataset Management
                 var datasetManagementFeature = featureManager.FindByName("Dataset Management") ?? featureManager.Create("Dataset Management", "", administrationFeature);
                 var datasetManagementOperation = operationManager.Find("SAM", "Datasets", "*") ?? operationManager.Create("SAM", "Datasets", "*", datasetManagementFeature);
+
+                // Document Management
+                var documentManagementFeature = featureManager.FindByName("Document Management") ?? featureManager.Create("Document Management", "", administrationFeature);
+                var documentManagementOperation = operationManager.Find("SAM", "Files", "*") ?? operationManager.Create("SAM", "Files", "*", documentManagementFeature);
+
+                // Request
+                var requestOperation = operationManager.Find("SAM", "Requests", "*") ?? operationManager.Create("SAM", "Requests", "*");
 
                 // Help
                 var helpOperation = operationManager.Find("SAM", "Help", "*") ?? operationManager.Create("SAM", "Help", "*");
@@ -73,11 +84,6 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 featureManager?.Dispose();
                 operationManager?.Dispose();
             }
-        }
-
-        public void Dispose()
-        {
-            //throw new NotImplementedException();
         }
     }
 }

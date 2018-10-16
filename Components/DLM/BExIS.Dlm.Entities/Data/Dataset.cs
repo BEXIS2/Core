@@ -119,6 +119,8 @@ namespace BExIS.Dlm.Entities.Data
         /// <param name="dataStructure"></param>
         public Dataset(DataStructure.DataStructure dataStructure)
         {
+            if (dataStructure == null)
+                throw new ArgumentNullException("Dataset can not be constructed without a data structure.");
             Versions = new List<DatasetVersion>();
             Status = DatasetStatus.CheckedIn;
             //Metadata = null; // new XmlElement();// Metadata.Metadata();

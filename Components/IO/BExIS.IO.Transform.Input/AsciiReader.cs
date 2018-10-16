@@ -9,6 +9,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using Vaiona.Logging.Aspects;
 
 /// <summary>
 ///
@@ -21,13 +22,28 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>        
     public class AsciiReader:DataReader
     {
-        public List<List<string>> ReadFile(Stream file, AsciiFileReaderInfo fri)
+        public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
+        {
+
+        }
+
+        public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
+        {
+
+        }
+
+        public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
+        {
+
+        }
+
+        public List<List<string>> ReadFile(Stream file)
         {
             List<List<string>> tmp = new List<List<string>>();
 
             this.FileStream = file;
-            this.Info = fri;
-
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+                
             // Check params
             if (this.FileStream == null)
             {
@@ -57,7 +73,7 @@ namespace BExIS.IO.Transform.Input
 
                     while ((line = streamReader.ReadLine()) != null)
                     {
-                        if (index >= this.Info.Data)
+                        if (index >= Info.Data)
                         {
                             // return List of VariablesValues, and error messages
                             tmp.Add(rowToList(line, seperator));
@@ -87,15 +103,14 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure</param>
         /// <param name="datasetId">Id of the dataset</param>
         /// <returns>List of datatuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
-            this.StructuredDataStructure = sds;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
-             // Check params
+            // Check params
             if (this.FileStream == null)
             {
                 this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
@@ -163,7 +178,8 @@ namespace BExIS.IO.Transform.Input
         /// <param name="datasetId">Id of the dataset</param>
         /// <param name="packageSize"></param>
         /// <returns>List of datatuples</returns>
-        public List<DataTuple> ReadFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, int packageSize)
+        [MeasurePerformance]
+        public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId, int packageSize)
         {
 
             // clear list of datatuples
@@ -173,9 +189,8 @@ namespace BExIS.IO.Transform.Input
 
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
-            this.StructuredDataStructure = sds;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
             // Check params
             if (this.FileStream == null)
@@ -283,13 +298,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="variableList">List of variables</param>
         /// <param name="packageSize">size of a package</param>
         /// <returns></returns>
-        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList, int packageSize)
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, long datasetId, List<long> variableList, int packageSize)
         {
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
-            this.StructuredDataStructure = sds;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
             List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
@@ -407,13 +421,12 @@ namespace BExIS.IO.Transform.Input
         /// <param name="fri">AsciiFileReaderInfo needed</param>
         /// <param name="sds">StructuredDataStructure</param>
         /// <param name="datasetId">Id of the dataset</param>
-        public void ValidateFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId)
+        public void ValidateFile(Stream file, string fileName, long datasetId)
         {
             this.FileStream = file;
             this.FileName = fileName;
-            this.Info = fri;
-            this.StructuredDataStructure = sds;
             this.DatasetId = datasetId;
+            AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
 
             // Check params
             if (this.FileStream == null)

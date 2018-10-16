@@ -22,8 +22,8 @@ namespace BExIS.Security.Services.Subjects
             Dispose(true);
         }
 
-        public IQueryable<Group> Roles => GroupRepository.Query();
         public IQueryable<Group> Groups => GroupRepository.Query();
+        public IQueryable<Group> Roles => GroupRepository.Query();
         private IReadOnlyRepository<Group> GroupRepository { get; }
 
         public Task CreateAsync(Group role)

@@ -30,7 +30,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAIgEAAAAAACAAQgAAAAAAACAAACAEAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAIgEAAAAAACAAQgAAAAAAACAAACAEAAAQA=</HashCode>
       <FileName>Party\Party.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -64,7 +64,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAQAAAAAIgAAAAgAACAIQAAAAAAQAiAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAUAAAABKgAAAAgAACAIQAAAAAAQAiAAAAAAAAAAA=</HashCode>
       <FileName>Party\PartyCustomAttribute.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -161,7 +161,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAIEAAAAgAEAAAAAAAAAAAAAAAQAAACAAAAAIAAA=</HashCode>
+      <HashCode>AAAAEIEAABAgAEAAAAAAAAAAAAAAAQAAACAAAAAoAAA=</HashCode>
       <FileName>Party\PartyType.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -171,33 +171,21 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.Party.PartyTypePair">
-    <Position X="12.5" Y="2" Width="1.5" />
-    <AssociationLine Name="AlowedSource" Type="BExIS.Dlm.Entities.Party.PartyType">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.671" Y="0.3" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <AssociationLine Name="AlowedTarget" Type="BExIS.Dlm.Entities.Party.PartyType">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.359" Y="0.8" />
-      </MemberNameLabel>
-    </AssociationLine>
+    <Position X="12.5" Y="1.5" Width="1.5" />
     <AssociationLine Name="PartyRelationshipType" Type="BExIS.Dlm.Entities.Party.PartyRelationshipType" FixedFromPoint="true">
       <Path>
-        <Point X="12.5" Y="2.903" />
-        <Point X="8.25" Y="2.903" />
+        <Point X="12.5" Y="2.403" />
+        <Point X="8.25" Y="2.403" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.475" Y="-0.096" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAEAAAAAEAAAAAAEAAAAAAAAAACAAAAA=</HashCode>
+      <HashCode>AAQABIAAAAAgAEAAAAAAAAAAAAAABAAEAQAAACAAAAA=</HashCode>
       <FileName>Party\PartyTypePair.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="AlowedSource" />
-      <Property Name="AlowedTarget" />
       <Property Name="PartyRelationshipType" />
     </ShowAsAssociation>
   </Class>
@@ -218,7 +206,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAEAAAAAAAAAAAAAAAEBAAAAAAACCgAA=</HashCode>
+      <HashCode>AAAAEAAAABAgAEAAAAAAAAAAAAAAAEBAAAAAAACCgAA=</HashCode>
       <FileName>Party\PartyRelationshipType.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -233,7 +221,7 @@
         <Position X="-0.838" Y="0.373" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="FirstParty" Type="BExIS.Dlm.Entities.Party.Party" FixedFromPoint="true">
+    <AssociationLine Name="SourceParty" Type="BExIS.Dlm.Entities.Party.Party" FixedFromPoint="true">
       <Path>
         <Point X="8" Y="8.519" />
         <Point X="13.281" Y="8.519" />
@@ -243,19 +231,19 @@
         <Position X="-0.086" Y="0.37" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="SecondParty" Type="BExIS.Dlm.Entities.Party.Party">
+    <AssociationLine Name="TargetParty" Type="BExIS.Dlm.Entities.Party.Party">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.308" Y="-0.086" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQgAGAAAAAAAAAgAAAAAAAAAAAAAGAIAAA=</HashCode>
+      <HashCode>AAAAAAAAAAQgBGAAAAAAAAAgAAAgAAAAAAAAAGAIAAA=</HashCode>
       <FileName>Party\PartyRelationship.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PartyRelationshipType" />
-      <Property Name="FirstParty" />
-      <Property Name="SecondParty" />
+      <Property Name="SourceParty" />
+      <Property Name="TargetParty" />
     </ShowAsAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />

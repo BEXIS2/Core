@@ -1,0 +1,426 @@
+﻿<!--
+    Author: Nafiseh Navabpour
+    Create: Release 2.12
+    Update: 14.09.2018
+    -->
+
+@model BExIS.Modules.Vim.UI.Models.VisualizationModels
+@using Telerik.Web.Mvc.UI;
+
+@{
+    ViewBag.Title = "Visualization";
+}
+
+@section Information
+{
+    Visualization provides diagrams depend on the selected data in specific range of time.
+    <p>
+        <a href="/vim/Help/index#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+
+@{
+    string activities = String.Join(",", Model.allActivities);
+    string allDatasets = String.Join(",", Model.allDatasets);
+    string createdDatasets = String.Join(",", Model.createdDatasets);
+    string deletedDatasets = String.Join(",", Model.deletedDatasets);
+}
+
+@section leftPane{
+
+    <div>
+        <!--Drop Down List to select datasets by status-->
+        <select id="statusSelector" onchange="myChart()" style="width:200px;">
+            <option value="all" label="Select a category">All Datasets</option>
+            <option value="activities" label="System Activities">System Activities</option>
+            <option value="created" label="Created Datasets">Created Datasets</option>
+            <option value="deleted" label="Deleted Datasets">Deleted Datasets</option>
+        </select>
+    </div>
+    <br />
+    <div>
+        <!--Drop Down List to select a Year-->
+        <select id="timeSelector" onchange="myChart()" style="width:200px;">
+            <!--this.value-->
+            <option value="all" label="Select a year">Select a year</option>
+        </select>
+    </div>
+    <br />
+    <!---------- Warning Message ---------->
+    <div id="Warning" style="color:gray"></div><br />
+
+    <!---------- SLIDER ---------->
+    <br />
+    Range: <span id="rangeYear"></span>
+    <br /><br />
+    <div id="slider"></div>
+    <br />
+}
+<!---------- Chart is there ---------->
+<div id="columnchart_material" style="height: 400px;"></div><br />
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<!--GOOGLE CHART-->
+<!--<script type="text/javascript" src="~/Scripts/googleChartLoader.js"></script>--> <!--Google Chart Library from uploaded script-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!--Google Chart Library-->
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        function messageNoData(text) {
+            document.getElementById('Warning').textContent = 'There is no Data to show '+text;
+        }
+
+        var allD = '@allDatasets'.split(",");       //Count of All Datasets over Time
+        //console.log(allD);
+        if (allD == '') {
+            messageNoData("at all.");
+        }
+        else {
+            //fill time selector
+            var y = years();
+            var minYear = y[0];
+            var maxYear = y[y.length - 1];
+
+            var timeSelector = document.getElementById("timeSelector");
+            for (var i = 0; i < y.length; i++) {
+                var option = document.createElement("option");
+                option.text = y[i];
+                option.value = y[i];
+                timeSelector.add(option);
+            }
+            ///////  SLIDER
+            var outputSpan = $('#rangeYear');
+            var sliderElement = $('#slider');
+
+            minYear = parseInt(minYear);
+            maxYear = parseInt(maxYear);
+            sliderElement.slider({
+                range: true,
+                min: minYear,
+                max: maxYear,
+                values: [minYear, maxYear],
+                slide: function (event, ui) {
+                    outputSpan.html(ui.values[0] + ' - ' + ui.values[1]);
+                },
+                stop: function (event, ui) {
+                    var minY = ui.values[0];
+                    var maxY = ui.values[1];
+                    if (ui.values[0] == ui.values[1]) {
+                        document.getElementById("timeSelector").value = minY;
+                        if (document.getElementById("timeSelector").value == "") {
+                            document.getElementById("timeSelector").value = "all";
+                        }
+
+                    }
+                    else {
+                        document.getElementById("timeSelector").value = "all";
+                    }
+
+                    myChart();
+                }
+            });
+
+            outputSpan.html(sliderElement.slider('values', 0) + ' - ' + sliderElement.slider('values', 1));
+            ////// END OF SLIDER
+
+        google.charts.load('current', { 'packages': ['bar'] });
+        google.charts.setOnLoadCallback(function () { myChart() });
+        }
+
+    });
+
+
+    //Function years()
+    //return list of all years, which includes data.
+    function years() {
+        var time = [];
+        var allD = '@allDatasets'.split(",");       //Count of All Datasets over Time
+        for (var i = 0; i < allD.length; i = i + 2) {
+            var year = (allD[i].split("/"))[1];
+            if (time.indexOf(year) < 0) {
+                //add key and value to the object "dataPoints". Remove brackets. convert value to int.
+                time.push((allD[i].replace('[', "")).split("/")[1]);
+            }
+        }
+        time.sort();
+        return (time);
+    }
+
+    //Function inYearRange(myData, firstY, lastY)
+    //return data in a range of years. Add not existing years in case years < 4
+    //myData: list of tuples [year, count]
+    //firstY: minimum time limit (e.g. 2014)
+    //lastY: maximum time limit (e.g. 2018)
+    function inYearRange(myData, firstY, lastY) {
+        var j = 1;
+        var data = [];
+        data[0] = myData[0];
+        for (var i = firstY; i <= lastY; ++i) {
+            var year = myData[j][0];
+            if (i == year) {
+                data.push(myData[j]);
+                j++;
+            }
+            else {
+                if (myData[0][2]) { data.push([(i.toString()), 0, 0]); }
+                else { data.push([(i.toString()), 0]); }
+            }
+        }
+        return (data);
+    }
+
+    //Function dataByYear(status)
+    //return dataset for a range of years. firstYear and lastYear will produce inside of the function.
+    //status: all, created, checkedOut, Deleted
+    function dataByYear(status) {
+        var myData = [];
+        var t = years(); //list of all years
+
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "activities") { var dataset = '@activities'.split(","); }
+        if (status == "created") { var dataset = '@createdDatasets'.split(","); }
+        if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
+
+        myData[0] = ['Date', 'Count'];
+        var minY = $("#slider").slider("values")[0];
+        var maxY = $("#slider").slider("values")[1];
+
+        for (var j = 0; j < t.length; ++j) {
+            var y = t[j];
+            var count = 0;
+
+            for (var i = 0; i < dataset.length; i = i + 2) {
+                var year = (dataset[i].replace('[', "")).split("/")[1];
+                if (y == year) {
+                    var c = parseInt(dataset[i + 1].replace(']', ""));
+                    count += c;
+                }
+            }
+            if (y >= minY && y <= maxY) {
+                myData.push([y, count]);
+            }
+        }
+
+
+        var firstY = minY;
+        var lastY = maxY; 
+        myData = inYearRange(myData, firstY, lastY);
+        return (myData);
+    }
+
+    //Function allDataByYear()
+    //return dataset includes data tuples of created, checkedOut and Deleted datasets in each year.
+    //It uses function dataByYear(status)
+    function allDataByYear() {
+        var mycreatedData = dataByYear("created");
+        var myDeletedData = dataByYear("deleted");
+
+        var myData = [];
+        myData[0] = ["Date", "created", "Deletet"];
+
+        for (var i = 1; i < mycreatedData.length; ++i) {
+            var year = mycreatedData[i][0];
+            try { var created = mycreatedData[i][1];}
+            catch { var created = 0;}
+            try { var deleted = myDeletedData[i][1];}
+            catch { var deleted = 0;}
+            var minY = $("#slider").slider("values")[0];
+            var maxY = $("#slider").slider("values")[1];
+            if (year >= minY || year <= maxY) {
+                myData.push([year, created, deleted]);
+            }
+        }
+
+        return (myData);
+    }
+
+    //Function dataByMonth(status, time)
+    //return dataset in a year and from a defined status
+    //time: Year
+    //status: all, created, checkedOut, Deleted
+    function dataByMonth(status, time) {
+        var myData = [];
+
+        if (status == "all") { var dataset = '@allDatasets'.split(","); }
+        if (status == "activities") { var dataset = '@activities'.split(","); }
+        if (status == "created") { var dataset = '@createdDatasets'.split(","); }
+        if (status == "deleted") { var dataset = '@deletedDatasets'.split(","); }
+        console.log("length: " + dataset.length);
+        console.log("status: " + status);
+        myData[0] = ['Date', 'Count'];
+        var j = 1;
+        for (var i = 0; i < dataset.length; i = i + 2) {
+            var year = (dataset[i].replace('[', "")).split("/")[1];
+            if (time == year) {
+                var month = (dataset[i].replace('[', "")).split("/")[0];
+                var count = parseInt(dataset[i + 1].replace(']', ""));
+                //add key and value to the object "dataPoints". Remove brackets. convert value to int.
+                myData[j] = [dataset[i].replace('[', ""), count];
+                j += 1;
+
+            }
+        }
+
+        var d12 = [];
+        d12.push(myData[0]);
+        for (var i = 1; i < 13; ++i) {      //fill Titles
+            d12.push([(i + "/" + time), 0]);
+        }
+        console.log(myData);                //Fill count
+        if (myData.length > 0) {
+            for (var j = 1; j < myData.length; ++j) {
+                for (var i = 1; i < 13; ++i) {
+                    console.log("d12, myData: " + d12[i][0] + ", " + myData[j][0]);
+                    if (d12[i][0] == myData[j][0]) {
+                        console.log("Here are the same.");
+                        d12[i][1] = myData[j][1];
+                        break;
+                    }
+                }
+            }
+        }
+        return (d12);
+    }
+
+    function allDataByMonth(time) {
+        var year = time;
+        var mycreatedData = dataByMonth("created", time);
+        var myDeletedData = dataByMonth("deleted", time);
+
+        var status = document.getElementById('statusSelector').value;
+
+        var myData = [];
+        myData[0] = ["Date", "Created", "Deleted"];
+
+        for (var i = 1; i < mycreatedData.length; ++i) {
+            var year = mycreatedData[i][0];
+            try { var created = mycreatedData[i][1]; }
+            catch { var created = 0; }
+            try { var deleted = myDeletedData[i][1]; }
+            catch { var deleted = 0; }
+
+            if (status == "all") { myData.push([year, created, deleted]); }
+
+        }
+
+        return (myData);
+    }
+
+    function maxValue() {
+        var dataset = '@allDatasets'.split(",");
+        var max = 0; 
+        for (var i = 0; i < dataset.length; i= i + 2) {
+            var count = parseInt(dataset[i + 1].replace(']', ""));
+            if (count > max) { max = count; }
+        }
+        return (max);
+    }
+
+    //Function createTitle(myData)
+    //Create a title for the chart. Check if diagram is empty.
+    //return title and subtitle for chart
+    function createTitle(myData) {
+        var status = document.getElementById('statusSelector');
+        var time = document.getElementById('timeSelector').value;
+
+        var lastPart = '';
+        if (time == "all") { lastPart = " over time"; }
+        else { lastPart = " in " + time; }
+
+        var firstPart = status.options[status.selectedIndex].innerHTML;
+
+        var title = [];
+        title[0] = firstPart + lastPart;
+        title[1] = "There is no data to show.";
+
+        for (var i = 1; i < myData.length; ++i) {
+            var data = myData[i];
+            for (var j = 1; j < data.length; ++j) {
+                if (data[j] != 0) {
+                    title[1] = "";
+                    break;
+                }
+            }
+        }
+        return (title);
+    }
+
+    function myChart() {
+        var status = document.getElementById('statusSelector').value;
+        var time = document.getElementById('timeSelector').value;
+        if (time != "all") {
+        }
+        var chartName = "";
+        var colors = ['#388670', '#f24c24', '#ffbb52', '#009cdf'];
+        var myData = [];
+
+        if (status == "all") {
+            if (time == "all") { myData = allDataByYear(); }
+            else { myData = allDataByMonth(time); }
+
+            drawChart(myData, colors[0]);
+        }
+
+        else { //if (status == created, created, checkedOut, deleted)
+            if (time == "all") { myData = dataByYear(status); }
+            else { myData = dataByMonth(status, time); }
+
+            if (status == "all") { drawChart(myData, colors[0]); }
+            if (status == "activities") { drawChart(myData, colors[3]); }
+            if (status == "created") { drawChart(myData, colors[0]); }
+            if (status == "deleted") { drawChart(myData, colors[1]); }
+        }
+    }
+
+    function drawChart(myData, color) {
+        var data = google.visualization.arrayToDataTable(myData);
+        var status = document.getElementById('statusSelector').value;
+        var time = document.getElementById('timeSelector').value;
+        var max = maxValue();
+
+        var width = 900;
+        var legendPosition = 'none';
+        var groupWidth = '30%';
+
+        if (status == "all") {
+            width = 950;
+            legendPosition = "right";
+            groupWidth = '90%';
+        }
+
+        var titles = createTitle(myData);
+        var title = titles[0];
+        var subtitle = titles[1];
+
+        var options = {
+            width: width,
+            legend: { position: legendPosition },
+            chart: {
+                title: title,
+                subtitle: subtitle,
+            },
+            bar: { groupWidth: groupWidth },
+            series: {
+                0: { color: color },
+                1: { color: '#f24c24' },
+                2: { color: '#ffbb52' }
+            },
+            vAxis: {
+                viewWindow: {
+                    min: 0,
+                    max: max
+                }
+            }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+
+    }
+
+</script>

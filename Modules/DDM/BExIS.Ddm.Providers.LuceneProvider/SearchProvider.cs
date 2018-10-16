@@ -121,6 +121,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             //Textvalues
             model.SearchComponent.TextBoxSearchValues = new List<TextValue>();
 
+            /// Add the general searchable properties, these are usually not visible through the UI.
+            /// Here, there is one built-in field that is used to filter public datasets
+            /// 
+            model.SearchComponent.Generals = new List<General>()
+                        { new General()
+                                { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false}
+                        };
+
             return model;
             //throw new NotImplementedException();
         }
@@ -147,6 +155,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             //Textvalues
             model.SearchComponent.TextBoxSearchValues = new List<TextValue>();
+
+            model.SearchComponent.Generals = new List<General>()
+                        { new General()
+                                { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false}
+                        };
 
             return model;
             //throw new NotImplementedException();
@@ -284,8 +297,19 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 {
                     if (sco.Values.Count > 0)
                     {
-
-                        if (sco.SearchComponent.Type.Equals(SearchComponentBaseType.Category))
+                        if (sco.SearchComponent.Type.Equals(SearchComponentBaseType.General))
+                        {
+                            String fieldName = sco.SearchComponent.Name;
+                            BooleanQuery bexisSearchingGeneral = new BooleanQuery();
+                            foreach (String value in sco.Values)
+                            {
+                                String encodedValue = value;
+                                Query query = new TermQuery(new Term(fieldName, encodedValue));
+                                bexisSearchingGeneral.Add(query, Occur.SHOULD);
+                            }
+                            ((BooleanQuery)bexisSearching).Add(bexisSearchingGeneral, Occur.MUST);
+                        }
+                        else if (sco.SearchComponent.Type.Equals(SearchComponentBaseType.Category))
                         {
                             BooleanQuery bexisSearchingCategory = new BooleanQuery();
                             String fieldName = "category_" + sco.SearchComponent.Name;

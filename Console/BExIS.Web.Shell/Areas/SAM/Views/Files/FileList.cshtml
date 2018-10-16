@@ -1,0 +1,45 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@model List<FolderModel>
+<style>
+    #Grid_Files .t-grid-content {
+        height: auto !important;
+        max-height: 475px !important;
+    }
+</style>
+@section Information
+{
+    Here you are able to view files and folders that are available to the users.
+    <p>
+        <a href="/SAM/Help/Index/#_TocXXX" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+@section LeftPane
+{
+    <div id="treeViewDiv">
+        @Html.Partial("_FolderTree", Model)
+    </div>
+}
+<div id="content_files"></div>
+<script>
+    function treeView_files_onChecked(e) { }
+    function getTreeView() {
+        return $('#treeView_files').data('tTreeView');
+    }
+
+    function treeView_files_onSelect(e) {
+        var path = getTreeView().getItemValue(e.item);
+        var prevSelectedDiv = $(".bx-selected");
+
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
+
+        $('#content_files').empty();
+
+        $.get('@Url.Action("FolderContentAsList", "Files")', { Path: path }, function (contentData) {
+            $('#content_files').html(contentData);
+            truncateTitle();
+        });
+    }
+</script>

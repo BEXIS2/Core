@@ -1,4 +1,4 @@
-﻿/// <reference path="modernizr-2.6.2.js" />
+﻿/// <reference path="modernizr-2.8.3.js" />
 /// <reference path="jquery-2.1.4.js" />
 /// <autosync enabled="true" />
 /// <reference path="jquery.validate.js" />

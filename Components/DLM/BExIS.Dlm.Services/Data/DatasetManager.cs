@@ -11,9 +11,29 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
+using BExIS.Dlm.Orm.NH.Qurying;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using Vaiona.Logging.Aspects;
 
+namespace System.Data
+{
+    public static class DataTableExtensionsForDataset
+    {
+        public static void Strip(this DataTable table)
+        {
+            if (table.Columns.Contains("id")) { table.Columns.Remove("id"); }
+            if (table.Columns.Contains("orderno")) { table.Columns.Remove("orderno"); }
+            if (table.Columns.Contains("timestamp")) { table.Columns.Remove("timestamp"); }
+            if (table.Columns.Contains("versionid")) { table.Columns.Remove("versionid"); }
+        }
+    }
+}
+
+/// <summary>
+/// The BExIS.Dlm.Services.Data namespace provides classes and interfaces that enable access to the datasets managed by the system.
+/// This includes creating a <see cref="BExIS.Dlm.Entities.Dataset"/>, a <see cref="BExIS.Dlm.Entities.Version"/> of a dataset, or manipulating data tuples associated with a specific version.
+/// </summary>
 namespace BExIS.Dlm.Services.Data
 {
     /// <summary>
@@ -36,7 +56,7 @@ namespace BExIS.Dlm.Services.Data
     ///         <item><description>There is an automatic and transparent authorization based result set trimming in place, that may reduce the matching entities based on the current user access rights.</description></item>
     ///     </list>
     /// </remarks>
-    public class DatasetManager : IDisposable, IEntityStore
+    public class DatasetManager : IDisposable
     {
         public const long BIG_DATASET_SIZE_THRESHOLD = 5000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
         public int PreferedBatchSize { get; set; }
@@ -292,7 +312,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="comment">A free form text to describe what has changed with this check-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>      
-        //[Diagnose]
+        [MeasurePerformance]
         public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
             checkInDataset(datasetId, comment, username, false, viewCreationBehavior);
@@ -367,7 +387,8 @@ namespace BExIS.Dlm.Services.Data
                     datasetRepo.Put(entity);
                     uow.Commit();
                     // if any problem was detected during the commit, an exception will be thrown!
-                    dropMaterializedView(datasetId);
+                    if ((entity.DataStructure is StructuredDataStructure))
+                        dropMaterializedView(datasetId);
                     return (true);
                 }
                 catch (Exception ex)
@@ -545,6 +566,13 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        /// <summary>
+        /// Physically deletes the whole dataset, including its versions and data tuples, from the database.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
+        /// <param name="forced">purge even if checked out, ...</param>
+        /// <returns>True if the dataset is purged, False otherwise.</returns>
+        /// <remarks>There is no way to recover the dataset after this method has successfully purged it.</remarks>
         public bool PurgeDataset(Int64 datasetId, bool forced) // forced is not used, it is just an indicator for now
         {
             // this varient create smaller units of work and commits changes as the purging progresses. So the dataset is in a wrong state during this operation
@@ -807,6 +835,26 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
+        public DataTable GetDatasetVersionTuples(long versionId, int pageNumber, int pageSize)
+        {
+
+            // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
+            var version = this.GetDatasetVersion(versionId);
+            var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
+            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            {
+                DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
+                return table;
+            }
+            
+            return null;
+        }
+
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        {
+            return queryMaterializedView(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+        }
+
         /// <summary>
         /// Returns one page of the data tuples of the dataset version requested. See <see cref="GetDatasetVersionEffectiveTuples"/> for more details about the effective tuples of a dataset.
         /// </summary>
@@ -826,6 +874,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersion">The object representing the data set version requested</param>
         /// <returns>The list of identifiers of the specified version</returns>
+        [MeasurePerformance]
         public List<Int64> GetDatasetVersionEffectiveTupleIds(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleIds(datasetVersion);
@@ -1344,6 +1393,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="deletedTuples">The list of existing tuples to be deleted from the working copy.</param>
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns>The working copy having the changes applied on it.</returns>
+        [MeasurePerformance]
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             List<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
@@ -2378,6 +2428,7 @@ namespace BExIS.Dlm.Services.Data
                                     OrderNo = item.OrderNo,
                                     URI = item.URI,
                                     DatasetVersion = dsNewVersion,
+                                    Extra=item.Extra
                                 };
                                 dsNewVersion.ContentDescriptors.Add(cd);
                             }
@@ -2434,7 +2485,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true, bool throwExceptionOnUnstructured = false)
         {
             if (behavior == ViewCreationBehavior.None) // do not use this one! (behavior.HasFlag(ViewCreationBehavior.None))
                 return;
@@ -2449,14 +2500,18 @@ namespace BExIS.Dlm.Services.Data
                 throw new Exception($"Dataset '{datasetId}' must be in the checked-in status.");
 
             if (!(dataset.DataStructure.Self is StructuredDataStructure))
+            {
+                if (throwExceptionOnUnstructured)
                     throw new Exception($"Dataset '{datasetId}' is not structured.");
+                return;
+            }
 
-                // check the size and threshold            
-                long numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
-                int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
-                long size = numberOfTuples * numberOfVariables;
-                if (enforceSizeCheck && size > BIG_DATASET_SIZE_THRESHOLD)
-                    return;
+            // check the size and threshold            
+            long numberOfTuples = GetDatasetLatestVersionEffectiveTupleCount(datasetId); // this.getDatasetVersionEffectiveTupleCount(latestVersion);
+            int numberOfVariables = ((StructuredDataStructure)dataset.DataStructure.Self).Variables.Count();
+            long size = numberOfTuples * numberOfVariables;
+            if (enforceSizeCheck && size > BIG_DATASET_SIZE_THRESHOLD)
+                return;
             //}
             
             if (behavior.HasFlag(ViewCreationBehavior.Create)) // create MV
@@ -2472,7 +2527,7 @@ namespace BExIS.Dlm.Services.Data
                     refreshMaterializedView(datasetId);
                     // update the the last synced information on the data set. It is used in the dataset maintenance UI logic
                     // check if the view is actually refreshed, by comparing the records in the view to the records in tuples.
-                    long noOfViewRecords = countRowsOfMaterializedView(datasetId);
+                    long noOfViewRecords = RowCount(datasetId);
 
                     if(noOfViewRecords < numberOfTuples)
                     {
@@ -2540,10 +2595,16 @@ namespace BExIS.Dlm.Services.Data
             mvHelper.Refresh(datasetId);
         }
 
-        private long countRowsOfMaterializedView(long datasetId)
+        public long RowCount(long datasetId)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             return mvHelper.Count(datasetId);
+        }
+
+        public long RowCount(long datasetId, FilterExpression filter)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            return mvHelper.Count(datasetId, filter);
         }
 
         private bool existsMaterializedView(long datasetId)
@@ -2591,6 +2652,11 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        private DataTable queryMaterializedView(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            return mvHelper.Retrieve(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+        }
 
         // in some cases maybe another attribute of the user is used like its ID, email or the IP address
         private string getUserIdentifier(string username)
@@ -3092,7 +3158,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="variableId">The identifier of the variable that the value is belonging to.</param>
         /// <param name="parameterValues">If the variable has parameters attached, the parameter values are passed alongside, so that the method links them to their corresponding variable value using <paramref name="variableId"/>.</param>
         /// <returns>A transient object of type <seealso cref="VariableValue"/>.</returns>
-        public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
+        public virtual VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
             Contract.Requires(variableId > 0);
@@ -3360,16 +3426,5 @@ namespace BExIS.Dlm.Services.Data
         }
 
         #endregion
-
-        public List<EntityStoreItem> GetEntities()
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var repo = uow.GetReadOnlyRepository<Dataset>();
-
-                var entities = repo.Query().Select(x => new EntityStoreItem() { Id = x.Id, Title = "Not Available" });
-                return entities.ToList();
-            }
-        }
     }
 }

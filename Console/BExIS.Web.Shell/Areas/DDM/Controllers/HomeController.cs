@@ -31,6 +31,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Index";
+            Session["Controller"] = "Home";
+
 
             try
             {
@@ -67,6 +70,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Index(string autoComplete, string FilterList, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Index";
+            Session["Controller"] = "Home";
+
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
@@ -91,7 +97,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //reset searchType
             // after every search - searchType must be based on
             SetSearchType("basedon");
-
             return View(provider);
         }
 
@@ -285,7 +290,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return View("Index", provider);
+            return RedirectToAction(Session["SubmissionAction"].ToString()); //View("Index", provider);
         }
 
         #endregion

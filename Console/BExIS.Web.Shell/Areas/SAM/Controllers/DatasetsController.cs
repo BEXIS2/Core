@@ -2,7 +2,6 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System;
 using System.Collections.Generic;
@@ -17,8 +16,6 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-
-
     /// <summary>
     /// Manages all funactions an authorized user can do with datasets and their versions
     /// </summary>
@@ -32,40 +29,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Checkout(int id)
         {
             return View();
-        }
-
-        public ActionResult SyncAll()
-        {
-            var datasetManager = new DatasetManager();
-            var datasetIds = datasetManager.GetDatasetLatestIds();
-            try
-            {
-                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-                // if the viewData has a model error, the redirect forgets about it.
-                return RedirectToAction("Index", new { area = "Sam" });
-            }
-            catch (Exception ex)
-            {
-                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
-                return View("Sync");
-            }
-        }
-
-        public ActionResult Sync(long id)
-        {
-            var datasetManager = new DatasetManager();
-
-            try
-            {
-                datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-                // if the viewData has a model error, the redirect forgets about it.
-                return RedirectToAction("Index", new { area = "Sam" });
-            }
-            catch (Exception ex)
-            {
-                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
-                return View();
-            }
         }
 
         /// <summary>
@@ -86,7 +49,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {
                         var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                     }
@@ -98,6 +61,49 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             return View();
             //return RedirectToAction("List");
+        }
+
+        public ActionResult FlipDateTime(long id, long variableid)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+
+            try
+            {
+                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(id);
+                IEnumerable<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(dsv);
+
+                foreach (var tid in datatupleIds)
+                {
+                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(tid);
+                    dataTuple.Materialize();
+                    bool needUpdate = false;
+
+                    foreach (var vv in dataTuple.VariableValues)
+                    {
+                        string systemType = vv.DataAttribute.DataType.SystemType;
+                        if (systemType.Equals(typeof(DateTime).Name) && vv.VariableId.Equals(variableid))
+                        {
+                            string value = vv.Value.ToString();
+                            vv.Value = flip(value, out needUpdate);
+                        }
+                    }
+
+                    if (needUpdate)
+                    {
+                        dataTuple.Dematerialize();
+                        datasetManager.UpdateDataTuple(dataTuple);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+
+            return RedirectToAction("Index");
         }
 
         /// <summary>
@@ -129,7 +135,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             foreach (Dataset ds in datasets)
             {
                 long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
-                long noRows = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
+                long noRows = 0; //ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
                 bool synced = false;
                 if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
                         && ds.StateInfo?.Timestamp != null
@@ -161,7 +167,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     entityPermissionManager.Delete(typeof(Dataset), id);
 
-                    if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {
                         var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                     }
@@ -177,6 +183,65 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Rollback(int id)
         {
             return View();
+        }
+
+        public ActionResult Sync(long id)
+        {
+            var datasetManager = new DatasetManager();
+
+            try
+            {
+                datasetManager.SyncView(id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View();
+            }
+        }
+
+        public ActionResult SyncAll()
+        {
+            var datasetManager = new DatasetManager();
+            var datasetIds = datasetManager.GetDatasetLatestIds();
+            try
+            {
+                datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                // if the viewData has a model error, the redirect forgets about it.
+                return RedirectToAction("Index", new { area = "Sam" });
+            }
+            catch (Exception ex)
+            {
+                ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
+                return View("Sync");
+            }
+        }
+
+        public ActionResult CountRows(long id)
+        {
+            int number = 0;
+
+            DatasetManager dm = new DatasetManager();
+
+
+            try
+            {
+                if (id > 0)
+                {
+                    Dataset ds = dm.GetDataset(id);
+                    number = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0;
+                }
+
+                return Json(number, JsonRequestBehavior.AllowGet);
+
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+
         }
 
         /// <summary>
@@ -220,62 +285,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(versions);
         }
 
-        public ActionResult FlipDateTime(long id, long variableid)
-        {
-            DatasetManager datasetManager = new DatasetManager();
-            
-            try
-            {
-                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(id);
-                IEnumerable<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(dsv);
-
-                foreach (var tid in datatupleIds)
-                {
-                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(tid);
-                    dataTuple.Materialize();
-                    bool needUpdate = false;
-
-                    foreach (var vv in dataTuple.VariableValues)
-                    {
-                        string systemType = vv.DataAttribute.DataType.SystemType;
-                        if (systemType.Equals(typeof(DateTime).Name) && vv.VariableId.Equals(variableid))
-                        {
-                            string value = vv.Value.ToString();
-                            vv.Value = flip(value,out needUpdate);
-
-
-                        }
-                    }
-
-                    if (needUpdate)
-                    {
-                        dataTuple.Dematerialize();
-                        datasetManager.UpdateDataTuple(dataTuple);
-                    }
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
-
-            return RedirectToAction("Index");
-        }
-
-
         private string flip(string dateTime, out bool needUpdate)
         {
             string newDt = "";
 
             DateTime dt;
 
-            if(DateTime.TryParse(dateTime, new CultureInfo("en-us"),DateTimeStyles.NoCurrentDateDefault,out dt))
+            if (DateTime.TryParse(dateTime, new CultureInfo("en-us"), DateTimeStyles.NoCurrentDateDefault, out dt))
             {
                 int day = dt.Day;
                 int month = dt.Month;
@@ -285,7 +301,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     needUpdate = true;
                     //1/1/2017 12:00:00 AM
                     return day + "/" + month + "/" + dt.Year + " " + dt.TimeOfDay;
-
                 }
             }
 
@@ -293,6 +308,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             return dateTime;
         }
-        
+
+
+
+
     }
 }
