@@ -536,14 +536,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-#region set releationships 
+                        #region set releationships 
 
 
                         //todo check if dim is active
                         // todo call to  a function in dim
                         setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
-#endregion
+                        #endregion
 
                         if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
@@ -592,12 +592,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
 
-#endregion create dataset
+            #endregion create dataset
 
             return -1;
         }
 
-#region Options
+        #region Options
 
         public ActionResult Cancel()
         {
@@ -719,11 +719,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
         }
 
-#endregion Options
+        #endregion Options
 
-#endregion Submit And Create And Finish And Cancel and Reset
+        #endregion Submit And Create And Finish And Cancel and Reset
 
-#region Helper
+        #region Helper
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
@@ -928,30 +928,48 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
                             ));
 
-#region delete relationships
+                    #region delete relationships
 
                     foreach (var relationshipType in relationshipTypes)
                     {
                         bool exist = false;
                         var partyTpePair = relationshipType.AssociatedPairs.FirstOrDefault();
 
-                        IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
-                                r =>
-                                r.SourceParty != null && r.SourceParty.Id.Equals(datasetid) &&
-                                r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
-                            );
-
-                        IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
-                        foreach (PartyRelationship pr in relationships)
+                        if (partyTpePair.SourcePartyType.Title.ToLower().Equals("dataset"))
                         {
-                            if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                    r =>
+                                    r.SourceParty != null && r.SourceParty.Name.Equals(datasetid.ToString()) &&
+                                    r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                );
+
+                            IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                            foreach (PartyRelationship pr in relationships)
+                            {
+                                if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            }
+                        }
+                        else
+                        {
+                            IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                    r =>
+                                    r.TargetParty != null && r.TargetParty.Name.Equals(datasetid.ToString()) &&
+                                    r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                );
+
+                            IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                            foreach (PartyRelationship pr in relationships)
+                            {
+                                if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            }
                         }
 
                     }
-#endregion
+                    #endregion
 
-#region add relationship
+                    #region add relationship
 
                     foreach (XElement item in complexElements)
                     {
@@ -973,7 +991,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                     MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)))
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
+                                    (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)))
                                 {
 
                                     // create releationship
@@ -1008,7 +1028,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 relationship.Title,
                                                 "",
                                                 partyTpePair.Id
-
                                                 );
                                         }
                                     }
@@ -1017,7 +1036,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
 
-#endregion //add relationship
+                    #endregion //add relationship
                 }
             }
             catch (Exception ex)
@@ -1031,6 +1050,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-#endregion Helper
+        #endregion Helper
     }
 }

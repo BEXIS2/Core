@@ -28,7 +28,7 @@ namespace BExIS.App.Bootstrap
         // keep on instance per run stage
         private static Dictionary<RunStage, Application> instances = new Dictionary<RunStage, Application>();
 
-        private Application(): this(RunStage.Production)
+        private Application() : this(RunStage.Production)
         {
         }
 
@@ -259,9 +259,7 @@ namespace BExIS.App.Bootstrap
         private void registerGlobalFilters(GlobalFilterCollection filters)
         {
             //filters.Add(new PersistenceContextProviderFilterAttribute()); // disabled by Javad on 22.08.2017
-#if !DEBUG
             filters.Add(new BExISAuthorizeAttribute());
-#endif
             //filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
         }
@@ -284,7 +282,7 @@ namespace BExIS.App.Bootstrap
             {
                 if (this.runStage == RunStage.Production)
                     throw ex;
-            } 
+            }
         }
 
     }

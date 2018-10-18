@@ -345,7 +345,6 @@ namespace BExIS.Dim.Helpers.Mapping
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
                     string value = "";
-
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
                             .Where(m =>
                                 m.Target.ElementId.Equals(targetElementId) &&
@@ -368,10 +367,18 @@ namespace BExIS.Dim.Helpers.Mapping
                                     .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(partyid))
                                     .FirstOrDefault();
 
+                            //if (attrValue != null)
+                            //{
+
                             List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
                             string placeHolderName = attrValue.CustomAttribute.Name;
 
                             mask = setOrReplace(mask, regExResultList, placeHolderName);
+                            //}
+                            //else
+                            //{
+                            //    mask = "";
+                            //}
 
                         }
 

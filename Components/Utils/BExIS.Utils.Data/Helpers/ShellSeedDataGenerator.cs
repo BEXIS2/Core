@@ -1,5 +1,4 @@
 ﻿using BExIS.Security.Services.Objects;
-using System;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Utils.Data.Helpers
