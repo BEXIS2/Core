@@ -5,8 +5,8 @@
     // and then you will get a range of ids to set
     public enum Key
     {
-        Author = 0,
-        Description = 1,
+        Author = 0, //also creator for Dublin Core
+        Description = 1, // also for Dublin Core
         License = 2,
         ProjectTitle = 3,
         Title = 4,
@@ -18,8 +18,20 @@
         MetadataCreationDate = 103,
         MetadataLastModfied = 104,
         DataFirstEntry = 105,
-        DataLastModified = 106
+        DataLastModified = 106, // also for Dubline Core date 
 
+        //Additional Dublin Core nodes starts at 200
+        Subject = 200,
+        Publisher = 201,
+        Contributor = 202,
+        Type = 203, //Examples:Type = "image", Type = "sound", Type = "text"
+        Format = 204, //e.g. Format="image/gif"
+        Identifier = 205, //Open Identifier
+        Source = 206,
+        Language = 207,
+        Relation = 208,
+        Coverage = 209,
+        Rights = 210
     }
 
     public enum LinkElementComplexity
