@@ -1,12 +1,25 @@
 ﻿namespace BExIS.Dim.Entities.Mapping
 {
+
+    //if you want to add keys here, please talk to david schöne
+    // and then you will get a range of ids to set
     public enum Key
     {
-        Author,
-        Description,
-        License,
-        ProjectTitle,
-        Title
+        Author = 0,
+        Description = 1,
+        License = 2,
+        ProjectTitle = 3,
+        Title = 4,
+
+        //Automatic System Keys starts at 100
+        Id = 100,
+        Version = 101,
+        DateOfVersion = 102,
+        MetadataCreationDate = 103,
+        MetadataLastModfied = 104,
+        DataFirstEntry = 105,
+        DataLastModified = 106
+
     }
 
     public enum LinkElementComplexity
