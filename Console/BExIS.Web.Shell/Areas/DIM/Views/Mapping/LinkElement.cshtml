@@ -1,16 +1,41 @@
 ﻿
 @using BExIS.Modules.Dim.UI.Models.Mapping
+@using System.Text.RegularExpressions
+
 @model LinkElementModel
 
 @{
-    string id = Model.ElementId+"_"+ @Model.Position+"_"+@Model.Name;
-    string c = "le-simple-" + @Model.Position;
+    string id = Model.ElementId + "_" + Model.Position + "_" + Model.Name;
+    string c = "le-simple-" + Model.Position;
+
+
+    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+    string displayName = Regex.Replace(Model.Name, "((?<=[a-z])[A-Z])", " $1");
+
+    // split at " "
+    string[] wordList = displayName.Split(new char[0]);
+
+
+    for (int i = 0; i < wordList.Length; i++)
+    {
+        if (wordList[i].ToUpper() != wordList[i])
+        {
+            wordList[i] = wordList[i].ToLower();
+        }
+    }
+
+    displayName = String.Join(" ", wordList);
+
+    // Make first char uppercase
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+
+
 
 }
 
 
 
-<div id="@id" class="le-simple @id @c" title="@Model.Description" >
+<div id="@id" class="le-simple @id @c" title="@Model.Description">
 
     <div class="le-simple-info" style="display: none">
         <div id="Id">@Model.Id</div>
@@ -22,15 +47,15 @@
         <div id="XPath">@Model.XPath</div>
     </div>
 
-   
+
 
     <table>
         <tr>
             @if (Model.Position.Equals(LinkElementPostion.Source))
             {
                 <td class="le-simple-header-td">
-                    <div class="le-simple-header">
-                        @Model.Name
+                    <div class="le-simple-header" title="@displayName">
+                        @displayName
                     </div>
                     <div class="le-simple-path" value="@Model.XPath">
                         @Model.XPath.Replace("/", "/ ")
@@ -48,8 +73,8 @@
                     <span class="bx bx-previous bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
                 </td>
                 <td class="le-simple-header-td">
-                    <div class="le-simple-header">
-                         @Model.Name 
+                    <div class="le-simple-header" title="@displayName">
+                        @displayName
                     </div>
                     <div class="le-simple-path" value="@Model.XPath">
                         @Model.XPath.Replace("/", "/ ")
@@ -58,13 +83,12 @@
             }
         </tr>
     </table>
- 
-   
+
+
 </div>
 <style type="text/css">
     .bx-info {
         cursor: help !important;
-        border:none;
+        border: none;
     }
-
 </style>

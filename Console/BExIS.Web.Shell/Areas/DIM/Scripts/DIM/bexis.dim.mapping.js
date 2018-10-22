@@ -1235,6 +1235,7 @@ $(".prefilter").change(function (e) {
 
     //class for all simple elements
     var identiferSimple = ".le-simple-" + position;
+    console.log("identiferSimple : " + identiferSimple);
     //class for container
     var currentidentifer = ".le-container-content-" + position;
 
@@ -1281,11 +1282,11 @@ $(".prefilter").change(function (e) {
 function filter(elems, terms, types) {
 
     searchFilter = [];
-
+    var temp = [];
     if (terms.length > 0 && terms[0] !== '') {
         for (var j = 0; j < terms.length; j++) {
             terms[j] = terms[j].toLowerCase();
-            var temp = [];
+            
             for (var i = 0; i < elems.length; i++) {
 
                 var text = $(elems[i]).find('.le-simple-header').text().trim();
@@ -1327,8 +1328,38 @@ function filter(elems, terms, types) {
             }
         }
     }
+    //filter only types
+    else if (types.length > 0) {
+
+        for (var x = 0; x < types.length; x++) {
+
+            for (var i = 0; i < elems.length; i++) {
+
+                //var text = $(elems[i]).find('.le-simple-header').text().trim();
+                var type = $(elems[i]).find('.fa-info').attr("type").trim();
+                var id = $(elems[i]).attr("id");
+
+                var t = types[x].toLowerCase()
+
+                if (type.toLowerCase().indexOf(t) !== -1) {
+                    console.log("yeah");
+                    temp.push(id);
+                }
+            }
+        }
+
+        if (searchFilter.length === 0) {
+            searchFilter = temp.slice();
+        }
+
+        if (temp.length === 0) {
+            searchFilter.push("0");
+        }
+
+    }
     else {
         searchFilter = [];
+        searchFilter.push("0");
     }
 
     return searchFilter;
