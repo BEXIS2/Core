@@ -17,7 +17,7 @@
         DateOfVersion = 102,
         MetadataCreationDate = 103,
         MetadataLastModfied = 104,
-        DataFirstEntry = 105,
+        DataCreationDate = 105,
         DataLastModified = 106, // also for Dubline Core date 
 
         //Additional Dublin Core nodes starts at 200

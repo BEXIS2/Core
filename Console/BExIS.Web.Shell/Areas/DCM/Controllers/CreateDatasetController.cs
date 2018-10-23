@@ -13,6 +13,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -517,6 +518,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                             workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
+
+                            //check if modul exist
+                            int v = 1;
+                            if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
+
+                            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+
                         }
 
                         //set status
@@ -533,17 +541,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
+                        #region set system informations to the metadata if it is mapped
+
+
+
+                        #endregion
+
+
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-#region set releationships 
+                        #region set releationships 
 
 
                         //todo check if dim is active
                         // todo call to  a function in dim
                         setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
-#endregion
+                        #endregion
 
                         if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
@@ -592,12 +607,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
 
-#endregion create dataset
+            #endregion create dataset
 
             return -1;
         }
 
-#region Options
+        #region Options
 
         public ActionResult Cancel()
         {
@@ -719,11 +734,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
         }
 
-#endregion Options
+        #endregion Options
 
-#endregion Submit And Create And Finish And Cancel and Reset
+        #endregion Submit And Create And Finish And Cancel and Reset
 
-#region Helper
+        #region Helper
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
@@ -928,7 +943,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
                             ));
 
-#region delete relationships
+                    #region delete relationships
 
                     foreach (var relationshipType in relationshipTypes)
                     {
@@ -949,9 +964,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
 
                     }
-#endregion
+                    #endregion
 
-#region add relationship
+                    #region add relationship
 
                     foreach (XElement item in complexElements)
                     {
@@ -1017,7 +1032,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
 
-#endregion //add relationship
+                    #endregion //add relationship
                 }
             }
             catch (Exception ex)
@@ -1031,6 +1046,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-#endregion Helper
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        {
+
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
+        }
+
+        #endregion Helper
     }
 }

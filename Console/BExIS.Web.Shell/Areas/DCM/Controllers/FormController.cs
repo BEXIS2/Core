@@ -599,7 +599,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult StartMetadataEditor()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
-            ViewData["ShowOptional"] = false;
+            ViewData["ShowOptional"] = true;
 
             var Model = new MetadataEditorModel();
 
