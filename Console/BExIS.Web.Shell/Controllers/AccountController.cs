@@ -18,7 +18,6 @@ namespace BExIS.Web.Shell.Controllers
     {
         //
         // GET: /Account/ConfirmEmail
-
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
             var identityUserService = new IdentityUserService();
@@ -418,8 +417,35 @@ namespace BExIS.Web.Shell.Controllers
             {
                 identityUserService.Dispose();
             }
+        }
 
+        public async Task<ActionResult> Profile()
+        {
+            var identityUserService = new IdentityUserService();
+            var userManager = new UserManager();
 
+            try
+            {
+                long userId = 0;
+                long.TryParse(this.User.Identity.GetUserId(), out userId);
+
+                var user = identityUserService.FindById(userId);
+
+                if (string.IsNullOrEmpty(user.Token))
+                {
+                    await userManager.SetTokenAsync(user);
+                }
+
+                user = identityUserService.FindById(userId);
+                var token = await userManager.GetTokenAsync(user);
+
+                return View(model: token);
+            }
+            finally
+            {
+                identityUserService.Dispose();
+                userManager.Dispose();
+            }
         }
 
         #region Hilfsprogramme
