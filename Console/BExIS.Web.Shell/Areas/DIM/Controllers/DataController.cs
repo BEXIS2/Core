@@ -11,8 +11,8 @@ using System.Linq;
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
-using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -65,7 +65,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             try
             {
-
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 OutputDataManager ioOutputDataManager = new OutputDataManager();
 
                 DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
@@ -89,11 +89,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
                     }
 
+                    if (dt.TableName == "") dt.TableName = id + "_data";
+
+
                     DatasetModel model = new DatasetModel();
                     model.DataTable = dt;
 
+
                     var response = Request.CreateResponse();
                     response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
 
 
                     //set headers on the "response"
