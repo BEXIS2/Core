@@ -11,6 +11,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
+using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
@@ -388,6 +389,10 @@ namespace BExIS.Dlm.Services.Data
                     // if any problem was detected during the commit, an exception will be thrown!
                     if ((entity.DataStructure is StructuredDataStructure))
                         dropMaterializedView(datasetId);
+
+                    string message = string.Format("Delete dataset {0}.", datasetId);
+                    LoggerFactory.LogCustom(message);
+
                     return (true);
                 }
                 catch (Exception ex)
@@ -562,6 +567,10 @@ namespace BExIS.Dlm.Services.Data
             }
             // if any problem was detected during the commit, an exception will be thrown!
             dropMaterializedView(datasetId);
+
+            string message = string.Format("Purge dataset {0}.", datasetId);
+            LoggerFactory.LogCustom(message);
+
             return (true);
         }
 
