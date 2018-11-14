@@ -1,8 +1,13 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -31,6 +36,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
         // GET: api/data
+        [BExISApiAuthorize]
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -57,64 +63,97 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// logical operators, nesting, precedence, and SOME functions should be supported.
         /// /api/data/6?header=TimeUTC,D8CO1_1&filter=TimeUTC<5706000
         /// </remarks>
+        [BExISApiAuthorize]
         public HttpResponseMessage Get(int id)
         {
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string token = this.Request.Headers.Authorization?.Parameter;
 
             DatasetManager datasetManager = new DatasetManager();
+            UserManager userManager = new UserManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
             try
             {
-                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                OutputDataManager ioOutputDataManager = new OutputDataManager();
+                User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
-                DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
-
-                string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
-
-                // check the data sturcture type ...
-                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (user != null)
                 {
-                    // apply selection and projection
-                    DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id);
 
-                    if (!string.IsNullOrEmpty(selection))
+                    if (entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
                     {
-                        dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                    }
+                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                        OutputDataManager ioOutputDataManager = new OutputDataManager();
 
-                    if (!string.IsNullOrEmpty(projection))
+                        DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
+
+                        string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
+
+                        // check the data sturcture type ...
+                        if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                        {
+                            // apply selection and projection
+                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id);
+
+                            if (!string.IsNullOrEmpty(selection))
+                            {
+                                dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                            }
+
+                            if (!string.IsNullOrEmpty(projection))
+                            {
+                                // make the header names upper case to make them case insensitive
+                                dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                            }
+
+                            if (dt.TableName == "") dt.TableName = id + "_data";
+
+
+                            DatasetModel model = new DatasetModel();
+                            model.DataTable = dt;
+
+
+                            var response = Request.CreateResponse();
+                            response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+
+
+                            //set headers on the "response"
+                            return response;
+
+                            //return model;
+
+
+                        }
+                        else
+                        {
+                            return Request.CreateResponse();
+                        }
+                    }
+                    else // has rights?
                     {
-                        // make the header names upper case to make them case insensitive
-                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                        var request = Request.CreateResponse();
+                        request.Content = new StringContent("User has no read right.");
+
+                        return request;
                     }
-
-                    if (dt.TableName == "") dt.TableName = id + "_data";
-
-
-                    DatasetModel model = new DatasetModel();
-                    model.DataTable = dt;
-
-
-                    var response = Request.CreateResponse();
-                    response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-
-
-                    //set headers on the "response"
-                    return response;
-
-                    //return model;
-
                 }
                 else
                 {
-                    return Request.CreateResponse();
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("User is not available.");
+
+                    return request;
                 }
+
             }
             finally
             {
                 datasetManager.Dispose();
+                userManager.Dispose();
+                entityPermissionManager.Dispose();
+
             }
         }
 

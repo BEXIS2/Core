@@ -12,7 +12,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
     public class StructuresController : ApiController
     {
         // GET: api/Structures
-        [BExISApiAuthorize]
+       
         public IEnumerable<long> Get()
         {
             var dataStructureIds = this.GetUnitOfWork().GetReadOnlyRepository<DataStructure>().Query().Select(d => d.Id).ToList();
