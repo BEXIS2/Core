@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
+using System.Web.Http.Description;
 using System.Xml;
 
 namespace BExIS.Modules.Dim.UI.Controllers
@@ -98,16 +99,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         // POST: api/Metadata
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Post([FromBody]string value)
         {
         }
 
         // PUT: api/Metadata/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Put(int id, [FromBody]string value)
         {
         }
 
         // DELETE: api/Metadata/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Delete(int id)
         {
         }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -34,18 +35,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         // POST: api/Structures
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Post([FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
         // PUT: api/Structures/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Put(int id, [FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
         // DELETE: api/Structures/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);

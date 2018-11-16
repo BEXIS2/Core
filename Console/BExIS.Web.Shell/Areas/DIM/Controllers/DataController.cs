@@ -18,6 +18,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -36,6 +37,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
         // GET: api/data
+        /// <summary>
+        /// Get a list of all dataset ids
+        /// </summary>
+        /// <returns></returns>
         [BExISApiAuthorize]
         public IEnumerable<long> Get()
         {
@@ -58,13 +63,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         /// <returns></returns>
         /// <remarks> The action accepts the following additional parameters via the query string
-        /// 1: projection: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
-        /// 2: selection: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
-        /// /api/data/6?header=TimeUTC,D8CO1_1&filter=TimeUTC<5706000
+        /// /api/data/6?header=TimeUTC,D8CO1_1&filter=TimeUTC=5706000
         /// </remarks>
         [BExISApiAuthorize]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(int id, [FromUri] string header = null, [FromUri] string filter = null)
         {
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
@@ -93,8 +98,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // check the data sturcture type ...
                         if (version.Dataset.DataStructure.Self is StructuredDataStructure)
                         {
+                            //FilterExpression filter = null;
+                            //OrderByExpression orderBy = null;
+
                             // apply selection and projection
-                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id);
+                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, 0);
+                            dt.Strip();
 
                             if (!string.IsNullOrEmpty(selection))
                             {
@@ -157,18 +166,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        // GET: api/data/5?projection=<projection>
-        // If the above GET function fails to work, then indivial actions for each case: projection, selection, etc.
-        // public string Get(int id, string projection)
-        //{
-        //    return "value";
-        //}
-
         // POST: api/data
         /// <summary>
         /// Create a new dataset!!!
         /// </summary>
         /// <param name="value"></param>
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Post([FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
@@ -180,6 +183,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Put(int id, [FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
@@ -190,6 +194,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Deletes an existing dataset
         /// </summary>
         /// <param name="id"></param>
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
