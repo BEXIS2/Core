@@ -21,30 +21,51 @@ namespace BExIS.App.Bootstrap.Attributes
             {
                 if (actionContext.Request.RequestUri.Scheme != Uri.UriSchemeHttps)
                 {
-                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
-                    {
-                        ReasonPhrase = "HTTPS Required"
-                    };
+                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                    return;
                 }
-                else
-                {
-                    if(actionContext.Request.Headers.Authorization == null)
-                    {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
-                        {
-                            ReasonPhrase = "Authentication Required"
-                        };
-                    }
-                    else
-                    {
-                        var token = actionContext.Request.Headers.Authorization?.ToString().Substring("Bearer ".Length).Trim();
-                        // resolve the token to the corresponding user
-                        var users = userManager.Users.Where(u => u.Token == token);
 
-                        if (users == null || users.Count() != 1)
-                        {
-                            actionContext.Response = new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.Forbidden, ReasonPhrase = "Access Denied" };
-                        }
+                var areaName = "Shell";
+                try
+                {
+                    areaName = actionContext.ControllerContext.RouteData.Route.DataTokens["area"] as string;
+                }
+                catch
+                {
+                    // ignored
+                }
+                var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+                var actionName = actionContext.ActionDescriptor.ActionName;
+                var operation = operationManager.Find(areaName, controllerName, "*");
+                if (operation == null)
+                {
+                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                    return;
+                }
+
+                var feature = operation.Feature;
+                if (feature != null)
+                {
+                    if (actionContext.Request.Headers.Authorization == null)
+                    {
+                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                        return;
+                    }
+
+                    var token = actionContext.Request.Headers.Authorization?.ToString().Substring("Bearer ".Length).Trim();
+                    // resolve the token to the corresponding user
+                    var users = userManager.Users.Where(u => u.Token == token);
+
+                    if (users == null || users.Count() != 1)
+                    {
+                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                        return;
+                    }
+
+                    if (!featurePermissionManager.HasAccess(users.Single().Id, feature.Id))
+                    {
+                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                        return;
                     }
                 }
             }
