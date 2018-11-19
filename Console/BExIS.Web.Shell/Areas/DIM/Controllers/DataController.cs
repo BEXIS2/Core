@@ -25,11 +25,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
     /// either of XML, JSON, or CSV formats.
+    /// </summary>
+    /// <remarks>
+    /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
+    /// either of XML, JSON, or CSV formats.
     /// The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
     /// CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
     /// The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
     /// text/xml and text/json return XML and JSON content accordingly.
-    /// </summary>
+    /// </remarks>
     public class DataController : ApiController
     {
 
@@ -40,7 +44,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <summary>
         /// Get a list of all dataset ids
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of ids</returns>
         [BExISApiAuthorize]
         public IEnumerable<long> Get()
         {
@@ -66,7 +70,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
         /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
-        /// /api/data/6?header=TimeUTC,D8CO1_1&filter=TimeUTC=5706000
         /// </remarks>
         [BExISApiAuthorize]
         public HttpResponseMessage Get(int id, [FromUri] string header = null, [FromUri] string filter = null)

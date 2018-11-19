@@ -13,11 +13,22 @@ using System.Xml;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
+    /// <summary>
+    /// This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+    /// </summary>
     public class MetadataController : ApiController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         // GET: api/Metadata
+        /// <summary>
+        /// With the Get function you get an overview of the exiting datasets from which you can load metadata.
+        /// </summary>
+        /// <remarks>
+        /// With the Get function you get an overview of the exiting datasets from which you can load metadata. 
+        /// The format indicates the possible conversions. Without format the system internal metadata xml document is loaded.
+        /// </remarks>
+        /// <returns>List of MetadataViewObject</returns>
         public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -51,6 +62,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET: api/Metadata/5
         // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
+
+        /// <summary>
+        /// This Get function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
+        /// </summary>
+        /// <param name="id">Dataset Id</param>
+        /// <returns>Xml Document</returns>
         public HttpResponseMessage Get(int id)
         {
             DatasetManager dm = new DatasetManager();
