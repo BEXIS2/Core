@@ -121,12 +121,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region API
 
                 operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("metadata"));
-                if (operation == null) operationManager.Create("DIM", "Metadata", "*", API);
+                    o.Module.ToLower().Equals("api") && o.Action.Equals("*") && o.Controller.ToLower().Equals("metadata"));
+                if (operation == null) operationManager.Create("API", "Metadata", "*", API);
 
                 operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("data"));
-                if (operation == null) operationManager.Create("DIM", "Data", "*", API);
+                    o.Module.ToLower().Equals("api") && o.Action.Equals("*") && o.Controller.ToLower().Equals("data"));
+                if (operation == null) operationManager.Create("API", "Data", "*", API);
 
 
                 #endregion

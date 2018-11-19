@@ -99,8 +99,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (api == null)
                     api = featureManager.Create("API", "API", dataPlanning);
 
-                if (!operationManager.Exists("RPM", "Structures", "*"))
-                    operationManager.Create("RPM", "Structures", "*", api);
+                if (!operationManager.Exists("API", "Structures", "*"))
+                    operationManager.Create("API", "Structures", "*", api);
 
                 //set api public
                 featurePermissionManager.Create(null, api.Id, Security.Entities.Authorization.PermissionType.Grant);
