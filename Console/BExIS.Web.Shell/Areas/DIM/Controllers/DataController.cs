@@ -84,6 +84,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             try
             {
+
+                if (String.IsNullOrEmpty(token))
+                {
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("Bearer token not exist.");
+
+                    return request;
+
+                }
+
                 User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
                 if (user != null)
@@ -105,7 +115,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //OrderByExpression orderBy = null;
 
                             // apply selection and projection
-                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, 0);
+                            long count = datasetManager.RowCount(id);
+                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
                             dt.Strip();
 
                             if (!string.IsNullOrEmpty(selection))

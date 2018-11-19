@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using System;
@@ -27,6 +28,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             SubmissionManager submissionManager = new SubmissionManager();
             FeatureManager featureManager = new FeatureManager();
+            FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
 
             try
@@ -51,21 +53,37 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
                 if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
 
+                Feature API = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("API") && f.Parent.Equals(DataDissemination));
+                if (API == null) API = featureManager.Create("API", "API", DataDissemination);
 
 
+                //set api public
+                 featurePermissionManager.Create(null, API.Id, Security.Entities.Authorization.PermissionType.Grant);
+
+                Operation operation = null;
                 #region Help Workflow
 
-                operationManager.Create("DIM", "Help", "*");
+                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
+                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("help"));
+
+                if (operation == null) operationManager.Create("DIM", "Help", "*");
 
                 #endregion
 
                 #region Admin Workflow
 
-                operationManager.Create("Dim", "Admin", "*", DataDissemination);
+                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
+                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("admin"));
+                if (operation == null) operationManager.Create("DIM", "Admin", "*", DataDissemination);
 
-                operationManager.Create("Dim", "Submission", "*", Submission);
-                operationManager.Create("Dim", "Mapping", "*", Mapping);
+                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
+                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("submission"));
+                if (operation == null) operationManager.Create("DIM", "Submission", "*", Submission);
 
+
+                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
+                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("mapping"));
+                if (operation == null) operationManager.Create("DIM", "Mapping", "*", Mapping);
 
                 #endregion
 
@@ -100,6 +118,19 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #endregion
 
+                #region API
+
+                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
+                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("metadata"));
+                if (operation == null) operationManager.Create("DIM", "Metadata", "*", API);
+
+                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
+                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("data"));
+                if (operation == null) operationManager.Create("DIM", "Data", "*", API);
+
+
+                #endregion
+
                 #endregion
 
                 #region EXPORT
@@ -125,6 +156,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 featureManager.Dispose();
                 operationManager.Dispose();
+                featurePermissionManager.Dispose();
             }
 
             //ImportPartyTypes();
