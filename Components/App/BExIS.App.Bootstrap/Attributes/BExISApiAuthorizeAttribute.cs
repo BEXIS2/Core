@@ -25,15 +25,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     return;
                 }
 
-                var areaName = "Shell";
-                try
-                {
-                    areaName = actionContext.ControllerContext.RouteData.Route.DataTokens["area"] as string;
-                }
-                catch
-                {
-                    // ignored
-                }
+                var areaName = "Api";
                 var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                 var actionName = actionContext.ActionDescriptor.ActionName;
                 var operation = operationManager.Find(areaName, controllerName, "*");
@@ -44,7 +36,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 }
 
                 var feature = operation.Feature;
-                if (feature != null)
+                if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
                 {
                     if (actionContext.Request.Headers.Authorization == null)
                     {
