@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers;
@@ -29,6 +30,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// The format indicates the possible conversions. Without format the system internal metadata xml document is loaded.
         /// </remarks>
         /// <returns>List of MetadataViewObject</returns>
+        [BExISApiAuthorize]
         public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -68,6 +70,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <param name="id">Dataset Id</param>
         /// <returns>Xml Document</returns>
+        [BExISApiAuthorize]
         public HttpResponseMessage Get(int id)
         {
             DatasetManager dm = new DatasetManager();
@@ -117,18 +120,21 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // POST: api/Metadata
         [ApiExplorerSettings(IgnoreApi = true)]
+        [BExISApiAuthorize]
         public void Post([FromBody]string value)
         {
         }
 
         // PUT: api/Metadata/5
         [ApiExplorerSettings(IgnoreApi = true)]
+        [BExISApiAuthorize]
         public void Put(int id, [FromBody]string value)
         {
         }
 
         // DELETE: api/Metadata/5
         [ApiExplorerSettings(IgnoreApi = true)]
+        [BExISApiAuthorize]
         public void Delete(int id)
         {
         }

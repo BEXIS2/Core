@@ -84,6 +84,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             try
             {
+
+                if (String.IsNullOrEmpty(token))
+                {
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("Bearer token not exist.");
+
+                    return request;
+
+                }
+
                 User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
                 if (user != null)
