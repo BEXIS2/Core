@@ -115,7 +115,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //OrderByExpression orderBy = null;
 
                             // apply selection and projection
-                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, 0);
+                            long count = datasetManager.RowCount(id);
+                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
                             dt.Strip();
 
                             if (!string.IsNullOrEmpty(selection))
