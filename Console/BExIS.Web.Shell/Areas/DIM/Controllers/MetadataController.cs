@@ -71,7 +71,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         /// <returns>Xml Document</returns>
         [BExISApiAuthorize]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(int id, [FromUri] string format = null)
         {
             DatasetManager dm = new DatasetManager();
 

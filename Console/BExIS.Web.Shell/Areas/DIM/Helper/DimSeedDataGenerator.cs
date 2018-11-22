@@ -58,32 +58,24 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
 
                 //set api public
-                 featurePermissionManager.Create(null, API.Id, Security.Entities.Authorization.PermissionType.Grant);
+                featurePermissionManager.Create(null, API.Id, Security.Entities.Authorization.PermissionType.Grant);
 
                 Operation operation = null;
                 #region Help Workflow
 
-                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("help"));
 
-                if (operation == null) operationManager.Create("DIM", "Help", "*");
+                if (!operationManager.Exists("dim", "help", "*")) operationManager.Create("DIM", "Help", "*");
 
                 #endregion
 
                 #region Admin Workflow
 
-                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("admin"));
-                if (operation == null) operationManager.Create("DIM", "Admin", "*", DataDissemination);
+                if (!operationManager.Exists("dim", "admin", "*")) operationManager.Create("DIM", "Admin", "*", DataDissemination);
 
-                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("submission"));
-                if (operation == null) operationManager.Create("DIM", "Submission", "*", Submission);
+                if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*", Submission);
 
 
-                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("dim") && o.Action.Equals("*") && o.Controller.ToLower().Equals("mapping"));
-                if (operation == null) operationManager.Create("DIM", "Mapping", "*", Mapping);
+                if (!operationManager.Exists("dim", "mapping", "*")) operationManager.Create("DIM", "Mapping", "*", Mapping);
 
                 #endregion
 
@@ -120,13 +112,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #region API
 
-                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("api") && o.Action.Equals("*") && o.Controller.ToLower().Equals("metadata"));
-                if (operation == null) operationManager.Create("API", "Metadata", "*", API);
+                if (!operationManager.Exists("api", "metadata", "*")) operationManager.Create("API", "Metadata", "*", API);
 
-                operation = operationManager.OperationRepository.Get().FirstOrDefault(o =>
-                    o.Module.ToLower().Equals("api") && o.Action.Equals("*") && o.Controller.ToLower().Equals("data"));
-                if (operation == null) operationManager.Create("API", "Data", "*", API);
+                if (!operationManager.Exists("api", "data", "*")) operationManager.Create("API", "Data", "*", API);
 
 
                 #endregion

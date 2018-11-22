@@ -265,7 +265,7 @@ namespace BExIS.Web.Shell
 
         private static string GetXmlCommentsPath()
         {
-            string path = string.Format(@"{0}\bin\api_documentation.xml", System.AppDomain.CurrentDomain.BaseDirectory);
+            string path = string.Format(@"{0}\App_Data\api_documentation.xml", System.AppDomain.CurrentDomain.BaseDirectory);
 
             return path;
         }

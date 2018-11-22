@@ -24,6 +24,6 @@ INSERT INTO public.operations(
 --Select * from public.operations;
 
 -- add token to users table
-ALTER TABLE public.users ADD token character varying "";
+ALTER TABLE public.users ADD token character varying;
 
 --COMMIT;
