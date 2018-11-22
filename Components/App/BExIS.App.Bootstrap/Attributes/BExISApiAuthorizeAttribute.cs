@@ -19,11 +19,12 @@ namespace BExIS.App.Bootstrap.Attributes
 
             try
             {
-                if (actionContext.Request.RequestUri.Scheme != Uri.UriSchemeHttps)
-                {
-                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                    return;
-                }
+                // Check for HTTPS
+                //if (actionContext.Request.RequestUri.Scheme != Uri.UriSchemeHttps)
+                //{
+                //    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                //    return;
+                //}
 
                 var areaName = "Api";
                 var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
