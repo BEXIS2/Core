@@ -28,15 +28,6 @@ $(document)
 
     });
 
-/**
- * Source or Target side
- * has simple and complex LinkElement lists
- * this action is called when 
- * the arrow next to teh name is clicked
- * toggle between hide and show
- * @param {} e 
- * @returns {} 
- */
 function iconClick(e) {
     //console.log("CLICK");
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
@@ -161,7 +152,6 @@ function enableAddicons(key) {
 
 }
 
-
 function updateSaveOptionOnNewContainer() {
     //alert("updateSaveOptionOnNewContainer");
     if ($("#emptySourceContainer").length === 0 && $("#emptyTargetContainer").length === 0) {
@@ -189,7 +179,7 @@ function deleteComplexMappingElement(e) {
         enableAddicons("Source");
 
 
-        if ($("#emptySourceContainer").length !== 0 || $("#emptyTargetContainer").length !== 0) {
+        if ($("#emptySourceContainer").length  !==  0 || $("#emptyTargetContainer").length  !==  0) {
             $("#newMapContainer .mapping-settings").hide();
         }
     }
@@ -203,7 +193,7 @@ function deleteComplexMappingElement(e) {
         enableAddicons("Target");
 
 
-        if ($("#emptySourceContainer").length !== 0 || $("#emptyTargetContainer").length !== 0) {
+        if ($("#emptySourceContainer").length  !==  0 || $("#emptyTargetContainer").length  !==  0) {
             $("#newMapContainer .mapping-settings").hide();
         }
     }
@@ -316,7 +306,7 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
     var ruleId = $(rule).attr("id");
     ////console.log(ruleId);
 
-    if (ruleId != null) {
+    if (ruleId !== null && ruleId !== undefined) {
         trId = ruleId.split("_")[0];
     }
    
@@ -380,7 +370,7 @@ function saveMapping(e, create) {
     for (var j = 0; j < connections.length; j++) {
         //console.log(connections[j].id + "===" + parent.id);
 
-        if (connections[j].id == parent.id) {
+        if (connections[j].id === parent.id) {
             //console.log("-- >get connection");
             parentMapping = connections[j];
             break;
@@ -388,7 +378,7 @@ function saveMapping(e, create) {
 
     }
 
-    if (parentMapping != null) {
+    if (parentMapping  !==  null) {
 
         ////console.log("save mapping ");
         ////console.log(parentMapping.connections.length);
@@ -566,23 +556,29 @@ function removeParentConnection(conn, parentId) {
     for (var i = 0; i < connections.length; i++) {
         var existParent = connections[i];
         var idx;
+        console.log("parentId: " + parentId);
         if (existParent.id === parentId) {
 
-            for (var j = 0; j < existParent.connections.length; i++) {
-                if (existParent.connections[i] == conn) {
+            for (var j = 0; j < existParent.connections.length; j++) {
+                if (existParent.connections[i] === conn) {
                     idx = i;
+                    console.log("i: " + i);
                     break;
                 }
             }
 
-            if (idx != -1) {
-                //console.log("remove");
+            console.log("idx: " + idx);
+
+            if (idx  !== -1) {
+                console.log(existParent.connections);
                 existParent.connections.splice(idx, 1);
-                //console.log(existParent.connections);
+                console.log(existParent.connections);
                 break;
             }
         }
     }
+
+    console.log("after remove parent");
 
 }
 
@@ -593,7 +589,8 @@ function updateConnections(conn, remove, parentId, jsPlumbInstance) {
         updateParentConnection(conn, parentId, jsPlumbInstance);
 
     } else {
-
+        console.log("remove");
+        console.log(parentId);
         removeParentConnection(conn, parentId);
     }
 
@@ -682,14 +679,9 @@ function getInstance(parentid) {
 /**
  * Call this function when the connections need to set new because of postion
  * arrangements of the containers
- * @returns {} 
+ *
  */
 function reloadAllConnections() {
-
-    //jsPlumb.repaintEverything();
-
-    console.log("RELOAD CONNECTIONS");
-    console.log(connections);
 
     // go to each parent
     for (var i = 0; i < connections.length; i++) {
@@ -743,7 +735,7 @@ function initJSPLUMB(parentid) {
 
             instance.bind("connectionDetached",
                 function(info, originalEvent) {
-                    ////console.log("connectionDetached");
+                    console.log("connectionDetached");
 
                     updateConnections(info.connection, true, parentid, instance);
                 });
@@ -830,6 +822,7 @@ function changeViewOfTransformationRule(conn) {
     var rule = findRuleFromConn(conn);
 
     $(rule).find(".toogle-icon").trigger("click");
+
 
     //setTimeout(function () {
     //    var ruleContent = $(rule).find(".mapping-container-transformation-rule-content")[0];
@@ -1072,7 +1065,7 @@ function countAllDeletedConnections(parentId) {
 
         if (!isIn) {
             ////console.log(newConn);
-            if (newConn != null) {
+            if (newConn  !== null) {
                 allDeletedConnections.push(newConn);
             }
         }
@@ -1089,13 +1082,13 @@ function updateSaveOptions(parentId, activate) {
 
     var saveBt = $("#" + parentId).find(".saveButton")[0];
 
-    if (true) {
+    //if (true) {
         $(saveBt).removeAttr("disabled");
         $(saveBt).removeClass("bx-disabled");
-    } else {
-        $(saveBt).attr("disabled", "disabled");
-        $(saveBt).addClass("bx-disabled");
-    }
+    //} else {
+    //    $(saveBt).attr("disabled", "disabled");
+    //    $(saveBt).addClass("bx-disabled");
+    //}
 }
 
 
@@ -1104,13 +1097,25 @@ $(".mapping-container").dblclick(function () {
     var parent = $(this);
     var parentid = $(parent).attr("id");
 
-    if (parentid != "mapping_container_0") {
-        $($(parent).find(".mapping-container-expand")).toggle();
-        $($(parent).find(".mapping-container-collapse")).toggle();
+    if (parentid !== "mapping_container_0") {
 
-        $($(parent).find(".jtk-overlay")).toggle();
+        
 
-        reloadAllConnections();
+        $($("#" + parentid).find(".mapping-container-expand")).toggle();
+        $($("#" + parentid).find(".mapping-container-collapse")).toggle();
+        $($("#" + parentid).find(".jtk-overlay")).toggle();
+        $($("#" + parentid).find(".jtk-connector")).toggle();
+        $($("#" + parentid).find(".jtk-endpoint")).toggle();
+
+        setTimeout(reloadAllConnections, 100);
+
+        
     }
     
 })
+
+function toggleArrows() {
+
+    $(".jtk-endpoint").toggle();
+    $(".jtk-connector").toggle();
+}

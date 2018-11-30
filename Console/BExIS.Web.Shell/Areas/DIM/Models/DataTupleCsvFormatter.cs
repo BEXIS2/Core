@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dim.UI.Models
 {
     // used: http://www.asp.net/web-api/overview/formats-and-model-binding/media-formatters
     // see: App_Start folder -> WebApiConfi.cs
-    public class DatasetModelCsvFormatter: BufferedMediaTypeFormatter
+    public class DatasetModelCsvFormatter : BufferedMediaTypeFormatter
     {
         public DatasetModelCsvFormatter()
         {
@@ -85,9 +85,9 @@ namespace BExIS.Modules.Dim.UI.Models
         {
             string columnStr = "";
             List<string> cols = new List<string>();
-            foreach (var item in columns)
+            foreach (DataColumn item in columns)
             {
-                cols.Add(item.ToString());
+                cols.Add(item.Caption.ToString());
             }
             columnStr = string.Join(",", cols);
             writer.WriteLine(columnStr);

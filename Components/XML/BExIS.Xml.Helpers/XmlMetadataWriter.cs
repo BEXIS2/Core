@@ -316,6 +316,48 @@ namespace BExIS.Xml.Helpers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="metadataXml"></param>
+        /// <param name="xpath"></param>
+        /// <returns></returns>
+        public XDocument Clean(XDocument metadataXml, string xpath)
+        {
+            this._tempXDoc = metadataXml;
+
+            if (this._tempXDoc.XPathSelectElement(xpath) != null)
+            {
+                XElement element = this._tempXDoc.XPathSelectElement(xpath);
+
+                element = clean(element);
+            }
+
+            return metadataXml;
+        }
+
+
+        private XElement clean(XElement element)
+        {
+            if (element != null)
+            {
+                foreach (XElement e in element.Elements())
+                {
+                    //some stuff here
+
+                    if (!e.HasElements && e.Value != null) e.Value = String.Empty;
+                    else clean(e);
+
+                }
+
+                return element;
+
+            }
+
+            return null;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="metadataXml"></param>

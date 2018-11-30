@@ -1,0 +1,105 @@
+﻿@model List<PartyRelationship>
+@using BExIS.Dlm.Entities.Party
+@using BExIS.Security.Entities.Authorization;
+@using BExIS.Modules.Bam.UI.Helpers;
+@{
+    //this=the source party
+    var thisParty = (Party)ViewBag.Party;
+    int counter = 0;
+}
+<ul>
+    @foreach (PartyTypePair typePair in Helper.GetSystemTypePairs(thisParty.PartyType.Id))
+    {
+        <li style="text-align:left">
+            @{
+                var existedRelationships = Model.Where(cc => cc.PartyTypePair.Id == typePair.Id);
+            }
+            @* <input type="checkbox" partyTypepairId="@typePair.Id" class="chkpartyTypePair" @(Model.Any() ? "checked" : "") /><label id="lblPartyName">@typePair.Title</label>&nbsp;<img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party name" />&nbsp;*@
+            <label id="lblPartyName">@typePair.Title</label>
+            <ul>
+                <li style="text-align:left">
+                    @foreach (Party party in typePair.TargetPartyType.Parties)
+                    {
+                       
+                        var existedRelationship = Model.FirstOrDefault(cc => cc.TargetParty.Id == party.Id);
+                        RightType[] rightTypes;
+                        if (existedRelationship != null)
+                        {
+                            rightTypes = Helper.GetRightTypes(existedRelationship.Permission);
+
+                        }
+                        else
+                        { rightTypes = Helper.GetRightTypes(typePair.PermissionTemplate); }
+                        <input type="checkbox" class="systemRelationshipParties" onclick="addRelationship(this,@counter)" partyId="@party.Id" partyTypepairId="@typePair.Id" @(existedRelationship == null ? "" : "checked") />
+
+
+                        <strong>@party.Name</strong>
+                        <div style="padding-left: 20px;">
+                            @foreach (RightType entity in Enum.GetValues(typeof(RightType)))
+                            {
+                                <input type="checkbox" permissionValue="@((int)entity)" onclick="changePermission(@counter)" class="permissionCheckbox_@counter" partyId="@party.Id" partyTypepairId="@typePair.Id" @(rightTypes.Contains(entity) ? "checked" : "") /> @entity
+                            }
+
+                            <input type="hidden" name="systemPartyRelationships[@counter].Id" id="existedRelationship_@counter" value="@(existedRelationship==null?long.MaxValue:existedRelationship.Id)" />
+                            <input type="hidden" name="systemPartyRelationships[@counter].Permission" id="systemPermission_@counter" value="@(existedRelationship==null?0:existedRelationship.Permission)" />
+                            <input type="hidden" name="systemPartyRelationships[@counter].PartyTypePair.Id" value="@(typePair==null?0:typePair.Id)" />
+                            <input type="hidden" name="systemPartyRelationships[@counter].TargetParty.Id" value="@party.Id" />
+                        </div>
+                        counter += 1;
+                    }
+                </li>
+            </ul>
+        </li>
+                }
+</ul>
+<script>
+    counter = 0;
+    if (createMode)
+        $(".systemRelationshipParties").attr("checked", "true");
+    function changePermission(index) {
+        //change sum of the permissions enum
+        permissionSum = 0;
+        $('.permissionCheckbox_' + index + ':checked').each(function (key, value) {
+            permissionSum += parseInt($(value).attr("permissionValue"));
+        });
+        $('#systemPermission_'+index).val(permissionSum);
+    }
+
+    function addRelationship(thisObj, index) {
+        changePermission(index);
+        //parse data
+        var targetPartyCheckbox = $(thisObj);
+        id = 0;
+        if (targetPartyCheckbox.attr('partyId'))
+            id = parseInt(targetPartyCheckbox.attr('partyId'))
+        //debugger
+        if (targetPartyCheckbox.is(":checked")) {
+            //remove '#' if it has to send it to the server
+            if ($("#existedRelationship_" + index).length) {
+                existedRelationshipVal = $("#existedRelationship_" + index).val();
+                if (existedRelationshipVal == '@long.MaxValue')
+                    $("#existedRelationship_" + index).val("0");
+                else
+                    $("#existedRelationship_" + index).val(existedRelationshipVal.replace("-",""));
+            }
+        }
+        else{
+            //rename targetpartid element to not send it to the server
+            if ($("#existedRelationship_" + index).length) {
+                existedRelationshipVal = $("#existedRelationship_" + index).val();
+                if (existedRelationshipVal == '0')
+                    $("#existedRelationship_" + index).val("@long.MaxValue");
+                else
+                    $("#existedRelationship_" + index).val("-" + existedRelationshipVal);
+
+            }
+    }
+        //  $("#hiddenData").append()
+        //'<input name="partyRelationships[0].Id" value="0" />'
+        //'<input name="partyRelationships[0].Title" value="testrel" />'
+    }
+    
+</script>
+<div id="hiddenData">
+
+</div>

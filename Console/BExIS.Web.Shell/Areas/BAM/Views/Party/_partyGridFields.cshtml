@@ -1,0 +1,59 @@
+﻿@model List<BExIS.Dlm.Entities.Party.PartyCustomGridColumns>
+
+@{
+        String partyTypeTitle = "";
+        if (Model.Any()) {
+            partyTypeTitle = Model.First().CustomAttribute == null ? Model.First().TypePair.SourcePartyType.Title : Model.First().CustomAttribute.PartyType.Title;
+        }
+    }
+
+    <div>
+        <div style="min-height:200px;width:50%;display:inline-block;vertical-align:top">
+            <div style="background-color:whitesmoke">Custom attributes</div>
+            @foreach (BExIS.Dlm.Entities.Party.PartyCustomGridColumns partyCustomGridColumns in Model.Where(cc => cc.TypePair == null))
+                {
+                <div style="padding-left:15px;">
+                    <div style="display:inline-block"><input type="checkbox" name="@partyCustomGridColumns.Id" @(partyCustomGridColumns.Enable?"checked":"") /></div><div style="display:inline-block">@Html.DisplayFor(cc => partyCustomGridColumns.CustomAttribute.DisplayName)</div>
+                </div>
+            }
+        </div><div style="min-height:200px;width:49%;display:inline-block;vertical-align:top">
+            <div style="background-color:whitesmoke">Party type pairs</div>
+            @foreach (BExIS.Dlm.Entities.Party.PartyCustomGridColumns partyCustomGridColumns in Model.Where(cc => cc.CustomAttribute == null))
+            {
+                <div style="padding-left:15px;">
+                    <div style="display:inline-block"><input type="checkbox" name="@partyCustomGridColumns.Id"  @(partyCustomGridColumns.Enable?"checked":"") /></div><div style="display:inline-block">@Html.DisplayFor(cc => partyCustomGridColumns.TypePair.Title)</div>
+                </div>
+            }
+        </div>
+    </div>
+    <div id="" class="bx-footer right">
+        <button type="submit" value="Save" id="savePartyRelationship" class="bx-button action" >Save</button>
+        <button type="button" value="Cancel" name="cancel" class="bx-button action" onclick="$('#PartyGridCustomGridColumnsWindow').data('tWindow').close();">Cancel</button>
+    </div>
+@*}*@
+
+<script>
+    $("#savePartyRelationship").bind("click", function () {
+        gridColumns = [];
+        $("input[type=checkbox]").each(function (indx, el) {
+            gridColumns.push(
+           {
+               "Id":$(el).attr("name"),
+               "CustomAttribute": null,
+               "TypePair": null,
+               "UserId": 0,
+               "Enable": $(el).prop('checked')
+        })
+        })
+       
+        $.ajax({
+            type: "POST",
+            url: "/BAM/Party/customizeGridColumns",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(gridColumns),
+            success: function (data) {
+                window.location.href = window.location.pathname + "?" + $.param({ 'partyTypeTitle': '@partyTypeTitle' })
+            }
+        });
+    });
+</script>

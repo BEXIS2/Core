@@ -15,12 +15,14 @@ namespace BExIS.IO.Transform.Input
 {
     public class EasyUploadExcelReader : ExcelReader
     {
-        public DataTuple[] ReadFile(Stream file, string fileName, EasyUploadFileReaderInfo fri, StructuredDataStructure sds, long datasetId, String worksheetUri)
+        public EasyUploadExcelReader(StructuredDataStructure structuredDatastructure, EasyUploadFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
+        {
+        }
+
+        public DataTuple[] ReadFile(Stream file, string fileName, EasyUploadFileReaderInfo fri, long datasetId, String worksheetUri)
         {
             this.FileStream = file;
             this.FileName = fileName;
-
-            this.StructuredDataStructure = sds;
             this.Info = fri;
             this.DatasetId = datasetId;
 

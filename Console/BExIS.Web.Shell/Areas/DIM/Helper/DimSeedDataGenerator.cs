@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using System;
@@ -17,15 +18,17 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
-    public class DimSeedDataGenerator : IDisposable
+    public class DimSeedDataGenerator : IModuleSeedDataGenerator
     {
         public void GenerateSeedData()
         {
             SubmissionManager submissionManager = new SubmissionManager();
             FeatureManager featureManager = new FeatureManager();
+            FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
 
             try
@@ -50,21 +53,29 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
                 if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
 
+                Feature API = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("API") && f.Parent.Equals(DataDissemination));
+                if (API == null) API = featureManager.Create("API", "API", DataDissemination);
 
 
+                //set api public
+                featurePermissionManager.Create(null, API.Id, Security.Entities.Authorization.PermissionType.Grant);
+
+                Operation operation = null;
                 #region Help Workflow
 
-                operationManager.Create("DIM", "Help", "*");
+
+                if (!operationManager.Exists("dim", "help", "*")) operationManager.Create("DIM", "Help", "*");
 
                 #endregion
 
                 #region Admin Workflow
 
-                operationManager.Create("Dim", "Admin", "*", DataDissemination);
+                if (!operationManager.Exists("dim", "admin", "*")) operationManager.Create("DIM", "Admin", "*", DataDissemination);
 
-                operationManager.Create("Dim", "Submission", "*", Submission);
-                operationManager.Create("Dim", "Mapping", "*", Mapping);
+                if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*", Submission);
 
+
+                if (!operationManager.Exists("dim", "mapping", "*")) operationManager.Create("DIM", "Mapping", "*", Mapping);
 
                 #endregion
 
@@ -99,6 +110,15 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #endregion
 
+                #region API
+
+                if (!operationManager.Exists("api", "metadata", "*")) operationManager.Create("API", "Metadata", "*", API);
+
+                if (!operationManager.Exists("api", "data", "*")) operationManager.Create("API", "Data", "*", API);
+
+
+                #endregion
+
                 #endregion
 
                 #region EXPORT
@@ -124,6 +144,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 featureManager.Dispose();
                 operationManager.Dispose();
+                featurePermissionManager.Dispose();
             }
 
             //ImportPartyTypes();
@@ -483,6 +504,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
             List<PartyCustomAttribute> partyCustomAttrs =
                 tmp.GetUnitOfWork().GetReadOnlyRepository<PartyCustomAttribute>().Get().ToList();
 
+            List<PartyRelationshipType> partyReleationships =
+                tmp.GetUnitOfWork().GetReadOnlyRepository<PartyRelationshipType>().Get().ToList();
+
             MappingManager mappingManager = new MappingManager();
             XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
@@ -564,26 +588,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
                         }
 
-                        //if (partyCustomAttrs.Any(
-                        //    pAttr => pAttr.Name.Equals("Address") && pAttr.PartyType.Id.Equals(partyType.Id)))
-                        //{
-                        //    PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
-                        //        pAttr => pAttr.Name.Equals("Address") && pAttr.PartyType.Id.Equals(partyType.Id));
-
-                        //    createToPartyTypeMapping(
-                        //        "Address", LinkElementType.MetadataNestedAttributeUsage,
-                        //        complexAttrName, LinkElementType.ComplexMetadataAttribute,
-                        //        partyCustomAttribute, partyType, rootTo, metadataRef,
-                        //        mappingManager,
-                        //        new TransformationRule());
-
-                        //    createFromPartyTypeMapping(
-                        //        "Address", LinkElementType.MetadataNestedAttributeUsage,
-                        //        complexAttrName, LinkElementType.ComplexMetadataAttribute,
-                        //        partyCustomAttribute, partyType, rootFrom, metadataRef,
-                        //        mappingManager,
-                        //        new TransformationRule());
-                        //}
 
                         if (partyCustomAttrs.Any(
                             pAttr => pAttr.Name.Equals("Phone") && pAttr.PartyType.Id.Equals(partyType.Id)))
@@ -605,6 +609,185 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 mappingManager,
                                 new TransformationRule());
                         }
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("EMail") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("EMail") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "Email", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+
+                            createFromPartyTypeMapping(
+                                "Email", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        #region adress
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("Street") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("Street") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Address[0]"));
+
+                            createFromPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("City") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("City") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Address[1]"));
+
+                            createFromPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("ZipCode") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("ZipCode") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Address[2]"));
+
+                            createFromPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("Country") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("Country") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Address[3]"));
+
+                            createFromPartyTypeMapping(
+                                "Address", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        #endregion adress
+
+                        #region owner releationship
+
+                        string personUsage = "Person";
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "FullName", LinkElementType.MetadataNestedAttributeUsage,
+                                personUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Name[0]"));
+
+                            createFromPartyTypeMapping(
+                                "FullName", LinkElementType.MetadataNestedAttributeUsage,
+                                personUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                        }
+
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("LastName") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("LastName") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "FullName", LinkElementType.MetadataNestedAttributeUsage,
+                                personUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Name[1]"));
+
+                            createFromPartyTypeMapping(
+                                "FullName", LinkElementType.MetadataNestedAttributeUsage,
+                                personUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                        }
+
+
+                        // add releationship type mapping
+
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.DisplayName.ToLower().Equals("owner"));
+                        if (partyRelationshipType != null)
+                        {
+                            createToPartyReleationMapping(
+                                "FullName", LinkElementType.MetadataNestedAttributeUsage,
+                                personUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                partyRelationshipType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "FullName[0]"));
+
+                            createFromPartyReleationMapping(
+                                "FullName", LinkElementType.MetadataNestedAttributeUsage,
+                                personUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                partyRelationshipType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                        }
+
+                        #endregion
                     }
                     #endregion
 
@@ -668,17 +851,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
 
                     //create root mapping
-                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id,
+                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id,
                         metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
 
                     //create system mapping
                     LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System,
                         LinkElementComplexity.None);
 
-                    #region mapping ABCD BASIC to System Keys
+                    #region mapping GFBIO to System Keys
 
-                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null, mappingManager);
-                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null, mappingManager);
+                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(gbifRoot, system, 0, null, null, mappingManager);
+                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, gbifRoot, 0, null, null, mappingManager);
 
                     // create mapping for paryttypes
 
@@ -733,6 +916,29 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 mappingManager,
                                 new TransformationRule());
                         }
+
+                        #region owner relationship
+
+                        //Metadata/creator/creatorType/individualName
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.DisplayName.ToLower().Equals("owner"));
+                        if (partyRelationshipType != null)
+                        {
+                            createToPartyReleationMapping(
+                                "givenName", LinkElementType.MetadataNestedAttributeUsage,
+                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                partyRelationshipType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+
+                            createFromPartyReleationMapping(
+                                "givenName", LinkElementType.MetadataNestedAttributeUsage,
+                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                partyRelationshipType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+                        #endregion
 
                     }
                     #endregion
@@ -863,6 +1069,88 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
             partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
+
+            foreach (XElement xElement in simpleElements)
+            {
+                string sId = xElement.Attribute("id").Value;
+                string name = xElement.Attribute("name").Value;
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    simpleType, LinkElementComplexity.Simple);
+
+                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+            }
+
+        }
+
+        private void createToPartyReleationMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            PartyRelationshipType partyReleationType,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager, TransformationRule transformationRule = null)
+        {
+
+            if (transformationRule == null) transformationRule = new TransformationRule();
+
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
+                    partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple);
+
+            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+
+            string sIdComplex = complex.Attribute("id").Value;
+            string nameComplex = complex.Attribute("name").Value;
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                complexType, LinkElementComplexity.Complex);
+
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
+
+            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+            LinkElement simpleLe = le;
+
+            foreach (XElement xElement in simpleElements)
+            {
+                string sId = xElement.Attribute("id").Value;
+                string name = xElement.Attribute("name").Value;
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    simpleType, LinkElementComplexity.Simple);
+
+                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
+            }
+
+        }
+
+        private void createFromPartyReleationMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            PartyRelationshipType partyReleationType,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager, TransformationRule transformationRule = null)
+        {
+            //create ruleif not exist
+            if (transformationRule == null) transformationRule = new TransformationRule();
+
+            //create complex elements if not exits
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
+                    partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple);
+
+            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+
+            string sIdComplex = complex.Attribute("id").Value;
+            string nameComplex = complex.Attribute("name").Value;
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                complexType, LinkElementComplexity.Complex);
+
+            //map complex
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
+
+            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+            LinkElement simpleLe = le;
 
             foreach (XElement xElement in simpleElements)
             {

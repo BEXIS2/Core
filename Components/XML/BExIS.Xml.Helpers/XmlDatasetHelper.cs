@@ -26,9 +26,13 @@ namespace BExIS.Xml.Helpers
             DatasetManager dm = new DatasetManager();
             try
             {
-                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
+                //DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
+                var datasetIds = new List<long>() { datasetid };
 
-                return GetInformationFromVersion(datasetVersion.Id, name);
+                var version = dm.GetDatasetLatestVersions(datasetIds, true).FirstOrDefault();
+
+                if (version == null) return string.Empty;
+                return GetInformationFromVersion(version.Id, name);
             }
             finally
             {

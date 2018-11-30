@@ -1,13 +1,13 @@
 ﻿@model BExIS.Web.Shell.Models.ExternalLoginListViewModel
+@using System.Configuration
 @using Microsoft.Owin.Security
 
 <h4>Einen anderen Dienst zum Anmelden verwenden.</h4>
 <hr />
 
-@Html.ActionLink("Ldap", "Login", "Ldap", null, new { @class = "btn btn-default" })
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-    if (!loginProviders.Any())
+    if (!loginProviders.Any() && ConfigurationManager.AppSettings["Ldap_Enabled"].ToLowerInvariant() != "true")
     {
         <div>
             <p>
@@ -18,13 +18,16 @@
     }
     else
     {
-
-
         using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
         {
             @Html.AntiForgeryToken()
             <div id="socialLoginList">
                 <p>
+                    @if (ConfigurationManager.AppSettings["Ldap_Enabled"].ToLowerInvariant() == "true")
+                    {
+                        @Html.ActionLink("Ldap", "Login", "Ldap", null, new { @class = "btn btn-default" })
+                    }
+
                     @foreach (var p in loginProviders)
                     {
                         <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Mit Ihrem @p.Caption-Konto anmelden">@p.AuthenticationType</button>

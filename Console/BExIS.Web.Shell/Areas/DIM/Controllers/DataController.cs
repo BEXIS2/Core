@@ -1,8 +1,13 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -11,19 +16,24 @@ using System.Linq;
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
-using Vaiona.Persistence.Api;
+using System.Web.Http.Description;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
     /// either of XML, JSON, or CSV formats.
+    /// </summary>
+    /// <remarks>
+    /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
+    /// either of XML, JSON, or CSV formats.
     /// The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
     /// CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
     /// The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
     /// text/xml and text/json return XML and JSON content accordingly.
-    /// </summary>
+    /// </remarks>
     public class DataController : ApiController
     {
 
@@ -31,6 +41,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
         // GET: api/data
+        /// <summary>
+        /// Get a list of all dataset ids
+        /// </summary>
+        /// <returns>List of ids</returns>
+        [BExISApiAuthorize]
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -52,80 +67,125 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         /// <returns></returns>
         /// <remarks> The action accepts the following additional parameters via the query string
-        /// 1: projection: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
-        /// 2: selection: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
-        /// /api/data/6?header=TimeUTC,D8CO1_1&filter=TimeUTC<5706000
         /// </remarks>
-        public HttpResponseMessage Get(int id)
+        [BExISApiAuthorize]
+        public HttpResponseMessage Get(int id, [FromUri] string header = null, [FromUri] string filter = null)
         {
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string token = this.Request.Headers.Authorization?.Parameter;
 
             DatasetManager datasetManager = new DatasetManager();
+            UserManager userManager = new UserManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
             try
             {
 
-                OutputDataManager ioOutputDataManager = new OutputDataManager();
-
-                DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
-
-                string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
-
-                // check the data sturcture type ...
-                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (String.IsNullOrEmpty(token))
                 {
-                    // apply selection and projection
-                    //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
-                    DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(datasetManager, version, title, true);
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("Bearer token not exist.");
 
-                    if (!string.IsNullOrEmpty(selection))
+                    return request;
+
+                }
+
+                User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                if (user != null)
+                {
+
+                    if (entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
                     {
-                        dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                    }
+                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                        OutputDataManager ioOutputDataManager = new OutputDataManager();
 
-                    if (!string.IsNullOrEmpty(projection))
+                        DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
+
+                        string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
+
+                        // check the data sturcture type ...
+                        if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                        {
+                            //FilterExpression filter = null;
+                            //OrderByExpression orderBy = null;
+
+                            // apply selection and projection
+                            long count = datasetManager.RowCount(id);
+                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                            dt.Strip();
+
+                            if (!string.IsNullOrEmpty(selection))
+                            {
+                                dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                            }
+
+                            if (!string.IsNullOrEmpty(projection))
+                            {
+                                // make the header names upper case to make them case insensitive
+                                dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                            }
+
+                            if (dt.TableName == "") dt.TableName = id + "_data";
+
+
+                            DatasetModel model = new DatasetModel();
+                            model.DataTable = dt;
+
+
+                            var response = Request.CreateResponse();
+                            response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+
+
+                            //set headers on the "response"
+                            return response;
+
+                            //return model;
+
+
+                        }
+                        else
+                        {
+                            return Request.CreateResponse();
+                        }
+                    }
+                    else // has rights?
                     {
-                        // make the header names upper case to make them case insensitive
-                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                        var request = Request.CreateResponse();
+                        request.Content = new StringContent("User has no read right.");
+
+                        return request;
                     }
-
-                    DatasetModel model = new DatasetModel();
-                    model.DataTable = dt;
-
-                    var response = Request.CreateResponse();
-                    response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-
-
-                    //set headers on the "response"
-                    return response;
-
-                    //return model;
-
                 }
                 else
                 {
-                    return Request.CreateResponse();
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("User is not available.");
+
+                    return request;
                 }
+
             }
             finally
             {
                 datasetManager.Dispose();
+                userManager.Dispose();
+                entityPermissionManager.Dispose();
+
             }
         }
-
-        // GET: api/data/5?projection=<projection>
-        // If the above GET function fails to work, then indivial actions for each case: projection, selection, etc.
-        // public string Get(int id, string projection)
-        //{
-        //    return "value";
-        //}
 
         // POST: api/data
         /// <summary>
         /// Create a new dataset!!!
         /// </summary>
         /// <param name="value"></param>
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Post([FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
@@ -137,6 +197,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Put(int id, [FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
@@ -147,6 +208,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Deletes an existing dataset
         /// </summary>
         /// <param name="id"></param>
+        [ApiExplorerSettings(IgnoreApi = true)]
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);

@@ -15,13 +15,12 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         public AsciiFileReaderInfo()
         {
-            this.Seperator = TextSeperator.tab;
-            this.TextMarker = TextMarker.quotes;
-            this.Offset = 0;
-            this.Orientation = Orientation.columnwise;
-            this.Variables = 1;
-            this.Data = 2;
-            this.Offset = 0;
+            Seperator = TextSeperator.tab;
+            TextMarker = TextMarker.quotes;
+            Offset = 0;
+            Orientation = Orientation.columnwise;
+            Variables = 1;
+            Data = 2;
         }
 
         /// <summary>

@@ -28,5 +28,24 @@ namespace BExIS.Xml.Helpers
                 }
             }
         }
+
+        public string GetTitleById(long id)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var dm = new DatasetManager();
+
+                try
+                {
+                    var datasetHelper = new XmlDatasetHelper();
+
+                    return datasetHelper.GetInformation(id, NameAttributeValues.title);
+                }
+                finally
+                {
+                    dm.Dispose();
+                }
+            }
+        }
     }
 }

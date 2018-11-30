@@ -4,83 +4,93 @@
 @using Vaiona.Web.Mvc.Modularity
 @model MetadataStructureManagerModel
 
-@Html.ActionLink("Import", "ImportMetadataStructureWizard", "ImportMetadataStructure",new {area="DCM"}, new {@class= "bx-button function" })
-<br/>
-<br/>
+@section Information
+{
+    This page helps you to import, edit or delete a metadata structure.
+    By clicking on the right or left arrow you will being driven to the mapping system.
+    <p>
+        <a href="/dim/Help/index#overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+
+@Html.ActionLink("Import", "ImportMetadataStructureWizard", "ImportMetadataStructure", new { area = "DCM" }, new { @class = "bx-button function" })
+<br />
+<br />
 @(Html.Telerik().Grid<MetadataStructureModel>
-      ()
-      .Name("metadataStructuresGrid")
-      .BindTo((IEnumerable<MetadataStructureModel>
-          )@Model.MetadataStructureModels)
-      .Pageable()
-      .Sortable()
-      .DataKeys(keys => { keys.Add(m => m.Id);
-      })
-      .Editable(editing => editing.Mode(GridEditMode.PopUp))
-      //.DataBinding(dataBinding => dataBinding
-      //    .Ajax()
-      //)
-      .ColumnContextMenu()
-      .Columns(columns =>
-      {
-      columns.Bound(c => c.Id).ReadOnly().Width(55);
-      columns.Bound(c => c.Name);
-      columns.Bound(c => c.Entity.Name).Width(110);
-      columns.Bound(c => c.Entity.ClassPath).Hidden(true);
-      columns.Template(@<text>
-                               @{
-                                <table class="tableWithoutBorder t-grid">
-                                    <tr><td><b>Title</b> :</td><td>@item.TitleNode</td></tr>
-                                    <tr><td><b>Description</b> :</td><td> @item.DescriptionNode</td></tr>
-                                </table>
+              ()
+              .Name("metadataStructuresGrid")
+              .BindTo((IEnumerable<MetadataStructureModel>
+                  )@Model.MetadataStructureModels)
+              .Pageable()
+              .Sortable()
+              .DataKeys(keys =>
+              {
+                  keys.Add(m => m.Id);
+              })
+              .Editable(editing => editing.Mode(GridEditMode.PopUp))
+              //.DataBinding(dataBinding => dataBinding
+              //    .Ajax()
+              //)
+              .ColumnContextMenu()
+              .Columns(columns =>
+              {
+                  columns.Bound(c => c.Id).ReadOnly().Width("5%");
+                  columns.Bound(c => c.Name).Width("20%");
+                  columns.Bound(c => c.Entity.Name).Width("15%");
+                  columns.Bound(c => c.Entity.ClassPath).Hidden(true);
+                  columns.Template(@<text>
+                    @{
+                        <table class="tableWithoutBorder t-grid">
+                            <tr><td><b>Title</b> :</td><td>@item.TitleNode</td></tr>
+                            <tr><td><b>Description</b> :</td><td> @item.DescriptionNode</td></tr>
+                        </table>
+                    }
+
+                </text>).Title("Info References").Width("45%");
+
+
+                        columns.Bound(c => c.Active).Width("5%");
+                        columns.Template(@<text>
+                            @{
+                                            string className = item.HasSchema ? "" : "bx-disabled";
+                                            string disabled = item.HasSchema ? "" : "disabled = disabled";
                             }
 
-                            </text>).Title("Info References");
-                             
-
-          columns.Bound(c => c.Active).Width(90);
-          columns.Template(@<text>
-                               @{
-                                   string className = item.HasSchema ? "" : "bx-disabled";
-                                   string disabled = item.HasSchema ? "" : "disabled = disabled";
-                               }
-
-                               <button type="button" class="bx bx-grid-function bx-edit" onclick="metadataStructureEdit_onClick('@item.Name', @item.Id)" title="Edit @item.Name"></button>
-                               <button type="button" class="bx bx-grid-function bx-trash" onclick="metadataStructureDelete_onClick('@item.Id', @item.Id)"title="Delete @item.Name"></button>
-                                @Html.ActionLink(" ", "DownloadSchema", "ManageMetadataStructure", new { id = @item.Id }, new { @class = "bx bx-grid-function bx-download " + className, title = "Download xsd schema", disabled })
+                            <button type="button" class="bx bx-grid-function bx-edit" onclick="metadataStructureEdit_onClick('@item.Name', @item.Id)" title="Edit @item.Name"></button>
+                            <button type="button" class="bx bx-grid-function bx-trash" onclick="metadataStructureDelete_onClick('@item.Id', @item.Id)" title="Delete @item.Name"></button>
+                            @Html.ActionLink(" ", "DownloadSchema", "ManageMetadataStructure", new { id = @item.Id }, new { @class = "bx bx-grid-function bx-download " + className, title = "Download xsd schema", disabled })
 
 
-                                 @if (Html.IsAccessibale("DIM", "Mapping", "Index"))
-                                 {
-                                     @Html.ActionLink(" ", "Index", "Mapping", new {area = "DIM", sourceId = @item.Id}, new {@class = "bx bx-grid-function fa-arrow-right ", title = "Mapping to system"})
-                                 }
+                            @if (Html.IsAccessible("DIM", "Mapping", "Index"))
+                                        {
+                                @Html.ActionLink(" ", "Index", "Mapping", new { area = "DIM", sourceId = @item.Id }, new { @class = "bx bx-grid-function fa-arrow-right ", title = "Mapping to system" })
+                                        }
+                                                        
+                            @if (Html.IsAccessible("DIM", "Mapping", "Mapping"))
+                                        {
+                                @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType = "System", targetType = "MetadataStructure" }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
+                                        }                                                        
 
-                                @if (Html.IsAccessibale("DIM", "Mapping", "Mapping"))
-                                {
-                                    @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType= "System", targetType = "MetadataStructure" }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
-                                }
+                        </text>)
 
+                                    .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Edit <#= Id #>\"></button>" +
+                                                    "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Delete <#= Id #>\" ></button>" +
+                                                    "@Html.ActionLink(\"hallo\", \"DownloadSchema\", \"ManageMetadataStructure\", new { id = <#= Id #> }, new { @class = \"bx bx-grid-function bx-download\", title=\"Download xsd schema\" })" +
+                                                    "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Index\")){" +
+                                                    "@Html.ActionLink(\" \", \"Index\", \"Mapping\", new { area = \"DIM\", sourceId = @item.Id }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-right \" + className, title = \"Mapping to system\", disabled })}" +
+                                                    "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Switch\")){" +
+                                                    "@Html.ActionLink(\" \", \"Mapping\", \"Mapping\", new { area = \"DIM\", sourceId = 0, targetId = @item.Id, sourceType= \"MetadataStructure\" }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-left \" + className, title = \"Mapping to system\", disabled })}")
+                                    .Width("10%");
 
-                               
-                            </text>)
+                            })
 
-                  .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Edit <#= Id #>\"></button>" +
-                                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Delete <#= Id #>\" ></button>" +
-                                  "@Html.ActionLink(\"hallo\", \"DownloadSchema\", \"ManageMetadataStructure\", new { id = <#= Id #> }, new { @class = \"bx bx-grid-function bx-download\", title=\"Download xsd schema\" })"+
-                                  "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Index\")){"+
-                                  "@Html.ActionLink(\" \", \"Index\", \"Mapping\", new { area = \"DIM\", sourceId = @item.Id }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-right \" + className, title = \"Mapping to system\", disabled })}"+
-                                  "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Switch\")){" +
-                                  "@Html.ActionLink(\" \", \"Mapping\", \"Mapping\", new { area = \"DIM\", sourceId = 0, targetId = @item.Id, sourceType= \"MetadataStructure\" }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-left \" + className, title = \"Mapping to system\", disabled })}")
-                  .Width(170);
-
-      })
-
-      .Filterable()
-      .Sortable()
-        .ClientEvents(clientEvents =>
-        {
-            clientEvents.OnDataBound("metadataStructuresGrid_onDataBound");
-        })
+                                          .Filterable()
+                                          .Sortable()
+                                            .ClientEvents(clientEvents =>
+                                            {
+                                                clientEvents.OnDataBound("metadataStructuresGrid_onDataBound");
+                                            })
 )
 
 <script type="text/javascript">
@@ -154,8 +164,7 @@
 
 </script>
 <style>
-    .tableWithoutBorder,.tableWithoutBorder td,.tableWithoutBorder tr {
+    .tableWithoutBorder, .tableWithoutBorder td, .tableWithoutBorder tr {
         border: none;
     }
-
 </style>

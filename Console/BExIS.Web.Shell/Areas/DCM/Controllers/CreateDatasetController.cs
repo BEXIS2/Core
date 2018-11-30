@@ -1,14 +1,18 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -410,6 +414,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // load metadatastructure with all packages and attributes
 
+
+
             if (metadataXml != null)
             {
                 // locat path
@@ -530,22 +536,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-                        //add to index
-                        // ToDo check which SearchProvider it is, default luceneprovider
+                        #region set releationships 
 
-                        // BUG: invalid call to ddm method
-                        // TODO: mODULARITY ->Call DDM Reindex
-                        /*
-                         <Export tag="internalApi" id="SearchIndex"
-                        title="Reindex Search" description="Reindex Search" icon=""
-                        controller="SearchIndex" action="Get"
-                        extends="" />
-                         */
-                        // WORKAROUND: do not reindex
-                        //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                        //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
-                        if (this.IsAccessibale("DDM", "SearchIndex", "ReIndexSingle"))
+                        //todo check if dim is active
+                        // todo call to  a function in dim
+                        setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+
+                        #endregion
+
+                        if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
 
                             var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
@@ -897,6 +897,157 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
             TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
             TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+        }
+
+        //toDo this function to DIM or BAM ??
+        /// <summary>
+        /// this function is parsing the xmldocument to 
+        /// create releationships based on releationshiptypes between datasets and person parties
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="metadata"></param>
+        private void setRelationships(long datasetid, long metadataStructureId, XmlDocument metadata)
+        {
+            PartyManager partyManager = new PartyManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
+
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+
+                    //check if mappings exist between system/relationships and the metadatastructure/attr
+                    // get all party mapped nodes
+                    IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
+
+                    // get releaionship type id for owner
+                    var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
+                        p => p.AssociatedPairs.Any(
+                            ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
+                            ));
+
+                    #region delete relationships
+
+                    foreach (var relationshipType in relationshipTypes)
+                    {
+                        bool exist = false;
+                        var partyTpePair = relationshipType.AssociatedPairs.FirstOrDefault();
+
+                        if (partyTpePair.SourcePartyType.Title.ToLower().Equals("dataset"))
+                        {
+                            IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                    r =>
+                                    r.SourceParty != null && r.SourceParty.Name.Equals(datasetid.ToString()) &&
+                                    r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                );
+
+                            IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                            foreach (PartyRelationship pr in relationships)
+                            {
+                                if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            }
+                        }
+                        else
+                        {
+                            IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                    r =>
+                                    r.TargetParty != null && r.TargetParty.Name.Equals(datasetid.ToString()) &&
+                                    r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                );
+
+                            IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                            foreach (PartyRelationship pr in relationships)
+                            {
+                                if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            }
+                        }
+
+                    }
+                    #endregion
+
+                    #region add relationship
+
+                    foreach (XElement item in complexElements)
+                    {
+                        if (item.HasAttributes)
+                        {
+                            long sourceId = Convert.ToInt64(item.Attribute("roleId").Value);
+                            long id = Convert.ToInt64(item.Attribute("id").Value);
+                            string type = item.Attribute("type").Value;
+                            long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
+
+                            LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
+                            if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
+
+                            foreach (var relationship in relationshipTypes)
+                            {
+                                // when mapping in both directions are exist
+                                if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
+                                    (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
+                                    (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
+                                    (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)))
+                                {
+
+                                    // create releationship
+
+                                    // create a Party for the dataset
+                                    var customAttributes = new Dictionary<String, String>();
+                                    customAttributes.Add("Name", datasetid.ToString());
+                                    customAttributes.Add("Id", datasetid.ToString());
+
+                                    // get or create datasetParty
+                                    Party datasetParty = partyManager.GetPartyByCustomAttributeValues(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), customAttributes).FirstOrDefault();
+                                    if (datasetParty == null) datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+
+
+                                    // Get user party
+                                    var person = partyManager.GetParty(partyid);
+
+                                    var partyTpePair = relationship.AssociatedPairs.FirstOrDefault();
+
+                                    if (partyTpePair != null && person != null && datasetParty != null)
+                                    {
+                                        if (!uow.GetReadOnlyRepository<PartyRelationship>().Get().Any(
+                                            r =>
+                                            r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
+                                            r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
+                                            r.TargetParty.Id.Equals(datasetid)
+                                        ))
+                                        {
+                                            partyManager.AddPartyRelationship(
+                                                person.Id,
+                                                datasetParty.Id,
+                                                relationship.Title,
+                                                "",
+                                                partyTpePair.Id
+                                                );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    #endregion //add relationship
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                partyManager.Dispose();
+                partyTypeManager.Dispose();
+            }
         }
 
         #endregion Helper

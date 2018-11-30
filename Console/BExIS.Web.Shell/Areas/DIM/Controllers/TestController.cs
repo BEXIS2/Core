@@ -62,8 +62,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult GetDatastructureAsJSON(long id)
         {
-            return Json(OutputDataStructureManager.GetDataStructureAsJson(id), JsonRequestBehavior.AllowGet);
+
+            return Json(OutputDataStructureManager.GetDataStructureAsJson(id), "application/json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetDatastructureAsJSON2(long id)
+        {
+
+            return new ContentResult() { Content = OutputDataStructureManager.GetDataStructureAsJson(id), ContentType = "application/json" };
+        }
+
 
         public async Task<ActionResult> GetStatus(long id)
         {
@@ -111,37 +119,37 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 var p = partyManager.Create(partyType, "David Blaa", "desc", null, null, partyStatusType);
                 // add value
                 var pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "David");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "David");
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "Schöne");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Schöne");
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "ds@test.de");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "ds@test.de");
 
                 /***********************************/
                 p = partyManager.Create(partyType, "Sven Thiel", "desc", null, null, partyStatusType);
                 // add value
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "Sven");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Sven");
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "Thiel");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Thiel");
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "st@test.de");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "st@test.de");
 
                 /***********************************/
                 p = partyManager.Create(partyType, "Martin Hohmuth", "desc", null, null, partyStatusType);
                 // add value
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "Martin");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Martin");
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "Hohmuth");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Hohmuth");
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(ref p, pAttr, "mh@test.de");
+                partyManager.AddPartyCustomAttributeValue(p, pAttr, "mh@test.de");
 
             }
 

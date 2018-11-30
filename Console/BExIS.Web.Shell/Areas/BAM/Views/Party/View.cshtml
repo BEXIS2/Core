@@ -2,13 +2,11 @@
 @section Information
 {
     This is the details of a party; its main fields, attributes and relationships. Also it is possible to view the detial of each relationship on relationshipgrid.
-   <p>
+    <p>
         <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
 
 }
-
-
 @using (Html.BeginForm("Edit", "Party", new { area = "BAM" }, FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id)
@@ -20,7 +18,8 @@
             {
             tabs.Add()
                     .Text("Party").Content(@<text>
-                    <table>                        <tr>
+                    <table>
+                        <tr>
                             <td style="width:40px;"></td>
                             <td style="width:200px;">
                                 @Html.LabelFor(m => m.PartyType)
@@ -35,7 +34,7 @@
                                 <label for="StartDate">Start Date</label>
                             </td>
                             <td>
-                                <span>@Model.StartDate</span>
+                                <span>@(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("yyyy-MM-dd") : "-")</span>
                             </td>
                         </tr>
                         <tr>
@@ -44,7 +43,7 @@
                                 <label for="EndDate">End Date</label>
                             </td>
                             <td>
-                                <span>@Model.EndDate</span>
+                                <span>@(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : "-")</span>
                             </td>
                         </tr>
                         <tr>
@@ -74,7 +73,6 @@
 }
 
 <div id="divPartyRelation">
-
 </div>
 <script type="text/javascript">
 
@@ -88,10 +86,8 @@
                 $('#divPartyCustomAttr').html("");
         });
     }
-  
     @if (Model.PartyType.Id != 0)
     {
        @Html.Raw("loadPartyType( {value: " + Model.PartyType.Id + "});");
     }
-
 </script>

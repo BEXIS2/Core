@@ -1,4 +1,5 @@
-﻿using BExIS.Utils.Filters;
+﻿using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.Filters;
 using System.ComponentModel.DataAnnotations;
 
 namespace BExIS.Web.Shell.Models
@@ -23,6 +24,36 @@ namespace BExIS.Web.Shell.Models
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+    }
+
+    public class LoginConfirmModel
+    {
+        [Required]
+        public long Id { get; set; }
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+
+        [Display(Name = "Terms and Conditions")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
+        public bool TermsAndConditions { get; set; }
+
+        [Display(Name = "Privacy Policy")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
+        public bool PrivacyPolicy { get; set; }
+
+        public static LoginConfirmModel Convert(User user)
+        {
+            return new LoginConfirmModel()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                TermsAndConditions = user.HasTermsAndConditionsAccepted,
+                PrivacyPolicy = user.HasPrivacyPolicyAccepted
+            };
+        }
     }
 
     public class LoginViewModel
@@ -87,6 +118,10 @@ namespace BExIS.Web.Shell.Models
         [Display(Name = "Terms and Conditions")]
         [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
         public bool TermsAndConditions { get; set; }
+
+        [Display(Name = "Privacy Policy")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
+        public bool PrivacyPolicy { get; set; }
 
         [Display(Name = "Inform")]
         [MustBeTrue(ErrorMessage = ".......")]

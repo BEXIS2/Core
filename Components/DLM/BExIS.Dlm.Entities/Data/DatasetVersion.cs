@@ -132,6 +132,7 @@ namespace BExIS.Dlm.Entities.Data
             ExtendedPropertyValues = new List<ExtendedPropertyValue>();
             ContentDescriptors = new List<ContentDescriptor>();
             PriliminaryTuples = new List<DataTuple>();
+            Timestamp = DateTime.UtcNow;
             //XmlExtendedPropertyValues = new XmlDocument();
         }
 

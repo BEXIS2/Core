@@ -56,7 +56,7 @@
       <column name="Condition"  />
     </property>
     
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="PartyTypeRef"/>
+    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" lazy="false" not-null="false" column="PartyTypeRef"/>
 
     <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true" inverse="true">
       <key column="CustomAttributeRef"/>

@@ -12,33 +12,36 @@
           columns.Bound(s => s.EffectiveRight)
               .ClientTemplate("<div class=' <#= EffectiveRight ? 'bx bx-check' : 'bx bx-close' #>' />")
               .Title("Effective")
-              .Width(64)
+              .Width("9%")
               .Filterable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(m => m.FeaturePermissionType)
               .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='1' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
               .Title("Grant")
-              .Width(50)
+              .Width("9%")
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
           columns.Bound(m => m.FeaturePermissionType)
               .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='2' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
               .Title("None")
-              .Width(50)
+              .Width("9%")
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(m => m.FeaturePermissionType)
               .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='0' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
               .Title("Deny")
-              .Width(50)
+              .Width("9%")
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
-          columns.Bound(m => m.SubjectId);
-          columns.Bound(m => m.SubjectName);
-          columns.Bound(m => m.SubjectType);
+          columns.Bound(m => m.SubjectId)
+              .Width("20%");
+          columns.Bound(m => m.SubjectName)
+            .Width("22%");
+          columns.Bound(m => m.SubjectType)
+            .Width("22%");
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()

@@ -328,7 +328,8 @@
     content: "\f00b";
 }
 
-.fa-check:before {
+.fa-check:before,
+.bx-check:before {
     content: "\f00c";
 }
 
@@ -641,7 +642,8 @@
     content: "\f05c";
 }
 
-.fa-check-circle-o:before {
+.fa-check-circle-o:before,
+.bx-check-circle-o:before {
     content: "\f05d";
 }
 

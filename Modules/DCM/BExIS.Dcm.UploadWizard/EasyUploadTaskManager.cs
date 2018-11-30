@@ -1,8 +1,7 @@
-﻿using System;
+﻿using BExIS.Dcm.Wizard;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using BExIS.Dcm.Wizard;
 
 /// <summary>
 ///
@@ -52,6 +51,9 @@ namespace BExIS.Dcm.UploadWizard
         public static string VERIFICATION_HEADERFIELDS = "VerificationHeaderFields";
         public static string VERIFICATION_MAPPEDHEADERUNITS = "VerificationMappedHeaderUnits";
         public static string VERIFICATION_ATTRIBUTESUGGESTIONS = "VerificationAttributeSuggestions";
+
+        public static string ROWS = "ROWS";
+        public static string ALL_DATATYPES = "ALL_DATATYPES";
 
         public static string NUMBERSOFROWS = "NUMBERSOFROWS";
         public static string CURRENTPACKAGE = "CURRENTPACKAGE";

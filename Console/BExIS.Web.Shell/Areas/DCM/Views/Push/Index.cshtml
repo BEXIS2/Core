@@ -102,7 +102,9 @@
                 //alert(file.size);
                 //alert(maxsize);
 
-                if (file.size > (maxsize*1024)) {
+
+                // file.size is in bytes - maxsize need to convert to bytes
+                if (file.size > (maxsize*1024*1024)) {
 
                     alert("Max file : " +
                         maxsize +
