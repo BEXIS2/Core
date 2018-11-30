@@ -2,7 +2,6 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO.DataType.DisplayPattern;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -39,71 +38,64 @@ namespace BExIS.IO.Transform.Output
             this.Structured = false;
             this.Variables = new DataTable("Variables");
 
-            this.Variables.Columns.Add("Id");
-            this.Variables.Columns.Add("Label");
-            this.Variables.Columns.Add("Description");
-            this.Variables.Columns.Add("isOptional");
-            this.Variables.Columns.Add("Unit");
-            this.Variables.Columns.Add("DataType");
-            this.Variables.Columns.Add("SystemType");
         }
 
-        public DataStructureDataTable(long datasetId) : this()
+        public DataStructureDataTable(long id) : this()
         {
-            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
-            if (dataset != null && dataset.DataStructure.Id != 0)
+
+            DataStructureManager dataStructureManager = null;
+            try
             {
-                DataStructureManager dataStructureManager = null;
-                try
+                dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(id);
+                if (dataStructure != null)
                 {
-                    dataStructureManager = new DataStructureManager();
-                    DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(dataset.DataStructure.Id);
-                    if (dataStructure != null)
+                    this.Id = dataStructure.Id;
+                    this.Title = dataStructure.Name;
+                    this.Description = dataStructure.Description;
+
+                    if (dataStructure.Datasets.Count > 0)
+                        this.inUse = true;
+                    else
+                        this.inUse = false;
+
+                    this.Structured = false;
+
+
+                    if (dataStructureManager.StructuredDataStructureRepo.Get(id) != null)
                     {
-                        this.Id = dataStructure.Id;
-                        this.Title = dataStructure.Name;
-                        this.Description = dataStructure.Description;
-
-                        if (dataStructure.Datasets.Count > 0)
-                            this.inUse = true;
-                        else
-                            this.inUse = false;
-
-                        this.Structured = false;
                         this.Variables = new DataTable("Variables");
 
-                        this.Variables.Columns.Add("Id");
+                        this.Variables.Columns.Add("Id", typeof(Int64));
                         this.Variables.Columns.Add("Label");
                         this.Variables.Columns.Add("Description");
-                        this.Variables.Columns.Add("isOptional");
+                        this.Variables.Columns.Add("isOptional", typeof(Boolean));
                         this.Variables.Columns.Add("Unit");
                         this.Variables.Columns.Add("DataType");
                         this.Variables.Columns.Add("SystemType");
 
-                        if (dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id) != null)
+                        StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+                        this.Structured = true;
+                        DataRow dataRow;
+                        foreach (Variable vs in structuredDataStructure.Variables)
                         {
-                            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
-                            this.Structured = true;
-                            DataRow dataRow;
-                            foreach (Variable vs in structuredDataStructure.Variables)
-                            {
-                                dataRow = this.Variables.NewRow();
-                                dataRow["Id"] = vs.Id;
-                                dataRow["Label"] = vs.Label;
-                                dataRow["Description"] = vs.Description;
-                                dataRow["isOptional"] = vs.IsValueOptional;
-                                dataRow["Unit"] = vs.Unit.Name;
-                                dataRow["DataType"] = vs.DataAttribute.DataType.Name;
-                                dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
-                                this.Variables.Rows.Add(dataRow);
-                            }
+                            dataRow = this.Variables.NewRow();
+                            dataRow["Id"] = vs.Id;
+                            dataRow["Label"] = vs.Label;
+                            dataRow["Description"] = vs.Description;
+                            dataRow["isOptional"] = vs.IsValueOptional;
+                            dataRow["Unit"] = vs.Unit.Name;
+                            dataRow["DataType"] = vs.DataAttribute.DataType.Name;
+                            dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
+                            this.Variables.Rows.Add(dataRow);
                         }
                     }
+
                 }
-                finally
-                {
-                    dataStructureManager.Dispose();
-                }
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
             }
         }
     }
@@ -223,46 +215,43 @@ namespace BExIS.IO.Transform.Output
             this.Variables = new List<VariableElement>();
         }
 
-        public DataStructureDataList(long datasetId) : this()
+        public DataStructureDataList(long id) : this()
         {
-            var dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetId);
-            if (dataset != null && dataset.DataStructure.Id != 0)
+
+            DataStructureManager dataStructureManager = null;
+            try
             {
-                DataStructureManager dataStructureManager = null;
-                try
+                dataStructureManager = new DataStructureManager();
+                DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(id);
+                if (dataStructure != null)
                 {
-                    dataStructureManager = new DataStructureManager();
-                    DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(dataset.DataStructure.Id);
-                    if (dataStructure != null)
+                    this.Id = dataStructure.Id;
+                    this.Title = dataStructure.Name;
+                    this.Description = dataStructure.Description;
+
+                    if (dataStructure.Datasets.Count > 0)
+                        this.inUse = true;
+                    else
+                        this.inUse = false;
+
+                    this.Structured = false;
+                    this.Variables = new List<VariableElement>();
+
+                    if (dataStructureManager.StructuredDataStructureRepo.Get(id) != null)
                     {
-                        this.Id = dataStructure.Id;
-                        this.Title = dataStructure.Name;
-                        this.Description = dataStructure.Description;
-
-                        if (dataStructure.Datasets.Count > 0)
-                            this.inUse = true;
-                        else
-                            this.inUse = false;
-
-                        this.Structured = false;
-                        this.Variables = new List<VariableElement>();
-
-                        if (dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id) != null)
+                        StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+                        this.Structured = true;
+                        foreach (Variable vs in structuredDataStructure.Variables)
                         {
-                            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
-                            this.Structured = true;
-                            foreach (Variable vs in structuredDataStructure.Variables)
-                            {
-                                vs.Materialize();
-                                this.Variables.Add(new VariableElement(vs));
-                            }
+                            vs.Materialize();
+                            this.Variables.Add(new VariableElement(vs));
                         }
                     }
                 }
-                finally
-                {
-                    dataStructureManager.Dispose();
-                }
+            }
+            finally
+            {
+                dataStructureManager.Dispose();
             }
         }
     }
@@ -272,26 +261,26 @@ namespace BExIS.IO.Transform.Output
     public class OutputDataStructureManager
     {
         /// <summary>
-        /// generate a text file with JSON from a datastructure of a dataset
+        /// generate a text file with JSON from a datastructure 
         /// and stored this file on the server
         /// and store the path in the content discriptor
         /// </summary>
-        /// <param name="datasetId"></param>
+        /// <param name="id"></param>
         /// <returns>dynamic filepath</returns>
 
-        public static string GetDataStructureAsJson(long datasetId)
+        public static string GetDataStructureAsJson(long id)
         {
-            return JsonConvert.SerializeObject(new DataStructureDataTable(datasetId));
+            return JsonConvert.SerializeObject(new DataStructureDataTable(id));
         }
 
-        public static string GetVariableListAsJson(long datasetId)
+        public static string GetVariableListAsJson(long id)
         {
-            return JsonConvert.SerializeObject(new DataStructureDataList(datasetId), Newtonsoft.Json.Formatting.Indented);
+            return JsonConvert.SerializeObject(new DataStructureDataList(id), Newtonsoft.Json.Formatting.Indented);
         }
 
-        public static DataStructureDataList GetVariableList(long datasetId)
+        public static DataStructureDataList GetVariableList(long id)
         {
-            return new DataStructureDataList(datasetId);
+            return new DataStructureDataList(id);
         }
 
         public static string GenerateDataStructure(long datasetId)
@@ -559,7 +548,7 @@ namespace BExIS.IO.Transform.Output
 
             //uint iExcelIndex = 164;
             List<StyleIndexStruct> styleIndex = new List<StyleIndexStruct>();
-            ExcelHelper.UpdateStylesheet(dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet,out styleIndex);
+            ExcelHelper.UpdateStylesheet(dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet, out styleIndex);
 
             Worksheet worksheet = dataStructureFile.WorkbookPart.WorksheetParts.First().Worksheet;
             List<Row> rows = GetRows(worksheet, 1, 11);

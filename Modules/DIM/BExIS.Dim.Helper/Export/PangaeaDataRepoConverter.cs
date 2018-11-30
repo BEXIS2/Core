@@ -59,7 +59,7 @@ namespace BExIS.Dim.Helpers.Export
                 long datasetId = datasetVersion.Dataset.Id;
                 long metadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
 
-                DataStructureDataList datastructureDataList = OutputDataStructureManager.GetVariableList(datasetId);
+                DataStructureDataList datastructureDataList = OutputDataStructureManager.GetVariableList(datasetVersion.Dataset.DataStructure.Id);
 
                 PanageaMetadata metadata = getMetadata(datasetVersion.Metadata, metadataStructureId);
                 metadata.ParameterIDs = datastructureDataList.Variables;

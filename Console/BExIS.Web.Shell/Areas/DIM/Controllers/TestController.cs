@@ -62,8 +62,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult GetDatastructureAsJSON(long id)
         {
-            return Json(OutputDataStructureManager.GetDataStructureAsJson(id), JsonRequestBehavior.AllowGet);
+
+            return Json(OutputDataStructureManager.GetDataStructureAsJson(id), "application/json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetDatastructureAsJSON2(long id)
+        {
+
+            return new ContentResult() { Content = OutputDataStructureManager.GetDataStructureAsJson(id), ContentType = "application/json" };
+        }
+
 
         public async Task<ActionResult> GetStatus(long id)
         {

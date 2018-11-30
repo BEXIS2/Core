@@ -194,6 +194,7 @@
     <Content Include="Content\Images\Help\Help_img11.png" />
     <Content Include="Content\Images\Help\login.png" />
     <Content Include="Content\Images\Help\register.png" />
+    <Content Include="Content\Images\Help\token.png" />
     <Content Include="Content\Images\Help\users.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

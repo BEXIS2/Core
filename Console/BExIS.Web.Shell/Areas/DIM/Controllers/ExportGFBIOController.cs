@@ -2,9 +2,12 @@
 using BExIS.IO.Transform.Output;
 using System.Collections.Generic;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
+
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ExportGFBIOController : ApiController
     {
         /// <summary>
