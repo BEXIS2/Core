@@ -141,8 +141,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VIM", "VIM", "{9A962207-D10
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Vim.UI", "Console\BExIS.Web.Shell\Areas\VIM\BExIS.Modules.Vim.UI.csproj", "{15821863-0273-485B-A9AB-D7C1E1011ADE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Tests", "Components\AAA\BExIS.Security.Tests\BExIS.Security.Tests.csproj", "{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -685,18 +683,6 @@ Global
 		{15821863-0273-485B-A9AB-D7C1E1011ADE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{15821863-0273-485B-A9AB-D7C1E1011ADE}.Release|x86.ActiveCfg = Release|Any CPU
 		{15821863-0273-485B-A9AB-D7C1E1011ADE}.Release|x86.Build.0 = Release|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Debug|x86.Build.0 = Debug|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Release|x86.ActiveCfg = Release|Any CPU
-		{C1536D8A-8D52-43C4-864A-EF59FDFF7EB3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -767,8 +753,8 @@ Global
 		{15821863-0273-485B-A9AB-D7C1E1011ADE} = {9A962207-D10C-472C-995B-A2519760F29A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
+		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
