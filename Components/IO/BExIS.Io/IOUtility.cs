@@ -7,26 +7,27 @@ namespace BExIS.IO
     public class IOUtility
     {
 
+
         public bool IsDate(string value)
         {
             DateTime dateTime;
 
-            if(DateTime.TryParse(value,out dateTime))
+            if (DateTime.TryParse(value, out dateTime))
             {
                 return true;
             }
 
-            if(DateTime.TryParse(value,new CultureInfo("de-DE", false),DateTimeStyles.None,out dateTime))
+            if (DateTime.TryParse(value, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
             {
                 return true;
             }
 
-            if(DateTime.TryParse(value,new CultureInfo("en-US", false),DateTimeStyles.None,out dateTime))
+            if (DateTime.TryParse(value, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
             {
                 return true;
             }
 
-            if (DateTime.TryParse(value,CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
             {
                 return true;
             }
@@ -36,7 +37,7 @@ namespace BExIS.IO
 
         public bool IsDate(string value, out DateTime dateTime)
         {
- 
+
             if (DateTime.TryParse(value, out dateTime))
             {
                 return true;
@@ -127,7 +128,7 @@ namespace BExIS.IO
 
             //Date might still be in OA-Date-Format (happens for Libre-Office dates)
             double valueAsDouble;
-            if(double.TryParse(dateAsString, out valueAsDouble))
+            if (double.TryParse(dateAsString, out valueAsDouble))
             {
                 try
                 {
@@ -162,7 +163,7 @@ namespace BExIS.IO
             return "";
         }
 
-        public bool ConvertToDate(string dateAsString, string pattern, out DateTime dateTime ,CultureInfo cultureInfo = null)
+        public bool ConvertToDate(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
         {
             if (cultureInfo == null) cultureInfo = CultureInfo.InvariantCulture;
 
@@ -178,7 +179,7 @@ namespace BExIS.IO
                 try
                 {
                     dateTime = DateTime.FromOADate(valueAsDouble);
-                    if(dateTime.Millisecond >= 500) dateTime.AddSeconds(1);
+                    if (dateTime.Millisecond >= 500) dateTime.AddSeconds(1);
 
                     return true;
                 }
@@ -193,7 +194,7 @@ namespace BExIS.IO
 
         public string ExportDateTimeString(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
         {
-     
+
             if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.NoCurrentDateDefault, out dateTime))
             {
                 return dateTime.ToString(pattern);
@@ -208,7 +209,7 @@ namespace BExIS.IO
         /// </summary>
         /// <param name="extention"></param>
         /// <returns></returns>
-        public Dictionary<string,string> GetSupportedAsciiFiles()
+        public Dictionary<string, string> GetSupportedAsciiFiles()
         {
             Dictionary<string, string> tmp = new Dictionary<string, string>();
             tmp.Add("Comma Separated", ".csv");
