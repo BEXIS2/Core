@@ -29,6 +29,7 @@ namespace BExIS.Security.Entities.Subjects
         public virtual string PhoneNumber { get; set; }
         public virtual string SecurityStamp { get; set; }
         public virtual DateTime RegistrationDate { get; set; }
+        public virtual string Token { get; set; }
 
 
         public virtual string UserName

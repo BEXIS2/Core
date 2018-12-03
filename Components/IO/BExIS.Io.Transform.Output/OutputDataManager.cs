@@ -453,7 +453,7 @@ namespace BExIS.IO.Transform.Output
             List<DataColumn> columnTobeDeleted = new List<DataColumn>();
             foreach (DataColumn column in dt.Columns)
             {
-                if (!visibleColumns.Contains(column.ColumnName.ToUpper()))
+                if (!visibleColumns.Contains(column.Caption.ToUpper()))
                 {
                     columnTobeDeleted.Add(column);
                 }

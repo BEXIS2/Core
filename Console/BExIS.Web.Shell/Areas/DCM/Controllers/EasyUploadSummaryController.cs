@@ -405,7 +405,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 CurrentDataAttribute = dam.CreateDataAttribute(TrimAndLimitString(header.Name), header.Name, header.SelectedDataAttribute.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, CurrentSelectedUnit, null, null, null, null, null, null);
                             }
 
-                            Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, header.Name, "", "", "");
+                            Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, header.Name, "", "", "", CurrentSelectedUnit);
                             VariableIdentifier vi = new VariableIdentifier
                             {
                                 name = newVariable.Label,

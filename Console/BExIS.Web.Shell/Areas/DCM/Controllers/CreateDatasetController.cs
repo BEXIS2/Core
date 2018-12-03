@@ -950,17 +950,35 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         bool exist = false;
                         var partyTpePair = relationshipType.AssociatedPairs.FirstOrDefault();
 
-                        IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
-                                r =>
-                                r.SourceParty != null && r.SourceParty.Id.Equals(datasetid) &&
-                                r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
-                            );
-
-                        IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
-                        foreach (PartyRelationship pr in relationships)
+                        if (partyTpePair.SourcePartyType.Title.ToLower().Equals("dataset"))
                         {
-                            if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                    r =>
+                                    r.SourceParty != null && r.SourceParty.Name.Equals(datasetid.ToString()) &&
+                                    r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                );
+
+                            IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                            foreach (PartyRelationship pr in relationships)
+                            {
+                                if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            }
+                        }
+                        else
+                        {
+                            IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                    r =>
+                                    r.TargetParty != null && r.TargetParty.Name.Equals(datasetid.ToString()) &&
+                                    r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                );
+
+                            IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+                            foreach (PartyRelationship pr in relationships)
+                            {
+                                if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                            }
                         }
 
                     }
@@ -988,7 +1006,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                     MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)))
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
+                                    (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                    MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)))
                                 {
 
                                     // create releationship
