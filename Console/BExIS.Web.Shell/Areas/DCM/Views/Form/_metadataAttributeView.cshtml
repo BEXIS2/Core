@@ -247,7 +247,12 @@
                     }
 
                     @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
-                        Model.SystemType.Equals(TypeCode.Int64.ToString())
+                        Model.SystemType.Equals(TypeCode.Int64.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.Int16.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.UInt16.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.UInt32.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.UInt64.ToString())
+                     
                     )
                     {
                         if (!locked)
@@ -274,7 +279,9 @@
                     }
 
                     @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
-                    Model.SystemType.Equals(TypeCode.Double.ToString()))
+                    Model.SystemType.Equals(TypeCode.Double.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.Single.ToString())
+                    )
                     {
                         if (!locked)
                         {

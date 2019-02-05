@@ -264,3 +264,6 @@ paket-files/
 /Console/Workspace_
 /Console/WorkspaceOld
 /CodeMaid.config
+/Console/BExIS.Web.Shell/Areas/Template
+/Console/BExIS.Web.Shell/Areas/OAIPMH
+/BExIS++_oaipmh.sln
