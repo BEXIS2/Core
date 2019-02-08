@@ -338,7 +338,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     // TODO: refactor Download Right not existing, so i set it to read
                     bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                        "Dataset", typeof(Dataset), datasetID, RightType.Read);
+                        "Dataset", typeof(Dataset), datasetID, RightType.Download);
 
 
 

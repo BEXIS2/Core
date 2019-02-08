@@ -4,7 +4,6 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Models.Attachments;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -16,7 +15,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
-using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -90,7 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
             model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
             model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
-            model.DownloadAccess = ((rights & (int)RightType.Download) > 0 || ((rights & (int)RightType.Grant) > 0));
+            model.DownloadAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
             model.ViewAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
             userManager?.Dispose();
             entityPermissionManager?.Dispose();
@@ -110,7 +108,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var contentDescriptorName = contentDescriptor.Name;
                 long fileLength = 0;
-                String filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", contentDescriptor.DatasetVersion.Dataset.Id.ToString(), "Attachments",contentDescriptor.Name);
+                String filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", contentDescriptor.DatasetVersion.Dataset.Id.ToString(), "Attachments", contentDescriptor.Name);
                 if (new FileInfo(filepath).Exists)
                 {  // if (System.IO.File.Exists(contentDescriptor.URI))
                     //TODO: In case a file is deleted physically from dataset folder, user should be inform maybe
