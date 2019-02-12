@@ -167,7 +167,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     }
 
-                                    if (string.IsNullOrEmpty(value)) value = c.CellValue.Text;
+                                    if (string.IsNullOrEmpty(value) && c.DataType.Value != CellValues.SharedString) value = c.CellValue.Text;
 
                                     rowAsStringList.Add(value);
 
