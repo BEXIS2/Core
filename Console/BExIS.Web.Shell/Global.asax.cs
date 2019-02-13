@@ -2,6 +2,7 @@
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using System;
+using System.Configuration;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -103,15 +104,22 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            HttpUnhandledException httpUnhandledException =
-               new HttpUnhandledException(Server.GetLastError().Message, Server.GetLastError());
-            //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
 
-            ErrorHelper.SendEmailWithErrors(
-                httpUnhandledException.GetHtmlErrorMessage()
-                );
+            bool sendExceptions = false;
+            bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
 
-            ErrorHelper.Log(Server.GetLastError().Message);
+            if (sendExceptions)
+            {
+                HttpUnhandledException httpUnhandledException =
+                   new HttpUnhandledException(Server.GetLastError().Message, Server.GetLastError());
+                //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
+
+                ErrorHelper.SendEmailWithErrors(
+                    httpUnhandledException.GetHtmlErrorMessage()
+                    );
+
+                ErrorHelper.Log(Server.GetLastError().Message);
+            }
 
         }
 
