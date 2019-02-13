@@ -5,7 +5,13 @@ $(document).ready(function ()
 	truncateTitle();
 	//console.log("on document ready");
 	//Bootstrat tooltip
-	$('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
+
+    //get height of the menu and add this to the margin of the content
+    var h = $(".navbar").height();
+    console.log("h = " + h);
+    $("#information-container").css("top", h);
+    $(".main-content").css("margin-top", h);
 });
 
 function resetAllTelerikIconTitles()
