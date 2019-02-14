@@ -108,10 +108,15 @@ namespace BExIS.Web.Shell
             bool sendExceptions = false;
             bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
 
-            if (sendExceptions)
+            var error = Server.GetLastError();
+            var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
+
+
+
+            if (sendExceptions && code != 404)
             {
                 HttpUnhandledException httpUnhandledException =
-                   new HttpUnhandledException(Server.GetLastError().Message, Server.GetLastError());
+                   new HttpUnhandledException(error.Message, error);
                 //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
 
                 ErrorHelper.SendEmailWithErrors(
