@@ -166,8 +166,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         }
 
                                     }
+                                    else { value = c.CellValue.Text; }
 
-                                    if (string.IsNullOrEmpty(value) && c.DataType.Value != CellValues.SharedString) value = c.CellValue.Text;
 
                                     rowAsStringList.Add(value);
 
