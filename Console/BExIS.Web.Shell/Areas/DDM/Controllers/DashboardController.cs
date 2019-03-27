@@ -185,7 +185,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (rights > 0)
                     {
                         DataRow dataRow = model.NewRow();
-                        Object[] rowArray = new Object[8];
+                        Object[] rowArray = new Object[7];
 
                         if (datasetManager.IsDatasetCheckedIn(datasetId))
                         {
@@ -214,8 +214,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[3] = (rights & (int)RightType.Read) > 0 ? "✔" : "✘";
                         rowArray[4] = (rights & (int)RightType.Write) > 0 ? "✔" : "✘";
                         rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
-                        rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
-                        rowArray[7] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
+                        //rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
+                        rowArray[6] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
 
                         dataRow = model.NewRow();
                         dataRow.ItemArray = rowArray;
@@ -288,14 +288,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Name = "Read",
                 DisplayName = "Read",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
@@ -400,13 +392,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
 
             headerItem = new HeaderItem()
             {

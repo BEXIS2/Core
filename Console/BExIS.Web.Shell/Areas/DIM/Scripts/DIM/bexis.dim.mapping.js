@@ -1188,7 +1188,7 @@ $('.le-search').change(function (e) {
     var terms = $('#' + targetid).val().split(' ');
 
     //get checked types
-    var types = []
+    var types = [];
     $(parent).find(".prefilter:checked").each(function (index, element) {
         // element == this
         //console.log(element);
@@ -1283,6 +1283,7 @@ function filter(elems, terms, types) {
 
     searchFilter = [];
     var temp = [];
+
     if (terms.length > 0 && terms[0] !== '') {
         for (var j = 0; j < terms.length; j++) {
             terms[j] = terms[j].toLowerCase();
@@ -1293,12 +1294,7 @@ function filter(elems, terms, types) {
                 var type = $(elems[i]).find('.fa-info').attr("type").trim();
 
                 var id = $(elems[i]).attr("id");
-
-                console.log(text);
-                console.log(terms[j]);
-                console.log(type);
-                console.log(types[j]);
-
+     
                 if (text.toLowerCase().indexOf(terms[j]) !== -1) {
 
                     //text is matched, now check the type
@@ -1306,10 +1302,12 @@ function filter(elems, terms, types) {
 
                         for (var x = 0; x < types.length; x++) {
 
-                            var t = types[x].toLowerCase()
+                            var t = types[x].toLowerCase();
 
                             if (type.toLowerCase().indexOf(t) !== -1) {
-                                console.log("yeah");
+                                temp.push(id);
+                            }
+                            else if (t==="type" && type.toLowerCase().indexOf("complex") !== -1){
                                 temp.push(id);
                             }
                         }
@@ -1339,10 +1337,12 @@ function filter(elems, terms, types) {
                 var type = $(elems[i]).find('.fa-info').attr("type").trim();
                 var id = $(elems[i]).attr("id");
 
-                var t = types[x].toLowerCase()
+                var t = types[x].toLowerCase();
 
                 if (type.toLowerCase().indexOf(t) !== -1) {
                     console.log("yeah");
+                    temp.push(id);
+                } else if (t === "type" && type.toLowerCase().indexOf("complex") !== -1) {
                     temp.push(id);
                 }
             }
