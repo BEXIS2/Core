@@ -1184,8 +1184,8 @@ $('.le-search').change(function (e) {
     searchFilter = [];
 
     //get input field as a list
-    $('#' + targetid).val($('#' + targetid).val().trim());
-    var terms = $('#' + targetid).val().split(' ');
+    var value = $('#' + targetid).val().trim();
+    var terms = value.split(' ');
 
     //get checked types
     var types = [];
