@@ -181,6 +181,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\DataStructure\ConstraintTests.cs" />
     <Compile Include="Entities\Data\DatasetTests.cs" />
     <Compile Include="Helpers\DatasetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
