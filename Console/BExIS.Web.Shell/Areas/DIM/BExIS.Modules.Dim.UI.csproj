@@ -563,6 +563,7 @@
     <Content Include="Content\Images\help\help_img2.png" />
     <Content Include="Content\Images\help\help_img3.png" />
     <Content Include="Content\Images\help\help_img4.png" />
+    <Content Include="Content\Images\help\key_overview.PNG" />
     <Content Include="Content\Images\help\many_to_one.png" />
     <Content Include="Content\Images\help\mapping.png" />
     <Content Include="Content\Images\help\mapping_tool.png" />
