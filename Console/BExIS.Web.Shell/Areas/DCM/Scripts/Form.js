@@ -144,6 +144,8 @@ function OnKeyUpTextInput(e) {
         //console.log(textarea);
         $("#" + e.id).replaceWith(textarea);
 
+        $(textarea).trigger("change");
+
         //set focus
         var tmp = $("#" + e.id).val();
         $("#" + e.id).val('');
@@ -166,6 +168,7 @@ function inputToTextArea(input) {
         "title='" + $("#" + input.id).attr("title") + "'" +
         "class=\"bx-textarea bx-metadataFormTextInput \"" +
         "cols=\"2\" rows=\"2\">" + input.value + "</textarea>";
+
 
     return textarea;
 }

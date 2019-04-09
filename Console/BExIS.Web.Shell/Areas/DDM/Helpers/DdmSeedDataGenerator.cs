@@ -1,5 +1,7 @@
 ﻿
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +85,11 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 operationManager.Create("DDM", "PublicSearch", "*");
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
                 operationManager.Create("DDM", "Data", "*", SearchFeature);
+
+                var featurePermissionManager = new FeaturePermissionManager();
+
+                if (!featurePermissionManager.Exists(null, SearchFeature.Id, PermissionType.Grant))
+                    featurePermissionManager.Create(null, SearchFeature.Id, PermissionType.Grant);
 
                 #endregion
 

@@ -748,7 +748,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
                         metadataXmlTemplate);
 
-                    TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, completeMetadata);
+                    TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(completeMetadata));
 
                     //LoadMetadata(long datasetId, bool locked= false, bool created= false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata=null)
                     return RedirectToAction("ImportMetadata", "Form",
@@ -3099,7 +3099,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = dm.GetDataset(datasetid);
                     metadataStructureid = dataset.MetadataStructure.Id;
                     metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
-                    TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
+                    TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(metadata));
                 }
 
                 return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = false, locked = true });
@@ -3131,7 +3131,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = dm.GetDataset(datasetid);
                     metadataStructureid = dataset.MetadataStructure.Id;
                     metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
-                    TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
+                    TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(metadata));
                 }
 
                 return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit, created });

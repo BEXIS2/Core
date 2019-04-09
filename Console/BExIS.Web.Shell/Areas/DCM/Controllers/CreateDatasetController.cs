@@ -1066,7 +1066,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
 
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
@@ -1078,7 +1078,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
 
-            return metadata;
+            return XmlUtility.ToXDocument(metadata);
         }
 
         #endregion Helper

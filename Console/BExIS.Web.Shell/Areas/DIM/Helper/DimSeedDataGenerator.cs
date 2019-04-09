@@ -110,6 +110,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #endregion
 
+                #region Export
+
+                if (!operationManager.Exists("dim", "export", "*")) operationManager.Create("DIM", "export", "*");
+
+                #endregion
+
                 #region API
 
                 if (!operationManager.Exists("api", "metadata", "*")) operationManager.Create("API", "Metadata", "*", API);
