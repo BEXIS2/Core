@@ -1,9 +1,8 @@
-[![N|Solid](https://github.com/BEXIS2/Documents/blob/master/Images/Logo/Logo_BEXIS_rgb_113x28.jpg?raw=true)](http://bexis2.uni-jena.de/) 
 # Modules Overview
 
 On this page all modules are shown which are available in the community for all BEXIS 2 instances. 
 
-### BEXIS2
+** BEXIS2 **
 
 | Name | Description | BEXIS 2 Version | Link |
 | ------ | ------ | ------ | ------ |
