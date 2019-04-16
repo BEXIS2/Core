@@ -3,12 +3,15 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.Logging.Aspects;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
@@ -38,6 +41,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <remarks>When a dataset is deleted, it is consodered as non-exisiting, but for the sake or provenance, citation, history, etc, it is not removed froom the database.
         /// The function to recover a deleted dataset, will not be provided.</remarks>
         /// <returns></returns>
+        [MeasurePerformance]
         public ActionResult Delete(long id)
         {
             var datasetManager = new DatasetManager();
@@ -47,6 +51,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
                 {
+
+                    //send email
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        MessageHelper.GetDeleteDatasetMessage(id, ControllerContext.HttpContext.User.Identity.Name),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                     //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
@@ -154,6 +166,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="id">the identifier of the dataset to be purged.</param>
         /// <remarks>This operation is not revocerable.</remarks>
         /// <returns></returns>
+        [MeasurePerformance]
         public ActionResult Purge(long id)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", Session.GetTenant());
@@ -166,6 +179,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (dm.PurgeDataset(id))
                 {
                     entityPermissionManager.Delete(typeof(Dataset), id);
+
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                        MessageHelper.GetPurgeDatasetMessage(id, ControllerContext.HttpContext.User.Identity.Name),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
 
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                     {

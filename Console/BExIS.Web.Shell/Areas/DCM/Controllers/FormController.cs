@@ -56,13 +56,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            var newMetadata = (XmlDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            //var newMetadata = TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
             var Model = new MetadataEditorModel();
 
 
-            TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
+            //TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, newMetadata);
 
             AdvanceTaskManagerBasedOnExistingMetadata(metadataStructureId);
 
