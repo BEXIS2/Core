@@ -3,6 +3,8 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
@@ -46,28 +48,63 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var datasetManager = new DatasetManager();
             var entityPermissionManager = new EntityPermissionManager();
+            var entityManager = new EntityManager();
+            var subjectManager = new SubjectManager();
+            var userManager = new UserManager();
 
             try
             {
-                if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
+                var userName = GetUsernameOrDefault();
+                var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+
+                // check if a user is logged in 
+                if (user != null)
                 {
-
-                    //send email
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDeleteDatasetHeader(),
-                        MessageHelper.GetDeleteDatasetMessage(id, ControllerContext.HttpContext.User.Identity.Name),
-                        ConfigurationManager.AppSettings["SystemEmail"]
-                        );
-
-                    //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
-
-                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                    // is the user allowed to delete this dataset
+                    if (entityPermissionManager.HasEffectiveRight(user, entityManager.FindByName("Dataset"), id, Security.Entities.Authorization.RightType.Delete))
                     {
-                        var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                        //try delete the dataset
+                        if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
+                        {
+
+                            //send email
+                            var es = new EmailService();
+                            es.Send(MessageHelper.GetDeleteDatasetHeader(),
+                                MessageHelper.GetDeleteDatasetMessage(id, user.Name),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+
+                            //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
+
+                            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                            {
+                                var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                            }
+                        }
+                    }
+                    else // user is not allowed
+                    {
+                        ViewData.ModelState.AddModelError("", $@"You do not have the permission to delete the record.");
+
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetTryToDeleteDatasetHeader(),
+                            MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault()),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
                     }
                 }
+                else // no user exist
+                {
+                    ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
+
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetTryToDeleteDatasetHeader(),
+                        MessageHelper.GetTryToDeleteDatasetMessage(id, userName),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+                }
             }
-            catch (Exception e)
+            catch (Exception e) //for technical reasons the dataset cannot be deleted
             {
                 ViewData.ModelState.AddModelError("", $@"Dataset {id} could not be deleted.");
             }
@@ -173,24 +210,58 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             DatasetManager dm = new DatasetManager();
             var entityPermissionManager = new EntityPermissionManager();
+            var datasetManager = new DatasetManager();
+            var entityManager = new EntityManager();
+            var userManager = new UserManager();
 
             try
             {
-                if (dm.PurgeDataset(id))
-                {
-                    entityPermissionManager.Delete(typeof(Dataset), id);
+                var userName = GetUsernameOrDefault();
+                var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
+                // check if a user is logged in 
+                if (user != null)
+                {
+                    // is the user allowed to delete this dataset
+                    if (entityPermissionManager.HasEffectiveRight(user, entityManager.FindByName("Dataset"), id, Security.Entities.Authorization.RightType.Delete))
+                    {
+                        if (dm.PurgeDataset(id))
+                        {
+                            entityPermissionManager.Delete(typeof(Dataset), id);
+
+                            var es = new EmailService();
+                            es.Send(MessageHelper.GetPurgeDatasetHeader(),
+                                MessageHelper.GetPurgeDatasetMessage(id, user.Name),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+
+
+                            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                            {
+                                var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                            }
+                        }
+
+                    }
+                    else // user is not allowed
+                    {
+                        ViewData.ModelState.AddModelError("", $@"You do not have the permission to purge the record.");
+
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetTryToPurgeDatasetHeader(),
+                            MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+                    }
+                }
+                else // no user exist
+                {
+                    ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetPurgeDatasetHeader(),
-                        MessageHelper.GetPurgeDatasetMessage(id, ControllerContext.HttpContext.User.Identity.Name),
+                    es.Send(MessageHelper.GetTryToPurgeDatasetHeader(),
+                        MessageHelper.GetTryToPurgeDatasetMessage(id, userName),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
-
-
-                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
-                    {
-                        var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
-                    }
                 }
             }
             catch (Exception e)
@@ -330,7 +401,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
 
+        public string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
 
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
 
     }
 }

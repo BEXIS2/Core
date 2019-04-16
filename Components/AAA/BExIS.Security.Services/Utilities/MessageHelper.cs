@@ -34,6 +34,22 @@
             return message + ".";
         }
 
+        public static string GetTryToDeleteDatasetHeader()
+        {
+            return $"Someone tried to delete a dataset";
+        }
+
+        public static string GetTryToDeleteDatasetMessage(long datasetid, string userName)
+        {
+            string message = $"An unsuccessful attempt was made to delete a Dataset with id <b>({datasetid})</b>";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
         public static string GetPurgeDatasetHeader()
         {
             return $"Dataset was purged";
@@ -42,6 +58,22 @@
         public static string GetPurgeDatasetMessage(long datasetid, string userName)
         {
             string message = $"Dataset with id <b>({datasetid})</b> was purged";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
+        public static string GetTryToPurgeDatasetHeader()
+        {
+            return $"Someone tried to purge a dataset";
+        }
+
+        public static string GetTryToPurgeDatasetMessage(long datasetid, string userName)
+        {
+            string message = $"An unsuccessful attempt was made to purge a Dataset with id <b>({datasetid})</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
