@@ -849,3 +849,25 @@ function TryParseInt(str, defaultValue) {
     }
     return retValue;
 }
+
+
+
+/******************************************
+ ********* HELP ***************************
+ ******************************************/
+
+function showHelp(id) {
+    $("#" + id).toggle();
+}
+
+function showHelpAll() {
+    $(".help").show();
+    $("#show_help_all").hide();
+    $("#hide_help_all").show();
+}
+
+function hideHelpAll() {
+    $(".help").hide();
+    $("#show_help_all").show();
+    $("#hide_help_all").hide();
+}

@@ -167,12 +167,14 @@
                 }
 
 
-                <td id="form_message_container_Column" style="text-align: right">
-                    <span id="form_message"></span>
-                    <div id="preloader_cotainer">
-                        <script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
-                    </div>
-                </td>
+                    <td id="form_message_container_Column" style="text-align: right">
+                        <span id="form_message"></span>
+                        <div id="preloader_cotainer">
+                            <script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
+                        </div>
+                        <div id="show_help_all"><button type="button" title="Show all help information." class="bx-function bx-disabled fa  fa-info " onclick="showHelpAll();"></button></div>
+                        <div id="hide_help_all"><button type="button" title="Hide all help information." class="bx-function bx-disabled" onclick="hideHelpAll();"><i class="fa bx-info" id="help_container"></i><i class="fa fa-ban" id="help_nested"></i></button></div>
+                    </td>
 
 
                 @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
