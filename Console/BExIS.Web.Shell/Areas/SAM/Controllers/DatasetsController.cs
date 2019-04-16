@@ -54,7 +54,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                     //send email
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetDeleteDatasetHeader(),
                         MessageHelper.GetDeleteDatasetMessage(id, ControllerContext.HttpContext.User.Identity.Name),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -181,7 +181,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     entityPermissionManager.Delete(typeof(Dataset), id);
 
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetPurgeDatasetHeader(),
                         MessageHelper.GetPurgeDatasetMessage(id, ControllerContext.HttpContext.User.Identity.Name),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );

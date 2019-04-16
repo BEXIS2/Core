@@ -34,6 +34,11 @@
             return message + ".";
         }
 
+        public static string GetPurgeDatasetHeader()
+        {
+            return $"Dataset was purged";
+        }
+
         public static string GetPurgeDatasetMessage(long datasetid, string userName)
         {
             string message = $"Dataset with id <b>({datasetid})</b> was purged";
