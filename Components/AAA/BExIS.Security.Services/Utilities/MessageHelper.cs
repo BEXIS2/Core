@@ -115,12 +115,12 @@
 
         public static string GetSendRequestHeader(long datasetid)
         {
-            return $"Request to dataset width id  {datasetid}";
+            return $"Request to dataset with id  {datasetid}";
         }
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester)
         {
-            return $"User \"{requester}\" send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+            return $"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
         public static string GetTryToRegisterUserHeader()
