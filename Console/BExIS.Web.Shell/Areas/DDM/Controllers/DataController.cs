@@ -9,6 +9,7 @@ using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
@@ -1261,10 +1262,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+
+                        // E-mail is collected from user
+                        UserManager userManager = new UserManager();
+                        User user = userManager.Users.Where(u => u.Name.Equals(GetUsernameOrDefault())).FirstOrDefault();
+                        string userName = "anonymus";
+                        string eMail = "no email available";
+
+                        if (user != null)
+                        {
+                            userName = user.Name;
+                            eMail = user.Email;
+                        }
+                        
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetSendRequestMessage(id, title, userName, eMail),
                             emailDescionMaker
                             );
                     }
