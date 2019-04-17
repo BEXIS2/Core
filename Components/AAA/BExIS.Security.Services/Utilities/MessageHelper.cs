@@ -83,7 +83,7 @@
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester, string email)
         {
-            return $"User \"{requester}\" send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+            return $"User \"{requester}\" with email <b>({email})</b> send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
         public static string GetTryToRegisterUserHeader()
