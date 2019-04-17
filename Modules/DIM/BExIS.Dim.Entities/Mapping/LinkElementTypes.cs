@@ -1,12 +1,37 @@
 ﻿namespace BExIS.Dim.Entities.Mapping
 {
+
+    //if you want to add keys here, please talk to david schöne
+    // and then you will get a range of ids to set
     public enum Key
     {
-        Author,
-        Description,
-        License,
-        ProjectTitle,
-        Title
+        Author = 0, //also creator for Dublin Core
+        Description = 1, // also for Dublin Core
+        License = 2,
+        ProjectTitle = 3,
+        Title = 4,
+
+        //Automatic System Keys starts at 100
+        Id = 100,
+        Version = 101,
+        DateOfVersion = 102,
+        MetadataCreationDate = 103,
+        MetadataLastModfied = 104,
+        DataCreationDate = 105,
+        DataLastModified = 106, // also for Dubline Core date 
+
+        //Additional Dublin Core nodes starts at 200
+        Subject = 200,
+        Publisher = 201,
+        Contributor = 202,
+        Type = 203, //Examples:Type = "image", Type = "sound", Type = "text"
+        Format = 204, //e.g. Format="image/gif"
+        Identifier = 205, //Open Identifier
+        Source = 206,
+        Language = 207,
+        Relation = 208,
+        Coverage = 209,
+        Rights = 210
     }
 
     public enum LinkElementComplexity

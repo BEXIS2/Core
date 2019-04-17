@@ -359,8 +359,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             try
                             {
+                                long count = dm.RowCount(datasetID, null);
+                                if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 100);
+                                else ModelState.AddModelError(string.Empty, "No data is uploaded to this dataset.");
 
-                                table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 100);
                             }
                             catch
                             {

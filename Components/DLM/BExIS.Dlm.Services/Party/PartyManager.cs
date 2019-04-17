@@ -818,12 +818,37 @@ namespace BExIS.Dlm.Services.Party
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                IRepository<PartyCustomGridColumns> repo = uow.GetRepository<PartyCustomGridColumns>();
+
                 var partyCustomGridColumn = new PartyCustomGridColumns();
+
+                //partyCustomGridColumn = repo.Query().Where(p =>
+                //(p.CustomAttribute != null && partyCustomAttribute != null && p.CustomAttribute.Id.Equals(partyCustomAttribute.Id)) ||
+                //(p.CustomAttribute == null && partyCustomAttribute == null)) &&
+                //((p.TypePair != null && partyTypePair != null && p.TypePair.Id.Equals(partyTypePair.Id)) ||
+                //(p.TypePair == null && partyTypePair == null))).FirstOrDefault();
+
+                if (partyCustomAttribute != null || partyTypePair == null)
+                {
+                    partyCustomGridColumn = repo.Query().Where(p =>
+                    p.TypePair == null &&
+                    p.CustomAttribute != null &&
+                    p.CustomAttribute.Id.Equals(partyCustomAttribute.Id)).FirstOrDefault();
+                }
+                else if (partyCustomAttribute == null || partyTypePair != null)
+                {
+                    partyCustomGridColumn = repo.Query().Where(p =>
+                    p.CustomAttribute == null &&
+                    p.TypePair != null &&
+                    p.TypePair.Id.Equals(partyTypePair.Id)).FirstOrDefault();
+                }
+
+                if (partyCustomGridColumn == null) partyCustomGridColumn = new PartyCustomGridColumns();
+
                 partyCustomGridColumn.UserId = userId;
                 partyCustomGridColumn.Enable = enable;
                 partyCustomGridColumn.CustomAttribute = partyCustomAttribute;
                 partyCustomGridColumn.TypePair = partyTypePair;
-                IRepository<PartyCustomGridColumns> repo = uow.GetRepository<PartyCustomGridColumns>();
                 repo.Put(partyCustomGridColumn);
                 uow.Commit();
             }

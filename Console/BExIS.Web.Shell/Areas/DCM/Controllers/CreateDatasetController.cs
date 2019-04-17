@@ -13,6 +13,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Entities.Authorization;
@@ -517,6 +518,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                             workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
+
+                            //check if modul exist
+                            int v = 1;
+                            if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
+
+                            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+
                         }
 
                         //set status
@@ -532,6 +540,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
+
+                        #region set system informations to the metadata if it is mapped
+
+
+
+                        #endregion
+
 
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -1048,6 +1063,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 partyManager.Dispose();
                 partyTypeManager.Dispose();
             }
+        }
+
+        private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        {
+
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+
+            return XmlUtility.ToXDocument(metadata);
         }
 
         #endregion Helper

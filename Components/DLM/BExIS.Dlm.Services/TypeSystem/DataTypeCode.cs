@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BExIS.Dlm.Services.TypeSystem
 {
@@ -15,10 +12,11 @@ namespace BExIS.Dlm.Services.TypeSystem
         Int64 = TypeCode.Int64,
         UInt16 = TypeCode.UInt16,
         UInt32 = TypeCode.UInt32,
-        UInt64  = TypeCode.UInt64,
-        Double  = TypeCode.Double,
+        UInt64 = TypeCode.UInt64,
+        Double = TypeCode.Double,
         Decimal = TypeCode.Decimal,
         DateTime = TypeCode.DateTime,
+        Single = TypeCode.Single
 
     }
 

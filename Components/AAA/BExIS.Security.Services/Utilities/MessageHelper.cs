@@ -23,9 +23,20 @@
             return $"Dataset was deleted";
         }
 
-        public static string GetDeleteDatasetMessage(long datasetid, string title, string userName)
+        public static string GetDeleteDatasetMessage(long datasetid, string userName)
         {
-            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was deleted";
+            string message = $"Dataset with id <b>({datasetid})</b> was deleted";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
+        public static string GetPurgeDatasetMessage(long datasetid, string userName)
+        {
+            string message = $"Dataset with id <b>({datasetid})</b> was purged";
 
             if (!string.IsNullOrEmpty(userName))
 

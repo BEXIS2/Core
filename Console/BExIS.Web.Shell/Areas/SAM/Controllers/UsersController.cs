@@ -164,11 +164,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
+
+
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
                 var user = userManager.FindByIdAsync(model.Id).Result;
-
                 if (user == null) return PartialView("_Update", model);
+
+                if (user.Email != model.Email)
+                {
+                    // check duplicate email cause of client validation is not working in a telerik window :(
+                    user = userManager.FindByEmailAsync(model.Email).Result;
+                    if (user != null) ModelState.AddModelError("Email", "The email address exists already.");
+                    if (!ModelState.IsValid) return PartialView("_Update", model);
+                }
 
                 user.Email = model.Email;
 
@@ -207,7 +216,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         #region Remote Validation
-
+        [AllowAnonymous]
+        [HttpPost]
         public JsonResult ValidateEmail(string email, long id = 0)
         {
             var userManager = new UserManager();

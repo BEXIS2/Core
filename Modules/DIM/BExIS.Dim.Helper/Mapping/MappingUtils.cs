@@ -14,6 +14,7 @@ namespace BExIS.Dim.Helpers.Mapping
 {
     public class MappingUtils
     {
+        public static object LinkeElementType { get; private set; }
 
         #region generic
 
@@ -164,6 +165,7 @@ namespace BExIS.Dim.Helpers.Mapping
         #endregion
 
         #region GET FROM SYSTEM
+
 
 
         /// <summary>
@@ -443,6 +445,52 @@ namespace BExIS.Dim.Helpers.Mapping
                 throw ex;
             }
         }
+
+
+        /// <summary>
+        /// Check if there is a mapping to system key nodes
+        /// return true if yes
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool ExistSystemFieldMappings(long id, LinkElementType type)
+        {
+
+            //Automatic System Keys starts at 100
+            //Id = 100,
+            //Version = 101,
+            //DateOfVersion = 102,
+            //MetadataCreationDate = 103,
+            //MetadataLastModfied = 104,
+            //DataFirstEntry = 105,
+            //DataLastModified = 106, // also for Dubline Core date 
+
+
+            try
+            {
+                // start with element at target
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(id) &&
+                            m.Target.Type.Equals(type) &&
+                            100 <= m.Source.ElementId && m.Source.ElementId <= 106 &&
+                            m.Source.Type.Equals(LinkElementType.Key)
+                        ).ToList();
+
+
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
 
         #endregion
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Vaiona.Entities.Common;
@@ -14,7 +13,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// The base class for all concrete constraint types. It provides various attributes needed for all the constraint sub types. Among them the cultureId is a means 
     /// to define different constraints on a single data attribute based on the culture.
     /// </summary>
-    public abstract class Constraint: BaseEntity
+    public abstract class Constraint : BaseEntity
     {
         protected string defaultMessageTemplate;
         protected string defaultNegatedMessageTemplate;
@@ -69,7 +68,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// The <see cref="DataContainer"/> the constraint applies on.
         /// </summary>
         public virtual DataContainer DataContainer { get; set; }
-        
+
         #endregion
 
         #region Mathods
@@ -84,7 +83,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// The actual error message to be returned to the caller. It is generated based on the <
         /// </summary>
         public abstract string ErrorMessage { get; }
-        
+
         /// <summary>
         /// The formal human readable translation of the constraint.
         /// </summary>
@@ -129,13 +128,13 @@ namespace BExIS.Dlm.Entities.DataStructure
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
-                        string.Join(",", Items.Select(p=>p.Key)) ));
+                        string.Join(",", Items.Select(p => p.Key))));
                 }
                 else
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
-                        string.Join(",", Items.Select(p => p.Key)) ));
+                        string.Join(",", Items.Select(p => p.Key))));
                 }
             }
         }
@@ -146,7 +145,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 if (Negated)
                 {
-                    return (string.Format("The value must not be any of these items: {0}.", string.Join(",", Items.Select(p=>p.Key))));
+                    return (string.Format("The value must not be any of these items: {0}.", string.Join(",", Items.Select(p => p.Key))));
                 }
                 else
                 {
@@ -170,13 +169,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <seealso cref=""/>
         /// <param>NA</param>       
         public DomainConstraint()
-        {      
+        {
             defaultMessageTemplate = "Provided value is not a domain item. The value should be one of these items: {0}.";
             defaultNegatedMessageTemplate = "Provided value is a domain item, but the constraint is negated. The value should not be one of these items: {0}.";
         }
 
         public DomainConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, List<DomainItem> items): this()
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, List<DomainItem> items) : this()
         {
             Contract.Requires(items != null);
             Contract.Requires(items.Count > 0);
@@ -207,12 +206,12 @@ namespace BExIS.Dlm.Entities.DataStructure
             // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
             // it computes the XOR between the positive clause of the constraint and the "Negated" Boolean,
             // meaning if Negated is true the function returns false for inputs that are in the domain
-            return (Negated ^ (Items.Where(p => p.Key.Equals(data.ToString(), StringComparison.InvariantCultureIgnoreCase)).Count() > 0)); 
+            return (Negated ^ (Items.Where(p => p.Key.Equals(data.ToString(), StringComparison.InvariantCultureIgnoreCase)).Count() > 0));
         }
 
         #endregion
 
-       
+
     }
 
     /// <summary>
@@ -271,13 +270,13 @@ namespace BExIS.Dlm.Entities.DataStructure
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
-                        MatchingPhrase, (CaseSensitive? "case sensitive": "case insensitive") ));
+                        MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
                 }
                 else
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
-                         MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive") ));
+                         MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
                 }
             }
         }
@@ -343,14 +342,14 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param name="auxiliary"></param>
         public override bool IsSatisfied(object data, object auxiliary = null)
         {
-            if(!CaseSensitive)
+            if (!CaseSensitive)
                 return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase, RegexOptions.IgnoreCase)));
             else
                 return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase)));
         }
 
         #endregion
-}
+    }
 
     /// <summary>
     /// checks whether the value is inside/ outside of the specified range, not/including the boundaries.
@@ -367,28 +366,28 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual double   Lowerbound { get; set; }
+        public virtual double Lowerbound { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual double   Upperbound { get; set; }
+        public virtual double Upperbound { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual bool     LowerboundIncluded { get; set; }
+        public virtual bool LowerboundIncluded { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual bool     UpperboundIncluded { get; set; }
+        public virtual bool UpperboundIncluded { get; set; }
 
         /// <summary>
         ///
@@ -492,11 +491,11 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 try
                 {
-                    d =  Convert.ToDouble(data);
+                    d = Convert.ToDouble(data);
                 }
                 catch
                 {
-                    return (Negated ^ false); 
+                    return (Negated ^ false);
                 }
             }
             if (LowerboundIncluded == true && d < Lowerbound || (LowerboundIncluded == false && d <= Lowerbound)) //out of lower bound
@@ -505,11 +504,11 @@ namespace BExIS.Dlm.Entities.DataStructure
             if (UpperboundIncluded == true && d > Upperbound || (UpperboundIncluded == false && d >= Upperbound)) //out of upper bound
                 return (Negated ^ false);
             return (Negated ^ true);
-        }        
+        }
 
         #endregion
     }
-  
+
     /// <summary>
     /// compares the input value to a reference/ target one using a specified comparison operator. 
     /// The reference object can be an object or the value of a variable/ parameter in the same tuple
@@ -518,7 +517,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     public class ComparisonConstraint : Constraint
     {
         #region Attributes
-        
+
         /// <summary>
         /// The comparison operator, it is always a binary operator capable of comparing its left side to the right and return true or false.
         /// valid operators depend on the data type, so the UI should show proper operators based on the data attribute's data type during the constraint definition.
@@ -805,7 +804,7 @@ namespace BExIS.Dlm.Entities.DataStructure
                         break;
                     }
                 case ComparisonOperator.LessThanOrEqual:
-                    {                        
+                    {
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
                             return Negated ^ (((string)data).Length <= ((string)auxiliary).Length);
@@ -843,7 +842,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// </summary>
     public enum ComparisonOperator
     {
-        Equals, NotEquals, GreaerThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, 
+        Equals, NotEquals, GreaerThan, GreaterThanOrEqual, LessThan, LessThanOrEqual,
     }
 
     /// <summary>

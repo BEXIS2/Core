@@ -9,5 +9,11 @@ namespace BExIS.Web.Shell.Controllers
         {
             return View();
         }
+
+        // GET: Error
+        public ActionResult NotFound()
+        {
+            return View();
+        }
     }
 }

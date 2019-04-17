@@ -1,4 +1,6 @@
-﻿using BExIS.Dlm.Entities.Common;
+﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.IO.DataType.DisplayPattern;
@@ -54,16 +56,21 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
             string constraintsDescription = "";
+            LinkElementType type = LinkElementType.MetadataNestedAttributeUsage;
+            bool locked = false;
 
             if (current is MetadataNestedAttributeUsage)
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)current;
                 metadataAttribute = mnau.Member;
+                type = LinkElementType.MetadataNestedAttributeUsage;
             }
             else
             {
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)current;
                 metadataAttribute = mau.MetadataAttribute;
+                type = LinkElementType.MetadataAttributeUsage;
+
             }
 
             if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
@@ -81,6 +88,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(metadataAttribute.DataType.Extra);
             string displayPattern = "";
             if (dtdp != null) displayPattern = dtdp.StringPattern;
+
+
+            //ToDO/Check if dim is active
+            //check if its linked with a system field
+            //
+            locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
+
+
 
             return new MetadataAttributeModel
             {
@@ -104,7 +119,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 last = true,
                 MetadataAttributeId = metadataAttribute.Id,
                 ParentStepId = parentStepId,
-                Errors = null
+                Errors = null,
+                Locked = locked
             };
         }
 

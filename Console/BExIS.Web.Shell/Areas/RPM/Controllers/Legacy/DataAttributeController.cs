@@ -1,17 +1,14 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
 using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
-using BExIS.Modules.Rpm.UI.Models;
 using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -38,7 +35,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Variable Templates", this.Session.GetTenant());
             if (Session["Window"] == null)
                 Session["Window"] = false;
-            if(dataStructureId == 0)
+            if (dataStructureId == 0)
                 return View(new DataAttributeManagerModel(showConstraints));
             else
                 return View(new DataAttributeManagerModel(dataStructureId, showConstraints));
@@ -46,7 +43,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult editAttribute(DataAttributeModel Model)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Data Attributes", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Data Attributes", this.Session.GetTenant());
             DataContainerManager dataAttributeManager = null;
             try
             {
@@ -380,7 +377,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     if (pcm.Id == 0)
                     {
-                        PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, pcm.Description, pcm.Negated, null, null, null, pcm.MatchingPhrase, false);
+                        PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, pcm.Description, pcm.Negated, null, null, null, pcm.MatchingPhrase, true);
                         dcManager.AddConstraint(constraint, dataAttribute);
                     }
                     else
@@ -442,7 +439,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         private List<DomainItem> createDomainItems(string Terms)
-        { 
+        {
             List<DomainItem> items = new List<DomainItem>();
 
             Terms = cutSpaces(Terms);
@@ -510,7 +507,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private List<DomainConstraintItemModel> clearEmptyItems(List<DomainConstraintItemModel> list)
         {
-            for (int i = 0; i < list.Count;i++ )
+            for (int i = 0; i < list.Count; i++)
             {
                 if (list.ElementAt(i).Key == null)
                 {
