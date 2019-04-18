@@ -1265,6 +1265,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),

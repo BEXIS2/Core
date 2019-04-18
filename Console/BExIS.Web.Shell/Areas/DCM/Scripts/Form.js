@@ -683,6 +683,8 @@ function OnClose(e) {
 /******************************************
  ********* Component************************
  ******************************************/
+
+
 function UpdateWithParty(componentId, number, partyid) {
 
     console.log("update with party");
@@ -840,7 +842,7 @@ function showHideClick(e) {
 
 function TryParseInt(str, defaultValue) {
     var retValue = defaultValue;
-    if (str !== null && str != undefined) {
+    if (str !== null && str !== undefined) {
         if (str.length > 0) {
             if (!isNaN(str)) {
                 retValue = parseInt(str);
