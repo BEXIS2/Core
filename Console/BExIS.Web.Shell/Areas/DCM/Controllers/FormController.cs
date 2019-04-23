@@ -10,6 +10,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
+using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
@@ -24,8 +25,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
@@ -33,6 +36,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -2218,6 +2222,63 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
 
+        private string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion,
+            string title, string ext)
+        {
+
+            string name = "";
+            string mimeType = "";
+
+            if (ext.Contains("csv"))
+            {
+                name = "datastructure";
+                mimeType = "text/comma-separated-values";
+            }
+
+            if (ext.Contains("html"))
+            {
+                name = title;
+                mimeType = "application/html";
+            }
+
+
+            // create the generated FileStream and determine its location
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title,
+                ext);
+            //Register the generated data FileStream as a resource of the current dataset version
+            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+            //{
+            //    OrderNo = 1,
+            //    Name = name,
+            //    MimeType = mimeType,
+            //    URI = dynamicPath,
+            //    DatasetVersion = datasetVersion,
+            //};
+
+            DatasetManager dm = new DatasetManager();
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+            {
+                // remove the one contentdesciptor 
+                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    if (cd.Name == name)
+                    {
+                        cd.URI = dynamicPath;
+                        dm.UpdateContentDescriptor(cd);
+                    }
+                }
+            }
+            else
+            {
+                // add current contentdesciptor to list
+                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+            }
+
+            //dm.EditDatasetVersion(datasetVersion, null, null, null);
+            return dynamicPath;
+        }
+
         #endregion Helper
 
         #region Attribute
@@ -3203,5 +3264,74 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #endregion overrideable Action
+
+        #region download
+
+        public ActionResult DownloadAsHtml()
+        {
+
+            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            if (TaskManager != null)
+            {
+                DatasetManager datasetManager = new DatasetManager();
+
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
+                long researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
+                long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+                string title = xmlDatasetHelper.GetInformation(entityId, NameAttributeValues.title);
+
+                // get the offline version of the metadata
+                var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()
+                {
+                    { "entityId", entityId },
+                    { "title", title },
+                    { "metadatastructureId", metadatastructureId },
+                    { "datastructureId", datastructureId },
+                    { "researchplanId", researchplanId },
+                    { "sessionKeyForMetadata", null },
+                    { "resetTaskManager", false }
+                });
+
+
+
+                // prepare view to write it to the file
+                byte[] content = Encoding.ASCII.GetBytes(view.ToString());
+
+                return File(content, "application/xhtml+xml", "metadata.htm");
+            }
+
+            return Content("no metadata html file is loaded.");
+        }
+
+        public ActionResult DownloadAsXml()
+        {
+
+            try
+            {
+                if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                if (TaskManager != null)
+                {
+                    long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                    string path = OutputMetadataManager.CreateConvertedMetadata(entityId, TransmissionType.mappingFileExport);
+
+                    path = Path.Combine(AppConfiguration.DataPath, path);
+
+                    return File(path, "application/xml", Path.GetFileName(path));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+
+            return Content("no metadata xml file is loaded.");
+        }
+
+        #endregion
     }
 }
