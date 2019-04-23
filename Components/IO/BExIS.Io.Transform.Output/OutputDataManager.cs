@@ -346,6 +346,7 @@ namespace BExIS.IO.Transform.Output
                 // text based files
                 case ".csv":
                 case ".txt":
+                case ".tsv":
                     AsciiWriter asciiwriter = (AsciiWriter)writer;
                     return asciiwriter.CreateFile(ns, title, ext);
 
