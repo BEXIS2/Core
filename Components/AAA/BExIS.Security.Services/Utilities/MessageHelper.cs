@@ -34,9 +34,46 @@
             return message + ".";
         }
 
+        public static string GetTryToDeleteDatasetHeader()
+        {
+            return $"Someone tried to delete a dataset";
+        }
+
+        public static string GetTryToDeleteDatasetMessage(long datasetid, string userName)
+        {
+            string message = $"An unsuccessful attempt was made to delete a Dataset with id <b>({datasetid})</b>";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
+        public static string GetPurgeDatasetHeader()
+        {
+            return $"Dataset was purged";
+        }
+
         public static string GetPurgeDatasetMessage(long datasetid, string userName)
         {
             string message = $"Dataset with id <b>({datasetid})</b> was purged";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
+        public static string GetTryToPurgeDatasetHeader()
+        {
+            return $"Someone tried to purge a dataset";
+        }
+
+        public static string GetTryToPurgeDatasetMessage(long datasetid, string userName)
+        {
+            string message = $"An unsuccessful attempt was made to purge a Dataset with id <b>({datasetid})</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -78,12 +115,12 @@
 
         public static string GetSendRequestHeader(long datasetid)
         {
-            return $"Request to dataset width id  {datasetid}";
+            return $"Request to dataset with id  {datasetid}";
         }
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester)
         {
-            return $"User \"{requester}\" send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+            return $"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
         public static string GetTryToRegisterUserHeader()

@@ -141,7 +141,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (!downloadAccess)
                     {
                         requestExist = HasRequest(id);
-                        requestAble = HasRequestMapping(id);
+
+                        if (UserExist() && HasRequestMapping(id)) requestAble = true;
+
                     }
 
                     if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
@@ -1263,6 +1265,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
@@ -1346,6 +1349,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public bool UserExist()
+        {
+            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) return true;
+
+            return false;
         }
 
         private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)

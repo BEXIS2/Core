@@ -56,10 +56,13 @@
         });
 
         $('.bx-delete').click(function () {
+
+
             var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
 
             if (result) {
-                $.post('@Url.Action("Reject", "Requests")', { DecisionId: $(this).attr("value") }, function (e) {
+            $.post('@Url.Action("Reject", "Requests")', { requestId: $(this).attr("value") }, function (e) {
+                    console.log("reject");
                     $("#grid_decisions .t-refresh").trigger('click');
                 });
             }

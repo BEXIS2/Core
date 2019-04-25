@@ -71,8 +71,8 @@
       <column name="ShortName" index="idx_DataContainers_shortName"/>
     </property>
 
-    <property name="Description" type="String">
-      <column name="Description" />
+    <property name="Description" type="String" > 
+      <column name="Description" sql-type="varchar" />
     </property>
     
     <property name="IsMultiValue" type="yes_no">

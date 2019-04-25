@@ -108,16 +108,21 @@ namespace BExIS.Web.Shell
             bool sendExceptions = false;
             bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
 
+
             var error = Server.GetLastError();
             var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
 
 
 
-            if (sendExceptions && code != 404)
+
+            if (
+                sendExceptions &&
+                code != 404 && // not existing action is called
+                !(error is InvalidOperationException) && !error.Message.StartsWith("Multiple types were found that match the controller named") // same controller name in multpily controller, and no correct action call
+               )
             {
                 HttpUnhandledException httpUnhandledException =
                    new HttpUnhandledException(error.Message, error);
-                //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
 
                 ErrorHelper.SendEmailWithErrors(
                     httpUnhandledException.GetHtmlErrorMessage()
