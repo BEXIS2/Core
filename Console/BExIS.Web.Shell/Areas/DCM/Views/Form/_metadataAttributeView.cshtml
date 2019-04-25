@@ -93,7 +93,7 @@
     @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
     {
     <table>
-        <tr><td></td><td><div id="help_@idInput" class="help" style="display: none;">@Model.Discription</div></td></tr>
+        <tr><td></td><td><div id="help_@idInput" class="help" style="display: none;">@Html.Raw(Model.Discription)</div></td></tr>
         <tr>
             <td class="metadataAttributeLabel">
                 @if (Model.MinCardinality > 0)
@@ -101,7 +101,7 @@
                     <b title="This field is required" style="color:red">*</b>
                 }
 
-                <b title="@Model.Discription">@displayName</b>
+                <b>@displayName</b>
 
                 @*Empty = @Model.IsEmpty.ToString();*@
             </td>
@@ -340,7 +340,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(Model.Discription))
                             {
-                                <button type="button" title="@Model.Discription" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
+                                <button type="button" title="@Html.Raw(Model.Discription)" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
                             }
 
                         </td>
