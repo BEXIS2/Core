@@ -92,35 +92,36 @@ namespace BExIS.Xml.Helpers
                     package.SetAttributeValue("number", "1");
                     role.Add(package);
 
+                    setChildren(package, mpu, importXml);
 
-                    attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
+                    //attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
 
-                    foreach (MetadataAttributeUsage mau in attributes)
-                    {
-                        XElement attribute;
+                    //foreach (MetadataAttributeUsage mau in attributes)
+                    //{
+                    //    XElement attribute;
 
-                        XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
-                        if (_mode.Equals(XmlNodeMode.xPath))
-                        {
-                            attributeRole.SetAttributeValue("name", mau.Label);
-                            attributeRole.SetAttributeValue("id", mau.Id.ToString());
-                        }
-                        package.Add(attributeRole);
+                    //    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
+                    //    if (_mode.Equals(XmlNodeMode.xPath))
+                    //    {
+                    //        attributeRole.SetAttributeValue("name", mau.Label);
+                    //        attributeRole.SetAttributeValue("id", mau.Id.ToString());
+                    //    }
+                    //    package.Add(attributeRole);
 
-                        attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
-                        if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
+                    //    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
+                    //    if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
 
-                        attribute.SetAttributeValue("roleId", mau.Id.ToString());
-                        attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
-                        attribute.SetAttributeValue("number", "1");
+                    //    attribute.SetAttributeValue("roleId", mau.Id.ToString());
+                    //    attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
+                    //    attribute.SetAttributeValue("number", "1");
 
-                        string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
+                    //    string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
 
-                        attributeRole.Add(attribute);
+                    //    attributeRole.Add(attribute);
 
-                        setChildren(attribute, mau, importXml);
+                    //    setChildren(attribute, mau, importXml);
 
-                    }
+                    //}
                 }
 
                 return doc;
@@ -129,7 +130,8 @@ namespace BExIS.Xml.Helpers
 
         private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
         {
-            MetadataAttribute metadataAttribute;
+            MetadataAttribute metadataAttribute = null;
+            MetadataPackage metadataPackage = null;
 
             if (usage is MetadataAttributeUsage)
             {
@@ -137,31 +139,32 @@ namespace BExIS.Xml.Helpers
                 metadataAttribute = metadataAttributeUsage.MetadataAttribute;
 
             }
-            else
+            else if (usage is MetadataNestedAttributeUsage)
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
                 metadataAttribute = mnau.Member;
 
             }
-
-            if (metadataAttribute.Self is MetadataCompoundAttribute)
+            else
             {
-                //MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttribute.Self;
+                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+                metadataPackage = mpu.MetadataPackage;
+
+            }
+
+            if (metadataAttribute != null && metadataAttribute.Self is MetadataCompoundAttribute)
+            {
 
                 MetadataCompoundAttribute mca = this.GetUnitOfWork().GetReadOnlyRepository<MetadataCompoundAttribute>().Get(metadataAttribute.Self.Id);
 
                 foreach (MetadataNestedAttributeUsage nestedUsage in mca.MetadataNestedAttributeUsages)
                 {
-                    //Debug.WriteLine("MetadataCompoundAttribute:            " + element.Name);
-                    //Debug.WriteLine("*************************:            " + element.Name);
-                    //XElement x = element.Descendants().Where(e => e.Name.Equals(nestedUsage.Member.Name)).First();
 
                     if (importDocument != null)
                     {
                         string parentPath = element.GetAbsoluteXPathWithIndex();
 
                         string usagePath = parentPath + "/" + nestedUsage.Label;
-                        //+"/"+ nestedUsage.Member.Name;
 
                         XElement usageElement = importDocument.XPathSelectElement(usagePath);
                         List<XElement> typeList = new List<XElement>();
@@ -169,13 +172,10 @@ namespace BExIS.Xml.Helpers
                         if (usageElement != null && usageElement.HasElements)
                         {
                             int num = usageElement.Elements().Count();
-                            //importDocument.XPathSelectElements(childPath).Count();
-                            //num = XmlUtility.ToXmlDocument(importDocument).SelectNodes(childPath).Count;
 
                             if (num == 0)
                             {
                                 typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
-                                //x = setChildren(x, nestedUsage, importDocument);
                             }
                             else
                             {
@@ -205,6 +205,63 @@ namespace BExIS.Xml.Helpers
                         setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
                     }
 
+                }
+            }
+            else
+            {
+                if (metadataPackage != null)
+                {
+
+                    foreach (MetadataAttributeUsage attrUsage in metadataPackage.MetadataAttributeUsages)
+                    {
+
+                        if (importDocument != null)
+                        {
+                            string parentPath = element.GetAbsoluteXPathWithIndex();
+
+                            string usagePath = parentPath + "/" + attrUsage.Label;
+
+
+                            XElement usageElement = importDocument.XPathSelectElement(usagePath);
+                            List<XElement> typeList = new List<XElement>();
+
+                            if (usageElement != null && usageElement.HasElements)
+                            {
+                                int num = usageElement.Elements().Count();
+
+                                if (num == 0)
+                                {
+                                    typeList = AddAndReturnAttribute(element, attrUsage, 1, 1);
+                                }
+                                else
+                                {
+                                    typeList = AddAndReturnAttribute(element, attrUsage, 1, num);
+                                }
+
+
+                            }
+                            else
+                            {
+                                Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
+
+                                typeList = AddAndReturnAttribute(element, attrUsage, 1, 1);
+                            }
+
+                            foreach (var type in typeList)
+                            {
+                                setChildren(type, attrUsage, importDocument);
+                            }
+
+                        }
+                        else
+                        {
+                            List<XElement> typeList = new List<XElement>();
+
+                            typeList = AddAndReturnAttribute(element, attrUsage, 1, 1);
+                            setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
+                        }
+
+                    }
                 }
             }
 

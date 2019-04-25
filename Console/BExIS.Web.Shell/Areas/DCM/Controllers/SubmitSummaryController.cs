@@ -1,4 +1,5 @@
 ﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dim.Entities.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -7,6 +8,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
@@ -18,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -312,8 +315,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         //XXX Add packagesize to excel read function
                                         if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
+
                                             if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
                                             {
+
                                                 dm.EditDatasetVersion(workingCopy, rows, null, null);
                                                 //Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
                                                 //Debug.WriteLine("----");
@@ -441,6 +446,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 }
 
+
+
                                 //Stream.Close();
 
                             }
@@ -475,6 +482,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         .FirstOrDefault();
                                 dm.DeleteContentDescriptor(tmp);
                             }
+
+
+                            #endregion
+
+                            #region set System value into metadata
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                            {
+                                bool newdataset = TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new");
+                                int v = 1;
+                                if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
+
+                                setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                                dm.EditDatasetVersion(workingCopy, null, null, null);
+                            }
+
+
 
 
                             #endregion
@@ -696,6 +720,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return storePath;
+        }
+
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        {
+
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
 
         #endregion

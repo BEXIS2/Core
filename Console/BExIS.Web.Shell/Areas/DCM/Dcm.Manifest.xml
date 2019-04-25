@@ -21,7 +21,7 @@
             extends="./settingsRoot"
             />
 
-        <Export tag="menubar" id="collect" order="1"
+    <Export tag="menubar" id="collect" order="1"
             title="Collect" description="Quick access to Data Collection Area" icon=""
             controller="" action=""
             extends="./menubarRoot"
@@ -43,6 +43,7 @@
             controller="Push" action="index"
             extends="./menubarRoot/collect" />
 
+    
     <Export tag="lunchbar" id="helpDcm" order="1"
             title="Data Collection" description="Data Collection Help Manual" icon=""
             controller="help" action="index"

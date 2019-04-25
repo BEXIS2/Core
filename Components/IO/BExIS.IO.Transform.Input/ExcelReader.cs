@@ -899,50 +899,7 @@ namespace BExIS.IO.Transform.Input
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
                             }
-                            //// string
-                            //else if (c.DataType != null && c.DataType.Value == CellValues.String)
-                            //{
-                            //    value = c.CellValue.Text;
-                            //}
-
-                            // not a text
-                            //else if (c.StyleIndex != null && c.StyleIndex.HasValue)
-                            //{
-
-                            //    uint styleIndex = c.StyleIndex.Value;
-                            //    CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
-                            //    if (cellFormat != null && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
-                            //    {
-                            //        uint numberFormatId = cellFormat.NumberFormatId.Value;
-
-                            //        NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
-
-                            //        //
-                            //        if (numberFormat != null)
-                            //        {
-                            //            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
-                            //            {
-                            //                string formatCode = numberFormat.FormatCode.Value;
-                            //                if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
-                            //                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
-                            //                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
-                            //                    (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
-                            //                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
-                            //                    )
-                            //                {
-                            //                    //DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                            //                    //value = dateTime.ToString();
-                            //                    double tmp = 0;
-                            //                    if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
-                            //                    else value = c.CellValue.Text;
-
-                            //                }
-                            //            }
-                            //        }
-                            //    }
-                            //}
-
-                            if (string.IsNullOrEmpty(value)) value = c.CellValue.Text;
+                            else { value = c.CellValue.Text; }
 
                             // define index based on cell refernce - offset 
                             int index = cellReferencAsInterger - offset - 1;

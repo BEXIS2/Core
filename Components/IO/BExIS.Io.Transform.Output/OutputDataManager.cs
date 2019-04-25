@@ -346,6 +346,7 @@ namespace BExIS.IO.Transform.Output
                 // text based files
                 case ".csv":
                 case ".txt":
+                case ".tsv":
                     AsciiWriter asciiwriter = (AsciiWriter)writer;
                     return asciiwriter.CreateFile(ns, title, ext);
 
@@ -453,7 +454,7 @@ namespace BExIS.IO.Transform.Output
             List<DataColumn> columnTobeDeleted = new List<DataColumn>();
             foreach (DataColumn column in dt.Columns)
             {
-                if (!visibleColumns.Contains(column.ColumnName.ToUpper()))
+                if (!visibleColumns.Contains(column.Caption.ToUpper()))
                 {
                     columnTobeDeleted.Add(column);
                 }

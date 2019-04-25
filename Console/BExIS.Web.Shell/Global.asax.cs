@@ -1,8 +1,8 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
-using BExIS.Web.Shell.Helpers;
 using System;
+using System.Configuration;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -59,7 +59,7 @@ namespace BExIS.Web.Shell
 
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             Tenant tenant = tenantResolver.Resolve(this.Request);
-            
+
             // if the tenant has no landing page, set the application's default landing page for it.
             GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
             var landingPage = generalSettings.GetEntryValue("landingPage").ToString();
@@ -104,15 +104,32 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            HttpUnhandledException httpUnhandledException =
-               new HttpUnhandledException(Server.GetLastError().Message, Server.GetLastError());
-            //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
 
-            ErrorHelper.SendEmailWithErrors(
-                httpUnhandledException.GetHtmlErrorMessage()
-                );
+            bool sendExceptions = false;
+            bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
 
-            ErrorHelper.Log(Server.GetLastError().Message);
+
+            var error = Server.GetLastError();
+            var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
+
+
+
+
+            if (
+                sendExceptions &&
+                code != 404 && // not existing action is called
+                !(error is InvalidOperationException) && !error.Message.StartsWith("Multiple types were found that match the controller named") // same controller name in multpily controller, and no correct action call
+               )
+            {
+                HttpUnhandledException httpUnhandledException =
+                   new HttpUnhandledException(error.Message, error);
+
+                ErrorHelper.SendEmailWithErrors(
+                    httpUnhandledException.GetHtmlErrorMessage()
+                    );
+
+                ErrorHelper.Log(Server.GetLastError().Message);
+            }
 
         }
 

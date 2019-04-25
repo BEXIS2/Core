@@ -1119,3 +1119,248 @@ function toggleArrows() {
     $(".jtk-endpoint").toggle();
     $(".jtk-connector").toggle();
 }
+
+/**
+ * *****************************************************
+ * @param {any} elems
+ * @param {any} terms
+ * @param {any} types
+ */
+
+
+
+
+function initIsotope(identiferSimple) {
+    // init Isotope
+    console.log("init isotope");
+
+
+    $(identifer).isotope({
+        itemSelector: identiferSimple,
+        layoutMode: 'vertical',
+        transitionDuration: '0.5s',
+        getSortData: {
+            name: '#Name',
+            category: '[data-category]'
+        }
+    });
+}
+
+
+function concatValues(obj) {
+    var value = '';
+    for (var prop in obj) {
+        if (prop == 0) {
+            value = '.' + obj[prop];
+        }
+        else {
+            value += ', .' + obj[prop];
+        }
+    }
+    return value;
+}
+
+$('.le-search').keyup(function () {
+    $('.le-search').trigger("change");
+});
+
+$('.le-search').change(function (e) {
+
+    var parent = $(e.target).parents(".le-root")[0];
+
+    //search input
+    var element = $("#" + e.target.id);
+    var targetid = e.target.id;
+
+    //get position
+    var tmpArray = targetid.split('-');
+    var position = tmpArray[tmpArray.length - 1];
+
+    //class for all simple elements
+    var identiferSimple = ".le-simple-" + position;
+    //class for container
+    var currentidentifer = ".le-container-content-" + position;
+
+    searchFilter = [];
+
+    //get input field as a list
+    var value = $('#' + targetid).val().trim();
+    var terms = value.split(' ');
+
+    //get checked types
+    var types = [];
+    $(parent).find(".prefilter:checked").each(function (index, element) {
+        // element == this
+        //console.log(element);
+        var id = $(element).attr("id");
+
+        types.push(id);
+    });
+
+    //get all simple elements
+
+    var elems = $(identiferSimple);
+    console.log("terms");
+    console.log(terms);
+    console.log("elems");
+    console.log(elems);
+    console.log("types");
+    console.log(types);
+
+    //filter based on terms and types
+    searchFilter = filter(elems, terms, types);
+    
+
+
+    //console.log(searchFilter);
+    console.log(concatValues(searchFilter));
+    $(currentidentifer).isotope({ filter: concatValues(searchFilter) });
+});
+
+$(".prefilter").change(function (e) {
+
+    //parent 
+    var parent = $(e.target).parents(".le-root")[0];
+    console.log(parent);
+
+    //search input
+    var element = $(parent).find(".le-search")[0];
+    var targetid = element.id;
+
+    console.log(element);
+
+    //get position
+    var tmpArray = targetid.split('-');
+    var position = tmpArray[tmpArray.length - 1];
+
+    //class for all simple elements
+    var identiferSimple = ".le-simple-" + position;
+    console.log("identiferSimple : " + identiferSimple);
+    //class for container
+    var currentidentifer = ".le-container-content-" + position;
+
+    searchFilter = [];
+
+    //get input field as a list
+    $('#' + targetid).val($('#' + targetid).val().trim());
+    var terms = $('#' + targetid).val().split(' ');
+
+    //get checked types
+    console.log("start get types");
+    console.log("****************");
+    var types = []
+    $(parent).find(".prefilter:checked").each(function (index, element) {
+        // element == this
+        console.log(element);
+        var id = $(element).attr("id");
+
+        types.push(id);
+    });
+
+    //get all simple elements
+    var elems = $(identiferSimple);
+    console.log("terms");
+    console.log(terms);
+    console.log("elems");
+    console.log(elems);
+    console.log("types");
+    console.log(types);
+
+    //console.log(elems);
+    //filter based on terms and types
+    searchFilter = filter(elems, terms, types);
+
+
+    console.log(searchFilter);
+    console.log(concatValues(searchFilter));
+    $(currentidentifer).isotope({ filter: concatValues(searchFilter) });
+})
+
+
+
+
+function filter(elems, terms, types) {
+
+    searchFilter = [];
+    var temp = [];
+
+    if (terms.length > 0 && terms[0] !== '') {
+        for (var j = 0; j < terms.length; j++) {
+            terms[j] = terms[j].toLowerCase();
+            
+            for (var i = 0; i < elems.length; i++) {
+
+                var text = $(elems[i]).find('.le-simple-header').text().trim();
+                var type = $(elems[i]).find('.fa-info').attr("type").trim();
+
+                var id = $(elems[i]).attr("id");
+     
+                if (text.toLowerCase().indexOf(terms[j]) !== -1) {
+
+                    //text is matched, now check the type
+                    if (types.length > 0) {
+
+                        for (var x = 0; x < types.length; x++) {
+
+                            var t = types[x].toLowerCase();
+
+                            if (type.toLowerCase().indexOf(t) !== -1) {
+                                temp.push(id);
+                            }
+                            else if (t==="type" && type.toLowerCase().indexOf("complex") !== -1){
+                                temp.push(id);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+            if (searchFilter.length === 0) {
+                searchFilter = temp.slice();
+            }
+
+            if (temp.length === 0) {
+                searchFilter.push("0");
+            }
+        }
+    }
+    //filter only types
+    else if (types.length > 0) {
+
+        for (var x = 0; x < types.length; x++) {
+
+            for (var i = 0; i < elems.length; i++) {
+
+                //var text = $(elems[i]).find('.le-simple-header').text().trim();
+                var type = $(elems[i]).find('.fa-info').attr("type").trim();
+                var id = $(elems[i]).attr("id");
+
+                var t = types[x].toLowerCase();
+
+                if (type.toLowerCase().indexOf(t) !== -1) {
+                    console.log("yeah");
+                    temp.push(id);
+                } else if (t === "type" && type.toLowerCase().indexOf("complex") !== -1) {
+                    temp.push(id);
+                }
+            }
+        }
+
+        if (searchFilter.length === 0) {
+            searchFilter = temp.slice();
+        }
+
+        if (temp.length === 0) {
+            searchFilter.push("0");
+        }
+
+    }
+    else {
+        searchFilter = [];
+        searchFilter.push("0");
+    }
+
+    return searchFilter;
+}
