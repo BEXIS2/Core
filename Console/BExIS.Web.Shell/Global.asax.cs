@@ -1,9 +1,11 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using BExIS.Web.Shell.Helpers;
 using System;
 using System.Configuration;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -23,6 +25,20 @@ namespace BExIS.Web.Shell
         private BExIS.App.Bootstrap.Application app = null;
         protected void Application_Start()
         {
+            // Extension of the view search engine by the case that the UI project with view can be found one directory lower. 
+            // This extension allows to store a complete module with libraries and Ui project in a parent directory. 
+            var tmp = new CustomViewEngine();
+
+            foreach (var engine in ViewEngines.Engines)
+            {
+                if (engine is RazorViewEngine)
+                {
+                    ((RazorViewEngine)engine).AreaMasterLocationFormats = tmp.AreaMasterLocationFormats;
+                    ((RazorViewEngine)engine).AreaPartialViewLocationFormats = tmp.AreaPartialViewLocationFormats;
+                    ((RazorViewEngine)engine).AreaViewLocationFormats = tmp.AreaViewLocationFormats;
+                }
+            }
+
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
 
