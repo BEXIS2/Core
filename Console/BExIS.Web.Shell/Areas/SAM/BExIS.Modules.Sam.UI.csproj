@@ -143,6 +143,9 @@
     <Reference Include="Vaiona.Web.Mvc">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Web.Mvc.Modularity">
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DatasetsController.cs" />

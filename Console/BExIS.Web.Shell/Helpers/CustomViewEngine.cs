@@ -9,6 +9,8 @@ namespace BExIS.Web.Shell.Helpers
         {
             var viewLocations = new[] {
 
+            "~/Areas/{2}/Views/{1}/{0}.cshtml",
+            "~/Areas/{2}/Views/Shared/{0}.cshtml",
             "~/Areas/{2}/UI/Views/{1}/{0}.cshtml",
             "~/Areas/{2}/UI/Views/Shared/{0}.cshtml",
             "~/Areas/{2}/BEXIS.Modules.{2}.UI/Views/{1}/{0}.cshtml",

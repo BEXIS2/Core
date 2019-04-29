@@ -27,7 +27,17 @@ namespace BExIS.Web.Shell
         {
             // Extension of the view search engine by the case that the UI project with view can be found one directory lower. 
             // This extension allows to store a complete module with libraries and Ui project in a parent directory. 
-            ViewEngines.Engines.Add(new CustomViewEngine());
+            var tmp = new CustomViewEngine();
+
+            foreach (var engine in ViewEngines.Engines)
+            {
+                if (engine is RazorViewEngine)
+                {
+                    ((RazorViewEngine)engine).AreaMasterLocationFormats = tmp.AreaMasterLocationFormats;
+                    ((RazorViewEngine)engine).AreaPartialViewLocationFormats = tmp.AreaPartialViewLocationFormats;
+                    ((RazorViewEngine)engine).AreaViewLocationFormats = tmp.AreaViewLocationFormats;
+                }
+            }
 
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
