@@ -2,8 +2,11 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Helper.API;
 using BExIS.Modules.Dim.UI.Models;
+using BExIS.Modules.Dim.UI.Models.API;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -12,11 +15,13 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -116,6 +121,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             // apply selection and projection
                             long count = datasetManager.RowCount(id);
+
+
                             DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
                             dt.Strip();
 
@@ -171,6 +178,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
 
             }
+            catch (Exception e)
+            {
+                throw e;
+            }
             finally
             {
                 datasetManager.Dispose();
@@ -184,11 +195,126 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <summary>
         /// Create a new dataset!!!
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="data"></param>
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void Post([FromBody]string value)
+        public async Task<HttpResponseMessage> Post([FromBody]PushDataModel data)
         {
-            throw new HttpResponseException(HttpStatusCode.NotFound);
+            var request = Request.CreateResponse();
+            User user = null;
+            string error = "";
+
+            DatasetManager datasetManager = new DatasetManager();
+            UserManager userManager = new UserManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            DataStructureManager dataStructureManager = new DataStructureManager();
+
+            DatasetVersion workingCopy = new DatasetVersion();
+            List<DataTuple> rows = new List<DataTuple>();
+
+
+
+            try
+            {
+                #region security
+
+                string token = this.Request.Headers.Authorization?.Parameter;
+
+                if (String.IsNullOrEmpty(token))
+                {
+                    request.Content = new StringContent("Bearer token not exist.");
+
+                    return request;
+
+                }
+
+                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                if (user == null)
+                {
+                    request.Content = new StringContent("Token is not valid.");
+
+                    return request;
+                }
+
+
+                //check permissions
+
+                //entity permissions
+                if (data.DatasetId > 0)
+                {
+
+                    Dataset d = datasetManager.GetDataset(data.DatasetId);
+                    if (d == null)
+                    {
+                        request.Content = new StringContent("the dataset with the id (" + data.DatasetId + ") does not exist.");
+
+                        return request;
+                    }
+
+                    if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), data.DatasetId, RightType.Write))
+                    {
+                        request.Content = new StringContent("The token is not authorized to write into the dataset.");
+
+                        return request;
+                    }
+                }
+
+
+                #endregion
+
+                #region incomming values check
+                // check incomming values
+
+
+                if (data.DatasetId == 0) error += "dataset id should be greater then 0.";
+                //if (data.UpdateMethod == null) error += "update method is not set"; 
+                if (data.Count == 0) error += "count should be greater then 0. ";
+                if (data.Columns == null) error += "cloumns should not be null. ";
+                if (data.Data == null) error += "data is empty. ";
+
+                if (data.UpdateMethod == UpdateMethod.Update)
+                {
+                    if (data.PrimaryKeys == null || data.PrimaryKeys.Count() == 0) error += "the UpdateMethod update has been selected but there are no primary keys available. ";
+                }
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    request.Content = new StringContent(error);
+
+                    return request;
+                }
+
+                #endregion
+
+                #region async upload with big data
+                // if dataste is not in the dataset
+                Dataset dataset = datasetManager.GetDataset(data.DatasetId);
+                if (dataset == null)
+                {
+                    request.Content = new StringContent("Dataset not exist.");
+
+                    return request;
+                }
+
+
+                PushDataApiHelper helper = new PushDataApiHelper(dataset, user, data);
+                Task.Run(() => helper.Run());
+
+                #endregion
+
+                request.Content = new StringContent("till now it works");
+
+                Debug.WriteLine("end of api call");
+
+                return request;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+                entityPermissionManager.Dispose();
+                dataStructureManager.Dispose();
+                userManager.Dispose();
+            }
         }
 
         // PUT: api/data/5

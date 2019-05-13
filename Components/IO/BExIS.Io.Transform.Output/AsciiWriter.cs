@@ -158,6 +158,14 @@ namespace BExIS.IO.Transform.Output
 
             return true;
         }
+
+        protected override bool AddHeader(string[] header)
+        {
+            // Add header to data
+            data.AppendLine(String.Join(this.separator, header.ToArray()));
+
+            return true;
+        }
         #endregion
 
         #region addRow
@@ -225,6 +233,15 @@ namespace BExIS.IO.Transform.Output
 
             // Add to result
             data.AppendLine(String.Join(this.separator, line));
+
+            return true;
+        }
+
+        protected override bool AddRow(string[] row, long rowIndex)
+        {
+
+            // Add to result
+            data.AppendLine(String.Join(this.separator, row.ToArray()));
 
             return true;
         }
