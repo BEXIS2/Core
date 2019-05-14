@@ -163,9 +163,9 @@ namespace BExIS.Security.Services.Utilities
 
         #region upload api
 
-        public static string GetPushApiStoreHeader()
+        public static string GetPushApiStoreHeader(long datasetid, string title)
         {
-            return $"Data received via api call.";
+            return $"Receive data for dataset '{title}' ({datasetid})";
         }
 
         public static string GetPushApiStoreMessage(long datasetid, string userName, string[] errors = null)
@@ -186,9 +186,9 @@ namespace BExIS.Security.Services.Utilities
             }
         }
 
-        public static string GetPushApiValidateHeader(long datasetid)
+        public static string GetPushApiValidateHeader(long datasetid, string title)
         {
-            return $"Validation <b>completed</b> for dataset: {datasetid}.";
+            return $"Validation completed for dataset '{title}' ({datasetid})";
         }
 
         public static string GetPushApiValidateMessage(long datasetid, string userName, string[] errors = null)
@@ -208,9 +208,9 @@ namespace BExIS.Security.Services.Utilities
             }
         }
 
-        public static string GetPushApiUploadSuccessHeader(long datasetid)
+        public static string GetPushApiUploadSuccessHeader(long datasetid, string title)
         {
-            return $"Upload <b>completed</b> for dataset: {datasetid}.";
+            return $"Upload <b>completed</b> for dataset: '{title}' ({datasetid})";
         }
 
         public static string GetPushApiUploadSuccessMessage(long datasetid, string userName)
@@ -219,9 +219,9 @@ namespace BExIS.Security.Services.Utilities
 
         }
 
-        public static string GetPushApiUploadFailHeader(long datasetid)
+        public static string GetPushApiUploadFailHeader(long datasetid, string title)
         {
-            return $"Upload  was not successful for dataset: {datasetid}.";
+            return $"Upload  was not successful for dataset '{title}' ({datasetid})";
         }
 
         public static string GetPushApiUploadFailMessage(long datasetid, string userName, string[] errors)

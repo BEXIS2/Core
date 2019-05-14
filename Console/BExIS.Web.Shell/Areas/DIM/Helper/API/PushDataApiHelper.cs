@@ -39,18 +39,21 @@ namespace BExIS.Modules.Dim.UI.Helper.API
         Dataset _dataset;
         User _user;
         PushDataModel _data = null;
+        string _title = "";
 
 
-        public PushDataApiHelper(Dataset dataset, User user, PushDataModel data)
+        public PushDataApiHelper(Dataset dataset, User user, PushDataModel data, string title)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            DataStructureManager dataStructureManager = new DataStructureManager();
+            datasetManager = new DatasetManager();
+            userManager = new UserManager();
+            entityPermissionManager = new EntityPermissionManager();
+            dataStructureManager = new DataStructureManager();
 
             _dataset = dataset;
             _user = user;
             _data = data;
+            _title = title;
+
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
                 //todo send email to user
                 var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiStoreHeader(),
+                es.Send(MessageHelper.GetPushApiStoreHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName),
                     new List<string>() { _user.Email },
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
@@ -90,7 +93,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
             {
                 //
                 var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiStoreHeader(),
+                es.Send(MessageHelper.GetPushApiStoreHeader(_data.DatasetId, _title),
                     MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
                     new List<string>() { _user.Email },
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
@@ -139,7 +142,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                 }
 
                 var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id),
+                es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
                     new List<string>() { _user.Email },
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
@@ -151,7 +154,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
             else
             {
                 var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id),
+                es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
                     new List<string>() { _user.Email },
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
@@ -205,7 +208,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                             }
 
                             //send error messages
-                            es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id),
+                            es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
                                 MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
                                 new List<string>() { _user.Email },
                                 new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
@@ -244,13 +247,14 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                 else
                 {
                     //ToDo send email to user
-                    es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id),
+                    es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
                                MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
                                new List<string>() { _user.Email },
                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                );
 
                 }
+
 
                 return true;
 
@@ -262,7 +266,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                     datasetManager.UndoCheckoutDataset(id, userName);
 
                 //ToDo send email to user
-                es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id),
+                es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
                                 MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
                                 new List<string>() { _user.Email },
                                 new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
