@@ -240,6 +240,32 @@ namespace BExIS.Security.Services.Utilities
 
         }
 
+        public static string GetPushApiPKCheckHeader(long datasetid, string title)
+        {
+            return $"The verification of the primary key/s for the dataset '{title}' ({datasetid}) is completed.";
+        }
+
+        public static string GetPushApiPKCheckMessage(long datasetid, string userName, string[] errors)
+        {
+
+            if (errors == null || errors.Length == 0) return $"The verification of the primary key/s was successful.";
+            else
+            {
+                StringBuilder builder = new StringBuilder($"The verification of the primary key was not successful.<br>");
+                builder.AppendLine("<br>");
+                builder.AppendLine("<b>Errors:</b> <br>");
+
+                foreach (string error in errors)
+                {
+                    builder.AppendLine(error + "<br>");
+                }
+
+                return builder.ToString();
+            }
+
+
+        }
+
         #endregion
     }
 }

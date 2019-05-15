@@ -7,7 +7,7 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers.API
 {
-    public class ApiHelper
+    public class ApiConfigurator
     {
         private const string sourceFile = "apiConfig.xml";
         private XmlDocument requirementXmlDocument = null;
@@ -16,7 +16,7 @@ namespace BExIS.Dim.Helpers.API
 
         public static string CELLS = "cells";
 
-        public ApiHelper()
+        public ApiConfigurator()
         {
             requirementXmlDocument = new XmlDocument();
             Settings = new Dictionary<string, string>();

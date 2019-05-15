@@ -340,7 +340,7 @@
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
-    <Compile Include="Helper\API\PushDataApiHelper.cs" />
+    <Compile Include="Helper\API\DataApiHelper.cs" />
     <Compile Include="Helper\DimSeedDataGenerator.cs" />
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\MappingHelper.cs" />

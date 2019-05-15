@@ -11,6 +11,8 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Helper.API
 {
-    public class PushDataApiHelper
+    public class DataApiHelper
     {
         DatasetManager datasetManager = new DatasetManager();
         UserManager userManager = new UserManager();
@@ -32,27 +34,35 @@ namespace BExIS.Modules.Dim.UI.Helper.API
         FileStream Stream = null;
         AsciiReader reader = null;
         AsciiWriter asciiWriter = null;
-
+        UploadHelper uploadHelper = new UploadHelper();
 
         int packageSize = 10000;
         string _filepath = "";
         Dataset _dataset;
+        StructuredDataStructure _dataStructure;
         User _user;
-        PushDataModel _data = null;
+        DataApiModel _data = null;
         string _title = "";
+        List<long> variableIds = new List<long>();
+        UploadMethod _uploadMethod;
 
 
-        public PushDataApiHelper(Dataset dataset, User user, PushDataModel data, string title)
+        public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
             datasetManager = new DatasetManager();
             userManager = new UserManager();
             entityPermissionManager = new EntityPermissionManager();
             dataStructureManager = new DataStructureManager();
+            uploadHelper = new UploadHelper();
 
             _dataset = dataset;
             _user = user;
             _data = data;
             _title = title;
+            _uploadMethod = uploadMethod;
+
+            _dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(_dataset.DataStructure.Id);
+            reader = new AsciiReader(_dataStructure, new AsciiFileReaderInfo());
 
         }
 
@@ -105,8 +115,69 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
             Debug.WriteLine("end storing data");
 
+            if (_uploadMethod.Equals(UploadMethod.Update)) return await PKCheck();
 
             return await Validate();
+
+        }
+
+        public async Task<bool> PKCheck()
+        {
+            List<string> errors = new List<string>();
+
+            try
+            {
+                // primary Key check is only available by put api , so in this case it must be a putapiModel 
+                // and need to convert to it to get the primary keys lsit
+
+                PutDataApiModel data = (PutDataApiModel)_data;
+                string[] pks = null;
+                if (data != null) pks = data.PrimaryKeys;
+
+                variableIds = new List<long>();
+                if (pks != null && _dataStructure != null)
+                {
+                    //check if primary keys are exiting in the datastrutcure
+                    foreach (var variable in _dataStructure.Variables)
+                    {
+                        if (pks.Any(p => p.ToLower().Equals(variable.Label.ToLower()))) variableIds.Add(variable.Id);
+                    }
+
+
+                    if (!variableIds.Count.Equals(pks.Count()))
+                    {
+                        errors.Add("The list of primary keys is unequal to the existing equal variables in the datatructure.");
+                        return false;
+                    }
+
+                    bool IsUniqueInDb = uploadHelper.IsUnique2(_dataset.Id, variableIds);
+                    bool IsUniqueInFile = uploadHelper.IsUnique(_dataset.Id, variableIds, ".tsv", Path.GetFileName(_filepath), _filepath, new AsciiFileReaderInfo(), _dataStructure.Id);
+
+                    if (!IsUniqueInDb || !IsUniqueInFile)
+                    {
+                        if (!IsUniqueInDb) errors.Add("The selected key is not unique in the data in the dataset.");
+                        if (!IsUniqueInFile) errors.Add("The selected key is not unique in the received data.");
+                    }
+                }
+                else
+                {
+                    errors.Add("The list of primary keys is empty.");
+                }
+
+
+                if (errors.Count == 0) return await Validate();
+                else return false;
+
+            }
+            finally
+            {
+                var es = new EmailService();
+                es.Send(MessageHelper.GetPushApiPKCheckHeader(_dataset.Id, _title),
+                    MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.UserName, errors.ToArray()),
+                    new List<string>() { _user.Email },
+                    new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                    );
+            }
         }
 
         public async Task<bool> Validate()
@@ -115,9 +186,9 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
             string error = "";
             //load strutcured data structure
-            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(_dataset.DataStructure.Id);
 
-            if (dataStructure == null)
+
+            if (_dataStructure == null)
             {
                 // send email to user ("failed to load datatructure");
                 return false;
@@ -126,7 +197,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
 
             // validate file
-            reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
             Stream = reader.Open(_filepath);
             reader.ValidateFile(Stream, Path.GetFileName(_filepath), _dataset.Id);
             List<Error> errors = reader.ErrorMessages;
@@ -182,6 +252,8 @@ namespace BExIS.Modules.Dim.UI.Helper.API
             try
             {
 
+                List<long> datatupleFromDatabaseIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetManager.GetDatasetLatestVersion(_dataset.Id));
+
                 if (FileHelper.FileExist(_filepath) && (datasetManager.IsDatasetCheckedOutFor(id, userName) || datasetManager.CheckOutDataset(id, userName)))
                 {
                     workingCopy = datasetManager.GetDatasetWorkingCopy(id);
@@ -218,7 +290,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                         }
 
                         //Update Method -- append or update
-                        if (_data.UpdateMethod == UpdateMethod.Append)
+                        if (_uploadMethod == UploadMethod.Append)
                         {
                             if (rows.Count > 0)
                             {
@@ -226,7 +298,17 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                                 inputWasAltered = true;
                             }
                         }
-                        //todo add updateMethod update 
+                        else if (_uploadMethod == UploadMethod.Update)
+                        {
+                            if (rows.Count() > 0)
+                            {
+                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
+                                datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                inputWasAltered = true;
+                            }
+                        }
+
+
 
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
@@ -279,6 +361,8 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                 Debug.WriteLine("end of upload");
             }
         }
+
+
 
     }
 }
