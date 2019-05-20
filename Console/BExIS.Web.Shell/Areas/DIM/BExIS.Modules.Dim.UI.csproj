@@ -330,23 +330,23 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\PublicationController.cs" />
-    <Compile Include="Controllers\DataController.cs" />
+    <Compile Include="Controllers\API\DataOutController.cs" />
     <Compile Include="Controllers\ExportGFBIOController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
-    <Compile Include="Controllers\MetadataController.cs" />
+    <Compile Include="Controllers\API\MetadataOutController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
-    <Compile Include="Helper\API\DataApiHelper.cs" />
     <Compile Include="Helper\DimSeedDataGenerator.cs" />
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\MappingHelper.cs" />
     <Compile Include="Helper\ReleationshipHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
-    <Compile Include="Models\API\ApiModels.cs" />
+    <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
     <Compile Include="Models\DataTupleCsvFormatter.cs" />

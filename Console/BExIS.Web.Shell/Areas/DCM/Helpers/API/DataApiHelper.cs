@@ -6,7 +6,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dim.UI.Models.API;
+using BExIS.Modules.Dcm.UI.Models.API;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
@@ -23,29 +23,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
 
-namespace BExIS.Modules.Dim.UI.Helper.API
+namespace BExIS.Modules.Dcm.UI.Helper.API
 {
     public class DataApiHelper
     {
-        DatasetManager datasetManager = new DatasetManager();
-        UserManager userManager = new UserManager();
-        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-        DataStructureManager dataStructureManager = new DataStructureManager();
-        FileStream Stream = null;
-        AsciiReader reader = null;
-        AsciiWriter asciiWriter = null;
-        UploadHelper uploadHelper = new UploadHelper();
+        private DatasetManager datasetManager = new DatasetManager();
+        private UserManager userManager = new UserManager();
+        private EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+        private DataStructureManager dataStructureManager = new DataStructureManager();
+        private FileStream Stream = null;
+        private AsciiReader reader = null;
+        private AsciiWriter asciiWriter = null;
+        private UploadHelper uploadHelper = new UploadHelper();
 
-        int packageSize = 10000;
-        string _filepath = "";
-        Dataset _dataset;
-        StructuredDataStructure _dataStructure;
-        User _user;
-        DataApiModel _data = null;
-        string _title = "";
-        List<long> variableIds = new List<long>();
-        UploadMethod _uploadMethod;
-
+        private int packageSize = 10000;
+        private string _filepath = "";
+        private Dataset _dataset;
+        private StructuredDataStructure _dataStructure;
+        private User _user;
+        private DataApiModel _data = null;
+        private string _title = "";
+        private List<long> variableIds = new List<long>();
+        private UploadMethod _uploadMethod;
 
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
@@ -63,7 +62,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
             _dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(_dataset.DataStructure.Id);
             reader = new AsciiReader(_dataStructure, new AsciiFileReaderInfo());
-
         }
 
         /// <summary>
@@ -110,7 +108,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                     );
 
                 return false;
-
             }
 
             Debug.WriteLine("end storing data");
@@ -118,7 +115,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
             if (_uploadMethod.Equals(UploadMethod.Update)) return await PKCheck();
 
             return await Validate();
-
         }
 
         public async Task<bool> PKCheck()
@@ -127,7 +123,7 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
             try
             {
-                // primary Key check is only available by put api , so in this case it must be a putapiModel 
+                // primary Key check is only available by put api , so in this case it must be a putapiModel
                 // and need to convert to it to get the primary keys lsit
 
                 PutDataApiModel data = (PutDataApiModel)_data;
@@ -142,7 +138,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                     {
                         if (pks.Any(p => p.ToLower().Equals(variable.Label.ToLower()))) variableIds.Add(variable.Id);
                     }
-
 
                     if (!variableIds.Count.Equals(pks.Count()))
                     {
@@ -164,10 +159,8 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                     errors.Add("The list of primary keys is empty.");
                 }
 
-
                 if (errors.Count == 0) return await Validate();
                 else return false;
-
             }
             finally
             {
@@ -187,14 +180,11 @@ namespace BExIS.Modules.Dim.UI.Helper.API
             string error = "";
             //load strutcured data structure
 
-
             if (_dataStructure == null)
             {
                 // send email to user ("failed to load datatructure");
                 return false;
             }
-
-
 
             // validate file
             Stream = reader.Open(_filepath);
@@ -219,7 +209,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                     );
 
                 return false;
-
             }
             else
             {
@@ -231,7 +220,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                     );
             }
             Debug.WriteLine("end validate data");
-
 
             return await Upload();
         }
@@ -251,7 +239,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
 
             try
             {
-
                 List<long> datatupleFromDatabaseIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetManager.GetDatasetLatestVersion(_dataset.Id));
 
                 if (FileHelper.FileExist(_filepath) && (datasetManager.IsDatasetCheckedOutFor(id, userName) || datasetManager.CheckOutDataset(id, userName)))
@@ -307,13 +294,9 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                                 inputWasAltered = true;
                             }
                         }
-
-
-
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
                     datasetManager.CheckInDataset(id, "upload data via api", userName);
-
 
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
@@ -324,7 +307,6 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                         new List<string>() { _user.Email },
                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                         );
-
                 }
                 else
                 {
@@ -334,13 +316,9 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                                new List<string>() { _user.Email },
                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                );
-
                 }
 
-
                 return true;
-
-
             }
             catch (Exception ex)
             {
@@ -361,8 +339,5 @@ namespace BExIS.Modules.Dim.UI.Helper.API
                 Debug.WriteLine("end of upload");
             }
         }
-
-
-
     }
 }

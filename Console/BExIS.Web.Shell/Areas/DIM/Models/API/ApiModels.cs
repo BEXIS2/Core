@@ -1,24 +1,16 @@
-﻿using BExIS.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
-namespace BExIS.Modules.Dim.UI.Models.API
+namespace BExIS.Modules.Dim.UI.Models.Api
 {
-    public class DataApiModel
+    public class ApiDatasetModel
     {
-        public long DatasetId { get; set; }
-        public DecimalCharacter DecimalCharacter { get; set; }
-        public string[] Columns { get; set; }
-        public string[][] Data { get; set; }
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public long DataStructureId { get; set; }
+        public long MetadataStructureId { get; set; }
     }
-
-    public class PushDataApiModel : DataApiModel
-    {
-
-    }
-
-    public class PutDataApiModel : DataApiModel
-    {
-        public string[] PrimaryKeys { get; set; }
-
-    }
-
 }

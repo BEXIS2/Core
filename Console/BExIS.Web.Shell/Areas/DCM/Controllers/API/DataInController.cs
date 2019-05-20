@@ -2,15 +2,15 @@
 using BExIS.Dim.Helpers.API;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dim.UI.Helper.API;
-using BExIS.Modules.Dim.UI.Models;
-using BExIS.Modules.Dim.UI.Models.API;
+using BExIS.Modules.Dcm.UI.Models.API;
+using BExIS.Modules.Dcm.UI.Helper.API;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -25,7 +25,6 @@ using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-//using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -34,184 +33,36 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 
-namespace BExIS.Modules.Dim.UI.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     /// <summary>
-    /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
+    /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
     /// either of XML, JSON, or CSV formats.
     /// </summary>
     /// <remarks>
-    /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
+    /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
     /// either of XML, JSON, or CSV formats.
     /// The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
     /// CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
     /// The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
     /// text/xml and text/json return XML and JSON content accordingly.
     /// </remarks>
-    public class DataController : ApiController
+    public class DataInController : ApiController
     {
-
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
-
-        // GET: api/data
-        /// <summary>
-        /// Get a list of all dataset ids
-        /// </summary>
-        /// <returns>List of ids</returns>
-        [BExISApiAuthorize]
-        public IEnumerable<long> Get()
-        {
-            DatasetManager dm = new DatasetManager();
-            try
-            {
-                var datasetIds = dm.GetDatasetLatestIds();
-                return datasetIds;
-            }
-            finally
-            {
-                dm.Dispose();
-            }
-        }
-
-        // GET: api/data/5
-        /// <summary>
-        /// In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
-        /// </summary>
-        /// <param name="id">Dataset Id</param>
-        /// <returns></returns>
-        /// <remarks> The action accepts the following additional parameters via the query string
-        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
-        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
-        /// logical operators, nesting, precedence, and SOME functions should be supported.
-        /// </remarks>
-        [BExISApiAuthorize]
-        public HttpResponseMessage Get(int id, [FromUri] string header = null, [FromUri] string filter = null)
-        {
-            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            string token = this.Request.Headers.Authorization?.Parameter;
-
-            DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            try
-            {
-
-                if (String.IsNullOrEmpty(token))
-                {
-                    var request = Request.CreateResponse();
-                    request.Content = new StringContent("Bearer token not exist.");
-
-                    return request;
-
-                }
-
-                User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-
-                if (user != null)
-                {
-
-                    if (entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
-                    {
-                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                        OutputDataManager ioOutputDataManager = new OutputDataManager();
-
-                        DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
-
-                        string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
-
-                        // check the data sturcture type ...
-                        if (version.Dataset.DataStructure.Self is StructuredDataStructure)
-                        {
-                            //FilterExpression filter = null;
-                            //OrderByExpression orderBy = null;
-
-                            // apply selection and projection
-                            long count = datasetManager.RowCount(id);
-
-
-                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
-                            dt.Strip();
-
-                            if (!string.IsNullOrEmpty(selection))
-                            {
-                                dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                            }
-
-                            if (!string.IsNullOrEmpty(projection))
-                            {
-                                // make the header names upper case to make them case insensitive
-                                dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
-                            }
-
-                            if (dt.TableName == "") dt.TableName = id + "_data";
-
-
-                            DatasetModel model = new DatasetModel();
-                            model.DataTable = dt;
-
-
-                            var response = Request.CreateResponse();
-                            response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-
-
-                            //set headers on the "response"
-                            return response;
-
-                            //return model;
-
-
-                        }
-                        else
-                        {
-                            return Request.CreateResponse();
-                        }
-                    }
-                    else // has rights?
-                    {
-                        var request = Request.CreateResponse();
-                        request.Content = new StringContent("User has no read right.");
-
-                        return request;
-                    }
-                }
-                else
-                {
-                    var request = Request.CreateResponse();
-                    request.Content = new StringContent("User is not available.");
-
-                    return request;
-                }
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
-
-            }
-        }
 
         // POST: api/data
         /// <summary>
         /// append data to a dataset
         /// </summary>
         /// <param name="data"></param>
+        [BExISApiAuthorize]
+        [Route("api/Data")]
         public async Task<HttpResponseMessage> Post([FromBody]PushDataApiModel data)
         {
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
-
-
 
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
@@ -222,14 +73,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
 
-
             //load from apiConfig
             int cellLimit = 10000;
             if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
             {
                 Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
             }
-
 
             try
             {
@@ -242,7 +91,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     request.Content = new StringContent("Bearer token not exist.");
 
                     return request;
-
                 }
 
                 user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
@@ -254,13 +102,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return request;
                 }
 
-
                 //check permissions
 
                 //entity permissions
                 if (data.DatasetId > 0)
                 {
-
                     Dataset d = datasetManager.GetDataset(data.DatasetId);
                     if (d == null)
                     {
@@ -277,15 +123,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
-
-                #endregion
+                #endregion security
 
                 #region incomming values check
+
                 // check incomming values
 
-
                 if (data.DatasetId == 0) error += "dataset id should be greater then 0.";
-                //if (data.UpdateMethod == null) error += "update method is not set"; 
+                //if (data.UpdateMethod == null) error += "update method is not set";
                 if (data.Columns == null) error += "cloumns should not be null. ";
                 if (data.Data == null) error += "data is empty. ";
 
@@ -296,8 +141,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return request;
                 }
 
-                #endregion
-
+                #endregion incomming values check
 
                 Dataset dataset = datasetManager.GetDataset(data.DatasetId);
                 if (dataset == null)
@@ -312,15 +156,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 if ((data.Data.Count() * data.Columns.Count()) > cellLimit)
                 {
-
                     #region async upload with big data
-                    // if dataste is not in the dataset
 
+                    // if dataste is not in the dataset
 
                     DataApiHelper helper = new DataApiHelper(dataset, user, data, title, UploadMethod.Append);
                     Task.Run(() => helper.Run());
 
-                    #endregion
+                    #endregion async upload with big data
 
                     request.Content = new StringContent("Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
 
@@ -375,7 +218,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string[] row = data.Data[i];
                             errors.AddRange(reader.ValidateRow(row.ToList(), i));
-
                         }
 
                         if (errors != null && errors.Count > 0)
@@ -417,7 +259,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 new List<string>() { user.Email },
                                        new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
-
                         }
 
                         request.Content = new StringContent("Data successfully uploaded.");
@@ -436,7 +277,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return request;
                     }
 
-                    #endregion
+                    #endregion direct upload
                 }
             }
             finally
@@ -452,6 +293,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <summary>
         /// append and update data to an existing dataset
         /// </summary>
+        [BExISApiAuthorize]
+        [Route("api/Data")]
         public async Task<HttpResponseMessage> Put([FromBody]PutDataApiModel data)
         {
             var request = Request.CreateResponse();
@@ -467,14 +310,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
 
-
             //load from apiConfig
             int cellLimit = 10000;
             if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
             {
                 Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
             }
-
 
             try
             {
@@ -487,7 +328,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     request.Content = new StringContent("Bearer token not exist.");
 
                     return request;
-
                 }
 
                 user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
@@ -499,13 +339,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return request;
                 }
 
-
                 //check permissions
 
                 //entity permissions
                 if (data.DatasetId > 0)
                 {
-
                     Dataset d = datasetManager.GetDataset(data.DatasetId);
                     if (d == null)
                     {
@@ -522,20 +360,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
-
-                #endregion
+                #endregion security
 
                 #region incomming values check
+
                 // check incomming values
 
-
                 if (data.DatasetId == 0) error += "dataset id should be greater then 0.";
-                //if (data.UpdateMethod == null) error += "update method is not set"; 
+                //if (data.UpdateMethod == null) error += "update method is not set";
                 //if (data.Count == 0) error += "count should be greater then 0. ";
                 if (data.Columns == null) error += "cloumns should not be null. ";
                 if (data.Data == null) error += "data is empty. ";
                 if (data.PrimaryKeys == null || data.PrimaryKeys.Count() == 0) error += "the UpdateMethod update has been selected but there are no primary keys available. ";
-
 
                 if (!string.IsNullOrEmpty(error))
                 {
@@ -544,8 +380,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return request;
                 }
 
-                #endregion
-
+                #endregion incomming values check
 
                 Dataset dataset = datasetManager.GetDataset(data.DatasetId);
                 if (dataset == null)
@@ -560,25 +395,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 if ((data.Data.Count() * data.Columns.Count()) > cellLimit)
                 {
-
-
                     #region async upload with big data
-                    // if dataste is not in the dataset
 
+                    // if dataste is not in the dataset
 
                     DataApiHelper helper = new DataApiHelper(dataset, user, data, title, UploadMethod.Update);
                     Task.Run(() => helper.Run());
 
-                    #endregion
+                    #endregion async upload with big data
 
                     request.Content = new StringContent("Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
 
                     Debug.WriteLine("end of api call");
 
                     return request;
-
-
-
                 }
                 else
                 {
@@ -586,7 +416,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     var es = new EmailService();
                     UploadHelper uploadHelper = new UploadHelper();
-
 
                     try
                     {
@@ -604,10 +433,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         List<VariableIdentifier> source = new List<VariableIdentifier>();
                         reader.SetSubmitedVariableIdentifiers(data.Columns.ToList());
 
-                        #region  primary key check
-
-
-
+                        #region primary key check
 
                         //prepare  primary keys ids from the exiting dataset
                         List<long> variableIds = new List<long>();
@@ -628,7 +454,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variableIds);
                         bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
 
-
                         if (!IsUniqueInDb || !IsUniqueInData)
                         {
                             StringBuilder sb = new StringBuilder("Error/s in Primary Keys selection:<br>");
@@ -639,9 +464,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             return request;
                         }
 
-                        #endregion
+                        #endregion primary key check
 
-                        #region  validate datastructure
+                        #region validate datastructure
+
                         foreach (string c in data.Columns)
                         {
                             source.Add(new VariableIdentifier() { name = c });
@@ -661,7 +487,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             return request;
                         }
 
-                        #endregion
+                        #endregion validate datastructure
 
                         #region validate data
 
@@ -671,7 +497,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string[] row = data.Data[i];
                             errors.AddRange(reader.ValidateRow(row.ToList(), i));
-
                         }
 
                         if (errors != null && errors.Count > 0)
@@ -687,7 +512,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             return request;
                         }
 
-                        #endregion
+                        #endregion validate data
 
                         #region update data
 
@@ -715,7 +540,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
-
                             datasetManager.CheckInDataset(dataset.Id, "upload data via api", user.UserName);
 
                             //send email
@@ -724,10 +548,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 new List<string>() { user.Email },
                                        new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
-
                         }
 
-                        #endregion
+                        #endregion update data
 
                         request.Content = new StringContent("Data successfully uploaded.");
                         return request;
@@ -745,7 +568,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return request;
                     }
 
-                    #endregion
+                    #endregion direct update
                 }
             }
             finally
@@ -763,6 +586,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <param name="id"></param>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [BExISApiAuthorize]
+        [Route("api/Data")]
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
