@@ -683,6 +683,8 @@ function OnClose(e) {
 /******************************************
  ********* Component************************
  ******************************************/
+
+
 function UpdateWithParty(componentId, number, partyid) {
 
     console.log("update with party");
@@ -840,7 +842,7 @@ function showHideClick(e) {
 
 function TryParseInt(str, defaultValue) {
     var retValue = defaultValue;
-    if (str !== null && str != undefined) {
+    if (str !== null && str !== undefined) {
         if (str.length > 0) {
             if (!isNaN(str)) {
                 retValue = parseInt(str);
@@ -848,4 +850,26 @@ function TryParseInt(str, defaultValue) {
         }
     }
     return retValue;
+}
+
+
+
+/******************************************
+ ********* HELP ***************************
+ ******************************************/
+
+function showHelp(id) {
+    $("#" + id).toggle();
+}
+
+function showHelpAll() {
+    $(".help").show();
+    $("#show_help_all").hide();
+    $("#hide_help_all").show();
+}
+
+function hideHelpAll() {
+    $(".help").hide();
+    $("#show_help_all").show();
+    $("#hide_help_all").hide();
 }

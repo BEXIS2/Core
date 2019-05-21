@@ -1,9 +1,11 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using BExIS.Web.Shell.Helpers;
 using System;
 using System.Configuration;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -23,6 +25,20 @@ namespace BExIS.Web.Shell
         private BExIS.App.Bootstrap.Application app = null;
         protected void Application_Start()
         {
+            // Extension of the view search engine by the case that the UI project with view can be found one directory lower. 
+            // This extension allows to store a complete module with libraries and Ui project in a parent directory. 
+            var tmp = new CustomViewEngine();
+
+            foreach (var engine in ViewEngines.Engines)
+            {
+                if (engine is RazorViewEngine)
+                {
+                    ((RazorViewEngine)engine).AreaMasterLocationFormats = tmp.AreaMasterLocationFormats;
+                    ((RazorViewEngine)engine).AreaPartialViewLocationFormats = tmp.AreaPartialViewLocationFormats;
+                    ((RazorViewEngine)engine).AreaViewLocationFormats = tmp.AreaViewLocationFormats;
+                }
+            }
+
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
 
@@ -108,16 +124,21 @@ namespace BExIS.Web.Shell
             bool sendExceptions = false;
             bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
 
+
             var error = Server.GetLastError();
             var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
 
 
 
-            if (sendExceptions && code != 404)
+
+            if (
+                sendExceptions &&
+                code != 404 && // not existing action is called
+                !(error is InvalidOperationException) && !error.Message.StartsWith("Multiple types were found that match the controller named") // same controller name in multpily controller, and no correct action call
+               )
             {
                 HttpUnhandledException httpUnhandledException =
                    new HttpUnhandledException(error.Message, error);
-                //SendEmailWithErrors(httpUnhandledException.GetHtmlErrorMessage());
 
                 ErrorHelper.SendEmailWithErrors(
                     httpUnhandledException.GetHtmlErrorMessage()

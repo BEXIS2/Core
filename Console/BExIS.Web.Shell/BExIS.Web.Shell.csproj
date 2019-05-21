@@ -303,7 +303,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Web.Mvc.Modularity">
+    <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
     <Reference Include="WebActivator">
@@ -415,6 +416,7 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
+    <Compile Include="Helpers\CustomViewEngine.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
@@ -937,6 +939,10 @@
     <Content Include="Views\Test\XmlEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>

@@ -147,7 +147,7 @@ namespace BExIS.Security.Services.Requests
                     var mergedDecision = decisionRepository.Get(decision.Id);
                     decisionRepository.Put(mergedDecision);
 
-                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id)
+                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id).ToList()
                         .All(m => m.Status != DecisionStatus.Open))
                     {
                         var request = requestRepository.Get(decision.Request.Id);
