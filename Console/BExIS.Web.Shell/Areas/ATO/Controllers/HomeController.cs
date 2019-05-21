@@ -1,8 +1,14 @@
-﻿using BExIS.Modules.Ato.UI.Models;
+﻿using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Ato.UI.Models;
+using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
@@ -138,6 +144,41 @@ namespace BExIS.Modules.Ato.UI.Controllers
             }
             return temp;
 
+        }
+
+        public ActionResult UserOverview(string gname)
+        {
+            UserManager userManager = new UserManager();
+            GroupManager groupManager = new GroupManager();
+            PartyManager partyManager = new PartyManager();
+
+            var group = groupManager.Groups.Where(g => g.Name.Equals(gname)).FirstOrDefault();
+
+            Debug.WriteLine("*****************USERS*********************");
+            StringBuilder sb = new StringBuilder("User overview <br>");
+
+            foreach (var user in group.Users)
+            {
+                var x = partyManager.GetPartyByUser(user.Id);
+                var institute = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("Institute")).FirstOrDefault();
+                var fname = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("FirstName")).FirstOrDefault();
+                var lname = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("LastName")).FirstOrDefault();
+
+                var message = String.Format("Name = {0} {1}, Email = {2}, Insitute = {3} <br>", fname.Value,lname.Value , user.Email, institute.Value);
+                Debug.WriteLine(message);
+                sb.AppendLine(message);
+            }
+
+            Debug.WriteLine("*****************End*********************");
+            var es = new EmailService();
+            //send email
+            es.Send("Nutzer Übersicht",
+                sb.ToString()
+                ,
+                ConfigurationManager.AppSettings["SystemEmail"]);
+
+
+            return View("Index");
         }
     }
 }

@@ -46,7 +46,7 @@
                     {
                         <span class="dropdown">
                             <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                Download Dataset
+                                Download Data Package
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
@@ -60,7 +60,7 @@
                     }
                     else
                     {
-                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
+                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download Data Package</a>
                     }
                 }
                 else
