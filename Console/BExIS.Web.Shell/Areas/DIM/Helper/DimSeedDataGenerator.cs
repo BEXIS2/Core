@@ -112,10 +112,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #region API
 
-                if (!operationManager.Exists("api", "metadataOut", "*")) operationManager.Create("API", "Metadata", "*", API);
+                if (!operationManager.Exists("api", "MetadataOut", "*")) operationManager.Create("API", "MetadataOut", "*", API);
 
-                if (!operationManager.Exists("api", "DataOut", "*")) operationManager.Create("API", "DataOut", "*", API);
-                if (!operationManager.Exists("api", "DatasetOut", "*")) operationManager.Create("API", "DatasetOut", "*", API);
+                if (!operationManager.Exists("api", "DataOut", "*")) operationManager.Create("api", "DataOut", "*", API);
+                if (!operationManager.Exists("api", "DatasetOut", "*")) operationManager.Create("api", "DatasetOut", "*", API);
+                if (!operationManager.Exists("api", "AttachmentOut", "*")) operationManager.Create("api", "AttachmentOut", "*", API);
 
                 #endregion API
 
