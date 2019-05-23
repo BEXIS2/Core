@@ -26,9 +26,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 {
     public class DatasetInController : ApiController
     {
-        // POST api/<controller>
+        // POST api/ DatasetIn
+        /// <summary>
+        ///
+        /// </summary>
+        /// <example>
+        ///{
+        /// "Title":"Title of my Dataset.",
+        /// "Description":"Description of my Dataset.",
+        /// "DataStructureId":1,
+        /// "MetadataStructureId":1,
+        ///}
+        /// </example>
+        /// <param name="dataset"></param>
+        /// <returns> HttpResponseMessage </returns>
         [BExISApiAuthorize]
-        //[Route("api/Dataset")]
+        [Route("api/Dataset")]
+        [HttpPost]
         public HttpResponseMessage Post([FromBody]PostApiDatasetModel dataset)
         {
             var request = Request.CreateResponse();
@@ -158,6 +172,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         // PUT api/<controller>/5
         [ApiExplorerSettings(IgnoreApi = true)]
         [BExISApiAuthorize]
+        [Route("api/Dataset")]
+        [HttpPut]
         public void Put(int id, [FromBody]string value)
         {
         }
@@ -165,6 +181,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         // DELETE api/<controller>/5
         [ApiExplorerSettings(IgnoreApi = true)]
         [BExISApiAuthorize]
+        [Route("api/Dataset")]
+        [HttpDelete]
         public void Delete(int id)
         {
         }
