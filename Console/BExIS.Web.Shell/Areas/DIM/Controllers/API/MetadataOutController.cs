@@ -31,7 +31,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </remarks>
         /// <returns>List of MetadataViewObject</returns>
         [BExISApiAuthorize]
-        //[Route("api/Metadata")]
+        [Route("api/Metadata")]
+        [HttpGet]
         public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -71,7 +72,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         /// <returns>Xml Document</returns>
         [BExISApiAuthorize]
-        //[Route("api/Metadata")]
+        [Route("api/Metadata/{id}")]
+        [HttpGet]
         public HttpResponseMessage Get(int id, [FromUri] string format = null)
         {
             DatasetManager dm = new DatasetManager();

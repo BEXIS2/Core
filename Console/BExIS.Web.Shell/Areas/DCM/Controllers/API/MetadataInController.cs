@@ -24,13 +24,17 @@ namespace BExIS.Modules.Dim.UI.Controllers
         // POST: api/Metadata
         [BExISApiAuthorize]
         [Route("api/Metadata")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpPost]
         public void Post([FromBody]string value)
         {
         }
 
         // PUT: api/Metadata/5
         [BExISApiAuthorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [Route("api/Metadata")]
+        [HttpPut]
         public void Put(int id, [FromBody]string value)
         {
         }
@@ -39,6 +43,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [BExISApiAuthorize]
         [Route("api/Metadata")]
+        [HttpDelete]
         public void Delete(int id)
         {
         }
