@@ -59,7 +59,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         // PUT: api/data/5
         [BExISApiAuthorize]
-        //[Route("api/AttachmentIn/{id}")]
+        [Route("api/Attachment/{id}")]
+        [HttpPut]
         public async Task<HttpResponseMessage> Put(long id)
         {
             if (Request.Content.IsMimeMultipartContent())
