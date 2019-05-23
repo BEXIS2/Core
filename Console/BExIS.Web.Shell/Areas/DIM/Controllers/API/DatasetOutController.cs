@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Api;
+using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -32,8 +33,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// </summary>
         /// <returns>IEnumerable with datatype long</returns>
         [BExISApiAuthorize]
-        [Route("api/Dataset")]
-        [HttpGet]
+        [GetRoute("api/Dataset")]
         public IEnumerable<long> Get()
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -65,8 +65,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         ///}
         /// </returns>
         [BExISApiAuthorize]
-        [Route("api/Dataset/{id}")]
-        [HttpGet]
+        [GetRoute("api/Dataset/{id}")]
         public ApiDatasetModel Get(long id)
         {
             if (id <= 0)

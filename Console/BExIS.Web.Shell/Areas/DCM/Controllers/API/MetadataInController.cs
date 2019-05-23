@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
+using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -23,9 +24,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // POST: api/Metadata
         [BExISApiAuthorize]
-        [Route("api/Metadata")]
+        [PostRoute("api/Metadata")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpPost]
         public void Post([FromBody]string value)
         {
         }
@@ -33,8 +33,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         // PUT: api/Metadata/5
         [BExISApiAuthorize]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Route("api/Metadata")]
-        [HttpPut]
+        [PutRoute("api/Metadata")]
         public void Put(int id, [FromBody]string value)
         {
         }
@@ -42,8 +41,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         // DELETE: api/Metadata/5
         [ApiExplorerSettings(IgnoreApi = true)]
         [BExISApiAuthorize]
-        [Route("api/Metadata")]
-        [HttpDelete]
+        [DeleteRoute("api/Metadata")]
         public void Delete(int id)
         {
         }

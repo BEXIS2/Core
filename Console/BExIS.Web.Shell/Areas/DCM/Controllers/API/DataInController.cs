@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using BExIS.Utils.Route;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -57,8 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         /// <param name="data"></param>
         [BExISApiAuthorize]
-        [Route("api/Data")]
-        [HttpPost]
+        [PostRoute("api/Data")]
         public async Task<HttpResponseMessage> Post([FromBody]PushDataApiModel data)
         {
             var request = Request.CreateResponse();
@@ -295,8 +295,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// append and update data to an existing dataset
         /// </summary>
         [BExISApiAuthorize]
-        [Route("api/Data")]
-        [HttpPut]
+        [PutRoute("api/Data")]
         public async Task<HttpResponseMessage> Put([FromBody]PutDataApiModel data)
         {
             var request = Request.CreateResponse();
@@ -589,7 +588,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="id"></param>
         [ApiExplorerSettings(IgnoreApi = true)]
         [BExISApiAuthorize]
-        [Route("api/Data")]
+        [DeleteRoute("api/Data")]
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);

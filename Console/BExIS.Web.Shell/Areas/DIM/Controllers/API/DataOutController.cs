@@ -15,6 +15,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Route;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
@@ -57,8 +58,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <returns>List of ids</returns>
         [BExISApiAuthorize]
-        [Route("api/Data")]
-        [HttpGet]
+        [GetRoute("api/Data")]
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -86,7 +86,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </remarks>
         [BExISApiAuthorize]
         //[Route("api/Data")]
-        [Route("api/Data/{id}")]
+        [GetRoute("api/Data/{id}")]
         [HttpGet]
         public HttpResponseMessage Get(int id, [FromUri] string header = null, [FromUri] string filter = null)
         {

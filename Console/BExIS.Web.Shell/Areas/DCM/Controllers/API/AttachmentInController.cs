@@ -38,6 +38,7 @@ using BExIS.IO;
 using System.Web;
 using System.Xml;
 using System.Text.RegularExpressions;
+using BExIS.Utils.Route;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -59,7 +60,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         // PUT: api/data/5
         [BExISApiAuthorize]
-        [Route("api/Attachment/{id}")]
+        [PutRoute("api/Attachment/{id}")]
         [HttpPut]
         public async Task<HttpResponseMessage> Put(long id)
         {

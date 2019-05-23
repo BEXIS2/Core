@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
+using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </remarks>
         /// <returns>List of MetadataViewObject</returns>
         [BExISApiAuthorize]
-        [Route("api/Metadata")]
-        [HttpGet]
+        [GetRoute("api/Metadata")]
         public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -72,8 +72,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         /// <returns>Xml Document</returns>
         [BExISApiAuthorize]
-        [Route("api/Metadata/{id}")]
-        [HttpGet]
+        [GetRoute("api/Metadata/{id}")]
         public HttpResponseMessage Get(int id, [FromUri] string format = null)
         {
             DatasetManager dm = new DatasetManager();
