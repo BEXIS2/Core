@@ -57,7 +57,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <returns>List of ids</returns>
         [BExISApiAuthorize]
-        //[Route("api/Data")]
+        [Route("api/Data")]
+        [HttpGet]
         public IEnumerable<long> Get()
         {
             DatasetManager dm = new DatasetManager();
@@ -85,6 +86,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </remarks>
         [BExISApiAuthorize]
         //[Route("api/Data")]
+        [Route("api/Data/{id}")]
+        [HttpGet]
         public HttpResponseMessage Get(int id, [FromUri] string header = null, [FromUri] string filter = null)
         {
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;

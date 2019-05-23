@@ -37,11 +37,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
-    /// either of XML, JSON, or CSV formats.
+    /// CSV formats.
     /// </summary>
     /// <remarks>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
-    /// either of XML, JSON, or CSV formats.
+    /// CSV formats.
     /// The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
     /// CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
     /// The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
@@ -58,6 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="data"></param>
         [BExISApiAuthorize]
         [Route("api/Data")]
+        [HttpPost]
         public async Task<HttpResponseMessage> Post([FromBody]PushDataApiModel data)
         {
             var request = Request.CreateResponse();
@@ -295,6 +296,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         [BExISApiAuthorize]
         [Route("api/Data")]
+        [HttpPut]
         public async Task<HttpResponseMessage> Put([FromBody]PutDataApiModel data)
         {
             var request = Request.CreateResponse();
