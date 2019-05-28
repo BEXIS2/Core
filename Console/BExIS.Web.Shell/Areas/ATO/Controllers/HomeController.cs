@@ -152,27 +152,46 @@ namespace BExIS.Modules.Ato.UI.Controllers
             GroupManager groupManager = new GroupManager();
             PartyManager partyManager = new PartyManager();
 
-            var group = groupManager.Groups.Where(g => g.Name.Equals(gname)).FirstOrDefault();
-
+            var group = groupManager.Groups.Where(g => g.Name.ToLower().Equals(gname.ToLower())).FirstOrDefault();
+            
             Debug.WriteLine("*****************USERS*********************");
             StringBuilder sb = new StringBuilder("User overview <br>");
+            sb.AppendLine(gname +"<br>");
+            sb.AppendLine("------------------------------------------------------------------------------- <br>");
 
-            foreach (var user in group.Users)
+            if (group != null && group.Users != null)
             {
-                var x = partyManager.GetPartyByUser(user.Id);
-                var institute = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("Institute")).FirstOrDefault();
-                var fname = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("FirstName")).FirstOrDefault();
-                var lname = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("LastName")).FirstOrDefault();
 
-                var message = String.Format("Name = {0} {1}, Email = {2}, Insitute = {3} <br>", fname.Value,lname.Value , user.Email, institute.Value);
-                Debug.WriteLine(message);
-                sb.AppendLine(message);
+                foreach (var user in group.Users)
+                {
+                    var x = partyManager.GetPartyByUser(user.Id);
+                 
+                    if (x != null)
+                    {
+                        var institute = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("Institute")).FirstOrDefault();
+                        var fname = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("FirstName")).FirstOrDefault();
+                        var lname = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("LastName")).FirstOrDefault();
+                        var email = x.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("E-Mail")).FirstOrDefault();
+                        
+                        var message = String.Format("Name = {0} {1}, Email = {2}, Insitute = {3} <br>", fname.Value, lname.Value, email.Value, institute.Value);
+                        Debug.WriteLine(message);
+                        sb.AppendLine(message);
+                    }
+                    else
+                    {
+                        sb.AppendLine(String.Format("party of the user {0} does not exist <br>", user.Id));
+                    }
+                }
+            }
+            else
+            {
+                sb.AppendLine("group does not exist or has no users. <br>");
             }
 
             Debug.WriteLine("*****************End*********************");
             var es = new EmailService();
             //send email
-            es.Send("Nutzer Übersicht",
+            es.Send("User Overview",
                 sb.ToString()
                 ,
                 ConfigurationManager.AppSettings["SystemEmail"]);

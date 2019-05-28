@@ -19,7 +19,7 @@
 
     <Export tag="menubar" id="menuSearch" order="2"
             title="Search" description="Search datasets" icon=""
-            controller="publicsearch" action="index"
+            controller="home" action="index"
             extends="./menubarRoot" />
     
     <!--<Export tag="menubar" id="menuSearchPublic" order="2"
@@ -70,10 +70,10 @@
             controller="SearchIndex" action="Get"
             extends="" />
 
-    <Export tag="internalApi" id="showDatasetsInDashboard"
+    <!--<Export tag="internalApi" id="showDatasetsInDashboard"
             title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""
             controller="home" action="index"
-            extends="" />
+            extends="" />-->
 
 
   </Exports>
