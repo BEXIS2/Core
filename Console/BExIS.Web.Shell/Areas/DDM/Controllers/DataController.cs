@@ -1243,6 +1243,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             SubjectManager subjectManager = new SubjectManager();
             EntityManager entityManager = new EntityManager();
             DatasetManager datasetManager = new DatasetManager();
+            PartyManager partyManager = new PartyManager();
 
             try
             {
@@ -1273,16 +1274,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         string userName = "anonymus";
                         string eMail = "no email available";
 
+                        List<string> emails = new List<string>(); 
+
                         if (user != null)
                         {
                             userName = user.Name;
-                            eMail = user.Email;
+                            //user email
+                            emails.Add(user.Email);
+                            //party email
+
+                            var party = partyManager.GetPartyByUser(user.Id);
+
+                            if (party != null)
+                            {
+                                string mail = party.CustomAttributeValues.Where(c => c.CustomAttribute.DisplayName.Equals("E-Mail")).Select(c=>c.Value).FirstOrDefault();
+                                if(!string.IsNullOrEmpty(mail) && !emails.Contains(mail))emails.Add(mail);
+                            }
                         }
                         
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, userName, eMail),
+                            MessageHelper.GetSendRequestMessage(id, title, userName, emails.ToArray()),
                             emailDescionMaker
                             );
                     }
