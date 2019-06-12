@@ -1,4 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Api;
@@ -31,18 +33,42 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// <summary>
         /// This function displays a list of all datasets Id´s in the system.
         /// </summary>
-        /// <returns>IEnumerable with datatype long</returns>
+        /// <returns>IEnumerable with ApiSimpleDatasetModel</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Dataset")]
-        public IEnumerable<long> Get()
+        public IEnumerable<ApiSimpleDatasetModel> Get()
         {
             DatasetManager datasetManager = new DatasetManager();
+            List<ApiSimpleDatasetModel> datasetModels = new List<ApiSimpleDatasetModel>();
 
             try
             {
                 IEnumerable<long> datasetIds = datasetManager.DatasetRepo.Get().Select(d => d.Id);
 
-                return datasetIds;
+                foreach (long id in datasetIds)
+                {
+                    Dataset tmpDataset = datasetManager.GetDataset(id);
+                    ApiSimpleDatasetModel datasetModel = new ApiSimpleDatasetModel();
+                    datasetModel.Id = tmpDataset.Id;
+
+                    DatasetVersion[] tmpVersions = tmpDataset.Versions.OrderBy(ds => ds.Timestamp).ToArray();
+
+                    for (int i = 0; i < tmpVersions.Length; i++)
+                    {
+                        DatasetVersion dsv = tmpVersions.ElementAt(i);
+                        ApiSimpleDatasetVersionModel datasetVersionModel = new ApiSimpleDatasetVersionModel()
+                        {
+                            Id = dsv.Id,
+                            Number = i + 1
+                        };
+
+                        datasetModel.Versions.Add(datasetVersionModel);
+                    }
+
+                    datasetModels.Add(datasetModel);
+                }
+
+                return datasetModels;
             }
             finally
             {
@@ -52,7 +78,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}
         /// <summary>
-        /// This function returns basic information from a data set. An identifier is required.
+        /// This function returns basic information from the latest version of a data set. An identifier is required.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -78,16 +104,111 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             try
             {
                 Dataset dataset = datasetManager.GetDataset(id);
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+
+                int versionNumber = dataset.Versions.Count;
+
+                xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
                 string title = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
-                string description = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.description);
+                string description = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
+
                 ApiDatasetModel datasetModel = new ApiDatasetModel()
                 {
                     Id = id,
+                    Version = versionNumber,
+                    VersionId = datasetVersion.Id,
                     Title = title,
                     Description = description,
                     DataStructureId = dataset.DataStructure.Id,
                     MetadataStructureId = dataset.MetadataStructure.Id
                 };
+
+                // add addtional Iformations
+                foreach (Key k in Enum.GetValues(typeof(Key)))
+                {
+                    var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+                    if (tmp != null)
+                    {
+                        string value = string.Join(",", tmp.Distinct());
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            datasetModel.AdditionalInformations.Add(k.ToString(), value);
+                        }
+                    }
+                }
+
+                return datasetModel;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+        }
+
+        // GET api/DatasetOut/{id}/{version}
+        /// <summary>
+        /// This function returns basic information from a version of a data set. An identifier and version is required.
+        /// </summary>
+        ///
+        /// <param name="id">Identifier of a dataset</param>
+        /// <param name="version">Version of a dataset</param>
+        /// <returns>
+        ///{
+        /// "Title":"Title of my Dataset.",
+        /// "Description":"Description of my Dataset.",
+        /// "DataStructureId":1,
+        /// "MetadataStructureId":1,
+        ///}
+        /// </returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/Dataset/{id}/{version}")]
+        public ApiDatasetModel Get(long id, int version)
+        {
+            if (id <= 0)
+            {
+                ApiDatasetModel datasetModel = new ApiDatasetModel();
+            }
+
+            DatasetManager datasetManager = new DatasetManager();
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            try
+            {
+                Dataset dataset = datasetManager.GetDataset(id);
+                int index = version - 1;
+                DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+
+                xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                string description = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+
+                ApiDatasetModel datasetModel = new ApiDatasetModel()
+                {
+                    Id = id,
+                    Version = version,
+                    VersionId = datasetVersion.Id,
+                    Title = title,
+                    Description = description,
+                    DataStructureId = dataset.DataStructure.Id,
+                    MetadataStructureId = dataset.MetadataStructure.Id
+                };
+
+                // add addtional Iformations
+                foreach (Key k in Enum.GetValues(typeof(Key)))
+                {
+                    var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+                    if (tmp != null)
+                    {
+                        string value = string.Join(",", tmp.Distinct());
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            datasetModel.AdditionalInformations.Add(k.ToString(), value);
+                        }
+                    }
+                }
 
                 return datasetModel;
             }

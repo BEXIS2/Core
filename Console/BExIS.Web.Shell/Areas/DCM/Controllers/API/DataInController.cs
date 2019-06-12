@@ -88,20 +88,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 string token = this.Request.Headers.Authorization?.Parameter;
 
                 if (String.IsNullOrEmpty(token))
-                {
-                    request.Content = new StringContent("Bearer token not exist.");
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
 
                 user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
                 if (user == null)
-                {
-                    request.Content = new StringContent("Token is not valid.");
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
 
                 //check permissions
 
@@ -110,18 +102,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Dataset d = datasetManager.GetDataset(data.DatasetId);
                     if (d == null)
-                    {
-                        request.Content = new StringContent("the dataset with the id (" + data.DatasetId + ") does not exist.");
-
-                        return request;
-                    }
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + data.DatasetId + ") does not exist.");
 
                     if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), data.DatasetId, RightType.Write))
-                    {
-                        request.Content = new StringContent("The token is not authorized to write into the dataset.");
-
-                        return request;
-                    }
+                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
                 #endregion security
@@ -136,20 +120,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (data.Data == null) error += "data is empty. ";
 
                 if (!string.IsNullOrEmpty(error))
-                {
-                    request.Content = new StringContent(error);
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, error);
 
                 #endregion incomming values check
 
                 Dataset dataset = datasetManager.GetDataset(data.DatasetId);
                 if (dataset == null)
                 {
-                    request.Content = new StringContent("Dataset not exist.");
-
-                    return request;
+                    return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "Dataset not exist.");
                 }
 
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -166,11 +144,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     #endregion async upload with big data
 
-                    request.Content = new StringContent("Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
-
                     Debug.WriteLine("end of api call");
 
-                    return request;
+                    return Request.CreateResponse(HttpStatusCode.OK, "Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
                 }
                 else
                 {
@@ -184,10 +160,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
                         List<Error> errors = new List<Error>();
                         if (dataStructure == null)
-                        {
-                            request.Content = new StringContent("The Datastructure does not exist.");
-                            return request;
-                        }
+                            return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "The Datastructure does not exist.");
 
                         APIDataReader reader = new APIDataReader(dataStructure, new ApiFileReaderInfo());
 
@@ -209,8 +182,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 sb.AppendLine(e.ToHtmlString());
                             }
 
-                            request.Content = new StringContent(sb.ToString());
-                            return request;
+                            return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
                         }
 
                         errors = new List<Error>();
@@ -230,8 +202,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 sb.AppendLine(e.ToHtmlString());
                             }
 
-                            request.Content = new StringContent(sb.ToString());
-                            return request;
+                            return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
                         }
 
                         if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, user.UserName) || datasetManager.CheckOutDataset(dataset.Id, user.UserName))
@@ -262,8 +233,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 );
                         }
 
-                        request.Content = new StringContent("Data successfully uploaded.");
-                        return request;
+                        return Request.CreateResponse(HttpStatusCode.OK, "Data successfully uploaded.");
                     }
                     catch (Exception ex)
                     {
@@ -274,8 +244,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                    new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                    );
 
-                        request.Content = new StringContent(ex.Message);
-                        return request;
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }
 
                     #endregion direct upload
@@ -325,20 +294,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 string token = this.Request.Headers.Authorization?.Parameter;
 
                 if (String.IsNullOrEmpty(token))
-                {
-                    request.Content = new StringContent("Bearer token not exist.");
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
 
                 user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
                 if (user == null)
-                {
-                    request.Content = new StringContent("Token is not valid.");
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
 
                 //check permissions
 
@@ -347,18 +308,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Dataset d = datasetManager.GetDataset(data.DatasetId);
                     if (d == null)
-                    {
-                        request.Content = new StringContent("the dataset with the id (" + data.DatasetId + ") does not exist.");
-
-                        return request;
-                    }
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + data.DatasetId + ") does not exist.");
 
                     if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), data.DatasetId, RightType.Write))
-                    {
-                        request.Content = new StringContent("The token is not authorized to write into the dataset.");
-
-                        return request;
-                    }
+                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
                 #endregion security
@@ -375,21 +328,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (data.PrimaryKeys == null || data.PrimaryKeys.Count() == 0) error += "the UpdateMethod update has been selected but there are no primary keys available. ";
 
                 if (!string.IsNullOrEmpty(error))
-                {
-                    request.Content = new StringContent(error);
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, error);
 
                 #endregion incomming values check
 
                 Dataset dataset = datasetManager.GetDataset(data.DatasetId);
                 if (dataset == null)
-                {
-                    request.Content = new StringContent("Dataset not exist.");
-
-                    return request;
-                }
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset not exist.");
 
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 string title = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
@@ -405,11 +350,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     #endregion async upload with big data
 
-                    request.Content = new StringContent("Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
-
                     Debug.WriteLine("end of api call");
 
-                    return request;
+                    return Request.CreateResponse(HttpStatusCode.OK, "Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
                 }
                 else
                 {
@@ -424,10 +367,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
                         List<Error> errors = new List<Error>();
                         if (dataStructure == null)
-                        {
-                            request.Content = new StringContent("The Datastructure does not exist.");
-                            return request;
-                        }
+                            return Request.CreateResponse(HttpStatusCode.ExpectationFailed, "The Datastructure does not exist.");
 
                         APIDataReader reader = new APIDataReader(dataStructure, new ApiFileReaderInfo());
 
@@ -461,8 +401,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (!IsUniqueInDb) sb.AppendLine("The selected key is not unique in the data in the dataset.");
                             if (!IsUniqueInData) sb.AppendLine("The selected key is not unique in the received data.");
 
-                            request.Content = new StringContent(sb.ToString());
-                            return request;
+                            return Request.CreateResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
                         }
 
                         #endregion primary key check
@@ -484,8 +423,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 sb.AppendLine(e.ToHtmlString());
                             }
 
-                            request.Content = new StringContent(sb.ToString());
-                            return request;
+                            return Request.CreateResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
                         }
 
                         #endregion validate datastructure
@@ -509,8 +447,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 sb.AppendLine(e.ToHtmlString());
                             }
 
-                            request.Content = new StringContent(sb.ToString());
-                            return request;
+                            return Request.CreateResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
                         }
 
                         #endregion validate data
@@ -553,8 +490,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #endregion update data
 
-                        request.Content = new StringContent("Data successfully uploaded.");
-                        return request;
+                        return Request.CreateResponse(HttpStatusCode.OK, "Data successfully uploaded.");
                     }
                     catch (Exception ex)
                     {
@@ -565,8 +501,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                    new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                    );
 
-                        request.Content = new StringContent(ex.Message);
-                        return request;
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }
 
                     #endregion direct update
