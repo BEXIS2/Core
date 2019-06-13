@@ -484,14 +484,30 @@
       <summary>
         This function displays a list of all datasets Id´s in the system.
       </summary>
-      <returns>IEnumerable with datatype long</returns>
+      <returns>IEnumerable with ApiSimpleDatasetModel</returns>
     </member>
     <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
       <summary>
-        This function returns basic information from a data set. An identifier is required.
+        This function returns basic information from the latest version of a data set. An identifier is required.
       </summary>
 
       <param name="id">Identifier of a dataset</param>
+      <returns>
+        {
+        "Title":"Title of my Dataset.",
+        "Description":"Description of my Dataset.",
+        "DataStructureId":1,
+        "MetadataStructureId":1,
+        }
+      </returns>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
+      <summary>
+        This function returns basic information from a version of a data set. An identifier and version is required.
+      </summary>
+
+      <param name="id">Identifier of a dataset</param>
+      <param name="version">Version of a dataset</param>
       <returns>
         {
         "Title":"Title of my Dataset.",
@@ -549,6 +565,20 @@
         In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
       </summary>
       <param name="id">Dataset Id</param>
+      <returns> data from the latest version of a dataset</returns>
+      <remarks>
+        The action accepts the following additional parameters via the query string
+        1: header: is a comman separated list of variable names that determines which variables of the dataset version tuples should take part in the result set
+        2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        logical operators, nesting, precedence, and SOME functions should be supported.
+      </remarks>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String)">
+      <summary>
+        In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+      </summary>
+      <param name="id">Dataset Id</param>
+      <param name="version">Version number of the dataset</param>
       <returns></returns>
       <remarks>
         The action accepts the following additional parameters via the query string

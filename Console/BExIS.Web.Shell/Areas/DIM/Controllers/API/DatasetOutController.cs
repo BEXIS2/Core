@@ -6,12 +6,15 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace BExIS.Modules.Dim.UI.Controllers.API
 {
@@ -92,19 +95,20 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// </returns>
         [BExISApiAuthorize]
         [GetRoute("api/Dataset/{id}")]
-        public ApiDatasetModel Get(long id)
+        [ResponseType(typeof(ApiDatasetModel))]
+        public HttpResponseMessage Get(long id)
         {
-            if (id <= 0)
-            {
-                ApiDatasetModel datasetModel = new ApiDatasetModel();
-            }
+            if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
 
             DatasetManager datasetManager = new DatasetManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             try
             {
                 Dataset dataset = datasetManager.GetDataset(id);
+                if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
+
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "It is not possible to load the latest version.");
 
                 int versionNumber = dataset.Versions.Count;
 
@@ -139,7 +143,13 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     }
                 }
 
-                return datasetModel;
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                string resp = JsonConvert.SerializeObject(datasetModel);
+
+                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                return response;
             }
             finally
             {
@@ -164,20 +174,25 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// </returns>
         [BExISApiAuthorize]
         [GetRoute("api/Dataset/{id}/{version}")]
-        public ApiDatasetModel Get(long id, int version)
+        [ResponseType(typeof(ApiDatasetModel))]
+        public HttpResponseMessage Get(long id, int version)
         {
-            if (id <= 0)
-            {
-                ApiDatasetModel datasetModel = new ApiDatasetModel();
-            }
+            if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
+            if (version <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid version.");
 
             DatasetManager datasetManager = new DatasetManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             try
             {
                 Dataset dataset = datasetManager.GetDataset(id);
+                if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
+
                 int index = version - 1;
+
+                if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
+
                 DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
 
                 xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -210,7 +225,13 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     }
                 }
 
-                return datasetModel;
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                string resp = JsonConvert.SerializeObject(datasetModel);
+
+                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                return response;
             }
             finally
             {
