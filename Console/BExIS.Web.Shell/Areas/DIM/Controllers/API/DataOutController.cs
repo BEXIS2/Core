@@ -2,6 +2,7 @@
 using BExIS.Dim.Helpers.API;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Input;
@@ -78,9 +79,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
         /// </summary>
         /// <param name="id">Dataset Id</param>
-        /// <returns></returns>
+        /// <returns> data from the latest version of a dataset</returns>
         /// <remarks> The action accepts the following additional parameters via the query string
-        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 1: header: is a comman separated list of variable names that determines which variables of the dataset version tuples should take part in the result set
         /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
         /// </remarks>
@@ -94,6 +95,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string token = this.Request.Headers.Authorization?.Parameter;
 
+            return getData(id, -1, token, projection, selection);
+        }
+
+        // GET: api/data/5
+        /// <summary>
+        /// In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+        /// </summary>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="version">Version number of the dataset</param>
+        /// <returns></returns>
+        /// <remarks> The action accepts the following additional parameters via the query string
+        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        /// logical operators, nesting, precedence, and SOME functions should be supported.
+        /// </remarks>
+        [BExISApiAuthorize]
+        //[Route("api/Data")]
+        [GetRoute("api/Data/{id}/{version}")]
+        [HttpGet]
+        public HttpResponseMessage Get(long id, int version, [FromUri] string header = null, [FromUri] string filter = null)
+        {
+            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string token = this.Request.Headers.Authorization?.Parameter;
+
+            return getData(id, version, token, projection, selection);
+        }
+
+        private HttpResponseMessage getData(long id, int version, string token, string projection = null, string selection = null)
+        {
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
@@ -117,50 +148,121 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
 
-                        DatasetVersion version = datasetManager.GetDatasetLatestVersion(id);
+                        Dataset dataset = datasetManager.GetDataset(id);
 
-                        string title = xmlDatasetHelper.GetInformationFromVersion(version.Id, NameAttributeValues.title);
+                        // If the requested version is -1 or the last version of the dataset, then the data will be loaded in a
+                        // different way than when loading the data from an older version
+                        bool isLatestVersion = false;
+                        if (version == -1 || dataset.Versions.Count == version) isLatestVersion = true;
 
-                        // check the data sturcture type ...
-                        if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                        if (isLatestVersion)
                         {
-                            //FilterExpression filter = null;
-                            //OrderByExpression orderBy = null;
+                            #region get data from the latest version of a dataset
 
-                            // apply selection and projection
-                            long count = datasetManager.RowCount(id);
+                            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
-                            DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
-                            dt.Strip();
+                            string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
 
-                            if (!string.IsNullOrEmpty(selection))
+                            // check the data sturcture type ...
+                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                             {
-                                dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                            }
+                                //FilterExpression filter = null;
+                                //OrderByExpression orderBy = null;
+                                //ProjectionExpression projectionExpression = GetProjectionExpression(projection);
 
-                            if (!string.IsNullOrEmpty(projection))
+                                // apply selection and projection
+                                long count = datasetManager.RowCount(id);
+
+                                DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                                dt.Strip();
+
+                                if (!string.IsNullOrEmpty(selection))
+                                {
+                                    dt = OutputDataManager.SelectionOnDataTable(dt, selection, true);
+                                }
+
+                                if (!string.IsNullOrEmpty(projection))
+                                {
+                                    // make the header names upper case to make them case insensitive
+                                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                }
+
+                                dt.TableName = id + "_data";
+
+                                DatasetModel model = new DatasetModel();
+                                model.DataTable = dt;
+
+                                var response = Request.CreateResponse();
+                                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+
+                                //set headers on the "response"
+                                return response;
+
+                                #endregion get data from the latest version of a dataset
+
+                                //return model;
+                            }
+                            else
                             {
-                                // make the header names upper case to make them case insensitive
-                                dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                return Request.CreateResponse();
                             }
-
-                            if (dt.TableName == "") dt.TableName = id + "_data";
-
-                            DatasetModel model = new DatasetModel();
-                            model.DataTable = dt;
-
-                            var response = Request.CreateResponse();
-                            response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-
-                            //set headers on the "response"
-                            return response;
-
-                            //return model;
                         }
                         else
                         {
-                            return Request.CreateResponse();
+                            #region load data of a older version of a dataset
+
+                            int index = version - 1;
+                            if (version >= dataset.Versions.Count)
+                            {
+                                return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("This version ({0}) is not available for the dataset", version));
+                            }
+
+                            DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(version - 1);
+
+                            string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+
+                            // check the data sturcture type ...
+                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            {
+                                //FilterExpression filter = null;
+                                //OrderByExpression orderBy = null;
+
+                                // apply selection and projection
+                                int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+                                DataTable dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
+
+                                dt.Strip();
+
+                                if (!string.IsNullOrEmpty(selection))
+                                {
+                                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                                }
+
+                                if (!string.IsNullOrEmpty(projection))
+                                {
+                                    // make the header names upper case to make them case insensitive
+                                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                }
+
+                                dt.TableName = id + "_data";
+
+                                DatasetModel model = new DatasetModel();
+                                model.DataTable = dt;
+
+                                var response = Request.CreateResponse();
+                                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+
+                                //set headers on the "response"
+                                return response;
+                            }
+                            else // return files of the unstructure dataset
+                            {
+                                return Request.CreateResponse();
+                            }
+
+                            #endregion load data of a older version of a dataset
                         }
                     }
                     else // has rights?
@@ -189,6 +291,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 userManager.Dispose();
                 entityPermissionManager.Dispose();
             }
+        }
+
+        private ProjectionExpression GetProjectionExpression(string projection)
+        {
+            ProjectionExpression pe = new ProjectionExpression();
+
+            string[] columns = projection.Split(',');
+
+            foreach (string c in columns)
+            {
+                if (!string.IsNullOrEmpty(c))
+                {
+                    pe.Items.Add(new ProjectionItemExpression() { FieldName = c });
+                }
+            }
+
+            return pe;
         }
     }
 }
