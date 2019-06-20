@@ -44,6 +44,14 @@
         Feature = 704,
         Taxonomy = 705,
         Platform = 705,
+        Habitat = 706,
+        Stratigraphy = 707,
+        NorthBoundLatitude = 708,
+        WestBoundLongitude = 709,
+        SouthBoundLatitude = 710,
+        EastBoundLongitude = 711,
+        MinEvelation = 712,
+        MaxEvelation = 713,
     }
 
     public enum LinkElementComplexity
