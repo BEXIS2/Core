@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
 
+using BExIS.Dim.Entities.Mapping;
+
 namespace BExIS.Dim.Helpers.Mapping
 {
     public class MappingUtils
@@ -32,7 +34,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Source.Type.Equals(sourceType)
                         ).ToList();
 
-
                     return mappings.Any();
                 }
             }
@@ -41,8 +42,6 @@ namespace BExIS.Dim.Helpers.Mapping
                 throw ex;
             }
         }
-
-
 
         public static List<Entities.Mapping.Mapping> GetMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
         {
@@ -138,7 +137,6 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-
         public static List<Entities.Mapping.Mapping> GetMappingsWhereTarget(long targetId, LinkElementType targetType)
         {
             try
@@ -162,11 +160,9 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        #endregion
+        #endregion generic
 
         #region GET FROM SYSTEM
-
-
 
         /// <summary>
         /// e.g.
@@ -203,7 +199,6 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 throw ex;
             }
-
         }
 
         public static bool ExistMappingWithParty(long targetId, LinkElementType targetType)
@@ -219,7 +214,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent != null &&
                             m.Parent.Source.Type.Equals(LinkElementType.PartyType)
                         ).ToList();
-
 
                     return mappings.Any();
                 }
@@ -244,7 +238,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent.Source.ElementId.Equals(partyId)
                         ).ToList();
 
-
                     return mappings.Any();
                 }
             }
@@ -256,7 +249,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
         /// <summary>
         /// get all values from systen parties values
-        /// 
+        ///
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
@@ -283,7 +276,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
                 selectedMappings =
                     mappings.Where(m => m.Parent != null && m.Parent.Id.Equals(pId));
-
 
                 long parentTypeId = parentMapping.Source.ElementId;
                 long sourceId = selectedMappings.FirstOrDefault().Source.ElementId;
@@ -338,7 +330,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
         public static string GetValueFromSystem(long partyid, long targetElementId, LinkElementType targetElementType)
         {
-
             MappingManager _mappingManager = new MappingManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
@@ -354,7 +345,6 @@ namespace BExIS.Dim.Helpers.Mapping
                                 m.Target.Type.Equals(targetElementType) &&
                                 m.Source.Type.Equals(LinkElementType.PartyCustomType)
                             ).ToList();
-
 
                     if (mappings.Any())
                     {
@@ -374,11 +364,9 @@ namespace BExIS.Dim.Helpers.Mapping
                             string placeHolderName = attrValue.CustomAttribute.Name;
 
                             mask = setOrReplace(mask, regExResultList, placeHolderName);
-
                         }
 
                         if (mask.ToLower().Contains(value.ToLower()))
-
 
                             return mask;
                     }
@@ -395,7 +383,7 @@ namespace BExIS.Dim.Helpers.Mapping
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="targetElementId"></param>
         /// <param name="targetElementType"></param>
@@ -412,8 +400,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 {
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
-
-                    //Select all mappings where the target is mapped to a party custom attr with the party id 
+                    //Select all mappings where the target is mapped to a party custom attr with the party id
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
                         .Where(m =>
                             m.Target.ElementId.Equals(targetElementId) &&
@@ -439,7 +426,6 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-
         /// <summary>
         /// Check if there is a mapping to system key nodes
         /// return true if yes
@@ -449,7 +435,6 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <returns></returns>
         public static bool ExistSystemFieldMappings(long id, LinkElementType type)
         {
-
             //Automatic System Keys starts at 100
             //Id = 100,
             //Version = 101,
@@ -457,8 +442,7 @@ namespace BExIS.Dim.Helpers.Mapping
             //MetadataCreationDate = 103,
             //MetadataLastModfied = 104,
             //DataFirstEntry = 105,
-            //DataLastModified = 106, // also for Dubline Core date 
-
+            //DataLastModified = 106, // also for Dubline Core date
 
             try
             {
@@ -473,7 +457,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Source.Type.Equals(LinkElementType.Key)
                         ).ToList();
 
-
                     return mappings.Any();
                 }
             }
@@ -483,15 +466,12 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        #endregion GET FROM SYSTEM
 
-
-        #endregion
-
-        #region GET FROM Specific MetadataStructure // Source 
-
+        #region GET FROM Specific MetadataStructure // Source
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="targetElementId"></param>
         /// <param name="targetType"></param>
@@ -501,7 +481,6 @@ namespace BExIS.Dim.Helpers.Mapping
         public static List<string> GetValuesFromMetadata(long targetElementId, LinkElementType targetType,
             long sourceRootId, XDocument metadata)
         {
-
             //grab values from metadata where targetelementid and targetType is mapped
             // e.g. get title from metadata
 
@@ -519,30 +498,97 @@ namespace BExIS.Dim.Helpers.Mapping
                     getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
                     m.Level.Equals(2));
 
+                // possinle cases                   mapping count
+                // 1 - 1                            1
+                // x,y to z (combination merge)     2
+                // x -> z1,z2,z3 (split)            1
+                // x1,x2,x3 -> z (merge)            1
 
-                foreach (var m in mappings)
+                if (mappings.Count() == 1)
                 {
+                    //possible cases =
+                    // 1 - 1
+                    // x -> z1,z2,z3 (split)
+                    // x1,x2,x3 -> z (join)
 
-                    Dictionary<string, string> AttrDic = new Dictionary<string, string>();
+                    Entities.Mapping.Mapping m = mappings.FirstOrDefault();
 
-                    if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                        m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                    if (m != null &&
+                        (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                         m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage)))
                     {
-                        AttrDic.Add("id", m.Source.ElementId.ToString());
-                        AttrDic.Add("name", m.Source.Name);
-                        AttrDic.Add("type", "MetadataAttributeUsage");
+                        IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
 
-                        //find sourceelement in xmldocument
-                        IEnumerable<XElement> elements = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
-
-                        foreach (var element in elements)
+                        if (elements.Count() == 1)
                         {
-                            tmp.Add(element.Value);
+                            var element = elements.First();
+                            string mask = m.TransformationRule.Mask;
+                            // 1 - 1
+                            // x -> z1,z2,z3 (split)
+                            List<string> result = transform(element.Value, m.TransformationRule);
+
+                            if (result.Count == 1) // 1 - 1
+                            {
+                                mask = setOrReplace(mask, result, m.Source.Name);
+                                tmp.Add(mask);
+                            }
+                            else // x -> z1,z2,z3 (split)
+                            {
+                                //ToDo Add mask
+                                foreach (string r in result)
+                                {
+                                    mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
+                                    tmp.Add(mask);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // x1,x2,x3 -> z (join)
+
+                            foreach (var element in elements)
+                            {
+                                tmp.AddRange(transform(element.Value, m.TransformationRule));
+                            }
                         }
                     }
+                }
+                // x,y to z (combination merge)
+                // if multiply mappings to the same source, it is a merge
+                else
+                {
+                    // all mappings that have the same parent mapping should be handelt together
+                    IEnumerable<long> parentIds = mappings.Select(m => m.Parent.Id).Distinct();
 
+                    foreach (int parentId in parentIds)
+                    {
+                        string mask = "";
 
+                        //load all maaping that belongs to the parent mapping with id -> parentId
+                        IEnumerable<Entities.Mapping.Mapping> tmpMappings = mappings.Where(m => m.Parent.Id.Equals(parentId));
 
+                        foreach (var m in tmpMappings)
+                        {
+                            if (string.IsNullOrEmpty(mask)) mask = mappings.FirstOrDefault().TransformationRule.Mask;
+
+                            if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                            {
+                                IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+
+                                //the elements are the result of one mapping
+                                foreach (var element in elements)
+                                {
+                                    List<string> regExResultList = transform(element.Value, m.TransformationRule);
+                                    string placeHolderName = m.Source.Name;
+
+                                    mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                }
+                            }
+                        }
+
+                        tmp.Add(mask);
+                    }
                 }
 
                 return tmp;
@@ -553,9 +599,66 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        private static IEnumerable<XElement> getXElementsFromAMapping(Entities.Mapping.Mapping m, XDocument metadata)
+        {
+            Dictionary<string, string> AttrDic = new Dictionary<string, string>();
+            List<XElement> elements = new List<XElement>();
 
-        #endregion
+            //get parent elemenet with parent mapping
+            var parentMapping = m.Parent;
+            // if a mapping is linked direct to a simple attribute, then lvl 1&2 are  connected to the same linkelement
+            bool directSimpleMapping = false;
+            // if the parent and the current source are equals, then the child can loaded directly
+            if (parentMapping.Source.Id.Equals(m.Source.Id)) directSimpleMapping = true;
 
+            if (directSimpleMapping)
+            {
+                AttrDic = new Dictionary<string, string>();
+                AttrDic.Add("id", m.Source.ElementId.ToString());
+                AttrDic.Add("name", m.Source.Name);
+                AttrDic.Add("type", "MetadataAttributeUsage");
+
+                //the usage is the head node of a attr, if there are more then one, there are listed inside of the usage
+                // always :  usage/type/value
+                // if cardianlity is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
+                // in this case the childs of the usage is needed
+                var usages = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+                foreach (var u in usages)
+                {
+                    elements.AddRange(u.Elements());
+                }
+            }
+            else
+            {
+                AttrDic.Add("id", parentMapping.Source.ElementId.ToString());
+                AttrDic.Add("name", parentMapping.Source.Name);
+
+                //get parents from metadata
+                IEnumerable<XElement> parents = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+
+                foreach (var parent in parents)
+                {
+                    //sett attrs for the child
+                    AttrDic = new Dictionary<string, string>();
+                    AttrDic.Add("id", m.Source.ElementId.ToString());
+                    AttrDic.Add("name", m.Source.Name);
+                    AttrDic.Add("type", "MetadataAttributeUsage");
+
+                    //the usage is the head node of a attr, if there are more then one, there are listed inside of the usage
+                    // always :  usage/type/value
+                    // if cardianlity is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
+                    // in this case the childs of the usage is needed
+                    var usages = XmlUtility.GetXElementsByAttribute(AttrDic, parent);
+                    foreach (var u in usages)
+                    {
+                        elements.AddRange(u.Elements());
+                    }
+                }
+            }
+            return elements;
+        }
+
+        #endregion GET FROM Specific MetadataStructure // Source
 
         #region Helpers
 
@@ -565,7 +668,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
             return getRootMapping(mapping.Parent);
         }
-
 
         private static List<string> transform(string value, TransformationRule transformationRule)
         {
@@ -595,7 +697,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
         private static string setOrReplace(string mask, List<string> replacers, string attrName)
         {
-
             if (replacers != null && replacers.Any())
             {
                 if (!string.IsNullOrEmpty(mask))
@@ -623,7 +724,6 @@ namespace BExIS.Dim.Helpers.Mapping
             return "";
         }
 
-        #endregion
-
+        #endregion Helpers
     }
 }
