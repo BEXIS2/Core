@@ -13,7 +13,7 @@ $(document).ready(function ()
 	$("#information-container").css("top", h);
 	$(".main-content").css("margin-top", h);
 
-	$(document).resize(function () {
+	$(window).resize(function () {
 
 		var h = $(".navbar").height();
 		console.log("h = " + h);
