@@ -534,11 +534,15 @@ namespace BExIS.Dim.Helpers.Mapping
                             }
                             else // x -> z1,z2,z3 (split)
                             {
-                                //ToDo Add mask
-                                foreach (string r in result)
+                                if (string.IsNullOrEmpty(mask)) tmp.AddRange(result);
+                                else
                                 {
-                                    mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
-                                    tmp.Add(mask);
+                                    //ToDo Add mask
+                                    foreach (string r in result)
+                                    {
+                                        mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
+                                        tmp.Add(mask);
+                                    }
                                 }
                             }
                         }
@@ -677,13 +681,16 @@ namespace BExIS.Dim.Helpers.Mapping
                 Regex r = new Regex(transformationRule.RegEx, RegexOptions.IgnoreCase);
 
                 // Match the regular expression pattern against a text string.
-                Match m = r.Match(value);
+                MatchCollection matchCollection = r.Matches(value);
 
-                if (m.Success)
+                foreach (var match in matchCollection.Cast<Match>())
                 {
-                    foreach (var groupElement in m.Groups)
+                    if (match.Success)
                     {
-                        tmp.Add(groupElement.ToString());
+                        foreach (var groupElement in match.Groups)
+                        {
+                            tmp.Add(groupElement.ToString().Trim());
+                        }
                     }
                 }
             }
