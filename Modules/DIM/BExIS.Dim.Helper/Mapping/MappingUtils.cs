@@ -704,6 +704,20 @@ namespace BExIS.Dim.Helpers.Mapping
 
         private static string setOrReplace(string mask, List<string> replacers, string attrName)
         {
+            // in case of haven a boolean value in the metadata, true or false is not the value that should came out.
+            // the name of that what is checked is important here
+            for (int i = 0; i < replacers.Count(); i++)
+            {
+                string value = replacers[i];
+                if (value.ToLower().Equals("true"))
+                {
+                    value = attrName;
+                    replacers[i] = value;
+                }
+                else
+                if (value.ToLower().Equals("false")) replacers.Remove(value);
+            }
+
             if (replacers != null && replacers.Any())
             {
                 if (!string.IsNullOrEmpty(mask))
@@ -716,7 +730,8 @@ namespace BExIS.Dim.Helpers.Mapping
                             mask = mask.Replace(completePlaceHolderName, r);
                         else
                         {
-                            mask = string.IsNullOrEmpty(mask) ? mask = r : mask += " " + r;
+                            if (!string.IsNullOrEmpty(r))
+                                mask = string.IsNullOrEmpty(mask) ? mask = r : mask += " " + r;
                         }
                     }
 
