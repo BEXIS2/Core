@@ -38,4 +38,23 @@ namespace BExIS.Modules.Dim.UI.Models.Api
             AdditionalInformations = new Dictionary<string, string>();
         }
     }
+
+    public class ApiDatasetAttachmentsModel
+    {
+        public long DatasetId { get; set; }
+        public List<ApiSimpleAttachmentModel> Attachments { get; set; }
+
+        public ApiDatasetAttachmentsModel()
+        {
+            DatasetId = 0;
+            Attachments = new List<ApiSimpleAttachmentModel>();
+        }
+    }
+
+    public class ApiSimpleAttachmentModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string MimeType { get; set; }
+    }
 }
