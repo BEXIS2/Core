@@ -5,7 +5,6 @@ using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Dynamic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
@@ -164,8 +163,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
-
-
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
                 var user = userManager.FindByIdAsync(model.Id).Result;
@@ -216,6 +213,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         #region Remote Validation
+
         [AllowAnonymous]
         [HttpPost]
         public JsonResult ValidateEmail(string email, long id = 0)

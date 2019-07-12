@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BExIS.Dlm.Orm.NH.Qurying
+namespace BExIS.Utils.NH.Querying
 {
-
     public enum GenericOperation
     {
         Equals = 1,
@@ -31,12 +30,19 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         Ascending,
         Descending,
     }
+
     public static class UnaryOperator
     {
         // the string value in the dictionary may need to be a tuple<enum, sql, sqlPattern>
         public static Dictionary<Operation, Tuple<string, string>> Translation = new Dictionary<Operation, Tuple<string, string>>()
         {
             { Operation.Not,          Tuple.Create("NOT", "NOT ({0})") },
+            { Operation.Negate,       Tuple.Create("-", "-({0})") },
+        };
+
+        public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.Not,          Tuple.Create("NOT", "!({0})") },
             { Operation.Negate,       Tuple.Create("-", "-({0})") },
         };
 
@@ -55,10 +61,16 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             { Operation.Or,                 Tuple.Create("OR", "({0}) OR ({1})") },
         };
 
+        public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.And,                Tuple.Create("AND", "({0}) && ({1})") },
+            { Operation.Or,                 Tuple.Create("OR", "({0}) || ({1})") },
+        };
+
         public enum Operation
         {
-            And                             = GenericOperation.And,
-            Or                              = GenericOperation.Or,
+            And = GenericOperation.And,
+            Or = GenericOperation.Or,
         }
     }
 
@@ -73,13 +85,22 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             { Operation.GreaterThanOrEqual, Tuple.Create(">=", "({0}) >= ({1})") },
         };
 
+        public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.Equals,             Tuple.Create("=", "{0} = {1}") },
+            { Operation.LessThan,           Tuple.Create("<", "{0} < {1}") },
+            { Operation.LessThanOrEqual,    Tuple.Create("<=", "{0} <= {1}") },
+            { Operation.GreaterThan,        Tuple.Create(">", "{0} > {1}") },
+            { Operation.GreaterThanOrEqual, Tuple.Create(">=", "{0} >= {1}") },
+        };
+
         public enum Operation
         {
-            Equals                          = GenericOperation.Equals,
-            LessThan                        = GenericOperation.LessThan,
-            LessThanOrEqual                 = GenericOperation.LessThanOrEqual,
-            GreaterThan                     = GenericOperation.GreaterThan,
-            GreaterThanOrEqual              = GenericOperation.GreaterThanOrEqual,
+            Equals = GenericOperation.Equals,
+            LessThan = GenericOperation.LessThan,
+            LessThanOrEqual = GenericOperation.LessThanOrEqual,
+            GreaterThan = GenericOperation.GreaterThan,
+            GreaterThanOrEqual = GenericOperation.GreaterThanOrEqual,
         }
     }
 
@@ -93,12 +114,20 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             { Operation.EndsWith,           Tuple.Create("EW", "({0}) LIKE ('%{1}')") },
         };
 
+        public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.Equals,             Tuple.Create("=",  "{0} = \"{1}\"") },
+            { Operation.StartsWith,         Tuple.Create("ST", "{0}.Contains(\"{1}\")") },
+            { Operation.Contains,           Tuple.Create("ST", "{0}.Contains(\"{1}\")") },
+            { Operation.EndsWith,           Tuple.Create("EW", "{0}.Contains(\"{1}\")") }
+        };
+
         public enum Operation
         {
-            Equals                          = GenericOperation.Equals,
-            StartsWith                      = GenericOperation.StartsWith,
-            Contains                        = GenericOperation.Contains,
-            EndsWith                        = GenericOperation.EndsWith,
+            Equals = GenericOperation.Equals,
+            StartsWith = GenericOperation.StartsWith,
+            Contains = GenericOperation.Contains,
+            EndsWith = GenericOperation.EndsWith,
         }
     }
 
@@ -113,13 +142,22 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             { Operation.GreaterThanOrEqual, Tuple.Create(">=", "({0}) >= ('{1}')") },
         };
 
+        public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.Equals,             Tuple.Create("=", "{0} = \"{1}\"") },
+            { Operation.LessThan,           Tuple.Create("<", "{0} < \"{1}\"") },
+            { Operation.LessThanOrEqual,    Tuple.Create("<=", "{0} <= \"{1}\"") },
+            { Operation.GreaterThan,        Tuple.Create(">", "{0} > \"{1}\"") },
+            { Operation.GreaterThanOrEqual, Tuple.Create(">=", "{0} >= \"{1}\"") },
+        };
+
         public enum Operation
         {
-            Equals                          = GenericOperation.Equals,
-            LessThan                        = GenericOperation.LessThan,
-            LessThanOrEqual                 = GenericOperation.LessThanOrEqual,
-            GreaterThan                     = GenericOperation.GreaterThan,
-            GreaterThanOrEqual              = GenericOperation.GreaterThanOrEqual,
+            Equals = GenericOperation.Equals,
+            LessThan = GenericOperation.LessThan,
+            LessThanOrEqual = GenericOperation.LessThanOrEqual,
+            GreaterThan = GenericOperation.GreaterThan,
+            GreaterThanOrEqual = GenericOperation.GreaterThanOrEqual,
         }
     }
 
@@ -128,6 +166,11 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         public static Dictionary<Operation, Tuple<string, string>> Translation = new Dictionary<Operation, Tuple<string, string>>()
         {
             { Operation.Equals,             Tuple.Create("=", "({0}) = ({1})") },
+        };
+
+        public static Dictionary<Operation, Tuple<string, string>> TranslationLINQ = new Dictionary<Operation, Tuple<string, string>>()
+        {
+            { Operation.Equals,             Tuple.Create("=", "{0} = {1}") },
         };
 
         public enum Operation
@@ -144,5 +187,4 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         Double,
         Boolean,
     }
-
 }

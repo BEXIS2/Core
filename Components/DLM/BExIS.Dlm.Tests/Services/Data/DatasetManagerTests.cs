@@ -15,11 +15,11 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Entities.Administration;
+using BExIS.Utils.NH.Querying;
 
 namespace BExIS.Dlm.Tests.Services.Data
-{    
+{
     public class DatasetManagerTests
     {
         private TestSetupHelper helper = null;
@@ -117,7 +117,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
-
         [Test()]
         public void CreateDatasetVersionTest()
         {
@@ -180,7 +179,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 .And(
                     new FilterNumberItemExpression()
                     {
-                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = var1Name }
+                        Field = new Field() { DataType = Utils.NH.Querying.DataType.Ineteger, Name = var1Name }
                         ,
                         Operator = NumberOperator.Operation.GreaterThan
                         ,
@@ -189,7 +188,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     ,
                     new FilterStringItemExpression()
                     {
-                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name =  var2Name}
+                        Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = var2Name }
                             ,
                         Operator = StringOperator.Operation.EndsWith
                             ,
@@ -203,7 +202,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             // It can be applied on Numeric, String, Date, and any other type of expression
             FilterExpression notFex = UnaryFilterExpression.Not(fex);
             notFex.ToSQL().Should().Be($"NOT ((({var1Name}) > (12)) AND (({var2Name}) LIKE ('%Test')))");
-            notFex.ToSQL().Should().Be($"NOT ({fex.ToSQL()})"); 
+            notFex.ToSQL().Should().Be($"NOT ({fex.ToSQL()})");
 
             OrderByExpression orderByExpr = new OrderByExpression(
                                                     new List<OrderItemExpression>() {
@@ -257,7 +256,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 rsm.Dispose();
                 mdm.Dispose();
             }
-
         }
 
         [Test()]
@@ -275,7 +273,6 @@ namespace BExIS.Dlm.Tests.Services.Data
 
             projectionExpression.Items.Add(new ProjectionItemExpression() { FieldName = var1Name });
             projectionExpression.Items.Add(new ProjectionItemExpression() { FieldName = var3Name });
-
 
             // create a dataset and test the filter, sorting, and projectgion
             long numberOfTuples = 10;
@@ -327,8 +324,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 rsm.Dispose();
                 mdm.Dispose();
             }
-
         }
     }
-
 }
