@@ -2,7 +2,6 @@
 using BExIS.Dim.Helpers.API;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Input;
