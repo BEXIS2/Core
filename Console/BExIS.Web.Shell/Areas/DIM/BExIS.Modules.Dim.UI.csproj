@@ -331,6 +331,7 @@
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\API\DatasetOutController.cs" />
+    <Compile Include="Controllers\API\AttachmentOutController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\PublicationController.cs" />
     <Compile Include="Controllers\API\DataOutController.cs" />
