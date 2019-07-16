@@ -3052,6 +3052,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
                             simpleMetadataAttributeModel.Value = simpleElement.Value;
+
                             // if at least on item has a value, the parent should be activated
                             setStepModelActive(stepModelHelper);
                         }

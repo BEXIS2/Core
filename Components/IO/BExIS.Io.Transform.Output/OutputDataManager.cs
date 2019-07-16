@@ -87,8 +87,7 @@ namespace BExIS.IO.Transform.Output
                         return path;
                     }
 
-                    #endregion
-
+                    #endregion FileStream exist
                 }
 
                 // not exist needs to generated
@@ -105,7 +104,6 @@ namespace BExIS.IO.Transform.Output
                 writer.AddData(data, path, datastuctureId);
 
                 return path;
-
             }
             finally
             {
@@ -149,7 +147,6 @@ namespace BExIS.IO.Transform.Output
             writer.AddData(table, path, dataStructureId);
 
             return path;
-
         }
 
         //public string GenerateAsciiFile(long id, string title, string mimeType, string[] visibleColumns)
@@ -161,11 +158,10 @@ namespace BExIS.IO.Transform.Output
 
         //    try
         //    {
-
         //        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
         //        AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
 
-        //        // Javad: It is better to have a list of tuple IDs and pass it to the AddDataTuples method. 
+        //        // Javad: It is better to have a list of tuple IDs and pass it to the AddDataTuples method.
         //        // This method is using a special iterator to reduce the number of queries. 18.11.2016
 
         //        List<long> datatuples = new List<long>(); //GetFilteredDataTuples(datasetVersion);
@@ -199,8 +195,6 @@ namespace BExIS.IO.Transform.Output
             ExcelWriter writer = new ExcelWriter();
             string path = createDownloadFile(ns, dsId, title, ext, writer);
 
-
-
             writer.AddDataTuplesToFile(table, path, dsId);
 
             return path;
@@ -208,7 +202,6 @@ namespace BExIS.IO.Transform.Output
 
         public string GenerateExcelFile(long id, string title, bool createAsTemplate, DataTable data = null)
         {
-
             string mimeType = "";
             string ext = ".xlsx";
             string contentDescriptorTitle = "";
@@ -233,7 +226,6 @@ namespace BExIS.IO.Transform.Output
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                 ExcelWriter writer = new ExcelWriter(createAsTemplate);
 
-
                 string path = "";
 
                 //excel allready exist
@@ -256,7 +248,7 @@ namespace BExIS.IO.Transform.Output
                         return path;
                     }
 
-                    #endregion
+                    #endregion FileStream exist
                 }
 
                 // not exist needs to generated
@@ -274,7 +266,6 @@ namespace BExIS.IO.Transform.Output
 
                 if (createAsTemplate)
                 {
-
                     string[] columnNames = (from dc in data.Columns.Cast<DataColumn>()
                                             select dc.Caption).ToArray();
 
@@ -291,8 +282,7 @@ namespace BExIS.IO.Transform.Output
 
                 return path;
 
-                #endregion
-
+                #endregion FileStream not exist
             }
             catch (Exception ex)
             {
@@ -325,7 +315,6 @@ namespace BExIS.IO.Transform.Output
                 return excelwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, "data", ext);
             }
 
-
             return "";
         }
 
@@ -354,6 +343,7 @@ namespace BExIS.IO.Transform.Output
                 case ".xlsx":
                     excelwriter = (ExcelWriter)writer;
                     return excelwriter.CreateFile(ns, datastructureId, title, ext);
+
                 case ".xlsm":
                     excelwriter = (ExcelWriter)writer;
                     excelwriter.VisibleColumns = columns;
@@ -367,12 +357,9 @@ namespace BExIS.IO.Transform.Output
 
         private void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string ext)
         {
-
             DatasetManager dm = new DatasetManager();
             try
             {
-
-
                 string name = "";
                 string mimeType = "";
 
@@ -419,7 +406,7 @@ namespace BExIS.IO.Transform.Output
                 //};
 
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-                {   // remove the one contentdesciptor 
+                {   // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
                         if (cd.Name == name)
@@ -442,10 +429,9 @@ namespace BExIS.IO.Transform.Output
             {
                 dm.Dispose();
             }
-
         }
 
-        #endregion
+        #endregion export prepare files
 
         #region datatable
 
@@ -463,15 +449,24 @@ namespace BExIS.IO.Transform.Output
             return dt;
         }
 
-        public static DataTable SelectionOnDataTable(DataTable dt, string selection)
+        public static DataTable SelectionOnDataTable(DataTable dt, string selection, bool useCaption = false)
         {
+            //if selection contains variable like defind in the caption the datatable need to change
+            if (useCaption)
+            {
+                foreach (DataColumn c in dt.Columns)
+                {
+                    var t = c.Caption;
+                    c.ColumnName = t;
+                }
+            }
+
             DataTable newDt = dt.Clone();
             DataRow[] rows = dt.Select(selection);
             foreach (var row in rows)
             {
                 newDt.ImportRow(row);
             }
-
 
             return newDt;
         }
@@ -494,6 +489,6 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        #endregion
+        #endregion datatable
     }
 }

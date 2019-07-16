@@ -319,6 +319,9 @@ namespace BExIS.Security.Services.Authorization
                 if (feature != null && subject != null)
                     return HasAccess(subject.Id, feature.Id);
 
+                if (feature == null && subject != null)
+                    return true;
+
                 return false;
             }
         }

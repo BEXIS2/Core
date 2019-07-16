@@ -2107,7 +2107,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private List<DataTuple> getHistoricTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        private List<AbstractTuple> getHistoricTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -2117,21 +2117,21 @@ namespace BExIS.Dlm.Services.Data
                 //get previous versions including the version specified
                 List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
                 //get all tuples from the main tuples table belonging to one of the previous versions + the current version
-                List<DataTuple> tuples = dataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
+                List<AbstractTuple> tuples = dataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).Cast<AbstractTuple>().ToList();
 
-                List<DataTuple> editedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Edited)
+                List<AbstractTuple> editedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Edited)
                                                                             && (p.DatasetVersion.Id == datasetVersion.Id)
                                                                             && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
                                                                 .Skip(pageNumber * pageSize).Take(pageSize)
-                                                                .Cast<DataTuple>().ToList();
-                List<DataTuple> deletedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Deleted)
+                                                                .Cast<AbstractTuple>().ToList();
+                List<AbstractTuple> deletedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Deleted)
                                                                         && (versionIds.Contains(p.DatasetVersion.Id))
                                                                         && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
                                                                    .Skip(pageNumber * pageSize).Take(pageSize)
-                                                                   .Cast<DataTuple>().ToList();
+                                                                   .Cast<AbstractTuple>().ToList();
                 // the resulting union-ned list is made by a page from editedVersion and a page from the deleted ones, so it is maximum 2 pages, but should be reduced to a page.
                 // for this reason the union is sorted by timestamp and then the first page is taken.
-                List<DataTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
+                List<AbstractTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
                     .OrderBy(p => p.Timestamp)
                     .Take(pageSize)
                     .ToList();

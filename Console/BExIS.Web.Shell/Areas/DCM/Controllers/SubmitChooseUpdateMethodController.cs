@@ -2,8 +2,11 @@
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +20,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class SubmitChooseUpdateMethodController : BaseController
     {
         private TaskManager TaskManager;
-        private UploadWizardHelper uploadWizardHelper = new UploadWizardHelper();
+        private UploadHelper uploadWizardHelper = new UploadHelper();
 
         // GET: /DCM/DefinePrimaryKey/
         [HttpGet]
@@ -181,9 +184,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // temporary solution to make it a little bit faster
                     // direct link to xml is no t allow, need to call functions from dlm
-                    bool IsUniqueInDb = uploadWizardHelper.IsUnique2(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    bool IsUniqueInDb = uploadWizardHelper.IsUnique2(
+                        Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()),
+                        identifiers);
 
-                    bool IsUniqueInFile = uploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
+                    bool IsUniqueInFile = uploadWizardHelper.IsUnique(
+                        Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()),
+                        identifiers,
+                        TaskManager.Bus[TaskManager.EXTENTION].ToString(),
+                        TaskManager.Bus[TaskManager.FILENAME].ToString(),
+                        TaskManager.Bus[TaskManager.FILEPATH].ToString(),
+                        (FileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO],
+                        Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID])
+                        );
 
                     if (IsUniqueInDb && IsUniqueInFile)
                     {

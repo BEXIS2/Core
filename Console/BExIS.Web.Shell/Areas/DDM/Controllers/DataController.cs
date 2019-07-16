@@ -398,6 +398,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 return PartialView(null);
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             finally
             {
                 dm.Dispose();

@@ -11,6 +11,8 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private static IDictionary<Guid, int> tasks = new Dictionary<Guid, int>();
 
-        private UploadWizardHelper uploadWizardHelper = new UploadWizardHelper();
+        private UploadHelper uploadWizardHelper = new UploadHelper();
         //
         // GET: /DCM/Summary/
 

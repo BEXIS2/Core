@@ -2,6 +2,7 @@
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Utils.Data.Upload;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {

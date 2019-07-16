@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
+using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
     /// </summary>
-    public class MetadataController : ApiController
+    public class MetadataOutController : ApiController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
@@ -26,18 +27,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// With the Get function you get an overview of the exiting datasets from which you can load metadata.
         /// </summary>
         /// <remarks>
-        /// With the Get function you get an overview of the exiting datasets from which you can load metadata. 
+        /// With the Get function you get an overview of the exiting datasets from which you can load metadata.
         /// The format indicates the possible conversions. Without format the system internal metadata xml document is loaded.
         /// </remarks>
         /// <returns>List of MetadataViewObject</returns>
         [BExISApiAuthorize]
+        [GetRoute("api/Metadata")]
         public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
 
             try
             {
-
                 var datasetIds = dm.GetDatasetLatestIds();
 
                 List<MetadataViewObject> tmp = new List<MetadataViewObject>();
@@ -71,6 +72,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         /// <returns>Xml Document</returns>
         [BExISApiAuthorize]
+        [GetRoute("api/Metadata/{id}")]
         public HttpResponseMessage Get(int id, [FromUri] string format = null)
         {
             DatasetManager dm = new DatasetManager();
@@ -95,7 +97,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
                 else
                 {
-
                     try
                     {
                         XmlDocument newXmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
@@ -115,28 +116,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 dm.Dispose();
             }
-
-        }
-
-        // POST: api/Metadata
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [BExISApiAuthorize]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/Metadata/5
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [BExISApiAuthorize]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Metadata/5
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [BExISApiAuthorize]
-        public void Delete(int id)
-        {
         }
     }
 
