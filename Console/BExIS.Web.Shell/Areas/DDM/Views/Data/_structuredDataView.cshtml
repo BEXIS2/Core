@@ -5,7 +5,6 @@
 @using Telerik.Web.Mvc.UI;
 @using System.Linq;
 
-
 @{
     ViewBag.Title = "Primary Data";
 
@@ -17,7 +16,6 @@
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
-
 
     int total = 0;
     if (Session["gridTotal"] != null)
@@ -37,25 +35,25 @@
         tableClass = "scroll_in_screen";
     }
 
-
 }
 
-
 @section Scripts{
-	<link href="@Url.Content(Themes.GetResourcePath("Styles", "images.css"))" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="/Areas/ddm/Scripts/ddm.js"></script>
-	@*<script type="text/javascript" src="/Areas/ddm/Views/Shared/ddm.js"></script>*@
+    <link href="@Url.Content(Themes.GetResourcePath("Styles", "images.css"))" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/Areas/ddm/Scripts/ddm.js"></script>
+    @*<script type="text/javascript" src="/Areas/ddm/Views/Shared/ddm.js"></script>*@
 }
 
 @section information
 {
-	<p>To download the entire dataset choose one of the following formats.</p>
+    <p>To download the entire dataset choose one of the following formats.</p>
 
-	<p>Note: If you are the first one to download this dataset it may take a
-		little longer, because the file has to be created.</p>
-<p>
-	<a href="/DCM/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
-</p>
+    <p>
+        Note: If you are the first one to download this dataset it may take a
+        little longer, because the file has to be created.
+    </p>
+    <p>
+        <a href="/DCM/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 }
 <div id="downloadOptions" style="text-align:left;">
 
@@ -88,10 +86,8 @@
                 {
                     <li><a class="file-type-download-entry" ext="@fileType.Value"> @fileType.Key (@fileType.Value)</a></li>
                 }
-
             </ul>
         </span>
-
 
     }
     else
@@ -112,10 +108,7 @@
         @*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
     }
 
-
-
     @Html.CheckBox("FitToScreen", fitToScreen, new { text = "Fit table to screen", @id = "FitToScreen" }) @Html.Label("Fit table to screen")
-
 
     <span id="preloaderContainer" style="float: right"></span>
 </div>
@@ -129,7 +122,7 @@
                  )
 
                 .EnableCustomBinding(true)
-                .HtmlAttributes(new { @class = "primaryDataResultGrid "+ @tableClass })
+                .HtmlAttributes(new { @class = "primaryDataResultGrid " + @tableClass })
                 .ClientEvents(events => events
                          .OnLoad("PrimaryDataResultGrid_OnLoad")
                          .OnDataBound("PrimaryData_OnCommand")
@@ -146,8 +139,6 @@
 
                     string title;
                     bool visible = false;
-
-
 
                     if (column.Caption == "")
                     {
@@ -182,12 +173,10 @@
                                .Title(title).Hidden(!visible);
                         }
                     }
-                }
-            })
-
+                })
 
             .Pageable(paging =>
-                paging.PageSize(100,new int[]{10,20,50,100,500})
+                paging.PageSize(100, new int[] { 10, 20, 50, 100, 500 })
                     .Style(pagerStyles)
                     .Position(GridPagerPosition.Both)
                     .Total(total)
@@ -203,9 +192,7 @@
 
 <br />
 
-
 <script type="text/javascript">
-
 
 	$(document).ready(function(){
 
@@ -302,7 +289,6 @@
 
             console.log("rowwidth < tablewidth | " + rowwidth + "<" + tablewidth)
 
-
             if (rowwidth < tablewidth) {
                 console.log("inside baby")
                 $("#PrimaryDataResultGrid").addClass("fit_to_screen");
@@ -311,7 +297,7 @@
             }
 
         }, 200);
-        
+
 	}
 
 	$(".file-type-download-entry").click(function (id) {
@@ -319,7 +305,6 @@
 		var ext = $(this).attr("ext");
 
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
-
 
 		$.ajax({
 			url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })'+"?ext=" + ext+"&versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
@@ -339,7 +324,6 @@
 			}
 		})
 	})
-
 
 	function downloadExcelTemplate(id) {
 
@@ -384,5 +368,4 @@
 				$("#preloaderContainer").removePreloader();
 			}
 		})}
-
 </script>

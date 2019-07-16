@@ -2,7 +2,6 @@
 using BExIS.Dim.Helpers.API;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Input;
@@ -16,6 +15,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Data.Upload;
+using BExIS.Utils.NH.Querying;
 using BExIS.Utils.Route;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;

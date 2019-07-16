@@ -65,6 +65,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Web.Mvc, Version=2013.2.611.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -79,6 +83,7 @@
   <ItemGroup>
     <Compile Include="Helpers\BexisUIHelper.cs" />
     <Compile Include="Helpers\ErrorHelper.cs" />
+    <Compile Include="Helpers\TelerikGridHelper.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Wizard\AbstractTaskManager.cs" />
     <Compile Include="Wizard\ActionInfo.cs" />
@@ -101,6 +106,10 @@
     <ProjectReference Include="..\..\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
       <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
+      <Project>{0f1ec13e-d685-4f4d-a438-52797b0e53a0}</Project>
+      <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>

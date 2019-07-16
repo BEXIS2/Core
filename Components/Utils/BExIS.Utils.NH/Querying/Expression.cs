@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BExIS.Dlm.Orm.NH.Qurying
+namespace BExIS.Utils.NH.Querying
 {
     public abstract class ModelExpression
     {
         public abstract string ToSQL();
+
+        public abstract string ToLINQ();
     }
 
     public class Field
     {
         public DataType DataType { get; set; }
         public string Name { get; set; }
-
     }
 
     public abstract class FilterExpression : ModelExpression
@@ -27,7 +28,7 @@ namespace BExIS.Dlm.Orm.NH.Qurying
     {
         public Field Field { get; set; }
         public object Value { get; set; }
-        public NumberOperator.Operation Operator { get; set; } 
+        public NumberOperator.Operation Operator { get; set; }
 
         public override string ToSQL()
         {
@@ -35,6 +36,11 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             return string.Format(NumberOperator.Translation[this.Operator].Item2, this.Field.Name, this.Value);
         }
 
+        public override string ToLINQ()
+        {
+            // a set of checks against the type and value should be done
+            return string.Format(NumberOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value);
+        }
     }
 
     public class FilterStringItemExpression : FilterExpression
@@ -48,6 +54,10 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             return string.Format(StringOperator.Translation[this.Operator].Item2, this.Field.Name, this.Value);
         }
 
+        public override string ToLINQ()
+        {
+            return string.Format(StringOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value);
+        }
     }
 
     public class FilterDateTimeItemExpression : FilterExpression
@@ -60,6 +70,12 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         {
             // a set of checks against the type and value should be done
             return string.Format(DateTimeOperator.Translation[this.Operator].Item2, this.Field.Name, this.Value);
+        }
+
+        public override string ToLINQ()
+        {
+            // a set of checks against the type and value should be done
+            return string.Format(DateTimeOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value);
         }
     }
 
@@ -75,9 +91,14 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             return string.Format(BooleanOperator.Translation[this.Operator].Item2, this.Field.Name, this.Value);
         }
 
+        public override string ToLINQ()
+        {
+            // a set of checks against the type and value should be done
+            return string.Format(BooleanOperator.TranslationLINQ[this.Operator].Item2, this.Field.Name, this.Value);
+        }
     }
 
-    public class UnaryFilterExpression: FilterExpression
+    public class UnaryFilterExpression : FilterExpression
     {
         public FilterExpression Operand { get; set; }
         public UnaryOperator.Operation Operator { get; set; }
@@ -95,6 +116,11 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         public override string ToSQL()
         {
             return string.Format(UnaryOperator.Translation[this.Operator].Item2, this.Operand.ToSQL());
+        }
+
+        public override string ToLINQ()
+        {
+            return string.Format(UnaryOperator.TranslationToLINQ[this.Operator].Item2, this.Operand.ToSQL());
         }
     }
 
@@ -118,6 +144,11 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         {
             return string.Format(BinaryOperator.Translation[this.Operator].Item2, this.Left.ToSQL(), this.Right.ToSQL());
         }
+
+        public override string ToLINQ()
+        {
+            return string.Format(BinaryOperator.TranslationToLINQ[this.Operator].Item2, this.Left.ToSQL(), this.Right.ToSQL());
+        }
     }
 
     public class OrderItemExpression : ModelExpression
@@ -130,9 +161,15 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             this.FieldName = fiedName;
             this.Direction = direction;
         }
+
         public override string ToSQL()
         {
             return string.Format("{0} {1}", this.FieldName, this.Direction == SortDirection.Ascending ? "ASC" : "DESC");
+        }
+
+        public override string ToLINQ()
+        {
+            return ToSQL();
         }
     }
 
@@ -146,6 +183,7 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         {
             this.Items = new List<OrderItemExpression>();
         }
+
         public OrderByExpression(List<OrderItemExpression> items) : this()
         {
             this.Items = items;
@@ -153,9 +191,13 @@ namespace BExIS.Dlm.Orm.NH.Qurying
 
         public override string ToSQL()
         {
-            return string.Join(", ", this.Items.Select(p=>p.ToSQL()));
+            return string.Join(", ", this.Items.Select(p => p.ToSQL()));
         }
 
+        public override string ToLINQ()
+        {
+            return ToSQL();
+        }
     }
 
     public class ProjectionItemExpression : ModelExpression
@@ -167,6 +209,11 @@ namespace BExIS.Dlm.Orm.NH.Qurying
         public override string ToSQL()
         {
             return string.Format("{0} AS {1}", this.FieldName, string.IsNullOrWhiteSpace(this.Alias) ? FieldName : Alias);
+        }
+
+        public override string ToLINQ()
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -181,13 +228,19 @@ namespace BExIS.Dlm.Orm.NH.Qurying
             this.Items = new List<ProjectionItemExpression>();
         }
 
-        public ProjectionExpression(List<ProjectionItemExpression> items): this()
+        public ProjectionExpression(List<ProjectionItemExpression> items) : this()
         {
             this.Items = items;
         }
+
         public override string ToSQL()
         {
             return string.Join(", ", this.Items.Select(p => p.ToSQL()));
+        }
+
+        public override string ToLINQ()
+        {
+            throw new NotImplementedException();
         }
     }
 }

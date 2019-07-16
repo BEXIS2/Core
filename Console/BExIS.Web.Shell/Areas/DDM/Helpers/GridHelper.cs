@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Orm.NH.Qurying;
+using BExIS.Utils.NH.Querying;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Infrastructure.Implementation;
 
@@ -11,10 +11,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public static class GridHelper
     {
-
         public static bool ValueComparion(VariableValue val, FilterOperator filterOperator, object value)
         {
-
             switch (filterOperator)
             {
                 case FilterOperator.Contains:
@@ -85,8 +83,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             throw new Exception("Value is not a number");
                         }
-
-
                     }
 
                 case FilterOperator.IsGreaterThanOrEqualTo:
@@ -141,8 +137,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             throw new Exception("Value is not a number");
                         }
                     }
-
-
             }
 
             return false;
@@ -150,7 +144,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
         public static GridCommand ConvertToGridCommand(string filters, string orders)
         {
-
             GridCommand command = new GridCommand();
 
             if (!string.IsNullOrEmpty(filters))
@@ -167,7 +160,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     filterDescriptor = new FilterDescriptor();
                     filterDescriptor.Member = filterSplit[i];
                     filterDescriptor.Operator = GetFilterOperator(filterSplit[i + 1]);
-                    filterDescriptor.Value = filterSplit[i + 2].Replace("'","");
+                    filterDescriptor.Value = filterSplit[i + 2].Replace("'", "");
 
                     command.FilterDescriptors.Add(filterDescriptor);
                 }
@@ -180,7 +173,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 string[] orderSplit = orders.Split('~');
                 SortDescriptor sortDescriptor = new SortDescriptor();
-
 
                 for (int i = 0; i < orderSplit.Length; i += 2)
                 {
@@ -209,20 +201,18 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 case "substringof": return FilterOperator.Contains;
                 case "notsubstringof": return FilterOperator.Contains;
 
-                default:    return FilterOperator.IsEqualTo;
+                default: return FilterOperator.IsEqualTo;
             }
         }
 
         private static ListSortDirection GetSortDirection(string sortDirectionAbbr)
         {
-
             switch (sortDirectionAbbr)
             {
                 case "asc": return ListSortDirection.Ascending;
                 case "desc": return ListSortDirection.Descending;
                 default: return ListSortDirection.Ascending;
             }
-
         }
 
         /// <summary>
@@ -233,7 +223,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
         /// <returns></returns>
         public static object CastVariableValue(object value, string systemType)
         {
-
             if (!String.IsNullOrEmpty(value.ToString()))
             {
                 switch (systemType)
@@ -272,7 +261,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
         /// <returns></returns>
         public static FilterExpression Convert(List<IFilterDescriptor> filterDescriptors)
         {
-
             FilterExpression filter = null;
             FilterExpression tmpFilter = null;
             List<FilterExpression> tmpFilterExpressions = new List<FilterExpression>();
@@ -322,13 +310,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
         }
 
         /// <summary>
-        /// Convert a FilterDescriptorCollection to FilterExpression 
+        /// Convert a FilterDescriptorCollection to FilterExpression
         /// </summary>
         /// <param name="filterDescriptors"></param>
         /// <returns></returns>
         public static FilterExpression Convert(FilterDescriptorCollection filterDescriptors)
         {
-
             FilterExpression filter = null;
             FilterExpression tmpFilter = null;
             List<FilterExpression> tmpFilterExpressions = new List<FilterExpression>();
@@ -392,7 +379,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
                            ,
                             Operator = StringOperator.Operation.Contains
                            ,
@@ -404,7 +391,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
                            ,
                             Operator = StringOperator.Operation.Contains
                            ,
@@ -421,7 +408,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
                             ,
                             Operator = StringOperator.Operation.EndsWith
                             ,
@@ -432,7 +419,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
                             ,
                             Operator = StringOperator.Operation.StartsWith
                             ,
@@ -443,7 +430,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
                             ,
                             Operator = StringOperator.Operation.Equals
                             ,
@@ -460,7 +447,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.GreaterThan
                                 ,
@@ -471,7 +458,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             throw new Exception("Value is not a number");
                         }
-
                     }
 
                 case FilterOperator.IsGreaterThanOrEqualTo:
@@ -480,7 +466,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.GreaterThanOrEqual
                                 ,
@@ -498,7 +484,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.LessThan
                                 ,
@@ -517,7 +503,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.LessThanOrEqual
                                 ,
@@ -529,12 +515,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             throw new Exception("Value is not a number");
                         }
                     }
-
-
             }
 
             return null;
-
         }
 
         public static OrderByExpression Convert(List<SortDescriptor> sortDescriptors)
@@ -547,7 +530,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                                                     });
              */
 
-
             List<OrderItemExpression> oieList = new List<OrderItemExpression>();
             if (sortDescriptors.Count > 0)
             {
@@ -558,10 +540,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     SortDirection sortDirection = SortDirection.Ascending;
 
                     if (direction.Equals("Ascending")) sortDirection = SortDirection.Ascending;
-                    if (direction.Equals("Descending"))sortDirection = SortDirection.Descending;
+                    if (direction.Equals("Descending")) sortDirection = SortDirection.Descending;
 
                     oieList.Add(new OrderItemExpression(name, sortDirection));
-
                 }
             }
 
@@ -585,10 +566,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 });
             }
 
-
             return new ProjectionExpression(pieList);
         }
-
-
     }
 }

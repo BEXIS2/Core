@@ -1,6 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Party;
@@ -14,6 +13,8 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
@@ -300,7 +301,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             Session["Columns"] = columns.Replace("ID", "").Split(',');
 
-            //Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+            //Session["Filter"] = TelerikGridHelper.ConvertToGridCommand(filters, orders);
 
             return null;
         }
@@ -431,8 +432,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // get primarydata from latest version with table
                     if (versionId == latestDatasetVersionId)
                     {
-                        FilterExpression filter = GridHelper.Convert(command.FilterDescriptors.ToList());
-                        OrderByExpression orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                        FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                        OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
                         table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, command.Page - 1, command.PageSize);
                         Session["gridTotal"] = dm.RowCount(datasetId, filter);
@@ -922,7 +923,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public void SetCommand(string filters, string orders)
         {
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+            Session["Filter"] = TelerikGridHelper.ConvertToGridCommand(filters, orders);
         }
 
         private bool filterInUse()
@@ -960,11 +961,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (command != null)
                 {
-                    filter = GridHelper.Convert(command.FilterDescriptors.ToList());
-                    orderBy = GridHelper.Convert(command.SortDescriptors.ToList());
+                    filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                    orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
                 }
 
-                ProjectionExpression projection = GridHelper.Convert(columns);
+                ProjectionExpression projection = TelerikGridHelper.Convert(columns);
 
                 long count = datasetManager.RowCount(datasetId, filter);
 

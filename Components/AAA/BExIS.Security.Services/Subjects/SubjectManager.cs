@@ -1,6 +1,11 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.NH.Querying;
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Linq.Dynamic;
+using System.Text;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
@@ -24,6 +29,36 @@ namespace BExIS.Security.Services.Subjects
 
         public IReadOnlyRepository<Subject> SubjectRepository { get; }
         public IQueryable<Subject> Subjects => SubjectRepository.Query();
+
+        public List<Subject> GetSubjects(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize)
+        {
+            var orderbyClause = orderBy?.ToLINQ();
+            var whereClause = filter?.ToLINQ();
+
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    if (whereClause != null && orderBy != null)
+                    {
+                        var l = Subjects.Where(whereClause);
+                        var x = l.OrderBy(orderbyClause);
+                        var y = x.Skip((pageNumber - 1) * pageSize);
+                        var z = y.Take(pageSize);
+
+                        return z.ToList();
+                    }
+                    else if (whereClause != null) return Subjects.Where(whereClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    if (orderBy != null) return Subjects.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Could not retrieve filtered subjects."), ex);
+            }
+
+            return null;
+        }
 
         public void Dispose()
         {
