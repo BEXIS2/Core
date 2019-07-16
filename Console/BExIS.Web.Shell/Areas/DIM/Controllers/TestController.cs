@@ -21,18 +21,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
     public class TestController : Controller
     {
         // GET: Test
-        public ActionResult Index()
+        public ActionResult Index(long id = -1)
         {
             DatasetManager datasetManager = new DatasetManager();
 
             try
             {
-
                 //get all
                 var x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage);
                 // get all where value = david
                 x = MappingUtils.GetAllMatchesInSystem(1, LinkElementType.MetadataNestedAttributeUsage, "David");
-
 
                 // get value from metadata over the system
                 // partytpe person - attr firstname
@@ -40,17 +38,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 long partyCustomtAttr = 1;
                 LinkElementType type = LinkElementType.PartyCustomType;
 
-                long datasetId = 1;
+                long datasetId = id;
 
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-
 
                 List<string> tmp = MappingUtils.GetValuesFromMetadata(partyCustomtAttr, type,
                     datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
-                tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key,
+
+                tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Author), LinkElementType.Key,
                    datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
+                tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Title), LinkElementType.Key,
+                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
                 return View("Index");
             }
@@ -62,27 +62,22 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult GetDatastructureAsJSON(long id)
         {
-
             return Json(OutputDataStructureManager.GetDataStructureAsJson(id), "application/json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetDatastructureAsJSON2(long id)
         {
-
             return new ContentResult() { Content = OutputDataStructureManager.GetDataStructureAsJson(id), ContentType = "application/json" };
         }
 
-
         public async Task<ActionResult> GetStatus(long id)
         {
-
             PublicationManager publicationManager = new PublicationManager();
 
             Broker broker =
                                        publicationManager.GetBroker()
                                            .Where(b => b.Name.ToLower().Equals("gfbio dev1"))
                                            .FirstOrDefault();
-
 
             if (broker != null)
             {
@@ -97,7 +92,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         roStatusJsonResult);
                 GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
                 return Content(gfbioRoStatus.status);
-
             }
 
             return Content("no status");
@@ -106,6 +100,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private void CreatePartys()
         {
             #region CREATE PARTYS
+
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
 
@@ -150,13 +145,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
                 partyManager.AddPartyCustomAttributeValue(p, pAttr, "mh@test.de");
-
             }
 
-
-
-
-            #endregion
+            #endregion CREATE PARTYS
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace BExIS.Dim.Entities.Mapping
 {
-
     //if you want to add keys here, please talk to david schöne
     // and then you will get a range of ids to set
     public enum Key
@@ -13,15 +12,17 @@
 
         //Automatic System Keys starts at 100
         Id = 100,
+
         Version = 101,
         DateOfVersion = 102,
         MetadataCreationDate = 103,
         MetadataLastModfied = 104,
         DataCreationDate = 105,
-        DataLastModified = 106, // also for Dubline Core date 
+        DataLastModified = 106, // also for Dubline Core date
 
         //Additional Dublin Core nodes starts at 200
         Subject = 200,
+
         Publisher = 201,
         Contributor = 202,
         Type = 203, //Examples:Type = "image", Type = "sound", Type = "text"
@@ -31,7 +32,26 @@
         Language = 207,
         Relation = 208,
         Coverage = 209,
-        Rights = 210
+        Rights = 210,
+
+        //PanSimple extetntions
+        //Additional PanSimple nodes starts at 700
+        Keyword = 700,
+
+        Parameter = 701,
+        Method = 702,
+        Sensor = 703,
+        Feature = 704,
+        Taxonomy = 705,
+        Platform = 705,
+        Habitat = 706,
+        Stratigraphy = 707,
+        NorthBoundLatitude = 708,
+        WestBoundLongitude = 709,
+        SouthBoundLatitude = 710,
+        EastBoundLongitude = 711,
+        MinEvelation = 712,
+        MaxEvelation = 713,
     }
 
     public enum LinkElementComplexity
@@ -59,22 +79,29 @@
         PartyRelationshipType = 13
     }
 
-
-
     public class LinkElementMetadataStructure : LinkElement { }
+
     public class LinkElementXsd : LinkElement { }
+
     public class LinkElementSystem : LinkElement { }
+
     public class LinkElementSimpleMetadataAttribute : LinkElement { }
+
     public class LinkElementComplexMetadatAttribute : LinkElement { }
+
     public class LinkElementMetadatAttributeUsage : LinkElement { }
+
     public class LinkElementMetadataNestedAttributeUsage : LinkElement { }
+
     public class LinkElementMetadataPackage : LinkElement { }
+
     public class LinkElementMetadataPackageUsage : LinkElement { }
+
     public class LinkElementPartyType : LinkElement { }
+
     public class LinkElementParty : LinkElement { }
+
     public class LinkElementKey : LinkElement { }
+
     public class LinkElementRole : LinkElement { }
-
-
-
 }
