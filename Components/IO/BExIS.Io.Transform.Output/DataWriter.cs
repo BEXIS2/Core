@@ -11,7 +11,6 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -93,12 +92,12 @@ namespace BExIS.IO.Transform.Output
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param>NA</param>       
-        public DataWriter():this(new IOUtility(), new DatasetManager())
+        public DataWriter() : this(new IOUtility(), new DatasetManager())
         {
 
         }
 
-        public DataWriter(IOUtility iOUtility):this(iOUtility,new DatasetManager())
+        public DataWriter(IOUtility iOUtility) : this(iOUtility, new DatasetManager())
         {
 
 
@@ -531,7 +530,7 @@ namespace BExIS.IO.Transform.Output
                             DateTime dateTime;
 
                             return IOUtility.ExportDateTimeString(value.ToString(), format, out dateTime);
-                            
+
                         }
                     default: return tmp;
                 }
@@ -549,10 +548,13 @@ namespace BExIS.IO.Transform.Output
         // add table header
         protected abstract bool AddHeader(StructuredDataStructure header);
         protected abstract bool AddHeader(DataColumnCollection header);
+        protected abstract bool AddHeader(string[] header);
 
         // add a single row to the output file
         protected abstract bool AddRow(AbstractTuple tuple, long rowIndex);
         protected abstract bool AddRow(DataRow row, long rowIndex);
+        protected abstract bool AddRow(string[] row, long rowIndex);
+
 
         #endregion
 
@@ -636,6 +638,45 @@ namespace BExIS.IO.Transform.Output
 
         //    return ErrorMessages;
         //}
+
+        /// <summary>
+        /// add all rows of the given array to a file using the given datastructure
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="filePath"></param>
+        /// <param name="dataStructureId"></param>
+        /// <returns></returns>
+        public List<Error> AddData(string[][] data, string[] columns, string filePath, long dataStructureId)
+        {
+
+            if (File.Exists(filePath))
+            {
+
+                if (rowIndex == 0) rowIndex = 1;
+
+                // setup excel file
+                Init(filePath, dataStructureId);
+
+                // add header
+                AddHeader(columns);
+
+                // iterate over all input rows
+                foreach (string[] row in data)
+                {
+                    // add row and increment current index
+                    if (AddRow(row, rowIndex))
+                    {
+                        rowIndex += 1;
+                    }
+                }
+
+                // close the excel file
+                Close();
+
+            }
+
+            return ErrorMessages;
+        }
 
         /// <summary>
         /// add all rows of the given datatable to a file using the given datastructure

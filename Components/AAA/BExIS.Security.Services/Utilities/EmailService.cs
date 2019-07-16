@@ -43,16 +43,21 @@ namespace BExIS.Security.Services.Utilities
 
         public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyToLists = null)
         {
-            var mail = new MailMessage()
-            {
-                From = new MailAddress(ConfigurationManager.AppSettings["Email_From"]),
-                To = { string.Join(",", destinations) },
-                CC = { string.Join(",", ccs) },
-                Bcc = { string.Join(",", bccs) },
-                ReplyToList = { string.Join(",", replyToLists) },
-                Subject = AppId + subject,
-                Body = body
-            };
+
+            var mail = new MailMessage();
+
+            mail.From = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
+            mail.To.Add(string.Join(",", destinations));
+
+            if (ccs != null) mail.CC.Add(string.Join(",", ccs));
+            if (bccs != null) mail.Bcc.Add(string.Join(",", bccs));
+            if (replyToLists != null) mail.ReplyToList.Add(string.Join(",", replyToLists));
+
+            mail.Subject = AppId + subject;
+            mail.Body = body;
+            mail.IsBodyHtml = true;
+
+
 
             try
             {
