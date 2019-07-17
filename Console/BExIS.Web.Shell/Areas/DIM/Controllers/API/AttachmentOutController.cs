@@ -3,6 +3,10 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Api;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
@@ -12,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -73,15 +78,47 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public HttpResponseMessage Get(int id)
         {
             if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset id can not be 0.");
-            if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-            DatasetManager dm = new DatasetManager();
+            DatasetManager datasetManager = new DatasetManager();
+            UserManager userManager = new UserManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+
+            User user = null;
+
             try
             {
-                var dataset = dm.GetDataset(id);
+                #region security
+
+                string token = this.Request.Headers.Authorization?.Parameter;
+
+                if (String.IsNullOrEmpty(token))
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
+
+                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                if (user == null)
+                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
+
+                //check permissions
+
+                //entity permissions
+                if (id > 0)
+                {
+                    Dataset d = datasetManager.GetDataset(id);
+                    if (d == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+
+                    if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
+                }
+
+                #endregion security
+
+                var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                var model = GetApiDatasetAttachmentsModel(id, dm);
+                var model = GetApiDatasetAttachmentsModel(id, datasetManager);
 
                 var response = this.Request.CreateResponse(HttpStatusCode.OK);
                 string json = JsonConvert.SerializeObject(model);
@@ -97,7 +134,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             finally
             {
-                dm.Dispose();
+                datasetManager.Dispose();
+                userManager.Dispose();
+                entityPermissionManager.Dispose();
             }
         }
 
@@ -116,21 +155,53 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset id can not be 0.");
             if (attachmentid == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the attachment id can not be 0.");
 
-            DatasetManager dm = new DatasetManager();
+            DatasetManager datasetManager = new DatasetManager();
+            UserManager userManager = new UserManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+
+            User user = null;
 
             try
             {
+                #region security
+
+                string token = this.Request.Headers.Authorization?.Parameter;
+
+                if (String.IsNullOrEmpty(token))
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
+
+                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                if (user == null)
+                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
+
+                //check permissions
+
+                //entity permissions
+                if (id > 0)
+                {
+                    Dataset d = datasetManager.GetDataset(id);
+                    if (d == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+
+                    if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
+                }
+
+                #endregion security
+
                 //check if dataset exist
-                var dataset = dm.GetDataset(id);
+                var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                var model = GetApiDatasetAttachmentsModel(id, dm);
+                var model = GetApiDatasetAttachmentsModel(id, datasetManager);
 
                 //check if attachment belongs to the dataset exist
                 if (!model.Attachments.Any(a => a.Id.Equals(attachmentid)))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the attechment with the id (" + attachmentid + ") does not belong to the dataset with the id (" + id + ").");
 
-                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(id);
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                 var attachment = datasetVersion.ContentDescriptors.Where(a => a.Id.Equals(attachmentid)).FirstOrDefault();
 
@@ -140,15 +211,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //converting file into bytes array
                 var dataBytes = File.ReadAllBytes(path);
                 //adding bytes to memory stream
-                var dataStream = new MemoryStream(dataBytes);
+                var dataStream = new FileStream(path, FileMode.OpenOrCreate);
 
                 HttpResponseMessage httpResponseMessage;
 
                 httpResponseMessage = Request.CreateResponse(HttpStatusCode.OK);
                 httpResponseMessage.Content = new StreamContent(dataStream);
-                httpResponseMessage.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
                 httpResponseMessage.Content.Headers.ContentDisposition.FileName = attachment.Name;
-                httpResponseMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(attachment.MimeType);
+                httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(attachment.MimeType);
 
                 return httpResponseMessage;
             }
@@ -158,7 +229,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             finally
             {
-                dm.Dispose();
+                datasetManager.Dispose();
+                userManager.Dispose();
+                entityPermissionManager.Dispose();
             }
         }
 
