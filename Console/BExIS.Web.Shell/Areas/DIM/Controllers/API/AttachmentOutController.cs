@@ -6,6 +6,7 @@ using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
@@ -82,22 +83,33 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            EntityManager entityManager = new EntityManager();
 
-
+            bool isPublic = false;
             User user = null;
 
             try
             {
+                #region is public
+
+                entityManager = new EntityManager();
+                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                #endregion is public
+
                 #region security
 
                 string token = this.Request.Headers.Authorization?.Parameter;
 
-                if (String.IsNullOrEmpty(token))
+                if (!isPublic && String.IsNullOrEmpty(token))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
 
                 user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
-                if (user == null)
+                if (!isPublic && user == null)
                     return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
 
                 //check permissions
@@ -109,7 +121,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
@@ -137,6 +149,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 datasetManager.Dispose();
                 userManager.Dispose();
                 entityPermissionManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
@@ -158,22 +171,35 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            EntityManager entityManager = new EntityManager();
 
-
+            bool isPublic = false;
             User user = null;
 
             try
             {
+                // if a dataset is public, then the api should also return data if there is no token for a user
+
+                #region is public
+
+                entityManager = new EntityManager();
+                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                #endregion is public
+
                 #region security
 
                 string token = this.Request.Headers.Authorization?.Parameter;
 
-                if (String.IsNullOrEmpty(token))
+                if (!isPublic && String.IsNullOrEmpty(token))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
 
                 user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
-                if (user == null)
+                if (!isPublic && user == null)
                     return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
 
                 //check permissions
@@ -185,7 +211,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
@@ -232,6 +258,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 datasetManager.Dispose();
                 userManager.Dispose();
                 entityPermissionManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
