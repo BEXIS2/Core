@@ -1,39 +1,27 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Helpers.API;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Security.Services.Utilities;
-using BExIS.Utils.Data.Upload;
 using BExIS.Utils.NH.Querying;
 using BExIS.Utils.Route;
-using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -66,6 +54,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             try
             {
                 var datasetIds = dm.GetDatasetLatestIds();
+                //test
                 return datasetIds;
             }
             finally
@@ -128,10 +117,25 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            EntityManager entityManager = new EntityManager();
 
+            bool isPublic = false;
             try
             {
-                if (String.IsNullOrEmpty(token))
+                // if a dataset is public, then the api should also return data if there is no token for a user
+
+                #region is public
+
+                entityManager = new EntityManager();
+                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                #endregion is public
+
+                if (!isPublic && String.IsNullOrEmpty(token))
+
                 {
                     var request = Request.CreateResponse();
                     request.Content = new StringContent("Bearer token not exist.");
@@ -141,9 +145,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
 
-                if (user != null)
+                if (isPublic || user != null)
                 {
-                    if (entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                    if (isPublic || entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
                     {
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
@@ -290,6 +294,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 datasetManager.Dispose();
                 userManager.Dispose();
                 entityPermissionManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
