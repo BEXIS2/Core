@@ -30,11 +30,21 @@ namespace BExIS.Security.Services.Subjects
         public IReadOnlyRepository<Subject> SubjectRepository { get; }
         public IQueryable<Subject> Subjects => SubjectRepository.Query();
 
-        public List<Subject> GetSubjects(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize)
+        /// <summary>
+        /// returns subset of subjects based on the parameters
+        /// and also count of filtered list
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public List<Subject> GetSubjects(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize, out int count)
         {
             var orderbyClause = orderBy?.ToLINQ();
             var whereClause = filter?.ToLINQ();
-
+            count = 0;
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -46,10 +56,22 @@ namespace BExIS.Security.Services.Subjects
                         var y = x.Skip((pageNumber - 1) * pageSize);
                         var z = y.Take(pageSize);
 
+                        count = l.Count();
+
                         return z.ToList();
                     }
-                    else if (whereClause != null) return Subjects.Where(whereClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                    if (orderBy != null) return Subjects.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    else if (whereClause != null)
+                    {
+                        var filtered = Subjects.Where(whereClause);
+                        count = filtered.Count();
+
+                        return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+                    if (orderBy != null)
+                    {
+                        count = Subjects.Count();
+                        return Subjects.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
                 }
             }
             catch (Exception ex)

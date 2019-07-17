@@ -1,6 +1,8 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Globalization;
@@ -187,16 +189,28 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        [GridAction]
-        public ActionResult Users_Select()
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Users_Select(GridCommand command)
         {
             var userManager = new UserManager();
 
             try
             {
-                var users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
+                var users = new List<UserGridRowModel>();
+                int count = userManager.Users.Count();
+                if (command != null)// filter subjects based on grid filter settings
+                {
+                    FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                    OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                return View(new GridModel<UserGridRowModel> { Data = users });
+                    users = userManager.GetUsers(filter, orderBy, command.Page, command.PageSize, out count).Select(UserGridRowModel.Convert).ToList();
+                }
+                else
+                {
+                    users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
+                }
+
+                return View(new GridModel<UserGridRowModel> { Data = users, Total = count });
             }
             finally
             {

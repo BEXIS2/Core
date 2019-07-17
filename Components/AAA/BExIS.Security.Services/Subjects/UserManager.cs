@@ -1,9 +1,11 @@
 ﻿using BExIS.Security.Entities.Authentication;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +32,60 @@ namespace BExIS.Security.Services.Subjects
         public IQueryable<User> Users => UserRepository.Query();
 
         private IReadOnlyRepository<User> UserRepository { get; }
+
+        /// <summary>
+        /// returns subset of users based on the parameters
+        /// and also count of filtered list
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public List<User> GetUsers(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize, out int count)
+        {
+            var orderbyClause = orderBy?.ToLINQ();
+            var whereClause = filter?.ToLINQ();
+
+            count = 0;
+
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    if (whereClause != null && orderBy != null)
+                    {
+                        var l = Users.Where(whereClause);
+                        var x = l.OrderBy(orderbyClause);
+                        var y = x.Skip((pageNumber - 1) * pageSize);
+                        var z = y.Take(pageSize);
+
+                        count = l.Count();
+
+                        return z.ToList();
+                    }
+                    else if (whereClause != null)
+                    {
+                        var filtered = Users.Where(whereClause);
+                        count = filtered.Count();
+
+                        return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+                    if (orderBy != null)
+                    {
+                        count = Users.Count();
+                        return Users.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Could not retrieve filtered users."), ex);
+            }
+
+            return null;
+        }
 
         #region IUserEmailStore
 
