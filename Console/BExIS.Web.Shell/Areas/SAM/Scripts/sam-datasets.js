@@ -5,13 +5,10 @@
 
     $.get("/SAM/Datasets/CountRows", { id },
         function (data, textStatus, jqXHR) {
-
             var tr = $(bt).parents("tr")[0];
             var nuRowsTd = $(tr).find(".number-of-rows");
             $(nuRowsTd).text(data);
-
         },
         "json"
     );
-
 })

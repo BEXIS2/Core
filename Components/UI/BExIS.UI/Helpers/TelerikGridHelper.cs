@@ -429,8 +429,10 @@ namespace BExIS.UI.Helpers
                             Value = fd.Value
                         };
                     }
-                case FilterOperator.IsEqualTo:
+                case FilterOperator.IsEqualTo: // can be a string or a number
                     {
+                        //if (fd.MemberType.Equals(typeof(string)))
+                        //{
                         return new FilterStringItemExpression()
                         {
                             Field = new Field() { DataType = DataType.String, Name = fd.Member }
@@ -439,6 +441,18 @@ namespace BExIS.UI.Helpers
                             ,
                             Value = fd.Value
                         };
+                        //}
+                        //else
+                        //{
+                        //    return new FilterNumberItemExpression()
+                        //    {
+                        //        Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
+                        //        ,
+                        //        Operator = NumberOperator.Operation.Equals
+                        //        ,
+                        //        Value = fd.Value
+                        //    };
+                        //}
                     }
                 case FilterOperator.IsNotEqualTo:
                     {

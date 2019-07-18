@@ -12,9 +12,9 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         public int EffectiveRights { get; set; }
         public int Rights { get; set; }
-        public long SubjectId { get; set; }
-        public string SubjectName { get; set; }
-        public string SubjectType { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
 
         public static EntityPermissionGridRowModel Convert(Subject subject, int rights, int effectiveRights)
         {
@@ -22,9 +22,9 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Rights = rights,
                 EffectiveRights = effectiveRights,
-                SubjectId = subject.Id,
-                SubjectName = subject.Name,
-                SubjectType = subject is User ? "User" : "Group",
+                Id = subject.Id,
+                Name = subject.Name,
+                Type = subject is User ? "User" : "Group",
             };
         }
     }
