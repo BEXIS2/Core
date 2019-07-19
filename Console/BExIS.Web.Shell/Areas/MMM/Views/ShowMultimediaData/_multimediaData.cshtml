@@ -352,7 +352,7 @@
             $('#imgModal .modal-body #content').html(data);
             initImgWindow();
             layoutImgWindow();
-            setTimeout(function () { initMiniMap() }, 200);
+            //setTimeout(function () { initMiniMap() }, 200);
         });
     }
 
@@ -437,27 +437,27 @@
         $('#imgModal .mmm-image-content .mmm-image #nextImg').css({ 'display': 'inline' });
     }
 
-    function initMiniMap() {
-        var lat = parseFloat($('#imgModal .modal-body #content .mmm-image').attr('lat'));
-        var lon = parseFloat($('#imgModal .modal-body #content .mmm-image').attr('lon'));
-        if (isNaN(lat) && isNaN(lon)) {
-            lat = 0;
-            lon = 0;
-            $('#imgModal .modal-body #content .mmm-map').css({ 'display': 'none' });
-        }
-        else {
-            $('#imgModal .modal-body #content .mmm-map').css({ 'display': 'block' });
-        }
-            var point = { lat: lat, lng: lon };
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 10,
-                center: point
-            });
-            var marker = new google.maps.Marker({
-                position: point,
-                map: map
-            });
-    }
+    //function initMiniMap() {
+    //    var lat = parseFloat($('#imgModal .modal-body #content .mmm-image').attr('lat'));
+    //    var lon = parseFloat($('#imgModal .modal-body #content .mmm-image').attr('lon'));
+    //    if (isNaN(lat) && isNaN(lon)) {
+    //        lat = 0;
+    //        lon = 0;
+    //        $('#imgModal .modal-body #content .mmm-map').css({ 'display': 'none' });
+    //    }
+    //    else {
+    //        $('#imgModal .modal-body #content .mmm-map').css({ 'display': 'block' });
+    //    }
+    //        var point = { lat: lat, lng: lon };
+    //        var map = new google.maps.Map(document.getElementById('map'), {
+    //            zoom: 10,
+    //            center: point
+    //        });
+    //        var marker = new google.maps.Marker({
+    //            position: point,
+    //            map: map
+    //        });
+    //}
 
     function initIsotope() {
         // init Isotope
@@ -503,7 +503,5 @@
 
         });
     }
-
-
-            </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfwu_uElzn7dmLov8ioMj9Ju2z3H6FTD4&callback=initMiniMap"></script>
+</script>
+@*<script async defer src="https://maps.googleapis.com/maps/api/js?key= GOOGLE API KEY HERE &callback=initMiniMap"></script>*@
