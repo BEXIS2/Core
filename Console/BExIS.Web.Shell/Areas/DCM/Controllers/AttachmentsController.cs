@@ -54,7 +54,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
             dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
             dm.EditDatasetVersion(datasetVersion, null, null, null);
-            dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
+            dm.CheckInDataset(dataset.Id, "Delete dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
             dm?.Dispose();
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
