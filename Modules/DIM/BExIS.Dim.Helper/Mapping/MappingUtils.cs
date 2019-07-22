@@ -541,11 +541,15 @@ namespace BExIS.Dim.Helpers.Mapping
                             }
                             else // x -> z1,z2,z3 (split)
                             {
-                                //ToDo Add mask
-                                foreach (string r in result)
+                                if (string.IsNullOrEmpty(mask)) tmp.AddRange(result);
+                                else
                                 {
-                                    mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
-                                    tmp.Add(mask);
+                                    //ToDo Add mask
+                                    foreach (string r in result)
+                                    {
+                                        mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
+                                        tmp.Add(mask);
+                                    }
                                 }
                             }
                         }
@@ -684,13 +688,16 @@ namespace BExIS.Dim.Helpers.Mapping
                 Regex r = new Regex(transformationRule.RegEx, RegexOptions.IgnoreCase);
 
                 // Match the regular expression pattern against a text string.
-                Match m = r.Match(value);
+                MatchCollection matchCollection = r.Matches(value);
 
-                if (m.Success)
+                foreach (var match in matchCollection.Cast<Match>())
                 {
-                    foreach (var groupElement in m.Groups)
+                    if (match.Success)
                     {
-                        tmp.Add(groupElement.ToString());
+                        foreach (var groupElement in match.Groups)
+                        {
+                            tmp.Add(groupElement.ToString().Trim());
+                        }
                     }
                 }
             }
@@ -704,6 +711,20 @@ namespace BExIS.Dim.Helpers.Mapping
 
         private static string setOrReplace(string mask, List<string> replacers, string attrName)
         {
+            // in case of haven a boolean value in the metadata, true or false is not the value that should came out.
+            // the name of that what is checked is important here
+            for (int i = 0; i < replacers.Count(); i++)
+            {
+                string value = replacers[i];
+                if (value.ToLower().Equals("true"))
+                {
+                    value = attrName;
+                    replacers[i] = value;
+                }
+                else
+                if (value.ToLower().Equals("false")) replacers.Remove(value);
+            }
+
             if (replacers != null && replacers.Any())
             {
                 if (!string.IsNullOrEmpty(mask))
@@ -716,7 +737,8 @@ namespace BExIS.Dim.Helpers.Mapping
                             mask = mask.Replace(completePlaceHolderName, r);
                         else
                         {
-                            mask = string.IsNullOrEmpty(mask) ? mask = r : mask += " " + r;
+                            if (!string.IsNullOrEmpty(r))
+                                mask = string.IsNullOrEmpty(mask) ? mask = r : mask += " " + r;
                         }
                     }
 

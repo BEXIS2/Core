@@ -45,6 +45,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 List<string> tmp = MappingUtils.GetValuesFromMetadata(partyCustomtAttr, type,
                     datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
+                tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Keyword), LinkElementType.Key,
+                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
                 tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(Key.Author), LinkElementType.Key,
                    datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
