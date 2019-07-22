@@ -287,42 +287,49 @@ namespace BExIS.Dim.Helpers.Mapping
                     partyType =
                         partyTypeManager.PartyTypeRepository.Query()
                             .FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
-                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Equals(partyType)).ToList();
+                    parties = partyManager.PartyRepository.Query().Where(p => p.PartyType.Equals(partyType)).ToList();
                 }
                 else
                 {
                     partyType = partyTypeManager.PartyTypeRepository.Get(parentTypeId);
-                    parties = partyManager.PartyRepository.Get().Where(p => p.PartyType.Id.Equals(parentTypeId)).ToList();
+                    parties = partyManager.PartyRepository.Query().Where(p => p.PartyType.Id.Equals(parentTypeId)).ToList();
                 }
 
-                if (parties != null)
-                    foreach (var p in parties)
+                //get all mapped element ids
+                var elementIds = mappings.Select(m => m.Source.ElementId);
+                // get all attributes based on the element id list
+                var attributeValues = partyManager.PartyCustomAttributeValueRepository.Query(y => elementIds.Contains(y.CustomAttribute.Id)).ToList();
+                attributeValues = attributeValues.Where(y => y.Value.ToLower().Contains(value.ToLower())).ToList();
+                //get all party ids
+                var partyIds = attributeValues.Select(a => a.Party.Id).Distinct();
+
+                foreach (var partyId in partyIds)
+                {
+                    MappingPartyResultElemenet resultObject = new MappingPartyResultElemenet();
+                    resultObject.PartyId = partyId;
+
+                    //get mask from first mapping
+                    mask = mappings.FirstOrDefault().TransformationRule.Mask;
+
+                    var allMappedAttrValues = partyManager.PartyCustomAttributeValueRepository.Query(y =>
+                        y.Party.Id.Equals(partyId) && elementIds.Contains(y.CustomAttribute.Id)).ToList();
+
+                    foreach (var attrValue in allMappedAttrValues)
                     {
-                        MappingPartyResultElemenet resultObject = new MappingPartyResultElemenet();
-                        resultObject.PartyId = p.Id;
+                        //get mapping for the attrvalue
+                        var mapping = mappings.Where(m => m.Source.ElementId.Equals(attrValue.CustomAttribute.Id)).FirstOrDefault();
 
-                        mask = mappings.FirstOrDefault().TransformationRule.Mask;
+                        List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
+                        string placeHolderName = attrValue.CustomAttribute.Name;
 
-                        foreach (var mapping in mappings)
-                        {
-                            long attributeId = mapping.Source.ElementId;
+                        mask = setOrReplace(mask, regExResultList, placeHolderName);
 
-                            PartyCustomAttributeValue attrValue =
-                                partyManager.PartyCustomAttributeValueRepository.Get()
-                                    .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(p.Id))
-                                    .FirstOrDefault();
-
-                            List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
-                            string placeHolderName = attrValue.CustomAttribute.Name;
-
-                            mask = setOrReplace(mask, regExResultList, placeHolderName);
-
-                            resultObject.Value = mask;
-                        }
-
-                        if (mask.ToLower().Contains(value.ToLower()))
-                            tmp.Add(resultObject);
+                        resultObject.Value = mask;
                     }
+
+                    if (mask.ToLower().Contains(value.ToLower()))
+                        tmp.Add(resultObject);
+                }
             }
 
             return tmp;
