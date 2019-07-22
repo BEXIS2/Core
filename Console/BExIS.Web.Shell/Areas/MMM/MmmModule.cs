@@ -1,4 +1,7 @@
-﻿using Vaiona.Web.Mvc.Modularity;
+﻿using BExIS.Modules.Mmm.UI.Helpers;
+using System;
+using Vaiona.Logging;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace IDIV.Modules.Mmm.UI
 {
@@ -6,6 +9,30 @@ namespace IDIV.Modules.Mmm.UI
     {
         public MmmModule(): base("MMM")
         {
+            LoggerFactory.GetFileLogger().LogCustom("...ctor of mmm...");
+        }
+
+        public override void Install()
+        {
+            LoggerFactory.GetFileLogger().LogCustom("...start install of mmm...");
+            try
+            {
+                base.Install();
+                using (MMMSeedDataGenerator generator = new MMMSeedDataGenerator())
+                {
+                    generator.GenerateSeedData();
+                }
+
+            }
+            catch (Exception e)
+            {
+                LoggerFactory.GetFileLogger().LogCustom(e.Message);
+                LoggerFactory.GetFileLogger().LogCustom(e.StackTrace);
+            }
+
+            LoggerFactory.GetFileLogger().LogCustom("...end install of mmm...");
+
+
         }
 
         /// <summary>

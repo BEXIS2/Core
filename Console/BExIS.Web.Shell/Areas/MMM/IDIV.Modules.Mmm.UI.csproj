@@ -130,6 +130,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ShowMultimediaDataController.cs" />
     <Compile Include="Converter\Converter.cs" />
+    <Compile Include="Install\MMMSeedDataGenerator.cs" />
     <Compile Include="Models\BundleModel.cs" />
     <Compile Include="Models\FileInformationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -147,6 +148,7 @@
     </Content>
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <Content Include="Stylesheets\MultimediaData.css" />
+    <Content Include="Vaiona.Web.Mvc.Modularity.dll" />
     <Content Include="x64\MediaInfo.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
