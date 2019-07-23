@@ -230,7 +230,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <seealso cref=""/>
         /// <param name="datasetID"></param>
         /// <returns>model</returns>
-        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
+        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata, bool latest)
         {
             var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
             result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "Form" }, { "area", "Form" }, { "type", "reset" } });
@@ -245,7 +245,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 { "datastructureId", datastructureId },
                 { "researchplanId", researchplanId },
                 { "sessionKeyForMetadata", sessionKeyForMetadata },
-                { "resetTaskManager", false }
+                { "resetTaskManager", false },
+                { "latest", latest }
             });
 
             return Content(view.ToHtmlString(), "text/html");
