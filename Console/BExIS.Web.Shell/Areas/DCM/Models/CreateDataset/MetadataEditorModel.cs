@@ -14,6 +14,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public bool Changed { get; set; }
         public bool Import { get; set; }
         public bool SaveWithErrors { get; set; }
+        public bool LatestVersion { get; set; }
 
         public List<StepModelHelper> StepModelHelpers { get; set; }
         public Dictionary<string, ActionInfo> Actions { get; set; }
@@ -30,6 +31,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
             EditRight = false;
             EditAccessRight = false;
+            LatestVersion = false;
 
             Actions = new Dictionary<string, ActionInfo>();
         }

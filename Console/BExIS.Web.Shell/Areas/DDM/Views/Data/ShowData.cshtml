@@ -24,15 +24,27 @@
 <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
-
-
 <div>
     <table>
         <tr>
             <td>
                 <h1 title="Id: @Model.Id">@Model.Title</h1>
                 <br />
-                <p><b>Dataset Id: </b> @Model.Id, <b>Version: </b> @Model.Version</p>
+                <p><b>Dataset Id: </b> @Model.Id 
+                    <b>Version: </b>
+
+                    @if (Model.Version > 1)
+                    {
+                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version-1 }, new {@class="bx-button small function fa fa-angle-double-left" } )
+                    }
+
+                    @Model.Version
+
+                    @if (!Model.LatestVersion)
+                    {
+                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version+1 },new {@class="bx-button small function fa fa-angle-double-right" } )
+                    }
+               </p>
             </td>
             <td>
                 <div id="preloaderContainer" />
@@ -100,11 +112,11 @@
 
                   //ToDo Recator Modularity -> load metadata from from dcm
 
-                  tabs.Add()
-                                                      .Text("Metadata")
-                                                      .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" })
-                                                      .HtmlAttributes(new { id = "metadata" })
-                                                      .Enabled(false);
+                                 tabs.Add()
+                                    .Text("Metadata")
+                                    .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest=Model.LatestVersion })
+                                    .HtmlAttributes(new { id = "metadata" })
+                                    .Enabled(false);
 
                                   tabs.Add()
                                       .Text("Primary Data")

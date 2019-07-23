@@ -115,7 +115,7 @@
                     </span>
 
 
-                    @if (Model.EditRight && Model.EditAccessRight)
+                    @if (Model.EditRight && Model.EditAccessRight && Model.LatestVersion)
                     {
                         <button onclick="edit()" class="bx-button function">Edit</button>
 
@@ -136,6 +136,11 @@
                         if (!Model.EditAccessRight)
                         {
                             tooltip += " You do not have permission for this function.";
+                        }
+
+                        if (!Model.LatestVersion)
+                        {
+                            tooltip += "You can only edit and copy from the latest version.";
                         }
 
                         if ((!Model.EditAccessRight && !Model.EditRight) == false)
