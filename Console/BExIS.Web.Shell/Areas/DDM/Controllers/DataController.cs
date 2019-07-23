@@ -381,15 +381,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
                     {
-                        return
-                            PartialView(ShowPrimaryDataModel.Convert(datasetID,
-                            versionId,
-                            title,
-                            ds,
-                            SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
-                            downloadAccess,
-                            iOUtility.GetSupportedAsciiFiles(),
-                            latestVersion));
+                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && ConfigurationManager.AppSettings["useMultimediaModule"].ToLower().Equals("true"))
+                            return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
+                        else
+                            return
+                                PartialView(ShowPrimaryDataModel.Convert(datasetID,
+                                versionId,
+                                title,
+                                ds,
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
+                                downloadAccess,
+                                iOUtility.GetSupportedAsciiFiles(),
+                                latestVersion));
                     }
                 }
                 else
