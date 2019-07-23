@@ -1,0 +1,28 @@
+﻿@using IDIV.Modules.Mmm.UI.Models
+
+@model List<Shape>
+
+@{ 
+    string points = "";
+}
+
+<svg width="@Model.FirstOrDefault().x" height="@Model.FirstOrDefault().y">
+    @foreach (Shape s in Model)
+    {
+        points = "";
+        foreach (Point p in s.Points)
+        {
+            if (s.Points.IndexOf(p) < s.Points.Count - 1)
+            {
+                points += p.x + "," + p.y + " ";
+            }
+            else
+            {
+                points += p.x + "," + p.y;
+            }
+        }
+        <polygon id="s_@s.Id" points="@points" />
+    }
+</svg>
+
+

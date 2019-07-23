@@ -430,6 +430,29 @@ namespace BExIS.Xml.Helpers
             }
         }
 
+        public string GetEntityName(long datasetid)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+
+            try
+            {
+                Dataset dataset = datasetManager.GetDataset(datasetid);
+
+                // get MetadataStructure
+                if (dataset != null)
+                {
+                    return GetEntityNameFromMetadatStructure(dataset.MetadataStructure.Id);
+                }
+                return string.Empty;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+                metadataStructureManager.Dispose();
+            }
+        }
+
         //todo entity extention
         public string GetEntityTypeFromMetadatStructure(long metadataStructureId, MetadataStructureManager metadataStructureManager)
         {

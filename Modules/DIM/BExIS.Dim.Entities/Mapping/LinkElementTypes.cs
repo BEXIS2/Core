@@ -43,7 +43,6 @@
         Sensor = 703,
         Feature = 704,
         Taxonomy = 705,
-        Platform = 705,
         Habitat = 706,
         Stratigraphy = 707,
         NorthBoundLatitude = 708,
@@ -52,6 +51,7 @@
         EastBoundLongitude = 711,
         MinEvelation = 712,
         MaxEvelation = 713,
+        Platform = 714
     }
 
     public enum LinkElementComplexity

@@ -1,5 +1,6 @@
 ﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
+using BExIS.Dlm.Services.Data;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -164,8 +165,22 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <returns></returns>
         public static SearchResult search(Query query, List<XmlNode> headerItemXmlNodeList)
         {
-
-            TopDocs docs = searcher.Search(query, 1000);
+            int n = 0;
+            DatasetManager dm = null;
+            try
+            {
+                dm = new DatasetManager();
+                n = dm.DatasetRepo.Get().Count;
+            }
+            catch
+            {
+                n = 1000;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+            TopDocs docs = searcher.Search(query, n);
             SearchResult sro = new SearchResult();
             sro.PageSize = 10;
             sro.CurrentPage = 1;

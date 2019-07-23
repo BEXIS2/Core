@@ -116,7 +116,7 @@ namespace BExIS.Utils.NH.Querying
 
         public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
         {
-            { Operation.Equals,             Tuple.Create("=",  "{0} = \"{1}\"") },
+            { Operation.Equals,             Tuple.Create("=",  "{0}.ToString() = \"{1}\"") },
             { Operation.StartsWith,         Tuple.Create("ST", "{0}.Contains(\"{1}\")") },
             { Operation.Contains,           Tuple.Create("ST", "{0}.Contains(\"{1}\")") },
             { Operation.EndsWith,           Tuple.Create("EW", "{0}.Contains(\"{1}\")") }
@@ -144,11 +144,11 @@ namespace BExIS.Utils.NH.Querying
 
         public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
         {
-            { Operation.Equals,             Tuple.Create("=", "{0} = \"{1}\"") },
-            { Operation.LessThan,           Tuple.Create("<", "{0} < \"{1}\"") },
-            { Operation.LessThanOrEqual,    Tuple.Create("<=", "{0} <= \"{1}\"") },
-            { Operation.GreaterThan,        Tuple.Create(">", "{0} > \"{1}\"") },
-            { Operation.GreaterThanOrEqual, Tuple.Create(">=", "{0} >= \"{1}\"") },
+            { Operation.Equals,             Tuple.Create("=", "{0} = {1}") },
+            { Operation.LessThan,           Tuple.Create("<", "{0} < {1} ") },
+            { Operation.LessThanOrEqual,    Tuple.Create("<=", "{0} <= {1}") },
+            { Operation.GreaterThan,        Tuple.Create(">", "{0} > {1}") },
+            { Operation.GreaterThanOrEqual, Tuple.Create(">=", "{0} >= {1}") },
         };
 
         public enum Operation

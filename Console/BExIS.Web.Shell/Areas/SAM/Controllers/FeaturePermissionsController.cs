@@ -175,7 +175,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
                     OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                    subjects = subjectManager.GetSubjects(filter, orderBy, command.Page, command.PageSize);
+                    subjects = subjectManager.GetSubjects(filter, orderBy, command.Page, command.PageSize, out count);
                 }
                 else
                 {
