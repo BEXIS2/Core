@@ -2249,7 +2249,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
+            // if mapping with etities exits
+            if (MappingUtils.ExistMappingWithEntity(id, LinkElementType.MetadataNestedAttributeUsage))
+            {
+                var y = new List<MappingEntityResultElement>();
+
+                y = MappingUtils.GetAllMatchesInEntities(id, LinkElementType.MetadataNestedAttributeUsage, text);
+
+                return new JsonResult
+                {
+                    Data = new SelectList(y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + ")", Value = e.Value + " (" + e.EntityId + ")_" + LinkElementType.Entity.ToString() })),
+                    JsonRequestBehavior = JsonRequestBehavior.AllowGet
+                };
+            }
+
             var x = new List<MappingPartyResultElemenet>();
+            // if mapping with parties exits
+
             switch (type)
             {
                 case "MetadataNestedAttributeUsage":
@@ -2270,6 +2286,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
             }
 
+            var list = x.Select(e => new SelectListItem() { Text = e.Value + " (" + e.PartyId + ")", Value = e.Value + " (" + e.PartyId + ")_" + LinkElementType.PartyCustomType.ToString() });
+
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex
             /*
@@ -2282,8 +2300,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
             // WORKAROUND: return always an empty list
-
-            return new JsonResult { Data = new SelectList(x.Select(e => e.Value + " (" + e.PartyId + ")")) };
+            return new JsonResult { Data = list, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)

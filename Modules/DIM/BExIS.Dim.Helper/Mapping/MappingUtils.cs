@@ -12,6 +12,10 @@ using Vaiona.Persistence.Api;
 
 using BExIS.Dim.Entities.Mapping;
 
+using BExIS.Security.Services.Objects;
+using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Services.Authorization;
+
 namespace BExIS.Dim.Helpers.Mapping
 {
     public class MappingUtils
@@ -162,6 +166,94 @@ namespace BExIS.Dim.Helpers.Mapping
 
         #endregion generic
 
+        #region get from entites
+
+        public static bool ExistMappingWithEntity(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.Entity)
+                        ).ToList();
+
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<MappingEntityResultElement> GetAllMatchesInEntities(long targetElementId, LinkElementType targetType,
+            string value = "")
+        {
+            try
+            {
+                //get all mapppings where target is mapped
+                // LinkElementType.PartyCustomType is set because of the function name
+                // all mapped attributes are LinkElementType.PartyCustomType in this case
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetElementId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.Type.Equals(LinkElementType.Entity)
+                        ).ToList();
+                    tmp = getAllValuesFromEntites(mappings, value);
+                    return tmp;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static List<MappingEntityResultElement> getAllValuesFromEntites(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
+        {
+            List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
+            EntityManager entityManager = new EntityManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+            try
+            {
+                foreach (var mapping in mappings)
+                {
+                    //load the entiy for each source element id wich is the entity id
+                    var entity = entityManager.EntityRepository.Get(mapping.Source.ElementId);
+                    // load all existing entity objects iwith the defined manager
+
+                    var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entity.Id).EntityStoreType);
+                    var instances = instanceStore.GetEntities().Where(e => e.Title.Contains(value)).Select(i => new MappingEntityResultElement()
+                    {
+                        EntityId = i.Id,
+                        Value = i.Title,
+                        Url = "url to " + i.Id
+                    }).ToList();
+
+                    if (instances.Any()) tmp.AddRange(instances.OrderBy(d => d.Value));
+                }
+            }
+            finally
+            {
+                entityManager.Dispose();
+                entityPermissionManager.Dispose();
+            }
+
+            return tmp;
+        }
+
+        #endregion get from entites
+
         #region GET FROM SYSTEM
 
         /// <summary>
@@ -193,6 +285,29 @@ namespace BExIS.Dim.Helpers.Mapping
                         ).ToList();
                     tmp = getAllValuesFromSystem(mappings, value);
                     return tmp;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static bool ExistMappingWithPartyCustomType(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType)
+                        ).ToList();
+
+                    return mappings.Any();
                 }
             }
             catch (Exception ex)

@@ -6,6 +6,8 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Mapping;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -246,6 +248,8 @@ namespace BExIS.Modules.Dim.UI.Helper
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
 
+            EntityManager entityManager = new EntityManager();
+
             try
             {
                 LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
@@ -329,6 +333,32 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 #endregion get all relationships
 
+                #region entities
+
+                foreach (Entity entity in entityManager.Entities)
+                {
+                    long value = entity.Id;
+                    long linkElementId = GetId(entity.Id, LinkElementType.Entity, mappingManager);
+
+                    LinkElementModel LEModel = new LinkElementModel(
+                            linkElementId,
+                            entity.Id,
+                            LinkElementType.Entity,
+                            entity.Name,
+                            "",
+                            model.Position,
+                            LinkElementComplexity.Simple,
+                            "");
+
+                    LEModel.Parent = LEParent;
+
+                    model.LinkElements.Add(LEModel);
+                }
+
+                //test
+
+                #endregion entities
+
                 //create container
                 model = CreateLinkElementContainerModels(model);
 
@@ -337,6 +367,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             finally
             {
                 partyTypeManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
