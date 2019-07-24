@@ -148,13 +148,6 @@
     </Content>
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <Content Include="Stylesheets\MultimediaData.css" />
-    <Content Include="Vaiona.Web.Mvc.Modularity.dll" />
-    <Content Include="x64\MediaInfo.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\MediaInfo.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="MediaInfoDotNet.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
