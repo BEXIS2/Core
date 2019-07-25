@@ -128,9 +128,8 @@ namespace BExIS.Security.Services.Utilities
         public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("Dear user, <br/>");
-            stringBuilder.Append($"user \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
-            stringBuilder.AppendLine("Reason: ");
+            stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
+            stringBuilder.AppendLine("<b>Intention:</b>");
             stringBuilder.AppendLine(reason);
 
             return stringBuilder.ToString();
