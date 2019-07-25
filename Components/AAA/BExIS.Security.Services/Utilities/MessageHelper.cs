@@ -125,6 +125,17 @@ namespace BExIS.Security.Services.Utilities
             return $"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
+        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("Dear user, <br/>");
+            stringBuilder.Append($"user \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
+            stringBuilder.AppendLine("Reason: ");
+            stringBuilder.AppendLine(reason);
+
+            return stringBuilder.ToString();
+        }
+
         public static string GetTryToRegisterUserHeader()
         {
             return $"User tries to register";
@@ -170,7 +181,6 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiStoreMessage(long datasetid, string userName, string[] errors = null)
         {
-
             if (errors == null) return $"Data for dataset with id: {datasetid} received and successfully buffered.";
             else
             {
@@ -216,7 +226,6 @@ namespace BExIS.Security.Services.Utilities
         public static string GetPushApiUploadSuccessMessage(long datasetid, string userName)
         {
             return $"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> is uploaded.";
-
         }
 
         public static string GetPushApiUploadFailHeader(long datasetid, string title)
@@ -226,7 +235,6 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadFailMessage(long datasetid, string userName, string[] errors)
         {
-
             StringBuilder builder = new StringBuilder($"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> not uploaded. <br>");
             builder.Append("Errors: <br>");
 
@@ -236,8 +244,6 @@ namespace BExIS.Security.Services.Utilities
             }
 
             return builder.ToString();
-
-
         }
 
         public static string GetPushApiPKCheckHeader(long datasetid, string title)
@@ -247,7 +253,6 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiPKCheckMessage(long datasetid, string userName, string[] errors)
         {
-
             if (errors == null || errors.Length == 0) return $"The verification of the primary key/s was successful.";
             else
             {
@@ -262,10 +267,8 @@ namespace BExIS.Security.Services.Utilities
 
                 return builder.ToString();
             }
-
-
         }
 
-        #endregion
+        #endregion upload api
     }
 }

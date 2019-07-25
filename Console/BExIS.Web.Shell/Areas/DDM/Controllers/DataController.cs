@@ -1198,7 +1198,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region request
 
-        public JsonResult SendRequest(long id)
+        public JsonResult SendRequest(long id, string intention)
         {
             RequestManager requestManager = new RequestManager();
             SubjectManager subjectManager = new SubjectManager();
@@ -1213,7 +1213,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // ask for read and download rights
                 if (!requestManager.Exists(userId, entityId, id))
                 {
-                    var request = requestManager.Create(userId, entityId, id, 3);
+                    var request = requestManager.Create(userId, entityId, id, 3, intention);
 
                     if (request != null)
                     {
@@ -1230,7 +1230,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault(), intention),
                             emailDescionMaker
                             );
                     }

@@ -30,21 +30,22 @@
             <td>
                 <h1 title="Id: @Model.Id">@Model.Title</h1>
                 <br />
-                <p><b>Dataset Id: </b> @Model.Id 
+                <p>
+                    <b>Dataset Id: </b> @Model.Id
                     <b>Version: </b>
 
                     @if (Model.Version > 1)
                     {
-                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version-1 }, new {@class="bx-button small function fa fa-angle-double-left" } )
+                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version - 1 }, new { @class = "bx-button small function fa fa-angle-double-left" })
                     }
 
                     @Model.Version
 
                     @if (!Model.LatestVersion)
                     {
-                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version+1 },new {@class="bx-button small function fa fa-angle-double-right" } )
+                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version + 1 }, new { @class = "bx-button small function fa fa-angle-double-right" })
                     }
-               </p>
+                </p>
             </td>
             <td>
                 <div id="preloaderContainer" />
@@ -86,7 +87,8 @@
                         }
                         else
                         {
-                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
                         }
                     }
                     else
@@ -114,7 +116,7 @@
 
                                  tabs.Add()
                                     .Text("Metadata")
-                                    .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest=Model.LatestVersion })
+                                    .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
                                     .HtmlAttributes(new { id = "metadata" })
                                     .Enabled(false);
 
@@ -131,13 +133,11 @@
                                       .HtmlAttributes(new { id = "datastructure" })
                                       .Enabled(false);
 
-
                                   tabs.Add()
                                       .Text("Dataset Permissions")
                                       .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
                                       .Enabled(false)
                                       .HtmlAttributes(new { id = "datapermissions" });
-
 
                                   tabs.Add()
                                       .Text("Publish")
@@ -159,7 +159,6 @@
         @Html.ValidationSummary(true);
     }
 }
-
 
 <script type="text/javascript">
 	function grid_subjects_onDataBound() {
@@ -185,7 +184,6 @@
 
 	$("#MetadataEditor").ready(function() {
 
-
 	});
 
 	$(document).ready(function () {
@@ -202,7 +200,6 @@
 			//console.log(tabStrip);
 			//console.log(viewAccess);
 			//console.log(grantAccess);
-
 
 			$("li#datastructure").removeClass("t-state-disabled");
 			//console.log($(tabStrip).find("li #datastructure"));
@@ -227,7 +224,6 @@
 		});
 
 	});
-
 
 	function existsRightType(rights, rightType) {
 		if (jQuery.inArray(rightType, rights) != -1) {
@@ -254,7 +250,6 @@
 
 			}, 120);
 
-
 		}
 		else {
 			$(".miniregion").remove();
@@ -272,7 +267,6 @@
 
 	function download(id, format) {
 
-
 		$("#preloaderContainer").preloader(20, "Preparing zip file...");
 
 		window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id})';
@@ -283,16 +277,19 @@
 
 	$("#sendRequestBt").click(function() {
 
-	    var id = $(this).attr("datasetId");
+        var id = $(this).attr("datasetId");
 
-	    $.post("/DDM/Data/SendRequest", { Id: id }, function(data) {
+        var intention = $("#intention").val();
+
+	    $.post("/DDM/Data/SendRequest", { id, intention }, function(data) {
 	        if (data === true) {
 	            $("#sendRequestBt").prop("disabled", "disabled");
 	            $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
-	            $("#sendRequestBt").text("Request has been made.");
+                $("#sendRequestBt").text("Request has been made.");
+
+                $("#intention").remove();
 	        }
 	    });
 
 	});
-
 </script>
