@@ -99,9 +99,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     if (entity.Extra == null)
                     {
-                        //add to Extra
+                        //update to Extra
 
                         XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.AppendChild(entity.Extra);
+
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
 
