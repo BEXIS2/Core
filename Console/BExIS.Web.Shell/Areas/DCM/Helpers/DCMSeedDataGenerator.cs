@@ -85,7 +85,30 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entity.UseMetadata = true;
                     entity.Securable = true;
 
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    entity.Extra = xmlDoc;
+
                     entityManager.Create(entity);
+                }
+                else
+                {
+                    if (entity.Extra == null)
+                    {
+                        //add to Extra
+
+                        XmlDocument xmlDoc = new XmlDocument();
+                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                        xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                        entity.Extra = xmlDoc;
+
+                        entityManager.Update(entity);
+                    }
                 }
 
                 #endregion create entities

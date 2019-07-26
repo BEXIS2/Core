@@ -21,7 +21,7 @@
             title="Search" description="Search datasets" icon=""
             controller="publicsearch" action="index"
             extends="./menubarRoot" />
-    
+
     <!--<Export tag="menubar" id="menuSearchPublic" order="2"
             title="Public" description="Search in public datasets" icon=""
             controller="publicsearch" action="public"
@@ -36,13 +36,12 @@
             title="Search" description="Search Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
-    
+
     <!--<Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""
             controller="publicsearch" action="public"
             extends="./apiRoot" />-->
-    
-    
+
     <!-- INTERNAL-->
 
     <Export tag="internalApi" id="showData"
@@ -74,7 +73,9 @@
             title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""
             controller="home" action="index"
             extends="" />
-
-
   </Exports>
+
+  <EntityActions>
+    <EntityAction id="showDataset" entity="dataset" controller="data" action="Showdata" area="DDM" modus="show" />
+  </EntityActions>
 </Manifest>

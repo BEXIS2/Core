@@ -438,6 +438,56 @@ namespace BExIS.Xml.Helpers
             return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XElement GetXElementByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XElement XElement)
+        {
+            string name = nodeName.Replace(" ", "");
+            IEnumerable<XElement> elements = new List<XElement>();
+
+            foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+            {
+                IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, XElement);
+
+                if (elements.Count() > 0)
+                    elements = elements.Intersect(newElements);
+                else
+                    elements = newElements;
+            }
+
+            return elements.FirstOrDefault();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XElement XElement)
+        {
+            string name = nodeName.Replace(" ", "");
+            IEnumerable<XElement> elements = new List<XElement>();
+
+            foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+            {
+                IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, XElement);
+
+                if (elements.Count() > 0)
+                    elements = elements.Intersect(newElements);
+                else
+                    elements = newElements;
+            }
+
+            return elements;
+        }
+
         public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, string value, XElement parent)
         {
             return parent.Descendants().Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
