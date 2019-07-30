@@ -78,6 +78,52 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Json(false);
         }
 
+        public ActionResult Show(long id)
+        {
+            //get the researchobject (cuurently called dataset) to get the id of a metadata structure
+            Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
+            long metadataStrutcureId = researcobject.MetadataStructure.Id;
+
+            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
+            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
+
+            //ToDo in the entity table there must be the information
+            EntityManager entityManager = new EntityManager();
+
+            var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+
+            string moduleId = "";
+            Tuple<string, string, string> action = null;
+            string defaultAction = "ShowData";
+
+            if (entity != null && entity.Extra != null)
+            {
+                var node = entity.Extra.SelectSingleNode("extra/modules/module");
+
+                if (node != null) moduleId = node.Attributes["value"].Value;
+
+                string modus = "show";
+
+                action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
+            }
+            if (action == null) RedirectToAction(defaultAction, new { id });
+
+            try
+            {
+                //var view = this.Render(action.Item1, action.Item2, action.Item3, new RouteValueDictionary()
+                //{
+                //    { "id", id }
+                //});
+
+                //return Content(view.ToHtmlString(), "text/html");
+                return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id = id });
+            }
+            catch
+            {
+                return RedirectToAction(defaultAction, new { id });
+            }
+        }
+
         public ActionResult ShowData(long id, int version = 0)
         {
             DatasetManager dm = new DatasetManager();
@@ -1198,7 +1244,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region request
 
-        public JsonResult SendRequest(long id)
+        public JsonResult SendRequest(long id, string intention)
         {
             RequestManager requestManager = new RequestManager();
             SubjectManager subjectManager = new SubjectManager();
@@ -1213,7 +1259,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // ask for read and download rights
                 if (!requestManager.Exists(userId, entityId, id))
                 {
-                    var request = requestManager.Create(userId, entityId, id, 3);
+                    var request = requestManager.Create(userId, entityId, id, 3, intention);
 
                     if (request != null)
                     {
@@ -1230,7 +1276,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault(), intention),
                             emailDescionMaker
                             );
                     }

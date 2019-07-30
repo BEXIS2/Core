@@ -47,7 +47,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public Request Create(long applicantId, long entityId, long key, short rights = 1)
+        public Request Create(long applicantId, long entityId, long key, short rights = 1, string intention = "")
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -89,7 +89,8 @@ namespace BExIS.Security.Services.Requests
                                     Key = key,
                                     RequestDate = DateTime.Now,
                                     Status = RequestStatus.Open,
-                                    Rights = rights
+                                    Rights = rights,
+                                    Intention = intention
                                 };
 
                                 requestRepository.Put(request);

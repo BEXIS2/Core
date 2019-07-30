@@ -5,10 +5,10 @@
     DCM provides functions to create, edit uploading of datasets and metadata strutcures
   </Description>
   <Assemblies>
-    <Assembly fullName="BExIS.Dcm.Wizard" role=""/>
-    <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role=""/>
-    <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role=""/>
-    <Assembly fullName="BExIS.Dcm.UploadWizard" role=""/>
+    <Assembly fullName="BExIS.Dcm.Wizard" role="" />
+    <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role="" />
+    <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role="" />
+    <Assembly fullName="BExIS.Dcm.UploadWizard" role="" />
   </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
@@ -18,14 +18,12 @@
     <Export tag="settings" id="manageMetadata" order="1"
             title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
             controller="ManageMetadataStructure" action="Index" argument=""
-            extends="./settingsRoot"
-            />
+            extends="./settingsRoot" />
 
     <Export tag="menubar" id="collect" order="1"
             title="Collect" description="Quick access to Data Collection Area" icon=""
             controller="" action=""
-            extends="./menubarRoot"
-            />
+            extends="./menubarRoot" />
     <Export tag="menubar" id="createDataset" order="1"
             title="Create Dataset" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
@@ -43,17 +41,15 @@
             controller="Push" action="index"
             extends="./menubarRoot/collect" />
 
-    
     <Export tag="lunchbar" id="helpDcm" order="1"
             title="Data Collection" description="Data Collection Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
-    
+
     <Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""
             controller="home" action="index"
-            extends="./apiRoot"
-            />
+            extends="./apiRoot" />
 
     <!-- INTERNAL-->
 
