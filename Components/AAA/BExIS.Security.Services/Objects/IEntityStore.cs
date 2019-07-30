@@ -7,11 +7,14 @@ namespace BExIS.Security.Services.Objects
         List<EntityStoreItem> GetEntities();
 
         string GetTitleById(long id);
+
+        int GetVersionById(long id);
     }
 
     public class EntityStoreItem
     {
         public long Id { get; set; }
+        public int Version { get; set; }
         public string Title { get; set; }
     }
 }

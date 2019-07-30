@@ -20,5 +20,10 @@ namespace BExIS.Security.Services.Objects
         {
             throw new System.NotImplementedException();
         }
+
+        public int GetVersionById(long id)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

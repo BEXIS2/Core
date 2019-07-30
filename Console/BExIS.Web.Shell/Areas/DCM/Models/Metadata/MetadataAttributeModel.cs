@@ -29,6 +29,16 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public List<Error> Errors { get; set; }
         public bool Locked { get; set; }
 
+        #region Mapping Variables
+
+        public bool PartyMappingExist { get; set; }
+        public bool EntityMappingExist { get; set; }
+
+        //url to the show view of the entity
+        public string EntityUrl { get; set; }
+
+        #endregion Mapping Variables
+
         public string ConstraintDescription { get; set; }
 
         public bool last = false;
@@ -77,9 +87,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 MetadataAttributeId = this.MetadataAttributeId,
                 ParentStepId = this.ParentStepId,
                 Errors = null,
-                Locked = false
+                Locked = false,
+                PartyMappingExist = this.PartyMappingExist,
+                EntityMappingExist = this.EntityMappingExist,
+                EntityUrl = ""
             };
         }
-
     }
 }

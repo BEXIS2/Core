@@ -16,8 +16,10 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
@@ -1205,6 +1207,82 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeView", stepModelHelper);
         }
 
+        public ActionResult UpdateComplexUsageWithEntity(int stepId, int number, int inputattrid, int inputAttrNumber, long entityId, string value)
+        {
+            ViewData["ShowOptional"] = true;
+
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            TaskManager.SetCurrent(TaskManager.Get(stepId));
+
+            var stepModelHelper = GetStepModelhelper(stepId);
+            stepModelHelper.Model = createModel(stepId, true, stepModelHelper.UsageType);
+            var usage = loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
+
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+
+            foreach (var attrModel in stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(inputattrid) && a.Number.Equals(inputAttrNumber)))
+            {
+                var metadataAttributeUsage = metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()).Where(u => u.Id.Equals(attrModel.Id)).FirstOrDefault();
+
+                if (entityId > 0 && attrModel.Id.Equals(inputattrid))
+                {
+                    if (MappingUtils.ExistMappingWithEntity(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        attrModel.Value = MappingUtils.GetAllMatchesInEntities(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage, value).Where(e => e.EntityId.Equals(entityId)).FirstOrDefault().Value;
+                        attrModel.Locked = false;
+                        int version = 0;
+
+                        // if an enity mapping exists, the question is whether the entity has a version or not. The url created may have to be created with version.
+                        // Get version of a entity with the entity store
+
+                        #region entity
+
+                        try
+                        {
+                            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
+                            {
+                                string entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
+
+                                EntityManager entityManager = new EntityManager();
+                                Entity entity = entityManager.Entities.ToList().FirstOrDefault(e => e.EntityType.FullName.Equals(entityClassPath));
+
+                                if (entity != null)
+                                {
+                                    var instanceStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
+                                    if (instanceStore != null)
+                                    {
+                                        version = instanceStore.GetVersionById(entityId);
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            version = 0;
+                        }
+
+                        #endregion entity
+
+                        //create dic for the xml attr
+                        Dictionary<string, string> xmlAttr = new Dictionary<string, string>();
+                        xmlAttr.Add("entityid", entityId.ToString());
+                        if (version > 0) xmlAttr.Add("entityversion", version.ToString());
+
+                        UpdateAttribute(
+                        usage,
+                        number,
+                        metadataAttributeUsage,
+                        Convert.ToInt32(inputAttrNumber),
+                        attrModel.Value,
+                        stepModelHelper.XPath,
+                        xmlAttr);
+                    }
+                }
+            }
+
+            return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
+        }
+
         public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
         {
             ViewData["ShowOptional"] = true;
@@ -1224,8 +1302,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (partyId > 0)
                 {
-                    attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
-                    attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                    if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                        attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+
+                        UpdateAttribute(
+                        usage,
+                        number,
+                        metadataAttributeUsage,
+                        Convert.ToInt32(attrModel.Number),
+                        attrModel.Value,
+                        stepModelHelper.XPath);
+                    }
                 }
                 else
                 {
@@ -1238,16 +1327,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     attrModel.Locked = false;
                 }
 
-                UpdateAttribute(
-                    usage,
-                    number,
-                    metadataAttributeUsage,
-                    Convert.ToInt32(attrModel.Number),
-                    attrModel.Value,
-                    stepModelHelper.XPath);
+                AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
             }
-
-            AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
@@ -2256,9 +2337,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 y = MappingUtils.GetAllMatchesInEntities(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
+                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + ")" });
+
                 return new JsonResult
                 {
-                    Data = new SelectList(y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + ")", Value = e.Value + " (" + e.EntityId + ")_" + LinkElementType.Entity.ToString() })),
+                    Data = tmp,
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet
                 };
             }
@@ -2286,7 +2369,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
             }
 
-            var list = x.Select(e => new SelectListItem() { Text = e.Value + " (" + e.PartyId + ")", Value = e.Value + " (" + e.PartyId + ")_" + LinkElementType.PartyCustomType.ToString() });
+            var list = x.Select(e => new SelectListItem() { Text = e.Value + " (" + e.PartyId + ")" });
 
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex
@@ -2300,7 +2383,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
             // WORKAROUND: return always an empty list
-            return new JsonResult { Data = list, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            return new JsonResult
+            {
+                Data = list,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
@@ -2534,6 +2621,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadataXml.Save(path);
         }
 
+        private void UpdateAttribute(BaseUsage parentUsage, int packageNumber, BaseUsage attribute, int number, object value, string parentXpath, Dictionary<string, string> xmlAttrs)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            var metadataXml = getMetadata();
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+
+            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath, xmlAttrs);
+
+            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+            // locat path
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            metadataXml.Save(path);
+        }
+
         //ToDo really said function, but cant find a other solution for now
         private void AddXmlAttribute(string xpath, string attrName, string attrValue)
         {
@@ -2544,7 +2645,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             XmlNode tmp = xmlDocument.SelectSingleNode(xpath);
 
-            XmlAttribute xmlAttr = xmlDocument.CreateAttribute("partyid");
+            XmlAttribute xmlAttr = xmlDocument.CreateAttribute(attrName);
             xmlAttr.Value = attrValue;
 
             tmp.Attributes.Append(xmlAttr);
@@ -3013,6 +3114,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
                             simpleMetadataAttributeModel.Value = simpleElement.Value;
+
+                            #region entity mapping
+
+                            // if this simple attr is linked to a enity, some attr need to get from the xelement and create a url for the model
+                            if (simpleElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid")))
+                            {
+                                long id = 0;
+                                int version = 0;
+                                string idAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid")).Value;
+                                string versionAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityversion")).Value;
+                                if (Int64.TryParse(idAsString, out id) && Int32.TryParse(versionAsString, out version))
+                                {
+                                    string server = this.Request.Url.GetLeftPart(UriPartial.Authority);
+                                    string url = server + "/DDM/Data/Show/" + id.ToString() + "?version=" + version;
+
+                                    simpleMetadataAttributeModel.EntityUrl = url;
+                                }
+                            }
+
+                            #endregion entity mapping
 
                             // if at least on item has a value, the parent should be activated
                             setStepModelActive(stepModelHelper);

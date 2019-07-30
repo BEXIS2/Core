@@ -601,29 +601,43 @@ function OnClickDown(e) {
 
 function OnClose(e) {
     console.log(e.target.value);
-    var value = e.target.value;
+    //var value = e.target.value;
 
-    var type = value.substring(value.lastIndexOf('_'));
+    var id = e.target.id;
+    var tAutoComplete = $('#' + id).data("tAutoComplete");
+    console.log(tAutoComplete);
+    var value = tAutoComplete.value();
+    console.log(value);
 
+    var type = $('#' + id).attr("type");
+    var start = 0;
+    var end = 0;
+    var partyid = 0;
+    var entityid = 0;
+    var number = 0;
+    var parent;
+    var parentid = 0;
     // if the autocomplete type a partycustm type
     if (type === "PartyCustomType") {
+        console.log("partycustomtype");
+
         if (~value.indexOf("(") && ~value.indexOf(")")) {
-            var start = value.lastIndexOf("(") + 1;
-            var end = value.lastIndexOf(")");
-            var partyid = value.substr(start, end - start);
+            start = value.lastIndexOf("(") + 1;
+            end = value.lastIndexOf(")");
+            partyid = value.substr(start, end - start);
 
             console.log("partyid = " + partyid);
 
             if (partyid !== "0") {
                 // find parent
 
-                var parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
+                parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
                 console.log("parent");
                 console.log(parent);
 
                 if (parent !== null) {
-                    var parentid = $(parent).attr("id");
-                    var number = $(parent).attr("number");
+                    parentid = $(parent).attr("id");
+                    number = $(parent).attr("number");
                     UpdateWithParty(parentid, number, partyid);
                 }
 
@@ -634,12 +648,63 @@ function OnClose(e) {
 
     // if the autocomplete type a Entity
     if (type === "Entity") {
+        console.log("entity");
+
+        if (~value.indexOf("(") && ~value.indexOf(")")) {
+            start = value.lastIndexOf("(") + 1;
+            end = value.lastIndexOf(")");
+            entityid = value.substr(start, end - start);
+            var title = value.substr(0, start-2);
+
+            parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
+
+            if (parent !== null) {
+                parentid = $(parent).attr("id");
+                number = $(parent).attr("number");
+                var attrnumber = $('#' + id).attr("number");
+               
+                UpdateWithEntity(parentid, number, id, attrnumber, entityid, title);
+            }
+        }
     }
 }
 
 /******************************************
  ********* Component************************
  ******************************************/
+
+function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityid, value) {
+    console.log("update with entity");
+    console.log(componentId + "-" + number + "-" + entityid);
+
+    var attrId = inputid.split("_")[0];
+
+    if (inputattrnumber == undefined) inputattrnumber = 1;
+
+    //$("#" + componentId).find(".metadataAttributeInput").each(function () {
+    //    $(this).preloader(12, "...loading");
+    //})
+
+    $.post('/DCM/Form/UpdateComplexUsageWithEntity',
+        {
+            stepId: componentId,
+            number: number,
+            inputattrid: attrId,
+            inputAttrNumber: inputattrnumber,
+            entityId: entityid,
+            value: value
+        },
+        function (response) {
+            console.log(componentId);
+            //console.log(response);
+
+            $("#" + componentId).replaceWith(response);
+            // update party id to component
+            $($("#" + inputid)[inputattrnumber-1]).attr("entityid", entityid);
+            //alert("test");
+            autosize($('textarea'));
+        })
+}
 
 function UpdateWithParty(componentId, number, partyid) {
     console.log("update with party");
