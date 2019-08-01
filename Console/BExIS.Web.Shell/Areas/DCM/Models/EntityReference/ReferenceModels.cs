@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityReference
 {
-    public class ReferencsModel
+    public class ReferencesModel
     {
         public SimpleReferenceModel Selected { get; set; }
-        public List<SimpleReferenceModel> Sources { get; set; }
-        public List<SimpleReferenceModel> Targets { get; set; }
+        public DataTable MetadataReferences { get; set; }
 
-        public ReferencsModel()
+        public DataTable SystemReferences { get; set; }
+
+        public ReferencesModel()
         {
             Selected = new SimpleReferenceModel();
-            Sources = new List<SimpleReferenceModel>();
-            Targets = new List<SimpleReferenceModel>();
+            SystemReferences = new DataTable();
+            MetadataReferences = new DataTable();
         }
     }
 

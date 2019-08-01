@@ -73,5 +73,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 entityReferenceManager.Dispose();
             }
         }
+
+        public ActionResult Show(long sourceId, long sourceTypeId)
+        {
+            ReferencesModel model = new ReferencesModel();
+
+            return View("Show")
+        }
     }
 }
