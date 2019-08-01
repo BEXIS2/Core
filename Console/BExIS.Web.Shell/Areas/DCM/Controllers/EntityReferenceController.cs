@@ -1,4 +1,4 @@
-﻿using BExIS.Modules.Dcm.UI.Helpers.EntityReference;
+﻿using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
@@ -25,24 +25,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // ViewData for Title
             ViewData["Title"] = helper.GetEntityTitle(sourceId, sourceTypeId);
             // ViewData for enitity type list
-            ViewData["Types"] = helper.GetEntityTypes();
-
-            List<SelectListItem> tmp = new List<SelectListItem>();
-
-            ViewData["Target"] = new SelectList(tmp, "Text", "Value");
+            ViewData["TargetType"] = helper.GetEntityTypes();
+            ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
+            ViewData["Init"] = true;
 
             return View("Create", new CreateSimpleReferenceModel(sourceId, sourceTypeId));
         }
 
-        public JsonResult GetTargets(string type)
+        public JsonResult GetTargets(long id)
         {
+            EntityReferenceHelper helper = new EntityReferenceHelper();
             List<SelectListItem> tmp = new List<SelectListItem>();
-            tmp.Add(new SelectListItem() { Text = "a", Value = "1" });
-            tmp.Add(new SelectListItem() { Text = "b", Value = "2" });
-            tmp.Add(new SelectListItem() { Text = "sample1", Value = "4" });
-            tmp.Add(new SelectListItem() { Text = "sample2", Value = "5" });
 
-            return Json(tmp);
+            if (id > 0)
+                helper.GetEntities(id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Title, Value = e.Id.ToString() }));
+
+            return Json(tmp, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -53,14 +51,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult Create(CreateSimpleReferenceModel model)
         {
+            EntityReferenceHelper helper = new EntityReferenceHelper();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
 
             try
             {
                 if (!ModelState.IsValid) return PartialView("Create", model);
 
-                EntityReference entityReference = new EntityReference();
+                EntityReference entityReference = helper.Convert(model);
+                entityReferenceManager.Create(entityReference);
 
+                ViewData["Title"] = helper.GetEntityTitle(model.SourceId, model.SourceTypeId);
+                ViewData["TargetType"] = helper.GetEntityTypes();
+                ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
+                ViewData["Success"] = "This references is saved.";
+                ViewData["Init"] = false;
                 return PartialView("Create", model);
             }
             finally

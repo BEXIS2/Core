@@ -209,7 +209,7 @@
     <Compile Include="Helpers\API\DataApiHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
-    <Compile Include="Helpers\EntityReference\EntityReferenceHelper.cs" />
+    <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
