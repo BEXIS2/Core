@@ -1231,6 +1231,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         attrModel.Value = MappingUtils.GetAllMatchesInEntities(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage, value).Where(e => e.EntityId.Equals(entityId)).FirstOrDefault().Value;
                         attrModel.Locked = false;
                         int version = 0;
+                        long entityTypeId = 0;
 
                         // if an enity mapping exists, the question is whether the entity has a version or not. The url created may have to be created with version.
                         // Get version of a entity with the entity store
@@ -1245,6 +1246,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 EntityManager entityManager = new EntityManager();
                                 Entity entity = entityManager.Entities.ToList().FirstOrDefault(e => e.EntityType.FullName.Equals(entityClassPath));
+                                entityTypeId = entity.Id;
 
                                 if (entity != null)
                                 {
@@ -1266,6 +1268,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //create dic for the xml attr
                         Dictionary<string, string> xmlAttr = new Dictionary<string, string>();
                         xmlAttr.Add("entityid", entityId.ToString());
+                        xmlAttr.Add("entitytypeid", entityTypeId.ToString());
                         if (version > 0) xmlAttr.Add("entityversion", version.ToString());
 
                         UpdateAttribute(

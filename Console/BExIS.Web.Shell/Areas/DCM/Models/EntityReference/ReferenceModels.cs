@@ -11,15 +11,15 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
     public class ReferencesModel
     {
         public SimpleReferenceModel Selected { get; set; }
-        public DataTable MetadataReferences { get; set; }
+        public List<SimpleReferenceModel> MetadataReferences { get; set; }
 
-        public DataTable SystemReferences { get; set; }
+        public List<SimpleReferenceModel> SystemReferences { get; set; }
 
         public ReferencesModel()
         {
             Selected = new SimpleReferenceModel();
-            SystemReferences = new DataTable();
-            MetadataReferences = new DataTable();
+            SystemReferences = new List<SimpleReferenceModel>();
+            MetadataReferences = new List<SimpleReferenceModel>();
         }
     }
 
@@ -30,6 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
         public long TypeId { get; set; }
         public string Type { get; set; }
         public string Title { get; set; }
+        public string Context { get; set; }
 
         public SimpleReferenceModel()
         {
@@ -38,6 +39,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
             TypeId = 0;
             Type = "";
             Title = "";
+            Context = "";
         }
 
         public SimpleReferenceModel(long id, int version, long typeId, string type, string title)

@@ -654,7 +654,7 @@ function OnClose(e) {
             start = value.lastIndexOf("(") + 1;
             end = value.lastIndexOf(")");
             entityid = value.substr(start, end - start);
-            var title = value.substr(0, start-2);
+            var title = value.substr(0, start - 2);
 
             parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
 
@@ -662,7 +662,7 @@ function OnClose(e) {
                 parentid = $(parent).attr("id");
                 number = $(parent).attr("number");
                 var attrnumber = $('#' + id).attr("number");
-               
+
                 UpdateWithEntity(parentid, number, id, attrnumber, entityid, title);
             }
         }
@@ -679,7 +679,7 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
 
     var attrId = inputid.split("_")[0];
 
-    if (inputattrnumber == undefined) inputattrnumber = 1;
+    if (inputattrnumber === undefined) inputattrnumber = 1;
 
     //$("#" + componentId).find(".metadataAttributeInput").each(function () {
     //    $(this).preloader(12, "...loading");
@@ -700,7 +700,7 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
 
             $("#" + componentId).replaceWith(response);
             // update party id to component
-            $($("#" + inputid)[inputattrnumber-1]).attr("entityid", entityid);
+            $($("#" + inputid)[inputattrnumber - 1]).attr("entityid", entityid);
             //alert("test");
             autosize($('textarea'));
         })

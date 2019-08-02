@@ -191,6 +191,66 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        /// <summary>
+        /// e.g. root is a metadata structre, the function will check if there is any mapping to any entity
+        /// </summary>
+        /// <param name="rootId"></param>
+        /// <param name="rootType"></param>
+        /// <returns></returns>
+        public static bool ExistMappingWithEntityFromRoot(long rootId, LinkElementType rootType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.Entity) &&
+                            m.Parent.Target.Type.Equals(rootType) &&
+                            m.Parent.Target.ElementId.Equals(rootId)
+                        ).ToList();
+
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// e.g. root is a metadata structre, the function will check if there is any mapping to a specific entity
+        /// </summary>
+        /// <param name="rootId"></param>
+        /// <param name="rootType"></param>
+        /// <param name="entityId"></param>
+        /// <returns></returns>
+        public static bool ExistMappingWithEntityFromRoot(long rootId, LinkElementType rootType, long entityId)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Parent != null &&
+                            m.Source.ElementId.Equals(entityId) &&
+                            m.Source.Type.Equals(LinkElementType.Entity) &&
+                            m.Parent.Target.Type.Equals(rootType) &&
+                            m.Parent.Target.ElementId.Equals(rootId)
+                        ).ToList();
+
+                    return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static List<MappingEntityResultElement> GetAllMatchesInEntities(long targetElementId, LinkElementType targetType,
             string value = "")
         {

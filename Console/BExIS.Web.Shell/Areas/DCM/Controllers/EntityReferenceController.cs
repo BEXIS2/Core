@@ -77,8 +77,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Show(long sourceId, long sourceTypeId)
         {
             ReferencesModel model = new ReferencesModel();
+            EntityReferenceHelper helper = new EntityReferenceHelper();
 
-            return View("Show")
+            model.Selected = helper.GetSimplereferenceModel(sourceId, sourceTypeId);
+            model.SystemReferences = helper.GetAllReferences(sourceId, sourceTypeId);
+            model.MetadataReferences = helper.GetAllMetadataReferences(sourceId, sourceTypeId);
+
+            return View("Show", model);
         }
     }
 }
