@@ -1,48 +1,49 @@
 ﻿@{
     ViewBag.Title = " ... ";
 }
-<h2>Refrences from Metadata</h2>
+<div>
+    <b>Refrences from Metadata</b>
 
-<table id="metadata_reference_table" class="display" style="width:100%">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Context</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-
-        @foreach (var srm in Model.MetadataReferences)
-        {
+    <table id="metadata_reference_table" class="display" style="width:100%">
+        <thead>
             <tr>
-                <td class="dt-body-center">@srm.Id</td>
-                <td>@srm.Type</td>
-                <td>@srm.Title</td>
-                <td>@srm.Context</td>
-                <td class="dt-body-center">
-                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new { @class = "bx bx-grid-function bx-show" })
-                </td>
+                <th>Id</th>
+                <th>Type</th>
+                <th>Title</th>
+                <th>Context</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <th>Id</th>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Context</th>
-            <th></th>
-        </tr>
-    </tfoot>
+        </thead>
+        <tbody>
+
+            @foreach (var srm in Model.MetadataReferences)
+            {
+                <tr>
+                    <td class="dt-body-center">@srm.Id</td>
+                    <td>@srm.Type</td>
+                    <td>@srm.Title</td>
+                    <td>@srm.Context</td>
+                    <td class="dt-body-center">
+                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new { @class = "bx bx-grid-function bx-show" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>Title</th>
+                <th>Context</th>
+                <th></th>
+            </tr>
+        </tfoot>
 
 
+</div>
 
-
-
-    <h2>References</h2>
+<div>
+    <b>References</b>
 
     @model BExIS.Modules.Dcm.UI.Models.EntityReference.ReferencesModel
 
@@ -81,32 +82,32 @@
             </tr>
         </tfoot>
     </table>
+</div>
+<script type="text/javascript">
 
-    <script type="text/javascript">
+    $(document).ready(function () {
 
-        $(document).ready(function () {
-
-            $("#metadata_reference_table").DataTable({
-                "autoWidth": false,
-                "columns": [
-                    { "width": "20px" },
-                    null,
-                    null,
-                    null,
-                    { "width": "20px" },
-                ]
-            });
-
-            $("#system_reference_table").DataTable({
-                "autoWidth": false,
-                "columns": [
-                    { "width": "20px" },
-                    null,
-                    null,
-                    null,
-                    { "width": "20px" },
-                ]
-            });
+        $("#metadata_reference_table").DataTable({
+            "autoWidth": false,
+            "columns": [
+                { "width": "20px" },
+                null,
+                null,
+                null,
+                { "width": "20px" },
+            ]
         });
 
-    </script>
+        $("#system_reference_table").DataTable({
+            "autoWidth": false,
+            "columns": [
+                { "width": "20px" },
+                null,
+                null,
+                null,
+                { "width": "20px" },
+            ]
+        });
+    });
+
+</script>

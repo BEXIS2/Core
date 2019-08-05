@@ -71,5 +71,10 @@
                 title="load Metadata Form" description="load Metadata Form" icon=""
                 controller="Form" action="StartMetadataEditor"
                 extends="" />
+
+    <Export tag="internalApi" id="ShowReferences"
+                title="Show references of a entity" description="Show references of a entity" icon=""
+                controller="EntityReference" action="Show"
+                extends="" />
   </Exports>
 </Manifest>

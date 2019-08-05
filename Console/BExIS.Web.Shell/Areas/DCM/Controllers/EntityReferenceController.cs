@@ -83,7 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.SystemReferences = helper.GetAllReferences(sourceId, sourceTypeId);
             model.MetadataReferences = helper.GetAllMetadataReferences(sourceId, sourceTypeId);
 
-            return View("Show", model);
+            return PartialView("Show", model);
         }
     }
 }

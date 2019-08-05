@@ -1299,6 +1299,35 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion request
 
+        #region entity references
+
+        public ActionResult ShowReferences(long id)
+        {
+            var sourceTypeId = 0;
+
+            //get the researchobject (cuurently called dataset) to get the id of a metadata structure
+            Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
+            long metadataStrutcureId = researcobject.MetadataStructure.Id;
+
+            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
+            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
+
+            //ToDo in the entity table there must be the information
+            EntityManager entityManager = new EntityManager();
+
+            var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+
+            var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
+            {
+                { "sourceId", id },
+                { "SourceTypeId", entity.Id }
+            });
+
+            return Content(view.ToHtmlString(), "text/html");
+        }
+
+        #endregion entity references
+
         #region helper
 
         private List<DropDownItem> GetDownloadOptions()
