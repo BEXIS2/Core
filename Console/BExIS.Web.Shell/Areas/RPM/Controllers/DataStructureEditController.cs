@@ -171,28 +171,27 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dataStructureManager.RemoveVariableUsage(v);
                     }
 
-                    foreach (storeVariableStruct svs in variables.Where(svs => svs.Id == 0).ToList())
+                    MissingValueManager missingValueManager = null;
+
+                    try
                     {
-                        if (svs.Lable == null)
-                            svs.Lable = "";
-                        if (svs.Description == null)
-                            svs.Description = "";
-                        try
+                        dataContainerManager = new DataContainerManager();
+                        um = new UnitManager();
+                        missingValueManager = new MissingValueManager();
+                        foreach (storeVariableStruct svs in variables.Where(svs => svs.Id == 0).ToList())
                         {
-                            dataContainerManager = new DataContainerManager();
+                            if (svs.Lable == null)
+                                svs.Lable = "";
+                            if (svs.Description == null)
+                                svs.Description = "";
+
                             DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
                             if (dataAttribute != null)
                             {
-                                try
-                                {
-                                    um = new UnitManager();
-                                    variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
-                                    svs.Id = variable.Id;
-                                }
-                                finally
-                                {
-                                    um.Dispose();
-                                }
+
+                                variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
+                                svs.Id = variable.Id;
+                                MissingValue missingValue = missingValueManager.Create(variable.Label, variable.Description, variable);
                             }
                             else
                             {
@@ -204,44 +203,36 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 };
                             }
                         }
-                        finally
+
+                        dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
+
+                        variables = variables.Where(v => v.Id != 0).ToArray();
+
+                        foreach (storeVariableStruct svs in variables.Where(svs => svs.Id != 0).ToList())
                         {
-                            // Javad: would be better to conctruct and dispose this object outside of the loop
-                            dataContainerManager.Dispose();
-                        }
-                    }
-                    dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
+                            if (svs.Lable == null)
+                                svs.Lable = "";
+                            if (svs.Description == null)
+                                svs.Description = "";
 
-                    variables = variables.Where(v => v.Id != 0).ToArray();
-
-                    foreach (storeVariableStruct svs in variables.Where(svs => svs.Id != 0).ToList())
-                    {
-                        if (svs.Lable == null)
-                            svs.Lable = "";
-                        if (svs.Description == null)
-                            svs.Description = "";
-
-                        variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
-                        if (variable != null)
-                        {
-                            variable.Label = svs.Lable.Trim();
-                            variable.Description = svs.Description.Trim();
-
-                            try
+                            variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
+                            if (variable != null)
                             {
-                                um = new UnitManager();
-                                dataContainerManager = new DataContainerManager();
+                                variable.Label = svs.Lable.Trim();
+                                variable.Description = svs.Description.Trim();
 
+                                
                                 variable.Unit = um.Repo.Get(svs.UnitId);
                                 variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                                variable.IsValueOptional = svs.isOptional;
-                            }
-                            finally
-                            {
-                                um.Dispose(); // Javad: would be better to conctruct and dipose these objects outside of the loop
-                                dataContainerManager.Dispose();
+                                variable.IsValueOptional = svs.isOptional;         
                             }
                         }
+                    }
+                    finally
+                    {
+                        missingValueManager.Dispose();
+                        um.Dispose();
+                        dataContainerManager.Dispose();
                     }
 
                     dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);

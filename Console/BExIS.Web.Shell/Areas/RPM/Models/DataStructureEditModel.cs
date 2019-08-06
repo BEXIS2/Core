@@ -2,6 +2,7 @@
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Classes;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -210,7 +211,6 @@ namespace BExIS.Modules.Rpm.UI.Models
                     Unit = dataAttribute.Unit,
                     DataAttribute = dataAttribute
                 };
-
                 return this.fill(variable, getConstraints);
             }
             finally
@@ -226,6 +226,8 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public VariablePreviewStruct fill(Variable variable, bool getConstraints)
         {
+            MissingValueManager missingValueManager = null;
+
             variable.Unit = variable.Unit ?? new Unit();
             variable.Unit.Dimension = variable.Unit.Dimension ?? new Dimension();
             variable.DataAttribute = variable.DataAttribute ?? new DataAttribute();
