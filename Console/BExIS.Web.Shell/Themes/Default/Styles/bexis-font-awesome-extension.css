@@ -66,6 +66,7 @@
 
 .bx-function,
 .bx-grid-function,
+a.bx-grid-function,
 .t-grid-filter,
 .t-state-active,
 .t-arrow-first,
@@ -80,7 +81,7 @@
 }
 
 .bx-action {
-    background: #FF9800;
+    background: #FF9700;
     color: white;
 }
 
@@ -102,7 +103,7 @@
     .t-grid-filter:hover,
     .t-edit:hover,
     .t-delete:hover {
-        background: #000000;
+        background: var(--bg-bx-hover);
         text-decoration: none;
     }
 
@@ -115,7 +116,7 @@
     .bx-grid-function.bx-disabled:hover,
     .bx-grid-function.bx-disabled.active:hover,
     .bx-grid-function.bx-disabled:active:hover {
-        background: #ffffff;
+        background: var(--bg-bx-disbaled-hover);
         text-decoration: none;
     }
 
@@ -130,7 +131,7 @@
     .t-edit.active,
     .t-delete:active,
     .t-delete:active {
-        background: #45B2A1;
+        background: var(--bg-bx-active);
     }
 
 /* makes the font 33% larger relative to the icon container */

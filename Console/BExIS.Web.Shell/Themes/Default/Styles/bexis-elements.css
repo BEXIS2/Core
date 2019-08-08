@@ -17,6 +17,7 @@ Green 04  #d2e8e3
 Green 05  #eff7f6   brigth
 */
 
+
 /*Helpers*/
 .vcenter {
 	display: inline-block;
@@ -34,7 +35,7 @@ Green 05  #eff7f6   brigth
 .nav a:hover
 {
 	/*text-transform:uppercase;*/
-	color:#ff9700 !important;
+	color:var(--nav-hover)!important;
 	cursor: pointer;
 }
 
@@ -44,7 +45,7 @@ Green 05  #eff7f6   brigth
 .t-link,
 .t-in
 {
-	color:#388670;
+	color: var(--bg-color-level-1);
 	cursor: pointer;
 }
 
@@ -115,9 +116,9 @@ button.smaller,
 }
 
 button.action,
-.t-button.action, 
+.t-button.action,
 .bx-button.action {
-	background: #00876F;
+    background: var(--button-action);
 }
 
 .whiteText {
@@ -125,11 +126,10 @@ button.action,
 }
 
 button.function,
-.t-button.function, 
+.t-button.function,
 .bx-button.function,
-.t-upload-button
-{
-	background: #FF9800;
+.t-upload-button {
+    background: var(--button-function);
 }
 
 button.confirm,
@@ -223,18 +223,15 @@ li.t-state-disabled .t-link
 .bx-dropdown,
 .bx-textarea,
 .t-autocomplete,
-.t-datepicker .t-picker-wrap input
-{
-	
-	width: 100px; /*Width of select dropdown to give space for arrow image*/
-	text-indent: 0.01px; /* Removes default arrow from firefox*/
-	text-overflow: "";  /*Removes default arrow from firefox*/
-
-	border: 2px solid black;
-	font-size: 12pt;
-	font-family: Arial;
-	padding-left:5px;
-	padding-right:5px;
+.t-datepicker .t-picker-wrap input {
+    width: 100px; /*Width of select dropdown to give space for arrow image*/
+    text-indent: 0.01px; /* Removes default arrow from firefox*/
+    text-overflow: ""; /*Removes default arrow from firefox*/
+    border: var(--border-width-field) solid var(--border-color-field);
+    font-size: 12pt;
+    font-family: Arial;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .bx-input,
@@ -289,7 +286,7 @@ textarea:disabled,
 
 .bx-select-mouseover
 {
-	background-color:#ff9700;
+	background-color:var(--bg-color-bx-selected-mousover);
 	color:white;
 }
 
@@ -337,42 +334,39 @@ ul.bx-list-multi
 .bx-list-multi li:hover
 {
    background-color:#eff7f6;
-   color:#388670;
+   color: var(--bg-color-level-1);
    border-top: 1px solid white;
 }
 
-.bx-list li.selected,
-.bx-list-multi li.selected
-{
-   background-color:#eff7f6;
-   color:#388670;
-   /*font-weight:bold;*/
-   border-top: 1px solid #388670;
-   border-bottom: 1px solid #388670;
-}
+    .bx-list li.selected,
+    .bx-list-multi li.selected {
+        background-color: #eff7f6;
+        color: var(--bg-color-level-1);
+        /*font-weight:bold;*/
+        border-top: 1px solid var(--bg-color-level-1);
+        border-bottom: 1px solid var(--bg-color-level-1);
+    }
 
 /* Container */
-.overlay
-{
-	/*display:none;*/
-	background-color:#bee1da;
-	padding: 12px 25px 12px 25px;
-	width:calc(100% + 12pt);
-	margin-left:-15px;
-	z-index:1000;
+.overlay {
+    /*display:none;*/
+    /* background-color: #bee1da; */
+    background-color: var(--bg-color-level-3);
+    padding: 12px 25px 12px 25px;
+    width: calc(100% + 12pt);
+    margin-left: -15px;
+    z-index: 1000;
 }
 
-.overlayHeader
-{
-	color:#72b1a0;
-	text-transform:uppercase;
-	font-size:16px;
-	padding-bottom:12px;
+.overlayHeader {
+    color: var(--bg-color-level-2);
+    text-transform: uppercase;
+    font-size: 16px;
+    padding-bottom: 12px;
 }
 
-.overlayContent
-{
-	border-color:#72b1a0;
+.overlayContent {
+    border-color: var(--bg-color-level-2);
 }
 
 .overlayContent li a,
@@ -401,23 +395,20 @@ ul.bx-list-multi
 }
 
 .slider .slider-track-high,
-.slider .slider-track-low
-{
-	background: white;
-	border: 1px solid #72b1a0;
+.slider .slider-track-low {
+    background: white;
+    border: 1px solid var(--bg-color-level-2);
 }
 
 .overlay .slider .slider-selection,
-.overlay .slider .slider-handle
-{
-	background: #72b1a0;
+.overlay .slider .slider-handle {
+    background: var(--bg-color-level-2);
 }
 
 .overlay .slider .slider-track-high,
-.overlay .slider .slider-track-low
-{
-	background: white;
-	border: 1px solid #72b1a0;
+.overlay .slider .slider-track-low {
+    background: white;
+    border: 1px solid var(--bg-color-level-2);
 }
 
 
@@ -482,13 +473,18 @@ ul.bx-list-multi
 /*information section*/
 
 .bx-informationLink {
-	color:#ff9700;
-	font-weight:bold;
+    color: var(--information-link-color);
+    font-weight: bold;
 }
-
-/*GRID*/
-.bx-selection-grid tr {
-	cursor: pointer;
+.bx-informationLink:hover {
+    color: var(--information-link-hover-color);
+}
+#information-container {
+    background-color: var(--information-bg-color);
+    color: var(--information-text-color);
+    position: fixed;
+    width: 100%;
+    z-index: 1336;
 }
 
 .bx-selection-grid tr:hover {
