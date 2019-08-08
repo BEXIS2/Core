@@ -5,6 +5,8 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -240,16 +242,32 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
         }
 
-        [GridAction]
-        public ActionResult Subjects_Select(long entityId, long instanceId)
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Subjects_Select(GridCommand command, long entityId, long instanceId)
         {
             var subjectManager = new SubjectManager();
             var entityPermissionManager = new EntityPermissionManager();
 
             try
             {
+                var subjectsDb = new List<Subject>();
+                var count = 0;
+                if (command != null)// filter subjects based on grid filter settings
+                {
+                    FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                    OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
+
+                    subjectsDb = subjectManager.GetSubjects(filter, orderBy, command.Page, command.PageSize, out count);
+                }
+                else
+                {
+                    subjectsDb = subjectManager.Subjects.ToList();
+                    count = subjectsDb.Count();
+                }
+
                 var subjects = new List<EntityPermissionGridRowModel>();
-                foreach (var subject in subjectManager.Subjects)
+
+                foreach (var subject in subjectsDb)
                 {
                     var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
                     var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
@@ -257,7 +275,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                 }
 
-                return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });
+                return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects, Total = count });
             }
             finally
             {

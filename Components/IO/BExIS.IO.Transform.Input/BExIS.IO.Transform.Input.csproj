@@ -74,6 +74,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIDataReader.cs" />
+    <Compile Include="ApiFileReaderInfo.cs" />
     <Compile Include="AsciiFileReaderInfo.cs" />
     <Compile Include="AsciiReader.cs" />
     <Compile Include="DataReader.cs" />

@@ -1,0 +1,147 @@
+﻿@using IDIV.Modules.Mmm.UI.Converter
+@using IDIV.Modules.Mmm.UI.Models
+
+
+@model FileInformation
+
+@{
+    string type = Model.MimeType.Substring(0, Model.MimeType.IndexOf('/'));
+    string lat = "";
+    string lon = "";
+    string fileSize = "";
+
+    if (Model.EXIF.ContainsKey("GPS"))
+    {
+        if (Model.EXIF["GPS"].ContainsKey("GPS Latitude Ref") && Model.EXIF["GPS"].ContainsKey("GPS Longitude Ref"))
+        {
+            lat = MetadataConverter.convertDegreeAngleToDouble(Model.EXIF["GPS"]["GPS Latitude Ref"] + Model.EXIF["GPS"]["GPS Latitude"]).ToString();
+            lon = MetadataConverter.convertDegreeAngleToDouble(Model.EXIF["GPS"]["GPS Longitude Ref"] + Model.EXIF["GPS"]["GPS Longitude"]).ToString();
+        }
+    }
+
+    if (Math.Round((double)Model.Size / 1000000000, 2) > 1)
+    {
+        fileSize = Math.Round((double)Model.Size / 1000000000, 2) + " GB";
+    }
+    else if (Math.Round((double)Model.Size / 1000000, 2) > 1)
+    {
+        fileSize = Math.Round((double)Model.Size / 1000000, 2) + " MB";
+    }
+    else if (Math.Round((double)Model.Size / 1000, 2) > 1)
+    {
+        fileSize = Math.Round((double)Model.Size / 1000, 2) + " KB";
+    }
+    else
+    {
+        fileSize = Math.Round((double)Model.Size / 1, 2) + " Byte";
+    }
+
+}
+
+<div class="mmm-image-window">
+    <table class="mmm-image-content">
+        <tr>
+            <td class="mmm-image" rowspan="2" path="@Server.UrlEncode(Model.Path)" lat="@lat" lon="@lon">
+
+                @switch (type)
+                {
+                    case "video":
+                        @Html.Partial("_videoPreview", @Server.UrlEncode(Model.Path))
+                        break;
+
+                    case "audio":
+                        @Html.Partial("_audioPreview", @Server.UrlEncode(Model.Path))
+                        break;
+
+                    case "image":
+                        @Html.Partial("_imagePreview", @Server.UrlEncode(Model.Path))
+                        break;
+
+                    default:
+                        break;
+                }
+
+                <div id="prevImg"><span class="fa fa-angle-left"></span></div>
+                <div id="nextImg"><span class="fa fa-angle-right"></span></div>
+            </td>
+            <td class="mmm-exif">
+                <div>
+                    <table>
+                        <tr>
+                            <td><h3>File</h3></td>
+                            <td><h3 id="more" style="text-align:right; cursor:default">...</h3></td>
+                        </tr>
+                        <tr class="mmm-exif-File">
+                            <td style="min-width:100px;">Name</td>
+                            <td>@Model.Name</td>
+                        </tr>
+
+                        <tr class="mmm-exif-File">
+                            <td>Size</td>
+                            <td>@fileSize</td>
+                        </tr>
+
+                        @foreach (KeyValuePair<string, Dictionary<string, string>> k in Model.EXIF)
+                        {
+                            if (k.Key == "GPS" || @k.Key == "JPEG")
+                            {
+                                <tr>
+                                    <td colspan="2" class="mmm-exif-haed"><h3>@k.Key</h3></td>
+                                </tr>
+
+                                foreach (KeyValuePair<string, string> v in k.Value)
+                                {
+                                    if (v.Key == "GPS Latitude Ref" || v.Key == "GPS Latitude" || v.Key == "GPS Latitude Ref" || v.Key == "GPS Longitude Ref" || v.Key == "GPS Longitude" || v.Key == "Image Width" || v.Key == "Image Height")
+                                    {
+                                        <tr class="mmm-exif-@k.Key">
+                                            <td style="min-width:100px;">@v.Key</td>
+                                            <td>@v.Value</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="mmm-exif-@k.Key extra" style="display:none;">
+                                            <td style="min-width:100px;">@v.Key</td>
+                                            <td>@v.Value</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" class="mmm-exif-haed extra" style="display:none;"><h3>@k.Key</h3></td>
+                                </tr>
+
+                                foreach (KeyValuePair<string, string> v in k.Value)
+                                {
+                                    <tr class="mmm-exif-@k.Key extra" style="display:none;">
+                                        <td style="min-width:100px;">@v.Key</td>
+                                        <td>@v.Value</td>
+                                    </tr>
+                                }
+                            }
+
+                        }
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="mmm-map">
+                <div id="map">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+    $('#more').on('click', function () {
+        if ($('.extra').attr('style')) {
+            $('.extra').removeAttr('style');
+        }
+        else {
+            $('.extra').attr('style', 'display:none;');
+        }
+    });
+</script>

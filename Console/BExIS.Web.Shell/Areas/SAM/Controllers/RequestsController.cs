@@ -58,8 +58,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         Status = m.Status,
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
-                        Applicant = m.Request.Applicant.Name
-                    });
+                        Applicant = m.Request.Applicant.Name,
+                        Intention = m.Request.Intention
+                    }); ;
 
             // Filtering
             var total = results.Count();
@@ -133,7 +134,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
 
             var results = requests.Select(
-                m => new RequestGridRowModel() { Id = m.Key, InstanceId = m.Key, Title = entityStore.GetTitleById(m.Key), Rights = m.Rights, RequestStatus = m.Status });
+                m => new RequestGridRowModel()
+                {
+                    Id = m.Key,
+                    InstanceId = m.Key,
+                    Title = entityStore.GetTitleById(m.Key),
+                    Rights = m.Rights,
+                    RequestStatus = m.Status,
+                    Intention = m.Intention
+                });
 
             // Filtering
             var total = results.Count();

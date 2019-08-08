@@ -1,11 +1,20 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 @model long
+@{
+
+    int total = 0;
+    if (ViewData["subjectsGridTotal"] != null)
+    {
+        total = Convert.ToInt32(Session["subjectsGridTotal"]); //  (int)Session["gridTotal"];
+    }
+}
+
 @(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
       .Name("grid_subjects")
       .DataKeys(keys =>
       {
-          keys.Add(m => m.SubjectId);
+          keys.Add(m => m.Id);
       })
       .Columns(columns =>
       {
@@ -16,32 +25,34 @@
               .Filterable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(m => m.FeaturePermissionType)
-              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='1' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='radio' name='permissionType_<#= Id #>' data-featureid='" + Model + "' data-subjectid='<#= Id #>' data-permissiontype='1' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
               .Title("Grant")
               .Width("9%")
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
           columns.Bound(m => m.FeaturePermissionType)
-              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='2' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='radio' name='permissionType_<#= Id #>' data-featureid='" + Model + "' data-subjectid='<#= Id #>' data-permissiontype='2' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
               .Title("None")
               .Width("9%")
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center" });
           columns.Bound(m => m.FeaturePermissionType)
-              .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' data-featureid='" + Model + "' data-subjectid='<#= SubjectId #>' data-permissiontype='0' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+              .ClientTemplate("<input type='radio' name='permissionType_<#= Id #>' data-featureid='" + Model + "' data-subjectid='<#= Id #>' data-permissiontype='0' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
               .Title("Deny")
               .Width("9%")
               .Filterable(false)
               .Sortable(false)
               .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
-          columns.Bound(m => m.SubjectId)
+          columns.Bound(m => m.Id)
               .Width("20%");
-          columns.Bound(m => m.SubjectName)
+          columns.Bound(m => m.Name)
             .Width("22%");
-          columns.Bound(m => m.SubjectType)
-            .Width("22%");
+          columns.Bound(m => m.Type)
+            .Width("22%")
+            .Filterable(false)
+            .Sortable(false);
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
@@ -50,13 +61,15 @@
       .Filterable()
       .Pageable(pageable =>
       {
-          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.PageSize(100, new[] { 10, 20, 50, 100, 200, 500 });
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-          pageable.Position(GridPagerPosition.Bottom);
+          pageable.Position(GridPagerPosition.Both);
+          pageable.Total(total);
+
       })
       .Sortable(sortable => sortable
           .OrderBy(orderby => orderby
-              .Add(m => m.SubjectName)
+              .Add(m => m.Name)
               .Ascending()
           )
       )

@@ -1,6 +1,8 @@
 ﻿using BExIS.Dcm.UploadWizard;
 using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Models.Push;
+using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Upload;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -129,7 +131,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var model = new SendBigFilesToServerModel
             {
                 ServerFileList = GetServerFileList(),
-                SupportedFileExtentions = UploadWizardHelper.GetExtentionList(DataStructureType.Unstructured, this.Session.GetTenant()),
+                SupportedFileExtentions = UploadHelper.GetExtentionList(DataStructureType.Unstructured, this.Session.GetTenant()),
                 FileSize = this.Session.GetTenant().MaximumUploadSize
             };
 

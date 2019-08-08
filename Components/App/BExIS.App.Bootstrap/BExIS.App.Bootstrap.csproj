@@ -73,17 +73,28 @@
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Api">
+    <Reference Include="Vaiona.MultiTenancy.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Services">
+    <Reference Include="Vaiona.MultiTenancy.Services, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.PersistenceProviders.NH">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Utils">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web.Mvc">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web.Mvc.Modularity">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>

@@ -21,6 +21,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Data.Upload;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
@@ -44,7 +45,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class CreateDatasetController : BaseController
     {
         private CreateTaskmanager TaskManager;
-        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         #region Create a Dataset Setup Page
 
@@ -84,7 +85,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (id != -1 && type.ToLower().Equals("datasetid"))
                 {
                     ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
-
 
                     Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
                     Model.SelectedDatasetId = id;
@@ -132,8 +132,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //if id is set and its type dataset
             if (id != -1 && type.ToLower().Equals("datasetid"))
             {
-
-
                 Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
                 Model.SelectedDatasetId = id;
                 Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
@@ -225,8 +223,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
-
                 if (model == null)
                 {
                     model = GetDefaultModel();
@@ -415,8 +411,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // load metadatastructure with all packages and attributes
 
-
-
             if (metadataXml != null)
             {
                 // locat path
@@ -459,6 +453,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public long SubmitDataset(bool valid)
         {
             #region create dataset
+
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
             ResearchPlanManager rpm = new ResearchPlanManager();
@@ -475,7 +470,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     && TaskManager.Bus.ContainsKey(CreateTaskmanager.RESEARCHPLAN_ID)
                     && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                 {
-
                     // for e new dataset
                     if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
                     {
@@ -524,7 +518,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
                             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
-
                         }
 
                         //set status
@@ -541,33 +534,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
-                        #region set system informations to the metadata if it is mapped
-
-
-
-                        #endregion
-
-
                         dm.EditDatasetVersion(workingCopy, null, null, null);
                         dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-                        #region set releationships 
-
+                        #region set releationships
 
                         //todo check if dim is active
                         // todo call to  a function in dim
                         setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
-                        #endregion
+                        #endregion set releationships
 
                         if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                         {
-
                             var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
                         }
 
                         LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
-
 
                         if (newDataset)
                         {
@@ -587,7 +570,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
 
-
                     return datasetId;
                 }
             }
@@ -605,7 +587,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 rpm.Dispose();
                 dsm.Dispose();
             }
-
 
             #endregion create dataset
 
@@ -714,11 +695,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            BExIS.Dcm.UploadWizard.DataStructureType type = new BExIS.Dcm.UploadWizard.DataStructureType();
+            DataStructureType type = new DataStructureType();
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_TYPE))
             {
-                type = (BExIS.Dcm.UploadWizard.DataStructureType)TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_TYPE];
+                type = (DataStructureType)TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_TYPE];
             }
 
             long datasetid = 0;
@@ -766,7 +747,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
@@ -780,7 +760,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         temp.Add(new ListViewItem(id, title, description));
                     }
                 }
-
 
                 return temp.OrderBy(p => p.Title).ToList();
             }
@@ -797,7 +776,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DataStructureManager dsm = new DataStructureManager();
             try
             {
-
                 List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
 
                 foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
@@ -823,7 +801,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 dsm.Dispose();
             }
-
         }
 
         public List<ListViewItem> LoadMetadataStructureViewList()
@@ -832,7 +809,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
                 IEnumerable<MetadataStructure> metadataStructureList = metadataStructureManager.Repo.Get();
 
                 List<ListViewItem> temp = new List<ListViewItem>();
@@ -859,7 +835,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private DataStructureType GetDataStructureType(long id)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-
 
             try
             {
@@ -916,7 +891,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         //toDo this function to DIM or BAM ??
         /// <summary>
-        /// this function is parsing the xmldocument to 
+        /// this function is parsing the xmldocument to
         /// create releationships based on releationshiptypes between datasets and person parties
         /// </summary>
         /// <param name="datasetid"></param>
@@ -932,7 +907,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 using (var uow = this.GetUnitOfWork())
                 {
-
                     //check if mappings exist between system/relationships and the metadatastructure/attr
                     // get all party mapped nodes
                     IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
@@ -980,9 +954,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
                             }
                         }
-
                     }
-                    #endregion
+
+                    #endregion delete relationships
 
                     #region add relationship
 
@@ -1010,7 +984,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                     MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)))
                                 {
-
                                     // create releationship
 
                                     // create a Party for the dataset
@@ -1021,7 +994,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     // get or create datasetParty
                                     Party datasetParty = partyManager.GetPartyByCustomAttributeValues(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), customAttributes).FirstOrDefault();
                                     if (datasetParty == null) datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
-
 
                                     // Get user party
                                     var person = partyManager.GetParty(partyid);
@@ -1052,7 +1024,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
 
-                    #endregion //add relationship
+                    #endregion add relationship
                 }
             }
             catch (Exception ex)
@@ -1068,7 +1040,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
-
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };

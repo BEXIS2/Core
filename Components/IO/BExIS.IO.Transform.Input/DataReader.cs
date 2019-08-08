@@ -420,6 +420,7 @@ namespace BExIS.IO.Transform.Input
 
 
             }
+
             if (errors == null)
             {
 

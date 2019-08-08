@@ -1,8 +1,11 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -144,8 +147,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Subjects", featureId);
         }
 
-        [GridAction]
-        public ActionResult Subjects_Select(long featureId)
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Subjects_Select(GridCommand command, long featureId)
         {
             FeaturePermissionManager featurePermissionManager = null;
             SubjectManager subjectManager = null;
@@ -163,7 +166,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 if (feature == null)
                     return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
-                var subjects = subjectManager.Subjects.ToList();
+
+                var subjects = new List<Subject>();
+                int count = subjectManager.Subjects.Count();
+                ViewData["subjectsGridTotal"] = count;
+                if (command != null)// filter subjects based on grid filter settings
+                {
+                    FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                    OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
+
+                    subjects = subjectManager.GetSubjects(filter, orderBy, command.Page, command.PageSize, out count);
+                }
+                else
+                {
+                    subjects = subjectManager.Subjects.ToList();
+                }
 
                 foreach (var subject in subjects)
                 {
@@ -173,7 +190,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
                 }
 
-                return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
+                return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions, Total = count });
             }
             finally
             {

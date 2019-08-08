@@ -1239,9 +1239,20 @@ namespace BExIS.IO.Transform.Output
             return true;
         }
 
+        protected override bool AddRow(string[] row, long rowIndex)
+        {
+
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region addHeader
+        protected override bool AddHeader(string[] header)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override bool AddHeader(StructuredDataStructure header)
         {
             return false;

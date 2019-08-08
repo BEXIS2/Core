@@ -1,14 +1,13 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.IO.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Timers;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
 using Vaiona.Logging.Aspects;
 
 /// <summary>
@@ -20,7 +19,7 @@ namespace BExIS.IO.Transform.Input
     /// this class is used to read and validate ascii files
     /// </summary>
     /// <remarks></remarks>        
-    public class AsciiReader:DataReader
+    public class AsciiReader : DataReader
     {
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
@@ -43,7 +42,7 @@ namespace BExIS.IO.Transform.Input
 
             this.FileStream = file;
             AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
-                
+
             // Check params
             if (this.FileStream == null)
             {
@@ -212,7 +211,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                
+
                 using (StreamReader streamReader = new StreamReader(file))
                 {
                     string line;
@@ -247,39 +246,39 @@ namespace BExIS.IO.Transform.Input
                     }
 
                     _timer.Stop();
-                    Debug.WriteLine(" ");
-                    Debug.WriteLine("*****************************************************************");
-                    Debug.WriteLine(" position : " + Position+"    -->  Timer: "+ _timer.Elapsed.TotalSeconds.ToString() );
+                    //Debug.WriteLine(" ");
+                    //Debug.WriteLine("*****************************************************************");
+                    //Debug.WriteLine(" position : " + Position + "    -->  Timer: " + _timer.Elapsed.TotalSeconds.ToString());
 
                     _timer = Stopwatch.StartNew();
 
-                        /// <summary>
-                        /// read each line as long as the packet size is not reached
-                        /// generating a datatuple from the line
-                        /// </summary>
-                        /// <remarks></remarks>        
-                        while ((line = streamReader.ReadLine()) != null && items <= packageSize-1)
+                    /// <summary>
+                    /// read each line as long as the packet size is not reached
+                    /// generating a datatuple from the line
+                    /// </summary>
+                    /// <remarks></remarks>        
+                    while ((line = streamReader.ReadLine()) != null && items <= packageSize - 1)
+                    {
+                        if (Position >= this.Info.Data)
                         {
-                            if (Position >= this.Info.Data)
-                            {
-                                // return List of VariablesValues, and error messages
-                                this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
-                            }
-
-                            Position++;
-                            index++;
-                            items++;
+                            // return List of VariablesValues, and error messages
+                            this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
                         }
 
-                        _timer.Stop();
+                        Position++;
+                        index++;
+                        items++;
+                    }
 
-                        Debug.WriteLine(" created datatuples : " + _timer.Elapsed.TotalSeconds.ToString());
-                        
+                    _timer.Stop();
+
+                    //Debug.WriteLine(" created datatuples : " + _timer.Elapsed.TotalSeconds.ToString());
+
 
                 }
             }
 
-            
+
             return this.DataTuples;
         }
 
@@ -384,7 +383,7 @@ namespace BExIS.IO.Transform.Input
                             listOfSelectedvalues.Add(GetValuesFromRow(rowToList(line, seperator), index, variableList));
 
                             rowTime.Stop();
-                            //Debug.WriteLine("index : "+index+"   ---- Total Time of primary key check " + rowTime.Elapsed.TotalSeconds.ToString());
+                            ////Debug.WriteLine("index : "+index+"   ---- Total Time of primary key check " + rowTime.Elapsed.TotalSeconds.ToString());
                         }
 
                         Position++;
@@ -395,11 +394,11 @@ namespace BExIS.IO.Transform.Input
 
                     _timer.Stop();
 
-                    Debug.WriteLine(" get values for primary key check datatuples : " + _timer.Elapsed.TotalSeconds.ToString());
+                    //Debug.WriteLine(" get values for primary key check datatuples : " + _timer.Elapsed.TotalSeconds.ToString());
                 }
 
                 totalTime.Stop();
-                Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
+                //Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
             }
 
             return listOfSelectedvalues;
@@ -483,7 +482,7 @@ namespace BExIS.IO.Transform.Input
         /// <seealso cref="TextSeparator"/>
         /// <param name="line">line which include the datastructure as names</param>       
         /// <param name="sep">TextSeparator as Character</param>       
-        protected bool ValidateDatastructure(string line, char sep )
+        protected bool ValidateDatastructure(string line, char sep)
         {
 
             /// <summary>
@@ -528,7 +527,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="variablesRow"></param>
         private void convertAndAddToSubmitedVariableIdentifier()
         {
-            
+
             if (VariableIdentifierRows != null)
             {
                 foreach (List<string> l in VariableIdentifierRows)
@@ -611,7 +610,7 @@ namespace BExIS.IO.Transform.Input
             {
                 string tempValue = "";
                 bool startText = false;
-                
+
                 List<string> temp = new List<string>();
 
                 foreach (string v in values)
@@ -634,7 +633,7 @@ namespace BExIS.IO.Transform.Input
 
                         if (v.ToCharArray().Last().Equals(textmarker))
                         {
-                            tempValue += separator+v;
+                            tempValue += separator + v;
                             temp.Add(tempValue.Trim(textmarker));
                             startText = false;
                         }
@@ -642,7 +641,7 @@ namespace BExIS.IO.Transform.Input
                     }
                     else
                     {
-                        if (startText) 
+                        if (startText)
                             tempValue += separator + v;
                         else temp.Add(v);
                     }
@@ -654,7 +653,7 @@ namespace BExIS.IO.Transform.Input
             return values;
         }
 
-  
+
 
         #endregion
 

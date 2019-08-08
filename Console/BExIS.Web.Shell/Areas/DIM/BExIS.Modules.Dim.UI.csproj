@@ -61,6 +61,7 @@
       <HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
@@ -329,13 +330,15 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\API\DatasetOutController.cs" />
+    <Compile Include="Controllers\API\AttachmentOutController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\PublicationController.cs" />
-    <Compile Include="Controllers\DataController.cs" />
+    <Compile Include="Controllers\API\DataOutController.cs" />
     <Compile Include="Controllers\ExportGFBIOController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
-    <Compile Include="Controllers\MetadataController.cs" />
+    <Compile Include="Controllers\API\MetadataOutController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
@@ -344,6 +347,7 @@
     <Compile Include="Helper\MappingHelper.cs" />
     <Compile Include="Helper\ReleationshipHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
+    <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
     <Compile Include="Models\DataTupleCsvFormatter.cs" />
@@ -713,9 +717,21 @@
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
+      <Project>{C8A05313-B960-406E-92EC-C1E5B3F47FCD}</Project>
+      <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
@@ -724,6 +740,10 @@
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
+      <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
+      <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>

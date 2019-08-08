@@ -1,5 +1,4 @@
-﻿
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
@@ -23,10 +22,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         public void GenerateSeedData()
         {
-
             ResearchPlanManager researchPlanManager = new ResearchPlanManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
             UnitManager unitManager = new UnitManager();
@@ -41,25 +38,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (!researchPlanManager.Repo.Get().Any(r => r.Title.Equals("none")))
                 {
                     researchPlanManager.Create("none", "If no research plan is used.");
-
                 }
 
-
-
-                #endregion
+                #endregion create none researchPlan
 
                 #region create none structure
-
 
                 if (!dataStructureManager.AllTypesDataStructureRepo.Get().Any(d => d.Name.Equals("none")))
                 {
                     dataStructureManager.CreateUnStructuredDataStructure("none", "If no data strutcure is used.");
-
                 }
 
-
-
-                #endregion
+                #endregion create none structure
 
                 #region create none unit
 
@@ -79,7 +69,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     unitManager.Create("none", "none", "If no unit is used.", dimension, MeasurementSystem.Unknown);
                 }
 
-                #endregion
+                #endregion create none unit
 
                 #region create entities
 
@@ -95,21 +85,42 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entity.UseMetadata = true;
                     entity.Securable = true;
 
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    entity.Extra = xmlDoc;
+
                     entityManager.Create(entity);
                 }
+                else
+                {
+                    if (entity.Extra == null)
+                    {
+                        //update to Extra
 
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.AppendChild(entity.Extra);
 
+                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                        xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
 
-                #endregion
+                        entity.Extra = xmlDoc;
+
+                        entityManager.Update(entity);
+                    }
+                }
+
+                #endregion create entities
 
                 #region SECURITY
+
                 //workflows = größere sachen, vielen operation
                 //operations = einzelne actions
 
                 //1.controller-> 1.Operation
-
-
-
 
                 Feature DataCollectionFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Collection"));
                 if (DataCollectionFeature == null) DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
@@ -123,23 +134,25 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Feature ImportDataFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Import Data"));
                 if (ImportDataFeature == null) ImportDataFeature = featureManager.Create("Import Data", "Easy way to load data into bexis", DataCollectionFeature);
 
-
                 Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
                 if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
-
 
                 #region Help Workflow
 
                 operationManager.Create("DCM", "Help", "*");
 
-                #endregion
+                #endregion Help Workflow
 
                 #region Create Dataset Workflow
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
+                operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
+                operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
+                operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
+                operationManager.Create("Api", "Metadata", "*", DatasetCreationFeature);
 
-                #endregion
+                #endregion Create Dataset Workflow
 
                 #region Update Dataset Workflow
 
@@ -157,8 +170,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 //Load files to server
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
 
+                operationManager.Create("Api", "DataIn", "*", DatasetUploadFeature);
+                operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
+                operationManager.Create("Api", "AttachmentIn", "*", DatasetUploadFeature);
+                operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
 
-                #endregion
+                #endregion Update Dataset Workflow
 
                 #region Easy Upload
 
@@ -170,7 +187,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "EasyUploadSummary", "*", ImportDataFeature);
                 operationManager.Create("DCM", "EasyUploadVerification", "*", ImportDataFeature);
 
-                #endregion
+                #endregion Easy Upload
 
                 #region Metadata Managment Workflow
 
@@ -182,17 +199,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "ManageMetadataStructure", "*", MetadataManagementFeature);
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", MetadataManagementFeature);
 
-                #endregion
+                #endregion Metadata Managment Workflow
 
                 #region public available
 
                 operationManager.Create("DCM", "Form", "*");
 
-                #endregion
+                #endregion public available
 
-                #endregion
+                #endregion SECURITY
 
-                #region Add Metadata 
+                #region Add Metadata
+
                 MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
@@ -202,10 +220,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     string descriptionXpath =
                         "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
-
                     ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
                         titleXPath, descriptionXpath);
-
                 }
 
                 //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
@@ -215,7 +231,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 //    string descriptionXpath =
                 //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
-
                 //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
                 //        titleXPath, descriptionXpath);
 
@@ -223,7 +238,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {
-
                     string titleXPath = "Metadata/Basic/BasicType/title/titleType";
                     string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
 
@@ -232,7 +246,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 }
                 //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
                 //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
-                #endregion
+
+                #endregion Add Metadata
             }
             catch (Exception ex)
             {
@@ -248,7 +263,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Dispose();
             }
         }
-
 
         #region METADATA
 
@@ -294,7 +308,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 }
                 catch (Exception ex)
                 {
-
                     throw ex;
                 }
             }
@@ -302,15 +315,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 xmlSchemaManager.Delete(schemaName);
             }
-
-
-
-
         }
 
         #region helper
 
         #region extra xdoc
+
         /// <summary>
         /// </summary>
         /// <param name="id"></param>
@@ -362,23 +372,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
-
             XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
             return doc;
-
         }
 
-        #endregion
+        #endregion extra xdoc
 
-        #endregion
+        #endregion helper
 
-        #endregion
+        #endregion METADATA
 
         public void Dispose()
         {
             // nothing to do for now...
         }
-
     }
 }
