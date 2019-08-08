@@ -24,7 +24,7 @@ namespace BExIS.Xml.Helpers
                     {
                         Id = id,
                         Title = datasetHelper.GetInformation(id, NameAttributeValues.title),
-                        Version = dm.GetDataset(id).Versions.Count
+                        Version = dm.GetDataset(id).Versions.Count,
                     });
                     return entities.ToList();
                 }
@@ -54,7 +54,7 @@ namespace BExIS.Xml.Helpers
             }
         }
 
-        public int GetVersionById(long id)
+        public int CountVersions(long id)
         {
             DatasetManager dm = new DatasetManager();
 
@@ -75,6 +75,44 @@ namespace BExIS.Xml.Helpers
             {
                 dm.Dispose();
             }
+        }
+
+        public List<EntityStoreItem> GetVersionsById(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+            List<EntityStoreItem> tmp = new List<EntityStoreItem>();
+            try
+            {
+                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetHelper = new XmlDatasetHelper();
+                var versions = dm.GetDataset(id).Versions.OrderBy(v => v.Timestamp).ToList();
+
+                foreach (var v in versions)
+                {
+                    tmp.Add(new EntityStoreItem()
+                    {
+                        Id = v.Id,
+                        Title = datasetHelper.GetInformationFromVersion(v.Id, NameAttributeValues.title),
+                        Version = versions.IndexOf(v) + 1,
+                        CommitComment = v.ChangeDescription
+                    });
+                }
+
+                return tmp;
+            }
+            catch (Exception ex)
+            {
+                return tmp;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+        public bool HasVersions()
+        {
+            return true;
         }
     }
 }
