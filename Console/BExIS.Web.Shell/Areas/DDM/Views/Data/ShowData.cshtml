@@ -1,8 +1,5 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
 
-@using Telerik.Web.Mvc.UI;
-@using Vaiona.Web.Mvc.Modularity
-
 @section Information
 {
     This is a detailed view on all parts of a dataset. Depending on your
@@ -24,81 +21,74 @@
 <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
+
+
 <div>
-    <table>
-        <tr>
-            <td>
-                <h1 title="Id: @Model.Id">@Model.Title</h1>
-                <br />
-                <p>
-                    <b>Dataset Id: </b> @Model.Id
-                    <b>Version: </b>
 
-                    @if (Model.Version > 1)
-                    {
-                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version - 1 }, new { @class = "bx-button small function fa fa-angle-double-left" })
-                    }
+    <h1 title="Id: @Model.Id">@Model.Title</h1>
 
-                    @Model.Version
+    <br />
 
-                    @if (!Model.LatestVersion)
-                    {
-                        @Html.ActionLink(" ", "ShowData", "Data", new { id = Model.Id, version = Model.Version + 1 }, new { @class = "bx-button small function fa fa-angle-double-right" })
-                    }
-                </p>
-            </td>
-            <td>
-                <div id="preloaderContainer" />
-            </td>
-            <td style="text-align: -webkit-right;">
+    <div id="view-header" class="row">
+        <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
+            <b>Dataset Id: </b> @Model.Id
+            <b>Version: </b>
+            @Html.DropDownListFor(m=>m.Version,null)
 
-                @if (Model.DownloadAccess)
+        </div>
+        <div class="col-xs-2 col-md-2 col-lg-2">
+            <div id="preloaderContainer"></div>
+        </div>
+
+        <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
+            @if (Model.DownloadAccess)
+            {
+
+                if (Model.DataStructureType.ToLower().Equals("structured"))
+                {
+                    <span class="dropdown">
+                        <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                            Download Dataset
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId  })">... with Template</a></li>
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+                        </ul>
+                    </span>
+                }
+                else
+                {
+                    <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
+                }
+            }
+            else
+            {
+                if (Model.RequestAble)
                 {
 
-                    if (Model.DataStructureType.ToLower().Equals("structured"))
+                    if (Model.RequestExist)
                     {
-                        <span class="dropdown">
-                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                Download Dataset
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId  })">... with Template</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                            </ul>
-                        </span>
+                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
                     }
                     else
                     {
-                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
+                        @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
                     }
                 }
                 else
                 {
-                    if (Model.RequestAble)
-                    {
-
-                        if (Model.RequestExist)
-                        {
-                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
-                        }
-                        else
-                        {
-                            @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
-                        }
-                    }
-                    else
-                    {
-                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
-                    }
+                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
                 }
-            </td>
-        </tr>
-    </table>
+            }
+
+
+        </div>
+    </div>
 </div>
 
 @if (@Model != null)
@@ -134,10 +124,10 @@
                                       .Enabled(false);
 
                                   tabs.Add()
-                                      .Text("Internal links")
+                                      .Text("Links")
                                       .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id })
-                                      .Enabled(false)
-                                      .HtmlAttributes(new { id = "datapermissions" });
+                                      .Enabled(true)
+                                      .HtmlAttributes(new { id = "showreferences" });
 
                                   tabs.Add()
                                       .Text("Dataset Permissions")

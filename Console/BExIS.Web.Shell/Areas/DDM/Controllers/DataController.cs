@@ -78,7 +78,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Json(false);
         }
 
-        public ActionResult Show(long id)
+        public ActionResult Show(long id, long version = 0)
         {
             //get the researchobject (cuurently called dataset) to get the id of a metadata structure
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
@@ -106,21 +106,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
             }
-            if (action == null) RedirectToAction(defaultAction, new { id });
+            if (action == null) RedirectToAction(defaultAction, new { id, version });
 
             try
             {
-                //var view = this.Render(action.Item1, action.Item2, action.Item3, new RouteValueDictionary()
-                //{
-                //    { "id", id }
-                //});
-
-                //return Content(view.ToHtmlString(), "text/html");
-                return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id = id });
+                if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
+                else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
             }
             catch
             {
-                return RedirectToAction(defaultAction, new { id });
+                return RedirectToAction(defaultAction, new { id, version });
             }
         }
 
@@ -225,6 +220,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
+                ViewData["Version"] = getVersionsSelectList(id, dm);
 
                 return View(model);
             }
@@ -1371,6 +1367,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             });
 
             return options;
+        }
+
+        private SelectList getVersionsSelectList(long id, DatasetManager datasetManager)
+        {
+            List<SelectListItem> tmp = new List<SelectListItem>();
+
+            List<DatasetVersion> dsvs = datasetManager.GetDatasetVersions(id).OrderBy(d => d.Timestamp).ToList();
+
+            dsvs.ForEach(d => tmp.Add(
+                new SelectListItem()
+                {
+                    Text = (dsvs.IndexOf(d) + 1) + " - " + d.ChangeDescription,
+                    Value = "" + (dsvs.IndexOf(d) + 1)
+                }
+                ));
+
+            return new SelectList(tmp, "Value", "Text");
         }
 
         public string GetUsernameOrDefault()

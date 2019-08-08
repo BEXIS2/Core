@@ -1,113 +1,166 @@
 ﻿@{
     ViewBag.Title = " ... ";
 }
-<div>
-    <b>Refrences from Metadata</b>
+@model BExIS.Modules.Dcm.UI.Models.EntityReference.ReferencesModel
 
-    <table id="metadata_reference_table" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Type</th>
-                <th>Title</th>
-                <th>Context</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+<script src="@Url.Content("~/Areas/Dcm/Scripts/entity.reference.js")" type="text/javascript"></script>
 
-            @foreach (var srm in Model.MetadataReferences)
-            {
+<div id="entity-reference-container" class="row">
+       <div class="col-md-12">
+        <div class="entity-referenceoption-container">
+            <button id="create-reference-bt" class="bx-button function">Create reference</button>
+        </div>
+
+        <table id="system_reference_table" class="display" style="width:100%">
+            <thead>
                 <tr>
-                    <td class="dt-body-center">@srm.Id</td>
-                    <td>@srm.Type</td>
-                    <td>@srm.Title</td>
+                    <th>Id</th>
+                    <th>Version</th>
+                    <th>Title</th>
+                    <th>Context</th>
+                    <th>Type</th>
+                    <th>Reference Type</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var srm in Model.SystemReferences)
+                {
+                <tr>
+                    <td>@srm.Id</td>
+                    <td>@srm.Version</td>
+                    <td>@Html.ActionLink(@srm.Title, "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, null)</td>
                     <td>@srm.Context</td>
+                    <td>@srm.Type</td>
+                    <td>@srm.ReferenceType</td>
                     <td class="dt-body-center">
-                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new { @class = "bx bx-grid-function bx-show" })
+
+
+                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, new {title="Go to this version.", @class = "bx bx-grid-function bx-show" })
+
+                        @if (!srm.LatestVersion)
+                        {
+                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new {title="Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                        }
+
+                        <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
                     </td>
                 </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Id</th>
-                <th>Type</th>
-                <th>Title</th>
-                <th>Context</th>
-                <th></th>
-            </tr>
-        </tfoot>
+                }
+            </tbody>
 
+        </table>
+    </div>
 
 </div>
 
-<div>
-    <b>References</b>
 
-    @model BExIS.Modules.Dcm.UI.Models.EntityReference.ReferencesModel
 
-    <table id="system_reference_table" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Type</th>
-                <th>Title</th>
-                <th>Context</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+<script src="@Url.Content("~/Scripts/2013.2.611/telerik.common.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/2013.2.611/telerik.draganddrop.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/2013.2.611/telerik.window.min.js")" type="text/javascript"></script>
 
-            @foreach (var srm in Model.SystemReferences)
-            {
-                <tr>
-                    <td class="dt-body-center">@srm.Id</td>
-                    <td>@srm.Type</td>
-                    <td>@srm.Title</td>
-                    <td>@srm.Context</td>
-                    <td class="dt-body-center">
-                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new { @class = "bx bx-grid-function bx-show" })
-                    </td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Id</th>
-                <th>Type</th>
-                <th>Title</th>
-                <th>Context</th>
-                <th></th>
-            </tr>
-        </tfoot>
-    </table>
-</div>
 <script type="text/javascript">
-
     $(document).ready(function () {
 
-        $("#metadata_reference_table").DataTable({
-            "autoWidth": false,
-            "columns": [
-                { "width": "20px" },
-                null,
-                null,
-                null,
-                { "width": "20px" },
-            ]
-        });
+            $("#system_reference_table").DataTable({
+                "autoWidth": false,
+                "columns": [
+                    { "width": "40px" },
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    { "width": "100px" },
+                ]
+            });
 
-        $("#system_reference_table").DataTable({
-            "autoWidth": false,
-            "columns": [
-                { "width": "20px" },
-                null,
-                null,
-                null,
-                { "width": "20px" },
-            ]
-        });
-    });
+            var id = '@Model.Selected.Id';
+            var type = '@Model.Selected.TypeId'
+            var title = '@Model.Selected.Title'
 
+            var parameters = {
+                sourceId: id,
+                sourceTypeId: type
+            }
+
+            $('#create-reference-bt')
+                .click(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Create", "EntityReference")',
+                        data: parameters,
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: "Create Reference for " + title +" ("+id+")",
+                                html: "<div id='content_create_reference' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#window_createReference").data('tWindow').destroy();
+                                    reload(id,type)
+                                    //update grid
+                                    //$("#grid_groups .t-refresh").trigger('click');
+                                }
+                            });
+
+                            windowElement.attr('id', 'window_createReference');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
+
+                        }
+                    });
+                });
+
+
+            $('.delete-reference-bt').click(function (e) {
+
+                var answer = confirm("Do you really want to delete the Enitity Reference?");
+
+                if (answer) {
+                    var sourceid = '@Model.Selected.Id';
+                    var sourcetype = '@Model.Selected.TypeId'
+
+                    var parameters = {
+                        id: $(this).attr("id")
+                    }
+
+                    console.log(parameters)
+
+                    $.ajax({
+                        type: 'Post',
+                        url: '@Url.Action("Delete", "EntityReference")',
+                        data: parameters,
+                        dataType: 'json',
+                        success: function (data) {
+
+                            if (data) {
+
+                                reload(sourceid, sourcetype)
+                            }
+                        }
+                    });
+                }
+            });
+
+        })
 </script>
+
+
+
+<style type="text/css">
+
+    .entity-referenceoption-container {
+        height: 70px;
+        text-align: left;
+    }
+</style>

@@ -15,9 +15,12 @@
 
     <property name="SourceId" type="Int64" />
     <property name="SourceEntityId" type="Int64" />
+    <property name="SourceVersion" type="Int32" />
     <property name="TargetId" type="Int64" />
     <property name="TargetEntityId" type="Int64" />
+    <property name="TargetVersion" type="Int32" />
 
     <property name="Context" type="string" />
+    <property name="ReferenceType" type="string" />
   </class>
 </hibernate-mapping>

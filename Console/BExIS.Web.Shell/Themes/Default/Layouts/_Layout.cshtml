@@ -29,6 +29,7 @@
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
+                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-datatables-net.css"))
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))
                                                         //.Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
 
@@ -51,6 +52,7 @@
     @Scripts.Render("~/bundles/handsontable")
     @Scripts.Render("~/bundles/dataTables")
     @Scripts.Render("~/bundles/bexis")
+   
 
 </head>
 
@@ -114,7 +116,6 @@
     )
 
     @Html.RenderAuto("Footer")
-
     @RenderSection("Scripts", false)
 
 </body>

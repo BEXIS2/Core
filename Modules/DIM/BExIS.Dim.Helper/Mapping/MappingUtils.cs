@@ -293,7 +293,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     // load all existing entity objects iwith the defined manager
 
                     var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entity.Id).EntityStoreType);
-                    var instances = instanceStore.GetEntities().Where(e => e.Title.Contains(value)).Select(i => new MappingEntityResultElement()
+                    var instances = instanceStore.GetEntities().Where(e => e.Title.ToLower().Contains(value.ToLower())).Select(i => new MappingEntityResultElement()
                     {
                         EntityId = i.Id,
                         Value = i.Title,

@@ -70,7 +70,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
 
-            var x = entityReferenceManager.Create(1, 1, 2, 2, "test");
+            var x = entityReferenceManager.Create(1, 1, 2, 2, 2, 3, "test", "testType");
             entityReferenceManager.Delete(x);
 
             return View("index");

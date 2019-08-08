@@ -29,6 +29,55 @@ namespace BExIS.Security.Services.Objects
 
         public IReadOnlyRepository<EntityReference> ReferenceRepository { get; }
 
+        public bool Exist(EntityReference entityReference, bool includeVersion = false, bool ignoreSourceVersion = false)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetRepository<EntityReference>();
+
+                if (includeVersion && !ignoreSourceVersion)
+                {
+                    if (repo.Query(r =>
+                         r.SourceId.Equals(entityReference.SourceId) &&
+                         r.SourceEntityId.Equals(entityReference.SourceEntityId) &&
+                         r.SourceVersion.Equals(entityReference.SourceVersion) &&
+                         r.TargetId.Equals(entityReference.TargetId) &&
+                         r.TargetEntityId.Equals(entityReference.TargetEntityId) &&
+                         r.TargetVersion.Equals(entityReference.TargetVersion) &&
+                         r.Context.Equals(entityReference.Context) &&
+                         r.ReferenceType.Equals(entityReference.ReferenceType)
+
+                    ).Count() == 0) return false;
+                }
+                else if (includeVersion && ignoreSourceVersion)
+                {
+                    if (repo.Query(r =>
+                         r.SourceId.Equals(entityReference.SourceId) &&
+                         r.SourceEntityId.Equals(entityReference.SourceEntityId) &&
+                         r.TargetId.Equals(entityReference.TargetId) &&
+                         r.TargetEntityId.Equals(entityReference.TargetEntityId) &&
+                         r.TargetVersion.Equals(entityReference.TargetVersion) &&
+                         r.Context.Equals(entityReference.Context) &&
+                         r.ReferenceType.Equals(entityReference.ReferenceType)
+
+                    ).Count() == 0) return false;
+                }
+                else
+                {
+                    if (repo.Query(r =>
+                         r.SourceId.Equals(entityReference.SourceId) &&
+                         r.SourceEntityId.Equals(entityReference.SourceEntityId) &&
+                         r.TargetId.Equals(entityReference.TargetId) &&
+                         r.TargetEntityId.Equals(entityReference.TargetEntityId) &&
+                         r.Context.Equals(entityReference.Context) &&
+                         r.ReferenceType.Equals(entityReference.ReferenceType)
+                    ).Count() == 0) return false;
+                }
+
+                return true;
+            }
+        }
+
         public void Create(EntityReference entityReference)
         {
             using (var uow = this.GetUnitOfWork())
@@ -39,9 +88,9 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public EntityReference Create(long sourceId, long sourceEntityId, long targetId, long targetEntityId, string context)
+        public EntityReference Create(long sourceId, long sourceEntityId, int sourceEntityVersion, long targetId, long targetEntityId, int targetEntityVersion, string context, string type)
         {
-            EntityReference entityReference = new EntityReference(sourceId, sourceEntityId, targetId, targetEntityId, context);
+            EntityReference entityReference = new EntityReference(sourceId, sourceEntityId, sourceEntityVersion, targetId, targetEntityId, targetEntityVersion, context, type);
 
             using (var uow = this.GetUnitOfWork())
             {
@@ -50,6 +99,17 @@ namespace BExIS.Security.Services.Objects
                 uow.Commit();
 
                 return entityReference;
+            }
+        }
+
+        public void Delete(long id)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetRepository<EntityReference>();
+                var entityReference = repo.Get(id);
+                repo.Delete(entityReference);
+                uow.Commit();
             }
         }
 

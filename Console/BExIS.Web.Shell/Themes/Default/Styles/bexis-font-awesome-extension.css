@@ -623,10 +623,11 @@
     content: "\f04d";
 }
 
+.bx-fast
 .fa-forward:before {
     content: "\f04e";
 }
-
+.bx-fast-forward:before,
 .fa-fast-forward:before {
     content: "\f050";
 }

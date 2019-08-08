@@ -1,7 +1,16 @@
-﻿.primaryDataResultGrid .t-grid-content
-{
-	height : auto !important;
+﻿/***SHOW DATA***/
+#view-header {
+    padding:5px 0 5px 0;
+}
 
+#view-header-dataset-details {
+
+
+}
+
+
+.primaryDataResultGrid .t-grid-content {
+    height: auto !important;
 }
 
 .primaryDataResultGrid .t-grid-content td

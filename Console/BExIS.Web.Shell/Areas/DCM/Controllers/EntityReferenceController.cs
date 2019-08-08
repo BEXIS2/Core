@@ -22,14 +22,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
-            // ViewData for Title
-            ViewData["Title"] = helper.GetEntityTitle(sourceId, sourceTypeId);
-            // ViewData for enitity type list
-            ViewData["TargetType"] = helper.GetEntityTypes();
-            ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
-            ViewData["Init"] = true;
+            SetViewData(sourceId, sourceTypeId, true, false);
 
-            return View("Create", new CreateSimpleReferenceModel(sourceId, sourceTypeId));
+            return PartialView("_create", new CreateSimpleReferenceModel(sourceId, sourceTypeId, helper.CountVersions(sourceId, sourceTypeId)));
         }
 
         public JsonResult GetTargets(long id)
@@ -39,6 +34,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (id > 0)
                 helper.GetEntities(id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Title, Value = e.Id.ToString() }));
+
+            return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetTargetVersions(long id, long type)
+        {
+            EntityReferenceHelper helper = new EntityReferenceHelper();
+            SelectList tmp = new SelectList(new List<SelectListItem>());
+
+            if (id > 0)
+                tmp = helper.GetEntityVersions(id, type);
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
@@ -61,12 +67,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 EntityReference entityReference = helper.Convert(model);
                 entityReferenceManager.Create(entityReference);
 
-                ViewData["Title"] = helper.GetEntityTitle(model.SourceId, model.SourceTypeId);
-                ViewData["TargetType"] = helper.GetEntityTypes();
-                ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
-                ViewData["Success"] = "This references is saved.";
-                ViewData["Init"] = false;
-                return PartialView("Create", model);
+                SetViewData(model.SourceId, model.SourceTypeId, false, true);
+                return PartialView("_create", model);
+            }
+            finally
+            {
+                entityReferenceManager.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public JsonResult Delete(long id)
+        {
+            if (id == 0) return Json(false);
+
+            EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
+
+            try
+            {
+                entityReferenceManager.Delete(id);
+
+                return Json(true);
             }
             finally
             {
@@ -79,11 +100,44 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ReferencesModel model = new ReferencesModel();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
-            model.Selected = helper.GetSimplereferenceModel(sourceId, sourceTypeId);
+            model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId);
             model.SystemReferences = helper.GetAllReferences(sourceId, sourceTypeId);
-            model.MetadataReferences = helper.GetAllMetadataReferences(sourceId, sourceTypeId);
 
             return PartialView("Show", model);
         }
+
+        public ActionResult Show2(long sourceId, long sourceTypeId)
+        {
+            ReferencesModel model = new ReferencesModel();
+            EntityReferenceHelper helper = new EntityReferenceHelper();
+
+            model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId);
+            model.SystemReferences = helper.GetAllReferences(sourceId, sourceTypeId);
+
+            return View("Show", model);
+        }
+
+        #region ViewData
+
+        //test
+        private void SetViewData(long id, long type, bool init, bool isSuccess)
+        {
+            EntityReferenceHelper helper = new EntityReferenceHelper();
+
+            // ViewData for Title
+            ViewData["Title"] = helper.GetEntityTitle(id, type);
+            ViewData["Version"] = helper.CountVersions(id, type);
+            // ViewData for enitity type list
+            ViewData["TargetType"] = helper.GetEntityTypes();
+            ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
+            ViewData["TargetVersion"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
+            ViewData["ReferenceType"] = helper.GetReferencesTypes();
+            //"This references is saved."
+            if (isSuccess) ViewData["Success"] = "This references is saved.";
+
+            ViewData["Init"] = init;
+        }
+
+        #endregion ViewData
     }
 }

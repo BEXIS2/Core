@@ -1253,7 +1253,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     var instanceStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
                                     if (instanceStore != null)
                                     {
-                                        version = instanceStore.GetVersionById(entityId);
+                                        version = instanceStore.CountVersions(entityId);
                                     }
                                 }
                             }
@@ -1267,9 +1267,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         //create dic for the xml attr
                         Dictionary<string, string> xmlAttr = new Dictionary<string, string>();
-                        xmlAttr.Add("entityid", entityId.ToString());
-                        xmlAttr.Add("entitytypeid", entityTypeId.ToString());
-                        if (version > 0) xmlAttr.Add("entityversion", version.ToString());
+                        xmlAttr.Add(EntityReferenceXmlAttribute.entityid.ToString(), entityId.ToString());
+                        xmlAttr.Add(EntityReferenceXmlAttribute.entitytype.ToString(), entityTypeId.ToString());
+                        if (version > 0) xmlAttr.Add(EntityReferenceXmlAttribute.entityversion.ToString(), version.ToString());
 
                         UpdateAttribute(
                         usage,

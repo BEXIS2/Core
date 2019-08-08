@@ -178,9 +178,6 @@
 
 <h1>Bootstrap Select</h1>
 
-
-
-
 <h3>BEXIS UI COLOR OVERVIEW</h3>
 <div>
     <table>
@@ -214,7 +211,7 @@
 </div>
 
 <h3>Dropdown with groups</h3>
-<select >
+<select>
     <optgroup label="Picnic">
         <option>Mustard</option>
         <option>Ketchup</option>
@@ -635,6 +632,7 @@
 <div>
     <p>click for the window</p>
     <button class="bx-button smaller" onclick="onSelect(this)">smallest</button>
+    <button class="bx-button smaller" onclick="openJqueryUIDialog()">jquery dialog</button>
     <button class="bx-button small" onclick="onSelect(this)">more</button>
     <button class="bx-button" onclick="openAlertDialog()">alert</button>
     <button class="bx-button" onclick="openMessageDialog()">message</button>
@@ -662,32 +660,32 @@
             .Draggable(true)
             .Buttons(buttons => buttons.Close())
             .Content(@<text>
-                <div class="bx-title"><h2>html vs telerik vs bootstrap</h2></div>
-                <div class="bx-content">
-                    <div>
-                        asdkhahsdöfjh  ahsdk jfhkjsdhkhkajdhk ddh chnyxkjh fhwsa jdkach yjh fuidy disjykdh c myxbkjxdh asuie ui<br />
-                        sdghjhbxjnb< jb usjh daiu soasdi niasjhdf kjyh xjigh yiusdgh iaug kjb kxyjhx isueg ajsg isds
-                    </div>
-                    <div>
-                        @(Html.Telerik().Grid(table)
-                                                  .Name("TestGrid")
-                                                  .Groupable()
-                                                  .Pageable(pageable => pageable.Position(GridPagerPosition.Both))
-                                                  .Filterable()
-                                                  .Sortable()
-                                                   .Pageable(paging =>
-                                                        paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
-                                                            .Total(table.Rows.Count)
-                                                            )
-                        )
-                    </div>
-                </div>
-                <div class="bx-footer right">
-                    <button class="bx-button action" onclick="onSelect(this)">more</button>
-                    <button class="bx-button action" onclick="openAlertDialog()">alert</button>
-                </div>
-            </text>
+                    <div class="bx-title"><h2>html vs telerik vs bootstrap</h2></div>
+                    <div class="bx-content">
+                        <div>
+                            asdkhahsdöfjh  ahsdk jfhkjsdhkhkajdhk ddh chnyxkjh fhwsa jdkach yjh fuidy disjykdh c myxbkjxdh asuie ui<br />
+                            sdghjhbxjnb< jb usjh daiu soasdi niasjhdf kjyh xjigh yiusdgh iaug kjb kxyjhx isueg ajsg isds
+                        </div>
+                        <div>
+                            @(Html.Telerik().Grid(table)
+                                                      .Name("TestGrid")
+                                                      .Groupable()
+                                                      .Pageable(pageable => pageable.Position(GridPagerPosition.Both))
+                                                      .Filterable()
+                                                      .Sortable()
+                                                       .Pageable(paging =>
+                                                            paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
+                                                                .Total(table.Rows.Count)
+                                                                )
                             )
+                        </div>
+                    </div>
+                    <div class="bx-footer right">
+                        <button class="bx-button action" onclick="onSelect(this)">more</button>
+                        <button class="bx-button action" onclick="openAlertDialog()">alert</button>
+                    </div>
+            </text>
+)
 )
 
 <h3>Telerik UI Components</h3>
@@ -914,6 +912,41 @@
 
         </table>
     </div>
+
+    <b>datatables.net</b>
+    <div style="padding: 10px">
+        <p>DATATABLE 1</p>
+        <table id="datatables-net-example">
+            <thead>
+                <tr>
+                    @foreach (DataColumn c in Model.DataTable.Columns)
+                    {
+                        <th>@c.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow r in Model.DataTable.Rows)
+                {
+                    <tr>
+                        @foreach (object o in r.ItemArray)
+                        {
+                            <td>@o</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    @foreach (DataColumn c in Model.DataTable.Columns)
+                    {
+                        <th>@c.ColumnName</th>
+                    }
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
 }
 <style>
     .slider-selection {
@@ -927,6 +960,9 @@
     $(document).ready(function () {
         resetAllTelerikIconTitles();
         autosize($('textarea'));
+
+        $("#datatables-net-example").DataTable();
+
     });
 
     function onChange(e) {
@@ -940,6 +976,10 @@
 
     function openAlertDialog() {
         bx_openDialog("#alertDialog", "alert");
+    }
+
+    function openJqueryUIDialog() {
+        $("#alertDialog").dialog();
     }
 
     function openMessageDialog() {
