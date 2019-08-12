@@ -95,26 +95,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        public ActionResult Show(long sourceId, long sourceTypeId)
+        public ActionResult Show(long sourceId, long sourceTypeId, int sourceVersion)
         {
             ReferencesModel model = new ReferencesModel();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
-            model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId);
-            model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId);
-            model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId);
+            model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId, sourceVersion);
+            model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId, sourceVersion);
+            model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId, sourceVersion);
 
             return PartialView("Show", model);
         }
 
-        public ActionResult Show2(long sourceId, long sourceTypeId)
+        public ActionResult Show2(long sourceId, long sourceTypeId, int sourceVersion)
         {
             ReferencesModel model = new ReferencesModel();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
-            model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId);
-            model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId);
-            model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId);
+            model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId, sourceVersion);
+            model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId, sourceVersion);
+            model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId, sourceVersion);
 
             return View("Show", model);
         }

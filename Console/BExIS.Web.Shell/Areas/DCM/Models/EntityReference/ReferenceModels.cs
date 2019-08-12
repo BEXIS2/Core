@@ -10,52 +10,74 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
 {
     public class ReferencesModel
     {
-        public SimpleReferenceModel Selected { get; set; }
+        public SimpleSourceReferenceModel Selected { get; set; }
 
-        public List<SimpleReferenceModel> SourceReferences { get; set; }
-        public List<SimpleReferenceModel> TargetReferences { get; set; }
+        public List<ReferenceModel> SourceReferences { get; set; }
+        public List<ReferenceModel> TargetReferences { get; set; }
 
         public ReferencesModel()
         {
-            Selected = new SimpleReferenceModel();
-            SourceReferences = new List<SimpleReferenceModel>();
-            TargetReferences = new List<SimpleReferenceModel>();
+            Selected = new SimpleSourceReferenceModel();
+            SourceReferences = new List<ReferenceModel>();
+            TargetReferences = new List<ReferenceModel>();
         }
     }
 
-    public class SimpleReferenceModel
+    public class SimpleSourceReferenceModel
     {
         public long Id { get; set; }
+        public int Version { get; set; }
+        public string Title { get; set; }
+
+        public long TypeId { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class ReferenceModel
+    {
         public long RefId { get; set; }
+
+        public ReferenceElementModel Target { get; set; }
+        public ReferenceElementModel Source { get; set; }
+
+        public string Context { get; set; }
+        public string ReferenceType { get; set; }
+
+        public ReferenceModel()
+        {
+            RefId = 0;
+            Target = new ReferenceElementModel();
+            Source = new ReferenceElementModel();
+            Context = "";
+            ReferenceType = "";
+        }
+    }
+
+    public class ReferenceElementModel
+    {
+        public long Id { get; set; }
         public int Version { get; set; }
         public long TypeId { get; set; }
         public string Type { get; set; }
         public string Title { get; set; }
-        public string Context { get; set; }
-        public string ReferenceType { get; set; }
         public bool LatestVersion { get; set; }
 
-        public SimpleReferenceModel()
+        public ReferenceElementModel()
         {
             Id = 0;
-            RefId = 0;
             Version = 0;
             TypeId = 0;
-            Type = "";
             Title = "";
-            Context = "";
-            ReferenceType = "";
+            Type = "";
         }
 
-        public SimpleReferenceModel(long id, int version, long typeId, string type, string title, string context, string referenceType)
+        public ReferenceElementModel(long id, int version, long typeId, string title, string type, bool latestVersionc)
         {
             Id = id;
             Version = version;
             TypeId = typeId;
-            Type = type;
             Title = title;
-            Context = context;
-            ReferenceType = referenceType;
+            Type = type;
         }
     }
 

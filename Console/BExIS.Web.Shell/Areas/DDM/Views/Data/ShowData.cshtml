@@ -1,5 +1,15 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
 
+@{
+    int tabIndex = 0;
+
+    if (ViewData["TabIndex"] != null )
+    {
+        tabIndex = Convert.ToInt32(ViewData["TabIndex"].ToString());
+    }
+
+}
+
 @section Information
 {
     This is a detailed view on all parts of a dataset. Depending on your
@@ -115,7 +125,7 @@
 
         @(Html.Telerik().TabStrip()
                               .Name("ShowDataTabStrip")
-                              .SelectedIndex(0)
+                              .SelectedIndex(tabIndex)
                               .Items(tabs =>
                               {
 
@@ -142,7 +152,7 @@
 
                                   tabs.Add()
                                       .Text("Links")
-                                      .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id })
+                                      .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
                                       .Enabled(true)
                                       .HtmlAttributes(new { id = "showreferences" });
 

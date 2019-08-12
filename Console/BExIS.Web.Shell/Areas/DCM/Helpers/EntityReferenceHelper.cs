@@ -156,52 +156,49 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         //    return tmp;
         //}
 
-        public SimpleReferenceModel GetSimpleReferenceModel(long id, long typeId)
+        public SimpleSourceReferenceModel GetSimpleReferenceModel(long id, long typeId, int version)
         {
-            SimpleReferenceModel tmp = new SimpleReferenceModel();
+            SimpleSourceReferenceModel tmp = new SimpleSourceReferenceModel();
             tmp.Id = id;
             tmp.TypeId = typeId;
+            tmp.Version = version;
             tmp.Title = GetEntityTitle(id, typeId);
             tmp.Type = GetEntityTypeName(typeId);
 
             return tmp;
         }
 
-        public SimpleReferenceModel GetTarget(EntityReference entityReference)
+        public ReferenceModel Convert(EntityReference entityReference)
         {
-            SimpleReferenceModel tmp = new SimpleReferenceModel();
-            tmp.Id = entityReference.TargetId;
-            tmp.Version = entityReference.TargetVersion;
-            tmp.RefId = entityReference.Id;
-            tmp.TypeId = entityReference.TargetEntityId;
-            tmp.Title = GetEntityTitle(entityReference.TargetId, entityReference.TargetEntityId, entityReference.TargetVersion);
-            tmp.Type = GetEntityTypeName(entityReference.TargetEntityId);
+            ReferenceModel tmp = new ReferenceModel();
+
+            tmp.Target = new ReferenceElementModel(
+                entityReference.TargetId,
+                entityReference.TargetVersion,
+                entityReference.TargetEntityId,
+                GetEntityTitle(entityReference.TargetId, entityReference.TargetEntityId, entityReference.TargetVersion),
+                GetEntityTypeName(entityReference.TargetEntityId),
+                entityReference.TargetVersion == CountVersions(entityReference.TargetId, entityReference.TargetEntityId) ? true : false
+                );
+
+            tmp.Source = new ReferenceElementModel(
+                entityReference.SourceId,
+                entityReference.SourceVersion,
+                entityReference.SourceEntityId,
+                GetEntityTitle(entityReference.SourceId, entityReference.SourceEntityId, entityReference.SourceVersion),
+                GetEntityTypeName(entityReference.SourceEntityId),
+                entityReference.SourceVersion == CountVersions(entityReference.SourceId, entityReference.SourceEntityId) ? true : false
+                );
+
             tmp.Context = entityReference.Context;
             tmp.ReferenceType = entityReference.ReferenceType;
-            tmp.LatestVersion = entityReference.TargetVersion == CountVersions(entityReference.TargetId, entityReference.TargetEntityId) ? true : false;
 
             return tmp;
         }
 
-        public SimpleReferenceModel GetSource(EntityReference entityReference)
+        public List<ReferenceModel> GetAllReferences(long id, long typeid)
         {
-            SimpleReferenceModel tmp = new SimpleReferenceModel();
-            tmp.Id = entityReference.SourceId;
-            tmp.Version = entityReference.SourceVersion;
-            tmp.RefId = entityReference.Id;
-            tmp.TypeId = entityReference.SourceEntityId;
-            tmp.Title = GetEntityTitle(entityReference.SourceId, entityReference.SourceEntityId, entityReference.SourceVersion);
-            tmp.Type = GetEntityTypeName(entityReference.SourceEntityId);
-            tmp.Context = entityReference.Context;
-            tmp.ReferenceType = entityReference.ReferenceType;
-            tmp.LatestVersion = entityReference.SourceVersion == CountVersions(entityReference.SourceId, entityReference.SourceEntityId) ? true : false;
-
-            return tmp;
-        }
-
-        public List<SimpleReferenceModel> GetAllReferences(long id, long typeid)
-        {
-            List<SimpleReferenceModel> tmp = new List<SimpleReferenceModel>();
+            List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
@@ -209,12 +206,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 // get all references where incoming is source
                 var list = entityReferenceManager.References.Where(r => r.SourceId.Equals(id) && r.SourceEntityId.Equals(typeid)).ToList();
-                list.ForEach(r => tmp.Add(helper.GetTarget(r)));
+                list.ForEach(r => tmp.Add(helper.Convert(r)));
 
                 //get all refs where incoming is taret
                 list = entityReferenceManager.References.Where(r => r.TargetId.Equals(id) && r.TargetEntityId.Equals(typeid)).ToList();
 
-                list.ForEach(r => tmp.Add(helper.GetSource(r)));
+                list.ForEach(r => tmp.Add(helper.Convert(r)));
             }
             catch (Exception ex)
             {
@@ -228,18 +225,21 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return tmp;
         }
 
-        public List<SimpleReferenceModel> GetSourceReferences(long id, long typeid)
+        public List<ReferenceModel> GetSourceReferences(long id, long typeid, int version)
         {
-            List<SimpleReferenceModel> tmp = new List<SimpleReferenceModel>();
+            List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
             try
             {
                 //get all refs where incoming is taret
-                var list = entityReferenceManager.References.Where(r => r.TargetId.Equals(id) && r.TargetEntityId.Equals(typeid)).ToList();
+                var list = entityReferenceManager.References.Where(r =>
+                        r.TargetId.Equals(id) &&
+                        r.TargetEntityId.Equals(typeid) &&
+                        r.TargetVersion <= version).ToList();
 
-                list.ForEach(r => tmp.Add(helper.GetSource(r)));
+                list.ForEach(r => tmp.Add(helper.Convert(r)));
             }
             catch (Exception ex)
             {
@@ -253,17 +253,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return tmp;
         }
 
-        public List<SimpleReferenceModel> GetTargetReferences(long id, long typeid)
+        public List<ReferenceModel> GetTargetReferences(long id, long typeid, int version)
         {
-            List<SimpleReferenceModel> tmp = new List<SimpleReferenceModel>();
+            List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
             try
             {
                 // get all references where incoming is source
-                var list = entityReferenceManager.References.Where(r => r.SourceId.Equals(id) && r.SourceEntityId.Equals(typeid)).ToList();
-                list.ForEach(r => tmp.Add(helper.GetTarget(r)));
+                var list = entityReferenceManager.References.Where(r =>
+                            r.SourceId.Equals(id) &&
+                            r.SourceEntityId.Equals(typeid) &&
+                            r.SourceVersion <= version).ToList();
+                list.ForEach(r => tmp.Add(helper.Convert(r)));
             }
             catch (Exception ex)
             {

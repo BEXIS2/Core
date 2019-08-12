@@ -1297,7 +1297,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region entity references
 
-        public ActionResult ShowReferences(long id)
+        public ActionResult ShowReferences(long id, int version)
         {
             var sourceTypeId = 0;
 
@@ -1316,7 +1316,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
             {
                 { "sourceId", id },
-                { "SourceTypeId", entity.Id }
+                { "SourceTypeId", entity.Id },
+                { "SourceVersion", version }
             });
 
             return Content(view.ToHtmlString(), "text/html");
