@@ -5,48 +5,92 @@
 
 <script src="@Url.Content("~/Areas/Dcm/Scripts/entity.reference.js")" type="text/javascript"></script>
 
-<div id="entity-reference-container" class="row">
-       <div class="col-md-12">
+<div id="entity-reference-container" class="row text-left">
+    <div class="col-md-12">
         <div class="entity-referenceoption-container">
-            <button id="create-reference-bt" class="bx-button function">Create reference</button>
+            <button id="create-reference-bt" class="bx-button function">Create link</button>
         </div>
 
-        <table id="system_reference_table" class="display" style="width:100%">
+        <h3>Link to</h3>
+
+        <table id="target_reference_table" class="display" style="width:100%">
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Version</th>
-                    <th>Title</th>
-                    <th>Context</th>
-                    <th>Type</th>
-                    <th>Reference Type</th>
+                    <th title="Identifier">Id</th>
+                    <th title="Version">V</th>
+                    <th title="Title">Title</th>
+                    <th title="Description">Context</th>
+                    <th title="Entity type">Type</th>
+                    <th title="Type of the reference">Reference Type</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
 
-                @foreach (var srm in Model.SystemReferences)
+                @foreach (var srm in Model.TargetReferences)
                 {
+                    <tr>
+                        <td>@srm.Id</td>
+                        <td>@srm.Version</td>
+                        <td>@Html.ActionLink(@srm.Title, "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, null)</td>
+                        <td>@srm.Context</td>
+                        <td>@srm.Type</td>
+                        <td>@srm.ReferenceType</td>
+                        <td class="dt-body-center">
+
+
+                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
+
+                            @if (!srm.LatestVersion)
+                            {
+                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                            }
+
+                            <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+        <h3>Linked from</h3>
+        <table id="source_reference_table" class="display" style="width:100%">
+            <thead>
                 <tr>
-                    <td>@srm.Id</td>
-                    <td>@srm.Version</td>
-                    <td>@Html.ActionLink(@srm.Title, "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, null)</td>
-                    <td>@srm.Context</td>
-                    <td>@srm.Type</td>
-                    <td>@srm.ReferenceType</td>
-                    <td class="dt-body-center">
-
-
-                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, new {title="Go to this version.", @class = "bx bx-grid-function bx-show" })
-
-                        @if (!srm.LatestVersion)
-                        {
-                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new {title="Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
-                        }
-
-                        <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
-                    </td>
+                    <th title="Identifier" >Id</th>
+                    <th title="Version" >V</th>
+                    <th title="Title">Title</th>
+                    <th title="Description">Context</th>
+                    <th title="Entity type">Type</th>
+                    <th title="Type of the reference" >Reference Type</th>
+                    <th></th>
                 </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var srm in Model.SourceReferences)
+                {
+                    <tr>
+                        <td>@srm.Id</td>
+                        <td>@srm.Version</td>
+                        <td>@Html.ActionLink(@srm.Title, "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, null)</td>
+                        <td>@srm.Context</td>
+                        <td>@srm.Type</td>
+                        <td>@srm.ReferenceType</td>
+                        <td class="dt-body-center">
+
+
+                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id, version = srm.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
+
+                            @if (!srm.LatestVersion)
+                            {
+                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                            }
+
+                            <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
+                        </td>
+                    </tr>
                 }
             </tbody>
 
@@ -64,15 +108,28 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-            $("#system_reference_table").DataTable({
+            $("#source_reference_table").DataTable({
                 "autoWidth": false,
                 "columns": [
-                    { "width": "40px" },
+                    { "width": "50px" },
+                    { "width": "50px" },
                     null,
                     null,
+                    { "width": "200px" },
+                    { "width": "200px" },
+                    { "width": "100px" },
+                ]
+            });
+
+            $("#target_reference_table").DataTable({
+                "autoWidth": false,
+                "columns": [
+                    { "width": "50px" },
+                    { "width": "50px" },
                     null,
                     null,
-                    null,
+                    { "width": "200px" },
+                    { "width": "200px" },
                     { "width": "100px" },
                 ]
             });

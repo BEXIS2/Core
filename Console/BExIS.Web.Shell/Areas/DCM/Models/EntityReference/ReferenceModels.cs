@@ -12,12 +12,14 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
     {
         public SimpleReferenceModel Selected { get; set; }
 
-        public List<SimpleReferenceModel> SystemReferences { get; set; }
+        public List<SimpleReferenceModel> SourceReferences { get; set; }
+        public List<SimpleReferenceModel> TargetReferences { get; set; }
 
         public ReferencesModel()
         {
             Selected = new SimpleReferenceModel();
-            SystemReferences = new List<SimpleReferenceModel>();
+            SourceReferences = new List<SimpleReferenceModel>();
+            TargetReferences = new List<SimpleReferenceModel>();
         }
     }
 

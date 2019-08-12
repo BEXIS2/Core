@@ -264,8 +264,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 // get all references where incoming is source
                 var list = entityReferenceManager.References.Where(r => r.SourceId.Equals(id) && r.SourceEntityId.Equals(typeid)).ToList();
                 list.ForEach(r => tmp.Add(helper.GetTarget(r)));
-
-                list.ForEach(r => tmp.Add(helper.GetSource(r)));
             }
             catch (Exception ex)
             {

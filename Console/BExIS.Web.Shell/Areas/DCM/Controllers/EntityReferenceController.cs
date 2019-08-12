@@ -101,7 +101,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
             model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId);
-            model.SystemReferences = helper.GetAllReferences(sourceId, sourceTypeId);
+            model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId);
+            model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId);
 
             return PartialView("Show", model);
         }
@@ -112,7 +113,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
             model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId);
-            model.SystemReferences = helper.GetAllReferences(sourceId, sourceTypeId);
+            model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId);
+            model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId);
 
             return View("Show", model);
         }
