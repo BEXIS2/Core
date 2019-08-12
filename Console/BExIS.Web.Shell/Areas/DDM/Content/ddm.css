@@ -8,10 +8,20 @@
 
 }
 
-
-.primaryDataResultGrid .t-grid-content {
-    height: auto !important;
+#view-warning {
+    width: 300px;
+    height: 35px;
+    padding: 7px 0 0 10px;
 }
+
+#view-warning-icon {
+    padding:0 10px 0 0;
+}
+
+#view-warning-container {
+  
+}
+
 
 .primaryDataResultGrid .t-grid-content td
 {

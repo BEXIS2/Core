@@ -24,23 +24,40 @@
 
 
 <div>
-
     <h1 title="Id: @Model.Id">@Model.Title</h1>
-
-    <br />
 
     <div id="view-header" class="row">
         <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-            <b>Dataset Id: </b> @Model.Id
-            <b>Version: </b>
-            @Html.DropDownListFor(m=>m.Version,null)
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <b>Dataset Id: </b> @Model.Id
+                    <b>Version: </b>
+                    @Html.DropDownListFor(m => m.Version, null, new { @class = "bx-dropdown" })
 
+                </div>
+                <div class="col-md-6">
+                    @if (!Model.LatestVersion)
+                    {
+                        <div id="view-warning-container">
+
+                            <div id="view-warning" class="alert alert-danger " role="alert">
+                                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                                Attention, this is not the latest version.
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+          
         </div>
         <div class="col-xs-2 col-md-2 col-lg-2">
             <div id="preloaderContainer"></div>
+            
         </div>
 
         <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
+
             @if (Model.DownloadAccess)
             {
 
@@ -287,5 +304,23 @@
 	        }
 	    });
 
-	});
+    });
+
+    $("#Version").change(function () {
+
+        var version = $(this).val();
+        var id = '@Model.Id';
+
+
+
+
+    })
+
+    $("#Version").on('change', function () {
+    var version = $("#Version").val();
+    var id = '@Model.Id';
+
+    var redirectURL = '@Url.Action("Show","Data")';
+        window.location.href = redirectURL+"/"+id+"?version="+version;
+});
 </script>
