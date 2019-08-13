@@ -223,18 +223,15 @@ li.t-state-disabled .t-link
 .bx-dropdown,
 .bx-textarea,
 .t-autocomplete,
-.t-datepicker .t-picker-wrap input
-{
-	
-	width: 100px; /*Width of select dropdown to give space for arrow image*/
-	text-indent: 0.01px; /* Removes default arrow from firefox*/
-	text-overflow: "";  /*Removes default arrow from firefox*/
-
-	border: 2px solid black;
-	font-size: 12pt;
-	font-family: Arial;
-	padding-left:5px;
-	padding-right:5px;
+.t-datepicker .t-picker-wrap input {
+    width: 100px; /*Width of select dropdown to give space for arrow image*/
+    text-indent: 0.01px; /* Removes default arrow from firefox*/
+    text-overflow: ""; /*Removes default arrow from firefox*/
+    border: 2px solid black;
+    font-size: 12pt;
+    font-family: Arial;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .bx-input,
@@ -499,4 +496,10 @@ ul.bx-list-multi
 
 .bx-mouse-pointer:hover {
 	cursor: pointer;
+}
+
+
+/**States**/
+.bx-success {
+    color:green;
 }

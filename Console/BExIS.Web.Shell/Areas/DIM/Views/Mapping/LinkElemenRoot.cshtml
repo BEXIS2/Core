@@ -30,8 +30,9 @@
 
         @if (Model.Name.Equals("System"))
         {
-            <span>@Html.CheckBox("Key", true, new { @class="prefilter" }) Key </span>
+            <span>@Html.CheckBox("Key", true, new { @class = "prefilter" }) Key </span>
             <span>@Html.CheckBox("Party", true, new { @class = "prefilter" }) Party </span>
+            <span>@Html.CheckBox("Entity", true, new { @class = "prefilter" }) Entity </span>
         }
 
         @if (Model.Type.ToString().Contains("Metadata"))

@@ -22,6 +22,8 @@
     string displayName = "";
     char tmp = ' ';
 
+    string autoCompleteType = "";
+
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
     displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
 
@@ -41,7 +43,15 @@
 
     // Make first char uppercase
     displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
-    
+
+    if (Model.EntityMappingExist)
+    {
+        autoCompleteType = "Entity";
+    }
+    else if (Model.PartyMappingExist)
+    {
+        autoCompleteType = "PartyCustomType";
+    }
 
 }
 
@@ -66,12 +76,12 @@
     }
 
 
-    @if (Model.Errors != null && Model.Errors.Count() > 0)
+@if (Model.Errors != null && Model.Errors.Count() > 0)
 {
         hasErrors = true;
     }
 
-    @if (hasErrors == true)
+@if (hasErrors == true)
 {
         errorClass = "bx-input-error";
         foreach (var item in Model.Errors)
@@ -142,12 +152,14 @@
                         {
 
                             //@Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
-                            <div class="bx-metadataForm-textArea-display">
-                                @if (Model.Value != null)
-                                {
-                                    @Html.DisplayWithLinksFor(m => m.Value)
-                                }
-                            </div>
+                        <div class="bx-metadataForm-textArea-display">
+                            @if (Model.Value != null)
+                            {
+                                
+                                @Html.DisplayWithLinksFor(m => m.Value)
+                                
+                            }
+                        </div>
                         }
 
 
@@ -169,53 +181,59 @@
                                     value = @Model.Value.ToString();
                                 }
 
-                                @*@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })*@
 
                                 @(Html.Telerik().AutoComplete()
-                                              .Name(@idInput)
-                                              .Encode(false)
-                                              .Value(value)
-                                              .HtmlAttributes(new { @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id })
-                                              .ClientEvents(events => events
-                                                  .OnChange("OnChangeTextInput")
-                                                  .OnClose("OnClose"))
+                                            .Name(@idInput)
+                                            .Encode(false)
+                                            .Value(value)
+                                            .HtmlAttributes(new { @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id, type = autoCompleteType })
+                                            .ClientEvents(events => events
+                                                .OnChange("OnChangeTextInput")
+                                                .OnClose("OnClose"))
 
-                                              .DataBinding(dataBinding => dataBinding
-                                                  .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new { id = Model.Id, type = Model.Source.GetType().Name })
-                                                  .Cache(false)
+                                            .DataBinding(dataBinding => dataBinding
+                                                .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new { id = Model.Id, type = Model.Source.GetType().Name })
+                                                .Cache(false)
+                                                )
 
-                                                  )
 
-                                              .Filterable(filtering =>
-                                              {
-                                                  filtering.FilterMode(AutoCompleteFilterMode.Contains);
-                                                  filtering.MinimumChars(1);
+                                            .Filterable(filtering =>
+                                            {
+                                                filtering.FilterMode(AutoCompleteFilterMode.Contains);
+                                                filtering.MinimumChars(1);
 
-                                              })
+                                            })
                                 )
+                                    
 
                             }
                             else
                             {
                                 @(Html.Telerik().DropDownList()
-                                              .Name(@idInput)
-                                              .Placeholder("Select, please")
-                                              .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
-                                              .ClientEvents(events => events.OnChange("OnChangeDropDown"))
-                                              .BindTo(new SelectList(Model.DomainList, Model.Value)))
+                                            .Name(@idInput)
+                                            .Placeholder("Select, please")
+                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
+                                            .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                                            .BindTo(new SelectList(Model.DomainList, Model.Value)))
                             }
                         }
                         else
                         {
                             //@Html.TextBoxFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass})
 
-                            <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
-                                @if (Model.Value != null)
+                        <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
+                            @if (Model.Value != null)
+                            {
+                                if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
                                 {
-
+                                    <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                                }
+                                else
+                                {
                                     @Html.DisplayWithLinksFor(m => m.Value)
                                 }
-                            </div>
+                            }
+                        </div>
 
                         }
 

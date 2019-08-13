@@ -78,9 +78,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityViewerHelper.cs" />
     <Compile Include="Helpers\BexisUIHelper.cs" />
     <Compile Include="Helpers\ErrorHelper.cs" />
     <Compile Include="Helpers\TelerikGridHelper.cs" />
@@ -114,6 +119,10 @@
     <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
+      <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -17,7 +17,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
             return new MetadataCompoundAttributeModel
             {
-
                 Id = metadataAttributeUsage.Id,
                 Number = number,
                 Source = metadataAttributeUsage,
@@ -58,6 +57,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             string constraintsDescription = "";
             LinkElementType type = LinkElementType.MetadataNestedAttributeUsage;
             bool locked = false;
+            bool entityMappingExist = false;
+            bool partyMappingExist = false;
 
             if (current is MetadataNestedAttributeUsage)
             {
@@ -70,7 +71,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)current;
                 metadataAttribute = mau.MetadataAttribute;
                 type = LinkElementType.MetadataAttributeUsage;
-
             }
 
             if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
@@ -89,13 +89,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             string displayPattern = "";
             if (dtdp != null) displayPattern = dtdp.StringPattern;
 
-
             //ToDO/Check if dim is active
             //check if its linked with a system field
             //
             locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
 
+            // check if a mapping for parties exits
+            partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
 
+            // check if a mapping for entites exits
+            entityMappingExist = MappingUtils.ExistMappingWithEntity(current.Id, type);
 
             return new MetadataAttributeModel
             {
@@ -120,7 +123,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MetadataAttributeId = metadataAttribute.Id,
                 ParentStepId = parentStepId,
                 Errors = null,
-                Locked = locked
+                Locked = locked,
+                EntityMappingExist = entityMappingExist,
+                PartyMappingExist = partyMappingExist
             };
         }
 
@@ -140,6 +145,5 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             return list;
         }
-
     }
 }
