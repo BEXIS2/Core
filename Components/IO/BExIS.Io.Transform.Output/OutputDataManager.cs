@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace BExIS.IO.Transform.Output
         public string GenerateAsciiFile(long id, long versionId, string title, string mimeType, bool withUnits)
         {
             DatasetManager datasetManager = new DatasetManager();
+            DataStructureManager datasetStructureManager = new DataStructureManager();
 
             try
             {
@@ -75,7 +77,9 @@ namespace BExIS.IO.Transform.Output
                 string path = "";
 
                 //ascii allready exist
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) &&
+                    p.URI.Contains(datasetVersion.Id.ToString())) > 0 &&
+                    !withUnits)
                 {
                     #region FileStream exist
 
@@ -90,9 +94,8 @@ namespace BExIS.IO.Transform.Output
                     #endregion FileStream exist
                 }
 
-                // not exist needs to generated
-                DatasetManager dm = new DatasetManager();
-                DataTable data = dm.GetLatestDatasetVersionTuples(id);
+                // not exist, needs to generated
+                DataTable data = datasetManager.GetLatestDatasetVersionTuples(id);
                 data.Strip();
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
@@ -102,11 +105,10 @@ namespace BExIS.IO.Transform.Output
                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
 
                 //add units if want
-                if (withUnits)
-                {
-                }
+                string[] units = null;
+                if (withUnits) units = getUnits(datastuctureId, null);
 
-                writer.AddData(data, path, datastuctureId);
+                writer.AddData(data, path, datastuctureId, units);
 
                 return path;
             }
@@ -116,7 +118,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        public string GenerateAsciiFile(string ns, DataTable table, string title, string mimeType, long dataStructureId)
+        public string GenerateAsciiFile(string ns, DataTable table, string title, string mimeType, long dataStructureId, bool withUnits = false)
         {
             string ext = "";
             TextSeperator textSeperator = TextSeperator.semicolon;
@@ -149,44 +151,18 @@ namespace BExIS.IO.Transform.Output
             // if there is already a file, replace it
             string path = createDownloadFile(ns, dataStructureId, title, ext, writer);
 
-            writer.AddData(table, path, dataStructureId);
+            string[] units = null;
+            string[] columns = null;
+            if (withUnits)
+            {
+                columns = getColumnNames(table);
+                units = getUnits(dataStructureId, columns);
+            }
+
+            writer.AddData(table, path, dataStructureId, units);
 
             return path;
         }
-
-        //public string GenerateAsciiFile(long id, string title, string mimeType, string[] visibleColumns)
-        //{
-        //    string ext = "";
-        //    string path = "";
-
-        //    DatasetManager datasetManager = new DatasetManager();
-
-        //    try
-        //    {
-        //        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-        //        AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-
-        //        // Javad: It is better to have a list of tuple IDs and pass it to the AddDataTuples method.
-        //        // This method is using a special iterator to reduce the number of queries. 18.11.2016
-
-        //        List<long> datatuples = new List<long>(); //GetFilteredDataTuples(datasetVersion);
-
-        //        long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-
-        //        path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
-
-        //        if (visibleColumns != null)
-        //            writer.VisibleColumns = visibleColumns;
-
-        //        writer.AddDataTuples(datasetManager, datatuples, path, datastuctureId);
-
-        //        return path;
-        //    }
-        //    finally
-        //    {
-        //        datasetManager.Dispose();
-        //    }
-        //}
 
         /// <summary>
         /// create an Excel file from the given Datatable
@@ -195,17 +171,21 @@ namespace BExIS.IO.Transform.Output
         /// <param name="table"></param>
         /// <param name="title"></param>
         /// <returns></returns>
-        public string GenerateExcelFile(string ns, DataTable table, string title, long dsId, string ext = ".xlsm")
+        public string GenerateExcelFile(string ns, DataTable table, string title, long dsId, string ext = ".xlsm", bool withUnits = false)
         {
             ExcelWriter writer = new ExcelWriter();
             string path = createDownloadFile(ns, dsId, title, ext, writer);
 
-            writer.AddDataTuplesToFile(table, path, dsId);
+            string[] units = null;
+            string[] columns = getColumnNames(table);
+            if (withUnits) units = getUnits(dsId, columns);
+
+            writer.AddDataTuplesToFile(table, path, dsId, units);
 
             return path;
         }
 
-        public string GenerateExcelFile(long id, string title, bool createAsTemplate, DataTable data = null)
+        public string GenerateExcelFile(long id, string title, bool createAsTemplate, DataTable data = null, bool withUnits = false)
         {
             string mimeType = "";
             string ext = ".xlsx";
@@ -234,7 +214,9 @@ namespace BExIS.IO.Transform.Output
                 string path = "";
 
                 //excel allready exist
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0 && data == null)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0 &&
+                    data == null &&
+                    withUnits == false)
                 {
                     #region FileStream exist
 
@@ -282,7 +264,11 @@ namespace BExIS.IO.Transform.Output
                 {
                     path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
-                    writer.AddData(data, path, datastuctureId);
+
+                    string[] units = null;
+                    if (withUnits) units = getUnits(datastuctureId, null);
+
+                    writer.AddData(data, path, datastuctureId, units);
                 }
 
                 return path;
@@ -434,6 +420,40 @@ namespace BExIS.IO.Transform.Output
             {
                 dm.Dispose();
             }
+        }
+
+        private string[] getUnits(long datastuctureId, string[] columns)
+        {
+            DataStructureManager datasetStructureManager = new DataStructureManager();
+
+            List<string> units = new List<string>();
+
+            try
+            {
+                var sds = datasetStructureManager.StructuredDataStructureRepo.Get(datastuctureId);
+
+                if (sds != null)
+                {
+                    var varList = sds.Variables.ToList();
+                    if (columns != null && columns.Count() > 0)
+                        varList = varList.Where(v => columns.Contains(v.Label)).ToList();
+
+                    varList.ForEach(v => units.Add(v.Unit.Abbreviation));
+                }
+
+                return units.ToArray();
+            }
+            finally
+            {
+                datasetStructureManager.Dispose();
+            }
+        }
+
+        private string[] getColumnNames(DataTable table)
+        {
+            return table.Columns.Cast<DataColumn>()
+                                 .Select(x => x.ColumnName)
+                                 .ToArray();
         }
 
         #endregion export prepare files

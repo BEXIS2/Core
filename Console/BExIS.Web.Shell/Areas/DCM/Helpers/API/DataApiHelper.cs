@@ -86,7 +86,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(_filepath));
                 asciiWriter.CreateFile(Path.GetDirectoryName(_filepath), Path.GetFileName(_filepath));
 
-                //store data into file
+                //store data into file without units
                 asciiWriter.AddData(_data.Data, _data.Columns, _filepath, _dataset.DataStructure.Id);
 
                 //todo send email to user

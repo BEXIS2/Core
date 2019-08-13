@@ -351,6 +351,9 @@ namespace BExIS.IO.Transform.Output
             {
                 if (!File.Exists(dataPath))
                 {
+                    string directory = Path.GetDirectoryName(dataPath);
+                    FileHelper.CreateDicrectoriesIfNotExist(directory);
+
                     File.Create(dataPath).Close();
                 }
             }
@@ -380,6 +383,9 @@ namespace BExIS.IO.Transform.Output
             {
                 if (!File.Exists(dataPath))
                 {
+                    string directory = Path.GetDirectoryName(dataPath);
+                    FileHelper.CreateDicrectoriesIfNotExist(directory);
+
                     File.Create(dataPath).Close();
                 }
             }
@@ -406,6 +412,9 @@ namespace BExIS.IO.Transform.Output
             {
                 if (!File.Exists(dataPath))
                 {
+                    string directory = Path.GetDirectoryName(dataPath);
+                    FileHelper.CreateDicrectoriesIfNotExist(directory);
+
                     File.Create(dataPath).Close();
                 }
             }

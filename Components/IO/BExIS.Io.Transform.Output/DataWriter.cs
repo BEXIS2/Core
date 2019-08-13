@@ -758,9 +758,9 @@ namespace BExIS.IO.Transform.Output
         //    return AddDataTuples(dataTuples, filePath, dataStructureId);
         //}
 
-        public List<Error> AddDataTuplesToFile(DataTable table, string filePath, long dataStructureId)
+        public List<Error> AddDataTuplesToFile(DataTable table, string filePath, long dataStructureId, string[] units)
         {
-            return AddData(table, filePath, dataStructureId);
+            return AddData(table, filePath, dataStructureId, units);
         }
 
         #endregion add data to files (compatibility aliases)
