@@ -28,6 +28,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }
         public bool Locked { get; set; }
+        public double LowerBoundary { get; set; }
+        public double UpperBoundary { get; set; }
 
         #region Mapping Variables
 
@@ -90,7 +92,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 Locked = false,
                 PartyMappingExist = this.PartyMappingExist,
                 EntityMappingExist = this.EntityMappingExist,
-                EntityUrl = ""
+                EntityUrl = "",
+                UpperBoundary = this.UpperBoundary,
+                LowerBoundary = this.LowerBoundary
             };
         }
     }
