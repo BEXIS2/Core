@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="Builders\QueryBuilder.cs" />
     <Compile Include="Config\WebApiConfig.cs" />
+    <Compile Include="Extensions\EnumExtentions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Extensions\ViewExtentions.cs" />

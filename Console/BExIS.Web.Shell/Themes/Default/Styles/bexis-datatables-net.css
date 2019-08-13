@@ -1,0 +1,49 @@
+﻿table.dataTable {
+    border-collapse: unset;
+}
+
+table.dataTable thead th {
+    position: relative;
+    background-image: none !important;
+}
+
+    table.dataTable thead th.sorting:after,
+    table.dataTable thead th.sorting_asc:after,
+    table.dataTable thead th.sorting_desc:after {
+        position: absolute;
+        top: 0px;
+        right: 8px;
+        display: block;
+        font-family: FontAwesome;
+    }
+
+    table.dataTable thead th.sorting:after {
+        content: "\f0dc";
+        color: #ddd;
+        /*font-size: 0.8em;*/
+    }
+
+    table.dataTable thead th.sorting_asc:after {
+        content: "\f0de";
+    }
+
+    table.dataTable thead th.sorting_desc:after {
+        content: "\f0dd";
+    }
+
+    table.dataTable thead th, table.dataTable tfoot th, table.dataTable td {
+        padding: 0 8px;
+    }
+
+    table.dataTable tr td:last-child,
+    table.dataTable tr th:last-child
+    {
+        border-right: none;
+    }
+
+    table.dataTable paginate_button,
+    table.dataTable paginate_button.current,
+    table.dataTable paginate_button.preview,
+    table.dataTable paginate_button.next {
+        background:none;
+    }

@@ -74,10 +74,6 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
-    </Reference>
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
@@ -187,6 +183,7 @@
     <Compile Include="Controllers\EasyUploadSheetSelectMetaDataController.cs" />
     <Compile Include="Controllers\EasyUploadSummaryController.cs" />
     <Compile Include="Controllers\EasyUploadVerificationController.cs" />
+    <Compile Include="Controllers\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ImportMetadataStructureController.cs" />
@@ -208,6 +205,7 @@
     <Compile Include="Helpers\API\DataApiHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
+    <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
@@ -220,6 +218,7 @@
     <Compile Include="Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
+    <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
     <Compile Include="Models\GetFileInformationModel.cs" />
@@ -501,6 +500,7 @@
     <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
     <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
+    <Content Include="Scripts\entity.reference.js" />
     <Content Include="Scripts\Form.js" />
     <Content Include="Scripts\minimap\minimap.js" />
     <Content Include="Scripts\minimap\minimap.min.css" />
@@ -576,6 +576,9 @@
     <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
     <Content Include="Views\EasyUploadVerification\Row.cshtml" />
     <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
+    <Content Include="Views\EntityReference\Index.cshtml" />
+    <Content Include="Views\EntityReference\_create.cshtml" />
+    <Content Include="Views\EntityReference\Show.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

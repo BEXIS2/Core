@@ -46,6 +46,9 @@ namespace BExIS.Web.Shell
             bundles.Add(new ScriptBundle("~/bundles/switchery").Include(
                 "~/Scripts/switchery/switchery.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/datatables").Include(
+                "~/Scripts/DataTables/media/js/jquery.dataTables.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                 //$"~/{Themes.GetResourcePath("Styles")}/bexis-jquery-ui.css",
                 //$"~/{Themes.GetResourcePath("Styles")}/bexis-font-awesome-extension.css",
@@ -58,6 +61,7 @@ namespace BExIS.Web.Shell
                 "~/Content/bootstrap-slider.min.css",
                 "~/Scripts/minimap/minimap.min.css",
                 "~/Content/handsontable/handsontable.full.css",
+                "~/Content/DataTables/media/css/jquery.dataTables.css",
                 "~/Content/Site.css"));
 
             BundleTable.EnableOptimizations = true;

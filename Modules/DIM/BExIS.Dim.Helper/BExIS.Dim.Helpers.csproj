@@ -82,6 +82,10 @@
     <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
       <Name>BExIS.Security.Services</Name>
@@ -109,6 +113,10 @@
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\Areas\SAM\BExIS.Modules.Sam.UI.csproj">
+      <Project>{DEC22F9C-47BE-4146-94BE-1C9AA969AFC3}</Project>
+      <Name>BExIS.Modules.Sam.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>

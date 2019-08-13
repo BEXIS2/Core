@@ -496,3 +496,9 @@ ul.bx-list-multi
 .bx-mouse-pointer:hover {
 	cursor: pointer;
 }
+
+
+/**States**/
+.bx-success {
+    color:green;
+}
