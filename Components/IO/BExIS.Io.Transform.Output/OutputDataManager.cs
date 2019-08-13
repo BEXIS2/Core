@@ -15,7 +15,7 @@ namespace BExIS.IO.Transform.Output
     {
         #region export prepare files
 
-        public string GenerateAsciiFile(long id, string title, string mimeType)
+        public string GenerateAsciiFile(long id, string title, string mimeType, bool withUnits)
         {
             DatasetManager datasetManager = new DatasetManager();
 
@@ -24,7 +24,7 @@ namespace BExIS.IO.Transform.Output
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                 long datasetVersionId = datasetVersion.Id;
 
-                return GenerateAsciiFile(id, datasetVersionId, title, mimeType);
+                return GenerateAsciiFile(id, datasetVersionId, title, mimeType, withUnits);
             }
             finally
             {
@@ -32,7 +32,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        public string GenerateAsciiFile(long id, long versionId, string title, string mimeType)
+        public string GenerateAsciiFile(long id, long versionId, string title, string mimeType, bool withUnits)
         {
             DatasetManager datasetManager = new DatasetManager();
 
@@ -100,6 +100,11 @@ namespace BExIS.IO.Transform.Output
                 path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
 
                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
+
+                //add units if want
+                if (withUnits)
+                {
+                }
 
                 writer.AddData(data, path, datastuctureId);
 
