@@ -62,8 +62,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                if (!ModelState.IsValid) return PartialView("Create", model);
-
+                if (!ModelState.IsValid)
+                {
+                    SetViewData(model.SourceId, model.SourceTypeId, false, false);
+                    return PartialView("_create", model);
+                }
                 EntityReference entityReference = helper.Convert(model);
                 entityReferenceManager.Create(entityReference);
 
