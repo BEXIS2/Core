@@ -25,9 +25,11 @@ $("#TargetType").on('change', function () {
 
 function successFunc(data, status) {
     console.log(data);
+    $("#Target").append("<option value='' selected disabled hidden>Select a entity</option>");
 
     for (var i = 0; i < data.length; i++) {
         var option = data[i];
+
         $("#Target").append("<option value=" + option.Value + ">" + option.Text + "</option>");
     }
 
@@ -93,15 +95,17 @@ $("#button_createEntityreference_cancel").click(function () {
 function onSuccess() {
     var id = $("#SourceId").val();
     var type = $("#SourceTypeId").val();
-    reload(id, type);
+    var version = $("#SourceVersion").val();
+    reload(id, type, version);
 
     $("#window_createReference").data('tWindow').destroy();
 }
 
-function reload(id, type) {
+function reload(id, type, version) {
     var parameters = {
         sourceId: id,
-        sourceTypeId: type
+        sourceTypeId: type,
+        sourceVersion: version
     };
 
     $.ajax({
