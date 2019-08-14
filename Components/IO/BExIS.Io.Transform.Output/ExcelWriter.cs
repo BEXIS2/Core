@@ -192,6 +192,31 @@ namespace BExIS.IO.Transform.Output
             return row;
         }
 
+        protected Row StringArrayToRow(string[] src)
+        {
+            Row row = new Row();
+            row.RowIndex = Convert.ToUInt32(rowIndex);
+            int columnIndex = 0;
+            columnIndex += offset;
+
+            foreach (string value in src)
+            {
+                string cellRef = getColumnIndex(columnIndex) + row.RowIndex;
+                string type = typeof(string).Name;
+
+                Cell cell = new Cell();
+                cell.CellReference = new StringValue(cellRef);
+                cell.DataType = CellValues.String;
+                //cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
+                cell.CellValue = new CellValue(value);
+
+                row.AppendChild(cell);
+                columnIndex += 1;
+            }
+
+            return row;
+        }
+
         /// <summary>
         /// Convert a VariableValue to Cell
         /// </summary>
@@ -1256,7 +1281,20 @@ namespace BExIS.IO.Transform.Output
 
         protected override bool AddUnits(string[] units)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // create excel row
+                Row excelRow = StringArrayToRow(units);
+                rowIndex++;
+                // add row
+                sheetData.Append(excelRow);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         protected override bool AddUnits(StructuredDataStructure structrue)
