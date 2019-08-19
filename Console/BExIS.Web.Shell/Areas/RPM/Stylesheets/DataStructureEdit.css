@@ -363,11 +363,11 @@ h2{
     padding: 7px 7px 7px 2px;
 }
 
-.bx-rpm-headlinetextbox:hover,
-.bx-rpm-headlinetextarea:hover {
-    padding: 5px 5px 5px 0px;
-    border:dotted #ff9700 2px;
-}
+    .bx-rpm-headlinetextbox:hover,
+    .bx-rpm-headlinetextarea:hover {
+        padding: 5px 5px 5px 0px;
+        border: dotted var(--highlight-color) 2px;
+    }
 
 .bx-rpm-headlinetextarea {
     width: 100%;
@@ -456,9 +456,9 @@ h2{
     padding-right:0px;
 }
 
-.bx-rpm-createUnitContainer table.bx-rpm-info .bx-input{
-    width:280px;
-}
+    .bx-rpm-createUnitContainer table.bx-rpm-info .bx-input {
+        width: 280px;
+    }
 
 .bx-rpm-createUnitContainer table.bx-rpm-info .datatypes .datatypeitem{
     width:calc(50% - 5px);

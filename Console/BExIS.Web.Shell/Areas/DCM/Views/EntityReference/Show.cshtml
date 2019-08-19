@@ -147,6 +147,7 @@
             var id = '@Model.Selected.Id';
             var type = '@Model.Selected.TypeId'
             var title = '@Model.Selected.Title'
+            var version = '@Model.Selected.Version'
 
             var parameters = {
                 sourceId: id,
@@ -174,7 +175,7 @@
                                 scrollable: false,
                                 onClose: function () {
                                     $("#window_createReference").data('tWindow').destroy();
-                                    reload(id,type)
+                                    reload(id,type,version)
                                     //update grid
                                     //$("#grid_groups .t-refresh").trigger('click');
                                 }

@@ -25,7 +25,7 @@
 
     @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
                                                                 .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
-
+                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-custom-style.css"))
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
                                                                         .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
@@ -57,11 +57,16 @@
 </head>
 
 <body>
+
+    
+
+
     <div id="informationContainer">
-        @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
+   
+    @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
         @Html.RenderAuto("Menu")
 
-        <div id="information-container" class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
+        <div id="information-container" class="container-fluid">
             <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
             <div class="collapse" id="information">
                 <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
@@ -109,10 +114,10 @@
         </table>
     </div>
     @(Html.Telerik().ScriptRegistrar()
-                    .DefaultGroup(group => group.Combined(true).Compress(true)
-                    //.DefaultPath("~/Scripts/2013.2.611/")
-                    )
-                    .jQuery(false)
+                            .DefaultGroup(group => group.Combined(true).Compress(true)
+                            //.DefaultPath("~/Scripts/2013.2.611/")
+                            )
+                            .jQuery(false)
     )
 
     @Html.RenderAuto("Footer")
