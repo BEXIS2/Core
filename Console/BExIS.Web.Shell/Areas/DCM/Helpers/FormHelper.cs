@@ -55,6 +55,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
             string constraintsDescription = "";
+            double lowerBoundary = 0;
+            double upperBoundary = 0;
             LinkElementType type = LinkElementType.MetadataNestedAttributeUsage;
             bool locked = false;
             bool entityMappingExist = false;
@@ -82,6 +84,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     if (string.IsNullOrEmpty(constraintsDescription)) constraintsDescription = c.FormalDescription;
                     else constraintsDescription = String.Format("{0}\n{1}", constraintsDescription, c.FormalDescription);
+                }
+                if (metadataAttribute.DataType.Name == "string" && metadataAttribute.Constraints.Where(c => (c is RangeConstraint)).Count() > 0)
+                {
+                    foreach (RangeConstraint r in metadataAttribute.Constraints.Where(c => (c is RangeConstraint)))
+                    {
+                        lowerBoundary = r.Lowerbound;
+                        upperBoundary = r.Upperbound;
+                    }
                 }
             }
             //load displayPattern
@@ -125,7 +135,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Errors = null,
                 Locked = locked,
                 EntityMappingExist = entityMappingExist,
-                PartyMappingExist = partyMappingExist
+                PartyMappingExist = partyMappingExist,
+                LowerBoundary = lowerBoundary,
+                UpperBoundary = upperBoundary,
             };
         }
 
