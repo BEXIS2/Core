@@ -22,168 +22,171 @@
 
 }
 
+
+
 @*load sctipts from dcm for the metadata. *@
 @section scripts
 {
-    <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+        <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
+        <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
 }
-<link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
-<link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
 
 
-<div>
-    <h1 title="Id: @Model.Id">@Model.Title</h1>
+<div id="showData">
+        <h1 title="Id: @Model.Id">@Model.Title</h1>
 
-    <div id="view-header" class="row">
-        <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <b>Dataset Id: </b> @Model.Id
-                    <b>Version: </b>
-                    @Html.DropDownListFor(m => m.Version, null, new { @class = "bx-dropdown" })
+        <div id="view-header" class="row">
+            <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
 
-                </div>
-                <div class="col-md-6">
-                    @if (!Model.LatestVersion)
-                    {
-                        <div id="view-warning-container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <b>Dataset Id: </b> @Model.Id
+                        <b>Version: </b>
+                        @Html.DropDownListFor(m => m.Version, null, new { @class = "bx-dropdown" })
 
-                            <div id="view-warning" class="alert alert-danger " role="alert">
-                                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                                Attention, this is not the latest version.
+                    </div>
+                    <div class="col-md-6">
+                        @if (!Model.LatestVersion)
+                        {
+                            <div id="view-warning-container">
+
+                                <div id="view-warning" class="alert alert-danger " role="alert">
+                                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                                    Attention, this is not the latest version.
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
+
             </div>
-          
-        </div>
-        <div class="col-xs-2 col-md-2 col-lg-2">
-            <div id="preloaderContainer"></div>
-            
-        </div>
+            <div class="col-xs-2 col-md-2 col-lg-2">
+                <div id="preloaderContainer"></div>
 
-        <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
+            </div>
 
-            @if (Model.DownloadAccess)
-            {
+            <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
 
-                if (Model.DataStructureType.ToLower().Equals("structured"))
-                {
-                    <span class="dropdown">
-                        <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                            Download Dataset
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId  })">... with Template</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                        </ul>
-                    </span>
-                }
-                else
-                {
-                    <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
-                }
-            }
-            else
-            {
-                if (Model.RequestAble)
+                @if (Model.DownloadAccess)
                 {
 
-                    if (Model.RequestExist)
+                    if (Model.DataStructureType.ToLower().Equals("structured"))
                     {
-                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                        <span class="dropdown">
+                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                                Download Dataset
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId  })">... with Template</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+                            </ul>
+                        </span>
                     }
                     else
                     {
-                        @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
                     }
                 }
                 else
                 {
-                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                    if (Model.RequestAble)
+                    {
+
+                        if (Model.RequestExist)
+                        {
+                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                        }
+                        else
+                        {
+                            @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                        }
+                    }
+                    else
+                    {
+                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                    }
                 }
-            }
 
 
+            </div>
         </div>
-    </div>
-</div>
 
-@if (@Model != null)
-{
-    if (ViewData.ModelState.IsValid)
-    {
 
-        @(Html.Telerik().TabStrip()
-                              .Name("ShowDataTabStrip")
-                              .SelectedIndex(tabIndex)
-                              .Items(tabs =>
-                              {
+        @if (@Model != null)
+        {
+            if (ViewData.ModelState.IsValid)
+            {
 
-                  //ToDo Recator Modularity -> load metadata from from dcm
+                @(Html.Telerik().TabStrip()
+                                      .Name("ShowDataTabStrip")
+                                      .SelectedIndex(tabIndex)
+                                      .Items(tabs =>
+                                      {
 
-                                 tabs.Add()
-                                    .Text("Metadata")
-                                    .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
-                                    .HtmlAttributes(new { id = "metadata" })
-                                    .Enabled(false);
+                          //ToDo Recator Modularity -> load metadata from from dcm
 
-                                  tabs.Add()
-                                      .Text("Primary Data")
-                                      .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
-                                      .Enabled(@Model.ViewAccess)
-                                      .HtmlAttributes(new { id = "primarydata" })
-                                      .Enabled(false);
+                                         tabs.Add()
+                                            .Text("Metadata")
+                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
+                                            .HtmlAttributes(new { id = "metadata" })
+                                            .Enabled(false);
 
-                                  tabs.Add()
-                                      .Text("Data Structure")
-                                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
-                                      .HtmlAttributes(new { id = "datastructure" })
-                                      .Enabled(false);
+                                          tabs.Add()
+                                              .Text("Metadata")
+                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
+                                              .HtmlAttributes(new { id = "metadata" })
+                                              .Enabled(false);
 
-                                  tabs.Add()
-                                      .Text("Links")
-                                      .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
-                                      .Enabled(true)
-                                      .HtmlAttributes(new { id = "showreferences" });
+                                          tabs.Add()
+                                              .Text("Metadata")
+                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
+                                              .HtmlAttributes(new { id = "metadata" })
+                                              .Enabled(false);
 
-                                  tabs.Add()
-                                      .Text("Dataset Permissions")
-                                      .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
-                                      .Enabled(false)
-                                      .HtmlAttributes(new { id = "datapermissions" });
+                                          tabs.Add()
+                                              .Text("Links")
+                                              .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
+                                              .Enabled(true)
+                                              .HtmlAttributes(new { id = "showreferences" });
 
-                                  tabs.Add()
-                                      .Text("Publish")
-                                        //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
-                                        .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-                                        .Enabled(false)
-                                        .HtmlAttributes(new { id = "prepare" });
-                                  tabs.Add()
-                                      .Text("Attachments")
-                                      .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
-                                      .Enabled(false)
-                                      .HtmlAttributes(new { id = "attachements" });
+                                          tabs.Add()
+                                              .Text("Dataset Permissions")
+                                              .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
+                                              .Enabled(false)
+                                              .HtmlAttributes(new { id = "datapermissions" });
 
-                              })
-                              .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
-    }
-    else
-    {
-        @Html.ValidationSummary(true);
-    }
-}
+                                          tabs.Add()
+                                              .Text("Publish")
+                                                //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                                                .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+                                                .Enabled(false)
+                                                .HtmlAttributes(new { id = "prepare" });
+                                          tabs.Add()
+                                              .Text("Attachments")
+                                              .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
+                                              .Enabled(false)
+                                              .HtmlAttributes(new { id = "attachements" });
+
+                                      })
+                                      .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
+            }
+            else
+            {
+                @Html.ValidationSummary(true);
+            }
+        }
+
 
 <script type="text/javascript">
+
 	function grid_subjects_onDataBound() {
 		addTooltips();
 		resetAllTelerikIconTitles();
@@ -213,6 +216,18 @@
 
 		$("#preloaderContainer").preloader(20, "Loading...");
 		resetAllTelerikIconTitles();
+
+        // set event if the metadata was edit an save, page need a reload
+        $(document).on("save", function () {
+
+            $('#showData').empty();
+
+            //$("#preloaderContainer").preloader(20, "Reloading...");
+            $.get('@Url.Action("Reload","Data", new { id= @Model.Id})', function (data) {
+
+                $('#showData').replaceWith(data);
+            })
+        })
 
 		$(document).bind("MetadataFormIsReady", function () {
 			//alert("m is ready");
@@ -334,3 +349,6 @@
         window.location.href = redirectURL+"/"+id+"?version="+version;
 });
 </script>
+
+</div>
+
