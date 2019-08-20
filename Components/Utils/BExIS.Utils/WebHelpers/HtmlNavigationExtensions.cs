@@ -1,5 +1,6 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using System;
 using System.Linq;
 using System.Text;
@@ -83,7 +84,6 @@ namespace BExIS.Utils.WebHelpers
 
                     bool childAccess = false;
 
-
                     foreach (var child in menuBarItem.Elements())
                     {
                         if (hasOperationRigths(child, userName))
@@ -146,7 +146,7 @@ namespace BExIS.Utils.WebHelpers
             return new MvcHtmlString(sb.ToString());
         }
 
-        public static MvcHtmlString Settings(this HtmlHelper htmlHelper,string userName)
+        public static MvcHtmlString Settings(this HtmlHelper htmlHelper, string userName)
         {
             StringBuilder sb = new StringBuilder();
             var settingsRoot = ModuleManager.ExportTree.GetElement("settingsRoot");
@@ -162,7 +162,7 @@ namespace BExIS.Utils.WebHelpers
             {
                 if (hasOperationRigths(child, userName))
                 {
-                    childAccess = true; 
+                    childAccess = true;
 
                     var area = child.Attribute("area").Value;
 
@@ -191,23 +191,29 @@ namespace BExIS.Utils.WebHelpers
                 return new MvcHtmlString($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-cog'></i></a><ul class='dropdown-menu'>" + sb.ToString() + $"</ul></li>");
             else
                 return new MvcHtmlString("");
-
         }
 
         private static bool hasOperationRigths(XElement operation, string userName)
         {
-            if (string.IsNullOrEmpty(userName)) return false;
-
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
+            OperationManager operationManager = new OperationManager();
 
             try
             {
+                //get parameters for the function to check
                 string name = userName;
                 string area = operation.Attribute("area").Value.ToLower();
                 string controller = operation.Attribute("controller").Value.ToLower();
                 //currently the action are not check, so we use a wildcard
                 string action = "*";//operation.Attribute("action").Value.ToLower();
 
+                // check if the operation is public
+                var op = operationManager.Operations.Where(x => x.Module.ToUpperInvariant() == area.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
+                var feature = op?.Feature;
+                if (feature == null) return true;
+
+                //or user has rights
+                if (string.IsNullOrEmpty(userName)) return false;
                 return featurePermissionManager.HasAccess<User>(name, area, controller, action);
             }
             catch (Exception ex)
@@ -217,6 +223,7 @@ namespace BExIS.Utils.WebHelpers
             finally
             {
                 featurePermissionManager.Dispose();
+                operationManager.Dispose();
             }
         }
     }
