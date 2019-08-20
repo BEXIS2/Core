@@ -28,7 +28,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-
             try
             {
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
@@ -36,12 +35,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (XmlSchemaManager.Delete(metadataStructure))
                 {
                     metadataStructureManager.Delete(metadataStructure);
+
+                    return Json(true);
                 }
 
-                if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
-
                 return Json(false);
-
             }
             catch (Exception ex)
             {
@@ -59,7 +57,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
                 string name = metadataStructure.Name;
 
@@ -99,7 +96,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 metadataStructureManager.Dispose();
             }
-
         }
 
         // GET: DCM/ManageMetadataStructure
@@ -118,13 +114,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
-
-
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
                     metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
                     metadataStructureManager.Update(metadataStructure);
-
 
                     return Json(true);
                 }
@@ -139,7 +131,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 metadataStructureManager.Dispose();
             }
-
         }
 
         private MetadataStructureManagerModel GetDefaultModel()
@@ -148,7 +139,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
                 MetadataStructureManagerModel tmp = new MetadataStructureManagerModel();
 
                 //load all metadatastructure
@@ -244,7 +234,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return xmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
-        // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.  
+        // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.
         private List<EntityModel> GetEntityModelList()
         {
             EntityManager entityManager = new EntityManager();
@@ -267,7 +257,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 XmlDocument xmlDocument = new XmlDocument();
                 if (metadataStructure.Extra != null)
                 {
-
                     if (metadataStructure.Extra as XmlDocument != null)
                         xmlDocument = metadataStructure.Extra as XmlDocument;
                     else
@@ -348,7 +337,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
 
                 metadataStructure.Extra = xmlDocument;
-
             }
             return metadataStructure;
         }
