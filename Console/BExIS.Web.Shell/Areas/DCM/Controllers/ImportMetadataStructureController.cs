@@ -45,7 +45,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     xmlTaskInfo.Load(path);
                     TaskManager = ImportMetadataStructureTaskManager.Bind(xmlTaskInfo);
                     Session["TaskManager"] = TaskManager;
-
                 }
                 catch (Exception e)
                 {
@@ -55,7 +54,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return View((ImportMetadataStructureTaskManager)Session["TaskManager"]);
         }
-
 
         #region Navigation
 
@@ -75,7 +73,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_taskListView", TaskManager.GetStatusOfStepInfos());
         }
 
-        #endregion
+        #endregion Navigation
 
         #region Navigation options
 
@@ -84,6 +82,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (ImportMetadataStructureTaskManager)Session["Taskmanager"];
 
             // delete created metadatastructure
+
             #region delete mds
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
@@ -98,7 +97,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (deleted)
                     {
-
                         //delete xsds
 
                         if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
@@ -117,7 +115,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 FileHelper.Delete(filepath);
                             }
-
                         }
 
                         if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT))
@@ -132,21 +129,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
+            #endregion delete mds
 
-            #endregion
             Session["Taskmanager"] = null;
             TaskManager = null;
-
-
 
             return RedirectToAction("ImportMetadataStructureWizard", "ImportMetadataStructure", new RouteValueDictionary { { "area", "DCM" } });
         }
 
-        #endregion
+        #endregion Navigation options
 
         public ActionResult FinishUpload()
         {
-            return RedirectToAction("ShowMyDatasetsInFullPage", "Dashboard", new { area = "DDM" });
+            return RedirectToAction("Index", "ManageMetadataStructure", new { area = "DCM" });
         }
     }
 }
