@@ -503,10 +503,27 @@ function OnSuccess(e) {
             {
                 valid: valid
             },
-            function(response) {
-                $('#MetadataEditor').replaceWith(response);
-                $('html, body').animate({ scrollTop: 0 }, 'slow');
-                bindMinimap(true);
+            function (response) {
+
+   
+                $.when(function () {
+                    $('#MetadataEditor').replaceWith(response);
+                }
+                ).then(
+                    function () {
+                        $('html, body').animate({ scrollTop: 0 }, "slow");
+                    }
+                ).then(
+                    function () {
+                        bindMinimap(true);
+                    }
+                )
+                .then(
+                    function () {
+                         // trigger save event
+                        $(document).trigger("save");
+                    }
+                )
             });
     }
 
