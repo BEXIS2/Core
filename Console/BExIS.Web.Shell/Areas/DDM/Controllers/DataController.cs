@@ -231,6 +231,118 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        public ActionResult Reload(long id, int version = 0)
+        {
+            DatasetManager dm = new DatasetManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+            try
+            {
+                DatasetVersion dsv;
+                ShowDataModel model = new ShowDataModel();
+
+                string title = "";
+                long metadataStructureId = -1;
+                long dataStructureId = -1;
+                long researchPlanId = 1;
+                long versionId = 0;
+                string dataStructureType = DataStructureType.Structured.ToString();
+                bool downloadAccess = false;
+                bool requestExist = false;
+                bool requestAble = false;
+                bool latestVersion = false;
+
+                XmlDocument metadata = new XmlDocument();
+
+                if (dm.IsDatasetCheckedIn(id))
+                {
+                    //get latest version
+                    if (version == 0)
+                    {
+                        versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
+                        //get current version number
+                        version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
+
+                        latestVersion = true;
+                    }
+                    // get specific version
+                    else
+                    {
+                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+                        latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
+                    }
+
+                    dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+
+                    metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+
+                    //MetadataStructureManager msm = new MetadataStructureManager();
+                    //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                    title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                    dataStructureId = dsv.Dataset.DataStructure.Id;
+                    researchPlanId = dsv.Dataset.ResearchPlan.Id;
+                    metadata = dsv.Metadata;
+
+                    // check if the user has download rights
+                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
+                        "Dataset", typeof(Dataset), id, RightType.Read);
+
+                    // check if a reuqest of this dataset exist
+                    if (!downloadAccess)
+                    {
+                        requestExist = HasRequest(id);
+
+                        if (UserExist() && HasRequestMapping(id)) requestAble = true;
+                    }
+
+                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    {
+                        dataStructureType = DataStructureType.Structured.ToString();
+                    }
+                    else
+                    {
+                        dataStructureType = DataStructureType.Unstructured.ToString();
+                    }
+
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                }
+
+                model = new ShowDataModel()
+                {
+                    Id = id,
+                    Version = version,
+                    VersionId = versionId,
+                    LatestVersion = latestVersion,
+                    Title = title,
+                    MetadataStructureId = metadataStructureId,
+                    DataStructureId = dataStructureId,
+                    ResearchPlanId = researchPlanId,
+                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
+                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
+                    DataStructureType = dataStructureType,
+                    DownloadAccess = downloadAccess,
+                    RequestExist = requestExist,
+                    RequestAble = requestAble
+                };
+
+                //set metadata in session
+                Session["ShowDataMetadata"] = metadata;
+                ViewData["Version"] = getVersionsSelectList(id, dm);
+
+                return PartialView("ShowData", model);
+            }
+            finally
+            {
+                dm.Dispose();
+                entityPermissionManager.Dispose();
+            }
+        }
+
         public ActionResult DownloadZip(long id, string format, long version = -1)
         {
             long datasetVersionId = 0;
@@ -511,7 +623,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
-        public JsonResult PrepareAscii(long id, string ext, long versionid, bool latest)
+        public JsonResult PrepareAscii(long id, string ext, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -540,7 +652,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = getFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id, withUnits);
 
                         LoggerFactory.LogCustom(message);
 
@@ -549,7 +661,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //full dataset
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype);
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype, withUnits);
 
                         LoggerFactory.LogCustom(message);
                     }
@@ -571,7 +683,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest)
+        public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -604,7 +716,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = getFilteredData(id);
-                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
+                        path = ioOutputDataManager.GenerateAsciiFile("temp", datatable, title, mimetype, datasetVersion.Dataset.DataStructure.Id, withUnits);
 
                         LoggerFactory.LogCustom(message);
 
@@ -614,7 +726,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype);
+                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype, withUnits);
 
                         LoggerFactory.LogCustom(message);
 
@@ -649,7 +761,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public JsonResult PrepareExcelData(long id, long versionid, bool latest)
+        public JsonResult PrepareExcelData(long id, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -675,7 +787,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (!latest)
                     {
                         DataTable datatable = getHistoryData(versionid);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id, ext);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id, ext, withUnits);
                     }
                     else
                     // if filter selected
@@ -684,7 +796,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = getFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext, withUnits);
 
                         LoggerFactory.LogCustom(message);
 
@@ -693,7 +805,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title, false);
+                        path = outputDataManager.GenerateExcelFile(id, title, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
                     }
 
@@ -714,7 +826,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public ActionResult DownloadAsExcelData(long id, long versionid, bool latest)
+        public ActionResult DownloadAsExcelData(long id, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -742,7 +854,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (!latest)
                     {
                         DataTable datatable = getHistoryData(versionid);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id, ext);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title, datasetVersion.Dataset.DataStructure.Id, ext, withUnits);
 
                         return File(path, mimetype, title + "_v" + versionNumber + ext);
                     }
@@ -754,7 +866,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = getFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext);
+                        path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext, withUnits);
 
                         LoggerFactory.LogCustom(message);
 
@@ -766,7 +878,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title, false);
+                        path = outputDataManager.GenerateExcelFile(id, title, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();

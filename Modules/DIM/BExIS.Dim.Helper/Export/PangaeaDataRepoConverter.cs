@@ -31,7 +31,6 @@ namespace BExIS.Dim.Helpers.Export
             PublicationManager publicationManager = new PublicationManager();
             try
             {
-
                 _broker = publicationManager.GetBroker(_broker.Id);
                 _dataRepo = publicationManager.GetRepository(_dataRepo.Id);
 
@@ -39,8 +38,8 @@ namespace BExIS.Dim.Helpers.Export
                  *  Generate a txt file for pangaea
                  *  1. json metadata
                  *  2. tabseperated primary Data
-                 * 
-                 * 
+                 *
+                 *
                  * if data only unstructred, then only metadata
                  */
 
@@ -48,12 +47,9 @@ namespace BExIS.Dim.Helpers.Export
 
                 #region create primary Data
 
-
                 primaryDataFilePath = generatePrimaryData(datasetVersionId);
 
-
-                #endregion
-
+                #endregion create primary Data
 
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
                 long datasetId = datasetVersion.Dataset.Id;
@@ -66,10 +62,7 @@ namespace BExIS.Dim.Helpers.Export
 
                 string json = JsonConvert.SerializeObject(metadata, Formatting.Indented);
 
-
                 SubmissionManager submissionManager = new SubmissionManager();
-
-
 
                 string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
                 string filename = submissionManager.GetFileNameForDataRepo(datasetVersionId, datasetId, _dataRepo.Name, "txt");
@@ -92,17 +85,11 @@ namespace BExIS.Dim.Helpers.Export
                     }
 
                     return filepath;
-
                 }
                 catch (Exception exception)
                 {
-
                     throw exception;
                 }
-
-
-
-
 
                 return "";
             }
@@ -125,7 +112,6 @@ namespace BExIS.Dim.Helpers.Export
                 DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-
                 if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
                     OutputDataManager outputDataManager = new OutputDataManager();
@@ -141,15 +127,14 @@ namespace BExIS.Dim.Helpers.Export
                         datasetId,
                         datasetVersionId,
                         fileName,
-                        "text/txt");
+                        "text/txt",
+                        false);
 
                     return filepath;
                 }
-
             }
             catch (Exception)
             {
-
                 throw;
             }
 
@@ -191,7 +176,6 @@ namespace BExIS.Dim.Helpers.Export
             pangaeaMetadata.ExportFilename = Regex.Replace(pangaeaMetadata.Title, "[^0-9a-zA-Z]+", "");
 
             return pangaeaMetadata;
-
         }
 
         public PangaeaDataRepoConverter(Repository datarepo)
@@ -200,7 +184,6 @@ namespace BExIS.Dim.Helpers.Export
             _broker = datarepo.Broker;
         }
     }
-
 
     public class PanageaMetadata
     {

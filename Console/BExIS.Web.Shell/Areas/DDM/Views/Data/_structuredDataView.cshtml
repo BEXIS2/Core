@@ -89,6 +89,8 @@
             </ul>
         </span>
 
+        @Html.CheckBox("WithUnits", false, new { text = "download data with units", @id = "WithUnits" }) @Html.Label("Download data with units")
+
     }
     else
     {
@@ -105,10 +107,10 @@
                 disabled="disabled">
             Download Text
         </button>
-        @*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
     }
 
     @Html.CheckBox("FitToScreen", fitToScreen, new { text = "Fit table to screen", @id = "FitToScreen" }) @Html.Label("Fit table to screen")
+
 
     <span id="preloaderContainer" style="float: right"></span>
 </div>
@@ -304,18 +306,19 @@
 	$(".file-type-download-entry").click(function (id) {
 
 		var ext = $(this).attr("ext");
-
+        var withunits = $("#WithUnits").prop('checked');
+        console.log(withunits);
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 
-		$.ajax({
-			url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })'+"?ext=" + ext+"&versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
+        $.ajax({
+            url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })' + "?ext=" + ext + "&versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits,
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function(e) {
 
 				if (e) {
-					window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})'+"?ext=" + ext+"&versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion';
+                    window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})' + "?ext=" + ext + "&versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits;
 				}
 				else {
 					alert(e);
@@ -350,17 +353,20 @@
 
 	function downloadExcel(id) {
 
+        var withunits = $("#WithUnits").prop('checked');
+
+
 		$("#preloaderContainer").preloader(20, "Preparing excel file...");
 		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
 		$.ajax({
-			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
+			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion' + "&withUnits=" + withunits,
 			contentType: 'application/json; charset=utf-8',
 			datatype: 'json',
 			type: "GET",
 			success: function(e) {
 
 				if (e) {
-					window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion';
+                    window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })' + "?versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits;
 				}
 				else {
 					alert(e);

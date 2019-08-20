@@ -137,7 +137,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 EntityMappingExist = entityMappingExist,
                 PartyMappingExist = partyMappingExist,
                 LowerBoundary = lowerBoundary,
-                UpperBoundary = lowerBoundary,
+                UpperBoundary = upperBoundary,
             };
         }
 
