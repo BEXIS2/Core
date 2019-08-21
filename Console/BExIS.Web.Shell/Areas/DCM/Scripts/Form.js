@@ -232,6 +232,7 @@ function OnChangeTextInput(e) {
             //console.log(newId);
 
             $("#" + newId).replaceWith(response);
+            updateHeader();
 
             //alert("test");
             autosize($('textarea'));
@@ -288,6 +289,9 @@ function OnChange(e) {
             var newId = e.id.substr(0, index);
 
             $("#" + newId).replaceWith(response);
+
+            updateHeader();
+
             if ($('textarea') !== null) {
                 autosize($('textarea'));
             }
@@ -344,7 +348,8 @@ function OnChangeCheckBox(e) {
             //alert(newId);
 
             $("#" + newId).replaceWith(response);
-        })
+            updateHeader();
+        });
 }
 
 function OnChangeDropDown(e) {
@@ -847,6 +852,36 @@ function showHideClick(e) {
     var buttonId = parentId + "_" + number + "_ButtonView";
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
+    bindMinimap(true);
+}
+
+function showAllClick(e) {
+    $('.first_level').show();
+    $('.header-menu').css('background-color', '##bee1da');
+    $(e).parent().css('background-color', '#a1bbb6');
+    bindMinimap(true);
+}
+function showFirstLevelClick(e) {
+    var temp = e.id;
+    var parentId = temp.split("_")[0];
+    var number = temp.split("_")[1];
+
+    var id = parentId + "_" + number + "_Container";
+    var buttonId = parentId + "_" + number + "_ButtonView";
+
+    $('.header-menu').css('background-color', '##bee1da');
+    $(e).parent().css('background-color', '#a1bbb6');
+
+    $('.first_level').hide();
+    $('#' + parentId).show();
+    $('#' + id).show();
+    bindMinimap(true);
+}
+
+function updateHeader() {
+    bindMinimap(true);
+    $('.header-menu').removeClass('bx-input-error')
+    $('.bx-input-error').closest('.Metadata-Level-1:first-child').each(function () { $('#' + $(this).parent().parent().attr('id') + '_Menu').addClass('bx-input-error') });
     bindMinimap(true);
 }
 
