@@ -495,7 +495,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             bool show = false,
             bool created = false,
             long entityId = -1,
-            bool fromEditMode = false
+            bool fromEditMode = false,
+            bool latestVersion = false
             )
         {
             ViewData["Locked"] = locked;
@@ -576,6 +577,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
+            Model.LatestVersion = latestVersion;
 
             //set title
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_TITLE))
@@ -670,7 +672,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View("MetadataEditor", Model);
         }
 
-        public ActionResult SwitchVisibilityOfOptionalElements(bool show, bool created, long entityId, bool fromEditMode)
+        public ActionResult SwitchVisibilityOfOptionalElements(bool show, bool created, long entityId, bool fromEditMode, bool latestVersion)
         {
             return RedirectToAction("ReloadMetadataEditor", new
             {
@@ -678,7 +680,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 show = !show,
                 created,
                 entityId,
-                fromEditMode
+                fromEditMode,
+                latestVersion
             });
         }
 

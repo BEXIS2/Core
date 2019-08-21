@@ -539,6 +539,7 @@ function OnSuccess(e) {
         var created = '@Model.Created';
         var entityId = '@Model.DatasetId';
         var fromEditMode = '@Model.FromEditMode';
+        var latest = '@Model.LatestVersion'
 
         //if(Model.Created && Model.DatasetId != -1 && !Model.FromEditMode)
 
@@ -547,7 +548,8 @@ function OnSuccess(e) {
                 show: show,
                 created: created,
                 entityId: entityId,
-                fromEditMode: fromEditMode
+                fromEditMode: fromEditMode,
+                latestVersion: latest
             },
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
