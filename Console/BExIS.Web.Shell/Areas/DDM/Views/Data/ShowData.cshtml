@@ -46,7 +46,6 @@
                         <b>Dataset Id: </b> @Model.Id
                         <b>Version: </b>
                         @Html.DropDownListFor(m => m.Version, null, new { @class = "bx-dropdown" })
-
                     </div>
                     <div class="col-md-6">
                         @if (!Model.LatestVersion)
@@ -140,21 +139,22 @@
                                             .Enabled(false);
 
                                           tabs.Add()
-                                              .Text("Metadata")
-                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
-                                              .HtmlAttributes(new { id = "metadata" })
+                                              .Text("Primary Data")
+                                              .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
+                                              .Enabled(@Model.ViewAccess)
+                                              .HtmlAttributes(new { id = "primarydata" })
                                               .Enabled(false);
 
                                           tabs.Add()
-                                              .Text("Metadata")
-                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
-                                              .HtmlAttributes(new { id = "metadata" })
+                                              .Text("Data Structure")
+                                              .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
+                                              .HtmlAttributes(new { id = "datastructure" })
                                               .Enabled(false);
 
                                           tabs.Add()
                                               .Text("Links")
                                               .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
-                                              .Enabled(true)
+                                              .Enabled(false)
                                               .HtmlAttributes(new { id = "showreferences" });
 
                                           tabs.Add()
@@ -246,6 +246,7 @@
 				$("li#primarydata").removeClass("t-state-disabled");
 				$("li#prepare").removeClass("t-state-disabled");
 				$("li#attachements").removeClass("t-state-disabled");
+				$("li#showreferences").removeClass("t-state-disabled");
 			}
 
 			if (grantAccess === "True") {
