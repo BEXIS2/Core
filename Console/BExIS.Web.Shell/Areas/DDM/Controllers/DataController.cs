@@ -179,7 +179,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // check if a reuqest of this dataset exist
                     if (!downloadAccess)
                     {
-                        requestExist = HasRequest(id);
+                        requestExist = HasOpenRequest(id);
 
                         if (UserExist() && HasRequestMapping(id)) requestAble = true;
                     }
@@ -291,7 +291,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // check if a reuqest of this dataset exist
                     if (!downloadAccess)
                     {
-                        requestExist = HasRequest(id);
+                        requestExist = HasOpenRequest(id);
 
                         if (UserExist() && HasRequestMapping(id)) requestAble = true;
                     }
@@ -1364,8 +1364,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
                 long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
-                // ask for read and download rights
-                if (!requestManager.Exists(userId, entityId, id))
+                if (!requestManager.Exists(userId, entityId, id) ||
+                    !(requestManager.Exists(userId, entityId, id, Security.Entities.Requests.RequestStatus.Open)))
                 {
                     var request = requestManager.Create(userId, entityId, id, 3, intention);
 
@@ -1582,9 +1582,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             #endregion security permissions and authorisations check
         }
 
-        private bool HasRequest(long datasetId)
+        private bool HasOpenRequest(long datasetId)
         {
             RequestManager requestManager = new RequestManager();
+            DecisionManager decisionManager = new DecisionManager();
             SubjectManager subjectManager = new SubjectManager();
             EntityManager entityManager = new EntityManager();
 
@@ -1595,7 +1596,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
                     long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
-                    return requestManager.Exists(userId, entityId, datasetId);
+                    var request = requestManager.Requests.Where(r =>
+                                            r.Applicant.Id.Equals(userId) &&
+                                            r.Entity.Id.Equals(entityId) &&
+                                            r.Key.Equals(datasetId) &&
+                                            r.Status == Security.Entities.Requests.RequestStatus.Open).FirstOrDefault();
+
+                    if (request != null) return true;
                 }
 
                 return false;
