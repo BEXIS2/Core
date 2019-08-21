@@ -2791,6 +2791,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value, stepModelHelper.XPath);
 
+            ViewData["Xpath"] = stepModelHelper.XPath; // set Xpath for idbyxapth
+
             if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
             {
                 var selectedMetadatAttributeModel = stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();

@@ -6,6 +6,7 @@
 
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
+    string idByXpath = ((string) ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
@@ -130,6 +131,7 @@
                                     new { OnChange = "OnChange(this)",
                                         Name = @displayName,
                                         Id = @idInput,
+                                        idbyxpath = @idByXpath,
                                         PackageId = @Model.Parent.Id,
                                         Title = @errorMessage,
                                         @class = "bx-input bx-metadataFormTextInput " + @errorClass,
@@ -142,7 +144,7 @@
                                 @(Html.Telerik().DropDownList()
                                             .Placeholder("Select, please")
                                             .Name(@idInput)
-                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown" + @errorClass })
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown" + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
                                             .BindTo(new SelectList(Model.DomainList, Model.Value)))
                             }
@@ -255,11 +257,11 @@
 
                     if (!locked)
                     {
-                        @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
+                        @Html.CheckBox(Model.DisplayName, value, new { idbyxpath = @idByXpath, OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
                     }
                     else
                     {
-                        @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
+                        @Html.CheckBox(Model.DisplayName, value, new { idbyxpath = @idByXpath, OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
                     }
 
                 }
@@ -286,13 +288,13 @@
                                                         .Value(value)
                                                         .ClientEvents(events => events
                                                         .OnChange("OnChangeNumbers"))
-                                                        .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
+                                                        .InputHtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                         )
                     }
                     else
                     {
 
-                        @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                     }
                 }
 
@@ -303,11 +305,11 @@
                 {
                     if (!locked)
                     {
-                        @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
+                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                     }
                     else
                     {
-                        @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
+                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                     }
                 }
 

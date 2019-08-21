@@ -255,12 +255,12 @@
                 {
                     if (Model.Model.MetadataAttributeModels.Any())
                     {
-                        <div class="simpleAttributesContainer">
-                            @foreach (var element in Model.Model.MetadataAttributeModels)
-                            {
-                                @Html.Partial("_metadataAttributeView", element)
-                            }
-                        </div>
+                    <div class="simpleAttributesContainer">
+                        @foreach (var element in Model.Model.MetadataAttributeModels)
+                        {
+                            @Html.Partial("_metadataAttributeView", element, new ViewDataDictionary { { "Xpath", Model.XPath } });
+                        }
+                    </div>
                     }
 
                     <div class="complexAttributesContainer">
