@@ -46,6 +46,17 @@
         hideOptional = (bool)ViewData["HideOptional"];
     }
 
+
+    //update ViewData XPath
+    if (ViewData["Xpath"] != null)
+    {
+        ViewData["Xpath"] = Model.XPath;
+    }
+    else
+    {
+        ViewData.Add("Xpath", Model.XPath);
+    }
+
 }
 
 <div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass">
@@ -240,7 +251,7 @@
                         <div class="simpleAttributesContainer">
                             @foreach (var element in Model.Model.MetadataAttributeModels)
                             {
-                                @Html.Partial("_metadataAttributeView", element, new ViewDataDictionary { { "Xpath", Model.XPath } });
+                                @Html.Partial("_metadataAttributeView", element, ViewData);
                             }
                         </div>
                     }
