@@ -251,7 +251,7 @@
     <div>
         <table>
             <tr>
-                <th style="width: 80px;">Version Id</th>
+                <th style="width: 80px;">Version</th>
                 <th>Broker</th>
                 <th>DataRepo</th>
                 <th>Creation Date</th>
@@ -264,7 +264,7 @@
                 foreach (var publication in Model.Publications)
                 {
                     <tr>
-                        <td>@publication.DatasetVersionId</td>
+                        <td>@publication.DatasetVersionNr</td>
                         <td>@publication.Broker.Name</td>
                         <td>@publication.DataRepo</td>
                         <td>@publication.CreationDate.ToLocalTime()</td>

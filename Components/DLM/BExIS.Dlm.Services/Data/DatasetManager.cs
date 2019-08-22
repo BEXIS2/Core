@@ -1457,6 +1457,41 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        public int GetDatasetVersionNr(long versionId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetVersion = datasetVersionRepo.Get(versionId);
+
+                if (datasetVersion == null) return -1;
+
+                return GetDatasetVersionNr(datasetVersion);
+            }
+        }
+
+        public int GetDatasetVersionNr(DatasetVersion datasetVersion)
+        {
+            if (datasetVersion == null) return -1;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
+                var dataset = DatasetRepo.Get(datasetVersion.Dataset.Id);
+
+                if (dataset == null) return -1;
+
+                var sortedVersions = dataset.Versions.OrderBy(dsv => dsv.Timestamp).ToList();
+
+                for (int i = 0; i < sortedVersions.Count(); i++)
+                {
+                    if (sortedVersions.ElementAt(i).Id.Equals(datasetVersion.Id)) return i + 1;
+                }
+            }
+
+            return 0;
+        }
+
         #endregion DatasetVersion
 
         #region Private Methods

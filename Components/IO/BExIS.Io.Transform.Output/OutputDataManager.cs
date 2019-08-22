@@ -41,6 +41,7 @@ namespace BExIS.IO.Transform.Output
             try
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);
+                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
 
                 string contentDescriptorTitle = "";
                 string ext = "";
@@ -109,7 +110,7 @@ namespace BExIS.IO.Transform.Output
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer, null, withUnits);
+                path = createDownloadFile(id, versionNr, datastuctureId, "data", ext, writer, null, withUnits);
 
                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext, withUnits);
 
@@ -266,19 +267,19 @@ namespace BExIS.IO.Transform.Output
                 }
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-
+                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                 if (createAsTemplate)
                 {
                     string[] columnNames = (from dc in data.Columns.Cast<DataColumn>()
                                             select dc.Caption).ToArray();
 
-                    path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer, columnNames);
+                    path = createDownloadFile(id, versionNr, datastuctureId, "data", ext, writer, columnNames);
                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext, false);
                     writer.AddData(data.Rows, path, datastuctureId);
                 }
                 else
                 {
-                    path = createDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer, null, withUnits);
+                    path = createDownloadFile(id, versionNr, datastuctureId, "data", ext, writer, null, withUnits);
 
                     // the default data is without units, so store the path of the file if it was generated
                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext, withUnits);
@@ -410,8 +411,10 @@ namespace BExIS.IO.Transform.Output
                     mimeType = "application/xlsx";
                 }
 
+                int versionNr = dm.GetDatasetVersionNr(datasetVersion);
+
                 // create the generated FileStream and determine its location
-                string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, datasetVersion.Id, "data", ext);
+                string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, versionNr, "data", ext);
                 //Register the generated data FileStream as a resource of the current dataset version
                 //ContentDescriptor generatedDescriptor = new ContentDescriptor()
                 //{

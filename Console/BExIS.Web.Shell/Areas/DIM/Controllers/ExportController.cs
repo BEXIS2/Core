@@ -187,6 +187,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     long dsId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
                     #region metadata
 
@@ -227,7 +228,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #endregion primary data
 
-                    string zipName = publishingManager.GetZipFileName(id, datasetVersion.Id);
+                    string zipName = publishingManager.GetZipFileName(id, versionNr);
                     string zipPath = publishingManager.GetDirectoryPath(id, brokerName);
                     string dynamicZipPath = publishingManager.GetDynamicDirectoryPath(id, brokerName);
                     string zipFilePath = Path.Combine(zipPath, zipName);
@@ -316,7 +317,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (manifest != null)
                     {
                         string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                            datasetVersion.Id, "manifest", ".xml");
+                            versionNr, "manifest", ".xml");
                         string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
 
                         manifest.Save(fullFilePath);
@@ -353,9 +354,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 name = title;
                 mimeType = "application/html";
             }
+            DatasetManager dm = new DatasetManager();
+            int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
             // create the generated FileStream and determine its location
-            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title,
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
                 ext);
             //Register the generated data FileStream as a resource of the current dataset version
             //ContentDescriptor generatedDescriptor = new ContentDescriptor()
@@ -367,7 +370,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             //    DatasetVersion = datasetVersion,
             //};
 
-            DatasetManager dm = new DatasetManager();
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
             {
                 // remove the one contentdesciptor
