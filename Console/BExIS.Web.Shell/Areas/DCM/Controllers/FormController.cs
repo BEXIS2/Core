@@ -177,6 +177,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             Model.EditRight = hasUserEditRights(entityId);
             Model.EditAccessRight = hasUserEditAccessRights(entityId);
+            Model.LatestVersion = true;
 
             //set addtionaly functions
             Model.Actions = getAddtionalActions();

@@ -215,7 +215,7 @@
     <div style="overflow: overlay;">
 
         <div class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white; background-color:#a1bbb6">
-            <div id ="@id_label_container_1" class="labelContainer" onclick="showAllClick(this)">
+            <div id="@id_label_container_1" class="labelContainer" onclick="showAllClick(this)">
                 <b>All</b>
                 <div>
                 </div>
@@ -511,11 +511,9 @@ function OnSuccess(e) {
                 valid: valid
             },
             function (response) {
-
-                $.when(function () {
                     $('#MetadataEditor').replaceWith(response);
-                }
-                ).then(
+
+                $.when().then(
                     function () {
                         $('html, body').animate({ scrollTop: 0 }, "slow");
                     }
