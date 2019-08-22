@@ -177,6 +177,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             Model.EditRight = hasUserEditRights(entityId);
             Model.EditAccessRight = hasUserEditAccessRights(entityId);
+            Model.LatestVersion = true;
 
             //set addtionaly functions
             Model.Actions = getAddtionalActions();
@@ -2793,6 +2794,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Number = number;
 
             UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value, stepModelHelper.XPath);
+
+            ViewData["Xpath"] = stepModelHelper.XPath; // set Xpath for idbyxapth
 
             if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
             {
