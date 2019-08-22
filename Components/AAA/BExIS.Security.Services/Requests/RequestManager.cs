@@ -154,6 +154,20 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
+        public bool Exists(long applicantId, long entityId, long key, RequestStatus status)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+
+                var request =
+                    requestRepository.Query(
+                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key && m.Status == status).FirstOrDefault();
+
+                return request != null;
+            }
+        }
+
         public Request FindById(long id)
         {
             return RequestRepository.Get(id);
