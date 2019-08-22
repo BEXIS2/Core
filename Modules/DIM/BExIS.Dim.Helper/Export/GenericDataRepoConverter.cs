@@ -68,7 +68,9 @@ namespace BExIS.Dim.Helpers.Export
                             odm.GenerateAsciiFile(datasetId, title, broker.PrimaryDataFormat, false);
                         }
 
-                        string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
+                        int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+
+                        string zipName = publishingManager.GetZipFileName(datasetId, versionNr);
                         string zipPath = publishingManager.GetDirectoryPath(datasetId, broker.Name);
                         string dynamicZipPath = publishingManager.GetDynamicDirectoryPath(datasetId, broker.Name);
                         string zipFilePath = Path.Combine(zipPath, zipName);

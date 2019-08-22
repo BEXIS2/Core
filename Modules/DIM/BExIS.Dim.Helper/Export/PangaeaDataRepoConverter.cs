@@ -65,7 +65,10 @@ namespace BExIS.Dim.Helpers.Export
                 SubmissionManager submissionManager = new SubmissionManager();
 
                 string path = submissionManager.GetDirectoryPath(datasetId, _broker.Name);
-                string filename = submissionManager.GetFileNameForDataRepo(datasetVersionId, datasetId, _dataRepo.Name, "txt");
+
+                int verionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+
+                string filename = submissionManager.GetFileNameForDataRepo(datasetId, verionNr, _dataRepo.Name, "txt");
 
                 string filepath = Path.Combine(path, filename);
 
@@ -118,8 +121,9 @@ namespace BExIS.Dim.Helpers.Export
                     SubmissionManager submissionManager = new SubmissionManager();
 
                     long datasetId = datasetVersion.Dataset.Id;
+                    int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
 
-                    string fileName = submissionManager.GetFileNameForDataRepo(datasetId, datasetVersionId,
+                    string fileName = submissionManager.GetFileNameForDataRepo(datasetId, versionNr,
                         _dataRepo.Name,
                         "csv");
 
