@@ -1015,16 +1015,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (model != null)
             {
-                //if (model is MetadataPackageModel)
-                //{
-                //    return PartialView("_metadataPackageUsageView", stepModelHelperParent);
-                //}
-
-                //if (model is MetadataCompoundAttributeModel)
-                //{
-                //    return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
-                //}
-
                 return PartialView("_metadataCompoundAttributeUsageView", stepModelHelperParent);
             }
 
