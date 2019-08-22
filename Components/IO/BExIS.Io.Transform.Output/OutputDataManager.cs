@@ -47,11 +47,17 @@ namespace BExIS.IO.Transform.Output
                 string nameExt = "";
                 TextSeperator textSeperator = TextSeperator.semicolon;
 
-                if (withUnits) nameExt = "WithUnits";
+                if (withUnits) nameExt = "_withunits";
 
                 switch (mimeType)
                 {
                     case "text/csv":
+                    case "text/comma-separated-values":
+                    case "application/octet-stream":
+                        /* of course this is a wrong  mimetype for csv.
+                        but the c# class MimeMapping.GetMimeMapping(ext) currently returns this as a result for .csv.
+                        since we don't use the datatype at the moment,
+                        it will be rebuilt into the case here*/
                         {
                             contentDescriptorTitle = "generatedCSV" + nameExt;
                             ext = ".csv";
@@ -59,6 +65,7 @@ namespace BExIS.IO.Transform.Output
                             break;
                         }
                     case "text/tsv":
+                    case "text/tab-separated-values":
                         {
                             contentDescriptorTitle = "generatedTSV" + nameExt;
                             ext = ".tsv";
@@ -128,12 +135,19 @@ namespace BExIS.IO.Transform.Output
             switch (mimeType)
             {
                 case "text/csv":
+                case "text/comma-separated-values":
+                case "application/octet-stream":
+                    /* of course this is a wrong  mimetype for csv.
+                    but the c# class MimeMapping.GetMimeMapping(ext) currently returns this as a result for .csv.
+                    since we don't use the datatype at the moment,
+                    it will be rebuilt into the case here*/
                     {
                         ext = ".csv";
                         textSeperator = TextSeperator.semicolon;
                         break;
                     }
                 case "text/tsv":
+                case "text/tab-separated-values":
                     {
                         ext = ".tsv";
                         textSeperator = TextSeperator.tab;
@@ -292,7 +306,7 @@ namespace BExIS.IO.Transform.Output
         private string createDownloadFile(long id, long datasetVersionOrderNo, long dataStructureId, string title, string ext, DataWriter writer, string[] columns = null, bool withUnits = false)
         {
             string addtionalFileNameExt = "";
-            if (withUnits) addtionalFileNameExt = "WithUnits";
+            if (withUnits) addtionalFileNameExt = "_withunits";
 
             string filename = "data" + addtionalFileNameExt;
 
@@ -359,7 +373,7 @@ namespace BExIS.IO.Transform.Output
         {
             DatasetManager dm = new DatasetManager();
             string nameExt = "";
-            if (withUnits) nameExt = "withUnits";
+            if (withUnits) nameExt = "_withunits";
 
             try
             {
@@ -464,7 +478,7 @@ namespace BExIS.IO.Transform.Output
         private string[] getColumnNames(DataTable table)
         {
             return table.Columns.Cast<DataColumn>()
-                                 .Select(x => x.ColumnName)
+                                 .Select(x => x.Caption)
                                  .ToArray();
         }
 
