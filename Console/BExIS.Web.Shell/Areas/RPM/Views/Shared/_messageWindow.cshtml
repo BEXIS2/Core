@@ -1,6 +1,10 @@
 ﻿@model BExIS.Modules.Rpm.UI.Models.MessageModel
 
-@if(!Model.hasMessage)
+@{ 
+    string[] lines = Model.Message.Split('\n');
+}
+
+@if (!Model.hasMessage)
 {
     <div class="bx-rpm-message" value="@Model.hasMessage" id="@Model.CssId">
         @Model.Message
@@ -13,7 +17,10 @@
 else if (Model.hasMessage)
 {
     <div class="bx-rpm-message" value="@Model.hasMessage" id="@Model.CssId">
-        @Model.Message
+        @foreach(string s in lines)
+        {
+            @s<br />
+        }
         <div id="buttons">
             <button class="bx-button small function" onclick="messageWindowCancel(@Model.CssId)" id="okButton">OK</button>
         </div>

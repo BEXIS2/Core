@@ -182,13 +182,14 @@ h2{
 .bx-rpm-attribute-container .bx-rpm-expand,
 .bx-rpm-attribute-container .bx-rpm-delete,
 .bx-rpm-variable-container .bx-rpm-delete,
-.bx-rpm-variable-container .bx-rpm-expand{
-    vertical-align:middle;
-    width:20px;
-    min-width:20px;
-    max-width:20px;
+.bx-rpm-variable-container .bx-rpm-expand,
+.bx-rpm-variable-container .bx-rpm-add {
+    vertical-align: middle;
+    width: 20px;
+    min-width: 20px;
+    max-width: 20px;
     text-align: center;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .bx-rpm-attribute-container .bx-rpm-select {

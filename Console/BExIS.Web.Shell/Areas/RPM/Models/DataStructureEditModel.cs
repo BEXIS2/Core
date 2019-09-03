@@ -1,6 +1,8 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Modules.Rpm.UI.Classes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -171,12 +173,29 @@ namespace BExIS.Modules.Rpm.UI.Models
             return this;
         }
     }
+
+    public class MissingValueStruct
+    {
+        public long Id { get; set; }
+        public string DisplayName { get; set; }
+        public string Placeholder { get; set; }
+        public string Description { get; set; }
+
+        public MissingValueStruct()
+        {
+            this.Id = 0;
+            this.DisplayName = "";
+            this.Placeholder = "";
+            this.Description = "";
+        }
+    }
+
     public class VariablePreviewStruct : AttributePreviewStruct
     {
         public bool isOptional { get; set; }
         public List<ItemStruct> convertibleUnits { get; set; }
         public AttributePreviewStruct Attribute { get; set; }
-
+        public List<MissingValueStruct> MissingValues { get; set; }
 
         public VariablePreviewStruct()
         {
@@ -189,7 +208,8 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
             this.Attribute = new AttributePreviewStruct();
-            this.inUse = false;
+            this.inUse = false;           
+            this.MissingValues = new List<MissingValueStruct>();
         }
 
         public new VariablePreviewStruct fill(long attributeId)
@@ -210,6 +230,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     Description = dataAttribute.Description,
                     Unit = dataAttribute.Unit,
                     DataAttribute = dataAttribute
+                    
                 };
                 return this.fill(variable, getConstraints);
             }
@@ -228,35 +249,74 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             MissingValueManager missingValueManager = null;
 
-            variable.Unit = variable.Unit ?? new Unit();
-            variable.Unit.Dimension = variable.Unit.Dimension ?? new Dimension();
-            variable.DataAttribute = variable.DataAttribute ?? new DataAttribute();
-            variable.DataAttribute.DataType = variable.DataAttribute.DataType ?? new DataType();
-
-            this.Id = variable.Id;
-            this.Name = variable.Label;
-            this.Description = variable.Description;
-            this.isOptional = variable.IsValueOptional;
-            this.Unit.Id = variable.Unit.Id;
-            this.Unit.Name = variable.Unit.Name;
-            this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
-            this.DataType = variable.DataAttribute.DataType.Name;
-
-            if (getConstraints)
+            try
             {
-                if (variable.DataAttribute.Constraints != null)
+                missingValueManager = new MissingValueManager();
+                List<MissingValue> temp = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(variable.Id)).ToList();
+
+                variable.Unit = variable.Unit ?? new Unit();
+                variable.Unit.Dimension = variable.Unit.Dimension ?? new Dimension();
+                variable.DataAttribute = variable.DataAttribute ?? new DataAttribute();
+                variable.DataAttribute.DataType = variable.DataAttribute.DataType ?? new DataType();
+
+                this.Id = variable.Id;
+                this.Name = variable.Label;
+                this.Description = variable.Description;
+                this.isOptional = variable.IsValueOptional;
+                this.Unit.Id = variable.Unit.Id;
+                this.Unit.Name = variable.Unit.Name;
+                this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
+                this.DataType = variable.DataAttribute.DataType.Name;
+
+                TypeCode typeCode = TypeCode.String;
+
+                foreach (TypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
                 {
-                    foreach (Constraint c in variable.DataAttribute.Constraints)
+                    if (tc.ToString() == variable.DataAttribute.DataType.SystemType)
                     {
-                        c.Materialize();
-                        this.Constraints.Add(c.Id, c.FormalDescription);
+                        typeCode = tc;
+                        break;
                     }
                 }
+
+                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null)
+                {
+                    foreach (MissingValue mv in temp)
+                    {
+                        this.MissingValues.Add(new MissingValueStruct()
+                        {
+                            Id = mv.Id,
+                            DisplayName = mv.DisplayName,
+                            Description = mv.Description,
+                            Placeholder = mv.Placeholder
+                        });
+                    }
+                }
+                else if(missingValueManager.getPlaceholder(typeCode, this.Id) == null)
+                {
+                    this.MissingValues = null;
+                }
+
+            if (getConstraints)
+                {
+                    if (variable.DataAttribute.Constraints != null)
+                    {
+                        foreach (Constraint c in variable.DataAttribute.Constraints)
+                        {
+                            c.Materialize();
+                            this.Constraints.Add(c.Id, c.FormalDescription);
+                        }
+                    }
+                }
+
+                this.Attribute = Attribute.fill(variable.DataAttribute, false);
+
+                return this;
             }
-
-            this.Attribute = Attribute.fill(variable.DataAttribute, false);
-
-            return this;
+            finally
+            {
+                missingValueManager.Dispose();
+            }
         }
 
         public List<ItemStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
@@ -472,6 +532,9 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Description { get; set; }
         public long UnitId { get; set; }
         public bool isOptional { get; set; }
+        public List<MissingValueStruct> MissingValues { get; set; }
+
+
 
         public storeVariableStruct()
         {
@@ -481,6 +544,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Description = "";
             this.UnitId = 0;
             this.isOptional = true;
+            this.MissingValues = new List<MissingValueStruct>();
         }
     }
 

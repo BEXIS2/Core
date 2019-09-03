@@ -14,6 +14,7 @@ using Vaiona.Web.Mvc.Models;
 using Vaiona.Persistence.Api;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc;
+using BExIS.Dlm.Services.TypeSystem;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -70,6 +71,43 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
+        public ActionResult _getMissingValueElement(long missinValueId = 0)
+        {
+            MissingValueStruct missingValueStruct = new MissingValueStruct();
+            if (missinValueId > 0)
+            {
+                MissingValueManager missingValueManager = null;
+
+                try
+                {
+                    missingValueManager = new MissingValueManager();
+                    MissingValue missingValue = missingValueManager.Repo.Get(missinValueId);
+                    if(missingValue == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        missingValueStruct = new MissingValueStruct() {
+                            Id = missingValue.Id,
+                            DisplayName = missingValue.DisplayName,
+                            Description = missingValue.Description,
+                            Placeholder = missingValue.Placeholder
+                        };
+                    }
+                }
+                catch
+                {
+                    return null;
+                }
+                finally
+                {
+                    missingValueManager.Dispose();
+                }
+            }
+            return PartialView("_missingValueElement", missingValueStruct);
+        }
+
         public ActionResult _getAttributeElement(long attributeId, string variableName)
         {
             variableName = Server.UrlDecode(variableName);
@@ -85,6 +123,58 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
+        [HttpPost]
+        public bool _checkMissingValueName(long variableId, MissingValueStruct missingValue)
+        {
+            MissingValueManager missingValueManager = null;
+
+            try
+            {
+                missingValueManager = new MissingValueManager();
+                List<MissingValue> missingValues = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).ToList();
+                foreach(MissingValue mv in missingValues)
+                {
+                    if (mv.DisplayName == missingValue.DisplayName && mv.Id != missingValue.Id)
+                        return false;
+                }
+                return true;
+            }
+            finally
+            {
+                missingValueManager.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public bool _checkMissingValuePlaceholder(long variableId, MissingValueStruct missingValue)
+        {
+            MissingValueManager missingValueManager = null;
+            DataStructureManager dataStructureManager = null;
+
+            try
+            {
+                missingValueManager = new MissingValueManager();
+                dataStructureManager = new DataStructureManager();
+
+                Variable variable = dataStructureManager.VariableRepo.Get(variableId);
+                TypeCode typecode = new TypeCode();
+
+                foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
+                {
+                    if (tc.ToString() == variable.DataAttribute.DataType.SystemType)
+                    {
+                        typecode = (TypeCode)tc;
+                        break;
+                    }
+                }
+                return missingValueManager.ValidatePlaceholder(typecode, missingValue.Placeholder, missingValue.Id);
+            }
+            finally
+            {
+                missingValueManager.Dispose();
+            }
+        }
+
         public ActionResult deleteDataStructure(long Id, string cssId = "")
         {
             MessageModel DataStructureDeleteValidation = MessageModel.validateDataStructureDelete(Id);
@@ -95,9 +185,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             else
             {
                 DataStructureManager dataStructureManager = null;
+                MissingValueManager missingValueManager = null;
+
                 try
                 {
                     dataStructureManager = new DataStructureManager();
+                    missingValueManager = new MissingValueManager();
                     var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
                     StructuredDataStructure structuredDataStructure = structureRepo.Get(Id);
 
@@ -106,6 +199,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         DataStructureIO.deleteTemplate(structuredDataStructure.Id);
                         foreach (Variable v in structuredDataStructure.Variables)
                         {
+                            List<MissingValue> missingValues = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(v.Id)).ToList();
+                            foreach (MissingValue mv in missingValues)
+                            {
+                                missingValueManager.Delete(mv);
+                            }
                             dataStructureManager.RemoveVariableUsage(v);
                         }
                         dataStructureManager.DeleteStructuredDataStructure(structuredDataStructure);
@@ -128,6 +226,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 finally
                 {
                     dataStructureManager.Dispose();
+                    missingValueManager.Dispose();
                 }
             }
         }
@@ -137,11 +236,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             DataStructureManager dataStructureManager = null;
             DataContainerManager dataContainerManager = null;
+            MissingValueManager missingValueManager = null;
             UnitManager um = null;
 
             try
             {
                 dataStructureManager = new DataStructureManager();
+                missingValueManager = new MissingValueManager();
+                dataContainerManager = new DataContainerManager();
+                um = new UnitManager();
                 var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
 
                 StructuredDataStructure dataStructure = structureRepo.Get(Id);
@@ -168,71 +271,102 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     foreach (Variable v in dataStructure.Variables)
                     {
                         if (!variables.Select(svs => svs.Id).ToList().Contains(v.Id))
+                        {
+                            List<MissingValue> missingValues = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(v.Id)).ToList();
+                            foreach (MissingValue mv in missingValues)
+                            {
+                                missingValueManager.Delete(mv);
+                            }
                             dataStructureManager.RemoveVariableUsage(v);
+                        }
                     }
 
-                    MissingValueManager missingValueManager = null;
-
-                    try
+                    foreach (storeVariableStruct svs in variables.Where(svs => svs.Id == 0).ToList())
                     {
-                        dataContainerManager = new DataContainerManager();
-                        um = new UnitManager();
-                        missingValueManager = new MissingValueManager();
-                        foreach (storeVariableStruct svs in variables.Where(svs => svs.Id == 0).ToList())
+                        if (svs.Lable == null)
+                            svs.Lable = "";
+                        if (svs.Description == null)
+                            svs.Description = "";
+
+                        DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                        if (dataAttribute != null)
                         {
-                            if (svs.Lable == null)
-                                svs.Lable = "";
-                            if (svs.Description == null)
-                                svs.Description = "";
-
-                            DataAttribute dataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                            if (dataAttribute != null)
+                            variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
+                            svs.Id = variable.Id;
+                            foreach(MissingValueStruct mvs in svs.MissingValues)
                             {
-
-                                variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
-                                svs.Id = variable.Id;
-                                MissingValue missingValue = missingValueManager.Create(variable.Label, variable.Description, variable);
-                            }
-                            else
-                            {
-                                returnObject = new MessageModel()
+                                if (mvs.Id == 0)
                                 {
-                                    hasMessage = true,
-                                    Message = "Not all Variables are stored.",
-                                    CssId = "0"
-                                };
+                                    if (String.IsNullOrEmpty(mvs.Placeholder))
+                                        missingValueManager.Create(mvs.DisplayName, mvs.Description, variable);
+                                    else
+                                        missingValueManager.Create(mvs.DisplayName, mvs.Description, variable, mvs.Placeholder);
+                                }
                             }
                         }
-
-                        dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
-
-                        variables = variables.Where(v => v.Id != 0).ToArray();
-
-                        foreach (storeVariableStruct svs in variables.Where(svs => svs.Id != 0).ToList())
+                        else
                         {
-                            if (svs.Lable == null)
-                                svs.Lable = "";
-                            if (svs.Description == null)
-                                svs.Description = "";
-
-                            variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
-                            if (variable != null)
+                            returnObject = new MessageModel()
                             {
-                                variable.Label = svs.Lable.Trim();
-                                variable.Description = svs.Description.Trim();
-
-                                
-                                variable.Unit = um.Repo.Get(svs.UnitId);
-                                variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
-                                variable.IsValueOptional = svs.isOptional;         
-                            }
+                                hasMessage = true,
+                                Message = "Not all Variables are stored.",
+                                CssId = "0"
+                            };
                         }
                     }
-                    finally
+
+                    //dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
+
+                    variables = variables.Where(v => v.Id != 0).ToArray();
+                    MissingValue missingValue = new MissingValue();
+                    foreach (storeVariableStruct svs in variables.Where(svs => svs.Id != 0).ToList())
                     {
-                        missingValueManager.Dispose();
-                        um.Dispose();
-                        dataContainerManager.Dispose();
+                        if (svs.Lable == null)
+                            svs.Lable = "";
+                        if (svs.Description == null)
+                            svs.Description = "";
+
+                        variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
+                        if (variable != null)
+                        {
+                            variable.Label = svs.Lable.Trim();
+                            variable.Description = svs.Description.Trim();                            
+                            variable.Unit = um.Repo.Get(svs.UnitId);
+                            variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
+                            variable.IsValueOptional = svs.isOptional;
+
+                            
+                            List<MissingValue> missingValues = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(svs.Id)).ToList();
+                            foreach (MissingValue mv in missingValues)
+                            {
+                                if (!svs.MissingValues.Select(mvs => mvs.Id).Contains(mv.Id))
+                                {
+                                    missingValueManager.Delete(mv);
+                                }
+                            }
+
+                            foreach (MissingValueStruct mvs in svs.MissingValues)
+                            {
+                                if (mvs.Id == 0)
+                                {
+                                    if (String.IsNullOrEmpty(mvs.Placeholder))
+                                        missingValueManager.Create(mvs.DisplayName, mvs.Description, variable);
+                                    else
+                                        missingValueManager.Create(mvs.DisplayName, mvs.Description, variable, mvs.Placeholder);
+                                }
+                                else if (mvs.Id > 0)
+                                {
+                                    missingValue = missingValues.Where(mv => mv.Id.Equals(mvs.Id)).FirstOrDefault();
+                                    if (missingValue != null)
+                                    {
+                                        missingValue.DisplayName = mvs.DisplayName;
+                                        missingValue.Description = mvs.Description;
+                                        missingValue.Placeholder = mvs.Placeholder;
+                                        missingValueManager.Update(missingValue);
+                                    }
+                                }                  
+                            }
+                        }
                     }
 
                     dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
@@ -242,6 +376,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (Variable v in dataStructure.Variables)
                     {
+                        List<MissingValue> missingValues = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(v.Id)).ToList();
+                        foreach (MissingValue mv in missingValues)
+                        {
+                            missingValueManager.Delete(mv);
+                        }
                         dataStructureManager.RemoveVariableUsage(v);
                     }
                 }
@@ -253,6 +392,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 dataStructureManager.Dispose();
                 dataContainerManager.Dispose();
                 um.Dispose();
+                missingValueManager.Dispose();
             }
         }
 
