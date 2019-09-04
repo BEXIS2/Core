@@ -5,8 +5,11 @@ using BExIS.Modules.Rpm.UI.Classes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -279,7 +282,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     }
                 }
 
-                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null)
+                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Count > 0)
                 {
                     foreach (MissingValue mv in temp)
                     {
@@ -291,6 +294,31 @@ namespace BExIS.Modules.Rpm.UI.Models
                             Placeholder = mv.Placeholder
                         });
                     }
+                }
+                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Count <= 0)
+                {
+                    try
+                    {
+                        string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
+                        XmlDocument settings = new XmlDocument();
+                        settings.Load(filePath);
+                        XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
+
+                        foreach(XmlNode xn in missingValues)
+                        {
+                            MissingValues.Add(new MissingValueStruct() {
+                                Id = 0,
+                                DisplayName = xn["placeholder"].InnerText,
+                                Description = xn["description"].InnerText
+                            });
+                        }
+                        
+                    }
+                    catch
+                    {
+                        this.MissingValues = new List<MissingValueStruct>();
+                    }
+
                 }
                 else if(missingValueManager.getPlaceholder(typeCode, this.Id) == null)
                 {
