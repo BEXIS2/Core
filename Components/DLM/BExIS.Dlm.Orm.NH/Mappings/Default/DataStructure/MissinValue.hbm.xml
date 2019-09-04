@@ -1,0 +1,26 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="MissingValue" table="missingvalues">
+    <!-- Mapping BaseEntity properties -->
+
+    <id name="Id" type="Int64">
+      <column name="Id" />
+      <generator class="native" />
+    </id>
+
+    <property name="DisplayName" type="string">
+      <column name="displayName" />
+    </property>
+
+    <property name="Placeholder" type="string">
+      <column name="placeholder" />
+    </property>
+
+    <property name="Description" type="string">
+      <column name="description" />
+    </property>
+
+    <many-to-one name="Variable" column="variableref" not-null="true"/>
+    
+    <!-- Associations -->
+  </class>
+</hibernate-mapping>

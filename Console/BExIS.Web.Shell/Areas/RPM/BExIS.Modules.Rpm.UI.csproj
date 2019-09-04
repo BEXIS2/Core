@@ -281,6 +281,7 @@
     <Content Include="Views\Unit\UnitManager.cshtml" />
     <Content Include="Views\Unit\_editUnit.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Views\DataStructureEdit\_missingValueElement.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
