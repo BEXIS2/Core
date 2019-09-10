@@ -120,6 +120,10 @@
       <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
       <Name>BExIS.Ext.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
+      <Name>BExIS.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
