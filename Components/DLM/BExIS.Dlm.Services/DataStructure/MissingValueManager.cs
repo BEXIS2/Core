@@ -5,21 +5,23 @@ using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 using BExIS.Dlm.Services.Helpers;
 using System.Linq;
-using Microsoft.ExtendedReflection.Metadata;
+
 using BExIS.Dlm.Services.TypeSystem;
 
 namespace BExIS.Dlm.Services.DataStructure
-{  
-    public class MissingValueManager: IDisposable
+{
+    public class MissingValueManager : IDisposable
     {
-        IUnitOfWork uow = null;
+        private IUnitOfWork uow = null;
+
         public MissingValueManager()
         {
             uow = this.GetIsolatedUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<MissingValue>();        
+            this.Repo = uow.GetReadOnlyRepository<MissingValue>();
         }
 
         private bool isDisposed = false;
+
         ~MissingValueManager()
         {
             Dispose(true);
@@ -38,18 +40,17 @@ namespace BExIS.Dlm.Services.DataStructure
                 {
                     if (uow != null)
                         uow.Dispose();
-                        isDisposed = true;
+                    isDisposed = true;
                 }
             }
         }
-
 
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MissingValue> Repo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         public string getPlaceholder(TypeCode typeCode, long variableId, string format = "")
         {
@@ -226,7 +227,7 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         //with this funktion you can check if the Placeholder you want to use can be used
-        public bool ValidatePlaceholder(TypeCode typeCode, string placeholder, long variableId,long missingvalueId = 0)
+        public bool ValidatePlaceholder(TypeCode typeCode, string placeholder, long variableId, long missingvalueId = 0)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -240,11 +241,11 @@ namespace BExIS.Dlm.Services.DataStructure
                         try
                         {
                             short temp = 0;
-                            if(short.TryParse(placeholder,out temp))
+                            if (short.TryParse(placeholder, out temp))
                             {
-                                foreach(MissingValue mv in missingValues)
+                                foreach (MissingValue mv in missingValues)
                                 {
-                                    if(mv.Id != missingvalueId && temp == Convert.ToInt16(mv.Placeholder))
+                                    if (mv.Id != missingvalueId && temp == Convert.ToInt16(mv.Placeholder))
                                         return false;
                                 }
                                 return true;
@@ -296,7 +297,7 @@ namespace BExIS.Dlm.Services.DataStructure
                             return false;
                         }
 
-                        case TypeCode.UInt16:
+                    case TypeCode.UInt16:
                         try
                         {
                             ushort temp = 0;
@@ -462,7 +463,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
             if (String.IsNullOrEmpty(placeholder))
             {
-                placeholder = getPlaceholder(typecode, variable.Id);                
+                placeholder = getPlaceholder(typecode, variable.Id);
             }
 
             if (!String.IsNullOrEmpty(placeholder) && ValidatePlaceholder(typecode, placeholder, variable.Id))
@@ -528,7 +529,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 }
 
                 if (String.IsNullOrEmpty(entity.Placeholder))
-                {                    
+                {
                     entity.Placeholder = getPlaceholder(typecode, entity.Variable.Id);
                 }
 
@@ -545,7 +546,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 {
                     return null;
                 }
-            }           
+            }
         }
     }
 }
