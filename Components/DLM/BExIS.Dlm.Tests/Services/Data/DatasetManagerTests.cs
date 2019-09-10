@@ -71,6 +71,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
                 dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -108,6 +109,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
 
                 dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -156,6 +158,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
                 dm.PurgeDataset(dataset.Id, true);
+
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -249,6 +253,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
                 dm.PurgeDataset(dataset.Id, true);
+
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -313,6 +319,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
                 dm.PurgeDataset(dataset.Id, true);
+                dsHelper.PurgeAllDataStructures();
             }
             catch (Exception ex)
             {
