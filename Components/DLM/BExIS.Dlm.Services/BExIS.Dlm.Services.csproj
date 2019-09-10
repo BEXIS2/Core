@@ -114,6 +114,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ExtendedReflection, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NCalc, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NCalc-Edge.1.4.3\lib\NCalc.dll</HintPath>
       <Private>True</Private>
@@ -145,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administration\ResearchPlanManager.cs" />
+    <Compile Include="DataStructure\MissingValueManager.cs" />
     <Compile Include="Data\DatasetManager.cs" />
     <Compile Include="DataStructure\AggregateFunctionManager.cs" />
     <Compile Include="DataStructure\ClassifierManager.cs" />

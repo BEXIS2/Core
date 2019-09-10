@@ -150,6 +150,9 @@
     <Content Include="Mappings\Default\DataStructure\Methodology.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\DataStructure\MissinValue.hbm.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Mappings\Default\DataStructure\Parameter.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

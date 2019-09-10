@@ -181,6 +181,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             finally
             {
                 dm.Dispose();
+                if (n <= 0)
+                    n = 1000;
             }
             TopDocs docs = searcher.Search(query, n);
             SearchResult sro = new SearchResult();
