@@ -9,6 +9,7 @@ using Vaiona.Utils.Cfg;
 using System.IO;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
+using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {
@@ -28,18 +29,17 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public DataStructure DataStructure { get; set; }
 
-        public DataStructureType DataStructureType{ get; set; }
+        public DataStructureType DataStructureType { get; set; }
 
-        public List<object> CompareValuesOfDataTypes { get; set; }
+        public List<MissingValueObject> CompareValuesOfDataTypes { get; set; }
 
         public List<DisplayFormatObject> DisplayFormats { get; set; }
 
         public bool DownloadAccess { get; set; }
 
-        public Dictionary<string,string> AsciiFileDownloadSupport { get; set; }
+        public Dictionary<string, string> AsciiFileDownloadSupport { get; set; }
 
-
-        public static ShowPrimaryDataModel Convert(long datasetId,int versionId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string,string> supportedAsciiFileTypes, bool latestVersion)
+        public static ShowPrimaryDataModel Convert(long datasetId, int versionId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string, string> supportedAsciiFileTypes, bool latestVersion)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.Data = data;
@@ -48,12 +48,11 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.DataStructure = dataStructure;
             model.DataStructureType = DataStructureType.Structured;
             model.DatasetTitle = title;
-            model.CompareValuesOfDataTypes = CompareValues();
+            model.CompareValuesOfDataTypes = CompareValues(dataStructure as StructuredDataStructure);
             model.DownloadAccess = downloadAccess;
             model.DisplayFormats = getDisplayFormatObjects(dataStructure as StructuredDataStructure);
             model.AsciiFileDownloadSupport = supportedAsciiFileTypes;
             model.LatestVersion = latestVersion;
-
 
             return model;
         }
@@ -67,7 +66,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.DataStructure = dataStructure;
             model.DataStructureType = DataStructureType.Unstructured;
             model.DatasetTitle = title;
-            model.CompareValuesOfDataTypes = CompareValues();
+            model.CompareValuesOfDataTypes = CompareValues(dataStructure as StructuredDataStructure);
             model.DownloadAccess = downloadAccess;
             model.AsciiFileDownloadSupport = asciiFileDownloadSupport;
             model.LatestVersion = latestVersion;
@@ -81,7 +80,6 @@ namespace BExIS.Modules.Ddm.UI.Models
 
             foreach (ContentDescriptor cd in cds)
             {
-
                 string filePath = Path.Combine(AppConfiguration.DataPath, cd.URI);
 
                 if (cd.Name.Equals("unstructuredData") && FileHelper.FileExist(filePath))
@@ -98,34 +96,42 @@ namespace BExIS.Modules.Ddm.UI.Models
         }
 
         /// <summary>
-        /// List of used datatypes and 
+        /// List of used datatypes and
         /// the maxvalue of the datatypes
         /// </summary>
         /// <returns></returns>
-        private static List<object> CompareValues()
+        private static List<MissingValueObject> CompareValues(StructuredDataStructure dataStructure)
         {
-            List<object> values = new List<object>();
+            List<MissingValueObject> tmp = new List<MissingValueObject>();
 
-            values.Add(Int16.MaxValue);
-            values.Add(Int32.MaxValue);
-            values.Add(Int64.MaxValue);
-            values.Add(UInt16.MaxValue);
-            values.Add(UInt32.MaxValue);
-            values.Add(UInt64.MaxValue);
-            values.Add(double.MaxValue);
-            values.Add(float.MaxValue);
-            values.Add(decimal.MaxValue);
-            values.Add(DateTime.MaxValue);
-            values.Add(-99999);
+            if (dataStructure != null)
+            {
+                MissingValueManager missingValueManager = new MissingValueManager();
 
-            return values;
+                foreach (var variable in dataStructure.Variables)
+                {
+                    var missingValues = missingValueManager.Repo.Get().Where(m => m.Variable.Id.Equals(variable.Id));
+
+                    foreach (var missingValue in missingValues)
+                    {
+                        tmp.Add(new MissingValueObject()
+                        {
+                            VariableId = variable.Id,
+                            DisplayName = missingValue.DisplayName,
+                            Placeholder = missingValue.Placeholder
+                        });
+                    }
+                }
+            }
+
+            return tmp;
         }
 
         private static List<DisplayFormatObject> getDisplayFormatObjects(StructuredDataStructure dataStructure)
         {
             List<DisplayFormatObject> tmp = new List<DisplayFormatObject>();
 
-            foreach (var variable in  dataStructure.Variables)
+            foreach (var variable in dataStructure.Variables)
             {
                 string format = "";
                 string unit = "";
@@ -140,7 +146,7 @@ namespace BExIS.Modules.Ddm.UI.Models
                     format = ddp.StringPattern;
                 }
 
-                // add unit abbr if exist do DisplayFormatObject 
+                // add unit abbr if exist do DisplayFormatObject
                 // first variable, second dataattribute
 
                 if (variable.Unit != null && !string.IsNullOrEmpty(variable.Unit.Abbreviation))
@@ -156,19 +162,17 @@ namespace BExIS.Modules.Ddm.UI.Models
                         unit = variable.DataAttribute.Unit.Abbreviation;
                     }
                 }
-                
-                if(!string.IsNullOrEmpty(column) && (!string.IsNullOrEmpty(format) || !string.IsNullOrEmpty(unit)) )
-                    tmp.Add(new DisplayFormatObject(column,format,unit));
 
+                if (!string.IsNullOrEmpty(column) && (!string.IsNullOrEmpty(format) || !string.IsNullOrEmpty(unit)))
+                    tmp.Add(new DisplayFormatObject(column, format, unit));
             }
-
 
             return tmp;
         }
     }
 
     public enum DataStructureType
-    { 
+    {
         Structured,
         Unstructured
     }
@@ -185,5 +189,12 @@ namespace BExIS.Modules.Ddm.UI.Models
             Format = format;
             Unit = unit;
         }
+    }
+
+    public class MissingValueObject
+    {
+        public long VariableId { get; set; }
+        public string DisplayName { get; set; }
+        public string Placeholder { get; set; }
     }
 }
