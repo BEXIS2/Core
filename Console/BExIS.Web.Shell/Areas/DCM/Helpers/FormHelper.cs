@@ -17,7 +17,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
             return new MetadataCompoundAttributeModel
             {
-
                 Id = metadataAttributeUsage.Id,
                 Number = number,
                 Source = metadataAttributeUsage,
@@ -56,8 +55,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
             string constraintsDescription = "";
+            double lowerBoundary = 0;
+            double upperBoundary = 0;
             LinkElementType type = LinkElementType.MetadataNestedAttributeUsage;
             bool locked = false;
+            bool entityMappingExist = false;
+            bool partyMappingExist = false;
 
             if (current is MetadataNestedAttributeUsage)
             {
@@ -70,7 +73,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)current;
                 metadataAttribute = mau.MetadataAttribute;
                 type = LinkElementType.MetadataAttributeUsage;
-
             }
 
             if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
@@ -83,19 +85,30 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     if (string.IsNullOrEmpty(constraintsDescription)) constraintsDescription = c.FormalDescription;
                     else constraintsDescription = String.Format("{0}\n{1}", constraintsDescription, c.FormalDescription);
                 }
+                if (metadataAttribute.DataType.Name == "string" && metadataAttribute.Constraints.Where(c => (c is RangeConstraint)).Count() > 0)
+                {
+                    foreach (RangeConstraint r in metadataAttribute.Constraints.Where(c => (c is RangeConstraint)))
+                    {
+                        lowerBoundary = r.Lowerbound;
+                        upperBoundary = r.Upperbound;
+                    }
+                }
             }
             //load displayPattern
             DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(metadataAttribute.DataType.Extra);
             string displayPattern = "";
             if (dtdp != null) displayPattern = dtdp.StringPattern;
 
-
             //ToDO/Check if dim is active
             //check if its linked with a system field
             //
             locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
 
+            // check if a mapping for parties exits
+            partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
 
+            // check if a mapping for entites exits
+            entityMappingExist = MappingUtils.ExistMappingWithEntity(current.Id, type);
 
             return new MetadataAttributeModel
             {
@@ -120,7 +133,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MetadataAttributeId = metadataAttribute.Id,
                 ParentStepId = parentStepId,
                 Errors = null,
-                Locked = locked
+                Locked = locked,
+                EntityMappingExist = entityMappingExist,
+                PartyMappingExist = partyMappingExist,
+                LowerBoundary = lowerBoundary,
+                UpperBoundary = upperBoundary,
             };
         }
 
@@ -140,6 +157,5 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             return list;
         }
-
     }
 }

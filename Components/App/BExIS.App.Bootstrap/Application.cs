@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,6 +106,9 @@ namespace BExIS.App.Bootstrap
             //ModuleInitializer.Initialize();
             try
             {
+                AppConfigHelper p = new AppConfigHelper();
+                p.SetAppRootKey();
+
                 application_Start(configurationCallback, configureModules); // this will error b/c not fully loaded yet.
             }
             catch (InvalidOperationException)
@@ -150,11 +154,12 @@ namespace BExIS.App.Bootstrap
         private void initIoC()
         {
             string path = Path.Combine(AppConfiguration.AppRoot, "IoC.config");
+
             if (!File.Exists(path))
                 throw new FileNotFoundException($"IoC.config file expected but was not found in '{path}'.");
             try
             {
-                IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer");
+                IoCFactory.StartContainer(path, "DefaultContainer");
             }
             catch (System.TypeLoadException) { } // swallow this exception, as it means that the IoC is already running.
             catch (Exception ex)

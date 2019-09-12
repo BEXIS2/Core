@@ -32,7 +32,6 @@
         lvl = "9";
     }
 
-
     string styleClass = "Metadata-Level-" + lvl;
     string headerClass = "Metadata-Level-Header-" + lvl;
 
@@ -47,9 +46,18 @@
         hideOptional = (bool)ViewData["HideOptional"];
     }
 
+
+    //update ViewData XPath
+    if (ViewData["Xpath"] != null)
+    {
+        ViewData["Xpath"] = Model.XPath;
+    }
+    else
+    {
+        ViewData.Add("Xpath", Model.XPath);
+    }
+
 }
-
-
 
 <div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass">
     @if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
@@ -65,21 +73,16 @@
                 <b>
                     @displayName
 
-
-
                     @if (Model.Model.MaxCardinality > 1)
                     {
                         <span>( @Model.Number )</span>
                     }
-
                 </b>
 
                 @if (Model.Model.MinCardinality > 0)
                 {
                     <b title="Required" style="color: red">*</b>
                 }
-
-
             </div>
 
             @if (Model.Activated)
@@ -135,8 +138,6 @@
                                         }
                                     </td>
 
-
-
                                 }
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.Model.Discription))
@@ -177,7 +178,6 @@
                     }
                 </div>
             }
-
         </div>
         if (Model.Activated && Model.Choice)
         {
@@ -190,7 +190,6 @@
                             <tbody>
                                 <tr>
                                     <td class="metadataAttributeLabel">
-
 
                                         @if (Model.Model.MinCardinality > 0)
                                         {
@@ -219,7 +218,6 @@
 
                                             @element.DisplayName()
                                         }
-
                                     </td>
                                     <td class="metadataAttributeOption"></td>
                                 </tr>
@@ -229,11 +227,6 @@
                 </div>
             }
         }
-
-
-
-
-
 
         if (Model.Activated)
         {
@@ -258,7 +251,7 @@
                         <div class="simpleAttributesContainer">
                             @foreach (var element in Model.Model.MetadataAttributeModels)
                             {
-                                @Html.Partial("_metadataAttributeView", element)
+                                @Html.Partial("_metadataAttributeView", element, ViewData);
                             }
                         </div>
                     }
@@ -275,5 +268,4 @@
             </div>
         }
     }
-
 </div>

@@ -121,7 +121,7 @@ namespace BExIS.Dlm.Tests.Helpers
                 dsManager.AddVariableUsage(dataStructure, dataAttribute5, true, "var5UT", "", "", "Used for unit testing");
                 return dataStructure;
             }
-            catch { return null; }
+            catch(Exception ex) { return null; }
             finally
             {
                 unitManager.Dispose();

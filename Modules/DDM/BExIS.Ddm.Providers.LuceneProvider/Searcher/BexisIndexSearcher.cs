@@ -19,13 +19,13 @@ using SearchResult = BExIS.Utils.Models.SearchResult;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public static class BexisIndexSearcher
     {
         private static string luceneIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisSearchIndex");
@@ -43,39 +43,39 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] facetFields { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] storedFields { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] categoryFields { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] propertyFields { get; set; }
 
         private static Boolean isInit = false;
-        static XmlDocument configXML;
+        private static XmlDocument configXML;
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>    
+        /// <param></param>
         /// <returns></returns>
         public static string[] getCategoryFields() { init(); return categoryFields; }
 
@@ -84,7 +84,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>   
+        /// <param></param>
         /// <returns></returns>
         public static string[] getStoredFields() { init(); return storedFields; }
 
@@ -93,7 +93,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public static IndexReader getIndexReader()
         {
@@ -106,7 +106,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>      
+        /// <param>NA</param>
         /// <returns></returns>
         public static IndexSearcher getIndexSearcher()
         {
@@ -118,7 +118,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         private static void init()
         {
             if (!isInit) { BexisIndexSearcherInit(); isInit = true; }
@@ -128,7 +128,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         private static void BexisIndexSearcherInit()
         {
             List<string> facetFieldList = new List<string>();
@@ -156,7 +156,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -171,6 +171,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             {
                 dm = new DatasetManager();
                 n = dm.DatasetRepo.Get().Count;
+
+                if (n == 0) n = 1000;
             }
             catch
             {
@@ -212,7 +214,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 {
                     DefaultHeader.Add(hi);
                 }
-
             }
 
             List<Row> RowList = new List<Row>();
@@ -254,7 +255,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -321,7 +322,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>

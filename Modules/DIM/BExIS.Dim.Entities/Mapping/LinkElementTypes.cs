@@ -76,7 +76,8 @@
         PartyCustomType = 10,
         Key = 11,
         Role = 12,
-        PartyRelationshipType = 13
+        PartyRelationshipType = 13,
+        Entity = 14,
     }
 
     public class LinkElementMetadataStructure : LinkElement { }
