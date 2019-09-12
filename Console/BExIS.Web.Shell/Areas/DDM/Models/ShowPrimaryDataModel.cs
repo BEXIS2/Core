@@ -106,17 +106,13 @@ namespace BExIS.Modules.Ddm.UI.Models
 
             if (dataStructure != null)
             {
-                MissingValueManager missingValueManager = new MissingValueManager();
-
                 foreach (var variable in dataStructure.Variables)
                 {
-                    var missingValues = missingValueManager.Repo.Get().Where(m => m.Variable.Id.Equals(variable.Id));
-
-                    foreach (var missingValue in missingValues)
+                    foreach (var missingValue in variable.MissingValues)
                     {
                         tmp.Add(new MissingValueObject()
                         {
-                            VariableId = variable.Id,
+                            Column = variable.Label,
                             DisplayName = missingValue.DisplayName,
                             Placeholder = missingValue.Placeholder
                         });
@@ -193,7 +189,7 @@ namespace BExIS.Modules.Ddm.UI.Models
 
     public class MissingValueObject
     {
-        public long VariableId { get; set; }
+        public string Column { get; set; }
         public string DisplayName { get; set; }
         public string Placeholder { get; set; }
     }
