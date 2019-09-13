@@ -251,6 +251,7 @@ namespace BExIS.IO.Transform.Output
                 if (variableValue.Variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
                 {
                     value = variableValue.Variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
                     cell.CellValue = new CellValue(value.ToString());
 
                     return cell;
@@ -351,6 +352,8 @@ namespace BExIS.IO.Transform.Output
             if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
             {
                 value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+
                 cell.CellValue = new CellValue(value.ToString());
 
                 return cell;
