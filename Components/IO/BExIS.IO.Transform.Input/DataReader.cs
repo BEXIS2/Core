@@ -456,7 +456,6 @@ namespace BExIS.IO.Transform.Input
         {
             string pattern = "";
             DataAttribute dataAttribute = variable.DataAttribute;
-            IEnumerable<MissingValue> missingValues = getMissingValues(variable.Id);
 
             if (dataAttribute != null && dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
             {
@@ -464,7 +463,7 @@ namespace BExIS.IO.Transform.Input
                 if (displayPattern != null) pattern = displayPattern.StringPattern;
             }
 
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, missingValues);
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues);
 
             return vvm;
         }
@@ -566,30 +565,5 @@ namespace BExIS.IO.Transform.Input
         }
 
         #endregion getter setter
-
-        #region helpers
-
-        /// <summary>
-        /// Get Missing values of a varaible by id
-        /// </summary>
-        private IEnumerable<MissingValue> getMissingValues(long varId)
-        {
-            MissingValueManager missingValueManager = new MissingValueManager();
-
-            try
-            {
-                return missingValueManager.Repo.Get().Where(m => m.Variable.Id.Equals(varId));
-            }
-            catch (Exception ex)
-            {
-                return new List<MissingValue>();
-            }
-            finally
-            {
-                missingValueManager.Dispose();
-            }
-        }
-
-        #endregion helpers
     }
 }

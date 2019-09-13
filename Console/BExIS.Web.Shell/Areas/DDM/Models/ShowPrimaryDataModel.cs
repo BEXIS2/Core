@@ -10,6 +10,7 @@ using System.IO;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Services.DataStructure;
+using System.Text;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {
@@ -31,7 +32,7 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public DataStructureType DataStructureType { get; set; }
 
-        public List<MissingValueObject> CompareValuesOfDataTypes { get; set; }
+        public List<string> CompareValuesOfDataTypes { get; set; }
 
         public List<DisplayFormatObject> DisplayFormats { get; set; }
 
@@ -100,27 +101,48 @@ namespace BExIS.Modules.Ddm.UI.Models
         /// the maxvalue of the datatypes
         /// </summary>
         /// <returns></returns>
-        private static List<MissingValueObject> CompareValues(StructuredDataStructure dataStructure)
+        private static List<string> CompareValues(StructuredDataStructure dataStructure)
         {
-            List<MissingValueObject> tmp = new List<MissingValueObject>();
+            List<string> cv = new List<string>();
 
+                
             if (dataStructure != null)
             {
                 foreach (var variable in dataStructure.Variables)
                 {
+                    StringBuilder sb = new StringBuilder();
                     foreach (var missingValue in variable.MissingValues)
                     {
-                        tmp.Add(new MissingValueObject()
-                        {
-                            Column = variable.Label,
-                            DisplayName = missingValue.DisplayName,
-                            Placeholder = missingValue.Placeholder
-                        });
+                        sb.Append(missingValue.DisplayName + "|" + missingValue.Placeholder + "#");
                     }
+
+                    //add also the case of the optional field
+                    //replace the value with EMPTY String
+                    sb.Append(" |" + getMaxvalueOfType(variable.DataAttribute.DataType.SystemType));
+
+                    cv.Add(sb.ToString());
                 }
             }
 
-            return tmp;
+            return cv;
+        }
+
+        private static string getMaxvalueOfType(string datatype)
+        {
+            switch (datatype)
+            {
+                case "System.Int16": return Int16.MaxValue.ToString();
+                case "System.Int32": return Int32.MaxValue.ToString();
+                case "System.Int64": return Int64.MaxValue.ToString();
+                case "System.UInt16": return UInt16.MaxValue.ToString();
+                case "System.UInt32": return UInt32.MaxValue.ToString();
+                case "System.UInt64": return UInt64.MaxValue.ToString();
+                case "System.Double": return double.MaxValue.ToString();
+                case "System.Float": return float.MaxValue.ToString();
+                case "System.Decimal": return decimal.MaxValue.ToString();
+                case "System.DateTime": return DateTime.MaxValue.ToString();
+                default: return "";
+            }
         }
 
         private static List<DisplayFormatObject> getDisplayFormatObjects(StructuredDataStructure dataStructure)
@@ -165,6 +187,8 @@ namespace BExIS.Modules.Ddm.UI.Models
 
             return tmp;
         }
+
+        
     }
 
     public enum DataStructureType
@@ -185,12 +209,5 @@ namespace BExIS.Modules.Ddm.UI.Models
             Format = format;
             Unit = unit;
         }
-    }
-
-    public class MissingValueObject
-    {
-        public string Column { get; set; }
-        public string DisplayName { get; set; }
-        public string Placeholder { get; set; }
     }
 }
