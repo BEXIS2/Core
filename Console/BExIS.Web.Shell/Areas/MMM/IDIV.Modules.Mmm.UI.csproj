@@ -146,12 +146,12 @@
     <Content Include="Mmm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Properties\PublishProfiles\WebDeploy.pubxml.user" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <Content Include="Stylesheets\MultimediaData.css" />
     <Content Include="MediaInfoDotNet.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -169,7 +169,7 @@
     <Content Include="Views\ShowMultimediaData\_bundleViewOverlay.cshtml" />
     <Content Include="Views\ShowMultimediaData\_measurementView.cshtml" />
     <Content Include="Views\ShowMultimediaData\_bundleImageView.cshtml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

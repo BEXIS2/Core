@@ -579,10 +579,10 @@
     <Content Include="Views\Attachments\Index.cshtml" />
     <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
     <Content Include="Views\EasyUploadVerification\Row.cshtml" />
-    <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
     <Content Include="Views\EntityReference\Index.cshtml" />
     <Content Include="Views\EntityReference\_create.cshtml" />
     <Content Include="Views\EntityReference\Show.cshtml" />
+    <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

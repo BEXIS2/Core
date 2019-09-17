@@ -1,0 +1,1535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Diese Datei wird vom Veröffentlichungs-/Paketierungsprozess Ihres Webprojekts verwendet. Sie können das Verhalten dieses Prozesses anpassen,
+indem Sie diese MSBuild-Datei bearbeiten. Weitere Informationen hierzu finden Sie unter https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdmxvaHbU7U+WzijecSfWPQAAAAACAAAAAAADZgAAwAAAABAAAABFGbhEaXdjMcGrlDQVYwokAAAAAASAAACgAAAAEAAAAFUwlgi02O2pkN2esYbjCZEgAAAAlxRHjoZa5M3YshtahwcMYAgiA1sWqmPEUMvwn4z9qhcUAAAAb5UFK3SHVf+VBG+GSvaV2EHlFSY=</EncryptedPassword>
+    <_PublishTargetUrl>ftp://bx2test.inf-bb.uni-jena.de:21/BPP213\Site\Area\DCM</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>09/10/2013 16:29:20</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.pdb">
+      <publishTime>09/10/2013 16:29:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.App.Bootstrap.dll">
+      <publishTime>09/17/2019 09:55:33</publishTime>
+    </File>
+    <File Include="bin/BExIS.App.Bootstrap.dll.config">
+      <publishTime>08/13/2019 11:16:55</publishTime>
+    </File>
+    <File Include="bin/BExIS.App.Bootstrap.pdb">
+      <publishTime>09/17/2019 09:55:33</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.CreateDatasetWizard.dll">
+      <publishTime>09/17/2019 12:19:47</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.CreateDatasetWizard.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.CreateDatasetWizard.pdb">
+      <publishTime>09/17/2019 12:19:47</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.ImportMetadataStructureWizard.dll">
+      <publishTime>09/17/2019 12:19:46</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.ImportMetadataStructureWizard.pdb">
+      <publishTime>09/17/2019 12:19:46</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.UploadWizard.dll">
+      <publishTime>09/17/2019 12:20:09</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.UploadWizard.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.UploadWizard.pdb">
+      <publishTime>09/17/2019 12:20:09</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.Wizard.dll">
+      <publishTime>09/17/2019 12:19:40</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dcm.Wizard.pdb">
+      <publishTime>09/17/2019 12:19:40</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Entities.dll">
+      <publishTime>09/17/2019 12:19:57</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Entities.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Entities.pdb">
+      <publishTime>09/17/2019 12:19:57</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Helpers.dll">
+      <publishTime>09/17/2019 13:54:42</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Helpers.dll.config">
+      <publishTime>08/08/2019 14:41:38</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Helpers.pdb">
+      <publishTime>09/17/2019 13:54:42</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Services.dll">
+      <publishTime>09/17/2019 12:20:06</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Services.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dim.Services.pdb">
+      <publishTime>09/17/2019 12:20:06</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Entities.dll">
+      <publishTime>09/17/2019 09:54:59</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Entities.pdb">
+      <publishTime>09/17/2019 09:54:59</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Orm.NH.dll">
+      <publishTime>09/17/2019 09:55:05</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Orm.NH.pdb">
+      <publishTime>09/17/2019 09:55:05</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Services.dll">
+      <publishTime>09/17/2019 09:55:19</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Services.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Services.pdb">
+      <publishTime>09/17/2019 09:55:19</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Model.dll">
+      <publishTime>09/17/2019 08:41:48</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Model.pdb">
+      <publishTime>09/17/2019 08:41:48</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Services.dll">
+      <publishTime>09/17/2019 09:55:11</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Services.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Services.pdb">
+      <publishTime>09/17/2019 09:55:11</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.DataType.DisplayPattern.dll">
+      <publishTime>09/17/2019 09:55:43</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.DataType.DisplayPattern.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.DataType.DisplayPattern.pdb">
+      <publishTime>09/17/2019 09:55:43</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.dll">
+      <publishTime>09/17/2019 08:41:48</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.pdb">
+      <publishTime>09/17/2019 08:41:48</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Input.dll">
+      <publishTime>09/17/2019 09:55:57</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Input.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Input.pdb">
+      <publishTime>09/17/2019 09:55:57</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Output.dll">
+      <publishTime>09/17/2019 09:55:49</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Output.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Output.pdb">
+      <publishTime>09/17/2019 09:55:49</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Validation.dll">
+      <publishTime>09/17/2019 09:55:24</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Validation.dll.config">
+      <publishTime>08/08/2019 14:09:09</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Validation.pdb">
+      <publishTime>09/17/2019 09:55:24</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Dcm.UI.dll">
+      <publishTime>09/17/2019 13:54:55</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Dcm.UI.pdb">
+      <publishTime>09/17/2019 13:54:55</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Dim.UI.dll">
+      <publishTime>09/17/2019 13:54:47</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Dim.UI.dll.config">
+      <publishTime>08/08/2019 14:41:40</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Dim.UI.pdb">
+      <publishTime>09/17/2019 13:54:47</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Entities.dll">
+      <publishTime>09/17/2019 08:41:43</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Entities.pdb">
+      <publishTime>09/17/2019 08:41:43</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Services.dll">
+      <publishTime>09/17/2019 09:55:06</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Services.dll.config">
+      <publishTime>08/08/2019 14:09:04</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Services.pdb">
+      <publishTime>09/17/2019 09:55:06</publishTime>
+    </File>
+    <File Include="bin/BExIS.UI.dll">
+      <publishTime>09/17/2019 09:55:55</publishTime>
+    </File>
+    <File Include="bin/BExIS.UI.dll.config">
+      <publishTime>08/08/2019 14:09:07</publishTime>
+    </File>
+    <File Include="bin/BExIS.UI.pdb">
+      <publishTime>09/17/2019 09:55:55</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.Data.dll">
+      <publishTime>09/17/2019 09:55:58</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.Data.dll.config">
+      <publishTime>08/08/2019 14:41:40</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.Data.pdb">
+      <publishTime>09/17/2019 09:55:58</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.dll">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.dll.config">
+      <publishTime>08/08/2019 14:09:07</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.NH.dll">
+      <publishTime>09/17/2019 08:41:43</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.NH.pdb">
+      <publishTime>09/17/2019 08:41:43</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.pdb">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/BExIS.Web.Shell.dll">
+      <publishTime>09/17/2019 13:52:16</publishTime>
+    </File>
+    <File Include="bin/BExIS.Web.Shell.dll.config">
+      <publishTime>09/17/2019 09:52:30</publishTime>
+    </File>
+    <File Include="bin/BExIS.Web.Shell.pdb">
+      <publishTime>09/17/2019 13:52:16</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Helpers.dll">
+      <publishTime>09/17/2019 09:55:37</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Helpers.dll.config">
+      <publishTime>08/08/2019 14:09:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Helpers.pdb">
+      <publishTime>09/17/2019 09:55:37</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Models.dll">
+      <publishTime>09/17/2019 08:41:48</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Models.pdb">
+      <publishTime>09/17/2019 08:41:48</publishTime>
+    </File>
+    <File Include="bin/bg-BG/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/da-DK/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/Dcm.Settings.xml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="bin/de-DE/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.Helpers.resources.dll">
+      <publishTime>01/28/2015 04:04:34</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.Http.WebHost.resources.dll">
+      <publishTime>01/28/2015 04:03:50</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.WebPages.Deployment.resources.dll">
+      <publishTime>01/28/2015 04:04:34</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.WebPages.Razor.resources.dll">
+      <publishTime>01/28/2015 04:04:34</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.WebPages.resources.dll">
+      <publishTime>01/28/2015 04:04:34</publishTime>
+    </File>
+    <File Include="bin/Dim.Settings.xml">
+      <publishTime>07/15/2019 14:42:48</publishTime>
+    </File>
+    <File Include="bin/DocumentFormat.OpenXml.dll">
+      <publishTime>07/15/2019 14:42:51</publishTime>
+    </File>
+    <File Include="bin/en-US/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/EPPlus.dll">
+      <publishTime>07/14/2016 15:57:38</publishTime>
+    </File>
+    <File Include="bin/es-ES/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/F23.StringSimilarity.dll">
+      <publishTime>09/13/2017 11:49:48</publishTime>
+    </File>
+    <File Include="bin/fr-FR/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:30</publishTime>
+    </File>
+    <File Include="bin/General.Settings.xml">
+      <publishTime>07/15/2019 14:42:50</publishTime>
+    </File>
+    <File Include="bin/Iesi.Collections.dll">
+      <publishTime>10/27/2012 18:50:12</publishTime>
+    </File>
+    <File Include="bin/Ionic.Zip.dll">
+      <publishTime>07/15/2019 14:42:51</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Administration/ResearchPlan.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/ContentDescriptor.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/Dataset.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/DatasetVersion.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/DataTuple.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/DataTupleVersion.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/AggregateFunction.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Classifier.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.ComparisonConstraint.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.DomainConstraint.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.PatternConstraint.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.RangeConstraint.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/ConversionMethod.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataContainer.DataAttribute.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataContainer.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataStructure.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataStructure.StructuredDataStructure.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataStructure.UnStructuredDataStructure.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataType.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataView.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Dimension.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/ExtendedProperty.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/GlobalizationInfo.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Methodology.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Parameter.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Unit.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Variable.hbm.xml">
+      <publishTime>09/17/2019 09:44:24</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.Compound.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.Simple.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataAttributeUsage.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataNestedAttributeUsage.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataPackage.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataPackageUsage.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataStructure.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Mappings/PostgreSQL82Dialect/NativeObjects/Queries.hbm.xml">
+      <publishTime>07/15/2019 14:42:45</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.Core.dll">
+      <publishTime>04/03/2015 17:07:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.Owin.dll">
+      <publishTime>04/03/2015 17:07:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.dll">
+      <publishTime>04/05/2017 11:53:36</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Host.SystemWeb.dll">
+      <publishTime>04/05/2017 11:53:40</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Cookies.dll">
+      <publishTime>04/05/2017 11:53:42</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.dll">
+      <publishTime>04/05/2017 11:53:42</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.OAuth.dll">
+      <publishTime>04/05/2017 11:53:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Helpers.dll">
+      <publishTime>01/28/2015 04:03:58</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>07/25/2012 11:48:56</publishTime>
+    </File>
+    <File Include="bin/NCalc.dll">
+      <publishTime>06/20/2016 16:51:04</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>03/24/2018 17:44:14</publishTime>
+    </File>
+    <File Include="bin/NHibernate.dll">
+      <publishTime>02/02/2017 12:35:28</publishTime>
+    </File>
+    <File Include="bin/nl-NL/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/Owin.dll">
+      <publishTime>11/13/2012 12:19:34</publishTime>
+    </File>
+    <File Include="bin/pl-PL/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/PostSharp.dll">
+      <publishTime>08/30/2016 15:18:00</publishTime>
+    </File>
+    <File Include="bin/pt-BR/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/pt-PT/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/ru-RU/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/Swashbuckle.Core.dll">
+      <publishTime>07/08/2017 01:30:56</publishTime>
+    </File>
+    <File Include="bin/System.Linq.Dynamic.dll">
+      <publishTime>10/15/2016 20:49:24</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>01/28/2015 04:02:42</publishTime>
+    </File>
+    <File Include="bin/System.Runtime.InteropServices.RuntimeInformation.dll">
+      <publishTime>11/05/2016 04:57:00</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>01/28/2015 04:02:54</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>01/28/2015 04:03:46</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>01/28/2015 04:02:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>02/11/2014 15:26:04</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>01/28/2015 04:02:32</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>01/28/2015 04:04:30</publishTime>
+    </File>
+    <File Include="bin/Telerik.Web.Mvc.dll">
+      <publishTime>06/12/2013 16:52:40</publishTime>
+    </File>
+    <File Include="bin/uk-UA/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Core.dll">
+      <publishTime>07/15/2019 14:42:51</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Entities.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.IoC.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Logging.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Model.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.MultiTenancy.Api.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.MultiTenancy.Services.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Persistence.Api.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Utils.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Web.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Web.Mvc.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Web.Mvc.Modularity.dll">
+      <publishTime>07/15/2019 14:42:52</publishTime>
+    </File>
+    <File Include="bin/WebActivatorEx.dll">
+      <publishTime>02/08/2013 16:42:28</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>01/23/2014 13:57:34</publishTime>
+    </File>
+    <File Include="bin/zh-CN/BExIS.Utils.resources.dll">
+      <publishTime>09/17/2019 09:55:31</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/treeview-line.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Black/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/treeview-line.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Default/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/treeview-line.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Forest/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/treeview-line.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Hay/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Metro/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Metro/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Metro/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Metro/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Metro/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Metro/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/treeview-line.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2007/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/treeview-line.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Black/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/gradient.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Blue/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/gradient.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Office2010Silver/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/editor.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/loading.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/slider-h.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/slider-v.gif">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/sprite.png">
+      <publishTime>07/15/2019 14:42:46</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Outlook/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Simple/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sitefinity/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Sunset/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.black.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.common.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.default.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.forest.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.hay.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.metro.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.office2007.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.office2010black.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.office2010blue.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.office2010silver.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.outlook.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.rtl.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.simple.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.sitefinity.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.sunset.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.telerik.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.transparent.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.vista.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.web20.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.webblue.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/telerik.windows7.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Telerik/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/active.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/gradient.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/group.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/hover.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/selected.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/toolbar.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Transparent/widget.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Vista/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Web20/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/treeview-line.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/treeview-nodes-rtl.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/WebBlue/treeview-nodes.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/editor.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/imagebrowser.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/loading.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/slider-h.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/slider-v.gif">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/sprite-vertical.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/2013.2.611/Windows7/sprite.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/bexis-metadata.css">
+      <publishTime>09/12/2019 07:59:54</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css.map">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css.map">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/ChooseUpdateMethod.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/collapse.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/columnwise.jpg">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Create_Dataset.jpg">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Create_Dataset.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/expand.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/GetFileInformations.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_end.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_metadata.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_select_areas.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_select_file.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_sheet_structure.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_summary.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/Help_easy_upload_verification.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/messages.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/metadata1.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/metadata2.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/metadata3.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/metadata4.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/mines.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/plus.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/primary_key.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/push_big_file.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/read_xsd.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/red_star.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/rowwise.jpg">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/select_file.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/select_xsd.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/set_xsd_parameters.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/summary_xsd.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/upload_data.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/upload_tabular.jpg">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Content/Images/help/up_down.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Dcm.Manifest.xml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Dcm.Settings.xml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.eot">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.svg">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff2">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Images/DCM_SelectFileStructure/left-right.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Images/DCM_SelectFileStructure/matrix.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Images/DCM_SelectFileStructure/top-down.png">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Scripts/entity.reference.js">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Scripts/Form.js">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Scripts/minimap/minimap.js">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Scripts/minimap/minimap.min.css">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Scripts/minimap/minimap.min.js">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.8.3.js">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Scripts/respond.matchmedia.addListener.js">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Scripts/respond.matchmedia.addListener.min.js">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Attachments/Index.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Attachments/_datasetAttachements.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/CreateDataset/Index.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUpload/UploadWizard.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUpload/_taskListView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUpload/_uploadWizardNav.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadSelectAFile/SelectAFile.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadSelectAreas/SelectAreas.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadSheetDataStructure/SheetDataStructure.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadSheetSelectMetaData/SheetSelectMetaData.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadSummary/EasyUploadSummary.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadVerification/Row.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EasyUploadVerification/Verification.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/EntityReference/Index.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/EntityReference/Show.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/EntityReference/_create.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/Form/MetadataEditor.cshtml">
+      <publishTime>09/17/2019 09:44:13</publishTime>
+    </File>
+    <File Include="Views/Form/MetadataEditorOffline.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Form/_metadataAttributeView.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/Form/_metadataAttributeViewOffline.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Form/_metadataCompoundAttributeUsageView.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/Form/_metadataCompoundAttributeUsageViewOffline.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Form/_metadataCompoundAttributeView.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/Form/_metadataCompoundAttributeViewOffline.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Help/Index.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Help/Informations.xml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructure/ImportMetadataStructureWizard.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructure/Index.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructure/_taskListView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructure/_wizardNav.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructureReadSource/ReadSource.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructureSelectAFile/SelectAFile.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructureSetParameters/SetParameters.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ImportMetadataStructureSummary/Summary.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/ManageMetadataStructure/Index.cshtml">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+    <File Include="Views/ManageMetadataStructure/_editMetadataStructureView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Push/Index.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Push/_fileListView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Shared/_EntitySelectorInWindowView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Shared/_EntitySelectorView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Shared/_errorMessages.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Shared/_summaryErrorMessages.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/FinishUpload.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/Index.cshtml">
+      <publishTime>08/13/2019 11:16:57</publishTime>
+    </File>
+    <File Include="Views/Submit/Test.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/UploadWizard.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/_defaultDatatypFomularView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/_selectDataStructureId.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/_taskListView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/_uploadWizardNav.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Submit/_useTemplateView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitChooseUpdateMethod/ChooseUpdateMethod.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitGetFileInformation/GetFileInformation.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitGetFileInformation/_txtFormularView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitGetFileInformation/_xlsFormularView.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitSelectAFile/SelectAFile.cshtml">
+      <publishTime>08/13/2019 11:16:57</publishTime>
+    </File>
+    <File Include="Views/SubmitSpecifyDataset/SpecifyDataset.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitSpecifyDataset/_selectADatasetId.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitSummary/Summary.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitUnstructuredData/UnstructuredData.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/SubmitValidation/Validation.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Test/Index.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>07/15/2019 14:42:47</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>09/12/2019 07:59:55</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
