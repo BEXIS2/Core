@@ -59,6 +59,7 @@
     <Compile Include="IValueValidation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueCheck\DataTypeCheck.cs" />
+    <Compile Include="ValueCheck\MissingValueCheck.cs" />
     <Compile Include="ValueCheck\OptionalCheck.cs" />
     <Compile Include="ValueValidationManager.cs" />
     <Compile Include="ValueValidation\DomainValidation.cs" />

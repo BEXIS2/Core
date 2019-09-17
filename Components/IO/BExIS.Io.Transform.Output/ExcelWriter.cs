@@ -246,6 +246,18 @@ namespace BExIS.IO.Transform.Output
                 CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
                 object value = variableValue.Value;
 
+                //missing value
+                // check if the value is a missing value and should be replaced
+                if (variableValue.Variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+                {
+                    value = variableValue.Variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                    cell.CellValue = new CellValue(value.ToString());
+
+                    return cell;
+                }
+
+                // number
                 if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
                 {
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -265,30 +277,24 @@ namespace BExIS.IO.Transform.Output
 
                     return cell;
                 }
-                else
+
+                // Date
+                if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
                 {
-                    if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+                    cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                    //CultureInfo provider = CultureInfo.InvariantCulture;
+                    try
                     {
-                        cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                        //CultureInfo provider = CultureInfo.InvariantCulture;
-                        try
+                        if (value.ToString() != "")
                         {
-                            if (value.ToString() != "")
+                            DateTime dt;
+                            if (dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
                             {
-                                DateTime dt;
-                                if (dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
+                                DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+                                if (!string.IsNullOrEmpty(pattern.StringPattern))
                                 {
-                                    DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
-                                    if (!string.IsNullOrEmpty(pattern.StringPattern))
-                                    {
-                                        IOUtility.ExportDateTimeString(value.ToString(), pattern.StringPattern, out dt);
-                                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                                    }
-                                    else
-                                    {
-                                        if (IOUtility.IsDate(value.ToString(), out dt))
-                                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                                    }
+                                    IOUtility.ExportDateTimeString(value.ToString(), pattern.StringPattern, out dt);
+                                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
                                 }
                                 else
                                 {
@@ -296,21 +302,27 @@ namespace BExIS.IO.Transform.Output
                                         cell.CellValue = new CellValue(dt.ToOADate().ToString());
                                 }
                             }
+                            else
+                            {
+                                if (IOUtility.IsDate(value.ToString(), out dt))
+                                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            throw new Exception(ex.Message + "|" + message);
-                        }
+
+                        return cell;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                        if (value == null)
-                            cell.CellValue = new CellValue("");
-                        else
-                            cell.CellValue = new CellValue(value.ToString());
+                        throw new Exception(ex.Message + "|" + message);
                     }
                 }
+
+                // String
+                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                if (value == null)
+                    cell.CellValue = new CellValue("");
+                else
+                    cell.CellValue = new CellValue(value.ToString());
 
                 return cell;
             }
@@ -334,6 +346,20 @@ namespace BExIS.IO.Transform.Output
 
             CellValues cellValueType = getExcelType(type);
 
+            // missing value
+            // check if the value is a missing value and should be replaced
+            var variable = dataStructure.Variables.ElementAt(columnIndex - offset);
+            if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+            {
+                value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+
+                cell.CellValue = new CellValue(value.ToString());
+
+                return cell;
+            }
+
+            // Number
             if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
             {
                 cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -346,31 +372,31 @@ namespace BExIS.IO.Transform.Output
 
                 return cell;
             }
-            else
-            {
-                if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
-                {
-                    cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                    //CultureInfo provider = CultureInfo.InvariantCulture;
 
-                    if (value.ToString() != "")
+            // Date
+            if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+            {
+                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                //CultureInfo provider = CultureInfo.InvariantCulture;
+
+                if (value.ToString() != "")
+                {
+                    DateTime dt;
+                    if (IOUtility.IsDate(value.ToString(), out dt))
                     {
-                        DateTime dt;
-                        if (IOUtility.IsDate(value.ToString(), out dt))
-                        {
-                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                        }
+                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
                     }
                 }
-                else
-                {
-                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    if (value == null)
-                        cell.CellValue = new CellValue("");
-                    else
-                        cell.CellValue = new CellValue(value.ToString());
-                }
+
+                return cell;
             }
+
+            //String
+            cell.DataType = new EnumValue<CellValues>(CellValues.String);
+            if (value == null)
+                cell.CellValue = new CellValue("");
+            else
+                cell.CellValue = new CellValue(value.ToString());
 
             return cell;
         }

@@ -257,6 +257,12 @@ namespace BExIS.IO.Transform.Output
                         }
                         else value = vv.Value.ToString();
 
+                        // check if the value is a missing value and should be replaced
+                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                        {
+                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                        }
+
                         // Add value to row
                         line[i] = escapeValue(value);
                     }
@@ -282,6 +288,13 @@ namespace BExIS.IO.Transform.Output
                 // get value as string
                 string value = row[i].ToString();
 
+                // check if the value is a missing value and should be replaced
+                var variable = dataStructure.Variables.ElementAt(i);
+                if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                {
+                    value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                }
+
                 // add value to row
                 line[i] = escapeValue(value);
             }
@@ -294,8 +307,25 @@ namespace BExIS.IO.Transform.Output
 
         protected override bool AddRow(string[] row, long rowIndex)
         {
+            List<string> newRow = new List<string>();
+
+            // set vor missing values
+
+            for (int i = 0; i < row.Length; i++)
+            {
+                var value = row[i];
+                // check if the value is a missing value and should be replaced
+                var variable = dataStructure.Variables.ElementAt(i);
+                if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                {
+                    value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                }
+
+                newRow.Add(value);
+            }
+
             // Add to result
-            data.AppendLine(String.Join(this.separator, row.ToArray()));
+            data.AppendLine(String.Join(this.separator, newRow.ToArray()));
 
             return true;
         }
