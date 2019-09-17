@@ -1181,12 +1181,6 @@
     <Content Include="Themes\Default\Partials\_Header.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Test\XmlShow.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Test\XmlEdit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
