@@ -119,7 +119,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        public ActionResult ShowData(long id, int versionNumber = 0)
+        public ActionResult ShowData(long id, int version = 0)
         {
             DatasetManager dm = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
@@ -145,18 +145,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 if (dm.IsDatasetCheckedIn(id))
                 {
                     //get latest version
-                    if (versionNumber == 0)
+                    if (version == 0)
                     {
                         versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
                         //get current version number
-                        versionNumber = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
+                        version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
 
                         latestVersion = true;
                     }
                     // get specific version
                     else
                     {
-                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(versionNumber - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
                         latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
                     }
 
@@ -203,7 +203,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 model = new ShowDataModel()
                 {
                     Id = id,
-                    Version = versionNumber,
+                    Version = version,
+                    VersionSelect = version,
                     VersionId = versionId,
                     LatestVersion = latestVersion,
                     Title = title,
@@ -220,7 +221,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
-                ViewData["Version"] = getVersionsSelectList(id, dm);
+                ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
 
                 return View(model);
             }
@@ -316,6 +317,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     Id = id,
                     Version = version,
+                    VersionSelect = version,
                     VersionId = versionId,
                     LatestVersion = latestVersion,
                     Title = title,
@@ -332,7 +334,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
-                ViewData["Version"] = getVersionsSelectList(id, dm);
+                ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
 
                 return PartialView("ShowData", model);
             }
