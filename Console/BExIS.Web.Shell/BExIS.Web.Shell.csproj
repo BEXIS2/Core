@@ -649,7 +649,6 @@
     <Content Include="Content\DataTables\extensions\Buttons\css\mixins.scss" />
     <Content Include="Content\DataTables\extensions\Buttons\css\common.scss" />
     <None Include="Properties\PublishProfiles\BPP212.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap4.js" />
@@ -722,6 +721,7 @@
     <Content Include="Scripts\DataTables\extensions\ColReorder\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
+    <None Include="Properties\PublishProfiles\Shell_Folder.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <EmbeddedResource Include="Scripts\custom-swagger.js" />
     <Content Include="Scripts\bootstrap.js" />
