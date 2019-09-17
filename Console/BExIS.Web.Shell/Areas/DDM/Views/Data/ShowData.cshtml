@@ -45,7 +45,7 @@
                     <div class="col-md-6">
                         <b>Dataset Id: </b> @Model.Id
                         <b>Version: </b>
-                        @Html.DropDownListFor(m => m.Version, null, new { @class = "bx-dropdown" })
+                        @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown" })
                     </div>
                     <div class="col-md-6">
                         @if (!Model.LatestVersion)
@@ -332,18 +332,9 @@
 
     });
 
-    $("#Version").change(function () {
 
-        var version = $(this).val();
-        var id = '@Model.Id';
-
-
-
-
-    })
-
-    $("#Version").on('change', function () {
-    var version = $("#Version").val();
+    $("#VersionSelect").on('change', function () {
+    var version = $("#VersionSelect").val();
     var id = '@Model.Id';
 
     var redirectURL = '@Url.Action("Show","Data")';
