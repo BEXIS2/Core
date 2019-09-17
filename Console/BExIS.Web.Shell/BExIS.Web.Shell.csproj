@@ -722,6 +722,7 @@
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
     <None Include="Properties\PublishProfiles\Shell_Folder.pubxml" />
+    <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <EmbeddedResource Include="Scripts\custom-swagger.js" />
     <Content Include="Scripts\bootstrap.js" />
