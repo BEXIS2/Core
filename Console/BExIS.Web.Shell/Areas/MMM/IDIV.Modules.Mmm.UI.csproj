@@ -169,6 +169,7 @@
     <Content Include="Views\ShowMultimediaData\_bundleViewOverlay.cshtml" />
     <Content Include="Views\ShowMultimediaData\_measurementView.cshtml" />
     <Content Include="Views\ShowMultimediaData\_bundleImageView.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="web.Debug.config">
