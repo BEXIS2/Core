@@ -154,7 +154,7 @@
                                 @(Html.Telerik().DropDownList()
                                             .Placeholder("Select, please")
                                             .Name(@idInput)
-                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown" + @errorClass })
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
                                             .BindTo(new SelectList(Model.DomainList, Model.Value)))
                             }
