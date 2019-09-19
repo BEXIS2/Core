@@ -19,19 +19,18 @@ using BExIS.Dlm.Services.Data;
 
 namespace BExIS.IO.Tests.Transform.Input
 {
-
     public class DataReaderTests
     {
         private TestSetupHelper helper = null;
         private StructuredDataStructure dataStructure;
 
-        DatasetHelper dsHelper = null;
+        private DatasetHelper dsHelper = null;
 
         private static int repeat = 0;
 
         [OneTimeSetUp]
         /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
+        /// Multiple methods can be marked. Order is not preserved.
         /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
@@ -56,31 +55,27 @@ namespace BExIS.IO.Tests.Transform.Input
                 var boolType = dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean);
                 var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime);
             */
-
         }
 
         [SetUp]
         /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
         /// performs the cleanup after each test
         public void TearDown()
         {
-
         }
 
         [OneTimeTearDown]
         /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
+        /// Multiple methods can be marked. Order is not preserved.
         /// Inheritance is supported, call sequence form the children
         /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
-
         }
 
         #region Read Row
@@ -112,9 +107,13 @@ namespace BExIS.IO.Tests.Transform.Input
             );
 
             //prepare the variables
-            DataReader reader = new AsciiReader(dataStructure,new AsciiFileReaderInfo(), ioUtilityMock.Object);
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo(), ioUtilityMock.Object);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
-            reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
+            List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
+
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+            errors.Should().BeNull();
 
             //test
             DataTuple dt = reader.ReadRow(new List<string>(row), 1);
@@ -122,7 +121,6 @@ namespace BExIS.IO.Tests.Transform.Input
             //asserts
             dt.Should().NotBeNull();
             dt.VariableValues.Count.Should().Equals(row.Count);
-
         }
 
         [TestCase("1|test|2.2|true")]
@@ -162,14 +160,12 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //asserts
             Assert.Throws<Exception>(() => reader.ReadRow(new List<string>(row), 1));
-
         }
 
         [Test]
         [Repeat(4)]
         public void ReadRowNullTest()
         {
-
             //Mock IOUtility
             var ioUtilityMock = new Mock<IOUtility>();
             ioUtilityMock.Setup(i => i.ConvertDateToCulture("2018")).Returns("2018");
@@ -184,7 +180,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //asserts
             dt.Should().BeNull();
-
         }
 
         [TestCase("")]
@@ -203,8 +198,6 @@ namespace BExIS.IO.Tests.Transform.Input
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
             reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
 
-            
-
             //test
             DataTuple dt = reader.ReadRow(new List<string>(row), 1);
 
@@ -212,11 +205,11 @@ namespace BExIS.IO.Tests.Transform.Input
             dt.Should().BeNull();
         }
 
-        #endregion
+        #endregion Read Row
 
         #region Validate Row
 
-        //ToDo check for Mocks in the ValidateRow Function 
+        //ToDo check for Mocks in the ValidateRow Function
         [TestCase("1|test|2.2|true|02.02.2018")]
         [Repeat(4)]
         public void ValidateRowTest(string rowString)
@@ -239,7 +232,6 @@ namespace BExIS.IO.Tests.Transform.Input
             //asserts
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(0);
-
         }
 
         [TestCase("1|test|2.2|true")]
@@ -265,7 +257,6 @@ namespace BExIS.IO.Tests.Transform.Input
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
             errors.ElementAt(0).ToString().Should().ContainEquivalentOf("Number of Values different as number of variables");
-
         }
 
         [TestCase("1|test|2.2|true|28.09.2018|1|2")]
@@ -291,10 +282,9 @@ namespace BExIS.IO.Tests.Transform.Input
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
             errors.ElementAt(0).ToString().Should().ContainEquivalentOf("Number of Values different as number of variables");
-
         }
 
-        //ToDo check for Mocks in the ValidateRow Function 
+        //ToDo check for Mocks in the ValidateRow Function
         [TestCase("var1UT|var2UT|var3UT|var4UT|var5UT")]
         [Repeat(4)]
         public void ValidateComparisonWithDatatstructureTest(string variableRowString)
@@ -312,7 +302,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //asserts
             errors.Should().BeNull();
-
         }
 
         [TestCase("var1UT|var2UT|var3UT|var4UT")]
@@ -332,7 +321,6 @@ namespace BExIS.IO.Tests.Transform.Input
             //asserts
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
-
         }
 
         [TestCase("var1UT|var2UT|var3UT|var4UT|var5UT|var6UT")]
@@ -352,7 +340,6 @@ namespace BExIS.IO.Tests.Transform.Input
             //asserts
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
-
         }
 
         [TestCase("var1UT|var2UT|var3UT|var4UT|XYZTSRZRDZ|var6UT")]
@@ -372,14 +359,12 @@ namespace BExIS.IO.Tests.Transform.Input
             //asserts
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
-
         }
 
         [Test]
         [Repeat(4)]
         public void ValidateComparisonWithDatatstructureNullTest()
         {
-
             //prepare the variables
             DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo());
 
@@ -389,9 +374,8 @@ namespace BExIS.IO.Tests.Transform.Input
             //asserts
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
-
         }
 
-        #endregion
+        #endregion Validate Row
     }
 }
