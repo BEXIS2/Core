@@ -720,6 +720,7 @@
     <Content Include="Scripts\DataTables\extensions\ColReorder\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <EmbeddedResource Include="Scripts\custom-swagger.js" />
@@ -846,6 +847,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Themes\Default\Styles\bexis-custom-style.css" />
+    <Content Include="Themes\Default\Styles\bexis-datatables-net.css" />
     <Content Include="Themes\Default\Styles\bexis-jquery-ui.css" />
     <Content Include="Themes\Default\Styles\bexis-metadata.css" />
     <Content Include="Themes\Default\Styles\bexis-telerik.css" />
