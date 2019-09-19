@@ -409,6 +409,9 @@
                 </table>
             </td>
         </tr>
+        @if (!locked){
+        <tr><td></td><td><div id="error_@idInput" class="error" style="margin-top: -10px;">@errorMessage</div></td></tr>
+        }
     </table>
     }
 
