@@ -127,10 +127,15 @@
             <td class="metadataAttributeInput">
                 @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                 {
-
-                    if (Model.DataType.ToLower().Equals("text") || Model.UpperBoundary > 250 || Model.UpperBoundary == 0 ||
-                        (Model.DataType.ToLower().Equals("string") &&
-                        Model.Value != null && Model.Value.ToString().Length >= 60))
+                    // Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11 check if upper boundary is set to default value (1.7976931348623157E+308) to exclude from rule for textareas which requires an active set maximum length
+                    if (Model.DataType.ToLower().Equals("text") || 
+                        (Model.UpperBoundary > 250 &&  !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) || 
+                        Model.UpperBoundary == 0 ||
+                        (Model.DataType.ToLower().Equals("string") && 
+                         Model.Value != null && 
+                         Model.Value.ToString().Length >= 60
+                         )
+                    )
                     {
                         if (!locked)
                         {
@@ -176,15 +181,11 @@
 
                     }
 
-                    if (
-                        Model.DataType.ToLower().Equals("string") && 
-                        Model.UpperBoundary < 251 && 
-                        Model.UpperBoundary != 0 &&
-                        ((Model.Value != null && 
-                          Model.Value.ToString().Length < 60) || 
-                          Model.Value == null)
-                       )
-                    {
+                    if (Model.DataType.ToLower().Equals("string") && 
+                        (Model.UpperBoundary < 251 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) && Model.UpperBoundary != 0 &&
+                        ((Model.Value != null && Model.Value.ToString().Length < 60) ||
+                        Model.Value == null))
+                    {                        
                         if (!locked)
                         {
 
@@ -292,8 +293,11 @@
                     if (!locked)
                     {
 
-                        int value = 0;
-                        value = Convert.ToInt32(Model.Value);
+                        int? value = null;
+                        if (Model.Value != null)
+                        {
+                            value = Convert.ToInt32(Model.Value);
+                        }
 
                         @(Html.Telerik().IntegerTextBox()
                                                         .Name(idInput)
