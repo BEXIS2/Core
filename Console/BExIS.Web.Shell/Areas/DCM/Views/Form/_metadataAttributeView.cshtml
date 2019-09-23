@@ -21,7 +21,6 @@
     bool showOptional = false;
 
     string displayName = "";
-    char tmp = ' ';
 
     string autoCompleteType = "";
 
@@ -177,9 +176,14 @@
 
                     }
 
-                    if (Model.DataType.ToLower().Equals("string") && Model.UpperBoundary < 251 && Model.UpperBoundary != 0 &&
-                        ((Model.Value != null && Model.Value.ToString().Length < 60) 
-                        Model.Value == null))
+                    if (
+                        Model.DataType.ToLower().Equals("string") && 
+                        Model.UpperBoundary < 251 && 
+                        Model.UpperBoundary != 0 &&
+                        ((Model.Value != null && 
+                          Model.Value.ToString().Length < 60) || 
+                          Model.Value == null)
+                       )
                     {
                         if (!locked)
                         {
