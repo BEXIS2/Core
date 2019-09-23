@@ -1493,7 +1493,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             dsvs.ForEach(d => tmp.Add(
                 new SelectListItem()
                 {
-                    Text = (dsvs.IndexOf(d) + 1) + " - " + d.ChangeDescription,
+                    Text = (dsvs.IndexOf(d) + 1) + " (" + d.Timestamp.ToString("dd.MM.yyyy HH:mm") + "): " + d.ChangeDescription,
                     Value = "" + (dsvs.IndexOf(d) + 1)
                 }
                 ));
