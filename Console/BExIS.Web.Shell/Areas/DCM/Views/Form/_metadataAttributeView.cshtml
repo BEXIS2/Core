@@ -294,8 +294,11 @@
                     if (!locked)
                     {
 
-                        int value = 0;
-                        value = Convert.ToInt32(Model.Value);
+                        int? value = null;
+                        if (Model.Value != null)
+                        {
+                            value = Convert.ToInt32(Model.Value);
+                        }
 
                         @(Html.Telerik().IntegerTextBox()
                                                         .Name(idInput)
