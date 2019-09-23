@@ -53,20 +53,14 @@
 
     <div id="view-header" class="row" >
             <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-
-                <div class="row">
+		<div class="row">
                     <div class="col-md-6" style="white-space: nowrap;display: flex;">
-                        <div><b>Dataset ID:</b> @Model.Id <br> <b>Version:</b> @Model.Version</div> 
-
-                        <div style="margin-left: 20px;">
-                            Change Version:
-                            @Html.DropDownListFor(m => m.VersionSelect, null, new {@class = "bx-dropdown"})
+                        <div><b>Dataset id:</b> @Model.Id
+                            <b style="padding-left: 5px;">Version:</b>
+                            @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown" , @style = "border:none;" })
                         </div>
-                       
-                        
                     </div>
                 </div>
-
             </div>
             <div class="col-xs-2 col-md-2 col-lg-2">
                 <div id="preloaderContainer"></div>
