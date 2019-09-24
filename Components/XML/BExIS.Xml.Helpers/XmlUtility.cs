@@ -15,8 +15,10 @@ namespace BExIS.Xml.Helpers
     {
         public static string GetXPathToNode(XmlNode node)
         {
+            if (node == null) return string.Empty;
+
             if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
-                return "";
+                return string.Empty;
 
             string xPath = GetXPathToNode(node.ParentNode);
             if (xPath == "")
@@ -27,6 +29,8 @@ namespace BExIS.Xml.Helpers
 
         public static string GetDirectXPathToNode(XmlNode node)
         {
+            if (node == null) return string.Empty;
+
             if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
                 return "";
 
@@ -68,6 +72,9 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static bool ExistAsChild(XmlNode parentNode, XmlNode childNode)
         {
+            if (parentNode == null) return false;
+            if (childNode == null) return false;
+
             if (parentNode.HasChildNodes)
             {
                 foreach (XmlNode child in parentNode.ChildNodes)
@@ -83,6 +90,8 @@ namespace BExIS.Xml.Helpers
 
         public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv = true)
         {
+            if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
+
             return getXmlNodeByName(parentNode, name, recursiv);
         }
 
@@ -98,8 +107,10 @@ namespace BExIS.Xml.Helpers
                     {
                         if (recursiv)
                         {
-                            if (getXmlNodeByName(child, name) != null)
-                                return child;
+                            var tmp = getXmlNodeByName(child, name);
+
+                            if (tmp != null)
+                                return tmp;
                         }
                         else
                         {
@@ -115,6 +126,11 @@ namespace BExIS.Xml.Helpers
 
         public static XmlNode GetXmlNodeByAttribute(XmlNode parentNode, string name, string attrName, string attrValue)
         {
+            if (string.IsNullOrEmpty(name) ||
+                string.IsNullOrEmpty(attrName) ||
+                string.IsNullOrEmpty(attrValue) ||
+                parentNode == null) return null;
+
             return getXmlNodeByAttribute(parentNode, name, attrName, attrValue);
         }
 
@@ -144,6 +160,8 @@ namespace BExIS.Xml.Helpers
 
         public static XmlNode CreateNode(string nodeName, XmlDocument doc)
         {
+            if (string.IsNullOrWhiteSpace(nodeName) || doc == null) return null;
+
             //doc.DocumentElement.NamespaceURI
             return doc.CreateElement(nodeName);
         }
