@@ -147,6 +147,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
+                operationManager.Create("DCM", "EntityReference", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
