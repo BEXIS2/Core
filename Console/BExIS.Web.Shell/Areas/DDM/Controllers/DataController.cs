@@ -1430,8 +1430,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
             {
                 { "sourceId", id },
-                { "SourceTypeId", entity.Id },
-                { "SourceVersion", version }
+                { "sourceTypeId", entity.Id },
+                { "sourceVersion", version }
             });
 
             return Content(view.ToHtmlString(), "text/html");
