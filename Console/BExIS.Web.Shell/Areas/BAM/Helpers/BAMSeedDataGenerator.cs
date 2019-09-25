@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Bam.UI.Helpers
@@ -258,6 +259,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             }
             catch (Exception ex)
             {
+                LoggerFactory.LogCustom("SeedData Failed: " + ex.Message);
                 throw ex;
             }
             finally
