@@ -168,47 +168,56 @@ namespace BExIS.Xml.Helpers
 
         public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath)
         {
-            // grab the next node name in the xpath; or return parent if empty
-            string[] partsOfXPath = xpath.Trim('/').Split('/');
-
-            if (partsOfXPath.Length == 0)
-                return parent;
-
-            string nextNodeInXPath = partsOfXPath[0];
-            if (string.IsNullOrEmpty(nextNodeInXPath))
-                return parent;
-
-            // get or create the node from the name
-
-            int index = 1;
-            string nodeName = nextNodeInXPath;
-            if (nextNodeInXPath.Contains("["))
+            try
             {
-                string[] tmp = nextNodeInXPath.Split('[');
-                nodeName = tmp[0];
-                index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
+                if (doc == null || parent == null) return null;
+
+                // grab the next node name in the xpath; or return parent if empty
+                string[] partsOfXPath = xpath.Trim('/').Split('/');
+
+                if (partsOfXPath.Length == 0)
+                    return parent;
+
+                string nextNodeInXPath = partsOfXPath[0];
+                if (string.IsNullOrEmpty(nextNodeInXPath))
+                    return parent;
+
+                // get or create the node from the name
+
+                int index = 1;
+                string nodeName = nextNodeInXPath;
+                if (nextNodeInXPath.Contains("["))
+                {
+                    string[] tmp = nextNodeInXPath.Split('[');
+                    nodeName = tmp[0];
+                    index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
+                }
+
+                XmlNodeList nodes = parent.SelectNodes(nodeName);
+
+                XmlNode node = nodes[index - 1];
+
+                if (node == null)
+                {
+                    if (nextNodeInXPath.StartsWith("@"))
+                    {
+                        XmlAttribute anode = doc.CreateAttribute(nextNodeInXPath.Substring(1));
+                        node = parent.Attributes.Append(anode);
+                    }
+                    else
+                    {
+                        node = parent.AppendChild(doc.CreateElement(nodeName));
+                    }
+                }
+
+                // rejoin the remainder of the array as an xpath expression and recurse
+                string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
+                return GenerateNodeFromXPath(doc, node, rest);
             }
-
-            XmlNodeList nodes = parent.SelectNodes(nodeName);
-
-            XmlNode node = nodes[index - 1];
-
-            if (node == null)
+            catch (Exception ex)
             {
-                if (nextNodeInXPath.StartsWith("@"))
-                {
-                    XmlAttribute anode = doc.CreateAttribute(nextNodeInXPath.Substring(1));
-                    node = parent.Attributes.Append(anode);
-                }
-                else
-                {
-                    node = parent.AppendChild(doc.CreateElement(nodeName));
-                }
+                throw ex;
             }
-
-            // rejoin the remainder of the array as an xpath expression and recurse
-            string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
-            return GenerateNodeFromXPath(doc, node, rest);
         }
 
         /// <summary>
@@ -315,6 +324,8 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XmlNode AddAttribute(XmlNode node, string name, string value, XmlDocument xmlDoc)
         {
+            if (node == null || xmlDoc == null || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(value)) return null;
+
             XmlAttribute attr = xmlDoc.CreateAttribute(name);
             attr.Value = value;
             node.Attributes.Append(attr);

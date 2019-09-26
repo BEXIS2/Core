@@ -267,5 +267,203 @@ namespace BExIS.Xml.Helpers.UnitTests
             Assert.IsInstanceOf<XmlNode>(result);
             Assert.That(result.Name, Is.EqualTo("test"));
         }
+
+        [Test()]
+        public void GenerateNodeFromXpath_XpathIsEmpty_ReturnParent()
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GenerateNodeFromXPath(_document, _document.DocumentElement, string.Empty);
+
+            //Assert
+            Assert.That(result, Is.EqualTo(_document.DocumentElement));
+        }
+
+        [Test()]
+        public void GenerateNodeFromXpath_ParentIsInvalid_ReturnNull()
+        {
+            //Arrange
+            string xpath = "/test/function";
+            //Act
+            var result = XmlUtility.GenerateNodeFromXPath(_document, null, xpath);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void GenerateNodeFromXpath_DocIsInvalid_ReturnNull()
+        {
+            //Arrange
+            string xpath = "/test/function";
+            //Act
+            var result = XmlUtility.GenerateNodeFromXPath(null, _document.DocumentElement, xpath);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void GenerateNodeFromXpath_ParentNotBelongToDoc_ReturnNull()
+        {
+            //Arrange
+            XmlDocument tmp = new XmlDocument();
+            tmp.AppendChild(tmp.CreateElement("otherRoot"));
+
+            string xpath = "root/level1/levelA";
+
+            //Act
+            //Assert
+            Assert.That(() => XmlUtility.GenerateNodeFromXPath(_document, tmp.DocumentElement, xpath), Throws.Exception);
+        }
+
+        [Test()]
+        public void GenerateNodeFromXpath_WhenCalledValid_ReturnParentWithNewChildrens()
+        {
+            //Arrange
+            string xpath = "levelA/levelB";
+            //Act
+            var result = XmlUtility.GenerateNodeFromXPath(_document, _document.DocumentElement, xpath);
+
+            //Assert
+            Assert.That(result.Name, Is.EqualTo("levelB"));
+            Assert.That(result.ParentNode.Name, Is.EqualTo("levelA"));
+            Assert.That(result.ParentNode.ParentNode.Name, Is.EqualTo("root"));
+            Assert.That(_document.DocumentElement.ChildNodes.Count, Is.EqualTo(2));
+        }
+
+        [TestCase("AttrName", null)]
+        [TestCase("AttrName", "")]
+        [TestCase("AttrName", " ")]
+        [TestCase(null, "AttrValue")]
+        [TestCase("", "AttrValue")]
+        [TestCase(" ", "AttrValue")]
+        public void AddAttribute_AttributeParametersInvalid_ReturnNull(string name, string value)
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.AddAttribute(_document.DocumentElement, name, value, _document);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void AddAttribute_NodeIsInvalid_ReturnNull()
+        {
+            //Arrange
+            string name = "AttrName";
+            string value = "AttrValue";
+            //Act
+            var result = XmlUtility.AddAttribute(_document.DocumentElement, name, value, null);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void AddAttribute_DocIsInvalid_ReturnNull()
+        {
+            //Arrange
+            string name = "AttrName";
+            string value = "AttrValue";
+
+            //Act
+            var result = XmlUtility.AddAttribute(_document.DocumentElement, name, value, null);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void Addttribute_NodeNotBelongToDoc_ReturnNull()
+        {
+            //Arrange
+            XmlDocument tmp = new XmlDocument();
+            tmp.AppendChild(tmp.CreateElement("otherRoot"));
+
+            string name = "AttrName";
+            string value = "AttrValue";
+
+            //Act
+            //Assert
+            Assert.That(() => XmlUtility.AddAttribute(_document.DocumentElement, name, value, tmp), Throws.Exception);
+        }
+
+        [Test()]
+        public void AddAttribute_WhenCalledValid_ReturnParentWithNewChildrens()
+        {
+            //Arrange
+            string name = "AttrName";
+            string value = "AttrValue";
+
+            //Act
+            var result = XmlUtility.AddAttribute(_document.DocumentElement, name, value, _document);
+
+            //Assert
+            Assert.That(result.Attributes.Count, Is.EqualTo(1));
+            Assert.That(result.Attributes[0].Name, Is.EqualTo(name));
+            Assert.That(result.Attributes[0].Value, Is.EqualTo(value));
+        }
+
+        [Test()]
+        public void FindXPath_NodeAsAttribute_ReturnXPath()
+        {
+            //Arrange
+            string xpath = "/root[1]/level1[1]/level2[1]/level3[1]/@type";
+            XmlNode node = _document.SelectSingleNode(xpath);
+
+            //Act
+            var result = XmlUtility.FindXPath(node);
+
+            //Assert
+            Assert.AreEqual(xpath, result);
+        }
+
+        [Test()]
+        public void FindXPath_NodeAsElement_ReturnXPath()
+        {
+            //Arrange
+            string xpath = "/root[1]/level1[1]/level2[1]/level3[1]";
+            XmlNode node = _document.SelectSingleNode(xpath);
+
+            //Act
+            var result = XmlUtility.FindXPath(node);
+
+            //Assert
+            Assert.AreEqual(xpath, result);
+        }
+
+        [Test()]
+        public void FindXPath_NodeAsDocument_ReturnXPath()
+        {
+            //Act
+            var result = XmlUtility.FindXPath(_document);
+
+            //Assert
+            Assert.That(result, Is.EqualTo(""));
+        }
+
+        [Test()]
+        public void FindXPath_NodeAsInvalidType_ReturnArgumentException()
+        {
+            //Arrange
+            XmlNode node = _document.CreateEntityReference("xyz");
+
+            //Act
+            //Assert
+            Assert.That(() => XmlUtility.FindXPath(node), Throws.ArgumentException);
+        }
+
+        [Test()]
+        public void FindXPath_NodeAsNotValid_ReturnArgumentException()
+        {
+            //Arrange
+            XmlNode node = _document.CreateEntityReference("xyz");
+
+            //Act
+            //Assert
+            Assert.That(() => XmlUtility.FindXPath(null), Throws.ArgumentException);
+        }
     }
 }
