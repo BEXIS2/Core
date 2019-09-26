@@ -7,7 +7,7 @@ using Assert = NUnit.Framework.Assert;
 namespace BExIS.Xml.Helpers.UnitTests
 {
     [TestFixture()]
-    public class XmlUtilityTests
+    public class XmlUtility_XmlDocumentTests
     {
         private XmlDocument _document;
 

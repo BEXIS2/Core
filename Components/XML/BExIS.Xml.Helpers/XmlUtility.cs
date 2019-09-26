@@ -404,7 +404,7 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static IEnumerable<XElement> GetChildren(XElement source)
         {
-            return source.Nodes().OfType<XElement>();
+            return source != null ? source.Nodes().OfType<XElement>() : null;
         }
 
         /// <summary>
@@ -416,7 +416,7 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static IEnumerable<XElement> GetAllChildren(XElement element)
         {
-            return element.Descendants();
+            return element != null ? element.Descendants() : null;
         }
 
         /// <summary>
@@ -428,7 +428,7 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static IEnumerable<XElement> GetXElementByNodeName(string nodeName, XDocument xDoc)
         {
-            return xDoc.Root.Descendants(nodeName);
+            return xDoc != null && !string.IsNullOrWhiteSpace(nodeName) ? xDoc.Root.Descendants(nodeName) : null;
         }
 
         /// <summary>
@@ -440,6 +440,11 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
         {
+            if (string.IsNullOrWhiteSpace(nodeName)) return null;
+            if (string.IsNullOrWhiteSpace(attrName)) return null;
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (xDoc == null) return null;
+
             string name = nodeName.Replace(" ", "");
             return xDoc.Root.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
         }
