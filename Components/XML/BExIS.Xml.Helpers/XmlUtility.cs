@@ -458,17 +458,30 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
         {
+            if (string.IsNullOrWhiteSpace(nodeName)) return null;
+            if (string.IsNullOrWhiteSpace(attrName)) return null;
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (xDoc == null) return null;
+
             string name = nodeName.Replace(" ", "");
+
             return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
         }
 
         public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, XDocument xDoc)
         {
+            if (string.IsNullOrWhiteSpace(attrName)) return null;
+            if (xDoc == null) return null;
+
             return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null);
         }
 
         public static IEnumerable<XElement> GetXElementsByAttribute(string attrName, string value, XDocument xDoc)
         {
+            if (string.IsNullOrWhiteSpace(attrName)) return null;
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (xDoc == null) return null;
+
             return xDoc.Root.Descendants().Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
         }
 

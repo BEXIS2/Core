@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -33,10 +34,35 @@ namespace BExIS.Xml.Helpers.UnitTests
             XElement e2 = new XElement("level2");
             XElement e3 = new XElement("level3");
 
-            e2.Add(e3);
+            // add format attribute
+            e1.Add(new XAttribute("format", "l"));
+            e2.Add(new XAttribute("format", "l"));
+            e3.Add(new XAttribute("format", "l"));
+
             e2.Add(new XAttribute("type", "l2"));
 
+            e2.Add(e3);
             e1.Add(e2);
+
+            // create rooms
+            XElement r1 = new XElement("room");
+            XElement r2 = new XElement("room");
+            XElement r3 = new XElement("room");
+
+            // add nr attribute
+            r1.Add(new XAttribute("nr", "l"));
+            r2.Add(new XAttribute("nr", "2"));
+            r3.Add(new XAttribute("nr", "3"));
+
+            // window account attr
+            r1.Add(new XAttribute("windows", "2"));
+            r2.Add(new XAttribute("windows", "2"));
+            r3.Add(new XAttribute("windows", "2"));
+
+            // add r to e3
+            e3.Add(r1);
+            e3.Add(r2);
+            e3.Add(r3);
 
             _document.Root.Add(e1);
             _document.Root.Add(new XElement("level1a"));
@@ -101,7 +127,7 @@ namespace BExIS.Xml.Helpers.UnitTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.That(result.Count(), Is.EqualTo(5));
+            Assert.That(result.Count(), Is.EqualTo(8));
         }
 
         [TestCase(null)]
@@ -128,6 +154,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             Assert.That(result.Count(), Is.EqualTo(0));
         }
 
+        [Test()]
         public void GetXElementByNodeName_DocumentIsNull_ReturnNull()
         {
             //Arrange
@@ -135,8 +162,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             var result = XmlUtility.GetXElementByNodeName("level3", null);
 
             //Assert
-            Assert.IsNotNull(result);
-            Assert.That(result.Count(), Is.EqualTo(5));
+            Assert.IsNull(result);
         }
 
         [Test()]
@@ -174,7 +200,7 @@ namespace BExIS.Xml.Helpers.UnitTests
         [TestCase("level2", "type", null)]
         [TestCase("level2", "type", "")]
         [TestCase("level2", "type", " ")]
-        public void GetXElementByAttribute_StringParametersInvalid_ReturnTheExpectedXElement(string name, string attrName, string attrValue)
+        public void GetXElementByAttribute_StringParametersInvalid_ReturnNull(string name, string attrName, string attrValue)
         {
             //Arrange
             //Act
@@ -182,6 +208,160 @@ namespace BExIS.Xml.Helpers.UnitTests
 
             //Assert
             Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_WhenCalledValid_ReturnExpectedXElements()
+        {
+            //Arrange
+
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("room", "windows", "2", _document);
+
+            //Assert
+            Assert.That(result.Count, Is.EqualTo(3));
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_AttributeNotExistButNodeAndValue_ReturnEmptyList()
+        {
+            //Arrange
+
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("room", "notexist", "2", _document);
+
+            //Assert
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_AttributeValueNotExistButNodeAndAttribute_ReturnEmptyList()
+        {
+            //Arrange
+
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("room", "window", "3", _document);
+
+            //Assert
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [TestCase(null, "windows", "2")]
+        [TestCase("", "windows", "2")]
+        [TestCase(" ", "windows", "22")]
+        [TestCase("room", null, "2")]
+        [TestCase("room", "", "2")]
+        [TestCase("room", " ", "2")]
+        [TestCase("room", "windows", null)]
+        [TestCase("room", "windows", "")]
+        [TestCase("room", "windows", " ")]
+        public void GetXElementsByAttribute_StringParametersInvalid_ReturnNull(string name, string attrName, string attrValue)
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute(name, attrName, attrValue, _document);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_WhenCallValid_ReturnExpectedXElements()
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("format", _document);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count(), Is.EqualTo(3));
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void GetXElementsByAttribute_StringParametersInvalid_ReturnNull(string attrName)
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute(attrName, _document);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_AttributeNotExist_ReturnEmptyList()
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("NotExistingAttributeName", _document);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count(), Is.EqualTo(0));
+        }
+
+        [TestCase(null, "1")]
+        [TestCase("", "1")]
+        [TestCase(" ", "1")]
+        [TestCase("format", null)]
+        [TestCase("format", "")]
+        [TestCase("format", " ")]
+        public void GetXElementsByAttribute_StringParametersInvalid_ReturnNull(string attrName, string attrValue)
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute(attrName, attrValue, _document);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_AttributeNotExistButValue_ReturnEmptyList()
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("NotExistingAttributeName", "2", _document);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count(), Is.EqualTo(0));
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_AttributeExistButNotValue_ReturnEmptyList()
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("format", "3", _document);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count(), Is.EqualTo(0));
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_WhenCallValidWithTwoParameters_ReturnExpectedXElements()
+        {
+            //Arrange
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute("format", "l", _document);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count(), Is.EqualTo(3));
+        }
+
+        [Test()]
+        public void GetXElementByAttribute_WhenCallValidWithManyAttrbites_ReturnExpectedXElement()
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
         }
     }
 }
