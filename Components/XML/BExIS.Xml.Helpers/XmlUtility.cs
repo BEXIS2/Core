@@ -494,6 +494,8 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XElement GetXElementByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XElement XElement)
         {
+            if (string.IsNullOrWhiteSpace(nodeName) || AttrValueDic == null || XElement == null) return null;
+
             string name = nodeName.Replace(" ", "");
             IEnumerable<XElement> elements = new List<XElement>();
 
@@ -519,6 +521,8 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XElement XElement)
         {
+            if (string.IsNullOrWhiteSpace(nodeName) || AttrValueDic == null || XElement == null) return null;
+
             string name = nodeName.Replace(" ", "");
             IEnumerable<XElement> elements = new List<XElement>();
 

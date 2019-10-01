@@ -39,7 +39,9 @@ namespace BExIS.Xml.Helpers.UnitTests
             e2.Add(new XAttribute("format", "l"));
             e3.Add(new XAttribute("format", "l"));
 
+            e1.Add(new XAttribute("type", "l1"));
             e2.Add(new XAttribute("type", "l2"));
+            e3.Add(new XAttribute("type", "l3"));
 
             e2.Add(e3);
             e1.Add(e2);
@@ -58,6 +60,10 @@ namespace BExIS.Xml.Helpers.UnitTests
             r1.Add(new XAttribute("windows", "2"));
             r2.Add(new XAttribute("windows", "2"));
             r3.Add(new XAttribute("windows", "2"));
+
+            r1.Add(new XAttribute("doors", "1"));
+            r2.Add(new XAttribute("doors", "1"));
+            r3.Add(new XAttribute("doors", "1"));
 
             // add r to e3
             e3.Add(r1);
@@ -355,13 +361,35 @@ namespace BExIS.Xml.Helpers.UnitTests
         }
 
         [Test()]
-        public void GetXElementByAttribute_WhenCallValidWithManyAttrbites_ReturnExpectedXElement()
+        public void GetXElementByAttribute_WhenCallValidWithManyAttributes_ReturnExpectedXElement()
         {
             //Arrange
-
+            var dic = new Dictionary<string, string>();
+            dic.Add("nr", "2");
+            dic.Add("windows", "2");
+            string nodeName = "room";
             //Act
+            var result = XmlUtility.GetXElementByAttribute(nodeName, dic, _document.Root);
 
             //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Name.LocalName, Is.EqualTo(nodeName));
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_WhenCallValidWithManyAttributes_ReturnExpectedXElement()
+        {
+            //Arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("doors", "1");
+            dic.Add("windows", "2");
+            string nodeName = "room";
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute(nodeName, dic, _document.Root);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count, Is.EqualTo(3));
         }
     }
 }
