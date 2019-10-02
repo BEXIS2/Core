@@ -167,14 +167,19 @@
                         {
 
                             //@Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
-                        <div class="bx-input bx-metadataFormTextInput bx-disabled">
-                            @if (Model.Value != null)
+                            if (Model.Value == null)
                             {
-                                
-                                @Html.DisplayWithLinksFor(m => m.Value)
-                                
+                                <div class="bx-input bx-metadataFormTextInput bx-disabled"></div>
                             }
-                        </div>
+                            else
+                            {
+                                <div class="bx-metadataForm-textArea-display">
+                                @if (Model.Value != null)
+                                {
+                                    @Html.DisplayWithLinksFor(m => m.Value)
+                                }
+                                </div>
+                            }
                         }
 
 
