@@ -62,15 +62,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
+                SetViewData(model.SourceId, model.SourceTypeId, false, true);
+
                 if (!ModelState.IsValid)
                 {
-                    SetViewData(model.SourceId, model.SourceTypeId, false, false);
                     return PartialView("_create", model);
                 }
+
                 EntityReference entityReference = helper.Convert(model);
                 entityReferenceManager.Create(entityReference);
 
-                SetViewData(model.SourceId, model.SourceTypeId, false, true);
+                // if successfuly created a entity link return a json true
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message.ToString());
                 return PartialView("_create", model);
             }
             finally

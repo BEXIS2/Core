@@ -20,7 +20,7 @@
 
 <div id="content_createEnityReference">
 
-    @using (Ajax.BeginForm("Create", "EntityReference", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createEnityReference", OnSuccess = "onSuccess()" }))
+    @using (Ajax.BeginForm("Create", "EntityReference", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createEnityReference", OnSuccess = "createEntityReference_OnSuccess" }))
     {
         @Html.ValidationSummary(true)
 

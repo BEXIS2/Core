@@ -4,7 +4,6 @@ $("#TargetType").on('change', function () {
 
     $("#Target").empty();
 
-
     if (id !== "" && id > 0) {
         $.ajax({
             type: "GET",
@@ -17,7 +16,6 @@ $("#TargetType").on('change', function () {
         })
     }
     else {
-       
         $("#Target").prop("disabled", true);
         $("#Target").addClass("bx-disabled");
     }
@@ -61,7 +59,6 @@ $("#Target").on('change', function () {
         })
     }
     else {
-       
         $("#TargetVersion").prop("disabled", true);
         $("#TargetVersion").addClass("bx-disabled");
     }
@@ -92,13 +89,22 @@ $("#button_createEntityreference_cancel").click(function () {
     $("#window_createReference").data('tWindow').destroy();
 });
 
-function onSuccess() {
-    var id = $("#SourceId").val();
-    var type = $("#SourceTypeId").val();
-    var version = $("#SourceVersion").val();
-    reload(id, type, version);
+function createEntityReference_OnSuccess(data) {
 
-    $("#window_createReference").data('tWindow').destroy();
+    console.log("on success");
+    console.log(data);
+
+    if (data) {
+
+        console.log("on success data = true");
+
+        var id = $("#Selected_Id").val();
+        var type = $("#Selected_TypeId").val();
+        var version = $("#Selected_Version").val();
+        reload(id, type, version);
+
+        $("#window_createReference").data('tWindow').destroy();
+    }
 }
 
 function reload(id, type, version) {
@@ -107,6 +113,8 @@ function reload(id, type, version) {
         sourceTypeId: type,
         sourceVersion: version
     };
+
+    console.log(parameters);
 
     $.ajax({
         type: 'GET',

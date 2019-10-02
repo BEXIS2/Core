@@ -96,7 +96,6 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
         [Required]
         public int TargetVersion { get; set; }
 
-        [Required]
         public String Context { get; set; }
 
         [Required]
@@ -104,6 +103,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
 
         public CreateSimpleReferenceModel()
         {
+            Context = "";
         }
 
         public CreateSimpleReferenceModel(long sourceId, long sourceTypeId, int sourceVersion)
@@ -111,6 +111,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
             SourceId = sourceId;
             SourceTypeId = sourceTypeId;
             SourceVersion = sourceVersion;
+            Context = "";
         }
     }
 }
