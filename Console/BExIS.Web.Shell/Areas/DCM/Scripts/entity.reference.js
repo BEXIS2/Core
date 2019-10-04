@@ -126,3 +126,31 @@ function reload(id, type, version) {
         }
     })
 }
+
+
+$("#delete-reference-bt").on("click", function () {
+
+    var id = $(this).attr("id");
+
+    var parameters = {
+        id:id
+    };
+
+    $.ajax({
+        type: 'GET',
+        url: "/dcm/entityreference/delete",
+        data: parameters,
+        dataType: 'html',
+        success: function (data) {
+
+            if (data) {
+                var id = $("#Selected_Id").val();
+                var type = $("#Selected_TypeId").val();
+                var version = $("#Selected_Version").val();
+                reload(id, type, version);
+            }
+
+        }
+    })
+
+})
