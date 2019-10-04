@@ -10,8 +10,10 @@
 @{  string value = "";
     int i = 0;
 
+    if (i == 0) { i = -1; }
+
     string controller = Session["Controller"].ToString();
-   }
+}
 
 @if (this.Session["PropertiesDictionary"] as Dictionary<string, string> !=null)
 {
@@ -27,13 +29,17 @@
  
 
 @foreach (string s in @Model.Values)
+{
+    if (s != Model.DefaultValue && string.IsNullOrWhiteSpace(s))
     {
+
         if (s != value)
         {
             i++;
         }
         else { break; }
     }
+}
 
 
 
