@@ -324,7 +324,7 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XmlNode AddAttribute(XmlNode node, string name, string value, XmlDocument xmlDoc)
         {
-            if (node == null || xmlDoc == null || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(value)) return null;
+            if (node == null || xmlDoc == null || string.IsNullOrWhiteSpace(name)) return null;
 
             XmlAttribute attr = xmlDoc.CreateAttribute(name);
             attr.Value = value;

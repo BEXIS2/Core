@@ -192,6 +192,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             tmp.Context = entityReference.Context;
             tmp.ReferenceType = entityReference.ReferenceType;
+            tmp.RefId = entityReference.Id;
 
             return tmp;
         }

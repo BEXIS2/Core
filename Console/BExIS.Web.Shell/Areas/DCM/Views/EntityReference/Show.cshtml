@@ -195,18 +195,26 @@
 
 
             $('.delete-reference-bt').click(function (e) {
+                deleteReference(e);
+            })
+
+
+            function deleteReference(e) {
+
+                //console.log(e);
 
                 var answer = confirm("Do you really want to delete the Enitity Reference?");
 
                 if (answer) {
                     var sourceid = '@Model.Selected.Id';
                     var sourcetype = '@Model.Selected.TypeId'
+                    var sourceVersion = '@Model.Selected.Version'
 
                     var parameters = {
-                        id: $(this).attr("id")
+                        id: $(e.currentTarget).attr("id")
                     }
-
-                    console.log(parameters)
+                   
+                    //console.log(parameters)
 
                     $.ajax({
                         type: 'Post',
@@ -217,13 +225,12 @@
 
                             if (data) {
 
-                                reload(sourceid, sourcetype)
+                                reload(sourceid, sourcetype, sourceVersion)
                             }
                         }
                     });
                 }
-            });
-
+            }
         })
 </script>
 

@@ -99,6 +99,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 return Json(true);
             }
+            catch (Exception ex)
+            {
+                return Json("Error : " + ex.Message);
+            }
             finally
             {
                 entityReferenceManager.Dispose();
