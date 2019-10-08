@@ -152,7 +152,7 @@
                         @(Html.LabelFor(m => m.searchType))<span class="bx bx-required" title="Required">
                     </td>
                     <td>
-                         @Html.DropDownListFor(m => m.searchType, new SelectList(SearchComponentBaseType, Model.searchType), "Select, please")
+                         @Html.DropDownListFor(m => m.searchType, new SelectList(SearchComponentBaseType, Model.searchType), "Please select")
                          <label title="Search pattern to be used for this item.">?</label>
                     </td>
                 </tr>
