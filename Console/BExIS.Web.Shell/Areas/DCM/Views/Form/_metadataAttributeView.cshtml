@@ -156,7 +156,7 @@
                             else
                             {
                                 @(Html.Telerik().DropDownList()
-                                            .Placeholder("Select, please")
+                                            .Placeholder("Please select")
                                             .Name(@idInput)
                                             .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
@@ -232,7 +232,7 @@
                             {
                                 @(Html.Telerik().DropDownList()
                                             .Name(@idInput)
-                                            .Placeholder("Select, please")
+                                            .Placeholder("Please select")
                                             .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
                                             .BindTo(new SelectList(Model.DomainList, Model.Value)))
