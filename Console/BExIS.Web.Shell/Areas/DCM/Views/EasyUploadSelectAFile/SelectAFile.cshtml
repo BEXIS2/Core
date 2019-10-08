@@ -74,7 +74,7 @@
 
                     <td>
                         @(Html.Telerik().DropDownList()
-                                    .Placeholder("Select, please")
+                                    .Placeholder("Please select")
                                     .Name("SelectedServerFileName")
                                     .BindTo(new SelectList(Model.serverFileList))
                                     .ClientEvents(e => e.OnChange("SelectedServerFileName_onChange")))
