@@ -79,7 +79,7 @@
                     }
                 </b>
 
-                @if (Model.Model.MinCardinality > 0)
+                @if (Model.Model.MinCardinality > 0  && !locked)
                 {
                     <b title="Required" style="color: red">*</b>
                 }
