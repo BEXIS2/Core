@@ -1,4 +1,5 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -50,6 +51,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Load Metadata formular actions
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult EditMetadata(long datasetId, bool locked = false, bool created = false)
         {
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });
