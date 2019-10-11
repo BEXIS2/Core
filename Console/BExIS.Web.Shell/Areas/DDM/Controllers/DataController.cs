@@ -1083,7 +1083,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult SetFullDatasetDownload(bool subset)
         {
             Session["DownloadFullDataset"] = subset;

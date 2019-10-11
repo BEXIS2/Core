@@ -44,7 +44,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Delete)]
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult Delete(long datasetId, String fileName)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
@@ -139,7 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
             var filemNames = "";

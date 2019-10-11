@@ -382,7 +382,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return null;
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
             PublicationManager publicationManager = new PublicationManager();
