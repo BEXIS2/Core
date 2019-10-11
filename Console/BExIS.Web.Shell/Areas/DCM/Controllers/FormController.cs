@@ -194,6 +194,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
+            
+            //Add JavaScript file
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            {
+                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+            }
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.LOCKED))
             {
@@ -345,6 +351,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
             {
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+            }
+            
+            //Add JavaScript file
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            {
+                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
             }
 
             return PartialView("MetadataEditor", Model);
@@ -576,6 +588,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
+            
+            //Add JavaScript file
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            {
+                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+            }
 
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
@@ -669,6 +687,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
                 {
                     Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+                }
+                
+                //Add JavaScript file
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+                {
+                    Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
                 }
             }
 
