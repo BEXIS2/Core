@@ -55,7 +55,9 @@ namespace BExIS.Dcm.CreateDatasetWizard
         //Action in Form
         public static string NO_IMPORT_ACTION = "NO_IMPORT_ACTION";
         public static string LOCKED = "LOCKED";
-
+        
+        //Additionl JavaScript file in form (e.g. for additional validation)
+        public static string JS_PATH = "JS_PATH";
 
         private int MaxStepId;
 
