@@ -539,28 +539,19 @@ namespace BExIS.UI.Helpers
 
         public static OrderByExpression Convert(List<SortDescriptor> sortDescriptors)
         {
-            /*
-             OrderByExpression orderByExpr = new OrderByExpression(
-                                                    new List<OrderItemExpression>() {
-                                                        new OrderItemExpression(var1Name),
-                                                        new OrderItemExpression(var2Name, SortDirection.Descending)
-                                                    });
-             */
+            if (sortDescriptors == null || sortDescriptors.Count == 0) return null;
 
             List<OrderItemExpression> oieList = new List<OrderItemExpression>();
-            if (sortDescriptors.Count > 0)
+            foreach (var sort in sortDescriptors)
             {
-                foreach (var sort in sortDescriptors)
-                {
-                    string name = sort.Member;
-                    string direction = sort.SortDirection.ToString();
-                    SortDirection sortDirection = SortDirection.Ascending;
+                string name = sort.Member;
+                string direction = sort.SortDirection.ToString();
+                SortDirection sortDirection = SortDirection.Ascending;
 
-                    if (direction.Equals("Ascending")) sortDirection = SortDirection.Ascending;
-                    if (direction.Equals("Descending")) sortDirection = SortDirection.Descending;
+                if (direction.Equals("Ascending")) sortDirection = SortDirection.Ascending;
+                if (direction.Equals("Descending")) sortDirection = SortDirection.Descending;
 
-                    oieList.Add(new OrderItemExpression(name, sortDirection));
-                }
+                oieList.Add(new OrderItemExpression(name, sortDirection));
             }
 
             return new OrderByExpression(oieList);

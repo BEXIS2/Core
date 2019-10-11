@@ -72,11 +72,14 @@ namespace BExIS.Security.Services.Subjects
 
                         return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
+
                     if (orderBy != null)
                     {
                         count = Users.Count();
                         return Users.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
+
+                    return Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 }
             }
             catch (Exception ex)
@@ -84,7 +87,6 @@ namespace BExIS.Security.Services.Subjects
                 throw new Exception(string.Format("Could not retrieve filtered users."), ex);
             }
 
-            return null;
         }
 
         #region IUserEmailStore
