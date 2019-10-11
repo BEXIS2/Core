@@ -202,8 +202,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
                 var group = groupManager.FindByIdAsync(model.Id).Result;
-
                 if (group == null) return PartialView("_Update", model);
+
+                // check wheter group name exist
+                if (groupManager.FindByNameAsync(model.Name).Result != null)
+                {
+                    ModelState.AddModelError("Name", "The name exists already.");
+                    if (!ModelState.IsValid) return PartialView("_Update", model);
+                }
 
                 group.Name = model.Name;
                 group.Description = model.Description;
