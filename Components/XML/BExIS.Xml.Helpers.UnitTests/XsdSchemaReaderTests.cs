@@ -9,14 +9,10 @@ namespace BExIS.Xml.Helpers.UnitTests
     {
         private MockRepository mockRepository;
 
-
-
         [SetUp]
         public void SetUp()
         {
             this.mockRepository = new MockRepository(MockBehavior.Strict);
-
-
         }
 
         [TearDown]
@@ -30,7 +26,6 @@ namespace BExIS.Xml.Helpers.UnitTests
             return new XsdSchemaReader();
         }
 
-        [Test]
         public void Read_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
