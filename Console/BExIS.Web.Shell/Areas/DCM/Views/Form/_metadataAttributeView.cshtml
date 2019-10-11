@@ -207,7 +207,7 @@
                                             .Name(@idInput)
                                             .Encode(false)
                                             .Value(value)
-                                            .HtmlAttributes(new { @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id, type = autoCompleteType })
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id, type = autoCompleteType })
                                             .ClientEvents(events => events
                                                 .OnChange("OnChangeTextInput")
                                                 .OnClose("OnClose"))
@@ -233,7 +233,7 @@
                                 @(Html.Telerik().DropDownList()
                                             .Name(@idInput)
                                             .Placeholder("Please select")
-                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
                                             .BindTo(new SelectList(Model.DomainList, Model.Value)))
                             }
@@ -366,12 +366,12 @@
                                     .Value(value)
                                     .ClientEvents(events => events
                                         .OnChange("OnChangeDatePicker"))
-                                    .InputHtmlAttributes(new { Title = @errorMessage, @class = @errorClass })
+                                    .InputHtmlAttributes(new { idbyxpath = @idByXpath, Title = @errorMessage, @class = @errorClass })
                         )
                     }
                     else
                     {
-                        @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, @class = "bx-input bx-metadataFormTextInput " + lockedClass })
+                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, @class = "bx-input bx-metadataFormTextInput " + lockedClass })
                     }
                 }
             </td>
