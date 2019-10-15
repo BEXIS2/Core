@@ -296,11 +296,20 @@ namespace BExIS.Dim.Helpers.Mapping
                     var instances = instanceStore.GetEntities().Where(e => e.Title.ToLower().Contains(value.ToLower())).Select(i => new MappingEntityResultElement()
                     {
                         EntityId = i.Id,
+                        EntityTypeId = entity.Id,
                         Value = i.Title,
                         Url = "url to " + i.Id
                     }).ToList();
 
-                    if (instances.Any()) tmp.AddRange(instances.OrderBy(d => d.Value));
+                    //check if allready exist in list
+                    if (instances.Any())
+                    {
+                        foreach (var instance in instances)
+                        {
+                            if (!tmp.Any(i => i.EntityId.Equals(instance.EntityId) && i.EntityTypeId.Equals(instance.EntityTypeId)))
+                                tmp.Add(instance);
+                        }
+                    }
                 }
             }
             finally
@@ -309,7 +318,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 entityPermissionManager.Dispose();
             }
 
-            return tmp;
+            return tmp.OrderBy(i => i.Value).ToList();
         }
 
         #endregion get from entites

@@ -1137,7 +1137,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (Int64.TryParse(e.Attribute(EntityReferenceXmlAttribute.entityid.ToString()).Value.ToString(), out xId) &&
                                 Int32.TryParse(e.Attribute(EntityReferenceXmlAttribute.entityversion.ToString()).Value.ToString(), out xVersion) &&
-                                Int64.TryParse(e.Attribute(EntityReferenceXmlAttribute.entityversion.ToString()).Value.ToString(), out xTypeId)
+                                Int64.TryParse(e.Attribute(EntityReferenceXmlAttribute.entitytype.ToString()).Value.ToString(), out xTypeId)
                                 )
                             {
                                 //entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());

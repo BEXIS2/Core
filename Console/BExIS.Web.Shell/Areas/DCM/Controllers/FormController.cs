@@ -194,7 +194,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
-            
+
             //Add JavaScript file
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
             {
@@ -352,7 +352,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
-            
+
             //Add JavaScript file
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
             {
@@ -588,7 +588,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
-            
+
             //Add JavaScript file
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
             {
@@ -688,7 +688,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
                 }
-                
+
                 //Add JavaScript file
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
                 {
@@ -1227,7 +1227,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeView", stepModelHelper);
         }
 
-        public ActionResult UpdateComplexUsageWithEntity(int stepId, int number, int inputattrid, int inputAttrNumber, long entityId, string value)
+        public ActionResult UpdateComplexUsageWithEntity(int stepId, int number, int inputattrid, int inputAttrNumber, long entityId, long entityTypeId, string value)
         {
             ViewData["ShowOptional"] = true;
 
@@ -1251,37 +1251,36 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         attrModel.Value = MappingUtils.GetAllMatchesInEntities(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage, value).Where(e => e.EntityId.Equals(entityId)).FirstOrDefault().Value;
                         attrModel.Locked = false;
                         int version = 0;
-                        long entityTypeId = 0;
 
                         // if an enity mapping exists, the question is whether the entity has a version or not. The url created may have to be created with version.
                         // Get version of a entity with the entity store
 
                         #region entity
 
-                        try
-                        {
-                            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
-                            {
-                                string entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
+                        //try
+                        //{
+                        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
+                        //    {
+                        //        string entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
 
-                                EntityManager entityManager = new EntityManager();
-                                Entity entity = entityManager.Entities.ToList().FirstOrDefault(e => e.EntityType.FullName.Equals(entityClassPath));
-                                entityTypeId = entity.Id;
+                        //        EntityManager entityManager = new EntityManager();
+                        //        Entity entity = entityManager.Entities.ToList().FirstOrDefault(e => e.EntityType.FullName.Equals(entityClassPath));
+                        //        entityTypeId = entity.Id;
 
-                                if (entity != null)
-                                {
-                                    var instanceStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
-                                    if (instanceStore != null)
-                                    {
-                                        version = instanceStore.CountVersions(entityId);
-                                    }
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            version = 0;
-                        }
+                        //        if (entity != null)
+                        //        {
+                        //            var instanceStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
+                        //            if (instanceStore != null)
+                        //            {
+                        //                version = instanceStore.CountVersions(entityId);
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                        //catch
+                        //{
+                        //    version = 0;
+                        //}
 
                         #endregion entity
 
@@ -2360,7 +2359,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 y = MappingUtils.GetAllMatchesInEntities(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
-                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + ")" });
+                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + "/" + e.EntityTypeId + ")", Value = e.EntityTypeId.ToString() });
+
+                tmp.Distinct();
 
                 return new JsonResult
                 {
