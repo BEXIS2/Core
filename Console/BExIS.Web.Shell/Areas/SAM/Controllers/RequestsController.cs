@@ -4,6 +4,7 @@ using BExIS.Security.Services.Requests;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using BExIS.Security.Entities.Authorization;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
@@ -55,6 +56,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         Id = m.Id,
                         RequestId = m.Request.Id,
                         Rights = m.Request.Rights,
+                        RightsAsText = string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & Convert.ToInt16(n)) > 0)),
                         Status = m.Status,
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
