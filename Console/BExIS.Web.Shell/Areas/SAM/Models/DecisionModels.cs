@@ -15,5 +15,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public string RightsAsText { get; set; }
         public string Title { get; set; }
         public DecisionStatus Status { get; set; }
+        public string StatusAsText { get; set; }
     }
 }

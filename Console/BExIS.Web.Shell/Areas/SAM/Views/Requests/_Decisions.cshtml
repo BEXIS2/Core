@@ -9,8 +9,6 @@
     columns.Bound(g => g.Title);
     columns.Bound(g => g.Applicant);
     columns.Bound(g => g.Intention);
-    columns.Bound(g => g.Rights);
-    columns.Bound(g => g.Status);
     columns.Template(@<text>
                 <button type="button" class="bx bx-grid-function bx-check" @(item.Status != 0 ? "disabled" : "")></button>
                 <button type="button" class="bx bx-grid-function bx-delete" @(item.Status != 0 ? "disabled" : "")></button>
