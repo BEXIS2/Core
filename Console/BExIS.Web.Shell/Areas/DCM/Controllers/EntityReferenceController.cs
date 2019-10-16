@@ -1,6 +1,9 @@
-﻿using BExIS.Modules.Dcm.UI.Helpers;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityReference;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
 using System.Collections.Generic;
@@ -117,6 +120,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId, sourceVersion);
             model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId, sourceVersion);
             model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId, sourceVersion);
+            model.HasEditRights = hasUserRights(sourceId, RightType.Write);
 
             return PartialView("Show", model);
         }
@@ -129,6 +133,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Selected = helper.GetSimpleReferenceModel(sourceId, sourceTypeId, sourceVersion);
             model.TargetReferences = helper.GetTargetReferences(sourceId, sourceTypeId, sourceVersion);
             model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId, sourceVersion);
+            model.HasEditRights = hasUserRights(sourceId, RightType.Write);
 
             return View("Show", model);
         }
@@ -155,5 +160,39 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #endregion ViewData
+
+        #region helpers
+
+        public string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        private bool hasUserRights(long entityId, RightType rightType)
+        {
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+            try
+            {
+                #region security permissions and authorisations check
+
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
+
+                #endregion security permissions and authorisations check
+            }
+            finally
+            {
+                entityPermissionManager.Dispose();
+            }
+        }
+
+        #endregion helpers
     }
 }
