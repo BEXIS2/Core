@@ -618,8 +618,8 @@ function OnClose(e) {
             end = value.lastIndexOf(")");
             //(1/2)
             entityInfo = value.substr(start, end - start);
-            entityid = value.split("/")[0];
-            entitytypeid = value.split("/")[1];
+            entityid = entityInfo.split("_")[0];
+            entitytypeid = entityInfo.split("_")[1];
 
             var title = value.substr(0, start - 2);
 
@@ -642,7 +642,7 @@ function OnClose(e) {
 
 function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityid, entitytypeid, value) {
     console.log("update with entity");
-    console.log(componentId + "-" + number + "-" + entityid);
+    console.log(componentId + "-" + number + "-" + entityid + "_" + entitytypeid);
 
     var attrId = inputid.split("_")[0];
 

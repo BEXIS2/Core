@@ -1257,30 +1257,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region entity
 
-                        //try
-                        //{
-                        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
-                        //    {
-                        //        string entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
+                        try
+                        {
+                            if (entityTypeId > 0)
+                            {
+                                EntityManager entityManager = new EntityManager();
+                                Entity entity = entityManager.Entities.FirstOrDefault(e => e.Id.Equals(entityTypeId));
 
-                        //        EntityManager entityManager = new EntityManager();
-                        //        Entity entity = entityManager.Entities.ToList().FirstOrDefault(e => e.EntityType.FullName.Equals(entityClassPath));
-                        //        entityTypeId = entity.Id;
-
-                        //        if (entity != null)
-                        //        {
-                        //            var instanceStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
-                        //            if (instanceStore != null)
-                        //            {
-                        //                version = instanceStore.CountVersions(entityId);
-                        //            }
-                        //        }
-                        //    }
-                        //}
-                        //catch
-                        //{
-                        //    version = 0;
-                        //}
+                                if (entity != null)
+                                {
+                                    var instanceStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
+                                    if (instanceStore != null)
+                                    {
+                                        version = instanceStore.CountVersions(entityId);
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            version = 0;
+                        }
 
                         #endregion entity
 
@@ -2359,7 +2356,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 y = MappingUtils.GetAllMatchesInEntities(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
-                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + "/" + e.EntityTypeId + ")", Value = e.EntityTypeId.ToString() });
+                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + "_" + e.EntityTypeId + ")", Value = e.EntityTypeId.ToString() });
 
                 tmp.Distinct();
 
@@ -3148,9 +3145,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 long id = 0;
                                 int version = 0;
-                                string idAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid")).Value;
-                                string versionAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityversion")).Value;
-                                if (Int64.TryParse(idAsString, out id) && Int32.TryParse(versionAsString, out version))
+                                string idAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid"))?.Value;
+                                string versionAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityversion"))?.Value;
+
+                                if (Int64.TryParse(idAsString, out id) &&
+                                    Int32.TryParse(versionAsString, out version))
                                 {
                                     string server = this.Request.Url.GetLeftPart(UriPartial.Authority);
                                     string url = server + "/DDM/Data/Show/" + id.ToString() + "?version=" + version;
