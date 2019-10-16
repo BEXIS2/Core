@@ -227,32 +227,34 @@ namespace BExIS.Dlm.Services.Party
             return (true);
         }
 
-        public PartyX Update(PartyX party)
+        public PartyX Update(PartyX newParty)
         {
-            Contract.Requires(party != null, "Provided entity can not be null");
-            Contract.Requires(party.Id >= 0, "Provided entity must have a permanent ID");
+            Contract.Requires(newParty != null, "Provided entity can not be null");
+            Contract.Requires(newParty.Id >= 0, "Provided entity must have a permanent ID");
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0, "No entity is persisted!");
-
-            if (party.StartDate == null)
-                party.StartDate = DateTime.MinValue;
-            if (party.EndDate == null || party.EndDate == DateTime.MinValue)
-                party.EndDate = DateTime.MaxValue;
-            if (party.StartDate > party.EndDate)
-                BexisException.Throw(null, "End date should be greater than start date.");
-            if ((ValidateRelationships(party.Id)).Any())
-                party.IsTemp = true;
-            else
-                party.IsTemp = false;
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                var party = uow.GetReadOnlyRepository<PartyX>().Get(newParty.Id);
+
+                if (party.StartDate == null)
+                    party.StartDate = DateTime.MinValue;
+                if (party.EndDate == null || party.EndDate == DateTime.MinValue)
+                    party.EndDate = DateTime.MaxValue;
+                if (party.StartDate > party.EndDate)
+                    BexisException.Throw(null, "End date should be greater than start date.");
+                if ((ValidateRelationships(party.Id)).Any())
+                    party.IsTemp = true;
+                else
+                    party.IsTemp = false;
+
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 repo.Merge(party);
                 var merged = repo.Get(party.Id);
                 repo.Put(merged);
                 uow.Commit();
+
+                return (party);
             }
-            return (party);
         }
 
         public bool TempPartyToPermanent(long partyId)
@@ -290,6 +292,8 @@ namespace BExIS.Dlm.Services.Party
             if (startDate > endDate)
                 BexisException.Throw(null, "End date should be greater than start date.");
 
+            PartyRelationship entity = null;
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repoParty = uow.GetRepository<PartyX>();
@@ -300,7 +304,7 @@ namespace BExIS.Dlm.Services.Party
                 PartyX firstParty = repoParty.Get(firstPartyId);
                 PartyX secondParty = repoParty.Get(secondPartyId);
 
-                var entity = new PartyRelationship()
+                entity = new PartyRelationship()
                 {
                     Description = description,
                     EndDate = endDate.Value,
@@ -336,10 +340,11 @@ namespace BExIS.Dlm.Services.Party
                 partyTypePair.PartyRelationshipType.PartyRelationships.Add(entity);
                 repoPR.Put(entity);
                 uow.Commit();
-
-                Update(entity.SourceParty);
-                return (entity);
             }
+
+            if (entity != null) Update(entity.SourceParty);
+            return (entity);
+
             //update the source party to check if relationship rules are satisfied and changed the istemp field
         }
 
@@ -362,13 +367,15 @@ namespace BExIS.Dlm.Services.Party
             if (startDate > endDate)
                 BexisException.Throw(sourceParty, "End date should be greater than start date.");
 
+            PartyRelationship entity = null; ;
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repoParty = uow.GetRepository<PartyX>();
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
                 IRepository<PartyRelationshipType> repoRelType = uow.GetRepository<PartyRelationshipType>();
 
-                var entity = new PartyRelationship()
+                entity = new PartyRelationship()
                 {
                     Description = description,
                     EndDate = endDate.Value,
@@ -406,11 +413,12 @@ namespace BExIS.Dlm.Services.Party
                 partyTypePair.PartyRelationshipType.PartyRelationships.Add(entity);
                 repoPR.Put(entity);
                 uow.Commit();
-
-                //update the source party to check if relationship rules are satisfied and changed the istemp field
-                Update(entity.SourceParty);
-                return (entity);
             }
+
+            //update the source party to check if relationship rules are satisfied and changed the istemp field
+            if (entity != null) Update(entity.SourceParty);
+
+            return (entity);
         }
 
         public Boolean UpdatePartyRelationship(long id, string title = null, string description = null, DateTime? startDate = null, DateTime? endDate = null, string scope = null, int? permission = null)
@@ -437,6 +445,7 @@ namespace BExIS.Dlm.Services.Party
                     entity.Permission = permission.Value;
                 repo.Put(entity);
                 uow.Commit();
+
                 entity = repo.Reload(entity);
             }
             return true;
