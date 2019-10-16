@@ -52,7 +52,10 @@
                                 @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
                             }
 
-                            <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
+                            @if (@srm.ReferenceType.ToLower().Equals("metadata-link"))
+                            {
+                                <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
+                            }
                         </td>
                     </tr>
                 }
