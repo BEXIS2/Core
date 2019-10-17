@@ -1,10 +1,12 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +25,54 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Create(long sourceId, long sourceTypeId)
         {
+            if (hasUserRights(sourceId, sourceTypeId, RightType.Write))
+            {
+                EntityReferenceHelper helper = new EntityReferenceHelper();
+
+                SetViewData(sourceId, sourceTypeId, true, false);
+
+                return PartialView("_create", new CreateSimpleReferenceModel(sourceId, sourceTypeId, helper.CountVersions(sourceId, sourceTypeId)));
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateSimpleReferenceModel model)
+        {
             EntityReferenceHelper helper = new EntityReferenceHelper();
+            EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
 
-            SetViewData(sourceId, sourceTypeId, true, false);
+            try
+            {
+                if (hasUserRights(model.SourceId, model.SourceTypeId, RightType.Write))
+                {
+                    SetViewData(model.SourceId, model.SourceTypeId, false, true);
 
-            return PartialView("_create", new CreateSimpleReferenceModel(sourceId, sourceTypeId, helper.CountVersions(sourceId, sourceTypeId)));
+                    if (!ModelState.IsValid)
+                    {
+                        return PartialView("_create", model);
+                    }
+
+                    EntityReference entityReference = helper.Convert(model);
+                    entityReferenceManager.Create(entityReference);
+
+                    // if successfuly created a entity link return a json true
+                    return Json(true);
+                }
+
+                ModelState.AddModelError("", "you are not authorized!");
+                return PartialView("_create", model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message.ToString());
+                return PartialView("_create", model);
+            }
+            finally
+            {
+                entityReferenceManager.Dispose();
+            }
         }
 
         public JsonResult GetTargets(long id)
@@ -57,37 +102,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost]
-        public ActionResult Create(CreateSimpleReferenceModel model)
-        {
-            EntityReferenceHelper helper = new EntityReferenceHelper();
-            EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
-
-            try
-            {
-                SetViewData(model.SourceId, model.SourceTypeId, false, true);
-
-                if (!ModelState.IsValid)
-                {
-                    return PartialView("_create", model);
-                }
-
-                EntityReference entityReference = helper.Convert(model);
-                entityReferenceManager.Create(entityReference);
-
-                // if successfuly created a entity link return a json true
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message.ToString());
-                return PartialView("_create", model);
-            }
-            finally
-            {
-                entityReferenceManager.Dispose();
-            }
-        }
 
         [HttpPost]
         public JsonResult Delete(long id)
@@ -98,9 +112,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                entityReferenceManager.Delete(id);
-
-                return Json(true);
+                //check if entity ref in db exist
+                var entityRef = entityReferenceManager.References.FirstOrDefault(e => e.Id.Equals(id));
+                if (entityRef != null)
+                {
+                    //check if user has rights to edit a dataset
+                    if (hasUserRights(entityRef.SourceId, entityRef.SourceEntityId, RightType.Write))
+                    {
+                        entityReferenceManager.Delete(id);
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json("Error : " + "you are not authorized!");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -110,6 +136,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 entityReferenceManager.Dispose();
             }
+
+            return Json(false);
         }
 
         public ActionResult Show(long sourceId, long sourceTypeId, int sourceVersion)
@@ -175,21 +203,53 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        private bool hasUserRights(long entityId, RightType rightType)
+        private bool hasUserRights(long instanceId, RightType rightType)
+        {
+            EntityManager entityManager = new EntityManager();
+
+            try
+            {
+                var entity = entityManager.FindByName("Dataset");
+                return hasUserRights(instanceId, entity.Id, rightType);
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
+        }
+
+        private bool hasUserRights(long instanceId, long entityId, RightType rightType)
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager();
+            EntityManager entityManager = new EntityManager();
 
             try
             {
                 #region security permissions and authorisations check
 
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
+                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                if (user == null) return false;
+
+                var entity = entityManager.FindByName("Dataset");
+                if (entity == null) return false;
+                return entityPermissionManager.HasEffectiveRight(user.UserName, entity.Name, typeof(Dataset), instanceId, rightType);
 
                 #endregion security permissions and authorisations check
+            }
+            catch
+            {
+                return false;
             }
             finally
             {
                 entityPermissionManager.Dispose();
+                userManager.Dispose();
+                entityManager.Dispose();
             }
         }
 
