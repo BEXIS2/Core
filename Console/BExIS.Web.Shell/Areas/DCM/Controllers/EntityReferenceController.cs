@@ -48,8 +48,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (id > 0)
                 tmp = helper.GetEntityVersions(id, type);
+                var tmpDecending = tmp.OrderByDescending(x => x.Value).ToList();
 
-            return Json(tmp, JsonRequestBehavior.AllowGet);
+            return Json(tmpDecending, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
