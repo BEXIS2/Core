@@ -217,6 +217,16 @@
         </table>
     </div>
 
+    @if (ViewBag.isValid == "no")
+        {
+            <div id="view-warning-container">
+                <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                    This metadata dataset is not complete.
+                </div>
+            </div>
+    	  }	
+	
     <div style="overflow: auto;">
 
         <div class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white; background-color:#a1bbb6">
