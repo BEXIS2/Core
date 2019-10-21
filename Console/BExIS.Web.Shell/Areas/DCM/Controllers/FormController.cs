@@ -209,7 +209,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true)
+        public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true, string isValid = "yes")
         {
             var loadFromExternal = true;
             long metadataStructureId = -1;
@@ -222,6 +222,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
             ViewData["Locked"] = true;
             ViewData["ShowOptional"] = false;
+            ViewData["isValid"] = isValid;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null || resetTaskManager)
