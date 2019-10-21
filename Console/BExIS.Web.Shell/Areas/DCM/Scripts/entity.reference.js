@@ -127,4 +127,6 @@ function reload(id, type, version) {
     })
 }
 
-
+function show_hide_help(){
+    $("#help_ref_type").toggle();
+}
