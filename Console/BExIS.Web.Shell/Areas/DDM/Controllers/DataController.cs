@@ -142,6 +142,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 bool requestExist = false;
                 bool requestAble = false;
                 bool latestVersion = false;
+                string isValid = "no";
 
                 XmlDocument metadata = new XmlDocument();
 
@@ -164,6 +165,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
                     dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+
+                    if (dsv.StateInfo != null)
+                    {
+                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                    }
 
                     metadataStructureId = dsv.Dataset.MetadataStructure.Id;
 
@@ -225,6 +231,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                ViewData["isValid"] = isValid;
 
                 return View(model);
             }
@@ -255,6 +262,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 bool requestExist = false;
                 bool requestAble = false;
                 bool latestVersion = false;
+                string isValid = "no";
 
                 XmlDocument metadata = new XmlDocument();
 
@@ -287,6 +295,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
+                    
+                    if (dsv.StateInfo != null)
+                    {
+                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                    }
 
                     // check if the user has download rights
                     downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
@@ -338,6 +351,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                ViewData["isValid"] = isValid;
 
                 return PartialView("ShowData", model);
             }
@@ -390,7 +404,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <seealso cref=""/>
         /// <param name="datasetID"></param>
         /// <returns>model</returns>
-        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata, bool latest)
+        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata, bool latest, string isValid = "yes")
         {
             var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
             result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "Form" }, { "area", "Form" }, { "type", "reset" } });
@@ -406,7 +420,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 { "researchplanId", researchplanId },
                 { "sessionKeyForMetadata", sessionKeyForMetadata },
                 { "resetTaskManager", false },
-                { "latest", latest }
+                { "latest", latest },
+                { "isValid", isValid }
             });
 
             return Content(view.ToHtmlString(), "text/html");
