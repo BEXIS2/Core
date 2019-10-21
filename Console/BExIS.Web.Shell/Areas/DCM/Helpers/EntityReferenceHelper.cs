@@ -319,7 +319,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 XDocument xdoc = XDocument.Load(filepath);
 
-                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem() { Text = e.Attribute("description").ToString(), Value = e.Value }).ToList();
+                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
 
                 return new SelectList(types, "Text", "Value");
             }
@@ -346,7 +346,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 XDocument xdoc = XDocument.Load(filepath);
 
-                var types = xdoc.Root.Descendants("entityType").Select(e => new SelectListItem() { Text = e.Attribute("description").ToString(), Value = e.Value }).ToList();
+                var types = xdoc.Root.Descendants("entityType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
                
                 return new SelectList(types, "Text", "Value");
             }
