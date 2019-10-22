@@ -149,9 +149,6 @@
     <Content Include="Properties\PublishProfiles\WebDeploy.pubxml.user" />
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <Content Include="Stylesheets\MultimediaData.css" />
-    <Content Include="MediaInfoDotNet.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -169,6 +166,15 @@
     <Content Include="Views\ShowMultimediaData\_bundleViewOverlay.cshtml" />
     <Content Include="Views\ShowMultimediaData\_measurementView.cshtml" />
     <Content Include="Views\ShowMultimediaData\_bundleImageView.cshtml" />
+    <Content Include="x64\MediaInfo.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\MediaInfo.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MediaInfoDotNet.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />

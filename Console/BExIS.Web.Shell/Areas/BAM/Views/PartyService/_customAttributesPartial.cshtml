@@ -81,10 +81,14 @@
             condition = $(this).attr("condition");
             if (condition.length) {
                 var cond = parsePartyCondition(condition);
-                if (eval(cond))
+                if (eval(cond)){
                     $(element).show();
-                else
+                    $(element).find('input').prop("disabled", false); // set enabled to tell jquery-validation to use
+                }
+                else{
                     $(element).hide();
+                    $(element).find('input').prop("disabled", true); // set disabled to tell jquery-validation to ignore
+                }
             }
         });
         

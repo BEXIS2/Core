@@ -104,8 +104,31 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             try
             {
                 entityManager.Entities.ToList().ForEach(e => list.Add(new SelectListItem() { Text = e.Name, Value = e.Id.ToString() }));
+                
+                var entityWhitelist = GetEntityTypesWhitlist();
+                
+                List<SelectListItem> listNew = new List<SelectListItem>();
+                // Check if whitelist has entries, if not use full list otherwise only use items from the whitelist
+                if (entityWhitelist.Count() > 0)
+                {
+                    foreach (SelectListItem item in list)
+                    {
+                        foreach (var item2 in entityWhitelist)
+                        {
+                            if (item2.Text == item.Text)
+                            {
+                                listNew.Add(item);
+                            }
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    listNew = list;
+                }
 
-                return new SelectList(list, "Value", "Text");
+                return new SelectList(listNew, "Value", "Text");
             }
             finally
             {
@@ -296,7 +319,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 XDocument xdoc = XDocument.Load(filepath);
 
-                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem() { Text = e.Value, Value = e.Value }).ToList();
+                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
 
                 return new SelectList(types, "Text", "Value");
             }
@@ -307,5 +330,35 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         }
 
         #endregion Entity Reference Config
+            
+        #region Entity Config
+
+        /// <summary>
+        /// this function return a list of all allowed entity types. This types are listed in the entity reference config.xml in the workspace
+        /// </summary>
+        /// <returns></returns>
+        public SelectList GetEntityTypesWhitlist()
+        {
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityReferenceConfig.xml");
+            string dir = Path.GetDirectoryName(filepath);
+
+            if (Directory.Exists(dir) && File.Exists(filepath))
+            {
+                XDocument xdoc = XDocument.Load(filepath);
+
+                var types = xdoc.Root.Descendants("entityType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
+               
+                return new SelectList(types, "Text", "Value");
+            }
+            else
+            {
+                throw new FileNotFoundException("File EntityReferenceConfig.xml not found in :" + dir, "EntityReferenceConfig.xml");
+            }
+        }
+
+        #endregion Entity Config    
+            
+            
+            
     }
 }

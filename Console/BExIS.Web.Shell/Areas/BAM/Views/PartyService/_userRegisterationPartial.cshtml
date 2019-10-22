@@ -68,7 +68,7 @@
     function submitForm()
     {
         $("#frmParty").valid();
-        if ($("#frmParty").find(".input-validation-error").length)
+        if ($("#frmParty").find(".input-validation-error:visible").length)
             return false;
         PartyTypeId=$("#ddl_PartyType").val();
         var customAttributeValues=[];

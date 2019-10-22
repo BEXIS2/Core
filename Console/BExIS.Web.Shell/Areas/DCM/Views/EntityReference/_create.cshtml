@@ -42,7 +42,7 @@
             </tr>
             <tr>
                 <td>
-                    Entity
+                    Title
                 </td>
                 <td>
                     @Html.DropDownListFor(m => m.Target, null, "Select a entity", new { @class = "bx-dropdown", disabled = "true" })
@@ -58,6 +58,15 @@
                     @Html.ValidationMessageFor(m => m.TargetVersion)
                 </td>
             </tr>
+            <tr id="help_ref_type" style="display:none;">
+                <td></td>
+                <td>
+                    @foreach (var item in ViewData["ReferenceType"] as SelectList)
+                    {
+                        <div class="help" style="display: block;width:372px">- <b>@item.Text</b>: @item.Value</div>
+                    }
+                </td>
+            </tr> 
             <tr>
                 <td>
                     Reference Type
@@ -66,10 +75,13 @@
                     @Html.DropDownListFor(m => m.ReferenceType, null, "Select a reference type", new { @class = "bx-dropdown" })
                     @Html.ValidationMessageFor(m => m.ReferenceType)
                 </td>
+                 <td>
+                    <button type="button" title="" class="bx-function bx-disabled bx-info fa fa-info" onclick="show_hide_help();"></button>
+                </td>
             </tr>
             <tr>
                 <td>
-                    Context
+                    Comment
                 </td>
                 <td>
                     @Html.TextAreaFor(m => m.Context, new { @class = "bx-input" })
