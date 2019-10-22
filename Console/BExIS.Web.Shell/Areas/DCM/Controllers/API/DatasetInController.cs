@@ -115,7 +115,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                 if (rp == null)
                 {
-                    request.Content = new StringContent("A research plan with id " + dataset.DataStructureId + "does not exist.");
+                    request.Content = new StringContent("A research plan with id " + researchPlanId + "does not exist.");
                     return request;
                 }
 
@@ -124,7 +124,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                 if (metadataStructure == null)
                 {
-                    request.Content = new StringContent("A metadata structure with id " + dataset.DataStructureId + "does not exist.");
+                    request.Content = new StringContent("A metadata structure with id " + dataset.MetadataStructureId + "does not exist.");
                     return request;
                 }
 
