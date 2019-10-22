@@ -7,6 +7,8 @@ using System.Xml;
 using BExIS.Xml.Helpers;
 using System.Xml.Linq;
 using BExIS.Modules.Rpm.UI.Classes;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -109,11 +111,25 @@ namespace BExIS.Modules.Rpm.UI.Models
                 this.Id = structuredDataStructure.Id;
                 this.Title = structuredDataStructure.Name;
                 this.Description = structuredDataStructure.Description;
+                this.inUse = false;
 
-                if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
-                    this.inUse = true;
-                else
-                    this.inUse = false;
+                DatasetManager datasetManager = null;
+                try
+                {
+                    datasetManager = new DatasetManager();
+                    foreach (Dataset d in structuredDataStructure.Datasets)
+                    {
+                        if (datasetManager.RowCount(d.Id, null) > 0)
+                        {
+                            this.inUse = true;
+                            break;
+                        }
+                    }
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }              
 
                 this.Structured = true;
                 this.Preview = false;
@@ -210,7 +226,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
-        DataStructureManager dataStructureManager = null;
+            DataStructureManager dataStructureManager = null;
             try
             {
                 dataStructureManager = new DataStructureManager();
@@ -221,10 +237,23 @@ namespace BExIS.Modules.Rpm.UI.Models
                     dataStructureResult.Title = ds.Name;
                     dataStructureResult.Description = ds.Description;
 
-                    if (ds.Datasets.Count > 0)
-                        dataStructureResult.inUse = true;
-
-                    dataStructureResult.Structured = true;
+                    DatasetManager datasetManager = null;                    
+                    try
+                    {
+                        datasetManager = new DatasetManager();
+                        foreach (Dataset d in ds.Datasets)
+                        {
+                            if (datasetManager.RowCount(d.Id, null) > 0)
+                            {
+                                dataStructureResult.inUse = true;
+                                break;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        datasetManager.Dispose();
+                    }
 
                     if (previewIds != null && previewIds.Contains(ds.Id))
                         dataStructureResult.Preview = true;
