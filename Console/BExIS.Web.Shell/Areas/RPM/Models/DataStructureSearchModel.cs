@@ -255,6 +255,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                         datasetManager.Dispose();
                     }
 
+                    dataStructureResult.Structured = true;
+
                     if (previewIds != null && previewIds.Contains(ds.Id))
                         dataStructureResult.Preview = true;
 
@@ -268,8 +270,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                     dataStructureResult.Title = ds.Name;
                     dataStructureResult.Description = ds.Description;
 
-                    if (ds.Datasets.Count > 0)
-                        dataStructureResult.inUse = true;
+                    //if (ds.Datasets.Count > 0)
+                    //    dataStructureResult.inUse = true;
 
                     if (previewIds != null && previewIds.Contains(ds.Id))
                         dataStructureResult.Preview = true;
