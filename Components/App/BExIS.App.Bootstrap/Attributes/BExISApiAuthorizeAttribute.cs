@@ -51,13 +51,13 @@ namespace BExIS.App.Bootstrap.Attributes
 
                     if (users == null || users.Count() != 1)
                     {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden, "Bearer token not exist.");
                         return;
                     }
 
                     if (!featurePermissionManager.HasAccess(users.Single().Id, feature.Id))
                     {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden, "Token is not valid.");
                         return;
                     }
                 }
