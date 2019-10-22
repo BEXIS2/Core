@@ -586,6 +586,8 @@ namespace BExIS.Xml.Helpers
             {
                 IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, xDoc);
 
+                if (elements.Count() == 0) return null;
+
                 if (elements.Count() > 0)
                     elements = elements.Intersect(newElements);
                 else

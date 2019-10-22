@@ -7,6 +7,7 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
@@ -79,7 +80,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             try
             {
+                if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "dataset id should be greater then 0.");
+
+                //entity permissions
+                if (id > 0)
+                {
+                    Dataset d = dm.GetDataset(id);
+                    if (d == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+                }
+
                 string convertTo = "";
+
                 try
                 {
                     convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
@@ -101,6 +113,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         XmlDocument newXmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
                             convertTo);
+
+                        if (newXmlDoc == null) return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, string.Format("No mapping found for this format : {0} .", format));
 
                         HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
 
