@@ -408,6 +408,17 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public string[] GetRights(short rights)
+        {
+            return Enum.GetNames(typeof(RightType)).Select(n => n)
+                .Where(n => (rights & (int) Enum.Parse(typeof(RightType), n)) > 0).ToArray();
+        }
+
+        public short GetRights(string[] rights)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool HasRight<T>(string subjectName, string entityName, Type entityType, long key, RightType rightType) where T : Subject
         {
             using (var uow = this.GetUnitOfWork())
