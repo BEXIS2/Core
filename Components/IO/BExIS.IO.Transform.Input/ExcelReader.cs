@@ -364,7 +364,7 @@ namespace BExIS.IO.Transform.Input
                 if (endPosition > endRowData)
                     endPosition = endRowData;
 
-                if (ValidateDatastructure(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow))
+                if (ValidateDatastructure(worksheetPart, fri.VariablesStartRow, fri.VariablesEndRow))
                 {
                     ReadRows(worksheetPart, Position, endPosition);
                     Position += packageSize;
