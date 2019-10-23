@@ -68,8 +68,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!operationManager.Exists("dim", "admin", "*")) operationManager.Create("DIM", "Admin", "*", DataDissemination);
 
-                if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*", Submission);
-
                 if (!operationManager.Exists("dim", "mapping", "*")) operationManager.Create("DIM", "Mapping", "*", Mapping);
 
                 #endregion Admin Workflow
@@ -123,6 +121,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!operationManager.Exists("api", "Attachment", "*")) operationManager.Create("api", "Attachment", "*", API);
 
                 #endregion API
+
+                #region public available
+
+                if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*");
+
+                #endregion public available
 
                 #endregion SECURITY
 

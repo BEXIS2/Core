@@ -94,7 +94,7 @@ namespace BExIS.Xml.Helpers
                         Id = v.Id,
                         Title = datasetHelper.GetInformationFromVersion(v.Id, NameAttributeValues.title),
                         Version = versions.IndexOf(v) + 1,
-                        CommitComment = v.ChangeDescription
+                        CommitComment = "(" + v.Timestamp.ToString("dd.MM.yyyy HH:mm") + "): " + v.ChangeDescription
                     });
                 }
 

@@ -542,21 +542,19 @@ namespace BExIS.IO.Transform.Input
         /// <param name="line">Row as a string</param>
         /// <param name="seperator">Character used as TextSeparator</param>
         /// <returns>List of values</returns>
-        private List<string> rowToList(string line, char seperator)
+        public List<string> rowToList(string line, char seperator)
         {
-            //if (this.info != null)
-            //{
-            //    AsciiFileReaderInfo fileReaderInfo = (AsciiFileReaderInfo)this.info;
-            //    if (fileReaderInfo != null)
-            //    {
-            //        List<string> temp = new List<string>();
-            //        temp = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
-            //        return temp;
-
-            //    }
-            //    else return line.Split(seperator).ToList();
-            //}
-            //else
+            if (this.Info != null)
+            {
+                AsciiFileReaderInfo fileReaderInfo = (AsciiFileReaderInfo)this.Info;
+                if (fileReaderInfo != null)
+                {
+                    List<string> temp = new List<string>();
+                    temp = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
+                    return temp;
+                }
+                else return line.Split(seperator).ToList();
+            }
 
             return line.Split(seperator).ToList();
         }
@@ -572,7 +570,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="separator">Character as Delimeter for the line (TextSeparator)</param>
         /// <param name="textmarker">Character as TextMarker for the line</param>
         /// <returns>List of values as a string list</returns>
-        private List<string> textMarkerHandling(string row, char separator, char textmarker)
+        public List<string> TextMarkerHandling(string row, char separator, char textmarker)
         {
             List<string> values = row.Split(separator).ToList();
 
@@ -597,17 +595,25 @@ namespace BExIS.IO.Transform.Input
                     /// <remarks></remarks>
                     if (v.Contains(textmarker))
                     {
-                        if (v.ToCharArray().First().Equals(textmarker))
+                        //if the qoutest are in one value - first and last character
+                        if (v.ToCharArray().First().Equals(textmarker) && v.ToCharArray().Last().Equals(textmarker))
                         {
-                            tempValue = v;
-                            startText = true;
+                            temp.Add(v.Trim(textmarker));
                         }
-
-                        if (v.ToCharArray().Last().Equals(textmarker))
+                        else
                         {
-                            tempValue += separator + v;
-                            temp.Add(tempValue.Trim(textmarker));
-                            startText = false;
+                            if (v.ToCharArray().First().Equals(textmarker))
+                            {
+                                tempValue = v;
+                                startText = true;
+                            }
+
+                            if (v.ToCharArray().Last().Equals(textmarker))
+                            {
+                                tempValue += separator + v;
+                                temp.Add(tempValue.Trim(textmarker));
+                                startText = false;
+                            }
                         }
                     }
                     else

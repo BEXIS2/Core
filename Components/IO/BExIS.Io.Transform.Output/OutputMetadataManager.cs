@@ -26,6 +26,8 @@ namespace BExIS.IO.Transform.Output
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                // if mapping file not exists
+                if (string.IsNullOrEmpty(mappingFileName)) return "";
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -67,6 +69,9 @@ namespace BExIS.IO.Transform.Output
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                // no mapping files with mappingName exist
+                if (string.IsNullOrEmpty(mappingFileName)) return null;
+
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -183,6 +188,8 @@ namespace BExIS.IO.Transform.Output
                 string mappingName = metadataStructure.Name;
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                //if mapping file not exist
+                if (string.IsNullOrEmpty(mappingFileName)) return "";
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);

@@ -73,7 +73,7 @@ function successFuncTargetVersions(data, status) {
     }
 
     $("#TargetVersion").prop("disabled", false);
-    $("#TargetVersion").prop("selectedIndex", data.length - 1);
+    $("#TargetVersion").prop("selectedIndex", 0);
     $("#TargetVersion").removeClass("bx-disabled");
 }
 
@@ -127,4 +127,6 @@ function reload(id, type, version) {
     })
 }
 
-
+function show_hide_help(){
+    $("#help_ref_type").toggle();
+}
