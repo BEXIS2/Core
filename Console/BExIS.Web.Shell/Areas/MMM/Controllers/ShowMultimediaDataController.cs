@@ -22,6 +22,7 @@ using Microsoft.VisualBasic.FileIO;
 using System.Data;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Authorization;
+using Vaiona.Persistence.Api;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -53,9 +54,15 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         public ActionResult multimediaData(long datasetID, long versionId = 0)
         {
             EntityPermissionManager entityPermissionManager = null;
+            DatasetManager datasetManager = null;
             try
             {
                 entityPermissionManager = new EntityPermissionManager();
+                datasetManager = new DatasetManager();
+                bool isLatestVersion = false;
+                if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
+                    isLatestVersion = true;
+                Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Read), entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Delete));
                 bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Read);
                 if (access)
                     return PartialView("_multimediaData", getFilesByDatasetId(datasetID, versionId));
@@ -134,16 +141,19 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 try
                 {
                     entityPermissionManager = new EntityPermissionManager();
-                    long datasetID = Convert.ToInt64(path.Split('\\')[1]);
+                    DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
+                    long datasetID = datasetInfo.DatasetId;
                     bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Read);
                     if (access)
                     {
                         path = Path.Combine(AppConfiguration.DataPath, path);
                         FileInfo fileInfo = new FileInfo(path);
+                        Session["DatasetInfo"] = datasetInfo;
                         return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), fileInfo.Name);
                     }
                     else
                     {
+                        Session["DatasetInfo"] = datasetInfo;
                         return null;
                     }
                 }
@@ -163,6 +173,82 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 return File(response.GetResponseStream(), MimeMapping.GetMimeMapping(response.ResponseUri.Segments.LastOrDefault()), response.ResponseUri.Segments.LastOrDefault());
             }
 
+        }
+
+        public bool deleteFile(string path)
+        {
+            path = Server.UrlDecode(path);           
+            {
+                EntityPermissionManager entityPermissionManager = null;
+                DatasetManager datasetManager = null;
+                try
+                {
+                    entityPermissionManager = new EntityPermissionManager();
+                    datasetManager = new DatasetManager();
+                    DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
+
+                    DatasetVersion workingCopy = new DatasetVersion();
+                    string status = DatasetStateInfo.NotValid.ToString();
+                    string[] temp = path.Split('\\');
+                    long datasetID = datasetInfo.DatasetId;
+                    status = datasetManager.GetDatasetLatestVersion(datasetID).StateInfo.State;
+                    bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Delete);
+
+                    if (access && (datasetManager.IsDatasetCheckedOutFor(datasetID, HttpContext.User.Identity.Name) || datasetManager.CheckOutDataset(datasetID, HttpContext.User.Identity.Name)))
+                    {
+                        try
+                        {
+                            workingCopy = datasetManager.GetDatasetWorkingCopy(datasetID);
+
+                            using (var unitOfWork = this.GetUnitOfWork())
+                            {
+                                workingCopy = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(workingCopy.Id);
+
+                                //set StateInfo of the previus version
+                                if (workingCopy.StateInfo == null)
+                                {
+                                    workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                    {
+                                        State = status
+                                };
+                                }
+                                else
+                                {
+                                    workingCopy.StateInfo.State = status;
+                                }
+
+                                unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
+
+                                ContentDescriptor contentDescriptor = workingCopy.ContentDescriptors.Where(cd => cd.URI.Equals(path)).FirstOrDefault();
+                                datasetManager.DeleteContentDescriptor(contentDescriptor);
+                 
+                            }
+                            datasetManager.EditDatasetVersion(workingCopy, null, null, null);
+
+                            // ToDo: Get Comment from ui and users
+                            datasetManager.CheckInDataset(datasetID, "File " + temp.Last() + " deleted", HttpContext.User.Identity.Name, ViewCreationBehavior.None);
+                            Session["DatasetInfo"] = datasetInfo;
+                            return true;
+                        }
+                        catch
+                        {
+                            datasetManager.CheckInDataset(datasetID, "Failed to delete File " + temp.Last(), HttpContext.User.Identity.Name, ViewCreationBehavior.None);
+                            Session["DatasetInfo"] = datasetInfo;
+                            return false;
+                        }
+                    }
+                    Session["DatasetInfo"] = datasetInfo;
+                    return false;
+                }
+                catch
+                {
+                    return false;
+                }
+                finally
+                {
+                    entityPermissionManager.Dispose();
+                }
+            }          
         }
 
         public FileResult getFileFromZip(string path, string file)
@@ -189,16 +275,22 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 try
                 {
                     entityPermissionManager = new EntityPermissionManager();
-                    long datasetID = Convert.ToInt64(path.Split('\\')[1]);
+                    DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
+
+                    long datasetID = datasetInfo.DatasetId;
                     bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Read);
                     if (access)
                     {
                         path = Path.Combine(AppConfiguration.DataPath, path);
                         FileInfo fileInfo = new FileInfo(path);
+                        Session["DatasetInfo"] = datasetInfo;
                         return new FileStreamResult(new FileStream(path, FileMode.Open), MimeMapping.GetMimeMapping(fileInfo.Name));
                     }
                     else
+                    {
+                        Session["DatasetInfo"] = datasetInfo;
                         return null;
+                    }
                 }
                 catch
                 {
@@ -363,15 +455,20 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 try
                 {
                     entityPermissionManager = new EntityPermissionManager();
-                    long datasetID = Convert.ToInt64(path.Split('\\')[1]);
+                    DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
+                    long datasetID = datasetInfo.DatasetId;
                     bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetID, RightType.Read);
                     if (access)
                     {
                         path = Path.Combine(AppConfiguration.DataPath, path);
+                        Session["DatasetInfo"] = datasetInfo;
                         return System.IO.File.OpenRead(path);
                     }
                     else
+                    {
+                        Session["DatasetInfo"] = datasetInfo;
                         return null;
+                    }
                 }
                 catch
                 {

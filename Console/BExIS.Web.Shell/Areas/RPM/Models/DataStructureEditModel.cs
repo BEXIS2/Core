@@ -1,4 +1,6 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Modules.Rpm.UI.Classes;
@@ -515,7 +517,23 @@ namespace BExIS.Modules.Rpm.UI.Models
 
                         if (dataStructure.Datasets.Count > 0)
                         {
-                            this.inUse = true;
+                            DatasetManager datasetManager = null;
+                            try
+                            {
+                                datasetManager = new DatasetManager();
+                                foreach (Dataset d in dataStructure.Datasets)
+                                {
+                                    if(datasetManager.RowCount(d.Id, null) > 0)
+                                    {
+                                        this.inUse = true;
+                                        break;
+                                    }
+                                }                             
+                            }
+                            finally
+                            {
+                                datasetManager.Dispose();
+                            }
                         }
 
                         foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
