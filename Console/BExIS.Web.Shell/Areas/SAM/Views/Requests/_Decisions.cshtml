@@ -8,6 +8,7 @@
     columns.Bound(g => g.InstanceId);
     columns.Bound(g => g.Title);
     columns.Bound(g => g.Applicant);
+    columns.Bound(g => g.RightsAsText);
     columns.Bound(g => g.Intention);
     columns.Template(@<text>
                 <button type="button" class="bx bx-grid-function bx-check" @(item.Status != 0 ? "disabled" : "")></button>

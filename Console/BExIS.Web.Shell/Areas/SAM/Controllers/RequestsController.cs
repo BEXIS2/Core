@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Authorization;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
@@ -42,6 +43,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Decisions_Select(long entityId, GridCommand command)
         {
             var entityManager = new EntityManager();
+            var entityPermissionManager = new EntityPermissionManager();
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
             var decisionManager = new DecisionManager();
@@ -56,7 +58,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         Id = m.Id,
                         RequestId = m.Request.Id,
                         Rights = m.Request.Rights,
-                        RightsAsText = "lalelu", //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                        RightsAsText = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                         Status = m.Status,
                         StatusAsText = m.Status.ToString(),
                         InstanceId = m.Request.Key,
@@ -129,6 +131,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Requests_Select(long entityId, GridCommand command)
         {
             var entityManager = new EntityManager();
+            var entityPermissionManager = new EntityPermissionManager();
+
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
             var requestManager = new RequestManager();
@@ -143,6 +147,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     InstanceId = m.Key,
                     Title = entityStore.GetTitleById(m.Key),
                     Rights = m.Rights,
+                    RightsAsText = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                     RequestStatus = m.Status,
                     Intention = m.Intention
                 });

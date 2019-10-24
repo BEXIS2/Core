@@ -39,7 +39,11 @@ namespace BExIS.Security.Services.Tests.Authorization
         {
         }
 
-        [TestCase(1, new string[] { "Read" })]
+        [TestCase(1, new[] { "Read" })]
+        [TestCase(4, new[] { "Write" })]
+        [TestCase(5, new[] { "Read", "Write" })]
+        [TestCase(6, new[] { "Write", "Read" })]
+
         public void CreateAsync_GroupIsNull_ReturnZero(short rights, string[] result)
         {
             //Arrange
