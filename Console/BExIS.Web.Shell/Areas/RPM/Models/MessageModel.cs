@@ -9,6 +9,8 @@ using BExIS.IO.Transform.Output;
 
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -150,7 +152,25 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             if (dataStructure != null && dataStructure.Id != 0)
             {
-                if (dataStructure.Datasets.Count > 0)
+                DatasetManager datasetManager = null;
+                bool inUse = false;
+                try
+                {
+                    datasetManager = new DatasetManager();
+                    foreach (Dataset d in dataStructure.Datasets)
+                    {
+                        if (datasetManager.RowCount(d.Id, null) > 0)
+                        {
+                            inUse = true;
+                            break;
+                        }
+                    }
+                }
+                finally
+                {
+                    datasetManager.Dispose();
+                }
+                if (inUse)
                 {
                     try
                     {

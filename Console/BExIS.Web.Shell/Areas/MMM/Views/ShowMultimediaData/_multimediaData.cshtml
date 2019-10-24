@@ -12,6 +12,7 @@
     string imgList = "";
     double lat = -1;
     double lon = -1;
+    DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
 }
 
 <link href="@Url.Content("~/Areas/MMM/Stylesheets/MultimediaData.css")" rel="stylesheet" type="text/css" />
@@ -271,7 +272,14 @@
                             break;
                      }
                         <td class="mmm-functions">
-                            @Html.ActionLink(" ", "getFile", "ShowMultimediaData", new { path = @Server.UrlEncode(fi.Path) } , new { area = "MMM", @class = "bx bx-grid-function bx-download" })
+                            @if (datasetInfo.Deleteable && datasetInfo.IsLatestVersion)
+                            {
+                                <span class = "bx bx-grid-function bx fa-trash-o bx-mmm-delete" value="@fi.Path"></span>
+                            }
+                            @if (datasetInfo.Downloadable)
+                            {
+                                @Html.ActionLink(" ", "getFile", "ShowMultimediaData", new { path = @Server.UrlEncode(fi.Path) }, new { area = "MMM", @class = "bx bx-grid-function bx-download" })
+                            }
                         </td>
                     </tr>
                 </table>
@@ -296,6 +304,22 @@
         imgList = imgList.split(',');
         imgList.splice(-1, 1);
     var test = 0;
+
+    $('.bx-mmm-delete').on('click', function () { 
+        var mediaContainer = $(this);
+        var parameters = encodeURI('?path=' + mediaContainer.attr('value'));
+        $.get('@Url.Action("deleteFile", "ShowMultimediaData")' + parameters, function (data) {
+            console.log(data);
+            if (data == true) {
+                mediaContainer.closest('.mmm-mediaContainer').remove();
+            }
+            else {
+                alert("Can't delete file " + mediaContainer.attr('value')); 
+            }
+            initIsotope();
+        });
+    });
+    
 
     $(function () {
         $('body').append('<div class="modal fade" id="imgModal" tabindex="-1" aria-hidden="true"><div class= "modal-body"> <div id="header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div> <div id="content"><table><tr><td class="mmm-map"><div id="map"></div></td></tr></table></div></div ></div> ');

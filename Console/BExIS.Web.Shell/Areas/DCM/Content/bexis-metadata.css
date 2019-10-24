@@ -102,6 +102,7 @@ Green 05  #eff7f6
         width: 490px;
         max-width: 490px;
         padding: 5px 4px;
+        white-space:pre-line;
 }
 
 .metadataAttributeInput
