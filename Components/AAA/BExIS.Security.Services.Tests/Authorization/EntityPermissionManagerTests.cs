@@ -18,7 +18,6 @@ namespace BExIS.Security.Services.Tests.Authorization
         private TestSetupHelper helper = null;
 
         [OneTimeSetUp]
-
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
@@ -42,7 +41,6 @@ namespace BExIS.Security.Services.Tests.Authorization
         [TestCase(1, new[] { "Read" })]
         [TestCase(4, new[] { "Write" })]
         [TestCase(5, new[] { "Read", "Write" })]
-        [TestCase(6, new[] { "Write", "Read" })]
 
         public void CreateAsync_GroupIsNull_ReturnZero(short rights, string[] result)
         {
