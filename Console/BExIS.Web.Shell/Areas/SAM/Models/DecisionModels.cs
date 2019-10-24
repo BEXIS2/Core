@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Requests;
+using System.ComponentModel;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -11,10 +12,13 @@ namespace BExIS.Modules.Sam.UI.Models
         public long Id { get; set; }
         public long Key { get; set; }
         public long RequestId { get; set; }
-        public short Rights { get; set; }
-        public string RightsAsText { get; set; }
+
+        public string Rights { get; set; }
+
         public string Title { get; set; }
         public DecisionStatus Status { get; set; }
+
+        [DisplayName("Status")]
         public string StatusAsText { get; set; }
     }
 }
