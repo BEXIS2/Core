@@ -68,6 +68,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
         /// </summary>
         /// <param name="id">Dataset Id</param>
+        /// <param name="header">Is a comman separated list of variable names that determines which variables of the dataset. e.g: Var1,Var2,var3</param>
+        /// <param name="filter">is a logical expression that filters the tuples of the chosen dataset. e.g. : Var1='Value'</param>
         /// <returns> data from the latest version of a dataset</returns>
         /// <remarks> The action accepts the following additional parameters via the query string
         /// 1: header: is a comman separated list of variable names that determines which variables of the dataset version tuples should take part in the result set
