@@ -92,7 +92,6 @@ $("#button_createEntityreference_cancel").click(function () {
 function createEntityReference_OnSuccess(data) {
     console.log("on success");
     console.log(data);
-    alert(data);
 
     if (data === true) {
         console.log("on success data = true");
