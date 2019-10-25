@@ -58,7 +58,7 @@
                     @Html.ValidationMessageFor(m => m.TargetVersion)
                 </td>
             </tr>
-            <tr id="help_ref_type" style="display:none;">
+            @*<tr id="help_ref_type" style="display:none;">
                 <td></td>
                 <td>
                     @foreach (var item in ViewData["ReferenceType"] as SelectList)
@@ -66,7 +66,7 @@
                         <div class="help" style="display: block;width:372px">- <b>@item.Text</b>: @item.Value</div>
                     }
                 </td>
-            </tr> 
+            </tr>*@ 
             <tr>
                 <td>
                     Reference Type
@@ -75,9 +75,9 @@
                     @Html.DropDownListFor(m => m.ReferenceType, null, "Select a reference type", new { @class = "bx-dropdown" })
                     @Html.ValidationMessageFor(m => m.ReferenceType)
                 </td>
-                 <td>
+                 @*<td>
                     <button type="button" title="" class="bx-function bx-disabled bx-info fa fa-info" onclick="show_hide_help();"></button>
-                </td>
+                </td>*@
             </tr>
             <tr>
                 <td>

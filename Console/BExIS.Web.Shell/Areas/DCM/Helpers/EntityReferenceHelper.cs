@@ -104,9 +104,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             try
             {
                 entityManager.Entities.ToList().ForEach(e => list.Add(new SelectListItem() { Text = e.Name, Value = e.Id.ToString() }));
-                
+
                 var entityWhitelist = GetEntityTypesWhitlist();
-                
+
                 List<SelectListItem> listNew = new List<SelectListItem>();
                 // Check if whitelist has entries, if not use full list otherwise only use items from the whitelist
                 if (entityWhitelist.Count() > 0)
@@ -119,7 +119,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 listNew.Add(item);
                             }
-                            
                         }
                     }
                 }
@@ -319,9 +318,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 XDocument xdoc = XDocument.Load(filepath);
 
-                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
+                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem()
+                {
+                    Text = String.IsNullOrEmpty(e.Attribute("description").Value) ? e.Value : e.Attribute("description").Value,
+                    Value = e.Value
+                }).ToList();
 
-                return new SelectList(types, "Text", "Value");
+                return new SelectList(types, "Value", "Text");
             }
             else
             {
@@ -330,7 +333,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         }
 
         #endregion Entity Reference Config
-            
+
         #region Entity Config
 
         /// <summary>
@@ -347,7 +350,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 XDocument xdoc = XDocument.Load(filepath);
 
                 var types = xdoc.Root.Descendants("entityType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
-               
+
                 return new SelectList(types, "Text", "Value");
             }
             else
@@ -356,9 +359,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
-        #endregion Entity Config    
-            
-            
-            
+        #endregion Entity Config
     }
 }
