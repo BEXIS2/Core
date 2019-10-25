@@ -158,7 +158,7 @@
 
             var id = '@Model.Selected.Id';
             var type = '@Model.Selected.TypeId'
-            var title = '@Model.Selected.Title'
+            var title = '@Model.Selected.Title.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " ");'
             var version = '@Model.Selected.Version'
 
             var parameters = {
