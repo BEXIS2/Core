@@ -173,11 +173,8 @@
                             }
                             else
                             {
-                                <div class="bx-metadataForm-textArea-display">
-                                @if (Model.Value != null)
-                                {
-                                    @Html.DisplayWithLinksFor(m => m.Value)
-                                }
+                                //leave below code in line to avoid leading emtpy line
+                                <div class="bx-metadataForm-textArea-display">@if (Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}
                                 </div>
                             }
                         }
