@@ -1,4 +1,6 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Dlm.Entities.Party;
+using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using System.Collections.Generic;
