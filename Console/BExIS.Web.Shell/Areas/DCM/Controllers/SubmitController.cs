@@ -8,6 +8,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
+using BExIS.Utils.Data.Upload;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;

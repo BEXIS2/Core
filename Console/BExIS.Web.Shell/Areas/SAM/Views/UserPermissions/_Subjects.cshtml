@@ -14,19 +14,19 @@
     .Name("grid_subjects")
     .DataKeys(keys =>
     {
-        keys.Add(m => m.SubjectId);
+        keys.Add(m => m.Id);
     })
     .Columns(columns =>
     {
-        columns.Bound(m => m.SubjectName)
+        columns.Bound(m => m.Name)
             .Width("15%");
-        columns.Bound(m => m.SubjectType)
+        columns.Bound(m => m.Type)
             .Width("15%");
 
         foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
         {
             columns.Bound(m => m.Rights)
-                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= SubjectId #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> />")
+                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= Id #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> />")
                                .Title(rightType.ToString())
                                .Width("11%")
                                .Filterable(false)
@@ -48,7 +48,7 @@
       })
       .Sortable(sortable => sortable
           .OrderBy(orderby => orderby
-              .Add(m => m.SubjectName)
+              .Add(m => m.Name)
               .Ascending()
           )
       )

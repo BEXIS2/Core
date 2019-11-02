@@ -1,6 +1,10 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
@@ -25,6 +29,60 @@ namespace BExIS.Security.Services.Subjects
         public IQueryable<Group> Groups => GroupRepository.Query();
         public IQueryable<Group> Roles => GroupRepository.Query();
         private IReadOnlyRepository<Group> GroupRepository { get; }
+
+        /// <summary>
+        /// returns subset of groups based on the parameters
+        /// and also count of filtered list
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public List<Group> GetGroups(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize, out int count)
+        {
+            var orderbyClause = orderBy?.ToLINQ();
+            var whereClause = filter?.ToLINQ();
+            count = 0;
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    if (whereClause != null && orderBy != null)
+                    {
+                        var l = Groups.Where(whereClause);
+                        var x = l.OrderBy(orderbyClause);
+                        var y = x.Skip((pageNumber - 1) * pageSize);
+                        var z = y.Take(pageSize);
+
+                        count = l.Count();
+
+                        return z.ToList();
+                    }
+                    else if (whereClause != null)
+                    {
+                        var filtered = Groups.Where(whereClause);
+                        count = filtered.Count();
+
+                        return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+
+                    if (orderBy != null)
+                    {
+                        count = Groups.Count();
+                        return Groups.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+
+                    // without filter and order
+                    return Groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Could not retrieve filtered groups."), ex);
+            }
+        }
 
         public Task CreateAsync(Group role)
         {

@@ -104,19 +104,19 @@ namespace BExIS.Dcm.UploadWizard
 
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public enum DataStructureType
-    {
-        Structured,
-        Unstructured
-    }
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    //public enum DataStructureType
+    //{
+    //    Structured,
+    //    Unstructured
+    //}
 
-    public enum UploadMethod
-    {
-        Append,
-        Update
-    }
+    //public enum UploadMethod
+    //{
+    //    Append,
+    //    Update
+    //}
 
 }

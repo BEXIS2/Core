@@ -4,6 +4,15 @@
 @using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc
 
+@{
+    string userName = "";
+    if (User != null && User.Identity != null)
+    {
+        userName = User.Identity.Name;
+    }
+
+}
+
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
     <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -22,12 +31,12 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
             @*menubar*@
             <ul class="nav navbar-nav">
-                @Html.MenuBar()
+                @Html.MenuBar(userName)
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 @Html.LaunchBar()
-                @Html.Settings()
+                @Html.Settings(userName)
             </ul>
 
             @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@

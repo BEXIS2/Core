@@ -113,7 +113,17 @@
     </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
+    <OutputPath>bin\TestServerRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ExtendedReflection, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NCalc, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NCalc-Edge.1.4.3\lib\NCalc.dll</HintPath>
       <Private>True</Private>
@@ -145,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administration\ResearchPlanManager.cs" />
+    <Compile Include="DataStructure\MissingValueManager.cs" />
     <Compile Include="Data\DatasetManager.cs" />
     <Compile Include="DataStructure\AggregateFunctionManager.cs" />
     <Compile Include="DataStructure\ClassifierManager.cs" />
@@ -178,6 +189,10 @@
     <ProjectReference Include="..\..\EXT\BExIS.Ext.Model\BExIS.Ext.Model.csproj">
       <Project>{f296cb14-3b71-40c9-89f7-f928ba2c7c5b}</Project>
       <Name>BExIS.Ext.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
+      <Project>{0f1ec13e-d685-4f4d-a438-52797b0e53a0}</Project>
+      <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>

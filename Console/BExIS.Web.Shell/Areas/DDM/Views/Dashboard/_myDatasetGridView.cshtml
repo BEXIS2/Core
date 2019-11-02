@@ -87,7 +87,7 @@
 							columns.Bound(column.DataType, column.ColumnName)
 							   .Title(title);
 						}
-						if (title == "Read" | title == "Write" | title == "Delete" | title == "Grant")
+						if (title == "Read" | title == "Write" | title == "Delete" | title == "Grant" | title == "is valid")
 						{
 							columns.Bound(column.DataType, column.ColumnName)
 							   .Title(title)
@@ -166,6 +166,15 @@
 				obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
 			}
 		});
+		// Add color to row based on value (yes / no) in 7. column ToDo: make it not fixed to position in array
+		$('.result-grid tbody tr').each(function() { 
+            		var cellText = $(this).find("td").eq(7).html(); 
+            		if (cellText == "no") {
+                		$(this).find("td").eq(7).parent().addClass("error");
+            		}
+           
+        	});
+		
 	}
 
 	function onComplete() {

@@ -48,7 +48,7 @@ Green 05  #eff7f6 brigth
 
 .t-grid th a:hover
 {
-    color: #ff9700;
+    color: var(--t-grid-a-hover);
 }
 
 .t-icon {
@@ -413,13 +413,13 @@ div.t-window-content{padding:.4em .5em;overflow:auto;position:relative;}
 .t-window table {background-color:#ffffff}
 
 /* Window Custom*/
-.t-window-titlebar{background-color:black; color:#ff9700; text-align:left; font-size:16px; font-weight:bold; }
+.t-window-titlebar{background-color:black; color:var(--t-windows-titlebar-color); text-align:left; font-size:16px; font-weight:bold; }
 .t-window-titlebar .t-close,.t-window-titlebar .t-state-hover .t-close{color:white;}
 .t-window-titlebar .t-window-actions {font-size: 18px;position: absolute;top:1px;right: 0.5em; white-space: nowrap;}
 
 
 /* Dropdown Custom */
-.t-dropdown {width: auto; height:30px; border: 2px solid black; padding: 0 7px}
+.t-dropdown {width: auto; height:30px; border: var(--border-width-field) solid var(--border-color-field); padding: 0 7px}
 .t-dropdown-wrap,
 .t-dropdown-wrap t-input,
 .t-dropdown-wrap t-select
@@ -440,7 +440,7 @@ div.t-window-content{padding:.4em .5em;overflow:auto;position:relative;}
 .t-animation-container .t-popup .t-reset .t-state-selected
 {
     color:white;
-    background-color:#ff9700;
+    background-color:var(--t-animation-container-hover-selected);
 }
 
 .t-dropdown-wrap .t-select

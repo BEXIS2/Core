@@ -39,12 +39,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-                //if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
-                //{
                 provider.WorkingSearchModel.CriteriaComponent.Clear();
                 provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
-                //}
-                //var pp = IoCFactory.Container.ResolveAll<ISearchProvider>();
 
                 SetSessionsToDefault();
 
@@ -290,7 +286,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return RedirectToAction(Session["SubmissionAction"].ToString()); //View("Index", provider);
+            return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
         }
 
         #endregion
@@ -350,13 +346,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         //+++++++++++++++++++++Properties RadioButton Action +++++++++++++++++++++++++++
-        // currently radionbuttons on View searchProperties
         [HttpPost]
-        public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
+        public ActionResult FilterByRadioButton(string value, string node, bool isChecked)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
+
+            return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
+        }
+
+        //+++++++++++++++++++++Properties ´CheckButton Action +++++++++++++++++++++++++++
+
+        [HttpPost]
+        public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+
+            UpdatePropertiesDic(node, value);
+            provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property, true);
 
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
         }

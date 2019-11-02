@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="MMM" displayName="Multimedia Data" version="1.0.0" builtin="false">
+  <Description>
+    <!--add proper description-->
+  </Description>
+  <Assemblies>
+    <Assembly fullName="" role=""/>
+  </Assemblies>
+  <Dependencies>
+    <!--<Dependency moduleId="dcm" version="*.*.*" />-->
+  </Dependencies>
+  <Exports>
+
+    <Export tag="internalApi" id="MultimediaDataIndex"
+            title="Multimedia Data Index" description="" icon=""
+            controller="ShowMultimediaData" action="Index"
+            extends="" />
+    <Export tag="internalApi" id="MultimediaDataView"
+            title="Multimedia Data View" description="" icon=""
+            controller="ShowMultimediaData" action="multimediaData"
+            extends="" />
+    
+  </Exports>
+</Manifest>

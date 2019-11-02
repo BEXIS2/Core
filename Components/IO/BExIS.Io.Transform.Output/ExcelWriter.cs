@@ -17,26 +17,28 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class ExcelWriter : DataWriter
     {
-
         #region constants
+
         // number types in datatable
         private static System.TypeCode[] numberTypes = new[] {
                           TypeCode.Decimal, TypeCode.Double, TypeCode.Single,
                           TypeCode.Int16, TypeCode.Int32, TypeCode.Int64,
                           TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64,
                         };
-        #endregion
+
+        #endregion constants
 
         #region private
 
@@ -48,7 +50,6 @@ namespace BExIS.IO.Transform.Output
         private DefinedNameVal areaOfVariables = new DefinedNameVal();
 
         private char[] alphabet = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-
 
         private int startColumn = 0;
         private int endColumn = 0;
@@ -66,7 +67,7 @@ namespace BExIS.IO.Transform.Output
         private SheetData sheetData;
         private bool Template = false;
 
-        #endregion
+        #endregion private
 
         public ExcelWriter(bool isTemplate = false)
         {
@@ -98,7 +99,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Row DatatupleToRow(long dataTupleId, int rowIndex)
         {
-
             DataTuple dataTuple = DatasetManager.DataTupleRepo.Query(d => d.Id.Equals(dataTupleId)).FirstOrDefault();
             dataTuple.Materialize();
 
@@ -174,10 +174,8 @@ namespace BExIS.IO.Transform.Output
             int columnIndex = 0;
             columnIndex += offset;
 
-
             foreach (DataColumn variable in src)
             {
-
                 string cellRef = getColumnIndex(columnIndex) + row.RowIndex;
                 string type = typeof(string).Name;
 
@@ -187,6 +185,30 @@ namespace BExIS.IO.Transform.Output
                 //cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
                 cell.CellValue = new CellValue(variable.Caption);
 
+                row.AppendChild(cell);
+                columnIndex += 1;
+            }
+
+            return row;
+        }
+
+        protected Row StringArrayToRow(string[] src)
+        {
+            Row row = new Row();
+            row.RowIndex = Convert.ToUInt32(rowIndex);
+            int columnIndex = 0;
+            columnIndex += offset;
+
+            foreach (string value in src)
+            {
+                string cellRef = getColumnIndex(columnIndex) + row.RowIndex;
+                string type = typeof(string).Name;
+
+                Cell cell = new Cell();
+                cell.CellReference = new StringValue(cellRef);
+                cell.DataType = CellValues.String;
+                //cell.InlineString = new InlineString() { Text = new Text(variable.Caption) };
+                cell.CellValue = new CellValue(value);
 
                 row.AppendChild(cell);
                 columnIndex += 1;
@@ -206,12 +228,9 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
-
             using (var uow = this.GetUnitOfWork())
             {
                 DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
-
-
 
                 string message = "row :" + rowIndex + "column:" + columnIndex;
                 Debug.WriteLine(message);
@@ -227,6 +246,18 @@ namespace BExIS.IO.Transform.Output
                 CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
                 object value = variableValue.Value;
 
+                //missing value
+                // check if the value is a missing value and should be replaced
+                if (variableValue.Variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+                {
+                    value = variableValue.Variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                    cell.CellValue = new CellValue(value.ToString());
+
+                    return cell;
+                }
+
+                // number
                 if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
                 {
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -246,56 +277,52 @@ namespace BExIS.IO.Transform.Output
 
                     return cell;
                 }
-                else
+
+                // Date
+                if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
                 {
-                    if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+                    cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                    //CultureInfo provider = CultureInfo.InvariantCulture;
+                    try
                     {
-
-                        cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                        //CultureInfo provider = CultureInfo.InvariantCulture;
-                        try
+                        if (value.ToString() != "")
                         {
-                            if (value.ToString() != "")
+                            DateTime dt;
+                            if (dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
                             {
-                                DateTime dt;
-                                if (dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
+                                DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+                                if (!string.IsNullOrEmpty(pattern.StringPattern))
                                 {
-                                    DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
-                                    if (!string.IsNullOrEmpty(pattern.StringPattern))
-                                    {
-                                        IOUtility.ExportDateTimeString(value.ToString(), pattern.StringPattern, out dt);
-                                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                                    }
-                                    else
-                                    {
-                                        if (IOUtility.IsDate(value.ToString(), out dt))
-                                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                                    }
-
+                                    IOUtility.ExportDateTimeString(value.ToString(), pattern.StringPattern, out dt);
+                                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
                                 }
                                 else
                                 {
                                     if (IOUtility.IsDate(value.ToString(), out dt))
                                         cell.CellValue = new CellValue(dt.ToOADate().ToString());
                                 }
-
-
+                            }
+                            else
+                            {
+                                if (IOUtility.IsDate(value.ToString(), out dt))
+                                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            throw new Exception(ex.Message + "|" + message);
-                        }
+
+                        return cell;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                        if (value == null)
-                            cell.CellValue = new CellValue("");
-                        else
-                            cell.CellValue = new CellValue(value.ToString());
+                        throw new Exception(ex.Message + "|" + message);
                     }
                 }
+
+                // String
+                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                if (value == null)
+                    cell.CellValue = new CellValue("");
+                else
+                    cell.CellValue = new CellValue(value.ToString());
 
                 return cell;
             }
@@ -310,7 +337,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected Cell VariableValueToCell(object value, int rowIndex, int columnIndex)
         {
-
             string cellRef = getColumnIndex(columnIndex) + rowIndex;
             string type = value.GetType().Name;
 
@@ -320,6 +346,20 @@ namespace BExIS.IO.Transform.Output
 
             CellValues cellValueType = getExcelType(type);
 
+            // missing value
+            // check if the value is a missing value and should be replaced
+            var variable = dataStructure.Variables.ElementAt(columnIndex - offset);
+            if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+            {
+                value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+
+                cell.CellValue = new CellValue(value.ToString());
+
+                return cell;
+            }
+
+            // Number
             if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
             {
                 cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -330,36 +370,33 @@ namespace BExIS.IO.Transform.Output
                     cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 }
 
+                return cell;
+            }
+
+            // Date
+            if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+            {
+                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                //CultureInfo provider = CultureInfo.InvariantCulture;
+
+                if (value.ToString() != "")
+                {
+                    DateTime dt;
+                    if (IOUtility.IsDate(value.ToString(), out dt))
+                    {
+                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                    }
+                }
 
                 return cell;
             }
+
+            //String
+            cell.DataType = new EnumValue<CellValues>(CellValues.String);
+            if (value == null)
+                cell.CellValue = new CellValue("");
             else
-            {
-                if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
-                {
-
-                    cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                    //CultureInfo provider = CultureInfo.InvariantCulture;
-
-                    if (value.ToString() != "")
-                    {
-                        DateTime dt;
-                        if (IOUtility.IsDate(value.ToString(), out dt))
-                        {
-                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                        }
-                    }
-
-                }
-                else
-                {
-                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    if (value == null)
-                        cell.CellValue = new CellValue("");
-                    else
-                        cell.CellValue = new CellValue(value.ToString());
-                }
-            }
+                cell.CellValue = new CellValue(value.ToString());
 
             return cell;
         }
@@ -406,15 +443,14 @@ namespace BExIS.IO.Transform.Output
         {
             DataStructureManager dsm = new DataStructureManager();
 
-
             try
             {
-
                 string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
                 if (Template)
                 {
                     #region template
+
                     //Template will not be filtered by columns
                     if (this.VisibleColumns == null)
                     {
@@ -425,7 +461,7 @@ namespace BExIS.IO.Transform.Output
 
                         createTemplateFile(dataPath, dataStructureId, extention);
 
-                        #endregion
+                        #endregion generate file with full datastructure
                     }
 
                     // create a file with a subset of variables
@@ -442,10 +478,9 @@ namespace BExIS.IO.Transform.Output
                         List<long> ids = GetSubsetOfVariableIds(ds.Variables, this.VisibleColumns);
 
                         provider.CreateTemplate(ids, dataStructureId, path, newTitle);
-
                     }
 
-                    #endregion
+                    #endregion template
                 }
                 else
                 {
@@ -461,7 +496,7 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="ns"></param>
         /// <param name="table"></param>
@@ -472,10 +507,10 @@ namespace BExIS.IO.Transform.Output
         {
             string dataPath = GetFullStorePath(ns, title, extension);
 
-
             if (Template)
             {
                 #region template
+
                 //Template will not be filtered by columns
                 if (this.VisibleColumns == null)
                 {
@@ -486,7 +521,7 @@ namespace BExIS.IO.Transform.Output
 
                     createTemplateFile(dataPath, dataStructureId, extension);
 
-                    #endregion
+                    #endregion generate file with full datastructure
                 }
 
                 // create a file with a subset of variables
@@ -498,12 +533,10 @@ namespace BExIS.IO.Transform.Output
                     string path = ns;
                     string newTitle = title + extension;
 
-
                     provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
-
                 }
 
-                #endregion
+                #endregion template
             }
             else
             {
@@ -515,7 +548,6 @@ namespace BExIS.IO.Transform.Output
 
         private bool createTemplateFile(string dataPath, long dataStructureId, string extension)
         {
-
             try
             {
                 string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extension);
@@ -539,7 +571,6 @@ namespace BExIS.IO.Transform.Output
             {
                 throw new Exception("Can´t create excel template file.", ex);
             }
-
         }
 
         private bool createEmptyFile(string dataPath, string extension)
@@ -586,10 +617,9 @@ namespace BExIS.IO.Transform.Output
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
-
             try
             {
-                // get all the defined area 
+                // get all the defined area
                 List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
 
                 if (namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault() != null
@@ -602,7 +632,6 @@ namespace BExIS.IO.Transform.Output
             {
                 return false;
             }
-
 
             return false;
         }
@@ -788,7 +817,6 @@ namespace BExIS.IO.Transform.Output
                     column = alphabet[residual - 1].ToString() + column;
                     index = (index / 26);
                 }
-
             } while (index > 0);
             return column;
         }
@@ -868,7 +896,6 @@ namespace BExIS.IO.Transform.Output
             //NEW OPENXMLREADER
             if (this.VariableIdentifiers == null || this.VariableIdentifiers.Count == 0)
             {
-
                 OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
                 int rowNum = 0;
 
@@ -888,9 +915,7 @@ namespace BExIS.IO.Transform.Output
 
                                 if (row.Hidden == null) VariableIdentifierRows.Add(rowToList(row));
                                 else if (row.Hidden != true) VariableIdentifierRows.Add(rowToList(row));
-
                             }
-
                         } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
                         break;
                     }
@@ -937,7 +962,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         private List<string> rowToList(Row r)
         {
-
             string[] rowAsStringArray = new string[numOfColumns];
 
             // create a new cell
@@ -950,7 +974,6 @@ namespace BExIS.IO.Transform.Output
 
                 string value = "";
 
-
                 if (c != null)
                 {
                     if (c.CellValue != null)
@@ -962,14 +985,12 @@ namespace BExIS.IO.Transform.Output
 
                         if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
                         {
-
                             // if Value a text
                             if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
                             {
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                 SharedStringItem sharedStringItem = sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
-
                             }
                             // not a text
                             else if (c.StyleIndex != null && c.StyleIndex.HasValue)
@@ -999,7 +1020,6 @@ namespace BExIS.IO.Transform.Output
                                                 {
                                                     DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
                                                     value = dateTime.ToString();
-
                                                 }
                                                 else
                                                 {
@@ -1021,16 +1041,14 @@ namespace BExIS.IO.Transform.Output
                                 {
                                     value = c.CellValue.Text;
                                 }
-
                             }
 
-                            // define index based on cell refernce - offset 
+                            // define index based on cell refernce - offset
                             int index = cellReferencAsInterger - offset - 1;
                             rowAsStringArray[index] = value;
                         }
                     }//end if cell value
                 }//end if cell null
-
             }//for
 
             return rowAsStringArray.ToList();
@@ -1058,7 +1076,7 @@ namespace BExIS.IO.Transform.Output
             return list;
         }
 
-        #endregion
+        #endregion helper
 
         #region setup / close actions
 
@@ -1069,7 +1087,6 @@ namespace BExIS.IO.Transform.Output
         /// <param name="dataStructureId"></param>
         protected override void Init(string filePath, long dataStructureId)
         {
-
             // loading datastructure
             dataStructure = GetDataStructure(dataStructureId);
 
@@ -1082,7 +1099,7 @@ namespace BExIS.IO.Transform.Output
             // if the writer should create a template, more preperation is needed
             if (Template)
             {
-                // get all the defined area 
+                // get all the defined area
                 List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
 
                 // select data area
@@ -1122,13 +1139,11 @@ namespace BExIS.IO.Transform.Output
                 worksheetPart = workbookPart.WorksheetParts.FirstOrDefault();
             }
 
-
             // get sheetData object for adding data to
             if (worksheetPart != null && !worksheetPart.Worksheet.HasChildren)
                 worksheetPart.Worksheet.AppendChild(new SheetData());
 
             sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-
         }
 
         /// <summary>
@@ -1174,7 +1189,7 @@ namespace BExIS.IO.Transform.Output
             spreadsheetDocument.Close();
         }
 
-        #endregion
+        #endregion setup / close actions
 
         #region addRow
 
@@ -1186,7 +1201,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected override bool AddRow(AbstractTuple tuple, long rowIndex)
         {
-
             // convert datatuple to row
             Row row = DatatupleToRow(tuple, (int)rowIndex);
 
@@ -1239,13 +1253,25 @@ namespace BExIS.IO.Transform.Output
             return true;
         }
 
-        #endregion
+        protected override bool AddRow(string[] row, long rowIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion addRow
 
         #region addHeader
+
+        protected override bool AddHeader(string[] header)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override bool AddHeader(StructuredDataStructure header)
         {
             return false;
         }
+
         protected override bool AddHeader(DataColumnCollection header)
         {
             // column count
@@ -1273,16 +1299,42 @@ namespace BExIS.IO.Transform.Output
             sheetData.Append(excelRow);
 
             return true;
-
         }
-        #endregion
 
+        #endregion addHeader
+
+        #region AddUnits
+
+        protected override bool AddUnits(string[] units)
+        {
+            try
+            {
+                // create excel row
+                Row excelRow = StringArrayToRow(units);
+                rowIndex++;
+                // add row
+                sheetData.Append(excelRow);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        protected override bool AddUnits(StructuredDataStructure structrue)
+        {
+            return false;
+        }
+
+        #endregion AddUnits
     }
 
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class DefinedNameVal
     {
         public string Key = "";

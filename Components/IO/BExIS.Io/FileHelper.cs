@@ -26,12 +26,10 @@ namespace BExIS.IO
                 else return false;
             }
             else return false;
-
         }
 
         public static FileStream Create(string filepath)
         {
-
             string path = Path.GetDirectoryName(filepath);
             // if folder not exist
             if (!Directory.Exists(path))
@@ -63,7 +61,6 @@ namespace BExIS.IO
                 File.Delete(file);
 
                 if (!File.Exists(file)) return true;
-
             }
 
             return false;
@@ -71,8 +68,6 @@ namespace BExIS.IO
 
         public static bool WaitForFile(string fullPath)
         {
-
-
             int numTries = 0;
             while (true)
             {
@@ -106,18 +101,17 @@ namespace BExIS.IO
             return true;
         }
 
-
         /// <summary>
         /// remove all files and folders from the given folder
         /// </summary>
         /// <param name="fullPath"></param>
         /// <returns></returns>
-        public static bool ClearFolder( string fullPath )
+        public static bool ClearFolder(string fullPath)
         {
             // https://stackoverflow.com/a/1288747/1169798
 
             // get file/folder listing
-            System.IO.DirectoryInfo di = new DirectoryInfo( fullPath );
+            System.IO.DirectoryInfo di = new DirectoryInfo(fullPath);
 
             // delete all files
             foreach (FileInfo file in di.GetFiles())
@@ -132,6 +126,19 @@ namespace BExIS.IO
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Copies the contents of input to output. Doesn't close either stream.
+        /// </summary>
+        public static void CopyStream(Stream input, Stream output)
+        {
+            byte[] buffer = new byte[8 * 1024];
+            int len;
+            while ((len = input.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                output.Write(buffer, 0, len);
+            }
         }
     }
 }
