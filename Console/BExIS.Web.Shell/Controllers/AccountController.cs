@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
@@ -321,7 +322,7 @@ namespace BExIS.Web.Shell.Controllers
                         );
 
 
-                    ViewBag.Message = "Before you can log in to complete your registration please check your email and verify your email address.";
+                    ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
 
                     return View("Info");
                 }
@@ -406,10 +407,12 @@ namespace BExIS.Web.Shell.Controllers
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
 
                 await identityUserService.SendEmailAsync(userId, subject,
-                    $"<p>please confirm your mail address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>." +
-                    $" Once you finished the registration a system administrator will decide based on your provided information about your assigned permissions. " +
+                    $"<p>Dear user,</p>" +
+                    $"<p>please confirm your email address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>.</p>" +
+                    $"<p>Once you finished the registration, a system administrator will decide based on your provided information about your assigned permissions. " +
                     $"This process can take up to 3 days.</p>" +
-                    $"<p>You agreed on our <a href=\"{policyUrl}\">data policy</a> and <a href=\"{termsUrl}\">terms and conditions</a>.</p>");
+                    $"<p>You agreed on our <a href=\"{policyUrl}\">data policy</a> and <a href=\"{termsUrl}\">terms and conditions</a>.</p>" +
+                    $"<br><p>Sincerely your {applicationName} administration team");
 
                 return callbackUrl;
             }
