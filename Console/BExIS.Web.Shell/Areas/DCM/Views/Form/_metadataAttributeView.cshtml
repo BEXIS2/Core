@@ -419,7 +419,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(Model.Discription))
                             {
-                                <button type="button" title="@Html.Raw(Model.Discription)" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
+                                <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
                             }
 
                         </td>
