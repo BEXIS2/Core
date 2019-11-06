@@ -405,6 +405,8 @@ namespace BExIS.Web.Shell.Controllers
 
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
+                
+                var applicationName = AppConfiguration.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,
                     $"<p>Dear user,</p>" +
