@@ -206,6 +206,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["Locked"] = (bool)TaskManager.Bus[CreateTaskmanager.LOCKED];
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -360,6 +361,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -610,6 +612,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 Model.DatasetTitle = "No Title available.";
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -697,6 +700,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return View("MetadataEditor", Model);
         }
 

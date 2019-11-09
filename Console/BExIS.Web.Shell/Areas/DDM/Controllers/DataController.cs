@@ -395,6 +395,44 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return Json(false);
         }
 
+        #region metadata external sources
+        // <summary>Retrieve the content of a JavaScript file, which is stored in the data folder, which is not accessible from the IIS. The content of the 
+        // JavaScript file is meant to manipulate the metadata edit form and view (e.g.add disabled fields, set default values, remove or add additional UI elements)
+        // based on special project needs.The files are attached to the MetadataStructure id. Files to be included have to be located under the
+        // folder "[DataFolder]/]MetadataStructure"/[id]/ext.js. If no file is deposited an empty file is created and returned.</summary>
+        public FileResult GetFile(long id = -1, long metadataStructureId = -1)
+        {
+
+            DatasetManager dm = null;
+            try
+            {
+                dm = new DatasetManager();
+
+                //use dataset ID instead of metdataStructureId
+                if (metadataStructureId == -1)
+                {
+                    metadataStructureId = dm.DatasetRepo.Get(id).MetadataStructure.Id;
+                }
+               
+                string filename = "ext.js";
+                string path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", metadataStructureId.ToString(), filename);
+
+                if (!FileHelper.FileExist(path))
+                {
+                    // Create new folder and empty file if not exists
+                    Directory.CreateDirectory(Path.Combine(AppConfiguration.DataPath, "MetadataStructures"));
+                    System.IO.File.Create(Path.Combine(AppConfiguration.DataPath, "MetadataStructures", filename)).Dispose();
+                    path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", filename); // set path to empty file location
+                }
+                return File(path, MimeMapping.GetMimeMapping(filename), filename);
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+        #endregion metadata external sources
+
         #region metadata
 
         /// <summary>
