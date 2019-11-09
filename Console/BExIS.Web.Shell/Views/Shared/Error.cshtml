@@ -6,7 +6,7 @@
 
 @*<h1 class="text-danger">Error.</h1>*@
 <h2 class="text-danger">An error occurred while processing your request.</h2>
-
+<p>@ViewBag.errorMessage</p>
 <hr />
 @if (@Model != null)
 {
@@ -16,6 +16,7 @@
 
     <h1>Message</h1>
     <p>@Model.Exception.Message</p>
+
 
 
     <h1>Stacktrace</h1>

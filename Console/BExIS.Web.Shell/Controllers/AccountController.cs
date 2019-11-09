@@ -242,7 +242,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
                     {
-                        ViewBag.errorMessage = "You must have a confirmed email address to log in.";
+                        ViewBag.errorMessage = "You must have a confirmed email address to log in. Please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
                         return View("Error");
                     }
                 }
