@@ -83,6 +83,12 @@
 
 @section Information
 {
+    @if (Model.HeaderHelp.Length > 2)
+    {
+        @Html.Raw(Model.HeaderHelp);
+    }
+    else
+{
     <p>
         Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
         Mandatory fields are indicated with an red asterisk.
@@ -93,6 +99,7 @@
         More information
         @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
     </p>
+}
 }
 
 
