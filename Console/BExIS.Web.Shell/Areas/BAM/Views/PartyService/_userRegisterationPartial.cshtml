@@ -127,14 +127,22 @@
         }
     }
 
-    function checkPartyRelationshipConditions()
-    {
-        $("#divPartyRelationships .partyTypeRelation").each(function(i, element) {
-            if(eval(parsePartyCondition($(element).attr("conditionSource"))))
-                $(element).show();
-            else
-                $(element).hide();
+    function checkPartyConditions() {
+        $("[name='condition']").each(function (index, element) {
+            condition = $(this).attr("condition");
+            if (condition.length) {
+                var cond = parsePartyCondition(condition);
+                if (eval(cond)) {
+                    $(element).show();
+                    $(element).find('input').prop("disabled", false); // set enabled to tell jquery-validation to use
+                }
+                else {
+                    $(element).hide();
+                    $(element).find('input').prop("disabled", true); // set disabled to tell jquery-validation to ignore
+                }
+            }
         });
+
     }
 
     function changePartyType() {
