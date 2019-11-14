@@ -47,7 +47,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             DataContainerManager dataAttributeManager = null;
             try
             {
-
                 dataAttributeManager = new DataContainerManager();
                 IList<DataAttribute> DataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
                 long tempUnitId = Convert.ToInt64(Model.Unit.Id);
@@ -65,7 +64,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 //        Model.DomainConstraints.FirstOrDefault().DomainItems = clearEmptyItems(Model.DomainItems);
                 //    }
                 //}
-
 
                 if (Model.Name == "" | Model.Name == null)
                 {
@@ -126,7 +124,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 um.Dispose();
                                 dtm.Dispose();
                             }
-                            #endregion                            
+
+                            #endregion store constraint
                         }
                         else
                         {
@@ -137,7 +136,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                     else
                     {
-                        if (nameNotExist || DataAttributeList.Where(p => p.Name.Equals(Model.Name)).ToList().First().Id == Model.Id)
+                        if (nameNotExist || DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).ToList().First().Id == Model.Id)
                         {
                             DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(Model.Id)).ToList().First();
                             if (!attributeInUse(dataAttribute))
@@ -194,8 +193,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 else
                                     dataAttribute = deletConstraint(Model.DomainConstraints.First().Id, dataAttribute);
 
+                                #endregion store constraint
 
-                                #endregion
                                 dataAttributeManager.UpdateDataAttribute(dataAttribute);
                             }
                         }
@@ -219,7 +218,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult deletAttribute(long id, string name)
         {
-
             if (id != 0)
             {
                 DataContainerManager DAM = null;
@@ -231,10 +229,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         if (!attributeInUse(dataAttribute))
                         {
-
                             DAM.DeleteDataAttribute(dataAttribute);
                         }
-
                     }
                 }
                 finally
@@ -249,7 +245,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             if (id != 0)
             {
-
                 Session["nameMsg"] = null;
                 Session["Window"] = true;
                 return RedirectToAction("AttributeManager", new { dataStructureId = id, showConstraints = showConstraints });
@@ -528,7 +523,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                 if (constraintId != 0 && attribute.Id != 0)
                 {
-
                     foreach (Constraint c in attribute.Constraints.ToList())
                     {
                         if (c.Id == constraintId)
@@ -585,7 +579,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return RedirectToAction("openAttributeWindow", new { Id = attributeId, showConstraints = true });
         }
 
-        #endregion
-
+        #endregion constraints
     }
 }
