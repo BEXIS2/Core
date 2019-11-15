@@ -310,7 +310,7 @@
         var parameters = encodeURI('?path=' + mediaContainer.attr('value'));
         $.get('@Url.Action("deleteFile", "ShowMultimediaData")' + parameters, function (data) {
             console.log(data);
-            if (data == true) {
+            if (data.toLowerCase() == 'true') {
                 mediaContainer.closest('.mmm-mediaContainer').remove();
             }
             else {
