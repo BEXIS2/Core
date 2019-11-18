@@ -237,7 +237,15 @@ namespace BExIS.Web.Shell.Controllers
 
                 // Require the user to have a confirmed email before they can log on.
 
-                var user = await identityUserService.FindByNameAsync(model.UserName);
+                User user = new User();
+
+                if (model.UserName.Contains("@")){
+                    user = await identityUserService.FindByEmailAsync(model.UserName);
+                    model.UserName = user.UserName;
+                }
+                else {
+                    user = await identityUserService.FindByNameAsync(model.UserName);
+                }
                 if (user != null)
                 {
                     if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
@@ -250,6 +258,10 @@ namespace BExIS.Web.Shell.Controllers
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, change to shouldLockout: true
                 var signInManager = new SignInManager(AuthenticationManager);
+
+       
+
+
                 var result =
                     await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
                 switch (result)
