@@ -88,7 +88,7 @@
         @Html.Raw(Model.HeaderHelp);
     }
     else
-{
+    {
     <p>
         Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
         Mandatory fields are indicated with an red asterisk.
@@ -99,14 +99,14 @@
         More information
         @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
     </p>
-}
+    }
 }
 
 
 <div id="MetadataEditor" style="width: 89%">
         @if (Model.DatasetId != -1)
         {
-            <span id="datasetId" style="display:none">@Model.DatasetId</span>
+        <span id="datasetId" style="display:none">@Model.DatasetId</span>
         }
     <div>
         <table>
@@ -234,8 +234,8 @@
                     This metadata dataset is not complete.
                 </div>
             </div>
-    	  }	
-	
+    }
+
     <div style="overflow: auto;">
 
         <div class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white; background-color:#a1bbb6">
@@ -282,7 +282,7 @@
         <div class="bx-footer right">
 
             <!-- only from editmode you have the option to reset-->
-            <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+            <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
 
             @*@if (@Model.FromEditMode)
                 {
@@ -291,12 +291,12 @@
 
             @if (@submit.IsComplete())
             {
-                <button onclick="submit()" class="bx-button action">Save</button>
+                <button id="save" onclick="submit()" class="bx-button action">Save</button>
             }
 
             @if (@Model.FromEditMode)
             {
-                <button onclick="cancel()" class="bx-button action">Cancel</button>
+                <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
             }
         </div>
     }
@@ -339,7 +339,7 @@
             bindMinimap();
         });
 
-function SelectFileProcess_OnSelect(e) {
+            function SelectFileProcess_OnSelect(e) {
 
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
@@ -368,11 +368,11 @@ function SelectFileProcess_OnSelect(e) {
         $(".t-upload-button span").text("Import");
     }
 
-/*
-Is Extention from selected file
-in list of supported files
-*/
-function IsExtentionValid(fileExtention) {
+            /*
+            Is Extention from selected file
+            in list of supported files
+            */
+            function IsExtentionValid(fileExtention) {
     var extListAsString = ".xml";
     var extList = extListAsString.split(',');
 
@@ -383,9 +383,9 @@ function IsExtentionValid(fileExtention) {
     }
 
     return false;
-}
+            }
 
-function OnSuccess(e) {
+            function OnSuccess(e) {
     //alert("on success");
 
     $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
@@ -401,7 +401,7 @@ function OnSuccess(e) {
             //    loadExternalXml();
             //}
         });
-}
+        }
 
     function loadExternalXml() {
 
