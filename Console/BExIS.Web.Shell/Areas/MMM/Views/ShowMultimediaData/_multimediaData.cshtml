@@ -336,20 +336,20 @@
         });
     });
 
-    $('#mapView').on('click', function () {
-        var path = '';
-        $('.mmm-Container .mmm-mediaContainer').each(function () {
-            if ($(this).find('.mmm-media').attr('type') == 'image') {
-                path = $(this).find('.mmm-media').attr('path');
-                $(this).find('.mmm-mediaInfo td').each(function () {
-                    if($(this).attr('id') == 'location') {
-                        console.log(path + ',' +$(this).attr('lat') +',' + $(this).attr('lon'));
-                    }
-                });
-            }
-        });
-        $('#imgModal').modal('toggle');
-    });
+    //$('#mapView').on('click', function () {
+    //    var path = '';
+    //    $('.mmm-Container .mmm-mediaContainer').each(function () {
+    //        if ($(this).find('.mmm-media').attr('type') == 'image') {
+    //            path = $(this).find('.mmm-media').attr('path');
+    //            $(this).find('.mmm-mediaInfo td').each(function () {
+    //                if($(this).attr('id') == 'location') {
+    //                    console.log(path + ',' +$(this).attr('lat') +',' + $(this).attr('lon'));
+    //                }
+    //            });
+    //        }
+    //    });
+    //    $('#imgModal').modal('toggle');
+    //});
 
     $('.mmm-media').on('click', function () {
         if ($(this).attr('type').toLowerCase() == "image" || $(this).attr('type').toLowerCase() == "video") {
