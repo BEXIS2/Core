@@ -48,9 +48,11 @@
 
 [#218](https://github.com/BEXIS2/Core/issues/218) As a user I would like to see units in the downloaded excel file
 
+[#259](https://github.com/BEXIS2/Core/issues/259) PostgreSQL >9.6 Support - Creation of materialized view adjusted
+
 [#268](https://github.com/BEXIS2/Core/issues/268) Replace BExIS colors with CSS variables - Main CSS colours are replaced by CSS vars
 
-[#259](https://github.com/BEXIS2/Core/issues/259) PostgreSQL >9.6 Support - Creation of materialized view adjusted
+[#269](https://github.com/BEXIS2/Core/issues/269) As a user I would like to see the full name in tab dataset permission, instead the username
 
 [#274](https://github.com/BEXIS2/Core/issues/274) Long waiting times when loading & filtering the Subjects table in Feature permissions View
 
