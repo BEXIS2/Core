@@ -63,7 +63,7 @@ namespace BExIS.Web.Shell.Models
         public string Authenticator { get; set; }
 
         [Required]
-        [Display(Name = "User Name")]
+        [Display(Name = "Email or Username")]
         public string UserName { get; set; }
 
         [Required]
@@ -97,7 +97,7 @@ namespace BExIS.Web.Shell.Models
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "User Name")]
+        [Display(Name = "Username")]
         public string UserName { get; set; }
 
         [Required]
