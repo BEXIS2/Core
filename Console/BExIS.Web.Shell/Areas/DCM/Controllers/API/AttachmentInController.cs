@@ -38,6 +38,7 @@ using System.Web;
 using System.Xml;
 using System.Text.RegularExpressions;
 using BExIS.Utils.Route;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -154,6 +155,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         AddFileInContentDiscriptor(datasetVersion, fileName, description);
                     }
                 }
+
+                ////set modification
+                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                {
+                    Performer = userName,
+                    Comment = "Attachment",
+                    ActionType = AuditActionType.Edit
+                };
+
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
                 dm.CheckInDataset(dataset.Id, "upload dataset attachements via api", userName, ViewCreationBehavior.None);
             }

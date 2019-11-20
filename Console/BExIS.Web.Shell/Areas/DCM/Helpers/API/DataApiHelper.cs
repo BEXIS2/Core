@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
@@ -244,6 +245,14 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 if (FileHelper.FileExist(_filepath) && (datasetManager.IsDatasetCheckedOutFor(id, userName) || datasetManager.CheckOutDataset(id, userName)))
                 {
                     workingCopy = datasetManager.GetDatasetWorkingCopy(id);
+
+                    ////set modification
+                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = userName,
+                        Comment = "Data",
+                        ActionType = AuditActionType.Edit
+                    };
 
                     //schleife
                     int counter = 0;

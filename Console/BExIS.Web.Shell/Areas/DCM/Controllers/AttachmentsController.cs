@@ -15,6 +15,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -160,6 +161,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     file.SaveAs(destinationPath);
                     AddFileInContentDiscriptor(datasetVersion, fileName, description);
                 }
+
+                //set modification
+                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                {
+                    Performer = GetUsernameOrDefault(),
+                    Comment = "Attachment",
+                    ActionType = AuditActionType.Create
+                };
+
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
                 dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
             }

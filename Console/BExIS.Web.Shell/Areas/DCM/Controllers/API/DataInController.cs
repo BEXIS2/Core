@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using BExIS.Utils.Route;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -219,6 +220,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (datatuples.Count > 0)
                             {
+                                ////set modification
+                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                {
+                                    Performer = user.UserName,
+                                    Comment = "Data",
+                                    ActionType = AuditActionType.Edit
+                                };
+
                                 datasetManager.EditDatasetVersion(workingCopy, datatuples, null, null);
                             }
 
@@ -476,6 +485,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, variableIds, workingCopy, ref datatupleFromDatabaseIds);
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
+
+                            ////set modification
+                            workingCopy.ModificationInfo = new EntityAuditInfo()
+                            {
+                                Performer = user.UserName,
+                                Comment = "Data",
+                                ActionType = AuditActionType.Edit
+                            };
+                            datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
                             datasetManager.CheckInDataset(dataset.Id, "upload data via api", user.UserName);
 

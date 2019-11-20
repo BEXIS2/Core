@@ -23,6 +23,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -467,6 +468,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
+                                //set modification
+                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                {
+                                    Performer = GetUsernameOrDefault(),
+                                    Comment = "Data",
+                                    ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
+                                };
+
                                 setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
                             }
@@ -532,6 +541,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     SaveFileInContentDiscriptor(workingCopy);
                                 }
+
+                                //set modification
+                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                {
+                                    Performer = GetUsernameOrDefault(),
+                                    Comment = "File",
+                                    ActionType = AuditActionType.Edit
+                                };
+
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
 
                                 // ToDo: Get Comment from ui and users

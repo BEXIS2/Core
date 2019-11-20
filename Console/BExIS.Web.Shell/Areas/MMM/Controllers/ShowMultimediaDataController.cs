@@ -23,6 +23,7 @@ using System.Data;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Authorization;
 using Vaiona.Persistence.Api;
+using Vaiona.Entities.Common;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -172,12 +173,11 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 return File(response.GetResponseStream(), MimeMapping.GetMimeMapping(response.ResponseUri.Segments.LastOrDefault()), response.ResponseUri.Segments.LastOrDefault());
             }
-
         }
 
         public bool deleteFile(string path)
         {
-            path = Server.UrlDecode(path);           
+            path = Server.UrlDecode(path);
             {
                 EntityPermissionManager entityPermissionManager = null;
                 DatasetManager datasetManager = null;
@@ -210,7 +210,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                     workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
                                     {
                                         State = status
-                                };
+                                    };
                                 }
                                 else
                                 {
@@ -221,8 +221,16 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
                                 ContentDescriptor contentDescriptor = workingCopy.ContentDescriptors.Where(cd => cd.URI.Equals(path)).FirstOrDefault();
                                 datasetManager.DeleteContentDescriptor(contentDescriptor);
-                 
                             }
+
+                            //set modification
+                            workingCopy.ModificationInfo = new EntityAuditInfo()
+                            {
+                                Performer = HttpContext.User?.Identity?.Name,
+                                Comment = "File",
+                                ActionType = AuditActionType.Delete
+                            };
+
                             datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
                             // ToDo: Get Comment from ui and users
@@ -248,7 +256,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 {
                     entityPermissionManager.Dispose();
                 }
-            }          
+            }
         }
 
         public FileResult getFileFromZip(string path, string file)
@@ -267,7 +275,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
         public FileResult getFileStreamResult(string path)
         {
-
             path = Server.UrlDecode(path);
             if (FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, path)))
             {
@@ -307,9 +314,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 return new FileStreamResult(response.GetResponseStream(), MimeMapping.GetMimeMapping(response.ResponseUri.Segments.LastOrDefault()));
             }
-
         }
-
 
         public Dictionary<string, Dictionary<string, string>> getExif(Stream fileStream)
         {
@@ -419,6 +424,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
             return exif;
         }
+
         public FileInformation getFileInfo(ContentDescriptor contentDescriptor)
         {
             EntityPermissionManager entityPermissionManager = null;
@@ -433,7 +439,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     {
                         Name = contentDescriptor.Name,
                         Path = contentDescriptor.URI,
-
                     };
             }
             catch
@@ -556,7 +561,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 entityPermissionManager = new EntityPermissionManager();
                 datasetManager = new DatasetManager();
                 bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Read);
-                if(access)
+                if (access)
                     return getFilesByDataset(datasetManager.DatasetRepo.Get(datasetId), datasetManager, versionNo);
                 else
                     return null;
@@ -598,10 +603,11 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
             return fileInfos;
         }
+
         public ActionResult ImageView(string path)
         {
             path = Server.UrlDecode(path);
-            return PartialView("_imageView",getFileInfo(path));
+            return PartialView("_imageView", getFileInfo(path));
         }
 
         public ActionResult BundleView(string path)
@@ -656,7 +662,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
-        public ActionResult overlayBinding (string path, string Name)
+        public ActionResult overlayBinding(string path, string Name)
         {
             return PartialView("_bundleViewOverlay", getShapes(path, Name));
         }
@@ -718,7 +724,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 while (!parser.EndOfData)
                                 {
                                     string[] fields = parser.ReadFields();
-                                    if (nameIndex >= 0 && fields[nameIndex].ToLower() == imgName.ToLower()&& Convert.ToInt64(fields[columns.IndexOf("polygonId")]) != polygonId)
+                                    if (nameIndex >= 0 && fields[nameIndex].ToLower() == imgName.ToLower() && Convert.ToInt64(fields[columns.IndexOf("polygonId")]) != polygonId)
                                     {
                                         if (shape.Id > 0)
                                             shapes.Add(shape);
@@ -794,7 +800,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 List<string> columns = parser.ReadFields().ToList();
                                 Measurement measurement = new Measurement();
 
-
                                 while (!parser.EndOfData)
                                 {
                                     string[] fields = parser.ReadFields();
@@ -802,7 +807,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                     measurement = new Measurement();
                                     Int64.TryParse(fields[columns.IndexOf("obj")], out measurement.Id);
                                     measurement.Type = fields[columns.IndexOf("type")];
-                                    if(columns.IndexOf("length") >=0 && !String.IsNullOrEmpty(fields[columns.IndexOf("length")]))
+                                    if (columns.IndexOf("length") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("length")]))
                                     {
                                         Double.TryParse(fields[columns.IndexOf("length")], out measurement.Length);
                                         measurement.Length = Math.Round(measurement.Length, 2);
@@ -829,7 +834,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                         measurement.Circularity = Math.Round(measurement.Circularity, 2);
                                     }
 
-                                    if(columns.IndexOf("parent") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("parent")]))
+                                    if (columns.IndexOf("parent") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("parent")]))
                                     {
                                         Measurement parent = getParent(measurements, Convert.ToInt64(fields[columns.IndexOf("parent")]));
                                         parent.Children.Add(measurement);

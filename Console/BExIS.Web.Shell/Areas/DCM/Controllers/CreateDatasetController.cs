@@ -37,6 +37,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.Entities.Common;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
@@ -525,12 +526,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
 
                         //set status
-
-                        if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
-
-                        if (valid)
-                            workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
-                        else workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
+                        workingCopy = setStateInfo(workingCopy, valid);
+                        //set modifikation
+                        workingCopy = setModificationInfo(workingCopy, newDataset, GetUsernameOrDefault(), "Metadata");
 
                         title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
@@ -1169,6 +1167,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return tmp;
+        }
+
+        private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)
+        {
+            //StateInfo
+            if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+
+            if (valid)
+                workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();
+            else workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
+
+            return workingCopy;
+        }
+
+        private DatasetVersion setModificationInfo(DatasetVersion workingCopy, bool newDataset, string user, string comment)
+        {
+            // modifikation info
+            if (workingCopy.StateInfo == null) workingCopy.ModificationInfo = new EntityAuditInfo();
+
+            if (newDataset)
+                workingCopy.ModificationInfo.ActionType = AuditActionType.Create;
+            else
+                workingCopy.ModificationInfo.ActionType = AuditActionType.Edit;
+
+            //set performer
+            workingCopy.ModificationInfo.Performer = string.IsNullOrEmpty(user) ? "" : user;
+
+            //set comment
+            workingCopy.ModificationInfo.Comment = string.IsNullOrEmpty(comment) ? "" : comment;
+
+            //set time
+            workingCopy.ModificationInfo.Timestamp = DateTime.Now;
+
+            return workingCopy;
         }
 
         #endregion Helper
