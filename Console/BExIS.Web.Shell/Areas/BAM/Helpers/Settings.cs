@@ -9,7 +9,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
 {
     public class Settings
     {
-        private static String filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "settings.xml");
+        private static String filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "BAM.Settings.xml");
         private static Dictionary<string, object> settings = new Dictionary<string, object>();
 
         /// <summary>
