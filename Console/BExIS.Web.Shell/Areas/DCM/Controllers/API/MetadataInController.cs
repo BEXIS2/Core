@@ -169,7 +169,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
-                        datasetManager.CheckInDataset(id, "Metadata was submited via api.", user.Name, ViewCreationBehavior.None);
+                        datasetManager.CheckInDataset(id, "via api.", user.Name, ViewCreationBehavior.None);
                     }
 
                     // ToDo add Index update to this api

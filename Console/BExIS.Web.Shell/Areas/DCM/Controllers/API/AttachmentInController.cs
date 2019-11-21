@@ -136,6 +136,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (dm.IsDatasetCheckedOutFor(datasetId, userName) || dm.CheckOutDataset(datasetId, userName))
             {
                 DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+                StringBuilder files = new StringBuilder();
                 foreach (var httpContent in attachments)
                 {
                     var dataStream = await httpContent.ReadAsStreamAsync();
@@ -153,6 +154,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         fileStream.Close();
 
                         AddFileInContentDiscriptor(datasetVersion, fileName, description);
+
+                        if (files.Length > 0)) files.Append(", ");
+                        files.Append(fileName);
                     }
                 }
 
@@ -165,7 +169,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 };
 
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, "upload dataset attachements via api", userName, ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, "File/s :" + files.ToString() + " via api", userName, ViewCreationBehavior.None);
             }
         }
 

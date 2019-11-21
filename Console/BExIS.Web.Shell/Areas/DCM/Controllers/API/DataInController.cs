@@ -231,7 +231,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 datasetManager.EditDatasetVersion(workingCopy, datatuples, null, null);
                             }
 
-                            datasetManager.CheckInDataset(dataset.Id, "upload data via api", user.UserName);
+                            datasetManager.CheckInDataset(dataset.Id, "Upload " + data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
                             es.Send(MessageHelper.GetUpdateDatasetHeader(),
@@ -495,7 +495,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             };
                             datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
-                            datasetManager.CheckInDataset(dataset.Id, "upload data via api", user.UserName);
+                            datasetManager.CheckInDataset(dataset.Id, "Upload " + data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
                             es.Send(MessageHelper.GetUpdateDatasetHeader(),

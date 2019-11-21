@@ -305,7 +305,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                         }
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
-                    datasetManager.CheckInDataset(id, "upload data via api", userName);
+                    datasetManager.CheckInDataset(id, "via api", userName);
 
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);

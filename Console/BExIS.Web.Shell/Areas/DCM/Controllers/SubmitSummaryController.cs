@@ -230,6 +230,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         long datasetid = ds.Id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         title = xmlDatasetHelper.GetInformation(ds.Id, NameAttributeValues.title);
+
+                        int numberOfRows = 0;
+
                         try
                         {
                             //Stopwatch fullTime = Stopwatch.StartNew();
@@ -332,6 +335,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         }
                                     }
                                     Stream?.Close();
+
+                                    //count rows
+                                    numberOfRows += rows.Count();
                                 } while (rows.Count() > 0 && rows.Count() == packageSize);
                             }
 
@@ -418,6 +424,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 inputWasAltered = true;
                                             }
                                         }
+
+                                        //count rows
+                                        numberOfRows += rows.Count();
                                     } while ((rows.Count() > 0 && rows.Count() == packageSize) || inputWasAltered == true);
 
                                     totalTime.Stop();
@@ -484,7 +493,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             // ToDo: Get Comment from ui and users
                             MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
-                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
+                            dm.CheckInDataset(ds.Id, "upload " + numberOfRows + " rows.", GetUsernameOrDefault());
 
                             //send email
                             var es = new EmailService();
@@ -553,7 +562,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
 
                                 // ToDo: Get Comment from ui and users
-                                dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                                dm.CheckInDataset(ds.Id, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
                             }
                             catch (Exception ex)
                             {
@@ -571,7 +580,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (temp.Count <= 0)
                 {
-                    dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    dm.CheckInDataset(ds.Id, "check in, but no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
                 else
                 {

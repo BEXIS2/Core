@@ -470,6 +470,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     #region excel reader
 
                     int packageSize = 10000;
+                    int numberOfRows = 0;
                     //HACK ?
                     TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
 
@@ -565,7 +566,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             //After reading the rows, add them to the dataset
                             if (rows != null)
+                            {
                                 dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+                                numberOfRows += rows.Count();
+                            }
 
                             //Close the Stream so the next ExcelReader can open it again
                             Stream.Close();
@@ -592,7 +596,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                    dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
+                    dm.CheckInDataset(ds.Id, "Import " + numberOfRows + " rows.", GetUsernameOrDefault());
 
                     //Reindex search
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
