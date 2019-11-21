@@ -561,8 +561,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
 
+                                //filename
+                                string filename = "";
+                                if (TaskManager.Bus.ContainsKey(TaskManager.FILENAME))
+                                {
+                                    filename = TaskManager.Bus[TaskManager.FILENAME]?.ToString();
+                                }
+
                                 // ToDo: Get Comment from ui and users
-                                dm.CheckInDataset(ds.Id, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                                dm.CheckInDataset(ds.Id, "File: " + filename, GetUsernameOrDefault(), ViewCreationBehavior.None);
                             }
                             catch (Exception ex)
                             {
