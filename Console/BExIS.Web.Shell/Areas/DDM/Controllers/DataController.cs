@@ -1575,7 +1575,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             StringBuilder sb = new StringBuilder();
 
             // modifikation exist
-            if (d.ModificationInfo != null)
+            if (d.ModificationInfo != null ||
+                (!string.IsNullOrEmpty(d.ModificationInfo.Performer) && !string.IsNullOrEmpty(d.ModificationInfo.Comment)))
             {
                 sb.Append(d.ModificationInfo.Comment);
                 sb.Append(" - ");
