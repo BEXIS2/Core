@@ -8,19 +8,24 @@
 
 [#192](https://github.com/BEXIS2/Core/issues/192) Automatic entry of system data in the metadata that can not be changed by the user
 
-[#193](https://github.com/BEXIS2/Core/issues/193) Users want to link dataset or other entities to datasets
+[#193](https://github.com/BEXIS2/Core/issues/193) Users want to link dataset or other entities to datasets. White list [#374](https://github.com/BEXIS2/Core/issues/374) + Description for links [#372](https://github.com/BEXIS2/Core/issues/372)
 
 [#250](https://github.com/BEXIS2/Core/issues/250) extend the API functionalities by writing data in bexis 2
 
-[#260](https://github.com/BEXIS2/Core/issues/260) create a Dataset API
+[#260](https://github.com/BEXIS2/Core/issues/260) Dataset API
 
-[#261](https://github.com/BEXIS2/Core/issues/261) create a Attachment API
+[#261](https://github.com/BEXIS2/Core/issues/261) Attachment API
 		
 [#262](https://github.com/BEXIS2/Core/issues/262) extend the existing metadata API functionalities by writing metadata in bexis 2
 
 [#281](https://github.com/BEXIS2/Core/issues/281) Integrate Multimedia Module
 
 [#283](https://github.com/BEXIS2/Core/issues/283) Switching dataset versions in show dataset
+
+[#381](https://github.com/BEXIS2/Core/issues/381) Option to delete primary data - unstructured data
+
+[#402](https://github.com/BEXIS2/Core/issues/402) Allow email address alternativ to account name for login
+
 
 
 ### Enhancements
@@ -43,7 +48,11 @@
 
 [#218](https://github.com/BEXIS2/Core/issues/218) As a user I would like to see units in the downloaded excel file
 
-[#259](https://github.com/BEXIS2/Core/issues/259) PostgreSQL >9.6 Support
+[#259](https://github.com/BEXIS2/Core/issues/259) PostgreSQL >9.6 Support - Creation of materialized view adjusted
+
+[#268](https://github.com/BEXIS2/Core/issues/268) Replace BExIS colors with CSS variables - Main CSS colours are replaced by CSS vars
+
+[#269](https://github.com/BEXIS2/Core/issues/269) As a user I would like to see the full name in tab dataset permission, instead the username
 
 [#274](https://github.com/BEXIS2/Core/issues/274) Long waiting times when loading & filtering the Subjects table in Feature permissions View
 
@@ -61,7 +70,17 @@
 
 [#284](https://github.com/BEXIS2/Core/issues/284) Allow other entities to have their own details view.
 
-[#293](https://github.com/BEXIS2/Core/issues/293) Add id by xpath to each element in the edit form
+[#285](https://github.com/BEXIS2/Core/issues/285) Google detects registration mails as SPAM - revised registration mail
+
+[#392](https://github.com/BEXIS2/Core/issues/392) Title fields with line breaks can cause JS errors
+
+[#293](https://github.com/BEXIS2/Core/issues/293) Add "id by xpath" to each element in the edit form to have a persitent identifier
+
+[#309](https://github.com/BEXIS2/Core/issues/309) Mark datasets which have been saved with errors in the dashboard and metadata view
+
+[#395](https://github.com/BEXIS2/Core/issues/395) Allow custom help text on top for MetadataEditor
+
+
 
 ### Bugs
 
@@ -90,3 +109,21 @@
 [#288](https://github.com/BEXIS2/Core/issues/288) Public features not showing up in Menue
 
 [#289](https://github.com/BEXIS2/Core/issues/289) After Metadata change, the dataset view is stilll in the previews version
+
+[#319](https://github.com/BEXIS2/Core/issues/319) Open mapping tool - Button was hidden
+
+[#308](https://github.com/BEXIS2/Core/issues/308) Errors in select list does not disappear as the content is validated, but not replaced
+
+[#367](https://github.com/BEXIS2/Core/issues/367) Numeric fields - handle data type correct to set max/min
+
+[#376](https://github.com/BEXIS2/Core/issues/376) Format stored text in test field (Enter) - Line breaks are now shown and stored
+
+[#377](https://github.com/BEXIS2/Core/issues/377) User registration form: Do not check none displayed fields - add disabled for jQuery validation to ignore hidden fields
+
+[#378](https://github.com/BEXIS2/Core/issues/378) Cleanup Javascript code in profile view - unused code removed / missing code added
+
+[#400](https://github.com/BEXIS2/Core/issues/400) Length of documentation field (xsd) in database too short - varchar(250) changed to text 
+
+[#403](https://github.com/BEXIS2/Core/issues/403) User registration: Relationship disappaers during field validation
+
+[#403](https://github.com/BEXIS2/Core/issues/403) Title fields with line breaks can cause JS errors
