@@ -350,6 +350,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
             }
+            catch (Exception ex)
+            {
+                LoggerFactory.LogCustom("Error: " + ex.Message);
+            }
             finally
             {
                 dm.Dispose();
