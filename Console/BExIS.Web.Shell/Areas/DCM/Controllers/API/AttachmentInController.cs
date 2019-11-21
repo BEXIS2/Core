@@ -155,7 +155,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         AddFileInContentDiscriptor(datasetVersion, fileName, description);
 
-                        if (files.Length > 0)) files.Append(", ");
+                        if (files.Length > 0) files.Append(", ");
                         files.Append(fileName);
                     }
                 }
