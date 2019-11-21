@@ -353,6 +353,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             catch (Exception ex)
             {
                 LoggerFactory.LogCustom("Error: " + ex.Message);
+                return null;
             }
             finally
             {
