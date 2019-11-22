@@ -427,12 +427,10 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
         public FileInformation getFileInfo(ContentDescriptor contentDescriptor)
         {
-            EntityPermissionManager entityPermissionManager = null;
+            
             try
             {
-                entityPermissionManager = new EntityPermissionManager();
-                bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), contentDescriptor.DatasetVersion.Dataset.Id, RightType.Read);
-                if (contentDescriptor.Name.ToLower().Equals("unstructureddata") && access)
+                if (contentDescriptor.Name.ToLower().Equals("unstructureddata"))
                     return getFileInfo(contentDescriptor.URI);
                 else
                     return new FileInformation()
@@ -444,10 +442,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             catch
             {
                 return null;
-            }
-            finally
-            {
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -579,29 +573,40 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
         public List<FileInformation> getFilesByDataset(Dataset dataset, DatasetManager datasetManager, long versionId = 0)
         {
-            List<FileInformation> fileInfos = new List<FileInformation>();
-            if (dataset != null)
+            EntityPermissionManager entityPermissionManager = null;
+            try
             {
-                DatasetVersion datasetVersion = new DatasetVersion();
-                if (versionId > 0)
-                    datasetVersion = datasetManager.GetDatasetVersion(versionId);
-                else
-                    datasetVersion = datasetManager.GetDatasetLatestVersion(dataset);
-
-                if (datasetVersion != null)
+                List<FileInformation> fileInfos = new List<FileInformation>();
+                entityPermissionManager = new EntityPermissionManager();
+                bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), dataset.Id, RightType.Read);
+                if (dataset != null && access)
                 {
-                    List<ContentDescriptor> contentDescriptors = datasetVersion.ContentDescriptors.ToList();
+                    DatasetVersion datasetVersion = new DatasetVersion();
+                    if (versionId > 0)
+                        datasetVersion = datasetManager.GetDatasetVersion(versionId);
+                    else
+                        datasetVersion = datasetManager.GetDatasetLatestVersion(dataset);
 
-                    if (contentDescriptors.Count > 0)
+                    if (datasetVersion != null)
                     {
-                        foreach (ContentDescriptor cd in contentDescriptors)
+                        List<ContentDescriptor> contentDescriptors = datasetVersion.ContentDescriptors.ToList();
+
+                        if (contentDescriptors.Count > 0)
                         {
-                            fileInfos.Add(getFileInfo(cd));
+                            foreach (ContentDescriptor cd in contentDescriptors)
+                            {
+                                if (cd.Name.ToLower().Equals("unstructureddata"))
+                                    fileInfos.Add(getFileInfo(cd));
+                            }
                         }
                     }
                 }
+                return fileInfos;
             }
-            return fileInfos;
+            finally
+            {
+                entityPermissionManager.Dispose();
+            }
         }
 
         public ActionResult ImageView(string path)
