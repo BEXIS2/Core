@@ -65,7 +65,7 @@
       <column name="Name" index="idx_MetadataPackages_name"/>
     </property>
 
-    <property name="Description" type="string">
+    <property name="Description" type="StringClob">
       <column name="Description" />
     </property>
 

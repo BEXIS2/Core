@@ -90,12 +90,10 @@ $("#button_createEntityreference_cancel").click(function () {
 });
 
 function createEntityReference_OnSuccess(data) {
-
     console.log("on success");
     console.log(data);
 
-    if (data) {
-
+    if (data === true) {
         console.log("on success data = true");
 
         var id = $("#Selected_Id").val();
@@ -127,6 +125,6 @@ function reload(id, type, version) {
     })
 }
 
-function show_hide_help(){
+function show_hide_help() {
     $("#help_ref_type").toggle();
 }

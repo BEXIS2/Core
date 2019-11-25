@@ -15,7 +15,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public bool Import { get; set; }
         public bool SaveWithErrors { get; set; }
         public bool LatestVersion { get; set; }
-        public string JsPath { get; set; }
+        public string HeaderHelp { get; set; }
 
         public List<StepModelHelper> StepModelHelpers { get; set; }
         public Dictionary<string, ActionInfo> Actions { get; set; }
@@ -29,7 +29,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             Changed = false;
             Import = false;
             SaveWithErrors = true;
-            JsPath = "";
+            HeaderHelp = "";
 
             EditRight = false;
             EditAccessRight = false;

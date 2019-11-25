@@ -17,35 +17,41 @@
 
 <link href="@Url.Content("~/Areas/MMM/Stylesheets/MultimediaData.css")" rel="stylesheet" type="text/css" />
 <script src="@Url.Content("~/Areas/MMM/Scripts/isotope.pkgd.min.js")"></script>
-
-<table class="mmm-filter-table">
-    <tr>
-        <td class="mmm-filter">
-            <button id="showAll" class="mmm-filterbutton function left active" value="*">Show All</button>
-            <button class="mmm-filterbutton function middle" value=".video">Video</button>
-            <button class="mmm-filterbutton function middle" value=".image">Image</button>
-            <button class="mmm-filterbutton function middle" value=".audio">Audio</button>
-            <button class="mmm-filterbutton function right" value="*,.video,.audio,.image">Other</button>
-            <button class="mmm-layoutbutton function hidden">Layout</button>
-        </td>
-        @*<td>
-            <button class="function" id="mapView">Map View</button>
-        </td>*@
-        <td class="mmm-sortdropdown">
-            Sort by
-            <select class="bx-dropdown mmm-dropdown">
-                <option value="">no Sorting</option>
-                <option class="type" value="type,true">Type &#xf106;</option>
-                <option class="type" value="type,false">Type &#xf107;</option>
-                <option class="name" value="name,true">Name &#xf106;</option>
-                <option class="name" value="name,false">Name &#xf107;</option>
-                <option class="size" value="size,true">Size &#xf106;</option>
-                <option class="size" value="size,false">Size &#xf107;</option>
-            </select>
-            <div class="t-arrow-down mmm-dropdownArrow"></div>
-        </td>
-    </tr>
-</table>
+@if (Model.Count > 0)
+{
+    <table class="mmm-filter-table">
+        <tr>
+            <td class="mmm-filter">
+                <button id="showAll" class="mmm-filterbutton function left active" value="*">Show All</button>
+                <button class="mmm-filterbutton function middle" value=".video">Video</button>
+                <button class="mmm-filterbutton function middle" value=".image">Image</button>
+                <button class="mmm-filterbutton function middle" value=".audio">Audio</button>
+                <button class="mmm-filterbutton function right" value="*,.video,.audio,.image">Other</button>
+                <button class="mmm-layoutbutton function hidden">Layout</button>
+            </td>
+            @*<td>
+                <button class="function" id="mapView">Map View</button>
+            </td>*@
+            <td class="mmm-sortdropdown">
+                Sort by
+                <select class="bx-dropdown mmm-dropdown">
+                    <option value="">no Sorting</option>
+                    <option class="type" value="type,true">Type &#xf106;</option>
+                    <option class="type" value="type,false">Type &#xf107;</option>
+                    <option class="name" value="name,true">Name &#xf106;</option>
+                    <option class="name" value="name,false">Name &#xf107;</option>
+                    <option class="size" value="size,true">Size &#xf106;</option>
+                    <option class="size" value="size,false">Size &#xf107;</option>
+                </select>
+                <div class="t-arrow-down mmm-dropdownArrow"></div>
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+    <span>No data uploaded.</span>
+}
 
 <div class="mmm-Container">
     @foreach (FileInformation fi in Model)
@@ -310,7 +316,7 @@
         var parameters = encodeURI('?path=' + mediaContainer.attr('value'));
         $.get('@Url.Action("deleteFile", "ShowMultimediaData")' + parameters, function (data) {
             console.log(data);
-            if (data == true) {
+            if (data.toLowerCase() == 'true') {
                 mediaContainer.closest('.mmm-mediaContainer').remove();
             }
             else {
@@ -336,23 +342,23 @@
         });
     });
 
-    $('#mapView').on('click', function () {
-        var path = '';
-        $('.mmm-Container .mmm-mediaContainer').each(function () {
-            if ($(this).find('.mmm-media').attr('type') == 'image') {
-                path = $(this).find('.mmm-media').attr('path');
-                $(this).find('.mmm-mediaInfo td').each(function () {
-                    if($(this).attr('id') == 'location') {
-                        console.log(path + ',' +$(this).attr('lat') +',' + $(this).attr('lon'));
-                    }
-                });
-            }
-        });
-        $('#imgModal').modal('toggle');
-    });
+    //$('#mapView').on('click', function () {
+    //    var path = '';
+    //    $('.mmm-Container .mmm-mediaContainer').each(function () {
+    //        if ($(this).find('.mmm-media').attr('type') == 'image') {
+    //            path = $(this).find('.mmm-media').attr('path');
+    //            $(this).find('.mmm-mediaInfo td').each(function () {
+    //                if($(this).attr('id') == 'location') {
+    //                    console.log(path + ',' +$(this).attr('lat') +',' + $(this).attr('lon'));
+    //                }
+    //            });
+    //        }
+    //    });
+    //    $('#imgModal').modal('toggle');
+    //});
 
     $('.mmm-media').on('click', function () {
-        if ($(this).attr('type').toLowerCase() == "image" || $(this).attr('type').toLowerCase() == "video") {
+        if ($(this).attr('type').toLowerCase() == "image") { //|| $(this).attr('type').toLowerCase() == "video") {
             openImg($(this).attr('path'));
         }
         else if ($(this).attr('type').toLowerCase() == "bundle") {

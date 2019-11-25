@@ -10,6 +10,7 @@ using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Security.Entities.Requests;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -57,10 +58,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         Id = m.Id,
                         RequestId = m.Request.Id,
-                        Rights = m.Request.Rights,
-                        RightsAsText = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                         Status = m.Status,
-                        StatusAsText = m.Status.ToString(),
+                        StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
                         Applicant = m.Request.Applicant.Name,
@@ -146,9 +146,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     Id = m.Key,
                     InstanceId = m.Key,
                     Title = entityStore.GetTitleById(m.Key),
-                    Rights = m.Rights,
-                    RightsAsText = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
-                    RequestStatus = m.Status,
+                    Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                    RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
                     Intention = m.Intention
                 });
 

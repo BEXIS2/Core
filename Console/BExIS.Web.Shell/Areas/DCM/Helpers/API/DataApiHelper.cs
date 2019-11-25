@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
@@ -245,6 +246,14 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 {
                     workingCopy = datasetManager.GetDatasetWorkingCopy(id);
 
+                    ////set modification
+                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = userName,
+                        Comment = "Data",
+                        ActionType = AuditActionType.Edit
+                    };
+
                     //schleife
                     int counter = 0;
                     bool inputWasAltered = false;
@@ -296,7 +305,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                         }
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
-                    datasetManager.CheckInDataset(id, "upload data via api", userName);
+                    datasetManager.CheckInDataset(id, "via api", userName);
 
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);

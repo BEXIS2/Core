@@ -8,10 +8,8 @@ namespace BExIS.Security.Services.Tests.Subjects
     public class GroupManagerTests
     {
         [OneTimeSetUp]
-
         public void OneTimeSetUp()
         {
-
         }
 
         [SetUp]
@@ -29,7 +27,6 @@ namespace BExIS.Security.Services.Tests.Subjects
         {
         }
 
-        [Test()]
         public void CreateAsync_GroupIsNull_ReturnZero()
         {
             //Arrange

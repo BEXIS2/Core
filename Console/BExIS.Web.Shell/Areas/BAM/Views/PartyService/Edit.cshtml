@@ -166,4 +166,22 @@
         loadCustomAttributes();
     }
 
+     function validateRelationships()
+    {
+        var valid=true;
+        if(@Model.Id != 0)
+        {
+            $.post('/BAM/Party/ValidateRelationships',
+            { partyId: @Model.Id },
+            function(response) {
+                if(response!=""){
+                    valid=false;
+                    //  $("#divSubmitButtons").hide();
+                }
+                $("#errorsMsgSpan").html(""+response+"");
+            });
+        }
+        return valid;
+    }
+
 </script>

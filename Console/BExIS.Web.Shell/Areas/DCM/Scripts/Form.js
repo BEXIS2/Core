@@ -814,7 +814,7 @@ function showHideClick(e) {
     var id = parentId + "_" + number + "_Container";
     var buttonId = parentId + "_" + number + "_ButtonView";
     $('#' + id).toggle();
-    $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
+    $('#' + buttonId).toggleClass("fa-angle-double-down fa-angle-double-right");
     bindMinimap(true);
 }
 

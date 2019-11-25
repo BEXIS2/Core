@@ -129,8 +129,7 @@
                 {
                     // Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11 check if upper boundary is set to default value (1.7976931348623157E+308) to exclude from rule for textareas which requires an active set maximum length
                     if (Model.DataType.ToLower().Equals("text") || 
-                        (Model.UpperBoundary > 256 &&  !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) || 
-                        Model.UpperBoundary == 0 ||
+                        (Model.UpperBoundary > 256 &&  !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) ||
                         (Model.DataType.ToLower().Equals("string") && 
                          Model.Value != null && 
                          Model.Value.ToString().Length >= 60
@@ -173,11 +172,8 @@
                             }
                             else
                             {
-                                <div class="bx-metadataForm-textArea-display">
-                                @if (Model.Value != null)
-                                {
-                                    @Html.DisplayWithLinksFor(m => m.Value)
-                                }
+                                //leave the below code in one line to avoid a leading emtpy line
+                                <div class="bx-metadataForm-textArea-display">@if (Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}
                                 </div>
                             }
                         }
@@ -187,7 +183,7 @@
                     }
 
                     if (Model.DataType.ToLower().Equals("string") && 
-                        (Model.UpperBoundary < 256 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) && Model.UpperBoundary != 0 &&
+                        (Model.UpperBoundary < 256 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11))  &&
                         ((Model.Value != null && Model.Value.ToString().Length < 60) ||
                         Model.Value == null))
                     {                        
@@ -423,7 +419,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(Model.Discription))
                             {
-                                <button type="button" title="@Html.Raw(Model.Discription)" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
+                                <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
                             }
 
                         </td>

@@ -39,6 +39,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using System.Text;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -295,7 +296,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
-                    
+
                     if (dsv.StateInfo != null)
                     {
                         isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
@@ -394,6 +395,45 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return Json(false);
         }
+
+        #region metadata external sources
+
+        // <summary>Retrieve the content of a JavaScript file, which is stored in the data folder, which is not accessible from the IIS. The content of the
+        // JavaScript file is meant to manipulate the metadata edit form and view (e.g.add disabled fields, set default values, remove or add additional UI elements)
+        // based on special project needs.The files are attached to the MetadataStructure id. Files to be included have to be located under the
+        // folder "[DataFolder]/]MetadataStructure"/[id]/ext.js. If no file is deposited an empty file is created and returned.</summary>
+        public FileResult GetFile(long id = -1, long metadataStructureId = -1)
+        {
+            DatasetManager dm = null;
+            try
+            {
+                dm = new DatasetManager();
+
+                //use dataset ID instead of metdataStructureId
+                if (metadataStructureId == -1)
+                {
+                    metadataStructureId = dm.DatasetRepo.Get(id).MetadataStructure.Id;
+                }
+
+                string filename = "ext.js";
+                string path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", metadataStructureId.ToString(), filename);
+
+                if (!FileHelper.FileExist(path))
+                {
+                    // Create new folder and empty file if not exists
+                    Directory.CreateDirectory(Path.Combine(AppConfiguration.DataPath, "MetadataStructures"));
+                    System.IO.File.Create(Path.Combine(AppConfiguration.DataPath, "MetadataStructures", filename)).Dispose();
+                    path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", filename); // set path to empty file location
+                }
+                return File(path, MimeMapping.GetMimeMapping(filename), filename);
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+        #endregion metadata external sources
 
         #region metadata
 
@@ -1522,12 +1562,42 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             dsvs.ForEach(d => tmp.Add(
                 new SelectListItem()
                 {
-                    Text = (dsvs.IndexOf(d) + 1) + " (" + d.Timestamp.ToString("dd.MM.yyyy HH:mm") + "): " + d.ChangeDescription,
+                    Text = (dsvs.IndexOf(d) + 1) + " (" + d.Timestamp.ToString("dd.MM.yyyy HH:mm") + ") " + getVersionInfo(d),
                     Value = "" + (dsvs.IndexOf(d) + 1)
                 }
                 ));
 
             return new SelectList(tmp, "Value", "Text");
+        }
+
+        private string getVersionInfo(DatasetVersion d)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // modifikation exist
+            if (d.ModificationInfo != null ||
+                (!string.IsNullOrEmpty(d.ModificationInfo.Performer) && !string.IsNullOrEmpty(d.ModificationInfo.Comment)))
+            {
+                sb.Append(d.ModificationInfo.Comment);
+                sb.Append(" - ");
+                sb.Append(d.ModificationInfo.ActionType);
+                sb.Append(" - ");
+                sb.Append(d.ModificationInfo.Performer);
+            }
+
+            // both exits - needs seperator
+            if (d.ModificationInfo != null && !string.IsNullOrEmpty(d.ChangeDescription))
+            {
+                sb.Append(" : ");
+            }
+
+            //changedescription is not null or empty
+            if (!string.IsNullOrEmpty(d.ChangeDescription))
+            {
+                sb.Append(d.ChangeDescription);
+            }
+
+            return sb.ToString();
         }
 
         public string GetUsernameOrDefault()

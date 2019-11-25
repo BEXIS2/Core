@@ -327,6 +327,11 @@ namespace BExIS.Security.Services.Authorization
                 if (feature == null && subject != null)
                     return true;
 
+                // operation exist but the features is null -> operation is public
+                // subject = null if no user is logged in
+                if (feature == null && subject == null)
+                    return true;
+
                 return false;
             }
         }

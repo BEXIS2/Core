@@ -25,6 +25,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.Entities.Common;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
@@ -35,7 +36,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private EasyUploadTaskManager TaskManager;
         private FileStream Stream;
-        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         private static IDictionary<Guid, int> tasks = new Dictionary<Guid, int>();
 
@@ -75,7 +76,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                 {
-
                     long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                     model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
                     msm.Dispose();
@@ -123,7 +123,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             model.NumberOfData += (areaDataValues[2]) - (areaDataValues[0]) + 1;
                         }
                     }
-
                 }
 
                 return PartialView("EasyUploadSummary", model);
@@ -140,17 +139,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             MetadataStructureManager msm = new MetadataStructureManager();
             try
             {
-
                 TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
                 EasyUploadSummaryModel model = new EasyUploadSummaryModel();
 
                 model.StepInfo = TaskManager.Current();
                 model.ErrorList = FinishUpload(TaskManager);
 
-
                 if (model.ErrorList.Count > 0)
                 {
                     #region Populate model with data from the TaskManager
+
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
                     {
                         model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
@@ -158,7 +156,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                     {
-
                         long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
                         model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
                     }
@@ -205,12 +202,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
                             }
                         }
-
                     }
 
-                    #endregion
-                    return PartialView("EasyUploadSummary", model);
+                    #endregion Populate model with data from the TaskManager
 
+                    return PartialView("EasyUploadSummary", model);
                 }
                 else
                 {
@@ -239,7 +235,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
                 {
-
                     // initialize all necessary manager
 
                     DataTuple[] rows = null;
@@ -280,7 +275,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         if (!foundReusableDataStructure)
                         {
-                            //For now a datastructure is considered an exact match if it contains variables with 
+                            //For now a datastructure is considered an exact match if it contains variables with
                             //the same names (labels), datatypes and units in the correct order
                             List<Variable> variablesOfExistingStructure = existingStructure.Variables.ToList();
                             foundReusableDataStructure = true;
@@ -365,7 +360,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.Bus.Add(EasyUploadTaskManager.CURRENTPACKAGE, 0);
                     }
 
-                    #endregion
+                    #endregion Progress Information
 
                     if (!foundReusableDataStructure)
                     {
@@ -425,7 +420,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         sds.Name = "generated import structure " + timestamp;
                         sds.Description = "automatically generated structured data structure by user " + GetUsernameOrDefault() + " for file " + title + " on " + timestamp;
 
-                        #endregion
+                        #endregion Set Variables and information for new DataStructure
                     }
 
                     Dataset ds = null;
@@ -454,8 +449,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dm.EditDatasetVersion(dsv, null, null, null);
                     }
 
-
                     #region security
+
                     // add security
                     if (GetUsernameOrDefault() != "DEFAULT")
                     {
@@ -469,12 +464,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
                         }
                     }
-                    #endregion security
 
+                    #endregion security
 
                     #region excel reader
 
                     int packageSize = 10000;
+                    int numberOfRows = 0;
                     //HACK ?
                     TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
 
@@ -509,9 +505,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         case "LeftRight":
                             orientation = Orientation.rowwise;
                             break;
+
                         case "Matrix":
                             //orientation = Orientation.matrix;
                             break;
+
                         default:
                             orientation = Orientation.columnwise;
                             break;
@@ -532,7 +530,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         int currentBatchStartRow = areaDataValues[0] + 1;
                         while (currentBatchStartRow <= areaDataValues[2] + 1) //While the end of the current data area has not yet been reached
                         {
-
                             //End row is start row plus batch size
                             int currentBatchEndRow = currentBatchStartRow + batchSize;
 
@@ -569,7 +566,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             //After reading the rows, add them to the dataset
                             if (rows != null)
+                            {
                                 dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+                                numberOfRows += rows.Count();
+                            }
 
                             //Close the Stream so the next ExcelReader can open it again
                             Stream.Close();
@@ -582,18 +582,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //Next batch starts after the current one
                             currentBatchStartRow = currentBatchEndRow + 1;
                         }
-
                     }
 
-                    #endregion
+                    #endregion excel reader
 
+                    //set modification
+                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = GetUsernameOrDefault(),
+                        Comment = "Data",
+                        ActionType = AuditActionType.Create
+                    };
 
-                    dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
+                    dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                    dm.CheckInDataset(ds.Id, "Import " + numberOfRows + " rows.", GetUsernameOrDefault());
 
                     //Reindex search
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                     {
-
                         this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
                     }
 
@@ -636,6 +643,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
          * Removes whitespaces at the beginning and end of the string
          * and limits the string to 255 characters
          * */
+
         private string TrimAndLimitString(string str, int limit = 255)
         {
             if (str != "" && str != null)
@@ -654,7 +662,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             DataTypeManager dtm = new DataTypeManager();
 
-
             try
             {
                 const int maxErrorsPerColumn = 20;
@@ -666,7 +673,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<Error> ErrorList = new List<Error>();
                 List<RowModel> Rows = (List<RowModel>)TaskManager.Bus[EasyUploadTaskManager.ROWS];
                 RowModel[] MappedRowsArray = Rows.ToArray();
-
 
                 List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                 List<int[]> IntDataAreaList = new List<int[]>();
@@ -695,7 +701,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             datatype = dtm.Repo.Get(mappedHeader.SelectedDataType.DataTypeId);
 
                             string datatypeName = datatype.SystemType;
-
 
                             DataTypeCheck dtc;
                             double DummyValue = 0;
@@ -739,7 +744,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-
-        #endregion
+        #endregion private methods
     }
 }

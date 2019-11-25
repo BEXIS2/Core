@@ -1,0 +1,4 @@
+ALTER TABLE metadataattributeusages ALTER COLUMN description TYPE text;
+ALTER TABLE MetadataNestedAttributeUsages ALTER COLUMN description TYPE text;
+ALTER TABLE MetadataPackageUsages ALTER COLUMN description TYPE text;
+ALTER TABLE MetadataPackages ALTER COLUMN description TYPE text;

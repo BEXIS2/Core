@@ -195,10 +195,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
-            //Add JavaScript file
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
             {
-                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
             }
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.LOCKED))
@@ -206,6 +212,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["Locked"] = (bool)TaskManager.Bus[CreateTaskmanager.LOCKED];
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -354,12 +361,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
-            //Add JavaScript file
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
             {
-                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
             }
 
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+            }
+
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -590,10 +604,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
-            //Add JavaScript file
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
             {
-                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
             }
 
             Model.Created = created;
@@ -610,6 +630,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 Model.DatasetTitle = "No Title available.";
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -690,13 +711,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
                 }
 
-                //Add JavaScript file
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+                //Replace the title of the info box on top
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
                 {
-                    Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
                 }
+
+                //Replace the description in the info box on top
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+                {
+                    Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+                }
+
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return View("MetadataEditor", Model);
         }
 
