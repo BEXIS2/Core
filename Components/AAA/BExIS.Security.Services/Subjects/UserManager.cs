@@ -98,7 +98,13 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task CreateAsync(User user)
         {
-            if (string.IsNullOrEmpty(user.Name))
+            if (user == null)
+                return Task.FromResult(0);
+
+            if (string.IsNullOrEmpty(user.UserName))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(user.UserName) != null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
@@ -171,6 +177,8 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task<User> FindByNameAsync(string userName)
         {
+            userName = userName.Trim();
+
             using (var uow = this.GetUnitOfWork())
             {
                 var userRepository = uow.GetRepository<User>();
@@ -227,13 +235,22 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Task UpdateAsync(User entity)
+        public Task UpdateAsync(User user)
         {
+            if (user == null)
+                return Task.FromResult(0);
+
+            if (string.IsNullOrEmpty(user.UserName))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(user.UserName) != null)
+                return Task.FromResult(0);
+
             using (var uow = this.GetUnitOfWork())
             {
                 var repo = uow.GetRepository<User>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
+                repo.Merge(user);
+                var merged = repo.Get(user.Id);
                 repo.Put(merged);
                 uow.Commit();
             }

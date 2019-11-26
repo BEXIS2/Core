@@ -180,7 +180,7 @@
 			},
 			success: function (result) {
 				if (result) {
-					window.top.location = "/ddm/Data/Show/" + id;
+					window.open("/ddm/Data/Show/" + id, "_blank");
 				} else {
 					
 					alert("Dataset is locked. Please try again later.");
