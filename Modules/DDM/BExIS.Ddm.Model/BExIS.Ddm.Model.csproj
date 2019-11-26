@@ -62,10 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchComponent.cs" />
-    <Compile Include="SearchCriteria.cs" />
-    <Compile Include="SearchModel.cs" />
-    <Compile Include="SearchResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

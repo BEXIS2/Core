@@ -70,7 +70,7 @@
         extends="" />
 
     <Export tag="internalApi" id="freeTextSearch"
-            title="Free Text Search" description="free Text Search" icon=""
+            title="Free Text Search" description="free Text Search" icon="" 
             controller="SearchIndex" action="Get"
             extends="" />
 

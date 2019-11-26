@@ -10,7 +10,6 @@
 @{  string value = "";
     int i = 0;
 
-    if (i == 0) { i = -1; }
 
     string controller = Session["Controller"].ToString();
 }
@@ -26,30 +25,19 @@
    value = Model.DefaultValue;
 }
     
- 
-
-@foreach (string s in @Model.Values)
-{
-    if (s != Model.DefaultValue && string.IsNullOrWhiteSpace(s))
-    {
-
-        if (s != value)
-        {
-            i++;
-        }
-        else { break; }
-    }
-}
-
 
 
 @(Html.Telerik().DropDownList()
-             .Name(Model.DataSourceKey)
-             .SelectedIndex(i)
-             .BindTo(new SelectList(Model.Values))
-            .ClientEvents(events => events
-            .OnChange("onChange"))
+                 .Name(Model.DataSourceKey)
+                 .Placeholder("Select, please")
+                 .SelectedIndex(i)
+                 .BindTo(new SelectList(Model.Values))
+                .ClientEvents(events => events
+                .OnChange("onChange"))
 )
+
+
+
 </div>
 <script type="text/javascript">
     function onChange(e) {
