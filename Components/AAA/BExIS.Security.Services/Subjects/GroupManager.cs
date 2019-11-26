@@ -86,7 +86,13 @@ namespace BExIS.Security.Services.Subjects
 
         public Task CreateAsync(Group role)
         {
+            if (role == null)
+                return Task.FromResult(0);
+
             if (string.IsNullOrEmpty(role.Name))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(role.Name) != null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
@@ -127,6 +133,8 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<Group> FindByNameAsync(string roleName)
         {
+            roleName = roleName.Trim();
+
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();
@@ -136,6 +144,15 @@ namespace BExIS.Security.Services.Subjects
 
         public Task UpdateAsync(Group role)
         {
+            if (role == null)
+                return Task.FromResult(0);
+
+            if (string.IsNullOrEmpty(role.Name))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(role.Name) != null)
+                return Task.FromResult(0);
+
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();
