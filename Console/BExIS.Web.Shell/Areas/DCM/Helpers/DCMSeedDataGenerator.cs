@@ -147,7 +147,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
-                operationManager.Create("DCM", "EntityReference", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
@@ -164,9 +163,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitSummary", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitValidation", "*", DatasetUploadFeature);
-
-                //Attachments
-                operationManager.Create("DCM", "Attachments", "*", DatasetUploadFeature);
 
                 //Load files to server
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
@@ -204,7 +200,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region public available
 
+                //because of reuse in ddm this controller must be public
+                // but the funktions should be secured
                 operationManager.Create("DCM", "Form", "*");
+                operationManager.Create("DCM", "EntityReference", "*");
+                //Attachments
+                operationManager.Create("DCM", "Attachments", "*", DatasetUploadFeature);
 
                 #endregion public available
 

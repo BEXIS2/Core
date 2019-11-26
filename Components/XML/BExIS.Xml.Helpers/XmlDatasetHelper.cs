@@ -229,7 +229,7 @@ namespace BExIS.Xml.Helpers
 
                 IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), queryDic, xDoc);
 
-                string value = temp.First().Attribute(returnType.ToString()).Value;
+                string value = temp?.First().Attribute(returnType.ToString()).Value;
 
                 return value;
             }

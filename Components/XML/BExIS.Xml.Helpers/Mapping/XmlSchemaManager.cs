@@ -2006,10 +2006,10 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                 }
 
-                if (description.Length > 250)
-                {
-                    description = description.Substring(0, 250);
-                }
+               // if (description.Length > 250)
+               // {
+               //     description = description.Substring(0, 250);
+               // }
             }
 
             return description;

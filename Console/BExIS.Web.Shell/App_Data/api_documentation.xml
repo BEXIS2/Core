@@ -517,6 +517,36 @@
         }
       </returns>
     </member>
+    <member name="T:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController">
+      <summary>
+        This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+      </summary>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get">
+      <summary>
+        With the Get function you get an overview of the exiting datasets and there attachments.
+      </summary>
+      <remarks>
+        With the Get function you get an overview of the exiting datasets and there attachments.
+      </remarks>
+      <returns>List of ApiDatasetAttachmentsModel</returns>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get(System.Int32)">
+      <summary>
+        With the Get function you get an overview of one specific dataset and there attachments.
+      </summary>
+      <remarks>
+        With the Get function you get an overview of one specific dataset and there attachments.
+      </remarks>
+      <returns>ApiDatasetAttachmentsModel</returns>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get(System.Int32,System.Int64)">
+      <summary>
+        This Get function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
+      </summary>
+      <param name="id">Dataset Id</param>
+      <returns>Xml Document</returns>
+    </member>
     <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportController.GetZipOfDatasetVersion(System.Int64,System.String)">
       <summary>
       </summary>
@@ -565,6 +595,8 @@
         In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
       </summary>
       <param name="id">Dataset Id</param>
+      <param name="header">Is a comman separated list of variable names that determines which variables of the dataset. e.g: Var1,Var2,var3</param>
+      <param name="filter">is a logical expression that filters the tuples of the chosen dataset. e.g. : Var1='Value'</param>
       <returns> data from the latest version of a dataset</returns>
       <remarks>
         The action accepts the following additional parameters via the query string

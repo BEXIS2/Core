@@ -10,6 +10,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
 {
     public class ReferencesModel
     {
+        public bool HasEditRights { get; set; }
         public SimpleSourceReferenceModel Selected { get; set; }
 
         public List<ReferenceModel> SourceReferences { get; set; }
@@ -20,6 +21,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
             Selected = new SimpleSourceReferenceModel();
             SourceReferences = new List<ReferenceModel>();
             TargetReferences = new List<ReferenceModel>();
+            HasEditRights = false;
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -50,6 +51,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Load Metadata formular actions
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult EditMetadata(long datasetId, bool locked = false, bool created = false)
         {
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });
@@ -193,15 +195,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+            }
+
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.LOCKED))
             {
                 ViewData["Locked"] = (bool)TaskManager.Bus[CreateTaskmanager.LOCKED];
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true)
+        public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true, string isValid = "yes")
         {
             var loadFromExternal = true;
             long metadataStructureId = -1;
@@ -214,6 +229,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
             ViewData["Locked"] = true;
             ViewData["ShowOptional"] = false;
+            ViewData["isValid"] = isValid;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null || resetTaskManager)
@@ -345,6 +361,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+            }
+
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -575,6 +604,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
+            {
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+            }
+
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
@@ -589,6 +630,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 Model.DatasetTitle = "No Title available.";
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -668,8 +710,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
                 }
+
+                //Replace the title of the info box on top
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
+                {
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+                }
+
+                //Replace the description in the info box on top
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+                {
+                    Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+                }
+
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return View("MetadataEditor", Model);
         }
 
@@ -1201,7 +1257,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeView", stepModelHelper);
         }
 
-        public ActionResult UpdateComplexUsageWithEntity(int stepId, int number, int inputattrid, int inputAttrNumber, long entityId, string value)
+        public ActionResult UpdateComplexUsageWithEntity(int stepId, int number, int inputattrid, int inputAttrNumber, long entityId, long entityTypeId, string value)
         {
             ViewData["ShowOptional"] = true;
 
@@ -1225,7 +1281,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         attrModel.Value = MappingUtils.GetAllMatchesInEntities(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage, value).Where(e => e.EntityId.Equals(entityId)).FirstOrDefault().Value;
                         attrModel.Locked = false;
                         int version = 0;
-                        long entityTypeId = 0;
 
                         // if an enity mapping exists, the question is whether the entity has a version or not. The url created may have to be created with version.
                         // Get version of a entity with the entity store
@@ -1234,13 +1289,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         try
                         {
-                            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
+                            if (entityTypeId > 0)
                             {
-                                string entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
-
                                 EntityManager entityManager = new EntityManager();
-                                Entity entity = entityManager.Entities.ToList().FirstOrDefault(e => e.EntityType.FullName.Equals(entityClassPath));
-                                entityTypeId = entity.Id;
+                                Entity entity = entityManager.Entities.FirstOrDefault(e => e.Id.Equals(entityTypeId));
 
                                 if (entity != null)
                                 {
@@ -2334,7 +2386,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 y = MappingUtils.GetAllMatchesInEntities(id, LinkElementType.MetadataNestedAttributeUsage, text);
 
-                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + ")" });
+                var tmp = y.Select(e => new SelectListItem() { Text = e.Value + " (" + e.EntityId + "_" + e.EntityTypeId + ")", Value = e.EntityTypeId.ToString() });
+
+                tmp.Distinct();
 
                 return new JsonResult
                 {
@@ -3121,9 +3175,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 long id = 0;
                                 int version = 0;
-                                string idAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid")).Value;
-                                string versionAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityversion")).Value;
-                                if (Int64.TryParse(idAsString, out id) && Int32.TryParse(versionAsString, out version))
+                                string idAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid"))?.Value;
+                                string versionAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("entityversion"))?.Value;
+
+                                if (Int64.TryParse(idAsString, out id) &&
+                                    Int32.TryParse(versionAsString, out version))
                                 {
                                     string server = this.Request.Url.GetLeftPart(UriPartial.Authority);
                                     string url = server + "/DDM/Data/Show/" + id.ToString() + "?version=" + version;

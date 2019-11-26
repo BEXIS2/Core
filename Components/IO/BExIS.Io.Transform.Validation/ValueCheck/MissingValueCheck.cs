@@ -14,6 +14,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         private ValueType appliedTo = new ValueType();
         private string name = "";
         private string dataType = "";
+        private Dictionary<string, string> missingValues = new Dictionary<string, string>();
 
         #endregion private
 
@@ -54,13 +55,11 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
         #endregion get
 
-        public IEnumerable<MissingValue> MissingValues { get; set; }
-
         public object Execute(string value, int row)
         {
-            if (MissingValues.Any(m => m.DisplayName.Equals(value)))
+            if (missingValues.ContainsKey(value))
             {
-                return MissingValues.Where(m => m.DisplayName.Equals(value)).FirstOrDefault().Placeholder;
+                return missingValues[value];
             }
 
             return null;
@@ -71,7 +70,15 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
             this.appliedTo = ValueType.All;
             this.name = name;
             this.dataType = dataType;
-            this.MissingValues = missingValues;
+            this.missingValues = new Dictionary<string, string>();
+
+            if (missingValues != null)
+            {
+                foreach (var missingValue in missingValues)
+                {
+                    this.missingValues.Add(missingValue.DisplayName, missingValue.Placeholder);
+                }
+            }
         }
     }
 }

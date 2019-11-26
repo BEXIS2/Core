@@ -43,9 +43,9 @@
     {
         <div id="view-warning-container">
 
-            <div id="view-warning" class="alert alert-danger " role="alert" style="width: 100%;">
+            <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
                 <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;"onclick="selectVersion(@Model.Id, @Model.LatestVersion)">here</span> to change to the latest version.
+                Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;"onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
             </div>
         </div>
     }
@@ -134,7 +134,7 @@
 
                                          tabs.Add()
                                             .Text("Metadata")
-                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
+                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion, isValid = ViewBag.isValid })
                                             .HtmlAttributes(new { id = "metadata" })
                                             .Enabled(false);
 
@@ -183,7 +183,6 @@
                 @Html.ValidationSummary(true);
             }
         }
-
 
 <script type="text/javascript">
 

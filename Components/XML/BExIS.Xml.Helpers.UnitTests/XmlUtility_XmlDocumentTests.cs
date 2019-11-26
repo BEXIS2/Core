@@ -332,9 +332,6 @@ namespace BExIS.Xml.Helpers.UnitTests
             Assert.That(_document.DocumentElement.ChildNodes.Count, Is.EqualTo(2));
         }
 
-        [TestCase("AttrName", null)]
-        [TestCase("AttrName", "")]
-        [TestCase("AttrName", " ")]
         [TestCase(null, "AttrValue")]
         [TestCase("", "AttrValue")]
         [TestCase(" ", "AttrValue")]

@@ -8,11 +8,10 @@ namespace BExIS.Utils.Helpers
         public static string FILENAME_REGEX = "[^\\/:*?<>|\"]+";
         public static string FILENAME_INVALID_CHARS_REGEX = "[\\\"/:*?<>|]+";
 
-        public static string LUCENE_INVALID_CHARS_REGEX = "[\\-&&\\^+||!(){}[\\]~*?:\"]";
+        public static string LUCENE_INVALID_CHARS_REGEX = "[\\-&&\\^+||!(){}_[\\]~*?:\"]";
 
         public static bool IsFilenameValid(string name)
         {
-
             if (string.IsNullOrEmpty(name)) return false;
             Regex r = new Regex(FILENAME_INVALID_CHARS_REGEX);
 

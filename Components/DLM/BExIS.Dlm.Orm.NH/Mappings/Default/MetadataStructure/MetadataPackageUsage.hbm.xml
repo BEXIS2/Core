@@ -29,7 +29,7 @@
       <column name="Label" index="idx_MetadataPackageUsages_label"/>
     </property>
 
-    <property name="Description" type="String">
+    <property name="Description" type="StringClob">
       <column name="Description" />
     </property>
 

@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Publication;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Services;
@@ -38,6 +39,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
         /// </summary>
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult publishData(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -45,6 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View("_showPublishDataView", model);
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -286,29 +289,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult DownloadZip(string broker, string datarepo, long datasetversionid)
         {
-            //string path = "";
-
-            //PublicationManager publicationManager = new PublicationManager();
-            //SubmissionManager publishingManager = new SubmissionManager();
-
-            //Publication publication = publicationManager.PublicationRepo.Get().Where(p => p.DatasetVersion.Id.Equals(datasetversionid)).LastOrDefault();
-
-            //if (publication != null)
-            //{
-            //    Broker broker = publicationManager.BrokerRepo.Get(publication.Broker.Id);
-            //    if (broker.Name.ToLower().Equals(datarepo.ToLower()))
-            //    {
-            //        DatasetManager datasetManager = new DatasetManager();
-            //        DatasetVersion dsv = datasetManager.GetDatasetVersion(datasetversionid);
-            //        long datasetid = dsv.Dataset.Id;
-
-            //        string zipName = publishingManager.GetZipFileName(datasetid, datasetversionid);
-            //        path = Path.Combine(AppConfiguration.DataPath, publication.FilePath);
-
-            //        return File(path, "application/zip", zipName);
-            //    }
-            //}
-
             DatasetVersion datasetVersion = this.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(datasetversionid);
             long datasetId = datasetVersion.Dataset.Id;
 
@@ -331,7 +311,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="datarepo"></param>
         /// <param name="broker"></param>
         /// <returns></returns>
-        public Tuple<string, string> PrepareData(long datasetVersionId, long datasetId, string datarepo, string broker)
+        private Tuple<string, string> PrepareData(long datasetVersionId, long datasetId, string datarepo, string broker)
         {
             Tuple<string, string> tmp;
             try
@@ -379,6 +359,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return null;
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
             PublicationManager publicationManager = new PublicationManager();

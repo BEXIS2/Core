@@ -38,6 +38,7 @@ using System.Web;
 using System.Xml;
 using System.Text.RegularExpressions;
 using BExIS.Utils.Route;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -135,6 +136,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (dm.IsDatasetCheckedOutFor(datasetId, userName) || dm.CheckOutDataset(datasetId, userName))
             {
                 DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+                StringBuilder files = new StringBuilder();
                 foreach (var httpContent in attachments)
                 {
                     var dataStream = await httpContent.ReadAsStreamAsync();
@@ -152,10 +154,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         fileStream.Close();
 
                         AddFileInContentDiscriptor(datasetVersion, fileName, description);
+
+                        if (files.Length > 0) files.Append(", ");
+                        files.Append(fileName);
                     }
                 }
+
+                ////set modification
+                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                {
+                    Performer = userName,
+                    Comment = "Attachment",
+                    ActionType = AuditActionType.Edit
+                };
+
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, "upload dataset attachements via api", userName, ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, "File/s :" + files.ToString() + " via api", userName, ViewCreationBehavior.None);
             }
         }
 

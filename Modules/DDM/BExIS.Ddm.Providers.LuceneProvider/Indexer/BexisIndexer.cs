@@ -110,7 +110,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     categoryXmlNodeList.Add(fieldProperty);
                     Category c = new Category();
                     c.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
-                    c.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value; ;
+                    c.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
                     c.DefaultValue = "nothing";
                     AllCategories.Add(c);
                 }

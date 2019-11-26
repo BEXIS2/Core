@@ -522,7 +522,7 @@ namespace BExIS.Xml.Helpers
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
                 typeName = metadataAttributeUsage.MetadataAttribute.Name;
                 id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.Id.ToString();
             }
             else
             {

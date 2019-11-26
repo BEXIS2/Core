@@ -65,6 +65,8 @@ namespace BExIS.Xml.Helpers.UnitTests
             r2.Add(new XAttribute("doors", "1"));
             r3.Add(new XAttribute("doors", "1"));
 
+            r3.Add(new XAttribute("lamp", "1"));
+
             // add r to e3
             e3.Add(r1);
             e3.Add(r2);
@@ -390,6 +392,22 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Assert
             Assert.IsNotNull(result);
             Assert.That(result.Count, Is.EqualTo(3));
+        }
+
+        [Test()]
+        public void GetXElementsByAttribute_ExistingNodeTypeButDicWithNotValidAttributes_ReturnEmptyList()
+        {
+            //Arrange
+            var dic = new Dictionary<string, string>();
+            dic.Add("notexistingattr", "1"); // not existing attr
+            dic.Add("windows", "2"); //existing attr
+            string nodeName = "room";
+            //Act
+            var result = XmlUtility.GetXElementsByAttribute(nodeName, dic, _document.Root);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count, Is.EqualTo(0));
         }
     }
 }

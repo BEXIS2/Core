@@ -530,6 +530,9 @@ namespace BExIS.Xml.Helpers
             {
                 IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, XElement);
 
+                //return a empty list if one of the attr return 0 elements
+                if (newElements.Count() == 0) return newElements;
+
                 if (elements.Count() > 0)
                     elements = elements.Intersect(newElements);
                 else
@@ -586,6 +589,9 @@ namespace BExIS.Xml.Helpers
             {
                 IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, xDoc);
 
+                //return a empty list if one of the attr return 0 elements
+                if (newElements == null || newElements.Count() == 0) return newElements;
+
                 if (elements.Count() > 0)
                     elements = elements.Intersect(newElements);
                 else
@@ -603,6 +609,9 @@ namespace BExIS.Xml.Helpers
             foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
             {
                 IEnumerable<XElement> newElements = GetXElementsByAttribute(keyValuePair.Key, keyValuePair.Value, xDoc);
+
+                //return a empty list if one of the attr return 0 elements
+                if (newElements.Count() == 0) return newElements;
 
                 if (elements.Count() > 0)
                 {
@@ -625,6 +634,9 @@ namespace BExIS.Xml.Helpers
             foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
             {
                 IEnumerable<XElement> newElements = GetXElementsByAttribute(keyValuePair.Key, keyValuePair.Value, parent);
+
+                //return a empty list if one of the attr return 0 elements
+                if (newElements.Count() == 0) return newElements;
 
                 if (elements.Count() > 0)
                 {
@@ -655,6 +667,9 @@ namespace BExIS.Xml.Helpers
             foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
             {
                 IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, parent);
+
+                //return a empty list if one of the attr return 0 elements
+                if (newElements.Count() == 0) return newElements;
 
                 if (elements.Count() > 0)
                     elements = elements.Intersect(newElements);

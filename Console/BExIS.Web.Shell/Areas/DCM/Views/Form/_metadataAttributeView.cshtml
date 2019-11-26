@@ -129,8 +129,7 @@
                 {
                     // Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11 check if upper boundary is set to default value (1.7976931348623157E+308) to exclude from rule for textareas which requires an active set maximum length
                     if (Model.DataType.ToLower().Equals("text") || 
-                        (Model.UpperBoundary > 250 &&  !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) || 
-                        Model.UpperBoundary == 0 ||
+                        (Model.UpperBoundary > 256 &&  !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) ||
                         (Model.DataType.ToLower().Equals("string") && 
                          Model.Value != null && 
                          Model.Value.ToString().Length >= 60
@@ -156,7 +155,7 @@
                             else
                             {
                                 @(Html.Telerik().DropDownList()
-                                            .Placeholder("Select, please")
+                                            .Placeholder("Please select")
                                             .Name(@idInput)
                                             .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
@@ -173,11 +172,8 @@
                             }
                             else
                             {
-                                <div class="bx-metadataForm-textArea-display">
-                                @if (Model.Value != null)
-                                {
-                                    @Html.DisplayWithLinksFor(m => m.Value)
-                                }
+                                //leave the below code in one line to avoid a leading emtpy line
+                                <div class="bx-metadataForm-textArea-display">@if (Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}
                                 </div>
                             }
                         }
@@ -187,7 +183,7 @@
                     }
 
                     if (Model.DataType.ToLower().Equals("string") && 
-                        (Model.UpperBoundary < 251 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) && Model.UpperBoundary != 0 &&
+                        (Model.UpperBoundary < 256 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11))  &&
                         ((Model.Value != null && Model.Value.ToString().Length < 60) ||
                         Model.Value == null))
                     {                        
@@ -207,13 +203,14 @@
                                             .Name(@idInput)
                                             .Encode(false)
                                             .Value(value)
-                                            .HtmlAttributes(new { @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id, type = autoCompleteType })
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id, type = autoCompleteType })
                                             .ClientEvents(events => events
                                                 .OnChange("OnChangeTextInput")
                                                 .OnClose("OnClose"))
 
                                             .DataBinding(dataBinding => dataBinding
-                                                .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new { id = Model.Id, type = Model.Source.GetType().Name })
+                                                .Ajax()
+                                                .Select("_AutoCompleteAjaxLoading", "Form", new { id = Model.Id, type = Model.Source.GetType().Name })
                                                 .Cache(false)
                                                 )
 
@@ -232,8 +229,8 @@
                             {
                                 @(Html.Telerik().DropDownList()
                                             .Name(@idInput)
-                                            .Placeholder("Select, please")
-                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
+                                            .Placeholder("Please select")
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
                                             .ClientEvents(events => events.OnChange("OnChangeDropDown"))
                                             .BindTo(new SelectList(Model.DomainList, Model.Value)))
                             }
@@ -303,11 +300,51 @@
                         {
                             value = Convert.ToInt32(Model.Value);
                         }
+        
+                        int minValue = 0;
+                        int maxValue = Int32.MaxValue;
+
+                        if (Model.SystemType.Equals(TypeCode.Int16.ToString()))
+                        {
+                            minValue = Int16.MinValue;
+                            maxValue = Int16.MaxValue;
+                        }
+
+                        if (Model.SystemType.Equals(TypeCode.Int32.ToString()))
+                        {
+                            minValue = Int32.MinValue;
+                            maxValue = Int32.MaxValue;
+                        }
+
+                        if (Model.SystemType.Equals(TypeCode.Int64.ToString()))
+                        {
+                            minValue = Int32.MinValue; // Telerik function does not accept long 
+                            maxValue = Int32.MaxValue; // Telerik function does not accept long 
+                        }
+
+                        if (Model.SystemType.Equals(TypeCode.UInt16.ToString()))
+                        {
+                            minValue = 0;
+                            maxValue = Int16.MaxValue;
+                        }
+
+                        if (Model.SystemType.Equals(TypeCode.UInt32.ToString()))
+                        {
+                            minValue = 0;
+                            maxValue = Int32.MaxValue;
+                        }
+
+                        if (Model.SystemType.Equals(TypeCode.UInt64.ToString()))
+                        {
+                            minValue = 0;
+                            maxValue = Int32.MaxValue; // Telerik function does not accept long 
+                        }
+        
 
                         @(Html.Telerik().IntegerTextBox()
                                                         .Name(idInput)
-                                                        .MinValue(0)
-                                                        .MaxValue(Int32.MaxValue)
+                                                        .MinValue(minValue)
+                                                        .MaxValue(maxValue)
                                                         .Value(value)
                                                         .ClientEvents(events => events
                                                         .OnChange("OnChangeNumbers"))
@@ -366,12 +403,12 @@
                                     .Value(value)
                                     .ClientEvents(events => events
                                         .OnChange("OnChangeDatePicker"))
-                                    .InputHtmlAttributes(new { Title = @errorMessage, @class = @errorClass })
+                                    .InputHtmlAttributes(new { idbyxpath = @idByXpath, Title = @errorMessage, @class = @errorClass })
                         )
                     }
                     else
                     {
-                        @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, @class = "bx-input bx-metadataFormTextInput " + lockedClass })
+                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, @class = "bx-input bx-metadataFormTextInput " + lockedClass })
                     }
                 }
             </td>
@@ -382,7 +419,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(Model.Discription))
                             {
-                                <button type="button" title="@Html.Raw(Model.Discription)" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
+                                <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');" ></button>
                             }
 
                         </td>

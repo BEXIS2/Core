@@ -4,20 +4,21 @@ using System.Text.RegularExpressions;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
 {
     /// <summary>
     /// Lucene use some spacial Characters for query
     /// This Encoder find and replace this special Character for searching
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public static class EncoderHelper
     {
-        static string[] specialCharacterArray = new string[] { "\\", "^", "\"", "+", "-", "&&", "||", "!", "(", ")", "{", "}", "[", "]", "~", "*", "?", ":", "<" };
+        private static string[] specialCharacterArray = new string[] { "\\", "^", "\"", "+", "-", "&&", "||", "!", "(", ")", "{", "}", "[", "]", "~", "*", "?", ":", "<" };
+        private static string[] invalidCharacterArray = new string[] { "_" };
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -30,7 +31,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
             // has special characters
             if (RegExHelper.IsMatch(value, RegExHelper.LUCENE_INVALID_CHARS_REGEX))
             {
-                encodedValue = ReplaceSpecialCharacters(value);
+                encodedValue = replaceSpecialCharacters(value);
+                encodedValue = removeInvalidCharacters(encodedValue);
             }
 
             return encodedValue;
@@ -42,14 +44,33 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="value"></param>    
+        /// <param name="value"></param>
         /// <returns></returns>
-        private static string ReplaceSpecialCharacters(string value, bool encodeSpace = false)
+        private static string replaceSpecialCharacters(string value, bool encodeSpace = false)
         {
-
             foreach (string specailCharacter in specialCharacterArray)
             {
                 if (value.Contains(specailCharacter)) value = value.Replace(specailCharacter, @"\" + specailCharacter);
+            }
+
+            Debug.WriteLine(value);
+
+            return value;
+        }
+
+        /// <summary>
+        /// compare the list of Special Characters with the
+        /// incoming value and add a \ before it
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static string removeInvalidCharacters(string value, bool encodeSpace = false)
+        {
+            foreach (string invalidCHar in invalidCharacterArray)
+            {
+                if (value.Contains(invalidCHar)) value = value.Replace(invalidCHar, " ");
             }
 
             Debug.WriteLine(value);
@@ -62,9 +83,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="value"></param>   
+        /// <param name="value"></param>
         /// <returns></returns>
-        private static bool SpecialCharactrersInValue(string value)
+        private static bool specialCharactrersInValue(string value)
         {
             Regex rgx = new Regex(RegExHelper.LUCENE_INVALID_CHARS_REGEX, RegexOptions.IgnoreCase);
             Match m = rgx.Match(value);
@@ -75,6 +96,5 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
 
             return false;
         }
-
     }
 }

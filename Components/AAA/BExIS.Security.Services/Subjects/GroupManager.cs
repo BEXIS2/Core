@@ -67,19 +67,21 @@ namespace BExIS.Security.Services.Subjects
 
                         return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
+
                     if (orderBy != null)
                     {
                         count = Groups.Count();
                         return Groups.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
+
+                    // without filter and order
+                    return Groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(string.Format("Could not retrieve filtered groups."), ex);
             }
-
-            return null;
         }
 
         public Task CreateAsync(Group role)

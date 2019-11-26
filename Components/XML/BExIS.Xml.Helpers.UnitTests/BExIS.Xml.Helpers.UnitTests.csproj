@@ -71,6 +71,7 @@
     <Compile Include="XmlUtility_XDocumentTests.cs" />
     <Compile Include="XmlUtility_XmlDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XsdSchemaReaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

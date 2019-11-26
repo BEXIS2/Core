@@ -18,6 +18,7 @@ using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -28,6 +29,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
+using BExIS.App.Bootstrap.Attributes;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
@@ -37,6 +39,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using System.Text;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -44,6 +47,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
         {
             var entityManager = new EntityManager();
@@ -139,6 +143,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 bool requestExist = false;
                 bool requestAble = false;
                 bool latestVersion = false;
+                string isValid = "no";
 
                 XmlDocument metadata = new XmlDocument();
 
@@ -161,6 +166,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
                     dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+
+                    if (dsv.StateInfo != null)
+                    {
+                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                    }
 
                     metadataStructureId = dsv.Dataset.MetadataStructure.Id;
 
@@ -222,6 +232,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                ViewData["isValid"] = isValid;
 
                 return View(model);
             }
@@ -252,6 +263,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 bool requestExist = false;
                 bool requestAble = false;
                 bool latestVersion = false;
+                string isValid = "no";
 
                 XmlDocument metadata = new XmlDocument();
 
@@ -284,6 +296,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
+
+                    if (dsv.StateInfo != null)
+                    {
+                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                    }
 
                     // check if the user has download rights
                     downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
@@ -335,6 +352,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                ViewData["isValid"] = isValid;
 
                 return PartialView("ShowData", model);
             }
@@ -345,6 +363,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadZip(long id, string format, long version = -1)
         {
             long datasetVersionId = 0;
@@ -377,6 +396,45 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return Json(false);
         }
 
+        #region metadata external sources
+
+        // <summary>Retrieve the content of a JavaScript file, which is stored in the data folder, which is not accessible from the IIS. The content of the
+        // JavaScript file is meant to manipulate the metadata edit form and view (e.g.add disabled fields, set default values, remove or add additional UI elements)
+        // based on special project needs.The files are attached to the MetadataStructure id. Files to be included have to be located under the
+        // folder "[DataFolder]/]MetadataStructure"/[id]/ext.js. If no file is deposited an empty file is created and returned.</summary>
+        public FileResult GetFile(long id = -1, long metadataStructureId = -1)
+        {
+            DatasetManager dm = null;
+            try
+            {
+                dm = new DatasetManager();
+
+                //use dataset ID instead of metdataStructureId
+                if (metadataStructureId == -1)
+                {
+                    metadataStructureId = dm.DatasetRepo.Get(id).MetadataStructure.Id;
+                }
+
+                string filename = "ext.js";
+                string path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", metadataStructureId.ToString(), filename);
+
+                if (!FileHelper.FileExist(path))
+                {
+                    // Create new folder and empty file if not exists
+                    Directory.CreateDirectory(Path.Combine(AppConfiguration.DataPath, "MetadataStructures"));
+                    System.IO.File.Create(Path.Combine(AppConfiguration.DataPath, "MetadataStructures", filename)).Dispose();
+                    path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", filename); // set path to empty file location
+                }
+                return File(path, MimeMapping.GetMimeMapping(filename), filename);
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+        #endregion metadata external sources
+
         #region metadata
 
         /// <summary>
@@ -386,7 +444,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <seealso cref=""/>
         /// <param name="datasetID"></param>
         /// <returns>model</returns>
-        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata, bool latest)
+        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata, bool latest, string isValid = "yes")
         {
             var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
             result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "Form" }, { "area", "Form" }, { "type", "reset" } });
@@ -402,7 +460,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 { "researchplanId", researchplanId },
                 { "sessionKeyForMetadata", sessionKeyForMetadata },
                 { "resetTaskManager", false },
-                { "latest", latest }
+                { "latest", latest },
+                { "isValid", isValid }
             });
 
             return Content(view.ToHtmlString(), "text/html");
@@ -463,7 +522,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return null;
         }
 
-        //[MeasurePerformance]
+        //[MeasurePerformance
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetID", RightType.Read)]
         public ActionResult ShowPrimaryData(long datasetID, int versionId)
         {
             Session["Filter"] = null;
@@ -625,6 +685,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareAscii(long id, string ext, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -685,6 +746,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -763,6 +825,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareExcelData(long id, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -828,6 +891,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAsExcelData(long id, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -914,6 +978,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareExcelTemplateData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -985,6 +1050,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAsExcelTemplateData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1191,6 +1257,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download FileStream
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAllFiles(long id)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1258,6 +1325,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return Content("User has no rights.");
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadFile(long id, string path, string mimeType)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1411,6 +1479,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region entity references
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult ShowReferences(long id, int version)
         {
             var sourceTypeId = 0;
@@ -1493,12 +1562,42 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             dsvs.ForEach(d => tmp.Add(
                 new SelectListItem()
                 {
-                    Text = (dsvs.IndexOf(d) + 1) + " (" + d.Timestamp.ToString("dd.MM.yyyy HH:mm") + "): " + d.ChangeDescription,
+                    Text = (dsvs.IndexOf(d) + 1) + " (" + d.Timestamp.ToString("dd.MM.yyyy HH:mm") + ") " + getVersionInfo(d),
                     Value = "" + (dsvs.IndexOf(d) + 1)
                 }
                 ));
 
             return new SelectList(tmp, "Value", "Text");
+        }
+
+        private string getVersionInfo(DatasetVersion d)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // modifikation exist
+            if (d.ModificationInfo != null ||
+                (!string.IsNullOrEmpty(d.ModificationInfo.Performer) && !string.IsNullOrEmpty(d.ModificationInfo.Comment)))
+            {
+                sb.Append(d.ModificationInfo.Comment);
+                sb.Append(" - ");
+                sb.Append(d.ModificationInfo.ActionType);
+                sb.Append(" - ");
+                sb.Append(d.ModificationInfo.Performer);
+            }
+
+            // both exits - needs seperator
+            if (d.ModificationInfo != null && !string.IsNullOrEmpty(d.ChangeDescription))
+            {
+                sb.Append(" : ");
+            }
+
+            //changedescription is not null or empty
+            if (!string.IsNullOrEmpty(d.ChangeDescription))
+            {
+                sb.Append(d.ChangeDescription);
+            }
+
+            return sb.ToString();
         }
 
         public string GetUsernameOrDefault()
