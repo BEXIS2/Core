@@ -196,10 +196,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                             List<string> laDefault = new List<string>();
                             foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                             {
-                                laDefault.Add(hpg.Name.ToString());
+                                if(!string.IsNullOrEmpty(hpg?.Name?.ToString()))
+                                    laDefault.Add(hpg.Name.ToString());
                             }
 
-                            if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
+                            //if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
                             laDefault.Sort();
                             cDefault.Values = laDefault;
                             AllPropertiesDefault.Add(cDefault);
