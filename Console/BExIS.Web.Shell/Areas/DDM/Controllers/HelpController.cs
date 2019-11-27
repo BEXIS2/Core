@@ -6,7 +6,6 @@ using Vaiona.Utils.Cfg;
 using System.Xml;
 using BExIS.Xml.Helpers;
 using System.Xml.Linq;
-using Markdig;
 using System.Net;
 using System.Web;
 
@@ -19,7 +18,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-
             string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
             XDocument settings = XDocument.Load(filePath);
             XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
@@ -30,7 +28,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             //using (var client = new WebClient())
             //{
-
             //    var helpfile = client.DownloadString(helpurl);
 
             //    string model = Markdown.ToHtml(helpfile);
@@ -38,8 +35,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //}
 
             return Redirect(helpurl);
-
         }
-
     }
 }
