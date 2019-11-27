@@ -8,6 +8,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Models;
+using BExIS.Xml.Helpers;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -369,6 +370,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
             ///
             dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id) ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            dataset.Add(new Field("gen_entity_name", xmlDatasetHelper.GetEntityName(id), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+
 
             foreach (XmlNode facet in facetNodes)
             {

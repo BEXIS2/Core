@@ -202,6 +202,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             Header.Add(id);
             DefaultHeader.Add(id);
 
+            // create entity
+            HeaderItem entity = new HeaderItem();
+            entity.DisplayName = "Entity name";
+            entity.Name = "entity_name";
+            entity.DataType = "string";
+            Header.Add(entity);
+            //DefaultHeader.Add(entity);
+
             foreach (XmlNode ade in headerItemXmlNodeList)
             {
                 HeaderItem hi = new HeaderItem();
@@ -224,6 +232,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 List<object> ValueList = new List<object>();
                 ValueList = new List<object>();
                 ValueList.Add(doc.Get("doc_id"));
+                ValueList.Add(doc.Get("gen_entity_name"));
 
                 foreach (XmlNode ade in headerItemXmlNodeList)
                 {

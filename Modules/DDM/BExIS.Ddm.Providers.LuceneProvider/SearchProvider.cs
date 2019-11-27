@@ -124,7 +124,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             ///
             model.SearchComponent.Generals = new List<General>()
                         { new General()
-                                { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false}
+                                { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false},
+                          new General()
+                                { Name="gen_entity_name", DefaultValue = "", DisplayName = "Type", Value = "", IsVisible = true}
                         };
 
             return model;
@@ -155,7 +157,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             model.SearchComponent.Generals = new List<General>()
                         { new General()
-                                { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false}
+                                { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false},
+                         new General()
+                                { Name="gen_entity_name", DefaultValue = "", DisplayName = "Type", Value = "", IsVisible = true}
                         };
 
             return model;
