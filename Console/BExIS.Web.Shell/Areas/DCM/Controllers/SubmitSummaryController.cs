@@ -556,7 +556,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
                                     Performer = GetUsernameOrDefault(),
                                     Comment = "File",
-                                    ActionType = AuditActionType.Edit
+                                    ActionType = AuditActionType.Create
                                 };
 
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
@@ -569,7 +569,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 }
 
                                 // ToDo: Get Comment from ui and users
-                                dm.CheckInDataset(ds.Id, "File: " + filename, GetUsernameOrDefault(), ViewCreationBehavior.None);
+                                dm.CheckInDataset(ds.Id, filename, GetUsernameOrDefault(), ViewCreationBehavior.None);
                             }
                             catch (Exception ex)
                             {
