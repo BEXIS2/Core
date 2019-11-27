@@ -326,7 +326,7 @@ namespace BExIS.Web.Shell.Controllers
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
+                    await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
