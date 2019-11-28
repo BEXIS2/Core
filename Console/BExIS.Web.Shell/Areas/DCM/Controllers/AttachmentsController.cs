@@ -56,19 +56,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
             if (contentDescriptor == null)
                 throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
+
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
-            dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
 
-
-            DatasetVersion datasetVersion2 = dm.GetDatasetWorkingCopy(datasetId);
-            datasetVersion2.ModificationInfo = new EntityAuditInfo()
+            datasetVersion.ModificationInfo = new EntityAuditInfo()
             {
                 Performer = GetUsernameOrDefault(),
                 Comment = "Attachment",
                 ActionType = AuditActionType.Delete
-            }
+            };
 
-            dm.EditDatasetVersion(datasetVersion2, null, null, null);
+            dm.EditDatasetVersion(datasetVersion, null, null, null);
             dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
 
             dm?.Dispose();
