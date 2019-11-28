@@ -86,7 +86,6 @@ namespace BExIS.Security.Services.Subjects
             {
                 throw new Exception(string.Format("Could not retrieve filtered users."), ex);
             }
-
         }
 
         #region IUserEmailStore
@@ -104,7 +103,7 @@ namespace BExIS.Security.Services.Subjects
             if (string.IsNullOrEmpty(user.UserName))
                 return Task.FromResult(0);
 
-            if (FindByNameAsync(user.UserName) != null)
+            if (FindByNameAsync(user.UserName)?.Result != null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
@@ -243,7 +242,7 @@ namespace BExIS.Security.Services.Subjects
             if (string.IsNullOrEmpty(user.UserName))
                 return Task.FromResult(0);
 
-            if (FindByNameAsync(user.UserName) != null)
+            if (FindByNameAsync(user.UserName)?.Result == null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
