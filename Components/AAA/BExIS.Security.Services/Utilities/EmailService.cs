@@ -34,9 +34,9 @@ namespace BExIS.Security.Services.Utilities
                     ConfigurationManager.AppSettings["Email_Password"]);
             }
 
-            if (!string.IsNullOrEmpty(AppConfiguration.ApplicationName) && !string.IsNullOrEmpty(AppConfiguration.ApplicationVersion))
+            if (!string.IsNullOrEmpty(AppConfiguration.ApplicationName))
             {
-                AppId = AppConfiguration.ApplicationName + " (" + AppConfiguration.ApplicationVersion + ") - ";
+                AppId = AppConfiguration.ApplicationName + " - ";
             }
 
         }
