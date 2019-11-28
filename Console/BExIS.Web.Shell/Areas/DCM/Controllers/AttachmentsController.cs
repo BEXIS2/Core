@@ -58,9 +58,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
             dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
-            dm.EditDatasetVersion(datasetVersion, null, null, null);
 
-            dm.CheckInDataset(dataset.Id, "File: " + fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
+            DatasetVersion datasetVersion2 = dm.GetDatasetWorkingCopy(datasetId);
+            datasetVersion2.ModificationInfo = new EntityAuditInfo()
+            {
+                Performer = GetUsernameOrDefault(),
+                Comment = "Attachment",
+                ActionType = AuditActionType.Delete
+            }
+
+            dm.EditDatasetVersion(datasetVersion2, null, null, null);
+            dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
             dm?.Dispose();
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
@@ -175,7 +185,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
 
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, "File/s: " + filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
             }
             dm?.Dispose();
         }

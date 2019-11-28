@@ -42,9 +42,10 @@ using Vaiona.Web.Mvc.Modularity;
 using System.Text;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
+
 {
     public class DataController : BaseController
-    {
+    {  
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
@@ -1562,7 +1563,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             dsvs.ForEach(d => tmp.Add(
                 new SelectListItem()
                 {
-                    Text = (dsvs.IndexOf(d) + 1) + " (" + d.Timestamp.ToString("dd.MM.yyyy HH:mm") + ") " + getVersionInfo(d),
+                    Text = (dsvs.IndexOf(d) + 1) + " " + getVersionInfo(d),
                     Value = "" + (dsvs.IndexOf(d) + 1)
                 }
                 ));
@@ -1574,30 +1575,97 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             StringBuilder sb = new StringBuilder();
 
-            // modifikation exist
-            if (d.ModificationInfo != null ||
-                (!string.IsNullOrEmpty(d.ModificationInfo.Performer) && !string.IsNullOrEmpty(d.ModificationInfo.Comment)))
+            // modification, Performer and Comment exists (as indication for new version type tracking)
+            if (d.ModificationInfo != null &&
+                !string.IsNullOrEmpty(d.ModificationInfo.Performer) && 
+                !string.IsNullOrEmpty(d.ModificationInfo.Comment))
             {
-                sb.Append(d.ModificationInfo.Comment);
-                sb.Append(" - ");
-                sb.Append(d.ModificationInfo.ActionType);
-                sb.Append(" - ");
-                sb.Append(d.ModificationInfo.Performer);
+
+                // Metadata cration & edit
+                if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("Metadata creation (by {0}, {1})", d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
+                {
+                    sb.Append(String.Format("Metadata edited (by {0}, {1})", d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+                //unstructured file upload & delete
+                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("File uploaded: {0} (by {1}, {2})", d.ChangeDescription, d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                {
+                    sb.Append(String.Format("File deleted: {0} (by {1}, {2})", d.ChangeDescription, d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+                // structured data import & update & delete
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("Data imported: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
+                {
+                    sb.Append(String.Format("Data added: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                {
+                    sb.Append(String.Format("Data deleted (by {0}, {1})", d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+                // attachment 
+                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("Attachtment uploaded: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30) , d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                {
+                    sb.Append(String.Format("Attachtment deleted: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+
+                else
+                {
+                    sb.Append(d.ModificationInfo.Comment);
+                    sb.Append(" - ");
+                    sb.Append(d.ModificationInfo.ActionType);
+                    sb.Append(" - ");
+                    sb.Append(d.ModificationInfo.Performer);
+
+                    // both exits - needs seperator
+                    if (d.ModificationInfo != null &&
+                        string.IsNullOrEmpty(d.ModificationInfo.Performer) &&
+                        !string.IsNullOrEmpty(d.ModificationInfo.Comment) &&
+                        !string.IsNullOrEmpty(d.ChangeDescription))
+                    {
+                        sb.Append(" : ");
+                    }
+
+                    //changedescription is not null or empty
+                    if (!string.IsNullOrEmpty(d.ChangeDescription))
+                    {
+                        sb.Append(Truncate(d.ChangeDescription, 30));
+                    }
+
+                }
+                
+            }
+            else
+            {
+                sb.Append(String.Format("{0} ({1})", Truncate(d.ChangeDescription, 30), d.Timestamp.ToString("dd.MM.yyyy")));
             }
 
-            // both exits - needs seperator
-            if (d.ModificationInfo != null && !string.IsNullOrEmpty(d.ChangeDescription))
-            {
-                sb.Append(" : ");
-            }
 
-            //changedescription is not null or empty
-            if (!string.IsNullOrEmpty(d.ChangeDescription))
-            {
-                sb.Append(d.ChangeDescription);
-            }
 
             return sb.ToString();
+        }
+
+        public string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
         }
 
         public string GetUsernameOrDefault()

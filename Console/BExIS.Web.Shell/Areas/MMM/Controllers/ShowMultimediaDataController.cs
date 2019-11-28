@@ -234,7 +234,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                             datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
                             // ToDo: Get Comment from ui and users
-                            datasetManager.CheckInDataset(datasetID, "File " + temp.Last() + " deleted", HttpContext.User.Identity.Name, ViewCreationBehavior.None);
+                            datasetManager.CheckInDataset(datasetID, temp.Last(), HttpContext.User.Identity.Name, ViewCreationBehavior.None);
                             Session["DatasetInfo"] = datasetInfo;
                             return true;
                         }
