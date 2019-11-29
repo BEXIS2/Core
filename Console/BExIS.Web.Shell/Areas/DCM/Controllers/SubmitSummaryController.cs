@@ -493,7 +493,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             // ToDo: Get Comment from ui and users
                             MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
-                            dm.CheckInDataset(ds.Id, "upload " + numberOfRows + " rows.", GetUsernameOrDefault());
+                            dm.CheckInDataset(ds.Id, numberOfRows + " rows", GetUsernameOrDefault());
 
                             //send email
                             var es = new EmailService();
@@ -587,7 +587,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (temp.Count <= 0)
                 {
-                    dm.CheckInDataset(ds.Id, "check in, but no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    dm.CheckInDataset(ds.Id, "no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
                 else
                 {

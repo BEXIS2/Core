@@ -152,12 +152,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     workingCopy.ModificationInfo = new EntityAuditInfo()
                     {
                         Performer = user.UserName,
-                        Comment = "Dataset",
+                        Comment = "Metadata",
                         ActionType = AuditActionType.Create
                     };
 
                     datasetManager.EditDatasetVersion(workingCopy, null, null, null);
-                    datasetManager.CheckInDataset(datasetId, "Dataset was created and title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
+                    datasetManager.CheckInDataset(datasetId, "Title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
                 }
 
                 request.Content = new StringContent("the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");

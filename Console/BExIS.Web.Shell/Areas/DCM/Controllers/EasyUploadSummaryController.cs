@@ -596,7 +596,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                    dm.CheckInDataset(ds.Id, "Import " + numberOfRows + " rows.", GetUsernameOrDefault());
+                    dm.CheckInDataset(ds.Id, "Import " + numberOfRows + " rows", GetUsernameOrDefault());
 
                     //Reindex search
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))

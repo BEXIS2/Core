@@ -92,7 +92,7 @@ namespace BExIS.Security.Services.Subjects
             if (string.IsNullOrEmpty(role.Name))
                 return Task.FromResult(0);
 
-            if (FindByNameAsync(role.Name) != null)
+            if (FindByNameAsync(role.Name)?.Result != null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
