@@ -375,21 +375,6 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\ddm.css" />
-    <Content Include="Content\Images\Help\image001.png" />
-    <Content Include="Content\Images\Help\image002.jpg" />
-    <Content Include="Content\Images\Help\image003.jpg" />
-    <Content Include="Content\Images\Help\image004.png" />
-    <Content Include="Content\Images\Help\image005.jpg" />
-    <Content Include="Content\Images\Help\image006.jpg" />
-    <Content Include="Content\Images\Help\image007.jpg" />
-    <Content Include="Content\Images\Help\image008.jpg" />
-    <Content Include="Content\Images\Help\image009.jpg" />
-    <Content Include="Content\Images\Help\image010.png" />
-    <Content Include="Content\Images\Help\image011.jpg" />
-    <Content Include="Content\Images\Help\image012.jpg" />
-    <Content Include="Content\Images\Help\image013.jpg" />
-    <Content Include="Content\Images\Help\image014.jpg" />
-    <Content Include="Content\Images\Help\image015.jpg" />
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -457,6 +442,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Images\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />

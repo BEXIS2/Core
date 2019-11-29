@@ -457,39 +457,6 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\help\ChooseUpdateMethod.png" />
-    <Content Include="Content\Images\help\collapse.png" />
-    <Content Include="Content\Images\help\columnwise.jpg" />
-    <Content Include="Content\Images\help\Create_Dataset.jpg" />
-    <Content Include="Content\Images\help\Create_Dataset.png" />
-    <Content Include="Content\Images\help\expand.png" />
-    <Content Include="Content\Images\help\GetFileInformations.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_end.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_metadata.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_select_areas.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_select_file.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_sheet_structure.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_summary.png" />
-    <Content Include="Content\Images\help\Help_easy_upload_verification.png" />
-    <Content Include="Content\Images\help\messages.png" />
-    <Content Include="Content\Images\help\metadata1.png" />
-    <Content Include="Content\Images\help\metadata2.png" />
-    <Content Include="Content\Images\help\metadata3.png" />
-    <Content Include="Content\Images\help\metadata4.png" />
-    <Content Include="Content\Images\help\mines.png" />
-    <Content Include="Content\Images\help\plus.png" />
-    <Content Include="Content\Images\help\primary_key.png" />
-    <Content Include="Content\Images\help\push_big_file.png" />
-    <Content Include="Content\Images\help\read_xsd.png" />
-    <Content Include="Content\Images\help\red_star.png" />
-    <Content Include="Content\Images\help\rowwise.jpg" />
-    <Content Include="Content\Images\help\select_file.png" />
-    <Content Include="Content\Images\help\select_xsd.png" />
-    <Content Include="Content\Images\help\set_xsd_parameters.png" />
-    <Content Include="Content\Images\help\summary_xsd.png" />
-    <Content Include="Content\Images\help\upload_data.png" />
-    <Content Include="Content\Images\help\upload_tabular.jpg" />
-    <Content Include="Content\Images\help\up_down.png" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -591,6 +558,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Images\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>

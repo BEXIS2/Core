@@ -160,17 +160,6 @@
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\Images\Help\add_variables.png" />
-    <Content Include="Content\Images\Help\copy_data_structure.png" />
-    <Content Include="Content\Images\Help\create_data_structure.png" />
-    <Content Include="Content\Images\Help\create_data_type.png" />
-    <Content Include="Content\Images\Help\create_unit.png" />
-    <Content Include="Content\Images\Help\create_variable.png" />
-    <Content Include="Content\Images\Help\delete_button.png" />
-    <Content Include="Content\Images\Help\edit_button.png" />
-    <Content Include="Content\Images\Help\Help_img6.png" />
-    <Content Include="Content\Images\Help\main_menu.png" />
-    <Content Include="Content\Images\Help\manage_data_type.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Properties\PublishProfiles\WebDeploy.pubxml.user" />
     <Content Include="Rpm.Manifest.xml">
@@ -331,7 +320,9 @@
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\Images\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
