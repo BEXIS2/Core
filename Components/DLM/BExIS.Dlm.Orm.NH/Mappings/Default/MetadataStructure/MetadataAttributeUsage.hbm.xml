@@ -30,7 +30,7 @@
     </property>
 
     <property name="Description" type="StringClob">
-      <column name="Description" />
+      <column name="Description" sql-type="varchar" />
     </property>
 
     <many-to-one name="MetadataPackage" class="MetadataPackage" not-null="true" column="MetadataPackageRef"/>
