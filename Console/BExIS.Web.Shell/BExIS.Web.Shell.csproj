@@ -404,6 +404,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LdapController.cs" />
     <Compile Include="Controllers\PrivacyPolicyController.cs" />
@@ -1123,6 +1124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
+    <Folder Include="Views\Help\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
