@@ -302,7 +302,7 @@
     }
 
         <!--include additional JavaScript file at the bottum-->
-        @if ((long)ViewData["MetadataStructureID"] != -1)
+        @if (ViewData["MetadataStructureID"] !=null && (long)ViewData["MetadataStructureID"] != -1)
         {
             <script src="@Url.Content("~/ddm/Data/getFile/?metadataStructureId=" + (long)ViewData["MetadataStructureID"] )" type="text/javascript"></script>
         }
