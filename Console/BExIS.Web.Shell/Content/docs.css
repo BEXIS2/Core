@@ -1,0 +1,59 @@
+
+#divTimeout {
+    width: 100%;
+    display: none;
+    position: absolute;
+    color: green;
+    background: #f1f2f3;
+    top: 41%;
+    left: 0;
+    overflow: auto;
+    z-index: 1050;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    line-height: 2;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#divCountDown {
+    display: inline-block;
+    width: auto;
+    color: red;
+}
+
+#divTimeout .btn {
+    margin-left: 10px;
+    margin-top: 0;
+}
+
+body.opened, html.opened {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #000;
+    z-index: 1040;
+    display: none;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+
+.popup-block {
+    margin: 0 auto;
+    background: #f1f2f3;
+    padding: 20px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    text-align: center;
+}
