@@ -630,10 +630,15 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyCustomAttributeValue> repo = uow.GetRepository<PartyCustomAttributeValue>();
-                var entity = repo.Reload(partyCustomAttributeValue);
-                //Uniqeness policy
-                repo.Delete(entity);
-                uow.Commit();
+                if (partyCustomAttributeValue != null)
+                {
+                    var latest = repo.Get(partyCustomAttributeValue.Id);
+
+                    if (latest != null)
+                        repo.Delete(latest);
+
+                    uow.Commit();
+                }
             }
             partyCustomAttributeValue.Party = UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
@@ -649,13 +654,16 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyCustomAttributeValue> repo = uow.GetRepository<PartyCustomAttributeValue>();
                 foreach (var entity in entities)
                 {
-                    var latest = repo.Reload(entity);
-                    repo.Delete(entity);
+                    if (entity == null) continue;
+                    var latest = repo.Get(entity.Id);
+
+                    if (latest != null)
+                        repo.Delete(latest);
                 }
                 uow.Commit();
             }
-            if (entities.Any())
-                UpdatePartyName(entities.First().Party);
+            //if (entities.Any())
+            //    UpdatePartyName(entities.First().Party);
             return (true);
         }
 
@@ -854,6 +862,24 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return true;
+        }
+
+        public Boolean RemovePartyGridCustomColumn(long id)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyCustomGridColumns> repo = uow.GetRepository<PartyCustomGridColumns>();
+                var pcgc = repo.Get(id);
+
+                if (pcgc != null)
+                {
+                    repo.Delete(pcgc);
+                    uow.Commit();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion Account

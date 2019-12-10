@@ -51,13 +51,13 @@
         $.post('@Url.Action("FilterByDropDown", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: value, node: node }, function (response) {
             //alert(response);
             console.log("update header");
-            console.log(response);
+            //console.log(response);
             $(".searchBreadcrumbNavigation").html(response);
         });
 
         $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
             console.log("update facets");
-            console.log(response);
+            //console.log(response);
             $("#searchTreeView").html(response);
         })
         

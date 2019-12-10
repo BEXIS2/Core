@@ -235,6 +235,7 @@ namespace BExIS.Dlm.Services.Party
                 IsUnique = partyCustomeAttribute.IsUnique,
                 IsMain = partyCustomeAttribute.IsMain,
                 Name = partyCustomeAttribute.Name,
+                DisplayName = partyCustomeAttribute.DisplayName,
                 Condition = partyCustomeAttribute.Condition
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())

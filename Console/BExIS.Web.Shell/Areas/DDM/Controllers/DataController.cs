@@ -1594,11 +1594,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //unstructured file upload & delete
                 else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
-                    sb.Append(String.Format("File uploaded: {0} (by {1}, {2})", d.ChangeDescription, d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("File uploaded: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
                 }
                 else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
                 {
-                    sb.Append(String.Format("File deleted: {0} (by {1}, {2})", d.ChangeDescription, d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("File deleted: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 // structured data import & update & delete
