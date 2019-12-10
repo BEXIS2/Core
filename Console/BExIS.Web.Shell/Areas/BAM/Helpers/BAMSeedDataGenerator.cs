@@ -85,6 +85,9 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 xmlDoc.Load(xDoc.CreateReader());
                 var partyTypesNodeList = xmlDoc.SelectNodes("//PartyTypes");
 
+                var deleteAbleAttr = new List<PartyCustomAttribute>();
+                var deleteAbleAttrValues = new List<PartyCustomAttributeValue>();
+
                 if (partyTypesNodeList.Count > 0)
                     foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
                     {
@@ -197,8 +200,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             // Delete all attrs that are no longer in the partytype.xml
                             newCustomAttrs.AddRange(existingCustomAttrs);
                             var currentListOfAttr = partyType.CustomAttributes;
-                            var deleteAbleAttr = new List<PartyCustomAttribute>();
-                            var deleteAbleAttrValues = new List<PartyCustomAttributeValue>();
+
                             foreach (var attr in currentListOfAttr)
                             {
                                 if (!newCustomAttrs.Any(a => a.Id.Equals(attr.Id)))
@@ -211,13 +213,6 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                         .Where(v => v.CustomAttribute.Id.Equals(attr.Id)));
                                 }
                             }
-
-                            //delete all existing PartyCustomAttrValues
-                            deleteAbleAttrValues.ForEach(a => partyManager.RemovePartyCustomAttributeValue(a));
-
-                            // add CustomAttribute Grid Columns
-
-                            deleteAbleAttr.ForEach(a => partyTypeManager.DeletePartyCustomAttribute(a));
                         }
                     }
                 var partyRelationshipTypesNodeList = xmlDoc.SelectNodes("//PartyRelationshipTypes");
@@ -302,6 +297,22 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id && !cc.TargetPartyType.SystemType);
                     foreach (var partyTypePair in partyRelationshipTypePairs)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, null, partyTypePair);
+                }
+
+                if (deleteAbleAttr.Any())
+                {
+                    //delete all existing PartyCustomAttrValues
+                    deleteAbleAttrValues.ForEach(a => partyManager.RemovePartyCustomAttributeValue(a));
+
+                    // Delete all GridColumns of the CustomAttribute
+                    var listOfIds = deleteAbleAttr.Select(d => d.Id);
+                    var gridColumns = partyManager.PartyCustomGridColumnsRepository.Get();
+                    var listOfGridColumns = gridColumns.Where(c => c.CustomAttribute != null && listOfIds.Contains(c.CustomAttribute.Id)).ToList();
+
+                    listOfGridColumns.ForEach(c => partyManager.RemovePartyGridCustomColumn(c.Id));
+
+                    // add CustomAttribute Grid Columns
+                    deleteAbleAttr.ForEach(a => partyTypeManager.DeletePartyCustomAttribute(a));
                 }
             }
             catch (Exception ex)
