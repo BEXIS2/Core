@@ -220,6 +220,13 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
+        public ActionResult ClearSession()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            return RedirectToAction("SessionTimeout", "Home", new { area = "" });
+        }
+
         //
         // POST: /Account/Login
         [HttpPost]
