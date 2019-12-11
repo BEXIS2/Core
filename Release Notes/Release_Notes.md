@@ -1,6 +1,4 @@
-# Issues & Changes & Tests
-
-## Issues
+# BEXIS 2.13 Release Notes
 
 ### Features
 
@@ -80,7 +78,9 @@
 
 [#395](https://github.com/BEXIS2/Core/issues/395) Allow custom help text on top for MetadataEditor
 
+[#423](https://github.com/BEXIS2/Core/issues/423) Its not possible to update PartyTypes while running the partyType.xml again
 
+[#426](https://github.com/BEXIS2/Core/issues/426) Add FAQ link to the application
 
 ### Bugs
 
@@ -127,3 +127,20 @@
 [#403](https://github.com/BEXIS2/Core/issues/403) User registration: Relationship disappaers during field validation
 
 [#403](https://github.com/BEXIS2/Core/issues/403) Title fields with line breaks can cause JS errors
+
+[#422](https://github.com/BEXIS2/Core/issues/422) Boolean field in account registration form has no effect
+
+
+
+>The database update script has been revised. The seed data process has not been revised.
+
+## I. Software Information
+
+-	Name: BEXIS
+-	Version: 2.12.0
+-	Application Type: Web Application
+-	Platform: Windows
+
+## II.	License Agreement
+The contents included in this software are licensed to you, the end user. Your use of BEXIS software is subject to the terms of an End User License Agreement (EULA) accompanying the software and located in the \License subdirectory. You must read and accept the terms of the EULA before you access or use BEXIS software. If you do not agree to the terms of the EULA, you are not authorized to use BEXIS software.
+
