@@ -634,6 +634,10 @@ namespace BExIS.Dlm.Services.Party
                 {
                     var latest = repo.Get(partyCustomAttributeValue.Id);
 
+                    latest.CustomAttribute = null;
+                    latest.Party = null;
+                    repo.Put(latest);
+
                     if (latest != null)
                         repo.Delete(latest);
 
