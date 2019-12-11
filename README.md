@@ -8,11 +8,11 @@ BEXIS 2 is published under a GNU LESSER GENERAL PUBLIC LICENSE Version 3
 
 > In the release notes you can find a list of all the current versions. 
 
-[RELASE NOTES]
+[RELASE NOTES](https://github.com/BEXIS2/Core/blob/2.13/Release%20Notes/Release_Notes.md)
 
 > A more detailed list of the changes is available for the co-developers. It mentions the changed libraries and important feature changes.
 
-[CHANGES]
+[CHANGES](https://github.com/BEXIS2/Core/blob/2.13/Release%20Notes/Changes.md)
 
 >if a running instance is updated, an update to the database is required.
 
