@@ -30,22 +30,22 @@
 
 - Add reason to dataset request ([#130](https://github.com/BEXIS2/Core/issues/130))
 
-- Show version number in stead of id all ([#168](https://github.com/BEXIS2/Core/issues/168))
+- Show version number instead of id all ([#168](https://github.com/BEXIS2/Core/issues/168))
 
 - Add 1st Level tabs in Metadata Edit View ([#191](https://github.com/BEXIS2/Core/issues/191))
 
 - PostgreSQL >9.6 Support (creation of materialized view) ([#259](https://github.com/BEXIS2/Core/issues/259))
 
-- Main CSS colours are replaced by CSS variables ([#268](https://github.com/BEXIS2/Core/issues/268))
+- Main CSS colors are replaced by CSS variables ([#268](https://github.com/BEXIS2/Core/issues/268))
 
-- Full name for dataset, entity and feature permission instead the username ([#269](https://github.com/BEXIS2/Core/issues/269))
+- Full name for dataset, entity and feature permission instead of the username ([#269](https://github.com/BEXIS2/Core/issues/269))
 
 [#274](https://github.com/BEXIS2/Core/issues/274) Long waiting times when loading & filtering the Subjects table in Feature permissions View
 [#171](https://github.com/BEXIS2/Core/issues/171) Loading time for subjects
 
-[#276](https://github.com/BEXIS2/Core/issues/276) Public data sets must also be accessible via api without a token.
+[#276](https://github.com/BEXIS2/Core/issues/276) Public data sets must also be accessible via API without a token.
 
-- Support serverside paging for manage users ([#277](https://github.com/BEXIS2/Core/issues/277)), groups ([#278](https://github.com/BEXIS2/Core/issues/278)) and entities ([#279](https://github.com/BEXIS2/Core/issues/279))
+- Support server side-paging for manage users ([#277](https://github.com/BEXIS2/Core/issues/277)), groups ([#278](https://github.com/BEXIS2/Core/issues/278)) and entities ([#279](https://github.com/BEXIS2/Core/issues/279))
 
 [#280](https://github.com/BEXIS2/Core/issues/280) merge external_module_branch to dev
 
@@ -55,7 +55,7 @@
 
 - Revised registration mail content ([#285](https://github.com/BEXIS2/Core/issues/285))
 
-- Add persitent identifier ("id by xpath") to each metadata element ([#293](https://github.com/BEXIS2/Core/issues/293))
+- Add persistent identifier ("id by xpath") to each metadata element ([#293](https://github.com/BEXIS2/Core/issues/293))
 
 - Mark datasets which have been saved with errors in the dashboard and metadata view ([#309](https://github.com/BEXIS2/Core/issues/309))
 
@@ -70,7 +70,7 @@
 
 [#104](https://github.com/BEXIS2/Core/issues/104) DCM - Attachments 500 Error (not logged in)
 
-[#183](https://github.com/BEXIS2/Core/issues/183) Delete attachement from a dataset is defined by upload inside the database
+[#183](https://github.com/BEXIS2/Core/issues/183) Delete attachment from a dataset is defined by upload inside the database
 
 [#250](https://github.com/BEXIS2/Core/issues/250) Download dataset in text format
 - Fix the page is not refreshed after deleting a metadata structure ([#264](https://github.com/BEXIS2/Core/issues/264))
@@ -79,7 +79,7 @@
 
 [#267](https://github.com/BEXIS2/Core/issues/267) Refactor Api Data Get filtering and projection
 
-[#272](https://github.com/BEXIS2/Core/issues/272) Results from mapping to keys throw wrong values in special usecases
+[#272](https://github.com/BEXIS2/Core/issues/272) Results from mapping to keys throw wrong values in special use cases
 
 - Fix search is limited to 1000 results ([#273](https://github.com/BEXIS2/Core/issues/273))
 
@@ -90,7 +90,7 @@
 
 - Fix public features are not shown in menu ([#288](https://github.com/BEXIS2/Core/issues/288))
 
-[#289](https://github.com/BEXIS2/Core/issues/289) After Metadata change, the dataset view is stilll in the previews version
+[#289](https://github.com/BEXIS2/Core/issues/289) After Metadata change, the dataset view is still in the previews version
 
 [#319](https://github.com/BEXIS2/Core/issues/319) Open mapping tool - Button was hidden
 
@@ -102,7 +102,7 @@
 
 - Fix length of documentation field (xsd) in database only 255 -> changed to text ([#400](https://github.com/BEXIS2/Core/issues/400))
 
-- Fix relationship disappaers during field validation during user registration ([#403](https://github.com/BEXIS2/Core/issues/403))
+- Fix relationship disappears during field validation during user registration ([#403](https://github.com/BEXIS2/Core/issues/403))
 
 - Fix user registration form validation by jQuery. Do not check non-displayed/hidden fields([#377](https://github.com/BEXIS2/Core/issues/377))
 
