@@ -97,20 +97,17 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 }
                 else
                 {
-                    if (entity.Extra == null)
-                    {
-                        //update to Extra
+                    XmlDocument xmlDoc = new XmlDocument();
 
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.AppendChild(entity.Extra);
+                    if (entity.Extra != null) xmlDoc.AppendChild(entity.Extra);
 
-                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                        xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+                    //update to Extra
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
 
-                        entity.Extra = xmlDoc;
+                    entity.Extra = xmlDoc;
 
-                        entityManager.Update(entity);
-                    }
+                    entityManager.Update(entity);
                 }
 
                 #endregion create entities
