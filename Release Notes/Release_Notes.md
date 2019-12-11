@@ -2,27 +2,21 @@
 
 ### Features
 
-[#143](https://github.com/BEXIS2/Core/issues/143) Menu - Hide menu entries without permission
+- Hide menu entries without permission ([#143](https://github.com/BEXIS2/Core/issues/143))
 
-[#192](https://github.com/BEXIS2/Core/issues/192) Automatic entry of system data in the metadata that can not be changed by the user
+- Allow to map system data (e.g. version, last modification date) in metadata form (automatically filled; not editable for user) ([#192](https://github.com/BEXIS2/Core/issues/192))
 
-[#193](https://github.com/BEXIS2/Core/issues/193) Users want to link dataset or other entities to datasets. White list [#374](https://github.com/BEXIS2/Core/issues/374) + Description for links [#372](https://github.com/BEXIS2/Core/issues/372)
+- Link datasets or other entities (e.g. publications) to datasets ([#193](https://github.com/BEXIS2/Core/issues/193)). Entity white list ([#374](https://github.com/BEXIS2/Core/issues/374)) to exclude entities + Description for link types ([#372](https://github.com/BEXIS2/Core/issues/372))
 
-[#250](https://github.com/BEXIS2/Core/issues/250) extend the API functionalities by writing data in bexis 2
+- API to also write data ([#250](https://github.com/BEXIS2/Core/issues/250)) and metadata ([#262](https://github.com/BEXIS2/Core/issues/262)) and a new API for Datasets [#260](https://github.com/BEXIS2/Core/issues/260) and Attachments [#261](https://github.com/BEXIS2/Core/issues/261).
 
-[#260](https://github.com/BEXIS2/Core/issues/260) Dataset API
+- Multimedia Module to manage differnt types of files (e.g. images, vidoes ...)([#281](https://github.com/BEXIS2/Core/issues/281))
 
-[#261](https://github.com/BEXIS2/Core/issues/261) Attachment API
-		
-[#262](https://github.com/BEXIS2/Core/issues/262) extend the existing metadata API functionalities by writing metadata in bexis 2
+- Switching dataset versions in show dataset ([#283](https://github.com/BEXIS2/Core/issues/283))
 
-[#281](https://github.com/BEXIS2/Core/issues/281) Integrate Multimedia Module
+- Allow to delete unstructured primary data ([#381](https://github.com/BEXIS2/Core/issues/381))
 
-[#283](https://github.com/BEXIS2/Core/issues/283) Switching dataset versions in show dataset
-
-[#381](https://github.com/BEXIS2/Core/issues/381) Option to delete primary data - unstructured data
-
-[#402](https://github.com/BEXIS2/Core/issues/402) Allow email address alternativ to account name for login
+- Allow email address alternativ to account name for login ([#402](https://github.com/BEXIS2/Core/issues/402))
 
 
 
