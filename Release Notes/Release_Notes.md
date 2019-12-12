@@ -21,10 +21,9 @@
 
 ### Enhancements
 
-- [#17](https://github.com/BEXIS2/Core/issues/17) Upload data: variable names with double quotes in csv file can't be imported
+- Upload variables with quotes [#17](https://github.com/BEXIS2/Core/issues/17) 
 
-- [#74](https://github.com/BEXIS2/Core/issues/74) Add units of variables to downloaded primary data header
-- [#218](https://github.com/BEXIS2/Core/issues/218) As a user I would like to see units in the downloaded excel file
+- Add units of variables to downloaded in ascii & excel files [#74](https://github.com/BEXIS2/Core/issues/74), [#218](https://github.com/BEXIS2/Core/issues/218) 
 
 - Add BCC, CC and ReplyTo optional to EmailService ([#100](https://github.com/BEXIS2/Core/issues/100))
 
@@ -40,14 +39,12 @@
 
 - Full name for dataset, entity and feature permission instead of the username ([#269](https://github.com/BEXIS2/Core/issues/269))
 
-- [#274](https://github.com/BEXIS2/Core/issues/274) Long waiting times when loading & filtering the Subjects table in Feature permissions View
-- [#171](https://github.com/BEXIS2/Core/issues/171) Loading time for subjects
+- Improvement of loading & filtering time for Subjects table in Feature permissions View [#274](https://github.com/BEXIS2/Core/issues/274),[#171](https://github.com/BEXIS2/Core/issues/171) Loading time for subjects
 
-- [#276](https://github.com/BEXIS2/Core/issues/276) Public data sets must also be accessible via API without a token.
+- Public data sets are accessible via API without a token. [#276](https://github.com/BEXIS2/Core/issues/276) 
 
 - Support server side-paging for manage users ([#277](https://github.com/BEXIS2/Core/issues/277)), groups ([#278](https://github.com/BEXIS2/Core/issues/278)) and entities ([#279](https://github.com/BEXIS2/Core/issues/279))
 
-- [#280](https://github.com/BEXIS2/Core/issues/280) merge external_module_branch to dev
 
 - Improve performance for autocomplete in the metadata form ([#282](https://github.com/BEXIS2/Core/issues/282))
 
@@ -68,31 +65,25 @@
 ### Bugs
 - Fix rights and request Status are encoded in a number in the permission request view ([#187](https://github.com/BEXIS2/Core/issues/187))
 
-- [#104](https://github.com/BEXIS2/Core/issues/104) DCM - Attachments 500 Error (not logged in)
+- Fix sometimes occurring errors when loading the attachments page [#104](https://github.com/BEXIS2/Core/issues/104)
 
-- [#183](https://github.com/BEXIS2/Core/issues/183) Delete attachment from a dataset is defined by upload inside the database
+- Fix erroneous saving of actions name in database for attachments [#183](https://github.com/BEXIS2/Core/issues/183)
 
-- [#250](https://github.com/BEXIS2/Core/issues/250) Download dataset in text format
+- Fix issues by downloading data in text format [#250](https://github.com/BEXIS2/Core/issues/250) Download dataset in text format
+
 - Fix the page is not refreshed after deleting a metadata structure ([#264](https://github.com/BEXIS2/Core/issues/264))
 
 - Fix for a rejected data request you can't make a new one ([#266](https://github.com/BEXIS2/Core/issues/266))
 
-- [#267](https://github.com/BEXIS2/Core/issues/267) Refactor Api Data Get filtering and projection
-
-- [#272](https://github.com/BEXIS2/Core/issues/272) Results from mapping to keys throw wrong values in special use cases
+- Fix sorting and filtering issues of Data api calls [#267](https://github.com/BEXIS2/Core/issues/267)
 
 - Fix search is limited to 1000 results ([#273](https://github.com/BEXIS2/Core/issues/273))
 
-- [#275](https://github.com/BEXIS2/Core/issues/275) Attachment API should be secured
 - Fix icons not readable on hover on link buttons ([#286](https://github.com/BEXIS2/Core/issues/286))
 
 - Fix info messages is hidden under header in Upload Wizard ([#287](https://github.com/BEXIS2/Core/issues/287))
 
 - Fix public features are not shown in menu ([#288](https://github.com/BEXIS2/Core/issues/288))
-
-- [#289](https://github.com/BEXIS2/Core/issues/289) After Metadata change, the dataset view is still in the previews version
-
-- [#319](https://github.com/BEXIS2/Core/issues/319) Open mapping tool - Button was hidden
 
 - Fix identified/shown errors in metadata edit form does not disappear after correction ([#308](https://github.com/BEXIS2/Core/issues/308))
 
@@ -112,7 +103,7 @@
 
 - Fix title fields with line breaks can cause JS errors ([#403](https://github.com/BEXIS2/Core/issues/403), [#392](https://github.com/BEXIS2/Core/issues/392))
 
->The database update script has been revised. The seed data process has not been revised.
+> The database update script has been revised. The seed data process has not been revised.
 
 ## I. Software Information
 
