@@ -302,6 +302,7 @@ changes features rights for SubmissionController - must be public (dim)
 # CHANGED Files 
 
 $ git diff --stat origin/dev..origin/releases/2.13 --no-merges
+
  | File| Changes |
  |---|---|
  | .gitignore                                         |    1 + |
