@@ -110,7 +110,7 @@
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.12.0
+-	Version: 2.13.0
 -	Application Type: Web Application
 -	Platform: Windows
 
