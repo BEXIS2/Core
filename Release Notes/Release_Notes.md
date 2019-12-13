@@ -6,6 +6,8 @@
 
 - Allow deleting unstructured primary data ([#381](https://github.com/BEXIS2/Core/issues/381))
 
+- Allow the definition of missing values ([#35](https://github.com/BEXIS2/Core/issues/35))
+
 - Hide menu entries without permission ([#143](https://github.com/BEXIS2/Core/issues/143))
 
 - Allow to switch between dataset versions and show version information ([#283](https://github.com/BEXIS2/Core/issues/283),[#306](https://github.com/BEXIS2/Core/issues/306))
