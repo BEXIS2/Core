@@ -9,14 +9,15 @@ namespace BExIS.Modules.Ato.UI.Models
     {
         public string Name;
         public string Description;
-        public List<FileModel> FileModels;
-       
+        public List<BasicModel> BasicModels;
+        public List<string> Links;
+
         public CategoryModel()
         {
             Name = string.Empty;
             Description = string.Empty;
-            
-            FileModels = new List<FileModel>();
+
+            BasicModels = new List<BasicModel>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -19,6 +20,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Data.MetadataStructure;
+using BExIS.Web.Shell.Attributes;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using System;
@@ -48,7 +50,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
         #region Load Metadata formular actions
-
+        [BExISEntityAuthorizeAttribute("Dataset",typeof(Dataset), "datasetId",RightType.Write)]
         public ActionResult EditMetadata(long datasetId, bool locked = false, bool created = false)
         {
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });

@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Services.Data;
@@ -44,6 +45,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
         {
             var entityManager = new EntityManager();
@@ -192,8 +194,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 entityPermissionManager.Dispose();
             }
         }
-
-        public ActionResult DownloadZip(long id, string format, long version = -1)
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
+                public ActionResult DownloadZip(long id, string format, long version = -1)
         {
 
 
@@ -314,6 +316,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         //[MeasurePerformance]
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "datasetID", RightType.Read)]
         public ActionResult ShowPrimaryData(long datasetID, int versionId)
         {
             Session["Filter"] = null;
@@ -476,7 +479,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         #endregion server side
 
         #region download
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareAscii(long id, string ext, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -539,7 +542,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -621,7 +624,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Content("User has no rights.");
             }
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareExcelData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -690,7 +693,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAsExcelData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -780,7 +783,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Content("User has no rights.");
             }
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareExcelTemplateData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -855,7 +858,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Json("User has no rights.", JsonRequestBehavior.AllowGet);
             }
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAsExcelTemplateData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1071,7 +1074,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         #endregion download
 
         #region download FileStream
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAllFiles(long id)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1138,7 +1141,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return Content("User has no rights.");
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadFile(long id, string path, string mimeType)
         {
             if (hasUserRights(id, RightType.Read))

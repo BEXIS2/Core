@@ -107,12 +107,32 @@ namespace BExIS.Modules.Ato.UI.Controllers
 
                                     FileModel tmpFileModel = convert2FileModel(childElement);
 
-                                    temp.FileModels.Add(tmpFileModel);
+                                    temp.BasicModels.Add(tmpFileModel);
                                 }
                             }
 
                         }
                     }
+
+                    if (cElement.LocalName == "links")
+                    {
+                        if (cElement.HasChildNodes)
+                        {
+                            foreach (var child in cElement.ChildNodes)
+                            {
+                                XmlElement childElement = (XmlElement)child;
+                                if (childElement != null)
+                                {
+
+                                    LinkModel tmpFileModel = convert2LinkModel(childElement);
+
+                                    temp.BasicModels.Add(tmpFileModel);
+                                }
+                            }
+
+                        }
+                    }
+                    
                 }
             }
 
@@ -141,6 +161,29 @@ namespace BExIS.Modules.Ato.UI.Controllers
             if (element.HasAttribute("filename"))
             {
              temp.FileName = element.Attributes["filename"].Value;
+            }
+            return temp;
+
+        }
+
+        private LinkModel convert2LinkModel(XmlElement element)
+        {
+            LinkModel temp = new LinkModel();
+
+            if (element == null) return temp;
+
+            if (element.HasAttribute("header"))
+            {
+                temp.Header = element.Attributes["header"].Value;
+            }
+            if (element.HasAttribute("infotext"))
+            {
+                temp.InfoText = element.Attributes["infotext"].Value;
+            }
+
+            if (element.HasAttribute("link"))
+            {
+                temp.Link = element.Attributes["link"].Value;
             }
             return temp;
 

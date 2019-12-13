@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Publication;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Services;
@@ -38,14 +39,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// If Publication or any other entity is not part of the DLM, it is visible only to its own module.
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
         /// </summary>
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult publishData(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
 
             return View("_showPublishDataView", model);
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -400,7 +401,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             return null;
         }
-
+        [BExISEntityAuthorizeAttribute("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
             PublicationManager publicationManager = new PublicationManager();
