@@ -62,7 +62,9 @@
 
 - Allow to update PartyTypes while running the partyType.xml again ([#423](https://github.com/BEXIS2/Core/issues/423))
 
-- Add FAQ link to the application ([#426](https://github.com/BEXIS2/Core/issues/426) )
+- Add FAQ link to the application ([#426](https://github.com/BEXIS2/Core/issues/426))
+
+- Notification for session time out ([#300](https://github.com/BEXIS2/Core/issues/300))
 
 ### Bugs
 - Fix rights and request Status are encoded in a number in the permission request view ([#187](https://github.com/BEXIS2/Core/issues/187))
