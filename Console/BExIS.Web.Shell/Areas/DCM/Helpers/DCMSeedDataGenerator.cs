@@ -202,7 +202,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Form", "*");
                 operationManager.Create("DCM", "EntityReference", "*");
                 //Attachments
-                operationManager.Create("DCM", "Attachments", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "Attachments", "*");
 
                 #endregion public available
 
