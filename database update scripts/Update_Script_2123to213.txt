@@ -58,11 +58,19 @@ ALTER TABLE MetadataPackageUsages ALTER COLUMN description TYPE text;
 ALTER TABLE MetadataPackages ALTER COLUMN description TYPE text;
 
 
--- Update Data --
+-- INSERT Data --
 INSERT INTO public.operations
 (versionno, extra, "module", controller, "action", featureref)
 VALUES(1, NULL, 'Shell', 'Help', '*', NULL);
 
 
+-- UPDATE Data --
+UPDATE public.operations
+	SET featureref=null
+	WHERE module='DCM' AND controller='Attachments';
+
+UPDATE public.operations
+	SET featureref=null
+	WHERE module='DIM' AND controller='Submission';
    
 --COMMIT;
