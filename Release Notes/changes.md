@@ -231,24 +231,27 @@ changes features rights for SubmissionController - must be public (dim)
 ## WORKSPACE
 
 - apiConfig.xml (oai-pmh)
-- entityReferenceConfig.xml
 - MMM Module
 - geänderte mapping files 
 - BAM settings go to bam.settings.xml
 
+- entityReferenceConfig.xml (new in DCM)
   
 ````xml
 
-  <config>
-    <referenceTypes>
-        <referenceType>based on </referenceType>
-        <referenceType>collection</referenceType>
-        <referenceType>parent of</referenceType>
-        <referenceType>child of</referenceType>
-        <referenceType>link</referenceType>
-    </referenceTypes>
+<config>
+<referenceTypes>
+    <referenceType description="">collection</referenceType>
+    <referenceType description="">based on</referenceType>
+    <referenceType description="">child of</referenceType>
+    <referenceType description="">parent of</referenceType>
+    <referenceType description="">link</referenceType>
+</referenceTypes>
+<!--Whitelistfor entity types. Please configure, if you need to hide entities from the list
+<entityTypes>
+    <entityType description="">Dataset</entityType>
+</entityTypes>-->
 </config>
-
 ````
 
 ## UI
