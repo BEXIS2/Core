@@ -275,6 +275,8 @@ changes features rights for SubmissionController - must be public (dim)
 
 ## web.config
 
++ <add key="SessionWarningDelaySecond" value="30" />
+
 ```xml
 <remove name="WebDAVModule"/>
 
