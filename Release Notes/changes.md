@@ -229,11 +229,13 @@ changes features rights for EntityReferenceController - must be public (dcm)
 changes features rights for SubmissionController - must be public (dim)
 
 ## WORKSPACE
-
+- all module.settings file: Link to manual added
 - apiConfig.xml (oai-pmh)
-- MMM Module
-- geänderte mapping files 
+- new: Multimedia Module (MMM)
+- changed mapping files 
 - BAM settings go to bam.settings.xml
+- BAM: PartyTypes.xml (displayName (optional) added to PartyType attributes)
+- Rpm.Settings.xml (new: missing values)
 
 - entityReferenceConfig.xml (new in DCM)
   
@@ -256,12 +258,10 @@ changes features rights for SubmissionController - must be public (dim)
 
 ## UI
 
-- CSS -> erstellen von variables für Colors
-
-
+- CSS: user defined colors (Styles/bexis-custom.styles.css)
 
 - Site.css remove links urls by print view
-- ```css
+```css
 /* Don't print link hrefs */
 @media print {
     a [href]:after {
@@ -272,11 +272,9 @@ changes features rights for SubmissionController - must be public (dim)
 ```
 
 
-
 ## web.config
 
-+ <add key="SessionWarningDelaySecond" value="30" />
-
+new: 
 ```xml
 <remove name="WebDAVModule"/>
 
