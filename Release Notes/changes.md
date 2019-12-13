@@ -75,23 +75,6 @@
 ```
 
 
-## DCM
-- FormController -> version
-- Add new entity called EntityReference + EntityReferenceManager
-- add EntityReferenceController
-- add EntityReferenceController to seed data
-
-## DDM
-- change manifest file Search to secured search
-- 
-```xml
- <Export tag="menubar" id="menuSearch" order="2"
-            title="Search" description="Search datasets" icon=""
-            controller="Home" action="index"
-            extends="./menubarRoot" />
-```
-
-
 ## Core / Components 
 
 - EntityStore  
@@ -297,6 +280,25 @@ changes features rights for SubmissionController - must be public (dim)
 <add key="useMultimediaModule" value="true" />
 
 ```
+
+
+## DCM
+- FormController -> version
+- Add new entity called EntityReference + EntityReferenceManager
+- add EntityReferenceController
+- add EntityReferenceController to seed data
+
+## DDM
+- change manifest file Search to secured search
+- 
+```xml
+ <Export tag="menubar" id="menuSearch" order="2"
+            title="Search" description="Search datasets" icon=""
+            controller="Home" action="index"
+            extends="./menubarRoot" />
+```
+
+
 
 
 # CHANGED Files 
