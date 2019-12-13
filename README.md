@@ -12,13 +12,13 @@ BEXIS 2 is published under a GNU LESSER GENERAL PUBLIC LICENSE Version 3
 
 > A more detailed list of the changes is available for the co-developers. It mentions the changed libraries and important feature changes.
 
-[CHANGES](https://github.com/BEXIS2/Core/blob/2.13/Release%20Notes/Changes.md)
+[CHANGES](https://github.com/BEXIS2/Core/blob/2.13/Release%20Notes/changes.md)
 
 >if a running instance is updated, an update to the database is required.
 
 - STEP BY STEP
 
-[UPDATESCRIPTS] as Table?
+[UPDATESCRIPTS](https://github.com/BEXIS2/Core/blob/2.13/database%20update%20scripts)
 
 # Help for Users/Admins/Developers 
 
