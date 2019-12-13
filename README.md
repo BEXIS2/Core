@@ -20,6 +20,13 @@ BEXIS 2 is published under a GNU LESSER GENERAL PUBLIC LICENSE Version 3
 
 [UPDATE SCRIPTS](https://github.com/BEXIS2/Core/blob/2.13/database%20update%20scripts)
 
+# Installation
+
+For the preparation of Bexis 2 on a server a guide is available here.
+
+[Installation Manual](https://github.com/BEXIS2/Documents/blob/2.13/Guides/Installation/installation.md)
+
+
 # Help for Users/Admins/Developers
 
 >More help and information can be found on our GitHub - Wiki page.
