@@ -163,7 +163,7 @@
             showLoading(false);
             $('#tblPartyCustomAttributes').on('partyCustomAttributesChanged',
                          function (objectEvent, args) {
-                             //checkPartyRelationshipConditions();
+                             checkPartyRelationshipConditions();
                          });
         });
 
@@ -187,6 +187,18 @@
         });
         $("#divPartyRelationships").append(elements);
     }
+
+    function checkPartyRelationshipConditions()
+    {
+        $("#divPartyRelationships .partyTypeRelation").each(function(i, element) {
+            if(eval(parsePartyCondition($(element).attr("conditionSource"))))
+                $(element).show();
+            else
+                $(element).hide();
+        });
+    }
+
+
 
     $(function () {
         //parsing the unobtrusive attributes when we get content via ajax
