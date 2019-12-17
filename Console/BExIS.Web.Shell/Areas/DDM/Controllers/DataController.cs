@@ -1574,58 +1574,73 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return new SelectList(tmp, "Value", "Text");
         }
 
+        private string createEditedBy(string performer)
+        {
+            var user = GetUsernameOrDefault();
+            if (user != "DEFAULT")
+            {
+                return "by " + performer + ", ";
+            }
+            else
+            {
+                return "";
+            }
+            
+        }
+
+
         private string getVersionInfo(DatasetVersion d)
         {
             StringBuilder sb = new StringBuilder();
-
+            
             // modification, Performer and Comment exists (as indication for new version type tracking)
             if (d.ModificationInfo != null &&
                 !string.IsNullOrEmpty(d.ModificationInfo.Performer) && 
                 !string.IsNullOrEmpty(d.ModificationInfo.Comment))
             {
-
+                
                 // Metadata cration & edit
                 if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
-                    sb.Append(String.Format("Metadata creation (by {0}, {1})", d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Metadata creation ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
                 else if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
                 {
-                    sb.Append(String.Format("Metadata edited (by {0}, {1})", d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Metadata edited ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 //unstructured file upload & delete
                 else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
-                    sb.Append(String.Format("File uploaded: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("File uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
                 else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
                 {
-                    sb.Append(String.Format("File deleted: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("File deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 // structured data import & update & delete
                 else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
-                    sb.Append(String.Format("Data imported: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Data imported: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
                 else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
                 {
-                    sb.Append(String.Format("Data added: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Data added: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
                 else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
                 {
-                    sb.Append(String.Format("Data deleted (by {0}, {1})", d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Data deleted ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 // attachment 
                 else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
-                    sb.Append(String.Format("Attachtment uploaded: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30) , d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Attachtment uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
                 else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
                 {
-                    sb.Append(String.Format("Attachtment deleted: {0} (by {1}, {2})", Truncate(d.ChangeDescription, 30), d.ModificationInfo.Performer, d.Timestamp.ToString("dd.MM.yyyy")));
+                    sb.Append(String.Format("Attachtment deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
 
@@ -1635,7 +1650,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     sb.Append(" - ");
                     sb.Append(d.ModificationInfo.ActionType);
                     sb.Append(" - ");
-                    sb.Append(d.ModificationInfo.Performer);
+                    sb.Append(createEditedBy(d.ModificationInfo.Performer));
 
                     // both exits - needs seperator
                     if (d.ModificationInfo != null &&
