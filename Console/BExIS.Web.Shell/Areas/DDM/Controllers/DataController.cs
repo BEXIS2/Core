@@ -417,6 +417,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
                 string filename = "ext.js";
+                string datapath = @"C:\Data";
+                if (AppConfiguration.DataPath != null || !string.IsNullOrEmpty(AppConfiguration.DataPath)) datapath = AppConfiguration.DataPath;
+
                 string path = Path.Combine(AppConfiguration.DataPath, "MetadataStructures", metadataStructureId.ToString(), filename);
 
                 if (!FileHelper.FileExist(path))

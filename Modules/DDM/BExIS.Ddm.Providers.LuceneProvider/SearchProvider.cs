@@ -215,6 +215,17 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return this.WorkingSearchModel;
         }
 
+        public SearchModel UpdateProperties(SearchCriteria searchCriteria = null)
+        {
+            if (searchCriteria == null)
+                searchCriteria = new SearchCriteria();
+            getQueryFromCriteria(searchCriteria);
+
+            this.WorkingSearchModel.SearchComponent.Properties = BexisIndexSearcher.propertySearch(this.bexisSearching, this.WorkingSearchModel.SearchComponent.Properties);
+
+            return this.WorkingSearchModel;
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -243,6 +254,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         {
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
+            this.WorkingSearchModel = UpdateProperties(searchCriteria);
         }
 
         /// <summary>
@@ -258,6 +270,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         {
             this.WorkingSearchModel = Get(searchCriteria, pageSize, currentPage);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
+            this.WorkingSearchModel = UpdateProperties(searchCriteria);
 
             return this.WorkingSearchModel;
         }

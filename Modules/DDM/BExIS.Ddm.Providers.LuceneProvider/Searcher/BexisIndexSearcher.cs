@@ -370,5 +370,38 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             }
             return l;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="query"></param>
+        /// <param name="facets"></param>
+        /// <returns></returns>
+        public static IEnumerable<Property> propertySearch(Query query, IEnumerable<Property> properties)
+        {
+            foreach (Property p in properties)
+            {
+                SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + p.Name });
+                SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                int cCount = 0;
+
+                List<string> tmp = new List<string>();
+
+                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                {
+                    if (!String.IsNullOrEmpty(hpg.Name.ToString()))
+                    {
+                        if ((int)hpg.HitCount > 0)
+                            tmp.Add(hpg.Name.ToString());
+                    }
+                }
+
+                p.Values = tmp;
+
+            }
+            return properties;
+        }
     }
 }
