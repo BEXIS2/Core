@@ -32,6 +32,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
             Session["Controller"] = "Home";
+            Session["PropertiesDictionary"] = null;
 
             try
             {
@@ -169,6 +170,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
         }
 
+        public ActionResult UpdateProperties()
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+            var properties = provider.UpdateProperties(provider.WorkingSearchModel.CriteriaComponent).SearchComponent.Properties;
+
+            foreach (Property p in properties)
+            {
+                if (PropertiesDic.ContainsKey(p.DataSourceKey))
+                {
+                    p.SelectedValue = PropertiesDic[p.DataSourceKey];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
+                }
+            }
+
+            return PartialView("_searchProperties", properties);
+        }
+
         public ActionResult GetDataForBreadCrumbView()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -285,6 +306,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
+
+            //reset properties selected values
+            var properties = provider.WorkingSearchModel.SearchComponent.Properties;
+
+            foreach (Property p in properties)
+            {
+                if (PropertiesDic.ContainsKey(p.DataSourceKey))
+                {
+                    p.SelectedValue = PropertiesDic[p.DataSourceKey];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
+                }
+            }
+
+
             return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
         }
 
@@ -341,6 +379,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
+
+
 
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent, 10, 1));
         }

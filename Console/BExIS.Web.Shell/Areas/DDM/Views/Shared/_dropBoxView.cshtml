@@ -7,8 +7,14 @@
         <p class="PropertyHeader">@Model.DisplayName</p>
 
 
-        @{ string value = "";
+        @{ 
+            string value = "";
             int i = 0;
+
+            if (!string.IsNullOrEmpty(Model.SelectedValue))
+            {
+                i = Model.Values.ToList().IndexOf(Model.SelectedValue)+1;
+            }
 
 
             string controller = Session["Controller"].ToString();
@@ -53,13 +59,23 @@
             console.log("update header");
             //console.log(response);
             $(".searchBreadcrumbNavigation").html(response);
+
+            $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                console.log("update Properties");
+                console.log(response);
+                $("#searchProperties").html(response);
+            })
+        
+
         });
 
         $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
             console.log("update facets");
-            //console.log(response);
+            console.log(response);
             $("#searchTreeView").html(response);
         })
+
+
         
 
         refreshGrid();
