@@ -1561,13 +1561,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             List<SelectListItem> tmp = new List<SelectListItem>();
 
-            List<DatasetVersion> dsvs = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Timestamp).ToList();
+            List<DatasetVersion> dsvs = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Id).ToList();
 
             dsvs.ForEach(d => tmp.Add(
                 new SelectListItem()
                 {
-                    Text = (dsvs.IndexOf(d) + 1) + " " + getVersionInfo(d),
-                    Value = "" + (dsvs.IndexOf(d) + 1)
+                    Text = (dsvs.Count - dsvs.IndexOf(d)) + " " + getVersionInfo(d),
+                    Value = "" + (dsvs.Count - dsvs.IndexOf(d))
                 }
                 ));
 
