@@ -1558,7 +1558,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             List<SelectListItem> tmp = new List<SelectListItem>();
 
-            List<DatasetVersion> dsvs = datasetManager.GetDatasetVersions(id).OrderBy(d => d.Timestamp).ToList();
+            List<DatasetVersion> dsvs = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Timestamp).ToList();
 
             dsvs.ForEach(d => tmp.Add(
                 new SelectListItem()
