@@ -20,27 +20,27 @@
             <td>
                 @if (Model.Party == null)
                 {
-                    <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;">
-                        @foreach (var partyTypeModel in Model.PartyRelationshipsTypes)
+                <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;" >
+                    @foreach (var partyTypeModel in Model.PartyRelationshipsTypes)
                     {
-                            <script type="text/javascript">
+                        <script type="text/javascript">
                                 var partyTypePairs=[];
-                            </script>
-                            foreach (var PartyTypePair in partyTypeModel.Value)
-                            {
-                                <script type="text/javascript">
-                                    
-                                    partyTypePairs.push({Id:@PartyTypePair.Value.Id,Title:"@PartyTypePair.Key",PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id,conditionSource:"@PartyTypePair.Value.ConditionSource",parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.TargetPartyType.Parties.Select(item => new { item.Id, item.Name })))});
-                                </script>
-                            }
+                        </script>
+                        foreach (var PartyTypePair in partyTypeModel.Value)
+                        {
                             <script type="text/javascript">
+
+                                partyTypePairs.push({ Id:@PartyTypePair.Value.Id, Title: "@PartyTypePair.Key", PartyRelationshipId:@PartyTypePair.Value.PartyRelationshipType.Id, conditionSource: "@PartyTypePair.Value.ConditionSource", parties:@Html.Raw(Json.Encode(@PartyTypePair.Value.TargetPartyType.Parties.Select(item => new { item.Id, item.Name }))), MinCardinality:@PartyTypePair.Value.PartyRelationshipType.MinCardinality });
+                            </script>
+                        }
+                        <script type="text/javascript">
                                 //Add partyTypePairs to a list to make a option list later
                                 if(partyTypePairs.length)
                                     PartyRelations.items.push({ PartyTypeId: @partyTypeModel.Key.Id,"partyTypePairs":partyTypePairs});
-                            </script>
-                            <option value="@partyTypeModel.Key.Id">@partyTypeModel.Key.Title</option>
-                        }
-                    </select>
+                        </script>
+                        <option value="@partyTypeModel.Key.Id">@partyTypeModel.Key.Title</option>
+                    }
+                </select>
                     <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
                 }
                 else
@@ -173,16 +173,27 @@
             return PartyRelations.items[n].PartyTypeId==partyTypeId;
         });
         elements="";
+
         $("#divPartyRelationships").html("");
         $.each(data, function(i, item) {
-            $.each(item.partyTypePairs, function(i, partyTypePair) {
-                elements +="<div style='border-bottom:thin solid #ebebeb' conditionSource='"+partyTypePair.conditionSource+"' class='partyTypeRelation' PartyRelationshipId='"+partyTypePair.PartyRelationshipId+"' partyTypePairId='"+partyTypePair.Id+"'><div style='display: inline-block; width: 240px; padding-left: 50px; padding-bottom: 20px; padding-top: 10px;'><label>"+partyTypePair.Title+": </label></div><div style='display:inline-block;padding-left: 7px;'><select name='typeid' id='ddl_PartyTypePairId'  class='comboboxBootstrap' style='width: 372px; border: 2px solid black; height: 30px;'>";
+            $.each(item.partyTypePairs, function (i, partyTypePair) {
+                var validate = "false";
+                var asterix = "";
+                var padding = "50";
+                var width = "240";
+                if (partyTypePair.MinCardinality > 0) {
+                    validate = "true";
+                    asterix = '<b title="Required" style="color: red">*</b>';
+                    padding = "40";
+                    width = "234";
+                }
+                elements += "<div style='border-bottom:thin solid #ebebeb' conditionSource='" + partyTypePair.conditionSource + "' class='partyTypeRelation' PartyRelationshipId='" + partyTypePair.PartyRelationshipId + "' partyTypePairId='" + partyTypePair.Id + "'>" + asterix + "<div style='display: inline-block; width: " +width + "px; padding-left: "+ padding + "px; padding-bottom: 20px; padding-top: 10px;'><label>" + partyTypePair.Title + ": </label></div><div style='display:inline-block;padding-left: 7px;'><select name='typeid" + partyTypePair.Id +"' id='ddl_PartyTypePairId'  class='comboboxBootstrap' style='width: 372px; border: 2px solid black; height: 30px;' data-val='" + validate + "'  data-val-selectvalidation='This field is required'>";
                 elements +="<option value='-1'>---</option>";
                 $.each(partyTypePair.parties, function(i, Party) {
                     elements +="<option value='"+Party.Id+"'>"+Party.Name+"</option>";
                   
                 });
-                elements+="</select></div></div>";
+                elements += "</select></div><span class='field-validation-valid' data-valmsg-for='typeid" + partyTypePair.Id+"' data-valmsg-replace='true'></span></div>";
             });
         });
         $("#divPartyRelationships").append(elements);
