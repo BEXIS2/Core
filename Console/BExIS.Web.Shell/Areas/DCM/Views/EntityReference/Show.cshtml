@@ -7,101 +7,113 @@
 
 <div id="entity-reference-container" class="row text-left">
     <div class="col-md-12">
-        <div class="entity-referenceoption-container">
-            <button id="create-reference-bt" class="bx-button function">Create link</button>
+        @if (Model.HasEditRights)
+        {
+            <div class="entity-referenceoption-container">
+                <button id="create-reference-bt" class="bx-button function">Create link</button>
+            </div>
+        }
+
+            @Html.HiddenFor(m => m.Selected.Id)
+            @Html.HiddenFor(m => m.Selected.TypeId)
+            @Html.HiddenFor(m => m.Selected.Version)
+
+            <h3>Link to</h3>
+
+            <table id="target_reference_table" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th title="From version">From</th>
+                        <th title="Identifier">Id</th>
+                        <th title="Version">V</th>
+                        <th title="Title">Title</th>
+                        <th title="Description">Comment</th>
+                        <th title="Entity type">Type</th>
+                        <th title="Type of the reference">Reference Type</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var srm in Model.TargetReferences)
+                    {
+                        <tr>
+                            <td>@srm.Source.Version</td>
+                            <td>@srm.Target.Id</td>
+                            <td>@srm.Target.Version</td>
+                            <td>@Html.ActionLink(@srm.Target.Title, "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, null)</td>
+                            <td>@srm.Context</td>
+                            <td>@srm.Target.Type</td>
+                            <td>@srm.ReferenceType</td>
+                            <td class="dt-body-center">
+
+
+                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
+
+                                @if (!srm.Target.LatestVersion)
+                                {
+                                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                                }
+
+                                @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
+                                {
+                                    <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            <h3>Linked from</h3>
+            <table id="source_reference_table" class="display" style="width:100%">
+                <thead>
+                    <tr>
+
+                        <th title="Identifier">Id</th>
+                        <th title="Version">V</th>
+                        <th title="Title">Title</th>
+                        <th title="Description">Comment</th>
+                        <th title="Entity type">Type</th>
+                        <th title="Link to Version">To version</th>
+
+                        <th title="Type of the reference">Reference Type</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var srm in Model.SourceReferences)
+                    {
+                        <tr>
+                            <td>@srm.Source.Id</td>
+                            <td>@srm.Source.Version</td>
+                            <td>@Html.ActionLink(@srm.Source.Title, "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, null)</td>
+                            <td>@srm.Context</td>
+                            <td>@srm.Source.Type</td>
+                            <td>@srm.Target.Version</td>
+                            <td>@srm.ReferenceType</td>
+                            <td class="dt-body-center">
+
+
+                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
+
+                                @if (!srm.Source.LatestVersion)
+                                {
+                                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                                }
+                                @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
+                                {
+                                    <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
         </div>
-
-        <h3>Link to</h3>
-
-        <table id="target_reference_table" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th title="From version">From</th>
-                    <th title="Identifier">Id</th>
-                    <th title="Version">V</th>
-                    <th title="Title">Title</th>
-                    <th title="Description">Context</th>
-                    <th title="Entity type">Type</th>
-                    <th title="Type of the reference">Reference Type</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (var srm in Model.TargetReferences)
-                {
-                <tr>
-                    <td>@srm.Source.Version</td>
-                    <td>@srm.Target.Id</td>
-                    <td>@srm.Target.Version</td>
-                    <td>@Html.ActionLink(@srm.Target.Title, "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, null)</td>
-                    <td>@srm.Context</td>
-                    <td>@srm.Target.Type</td>
-                    <td>@srm.ReferenceType</td>
-                    <td class="dt-body-center">
-
-
-                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
-
-                        @if (!srm.Target.LatestVersion)
-                        {
-                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
-                        }
-
-                        <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
-                    </td>
-                </tr>
-                }
-            </tbody>
-
-        </table>
-
-        <h3>Linked from</h3>
-        <table id="source_reference_table" class="display" style="width:100%">
-            <thead>
-                <tr>
-
-                    <th title="Identifier">Id</th>
-                    <th title="Version">V</th>
-                    <th title="Title">Title</th>
-                    <th title="Description">Context</th>
-                    <th title="Entity type">Type</th>
-                    <th title="Link to Version">To version</th>
-
-                    <th title="Type of the reference">Reference Type</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (var srm in Model.SourceReferences)
-                {
-                <tr>
-                    <td>@srm.Source.Id</td>
-                    <td>@srm.Source.Version</td>
-                    <td>@Html.ActionLink(@srm.Source.Title, "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, null)</td>
-                    <td>@srm.Context</td>
-                    <td>@srm.Source.Type</td>
-                    <td>@srm.Target.Version</td>
-                    <td>@srm.ReferenceType</td>
-                    <td class="dt-body-center">
-
-
-                        @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
-
-                        @if (!srm.Source.LatestVersion)
-                        {
-                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
-                        }
-
-                    <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
-                    </td>
-                </tr>
-                }
-            </tbody>
-
-        </table>
-    </div>
 
 </div>
 
@@ -146,7 +158,7 @@
 
             var id = '@Model.Selected.Id';
             var type = '@Model.Selected.TypeId'
-            var title = '@Model.Selected.Title'
+            var title = '@Model.Selected.Title.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " ");'
             var version = '@Model.Selected.Version'
 
             var parameters = {
@@ -191,18 +203,26 @@
 
 
             $('.delete-reference-bt').click(function (e) {
+                deleteReference(e);
+            })
+
+
+            function deleteReference(e) {
+
+                //console.log(e);
 
                 var answer = confirm("Do you really want to delete the Enitity Reference?");
 
                 if (answer) {
                     var sourceid = '@Model.Selected.Id';
                     var sourcetype = '@Model.Selected.TypeId'
+                    var sourceVersion = '@Model.Selected.Version'
 
                     var parameters = {
-                        id: $(this).attr("id")
+                        id: $(e.currentTarget).attr("id")
                     }
-
-                    console.log(parameters)
+                   
+                    //console.log(parameters)
 
                     $.ajax({
                         type: 'Post',
@@ -213,13 +233,12 @@
 
                             if (data) {
 
-                                reload(sourceid, sourcetype)
+                                reload(sourceid, sourcetype, sourceVersion)
                             }
                         }
                     });
                 }
-            });
-
+            }
         })
 </script>
 

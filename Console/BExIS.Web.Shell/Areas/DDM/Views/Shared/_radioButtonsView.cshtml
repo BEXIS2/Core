@@ -21,25 +21,30 @@
  
     @foreach (var itemValue in Model.Values)
     {
-        if (value == itemValue.ToString())
+        //  empty value are not set
+        if (!string.IsNullOrWhiteSpace(itemValue))
         {
-            <input type="radio"
-                   id="@Model.DataSourceKey"
-                   name="@Model.DataSourceKey"
-                   runat="server"
-                   onclick="confirmSubmit(this)"
-                   checked="True"
-                   value="@itemValue.ToString()"/>@itemValue.ToString()
-        }
-        else
-        {
-            <input type="radio"
-                   id="@Model.DataSourceKey"
-                   name="@Model.DataSourceKey"
-                   runat="server"
-                   onclick="confirmSubmit(this)"
 
-                   value="@itemValue.ToString()"/>@itemValue.ToString()
+            if (value == itemValue.ToString())
+            {
+                <input type="radio"
+                       id="@Model.DataSourceKey"
+                       name="@Model.DataSourceKey"
+                       runat="server"
+                       onclick="confirmSubmit(this)"
+                       checked="True"
+                       value="@itemValue.ToString()"/>@itemValue.ToString()
+            }
+            else
+            {
+                <input type="radio"
+                       id="@Model.DataSourceKey"
+                       name="@Model.DataSourceKey"
+                       runat="server"
+                       onclick="confirmSubmit(this)"
+
+                       value="@itemValue.ToString()"/>@itemValue.ToString()
+            }
         }
 
     }
@@ -49,9 +54,16 @@
 
         function confirmSubmit(e) {
 
-            $.post('@Url.Action("FilterByCheckBox", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: e.value, node: e.name, isChecked: e.checked }, function (response) {
+            $.post('@Url.Action("FilterByRadioButton", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: e.value, node: e.name, isChecked: e.checked }, function (response) {
                 // alert(response);
                 $(".searchBreadcrumbNavigation").html(response);
+
+                     $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                        console.log("update Properties");
+                        //console.log(response);
+                        $("#searchProperties").html(response);
+                    })
+
             });
 
 //            $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
@@ -62,8 +74,9 @@
             $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
                 $("#searchTreeView").html(response);
             })
-        
 
+
+       
             e.disabled = true;
             refreshGrid();
             e.disabled = false;

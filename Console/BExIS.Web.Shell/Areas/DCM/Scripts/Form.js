@@ -270,10 +270,6 @@ function OnChange(e) {
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
 
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(ParentStepID);
-    //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
             value: e.value,
@@ -315,20 +311,6 @@ function OnChangeCheckBox(e) {
         value = false;
     }
 
-    var data = {
-        value: e.value,
-        id: id,
-        parentid: parentid,
-        parentname: parentname,
-        number: number,
-        parentModelNumber: ParentModelNumber,
-        ParentStepId: ParentStepID
-    };
-
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(ParentStepID);
-    //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
             value: value,
@@ -353,6 +335,7 @@ function OnChangeCheckBox(e) {
 }
 
 function OnChangeDropDown(e) {
+    var idParentDiv = $(this).attr("id");
     var substr = e.target.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -361,20 +344,6 @@ function OnChangeDropDown(e) {
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
 
-    var data = {
-        value: e.value,
-        id: id,
-        parentid: parentid,
-        parentname: parentname,
-        number: number,
-        parentModelNumber: ParentModelNumber,
-        ParentStepId: ParentStepID
-    };
-
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(ParentStepID);
-    //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
             value: e.value,
@@ -386,10 +355,18 @@ function OnChangeDropDown(e) {
             ParentStepId: ParentStepID
         },
         function (response) {
-        })
-}
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+        });
+};
 
 function OnChangeNumbers(e) {
+    var idParentDiv = $(this).attr("id");
+    var value = $(e.currentTarget).val();
     var substr = e.target.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -399,78 +376,57 @@ function OnChangeNumbers(e) {
     var ParentModelNumber = substr[4];
     var ParentStepID = substr[5];
 
-    var data = {
-        value: e.target.value,
-        id: id,
-        parentid: parentid,
-        parentname: parentname,
-        number: number,
-        ParentModelNumber: ParentModelNumber,
-        ParentStepId: ParentStepID
-    };
-
-    //alert(id);
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(number);
-
-    $.ajax({
-        url: '/DCM/Form/ValidateMetadataAttributeUsage',
-        type: 'POST',
-        data: JSON.stringify(data),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8',
-        error: function (xhr) {
-            //alert('Error: ' + xhr.statusText);
+    $.post("/DCM/Form/ValidateMetadataAttributeUsage",
+        {
+            value: value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
         },
-        success: function (result) {
-            //alert("success");
-        },
-        async: true,
-        processData: false
-    });
+        function (response) {
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+        });
 }
 
 function OnChangeDatePicker(e) {
+    //console.log(e.value);
+
+    var value = $(e.currentTarget).val(); // data value as normal text string (not as DateTime string -> e.value)
+    var idParentDiv = $(this).attr("id");
     var substr = e.target.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
     var parentname = $("#" + e.id).attr("title");
-    //var metadataStructureId = substr[2];
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
 
-    var data = {
-        value: e.value,
-        id: id,
-        parentid: parentid,
-        parentname: parentname,
-        number: number,
-        ParentModelNumber: ParentModelNumber,
-        ParentStepId: ParentStepID
-    };
-
-    //alert(id);
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(number);
-
-    $.ajax({
-        url: '/DCM/Form/ValidateMetadataAttributeUsage',
-        type: 'POST',
-        data: JSON.stringify(data),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8',
-        error: function (xhr) {
-            //alert('Error: ' + xhr.statusText);
+    $.post("/DCM/Form/ValidateMetadataAttributeUsage",
+        {
+            value: value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
         },
-        success: function (result) {
-            //alert("success");
-        },
-        async: true,
-        processData: false
-    });
+        function (response) {
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+        });
 }
 
 function OnClickAdd(e, max) {
@@ -619,6 +575,8 @@ function OnClose(e) {
     var end = 0;
     var partyid = 0;
     var entityid = 0;
+    var entitytypeid = 0;
+    var entityinfo;
     var number = 0;
     var parent;
     var parentid = 0;
@@ -658,7 +616,11 @@ function OnClose(e) {
         if (~value.indexOf("(") && ~value.indexOf(")")) {
             start = value.lastIndexOf("(") + 1;
             end = value.lastIndexOf(")");
-            entityid = value.substr(start, end - start);
+            //(1/2)
+            entityInfo = value.substr(start, end - start);
+            entityid = entityInfo.split("_")[0];
+            entitytypeid = entityInfo.split("_")[1];
+
             var title = value.substr(0, start - 2);
 
             parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
@@ -668,7 +630,7 @@ function OnClose(e) {
                 number = $(parent).attr("number");
                 var attrnumber = $('#' + id).attr("number");
 
-                UpdateWithEntity(parentid, number, id, attrnumber, entityid, title);
+                UpdateWithEntity(parentid, number, id, attrnumber, entityid, entitytypeid, title);
             }
         }
     }
@@ -678,9 +640,9 @@ function OnClose(e) {
  ********* Component************************
  ******************************************/
 
-function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityid, value) {
+function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityid, entitytypeid, value) {
     console.log("update with entity");
-    console.log(componentId + "-" + number + "-" + entityid);
+    console.log(componentId + "-" + number + "-" + entityid + "_" + entitytypeid);
 
     var attrId = inputid.split("_")[0];
 
@@ -697,6 +659,7 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
             inputattrid: attrId,
             inputAttrNumber: inputattrnumber,
             entityId: entityid,
+            entityTypeId: entitytypeid,
             value: value
         },
         function (response) {
@@ -851,7 +814,7 @@ function showHideClick(e) {
     var id = parentId + "_" + number + "_Container";
     var buttonId = parentId + "_" + number + "_ButtonView";
     $('#' + id).toggle();
-    $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
+    $('#' + buttonId).toggleClass("fa-angle-double-down fa-angle-double-right");
     bindMinimap(true);
 }
 

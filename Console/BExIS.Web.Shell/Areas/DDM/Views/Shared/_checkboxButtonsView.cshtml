@@ -1,0 +1,87 @@
+﻿@model BExIS.Utils.Models.Property
+
+<p><p class="PropertyHeader">@Model.DisplayName</p>
+   
+   @{ 
+       string value = "";
+       string controller = Session["Controller"].ToString();
+
+   }
+
+    @if (this.Session["PropertiesDictionary"] as Dictionary<string, string> != null)
+    {
+        Dictionary<string, string> dic = this.Session["PropertiesDictionary"] as Dictionary<string, string>;
+        value = ((dic != null && dic.ContainsKey(Model.DataSourceKey)) ? dic[Model.DataSourceKey] : Model.DefaultValue); //HtmlHelpers.GetSelectedValueInDictionary(Model.DataSourceKey, Model.DefaultValue, this.Session["PropertiesDictionary"] as Dictionary<string, string>); 
+    }
+    
+    @if (value == "" || this.Session["PropertiesDictionary"] as Dictionary<string, string> == null)
+    {
+        value = Model.DefaultValue;
+    }
+    
+ 
+    @foreach (var itemValue in Model.Values)
+    {
+        //default value not needed by checkbox
+        // also empty value are not set
+        if (itemValue != Model.DefaultValue && !string.IsNullOrWhiteSpace(itemValue))
+        {
+            if (value == itemValue.ToString())
+            {
+            <input type="checkbox"
+                   id="@Model.DataSourceKey"
+                   name="@Model.DataSourceKey"
+                   runat="server"
+                   onclick="confirmSubmit(this)"
+                   checked="True"
+                   value="@itemValue.ToString()"/>@itemValue.ToString()
+            }
+            else
+            {
+            <input type="checkbox"
+                   id="@Model.DataSourceKey"
+                   name="@Model.DataSourceKey"
+                   runat="server"
+                   onclick="confirmSubmit(this)"
+
+                   value="@itemValue.ToString()"/>@itemValue.ToString()
+            }
+        }
+
+    }
+    </p>
+
+    <script type="text/javascript">
+
+        function confirmSubmit(e) {
+
+            $.post('@Url.Action("FilterByCheckBox", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: e.value, node: e.name, isChecked: e.checked }, function (response) {
+                // alert(response);
+                $(".searchBreadcrumbNavigation").html(response);
+
+                 $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                    console.log("update Properties");
+                    //console.log(response);
+                    $("#searchProperties").html(response);
+                })
+            });
+
+//            $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+//                $("#resultContent").html(response);
+
+//            })
+
+            $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                $("#searchTreeView").html(response);
+            })
+
+
+           
+
+
+            e.disabled = true;
+            refreshGrid();
+            e.disabled = false;
+        }
+
+    </script>

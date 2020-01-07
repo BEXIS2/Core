@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using BExIS.Utils.Route;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -219,10 +220,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (datatuples.Count > 0)
                             {
+                                ////set modification
+                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                {
+                                    Performer = user.UserName,
+                                    Comment = "Data",
+                                    ActionType = AuditActionType.Edit
+                                };
+
                                 datasetManager.EditDatasetVersion(workingCopy, datatuples, null, null);
                             }
 
-                            datasetManager.CheckInDataset(dataset.Id, "upload data via api", user.UserName);
+                            datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
                             es.Send(MessageHelper.GetUpdateDatasetHeader(),
@@ -477,7 +486,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
-                            datasetManager.CheckInDataset(dataset.Id, "upload data via api", user.UserName);
+                            ////set modification
+                            workingCopy.ModificationInfo = new EntityAuditInfo()
+                            {
+                                Performer = user.UserName,
+                                Comment = "Data",
+                                ActionType = AuditActionType.Edit
+                            };
+                            datasetManager.EditDatasetVersion(workingCopy, null, null, null);
+
+                            datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
                             es.Send(MessageHelper.GetUpdateDatasetHeader(),

@@ -173,8 +173,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (user.Email != model.Email)
                 {
                     // check duplicate email cause of client validation is not working in a telerik window :(
-                    user = userManager.FindByEmailAsync(model.Email).Result;
-                    if (user != null) ModelState.AddModelError("Email", "The email address exists already.");
+                    var duplicateUser = userManager.FindByEmailAsync(model.Email).Result;
+                    if (duplicateUser != null) ModelState.AddModelError("Email", "The email address exists already.");
                     if (!ModelState.IsValid) return PartialView("_Update", model);
                 }
 

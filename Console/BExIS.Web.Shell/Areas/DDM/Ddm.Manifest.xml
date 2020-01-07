@@ -19,7 +19,7 @@
 
     <Export tag="menubar" id="menuSearch" order="2"
             title="Search" description="Search datasets" icon=""
-            controller="publicsearch" action="index"
+            controller="Home" action="index"
             extends="./menubarRoot" />
 
     <!--<Export tag="menubar" id="menuSearchPublic" order="2"
@@ -44,6 +44,11 @@
 
     <!-- INTERNAL-->
 
+    <Export tag="internalApi" id="publicsearch"
+            title="Public Search" description="public search" icon=""
+            controller="PublicSearch" action="Index"
+            extends="" />
+
     <Export tag="internalApi" id="showData"
             title="Show Data" description="ShowData" icon=""
             controller="Data" action="ShowData"
@@ -65,14 +70,14 @@
         extends="" />
 
     <Export tag="internalApi" id="freeTextSearch"
-            title="Free Text Search" description="free Text Search" icon=""
+            title="Free Text Search" description="free Text Search" icon="" 
             controller="SearchIndex" action="Get"
             extends="" />
 
-    <Export tag="internalApi" id="showDatasetsInDashboard"
+    <!--<Export tag="internalApi" id="showDatasetsInDashboard"
             title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""
             controller="home" action="index"
-            extends="" />
+            extends="" />-->
   </Exports>
 
   <EntityActions>

@@ -22,6 +22,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml.Linq;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers.API
 {
@@ -115,7 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                 if (rp == null)
                 {
-                    request.Content = new StringContent("A research plan with id " + dataset.DataStructureId + "does not exist.");
+                    request.Content = new StringContent("A research plan with id " + researchPlanId + "does not exist.");
                     return request;
                 }
 
@@ -124,7 +125,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                 if (metadataStructure == null)
                 {
-                    request.Content = new StringContent("A metadata structure with id " + dataset.DataStructureId + "does not exist.");
+                    request.Content = new StringContent("A metadata structure with id " + dataset.MetadataStructureId + "does not exist.");
                     return request;
                 }
 
@@ -147,8 +148,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.title, dataset.Title);
                     workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.description, dataset.Description);
 
+                    ////set modification
+                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = user.UserName,
+                        Comment = "Metadata",
+                        ActionType = AuditActionType.Create
+                    };
+
                     datasetManager.EditDatasetVersion(workingCopy, null, null, null);
-                    datasetManager.CheckInDataset(datasetId, "Dataset was created and title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
+                    datasetManager.CheckInDataset(datasetId, "Title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
                 }
 
                 request.Content = new StringContent("the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");

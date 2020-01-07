@@ -52,8 +52,8 @@
     @Scripts.Render("~/bundles/handsontable")
     @Scripts.Render("~/bundles/dataTables")
     @Scripts.Render("~/bundles/bexis")
-   
 
+    <link href="~/Content/docs.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -121,7 +121,17 @@
     )
 
     @Html.RenderAuto("Footer")
-    @RenderSection("Scripts", false)
+    
+<script type="text/javascript">
+    var global_sess_expirationSeconds = @Session.Timeout*60;
+    var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
+    var global_LogoutUrl = '@Url.Action("ClearSession", "Account", new { area = ""})';
+    var global_sess_resetPage = '@Url.Action("Index", "JS", new { area = ""})';
+</script>
+
+<script src="~/Scripts/session.warning.js"></script>
+
+@RenderSection("Scripts", false)
 
 </body>
 </html>

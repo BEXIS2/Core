@@ -114,7 +114,12 @@
          $.post('@Url.Action("UpdateFacets", @controller)', {}, function (response) {
              $("#searchTreeView").html(response);
          })
-        
+
+         $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+            console.log("update Properties");
+            //console.log(response);
+            $("#searchProperties").html(response);
+        })
 
          refreshGrid();
      }

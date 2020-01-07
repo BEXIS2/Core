@@ -562,24 +562,6 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\DIM\bexis-dim.css" />
-    <Content Include="Content\Images\help\collections.png" />
-    <Content Include="Content\Images\help\help_img1.png" />
-    <Content Include="Content\Images\help\help_img2.png" />
-    <Content Include="Content\Images\help\help_img3.png" />
-    <Content Include="Content\Images\help\help_img4.png" />
-    <Content Include="Content\Images\help\key_overview.PNG" />
-    <Content Include="Content\Images\help\many_to_one.png" />
-    <Content Include="Content\Images\help\mapping.png" />
-    <Content Include="Content\Images\help\mapping_tool.png" />
-    <Content Include="Content\Images\help\mapping_tool2.png" />
-    <Content Include="Content\Images\help\mapping_tool3.png" />
-    <Content Include="Content\Images\help\one_to_many.png" />
-    <Content Include="Content\Images\help\one_to_one.png" />
-    <Content Include="Content\Images\help\pangaea1.png" />
-    <Content Include="Content\Images\help\pangaea2.png" />
-    <Content Include="Content\Images\help\publish.png" />
-    <Content Include="Content\Images\help\source.png" />
-    <Content Include="Content\Images\help\target.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Dim.Manifest.xml">
       <SubType>Designer</SubType>
@@ -629,6 +611,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -685,6 +668,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Images\" />
     <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
     <Folder Include="Views\Shared\" />
@@ -996,6 +980,15 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

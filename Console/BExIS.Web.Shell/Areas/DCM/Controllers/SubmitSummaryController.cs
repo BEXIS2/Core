@@ -23,6 +23,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -229,6 +230,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         long datasetid = ds.Id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         title = xmlDatasetHelper.GetInformation(ds.Id, NameAttributeValues.title);
+
+                        int numberOfRows = 0;
+
                         try
                         {
                             //Stopwatch fullTime = Stopwatch.StartNew();
@@ -331,6 +335,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         }
                                     }
                                     Stream?.Close();
+
+                                    //count rows
+                                    numberOfRows += rows.Count();
                                 } while (rows.Count() > 0 && rows.Count() == packageSize);
                             }
 
@@ -417,6 +424,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 inputWasAltered = true;
                                             }
                                         }
+
+                                        //count rows
+                                        numberOfRows += rows.Count();
                                     } while ((rows.Count() > 0 && rows.Count() == packageSize) || inputWasAltered == true);
 
                                     totalTime.Stop();
@@ -467,6 +477,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
+                                //set modification
+                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                {
+                                    Performer = GetUsernameOrDefault(),
+                                    Comment = "Data",
+                                    ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
+                                };
+
                                 setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
                             }
@@ -475,7 +493,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             // ToDo: Get Comment from ui and users
                             MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
-                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
+                            dm.CheckInDataset(ds.Id, numberOfRows + " rows", GetUsernameOrDefault());
 
                             //send email
                             var es = new EmailService();
@@ -532,10 +550,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     SaveFileInContentDiscriptor(workingCopy);
                                 }
+
+                                //set modification
+                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                {
+                                    Performer = GetUsernameOrDefault(),
+                                    Comment = "File",
+                                    ActionType = AuditActionType.Create
+                                };
+
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
 
+                                //filename
+                                string filename = "";
+                                if (TaskManager.Bus.ContainsKey(TaskManager.FILENAME))
+                                {
+                                    filename = TaskManager.Bus[TaskManager.FILENAME]?.ToString();
+                                }
+
                                 // ToDo: Get Comment from ui and users
-                                dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                                dm.CheckInDataset(ds.Id, filename, GetUsernameOrDefault(), ViewCreationBehavior.None);
                             }
                             catch (Exception ex)
                             {
@@ -553,7 +587,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (temp.Count <= 0)
                 {
-                    dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    dm.CheckInDataset(ds.Id, "no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
                 else
                 {

@@ -5,6 +5,10 @@ using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using System.IO;
+using System.Xml.Linq;
+using BExIS.Xml.Helpers;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -13,8 +17,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Business Administration Manual", this.Session.GetTenant());
-            return View();
+            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "Bam.Settings.xml");
+            XDocument settings = XDocument.Load(filePath);
+            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
+
+            string helpurl = help.Attribute("value")?.Value;
+
+
+            return Redirect(helpurl);
 
         }
     }

@@ -67,24 +67,32 @@ namespace BExIS.Security.Services.Subjects
 
                         return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
+
                     if (orderBy != null)
                     {
                         count = Groups.Count();
                         return Groups.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
+
+                    // without filter and order
+                    return Groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(string.Format("Could not retrieve filtered groups."), ex);
             }
-
-            return null;
         }
 
         public Task CreateAsync(Group role)
         {
+            if (role == null)
+                return Task.FromResult(0);
+
             if (string.IsNullOrEmpty(role.Name))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(role.Name)?.Result != null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
@@ -125,6 +133,8 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<Group> FindByNameAsync(string roleName)
         {
+            roleName = roleName.Trim();
+
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();
@@ -134,6 +144,15 @@ namespace BExIS.Security.Services.Subjects
 
         public Task UpdateAsync(Group role)
         {
+            if (role == null)
+                return Task.FromResult(0);
+
+            if (string.IsNullOrEmpty(role.Name))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(role.Name) != null)
+                return Task.FromResult(0);
+
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();

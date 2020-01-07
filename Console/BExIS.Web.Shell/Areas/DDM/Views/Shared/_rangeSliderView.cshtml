@@ -33,6 +33,11 @@
          $.post('@Url.Action("FilterByRangeSlider", @controller, new RouteValueDictionary { { "area", "ddm" } })', { start: start, end: end, parent: id }, function (response) {
              // alert(response);
              $(".searchBreadcrumbNavigation").html(response);
+             $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                console.log("update Properties");
+                //console.log(response);
+                $("#searchProperties").html(response);
+            })
          });
 
          $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
@@ -43,7 +48,9 @@
          $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
              $("#searchTreeView").html(response);
          })
-        
+
+
+         
 
          refreshGrid();
      }

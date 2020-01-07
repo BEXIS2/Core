@@ -22,7 +22,7 @@
             columns.Bound("PartyTypeTitle").Title("Type").Width("80px");
 
             foreach (var partyCustomGridColumn in partyCustomGridColumns.Where(cc => cc.TypePair == null))
-                columns.Bound(partyCustomGridColumn.CustomAttribute.Name.Replace(" ", "_")).Title(partyCustomGridColumn.CustomAttribute.DisplayName).Width("90px");
+                columns.Bound(partyCustomGridColumn.CustomAttribute.DisplayName.Replace(" ", "_")).Title(partyCustomGridColumn.CustomAttribute.DisplayName).Width("90px");
             foreach (var partyCustomGridColumn in partyCustomGridColumns.Where(cc => cc.CustomAttribute == null))
                 columns.Bound(partyCustomGridColumn.TypePair.Title.Replace(" ", "_")).Title(partyCustomGridColumn.TypePair.Title).HtmlAttributes(new { @class = "relatioshipGridColumn" }).Width("115px");
             columns.Template(@<text>

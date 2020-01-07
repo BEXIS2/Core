@@ -10,6 +10,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
 {
     public class ReferencesModel
     {
+        public bool HasEditRights { get; set; }
         public SimpleSourceReferenceModel Selected { get; set; }
 
         public List<ReferenceModel> SourceReferences { get; set; }
@@ -20,6 +21,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
             Selected = new SimpleSourceReferenceModel();
             SourceReferences = new List<ReferenceModel>();
             TargetReferences = new List<ReferenceModel>();
+            HasEditRights = false;
         }
     }
 
@@ -96,7 +98,6 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
         [Required]
         public int TargetVersion { get; set; }
 
-        [Required]
         public String Context { get; set; }
 
         [Required]
@@ -104,6 +105,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
 
         public CreateSimpleReferenceModel()
         {
+            Context = "";
         }
 
         public CreateSimpleReferenceModel(long sourceId, long sourceTypeId, int sourceVersion)
@@ -111,6 +113,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
             SourceId = sourceId;
             SourceTypeId = sourceTypeId;
             SourceVersion = sourceVersion;
+            Context = "";
         }
     }
 }

@@ -425,7 +425,7 @@ namespace BExIS.IO.Transform.Input
                             string dataType = sdvu.DataAttribute.DataType.SystemType;
 
                             // change parameters to only sdvu
-                            this.ValueValidationManagerDic.Add(sdvu.Id, createValueValidationManager(varName, dataType, optional, sdvu));
+                            if (!this.ValueValidationManagerDic.ContainsKey(sdvu.Id)) this.ValueValidationManagerDic.Add(sdvu.Id, createValueValidationManager(varName, dataType, optional, sdvu));
                         }
                         else
                         {

@@ -36,7 +36,16 @@
     <table class="bx-rpm-dataStructure-functions bx-footer left">
         <tr>
             <td>
-                @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action" })
+                @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
+                {
+                    @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @id = "downloadButton" })
+                    <button class="bx-button action bx-disabled hidden" id="disableddownloadButton" disabled="disabled">Download Excel Template</button>
+                }
+                else
+                {
+                    @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action hidden", @id = "downloadButton" })
+                    <button class="bx-button action bx-disabled" id="disableddownloadButton" disabled="disabled">Download Excel Template</button>
+                }
                 @if (Model.inUse)
                 {
                     <button class="bx-button action bx-disabled" id="deleteButton" disabled="disabled" title="Can't delete Data Struture, it's used by a Dataset">Delete</button>
@@ -369,6 +378,7 @@
                         else {
                             storeVariables($(data).text());                                   
                         }
+
                     }
                 });
             }
@@ -513,6 +523,15 @@
                 });
                 $variableGrid.packery('layout');
                 setFocus();
+                elems = $variableGrid.packery('getItemElements');
+                if (elems.length > 0) {
+                    $('#downloadButton').removeClass('hidden');
+                    $('#disableddownloadButton').addClass('hidden');
+                }
+                else if (elems.length == 0) {
+                    $('#downloadButton').addClass('hidden');
+                    $('#disableddownloadButton').removeClass('hidden');
+                }
                 if(dataStruktureInUse){
                     lock();
                 }

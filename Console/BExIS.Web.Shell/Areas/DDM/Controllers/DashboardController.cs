@@ -107,6 +107,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
+            headerItem = new HeaderItem()
+            {
+                Name = "Valid",
+                DisplayName = "is valid",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
             ViewData["DefaultHeaderList"] = headerItems;
 
             #endregion header
@@ -185,7 +193,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (rights > 0)
                     {
                         DataRow dataRow = model.NewRow();
-                        Object[] rowArray = new Object[7];
+                        Object[] rowArray = new Object[8];
+                        string isValid = "no";
 
                         if (datasetManager.IsDatasetCheckedIn(datasetId))
                         {
@@ -199,6 +208,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                             string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
                             string description = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.description);
+
+                            if (dsv.StateInfo != null)
+                            {
+                                isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            }
 
                             rowArray[0] = Convert.ToInt64(datasetId);
                             rowArray[1] = title;
@@ -216,7 +230,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
                         //rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
                         rowArray[6] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
-
+                        rowArray[7] = isValid;
+                        
                         dataRow = model.NewRow();
                         dataRow.ItemArray = rowArray;
                         model.Rows.Add(dataRow);
@@ -312,6 +327,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Name = "Grant",
                 DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Valid",
+                DisplayName = "is valid",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
@@ -413,6 +436,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Name = "Grant",
                 DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Valid",
+                DisplayName = "is valid",
                 DataType = "String"
             };
             headerItems.Add(headerItem);

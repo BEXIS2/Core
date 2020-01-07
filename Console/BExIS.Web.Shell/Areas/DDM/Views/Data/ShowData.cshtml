@@ -36,31 +36,31 @@
 
 
 <div id="showData">
+       <div id="showData">
         <h1>@Model.Title</h1>
 
-        <div id="view-header" class="row">
+        @if (!Model.LatestVersion)
+    {
+        <div id="view-warning-container">
+
+            <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
+                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;"onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+            </div>
+        </div>
+    }
+
+
+    <div id="view-header" class="row" >
             <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <b>Dataset Id: </b> @Model.Id
-                        <b>Version: </b>
-                        @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown" })
-                    </div>
-                    <div class="col-md-6">
-                        @if (!Model.LatestVersion)
-                        {
-                            <div id="view-warning-container">
-
-                                <div id="view-warning" class="alert alert-danger " role="alert">
-                                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                                    Attention, this is not the latest version.
-                                </div>
-                            </div>
-                        }
+		<div class="row">
+                    <div class="col-md-6" style="white-space: nowrap;display: flex;">
+                        <div><b>Dataset id:</b> @Model.Id
+                            <b style="padding-left: 5px;">Version:</b>
+                            @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown" , @style = "border:none;" })
+                        </div>
                     </div>
                 </div>
-
             </div>
             <div class="col-xs-2 col-md-2 col-lg-2">
                 <div id="preloaderContainer"></div>
@@ -134,7 +134,7 @@
 
                                          tabs.Add()
                                             .Text("Metadata")
-                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
+                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion, isValid = ViewBag.isValid })
                                             .HtmlAttributes(new { id = "metadata" })
                                             .Enabled(false);
 
@@ -183,7 +183,6 @@
                 @Html.ValidationSummary(true);
             }
         }
-
 
 <script type="text/javascript">
 
@@ -332,14 +331,17 @@
 
     });
 
-
     $("#VersionSelect").on('change', function () {
-    var version = $("#VersionSelect").val();
-    var id = '@Model.Id';
-
-    var redirectURL = '@Url.Action("Show","Data")';
-        window.location.href = redirectURL+"/"+id+"?version="+version;
-});
+        console.log("change url");
+        var versionNumber = $("#VersionSelect").val();
+        selectVersion(@Model.Id, versionNumber);
+    });
+    
+   function selectVersion(datasetId, versionNumber) {
+        var redirectURL = '@Url.Action("Show","Data")';
+        window.location.href = redirectURL + "/" + datasetId + "?version=" + versionNumber;
+   }
+ 
 </script>
 
 </div>

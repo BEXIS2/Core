@@ -37,7 +37,7 @@
                 @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
 FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
                 {
-                    <div style="display:inline-block;width:50%"><span style="font-weight:bold">Description:</span><br /><textarea style="width:69%;" name="description" rows="4"></textarea></div><div style="display:inline-block;width:40%">
+                    <div style="display:inline-block;width:50%"><span style="font-weight:bold">Description:</span><br /><textarea style="max-width: 100%; min-width: 80%;" name="description" rows="4"></textarea></div><div style="display:inline-block;width:40%">
                         <span style="font-weight:bold">Files:</span><br />
                         @(Html.Telerik().Upload()
            .Name("attachments")
@@ -48,7 +48,7 @@ FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
                    //.OnComplete("OnComplete")
                    .OnRemove("Push_OnRemove")
                ))  <br />
-                        <button id="push_submitBt" type="submit" value="Upload" class="bx-button function bx-disabled" disabled="disabled">Push</button>
+                        <button id="push_submitBt" type="submit" value="Upload" class="bx-button function bx-disabled" disabled="disabled">Upload</button>
                     </div>   }
             </div>
 

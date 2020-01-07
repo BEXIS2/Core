@@ -170,7 +170,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         cDefault.DisplayTitle = fieldProperty.Attributes.GetNamedItem("display_name").Value;
                         cDefault.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
                         cDefault.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
-                        cDefault.AggregationType = "distinct";
+                        cDefault.AggregationType = fieldProperty.Attributes.GetNamedItem("aggregationType").Value;
                         cDefault.DefaultValue = "All";
                         cDefault.DataType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
                         if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
@@ -196,10 +196,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                             List<string> laDefault = new List<string>();
                             foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                             {
-                                laDefault.Add(hpg.Name.ToString());
+                                if(!string.IsNullOrEmpty(hpg?.Name?.ToString()))
+                                    laDefault.Add(hpg.Name.ToString());
                             }
 
-                            if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
+                            //if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
                             laDefault.Sort();
                             cDefault.Values = laDefault;
                             AllPropertiesDefault.Add(cDefault);

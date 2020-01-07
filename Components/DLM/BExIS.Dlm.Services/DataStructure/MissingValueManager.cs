@@ -220,6 +220,17 @@ namespace BExIS.Dlm.Services.DataStructure
                             return null;
                         }
 
+                    case TypeCode.String:
+                        try
+                        {
+                            int temp = DateTime.Now.GetHashCode();
+                            return temp.ToString(format);
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+
                     default:
                         return null;
                 }
@@ -431,6 +442,21 @@ namespace BExIS.Dlm.Services.DataStructure
                                 return true;
                             }
                             return false;
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+
+                    case TypeCode.String:
+                        try
+                        {
+                            foreach (MissingValue mv in missingValues)
+                            {
+                                if (mv.Id != missingvalueId && placeholder == mv.Placeholder)
+                                    return false;
+                            }
+                            return true;
                         }
                         catch
                         {

@@ -71,6 +71,15 @@ namespace BExIS.Ddm.Api
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="searchCriteria"></param>
+        /// <returns></returns>
+        SearchModel UpdateProperties(SearchCriteria searchCriteria);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="searchCriteria"></param>
         /// <param name="pageSize"></param>
         /// <param name="currentPage"></param>
         /// <returns></returns>

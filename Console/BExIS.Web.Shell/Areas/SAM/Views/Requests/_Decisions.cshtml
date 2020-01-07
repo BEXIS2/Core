@@ -8,9 +8,9 @@
     columns.Bound(g => g.InstanceId);
     columns.Bound(g => g.Title);
     columns.Bound(g => g.Applicant);
-    columns.Bound(g => g.Intention);
     columns.Bound(g => g.Rights);
-    columns.Bound(g => g.Status);
+    columns.Bound(g => g.Intention);
+    columns.Bound(g => g.StatusAsText);
     columns.Template(@<text>
                 <button type="button" class="bx bx-grid-function bx-check" @(item.Status != 0 ? "disabled" : "")></button>
                 <button type="button" class="bx bx-grid-function bx-delete" @(item.Status != 0 ? "disabled" : "")></button>
@@ -18,7 +18,7 @@
 .ClientTemplate(
 "<button type=\"button\" class=\"bx bx-grid-function bx-check <#= Status!=0 ? 'bx-disabled' : '' #> \" value=\"<#= Id #>\" title=\"Grant\" <#= Status!=0 ? 'disabled' : '' #> ></button>" +
 "<button type=\"button\" class=\"bx bx-grid-function bx-delete <#= Status!=0 ? 'bx-disabled' : '' #> \" value=\"<#= Id #>\" title=\"Deny\" <#= Status!=0 ? 'disabled' : '' #> ></button>")
-.Width(65);
+.Width(75);
 })
 .ClientEvents(events =>
 {

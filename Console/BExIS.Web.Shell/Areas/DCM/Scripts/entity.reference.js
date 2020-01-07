@@ -4,7 +4,6 @@ $("#TargetType").on('change', function () {
 
     $("#Target").empty();
 
-
     if (id !== "" && id > 0) {
         $.ajax({
             type: "GET",
@@ -17,7 +16,6 @@ $("#TargetType").on('change', function () {
         })
     }
     else {
-       
         $("#Target").prop("disabled", true);
         $("#Target").addClass("bx-disabled");
     }
@@ -61,7 +59,6 @@ $("#Target").on('change', function () {
         })
     }
     else {
-       
         $("#TargetVersion").prop("disabled", true);
         $("#TargetVersion").addClass("bx-disabled");
     }
@@ -76,7 +73,7 @@ function successFuncTargetVersions(data, status) {
     }
 
     $("#TargetVersion").prop("disabled", false);
-    $("#TargetVersion").prop("selectedIndex", data.length - 1);
+    $("#TargetVersion").prop("selectedIndex", 0);
     $("#TargetVersion").removeClass("bx-disabled");
 }
 
@@ -92,13 +89,20 @@ $("#button_createEntityreference_cancel").click(function () {
     $("#window_createReference").data('tWindow').destroy();
 });
 
-function onSuccess() {
-    var id = $("#SourceId").val();
-    var type = $("#SourceTypeId").val();
-    var version = $("#SourceVersion").val();
-    reload(id, type, version);
+function createEntityReference_OnSuccess(data) {
+    console.log("on success");
+    console.log(data);
 
-    $("#window_createReference").data('tWindow').destroy();
+    if (data === true) {
+        console.log("on success data = true");
+
+        var id = $("#Selected_Id").val();
+        var type = $("#Selected_TypeId").val();
+        var version = $("#Selected_Version").val();
+        reload(id, type, version);
+
+        $("#window_createReference").data('tWindow').destroy();
+    }
 }
 
 function reload(id, type, version) {
@@ -107,6 +111,8 @@ function reload(id, type, version) {
         sourceTypeId: type,
         sourceVersion: version
     };
+
+    console.log(parameters);
 
     $.ajax({
         type: 'GET',
@@ -117,4 +123,8 @@ function reload(id, type, version) {
             $("#entity-reference-container").replaceWith(htmlData);
         }
     })
+}
+
+function show_hide_help() {
+    $("#help_ref_type").toggle();
 }

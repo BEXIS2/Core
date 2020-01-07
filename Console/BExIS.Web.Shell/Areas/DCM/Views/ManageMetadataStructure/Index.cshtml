@@ -81,7 +81,7 @@
                                                     "@Html.ActionLink(\" \", \"Index\", \"Mapping\", new { area = \"DIM\", sourceId = @item.Id }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-right \" + className, title = \"Mapping to system\", disabled })}" +
                                                     "@if (Html.IsAccessibale(\"DIM\", \"Mapping\", \"Switch\")){" +
                                                     "@Html.ActionLink(\" \", \"Mapping\", \"Mapping\", new { area = \"DIM\", sourceId = 0, targetId = @item.Id, sourceType= \"MetadataStructure\" }, new { @class = \"bx bx-grid-function bx-arrow-circle-o-left \" + className, title = \"Mapping to system\", disabled })}")
-                                    .Width("10%");
+                                    .HtmlAttributes(new {style = "white-space:normal" }).Width("10%");
 
                             })
 

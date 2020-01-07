@@ -192,7 +192,7 @@ namespace BExIS.Utils.Models
         /// <returns></returns>
         public static AggregationType GetAggregationType(string value)
         {
-            switch (value)
+            switch (value.ToLower())
             {
                 case "distinct": return AggregationType.Distinct;
                 case "union": return AggregationType.Union;
@@ -261,19 +261,19 @@ namespace BExIS.Utils.Models
         /// <returns></returns>
         public static SearchComponentBaseType GetSearchType(String value)
         {
-            switch (value)
+            switch (value.ToLower())
             {
                 case "category_field": return SearchComponentBaseType.Category;
-                case "Category": return SearchComponentBaseType.Category;
+                case "category": return SearchComponentBaseType.Category;
 
                 case "facet_field": return SearchComponentBaseType.Facet;
-                case "Facet": return SearchComponentBaseType.Facet;
+                case "facet": return SearchComponentBaseType.Facet;
 
                 case "property_field": return SearchComponentBaseType.Property;
-                case "Property": return SearchComponentBaseType.Property;
+                case "property": return SearchComponentBaseType.Property;
 
                 case "general_field": return SearchComponentBaseType.General;
-                case "General": return SearchComponentBaseType.General;
+                case "general": return SearchComponentBaseType.General;
 
                 default: return SearchComponentBaseType.General;
             }
