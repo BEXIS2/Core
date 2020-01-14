@@ -232,7 +232,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Variable variable = new Variable()
                 {
                     Label = dataAttribute.Name,
-                    Description = dataAttribute.Description,
+                    Description = "",
                     Unit = dataAttribute.Unit,
                     DataAttribute = dataAttribute
                     
@@ -467,6 +467,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 {
                     this.AttributePreviews.Add(new AttributePreviewStruct().fill(da, getConstraints));
                 }
+                this.AttributePreviews = this.AttributePreviews.OrderBy(aps => aps.Id).ToList();
                 return this;
             }
             finally

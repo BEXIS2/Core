@@ -73,34 +73,36 @@ h2{
     cursor:move; 
 }
 
-.bx-rpm-variable-item td,
-.bx-rpm-variable-item table,
-.bx-rpm-attribute-item td,
-.bx-rpm-attribute-item table {
-    margin:0px;
-    padding:3px 0px 3px 0px;
-    background-color:transparent;  
-}
+    .bx-rpm-variable-item td,
+    .bx-rpm-variable-item table,
+    .bx-rpm-attribute-item td,
+    .bx-rpm-attribute-item table {
+        margin: 0px;
+        padding: 3px 0px 3px 0px;
+        background-color: transparent;
+        width: 100%;
+    }
 
-.bx-rpm-variable-item td,
-.bx-rpm-variable-item table {
-    border-right: solid 4px #d2e8e3;
-    border-bottom: #afb0b1 solid 0px;
-}
+    .bx-rpm-variable-item td,
+    .bx-rpm-variable-item table {
+        border-right: solid 4px #d2e8e3;
+        border-bottom: #afb0b1 solid 0px;
+        
+    }
 
-.bx-rpm-attribute-item td,
-.bx-rpm-attribute-item table {
-    border-right: solid 4px #f5f5f5;
-    border-bottom: #afb0b1 solid 0px;
-}
+    .bx-rpm-attribute-item td,
+    .bx-rpm-attribute-item table {
+        border-right: solid 4px #f5f5f5;
+        border-bottom: #afb0b1 solid 0px;
+    }
 
 .bx-rpm-variable-item .bx-rpm-unit-select,
 .bx-rpm-datastructureheader .bx-input,
 .bx-rpm-variable-item textarea,
 .bx-rpm-variable-item select,
-.bx-rpm-variable-item input{
-    width:100%;
-    min-width:100px;
+.bx-rpm-variable-item input {
+    min-width: 100px;
+    width: calc( 100% - 5px );
 }
 
 .bx-rpm-variable-item .bx-rpm-unit-select{
@@ -137,10 +139,11 @@ h2{
 }
 
 .bx-rpm-attribute-container .bx-rpm-attribute-item .id,
-.bx-rpm-variable-container .bx-rpm-variable-item .id{
-     width:50px;
-     min-width:50px;
-     max-width:50px;
+.bx-rpm-variable-container .bx-rpm-variable-item .id,
+.bx-rpm-variable-container .bx-rpm-variable-item .column {
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
 }
 
 .bx-rpm-attribute-container .bx-rpm-attribute-item .unit,
@@ -156,9 +159,25 @@ h2{
     max-width:100px;
 }
 
-.bx-rpm-attribute-container .bx-rpm-attribute-item .name .bx-rpm-text{
-    font-weight:bold;
+    .bx-rpm-attribute-container .bx-rpm-attribute-item .name .bx-rpm-text{
+        font-weight:bold;
+    }
+
+.bx-rpm-attribute-container .bx-rpm-attribute-item .description,
+.bx-rpm-variable-container .bx-rpm-attribute-item .description,
+.bx-rpm-attribute-container .bx-rpm-attribute-item .constraints,
+.bx-rpm-variable-container .bx-rpm-attribute-item .constraints,
+.bx-rpm-variable-container .bx-rpm-variable-item .attrribute {
+    min-width: 100px;
+    max-width: 100px;
 }
+
+    .bx-rpm-variable-container .bx-rpm-attribute-item .description .bx-rpm-text,
+    .bx-rpm-attribute-container .bx-rpm-attribute-item .description .bx-rpm-text,
+    .bx-rpm-attribute-container .bx-rpm-attribute-item .constraints .bx-rpm-text,
+    .bx-rpm-variable-container .bx-rpm-attribute-item .constraints .bx-rpm-text {
+        white-space: normal;
+    }
 
 .bx-rpm-attribute-container .bx-rpm-attribute-item .datatype,
 .bx-rpm-variable-container .bx-rpm-variable-item .datatype{

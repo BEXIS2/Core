@@ -40,6 +40,12 @@
             <td class="bx-rpm-expand" title="Show Details"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
             <td class="bx-rpm-select" title="Add Variable" onclick="javascript:addVariable(@Model.Id,'@Model.Name')"><span class="bx bx-next bx-button function small"></span></td>
         </tr>
+        <tr class="hiddenelements">
+            <td class="id"></td>
+            <td colspan="3" class="name">
+                <div class="bx-rpm-label" title="@Model.Description">@Model.Description</div>
+            </td>
+        </tr>
         <tr class="hidden hiddenelements">
             <td colspan="7" class="description">
                 <div class="bx-rpm-label">Description</div>
@@ -52,7 +58,7 @@
         @if (Model.Constraints.Count > 0)
         {
             <tr class="hidden hiddenelements">
-                <td colspan="7">
+                <td colspan="7" class="constraints">
                     <div class="bx-rpm-label">Constraints</div>
                     <div class="bx-rpm-text">
                         <ul>
