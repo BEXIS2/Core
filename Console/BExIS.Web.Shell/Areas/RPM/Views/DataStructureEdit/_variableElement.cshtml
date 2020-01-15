@@ -11,9 +11,10 @@
 <div class="bx-rpm-variable-item" id="@Model.Id">
     <table>
         <tr>
-            <td class="id">
-                <div class="bx-rpm-label">Id</div>
-                <div class="bx-rpm-text" id="varid">@Model.Id</div>
+            <td class="column">
+                <div class="bx-rpm-label">Column index</div>
+                <div class="bx-rpm-text">@Model.Id</div>
+                <div class="hidden" id="varid">@Model.Id</div>
                 <div class="hidden" id="attrid">@Model.Attribute.Id</div>
             </td>
             <td class="name">
@@ -59,8 +60,16 @@
             <td></td>
             <td class="bx-rpm-message" colspan="6"></td>
         </tr>
+        <tr>
+            <td class="id">
+                @*<div class="bx-rpm-label">Id: @Model.Id</div>*@
+            </td>
+            <td colspan="3" class="name hiddenelements">
+                <div class="bx-rpm-label" title="@Model.Description">@Model.Description</div>
+            </td>
+        </tr>
         <tr class="hidden hiddenelements">
-            <td colspan="7">
+            <td colspan="7" class="description">
                 <div class="bx-rpm-label">Description</div>
                 <div class="bx-rpm-text">@Html.TextArea("Description", @Model.Description, new { @class = "bx-rpm-textarea description", @id = "vardescription" })</div>
             </td>
@@ -75,7 +84,7 @@
             <td class="bx-rpm-add" title="Add Missing Value"><span id="addmissingvalue" class="bx fa-plus"></span></td>
         </tr>
         <tr class="hidden hiddenelements">
-            <td colspan="6">
+            <td colspan="6" class="missingvalues">
                 <table class="bx-rpm-missing-value-container">
                     @if (Model.MissingValues.Count > 0)
                     {
@@ -92,7 +101,7 @@
         @if (Model.Constraints.Count > 0)
         {
             <tr class="hidden hiddenelements">
-                <td colspan="7">
+                <td colspan="7" class="constraints">
                     <div class="bx-rpm-label">Constraints</div>
                     <div class="bx-rpm-text">
                         <ul>
@@ -126,6 +135,12 @@
                             <td class="datatype">
                                 <div class="bx-rpm-label">Data Type</div>
                                 <div class="bx-rpm-text" title="@Model.Attribute.DataType">@Model.Attribute.DataType</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="id"></td>
+                            <td colspan="3" class="name">
+                                <div class="bx-rpm-label" title="@Model.Attribute.Description">@Model.Attribute.Description</div>
                             </td>
                         </tr>
                     </table>

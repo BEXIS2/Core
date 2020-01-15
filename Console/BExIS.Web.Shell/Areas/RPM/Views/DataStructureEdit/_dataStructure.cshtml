@@ -188,7 +188,7 @@
                 $('.bx-rpm-variable-item').css({'position': 'absolute'});
                 var div = $('#variableContainer');
                 startpos = div.scrollTop();
-                $variableGrid.packery('layout');
+                $variableGrid.packery('layout');            
             });
 
             $('#variableContainer').scroll(function (e){
@@ -241,7 +241,7 @@
                 var speed = 5;
             });
 
-            $('.bx-rpm-dataStructure-functions #addVariableButton').on('click', function() {
+            $('.bx-rpm-dataStructure-functions #addVariableButton').on('click', function () {
                 var value = $(this).attr('value').split(',')
                 var attrId = value[0];
                 var variableName = '';
@@ -324,18 +324,19 @@
             $variableGrid.packery('layout');
         });
 
-        $('.bx-rpm-dataStructure-functions #storeVariablesButton').on('click', function () {
+        $variableGrid.on('layoutComplete', orderItems);
+        $variableGrid.on('dragItemPositioned', orderItems);
+
+        function orderItems() {
             var elems = $variableGrid.packery('getItemElements');
             for (var i = 0; i < elems.length; i++) {
-                var mvElems = $(elems[i]).find('.bx-rpm-missing-value-item');
-
-                for (var j = 0; j < mvElems.length; j++) {
-                    $(mvElems[j]).find('#mvid').text('0');
-                    console.log(mvElems[j]);
-                }
-
-                $(elems[i]).find('#varid').text('0');
+                var elem = $(elems[i]).find('.column .bx-rpm-text');
+                elem.text(i + 1);
             }
+        }
+          
+
+        $('.bx-rpm-dataStructure-functions #storeVariablesButton').on('click', function () {           
             storeVariables($('.bx-rpm-dataStructure-functions #storeVariablesButton').attr('value'), true);
             window.location.href = "/RPM/DataStructureEdit?dataStructureId=" + $('.bx-rpm-dataStructure-functions #storeVariablesButton').attr('value');
         });
@@ -460,6 +461,8 @@
                     });
                 }
 
+                console.log($(elems[i]).find('#varid').text());
+
                 var variable = {
                     Id: $(elems[i]).find('#varid').text(),
                     AttributeId: $(elems[i]).find('#attrid').text(),
@@ -575,6 +578,7 @@
             }
             return check;
         }
+        $variableGrid.packery('layout');
     }
 
     $(window).resize(function () {

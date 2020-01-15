@@ -57,9 +57,12 @@
 
 .bx-rpm-constrainTable .bx-rpm-label,
 .bx-rpm-attribute-container .bx-rpm-label,
-.bx-rpm-variable-container .bx-rpm-label{
+.bx-rpm-variable-container .bx-rpm-label {
     font-size: 8pt;
-    margin:0;
+    margin: 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .bx-rpm-constrainTable .bx-rpm-constrainlabel{
