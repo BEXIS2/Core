@@ -69,6 +69,7 @@ namespace BExIS.Dlm.Services.Data
             this.DatasetRepo = guow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = guow.GetReadOnlyRepository<DatasetVersion>();
             this.DataTupleRepo = guow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
+            this.DataTupleVersionRepo = guow.GetReadOnlyRepository<DataTupleVersion>();
         }
 
         private bool isDisposed = false;
@@ -114,6 +115,8 @@ namespace BExIS.Dlm.Services.Data
         /// Provides read-only querying and access to the tuples of dataset versions
         /// </summary>
         public IReadOnlyRepository<DataTuple> DataTupleRepo { get; private set; }
+
+        public IReadOnlyRepository<DataTupleVersion> DataTupleVersionRepo { get; private set; }
 
         /// <summary>
         /// Provides read-only querying and access to the previously archived versions of data tuples
@@ -807,6 +810,34 @@ namespace BExIS.Dlm.Services.Data
         public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion);
+        }
+
+        public IQueryable<AbstractTuple> GetDataTuples(long datasetVersionId)
+        {
+            var datasetVersion = DatasetVersionRepo.Get(datasetVersionId);
+            var dataset = datasetVersion.Dataset;
+            var previousDatasetVersionIds = getPreviousVersionIds(datasetVersion);
+
+            if (GetDatasetLatestVersionId(dataset.Id) == datasetVersion.Id)
+            {
+                if(dataset.Status == DatasetStatus.CheckedOut)
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
+
+                if (dataset.Status == DatasetStatus.CheckedIn)
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
+            }
+
+            var originalDataTuples = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
+            var editedDataTuples = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Edited
+                                                                    && previousDatasetVersionIds.Contains(
+                                                                        d.DatasetVersion.Id)
+                                                                    && !previousDatasetVersionIds.Contains(
+                                                                        d.ActingDatasetVersion.Id)).Cast<AbstractTuple>();
+            var deletedDataTuples = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Deleted
+                                                                    && previousDatasetVersionIds.Contains(d.DatasetVersion.Id)
+                                                                    && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Cast<AbstractTuple>();
+
+            return originalDataTuples.Union(editedDataTuples).Union(deletedDataTuples).OrderBy(d => d.OrderNo).ThenBy(d => d.Timestamp);
         }
 
         /// <summary>
