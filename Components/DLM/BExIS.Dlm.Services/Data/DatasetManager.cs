@@ -827,7 +827,8 @@ namespace BExIS.Dlm.Services.Data
                     return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
             }
 
-            var originalDataTuples = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
+
+            var originalDataTuples = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>();
             var editedDataTuples = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Edited
                                                                     && previousDatasetVersionIds.Contains(
                                                                         d.DatasetVersion.Id)
@@ -837,6 +838,8 @@ namespace BExIS.Dlm.Services.Data
                                                                     && previousDatasetVersionIds.Contains(d.DatasetVersion.Id)
                                                                     && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Cast<AbstractTuple>();
 
+
+          
             return originalDataTuples.Union(editedDataTuples).Union(deletedDataTuples).OrderBy(d => d.OrderNo).ThenBy(d => d.Timestamp);
         }
 

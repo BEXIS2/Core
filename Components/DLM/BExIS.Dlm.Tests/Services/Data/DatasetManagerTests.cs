@@ -140,7 +140,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples,"Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -232,7 +232,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -297,7 +297,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples,"Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
