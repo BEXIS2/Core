@@ -45,9 +45,9 @@
       <one-to-many class="MissingValue" />
     </set>
 
-    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef" />
+    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef" index="idx_DataAttributeRef_Variables"/>
     <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" />
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef" />
+    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef" index="idx_DataStructureRef_Variables" />
 
     <set name="Parameters" inverse="true">
       <key column="VariableRef" not-null="false" />

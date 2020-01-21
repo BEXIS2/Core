@@ -2076,7 +2076,7 @@ namespace BExIS.Dlm.Services.Data
                 // any single data tuple can be editedVersion by a specific version once at most.
                 // it is possible for a tuple to have beed changed many times between any given two versions v(x) and v(y), so it is required to group the tuples based on their original ID and then select the record corresponding to the max version
                 var editedTupleVersionsGrouped = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Edited)
-                                                                                && (versionIds.Contains(p.DatasetVersion.Id))
+                                                                                && (versionIds.Contains(p.DatasetVersion.Id)) 
                                                                                 && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
                                                                     .GroupBy(p => p.OriginalTuple.Id)
                                                                     .Select(p => new { OriginalTupleId = p.Key, MaxVersionOfTheTuple = p.Max(l => l.DatasetVersion.Id) })
@@ -2858,8 +2858,8 @@ namespace BExIS.Dlm.Services.Data
                             if (orginalTuple == null || orginalTuple.Id <= 0) // maybe the tuple is in the edited list by a mistake!
                                 continue;
                             //check if the history record for this data tuple has been created before. in cases of multiple edits in a single version for example
-                            if (dataTupleVersionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id && p.DatasetVersion.Id == orginalTuple.DatasetVersion.Id).Count() <= 0) // it is the first time the orginalTuple is getting editedVersion. so add a history record. the history record, keeps the tuple as was before the first edit!
-                            {
+                            //if (dataTupleVersionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id && p.DatasetVersion.Id == orginalTuple.DatasetVersion.Id).Count() <= 0) // it is the first time the orginalTuple is getting editedVersion. so add a history record. the history record, keeps the tuple as was before the first edit!
+                            //{
                                 DataTupleVersion tupleVersion = new DataTupleVersion()
                                 {
                                     TupleAction = TupleAction.Edited,
@@ -2878,7 +2878,7 @@ namespace BExIS.Dlm.Services.Data
                                 tupleVersionsTobeAdded.Add(tupleVersion);
                                 //DataTuple merged =
                                 //orginalTuple.History.Add(tupleVersion);
-                            }
+                            //}
 
                             //need a better way to preserve changes during the fetch of the original tuple. Maybe deep copy/ evict/ merge works
                             //XmlDocument xmlVariableValues = new XmlDocument();
