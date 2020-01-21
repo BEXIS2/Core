@@ -40,10 +40,10 @@
             <td class="bx-rpm-expand" title="Show Details"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
             <td class="bx-rpm-select" title="Add Variable" onclick="javascript:addVariable(@Model.Id,'@Model.Name')"><span class="bx bx-next bx-button function small"></span></td>
         </tr>
-        <tr class="hiddenelements">
+        <tr class="">
             <td class="id"></td>
             <td class="name">
-                <div class="bx-rpm-label" title="@Model.Description">@Model.Description</div>
+                <div class="bx-rpm-label hiddenelements" title="@Model.Description">@Model.Description</div>
             </td>
             <td class="unit">
                 <div class="bx-rpm-label" title="@Model.Unit.Name">@Model.Unit.Name</div>
