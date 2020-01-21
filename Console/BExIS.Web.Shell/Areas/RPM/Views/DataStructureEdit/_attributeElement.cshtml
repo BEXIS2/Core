@@ -23,7 +23,7 @@
             </td>
             <td class="unit">
                 <div class="bx-rpm-label">Unit</div>
-                <div class="bx-rpm-text" title="@Model.Unit.Name">@Model.Unit.Name</div>
+                <div class="bx-rpm-text" title="@Model.Unit.Name">@Model.Unit.Description</div>
             </td>
             <td class="datatype">
                 <div class="bx-rpm-label">Data Type</div>
@@ -42,8 +42,11 @@
         </tr>
         <tr class="hiddenelements">
             <td class="id"></td>
-            <td colspan="3" class="name">
+            <td class="name">
                 <div class="bx-rpm-label" title="@Model.Description">@Model.Description</div>
+            </td>
+            <td class="unit">
+                <div class="bx-rpm-label" title="@Model.Unit.Name">@Model.Unit.Name</div>
             </td>
         </tr>
         <tr class="hidden hiddenelements">
