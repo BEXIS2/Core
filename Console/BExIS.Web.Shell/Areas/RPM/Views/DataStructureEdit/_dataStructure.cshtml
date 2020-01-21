@@ -704,7 +704,7 @@
             if($(items[i]).parent().attr('id') == dropDown.attr('id') && $(items[i]).css('display') == 'none'){
                 $(items[i]).parent().find('.bx-rpm-options').css('z-index', '10');
                 $(items[i]).parent().find('.bx-rpm-options').slideToggle('fast');
-                offset = $(dropDown).parents('.bx-rpm-variable-item').position().top + $(dropDown).parents('.bx-rpm-variable-item').innerHeight() + $('#variableContainer').position().top - $('#variableContainer').scrollTop() - $(window).scrollTop() - 6;
+                offset = $(dropDown).height() + $(dropDown).position().top + $(dropDown).parents('.bx-rpm-variable-item').position().top + $('#variableContainer').position().top - $('#variableContainer').scrollTop() - $(window).scrollTop() + 2;
                 $(dropDown).find('.bx-rpm-options').css('top', offset);
                 $(dropDown).find('.bx-rpm-options').css('min-width', $(dropDown).outerWidth());
             }
