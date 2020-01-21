@@ -15,6 +15,8 @@ using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Utils.NH.Querying;
+using System.Text;
+using System.Diagnostics;
 
 namespace System.Data
 {
@@ -812,7 +814,7 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetVersionEffectiveTuples(datasetVersion);
         }
 
-        public IQueryable<AbstractTuple> GetDataTuples(long datasetVersionId)
+        public List<AbstractTuple> GetDataTuples(long datasetVersionId)
         {
             var datasetVersion = DatasetVersionRepo.Get(datasetVersionId);
             var dataset = datasetVersion.Dataset;
@@ -821,26 +823,114 @@ namespace BExIS.Dlm.Services.Data
             if (GetDatasetLatestVersionId(dataset.Id) == datasetVersion.Id)
             {
                 if(dataset.Status == DatasetStatus.CheckedOut)
-                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>().ToList();
 
                 if (dataset.Status == DatasetStatus.CheckedIn)
-                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id));
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>().ToList();
             }
 
 
-            var originalDataTuples = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>();
+            var originalDataTuples = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).ToList();
             var editedDataTuples = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Edited
                                                                     && previousDatasetVersionIds.Contains(
                                                                         d.DatasetVersion.Id)
                                                                     && !previousDatasetVersionIds.Contains(
-                                                                        d.ActingDatasetVersion.Id)).Cast<AbstractTuple>();
+                                                                        d.ActingDatasetVersion.Id)).Cast<AbstractTuple>().ToList();
             var deletedDataTuples = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Deleted
                                                                     && previousDatasetVersionIds.Contains(d.DatasetVersion.Id)
-                                                                    && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Cast<AbstractTuple>();
+                                                                    && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Cast<AbstractTuple>().ToList();
 
 
           
-            return originalDataTuples.Union(editedDataTuples).Union(deletedDataTuples).OrderBy(d => d.OrderNo).ThenBy(d => d.Timestamp);
+            return originalDataTuples.Union(editedDataTuples).Union(deletedDataTuples).OrderBy(d => d.OrderNo).ThenBy(d => d.Timestamp).ToList();
+        }
+
+        public IQueryable<AbstractTuple> GetDataTuplesTest(long datasetVersionId)
+        {
+            var datasetVersion = DatasetVersionRepo.Get(datasetVersionId);
+            var dataset = datasetVersion.Dataset;
+            var previousDatasetVersionIds = getPreviousVersionIds(datasetVersion);
+
+            if (GetDatasetLatestVersionId(dataset.Id) == datasetVersion.Id)
+            {
+                if (dataset.Status == DatasetStatus.CheckedOut)
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>();
+
+                if (dataset.Status == DatasetStatus.CheckedIn)
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>();
+            }
+
+
+            var o = DataTupleRepo.Query().ToSql();
+            var a = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).ToSql();
+
+            var b = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Edited
+                                                                    && previousDatasetVersionIds.Contains(
+                                                                        d.DatasetVersion.Id)
+                                                                    && !previousDatasetVersionIds.Contains(
+                                                                        d.ActingDatasetVersion.Id)).Cast<AbstractTuple>().ToSql();
+            var c = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Deleted
+                                                                    && previousDatasetVersionIds.Contains(d.DatasetVersion.Id)
+                                                                    && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Cast<AbstractTuple>().ToSql();
+            
+            StringBuilder sqlQuery = new StringBuilder();
+            sqlQuery.Append(a)
+                    //.Append(a).Append(" ")
+                    //.Append(") ")
+                    //.Append("Union").Append(" ")
+                    //.Append("( ")
+                    //.Append(b).Append(" ")
+                    //.Append(" )")
+                    //.Append("Union").Append(" ")
+                    //.Append("( ")
+                    //.Append(c).Append(" ")
+                    //.Append(" )")
+                    .AppendLine();
+
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                Debug.WriteLine(sqlQuery.ToString());
+
+
+                var result = uow.ExecuteScalar(sqlQuery.ToString());
+
+                return result as IQueryable<AbstractTuple>;
+            }
+
+
+            return null;
+        }
+
+        public int GetDataTuplesCount(long datasetVersionId)
+        {
+            var datasetVersion = DatasetVersionRepo.Get(datasetVersionId);
+            var dataset = datasetVersion.Dataset;
+            var previousDatasetVersionIds = getPreviousVersionIds(datasetVersion);
+
+            if (GetDatasetLatestVersionId(dataset.Id) == datasetVersion.Id)
+            {
+                if (dataset.Status == DatasetStatus.CheckedOut)
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Count();
+
+                if (dataset.Status == DatasetStatus.CheckedIn)
+                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Count();
+            }
+
+
+            var originalDataTuplesCount = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Count();
+            var editedDataTuplesCount = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Edited
+                                                                    && previousDatasetVersionIds.Contains(
+                                                                        d.DatasetVersion.Id)
+                                                                    && !previousDatasetVersionIds.Contains(
+                                                                        d.ActingDatasetVersion.Id)).Count();
+            var deletedDataTuplesCount = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Deleted
+                                                                    && previousDatasetVersionIds.Contains(d.DatasetVersion.Id)
+                                                                    && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Count();
+
+
+
+            return (originalDataTuplesCount + editedDataTuplesCount + deletedDataTuplesCount);
         }
 
         /// <summary>
@@ -2849,6 +2939,11 @@ namespace BExIS.Dlm.Services.Data
                         item.DatasetVersion = workingCopyVersion;
                         item.TupleAction = TupleAction.Created;
                         //item.Timestamp = workingCopyVersion.Timestamp;
+
+                        //set values
+                        if (item != null && item.VariableValues != null)
+                            item.Values = "{" + string.Join(",", item.VariableValues.Select(v => v.Value.ToString()).ToArray()) + "}";
+
                         if (null == item.Timestamp)
                         {
                             item.Timestamp = workingCopyVersion.Timestamp;
@@ -2931,6 +3026,11 @@ namespace BExIS.Dlm.Services.Data
                             //System.Diagnostics.Debug.Print(editedVersion.XmlVariableValues.AsString());
                             //editedVersion.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
                             //System.Diagnostics.Debug.Print(xmlVariableValues.AsString());
+
+                            //set values
+                            if(edited != null  && edited.VariableValues!=null)
+                                orginalTuple.Values = "{" + string.Join(",", edited.VariableValues.Select(v => v.Value.ToString()).ToArray()) + "}";
+
 
                             orginalTuple.DatasetVersion = workingCopyVersion;
                             orginalTuple.Timestamp = workingCopyVersion.Timestamp;

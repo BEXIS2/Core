@@ -135,8 +135,8 @@ namespace BExIS.Dlm.Tests.Services.Data
             //Arrange
             DatasetManager datasetManager = new DatasetManager();
             List<long> datatupleIds;
-       
-            
+
+
             try
             {
                 datasetManager = new DatasetManager();
@@ -166,11 +166,17 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 foreach (var dsv in datasetversions)
                 {
-                    var result = datasetManager.GetDataTuples(dsv.Id); // get datatuples from the one before the latest
-                    int c = result.Count();
+                    int c = datasetManager.GetDataTuplesCount(dsv.Id);
 
+                    var result = datasetManager.GetDataTuplesTest(dsv.Id); // get datatuples from the one before the latest
+                    int cm = result.Count();
                     Assert.That(c, Is.EqualTo(10));
+                    Assert.That(c, Is.EqualTo(result.Count()));
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
             finally
             {
