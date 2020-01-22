@@ -2942,7 +2942,8 @@ namespace BExIS.Dlm.Services.Data
 
                         //set values
                         if (item != null && item.VariableValues != null)
-                            item.Values = "{" + string.Join(",", item.VariableValues.Select(v => v.Value.ToString()).ToArray()) + "}";
+                            item.Values = "{" + string.Join(",", item.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : v.Value.ToString().Replace(@"""", @"\"""))).ToArray()) + "}";
+
 
                         if (null == item.Timestamp)
                         {
@@ -3001,6 +3002,7 @@ namespace BExIS.Dlm.Services.Data
                                     OriginalTuple = orginalTuple,
                                     DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
+                                    Values = orginalTuple.Values
                                 };
                                 // the tuple version as a history record to the list of history records to be added later when the edit and delete loops are finished.
                                 // the actual record persitence happens in the caller of this method.
@@ -3029,7 +3031,7 @@ namespace BExIS.Dlm.Services.Data
 
                             //set values
                             if(edited != null  && edited.VariableValues!=null)
-                                orginalTuple.Values = "{" + string.Join(",", edited.VariableValues.Select(v => v.Value.ToString()).ToArray()) + "}";
+                                orginalTuple.Values = "{" + string.Join(",", edited.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : v.Value.ToString().Replace(@"""", @"\"""))).ToArray()) + "}";
 
 
                             orginalTuple.DatasetVersion = workingCopyVersion;
@@ -3089,6 +3091,7 @@ namespace BExIS.Dlm.Services.Data
                                     //OriginalTuple = orginalTuple,
                                     DatasetVersion = originalTuple.DatasetVersion, // latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
+                                    Values = originalTuple.Values
                                 };
                             }
 

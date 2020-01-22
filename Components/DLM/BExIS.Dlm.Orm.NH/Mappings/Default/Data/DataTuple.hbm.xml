@@ -37,7 +37,7 @@
       <column name="XmlAmendments" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="Values" type="String">
+    <property name="Values" type="StringClob">
       <column name="Values" not-null="false"/>
     </property>
 
