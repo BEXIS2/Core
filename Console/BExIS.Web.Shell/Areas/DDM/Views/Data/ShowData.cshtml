@@ -8,6 +8,24 @@
         tabIndex = Convert.ToInt32(ViewData["TabIndex"].ToString());
     }
 
+    var show_tabs = new Dictionary<string, string>();
+
+    if (ViewData["show_tabs"] != null)
+    {
+        show_tabs = (Dictionary<string, string>)ViewData["show_tabs"];
+    }
+    else
+    {
+        show_tabs.Add("show_primary_data_tab", "true");
+        show_tabs.Add("show_data_structure_tab", "true");
+        show_tabs.Add("show_link_tab", "true");
+        show_tabs.Add("show_permission_tab", "true");
+        show_tabs.Add("show_publish_tab", "true");
+        show_tabs.Add("show_attachments_tab", "true");
+
+        show_tabs.Add("show_tabs_deactivated", "true");
+    }
+
 }
 
 @section Information
@@ -130,51 +148,65 @@
                                       .Items(tabs =>
                                       {
 
-                          //ToDo Recator Modularity -> load metadata from from dcm
-
-                                         tabs.Add()
-                                            .Text("Metadata")
-                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion, isValid = ViewBag.isValid })
-                                            .HtmlAttributes(new { id = "metadata" })
-                                            .Enabled(false);
+                                          //ToDo Recator Modularity -> load metadata from from dcm
 
                                           tabs.Add()
-                                              .Text("Primary Data")
-                                              .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
-                                              .Enabled(@Model.ViewAccess)
-                                              .HtmlAttributes(new { id = "primarydata" })
-                                              .Enabled(false);
+                                             .Text("Metadata")
+                                             .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion, isValid = ViewBag.isValid })
+                                             .HtmlAttributes(new { id = "metadata" })
+                                             .Enabled(false);
 
-                                          tabs.Add()
-                                              .Text("Data Structure")
-                                              .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
-                                              .HtmlAttributes(new { id = "datastructure" })
-                                              .Enabled(false);
-
-                                          tabs.Add()
-                                              .Text("Links")
-                                              .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
-                                              .Enabled(false)
-                                              .HtmlAttributes(new { id = "showreferences" });
-
-                                          tabs.Add()
-                                              .Text("Dataset Permissions")
-                                              .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
-                                              .Enabled(false)
-                                              .HtmlAttributes(new { id = "datapermissions" });
-
-                                          tabs.Add()
-                                              .Text("Publish")
-                                                //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
-                                                .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-                                                .Enabled(false)
-                                                .HtmlAttributes(new { id = "prepare" });
-                                          tabs.Add()
+                                          if (show_tabs["show_primary_data_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                  .Text("Primary Data")
+                                                  .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
+                                                  .Enabled(@Model.ViewAccess)
+                                                  .HtmlAttributes(new { id = "primarydata" })
+                                                  .Enabled(false);
+                                          }
+                                          if (show_tabs["show_data_structure_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                  .Text("Data Structure")
+                                                  .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
+                                                  .HtmlAttributes(new { id = "datastructure" })
+                                                  .Enabled(false);
+                                          }
+                                          if (show_tabs["show_link_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                  .Text("Links")
+                                                  .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
+                                                  .Enabled(false)
+                                                  .HtmlAttributes(new { id = "showreferences" });
+                                          }
+                                          if (show_tabs["show_permission_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                  .Text("Dataset Permissions")
+                                                  .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
+                                                  .Enabled(false)
+                                                  .HtmlAttributes(new { id = "datapermissions" });
+                                          }
+                                          if (show_tabs["show_publish_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                    .Text("Publish")
+                                                    //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                                                    .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+                                                    .Enabled(false)
+                                                    .HtmlAttributes(new { id = "prepare" });
+                                          }
+                                          if (show_tabs["show_attachments_tab"] == "true")
+                                          {
+                                              tabs.Add()
                                               .Text("Attachments")
                                               .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
                                               .Enabled(false)
                                               .HtmlAttributes(new { id = "attachements" });
 
+                                          }
                                       })
                                       .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
             }

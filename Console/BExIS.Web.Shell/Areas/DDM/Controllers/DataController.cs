@@ -234,6 +234,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                 ViewData["isValid"] = isValid;
+                ViewData["show_tabs"] = getSettingsTabList();
 
                 return View(model);
             }
@@ -354,6 +355,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                 ViewData["isValid"] = isValid;
+                ViewData["show_tabs"] = getSettingsTabList();
 
                 return PartialView("ShowData", model);
             }
@@ -1837,6 +1839,49 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 entityManager.Dispose();
             }
         }
+
+        private Dictionary<string, string> getSettingsTabList()
+        {
+            if (Session["SettingsTabList"] != null)
+            {
+                return (Dictionary<string, string>)Session["SettingsTabList"];
+            }
+
+            var show_tab_list = new Dictionary<string, string>();
+            show_tab_list.Add("show_primary_data_tab", "true");
+            show_tab_list.Add("show_data_structure_tab", "true");
+            show_tab_list.Add("show_link_tab", "true");
+            show_tab_list.Add("show_permission_tab", "true");
+            show_tab_list.Add("show_publish_tab", "true");
+            show_tab_list.Add("show_attachments_tab", "true");
+
+            show_tab_list.Add("show_tabs_deactivated", "true");
+
+
+            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
+            XDocument settings = XDocument.Load(filePath);
+
+            foreach (var item in show_tab_list.ToList()) {
+                try
+                {
+                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key , settings).Attribute("value")?.Value;
+
+                    if (value != null)
+                    {
+                        show_tab_list[item.Key] = value;
+                    }
+                }
+                catch(Exception e)
+                {
+                  // do nothing
+                }
+                
+            }
+
+            Session["SettingsTabList"] = show_tab_list;
+            return show_tab_list;
+       }
+
 
         #endregion helper
     }
