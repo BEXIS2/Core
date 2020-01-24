@@ -40,6 +40,8 @@ using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 using System.Text;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -1393,24 +1395,60 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(new GridModel(new DataTable()));
         }
 
-        public ActionResult ShowPreviewDataStructure(long datasetID)
+        public ActionResult ShowPreviewDataStructure(long datasetID, string entityType = "Dataset")
         {
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
+            EntityPermissionManager entityPermissionManager = null;
+            OperationManager operationManager = null;
+            FeaturePermissionManager featurePermissionManager = null;
+            SubjectManager subjectManager = null;
 
             try
             {
+                entityPermissionManager = new EntityPermissionManager();
+                operationManager = new OperationManager();
+                featurePermissionManager = new FeaturePermissionManager();
+                subjectManager = new SubjectManager();
+
                 using (var uow = this.GetUnitOfWork())
-                {
+                {                  
                     long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
-                    DataStructure dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
-
+                    DataStructure dataStructure = null;
                     long id = (long)datasetID;
+                    string DSlink = null;
 
-                    Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
+                    if (this.IsAccessible("RPM", "DataStructureEdit","Index"))
+                    {
+                        dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        bool structured = false;
+                        if (dataStructure != null)
+                            structured = true;
+                        else
+                            dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                                            
+                        if (structured)
+                        {
+                            if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
+                            {
+                                Feature feature = operationManager.OperationRepository.Get().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                Subject subject = subjectManager.SubjectRepository.Get().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+
+                                if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
+                                    DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
+                    }
+
+                    Tuple<DataStructure, long, string> m = new Tuple<DataStructure, long, string>(
                         dataStructure,
-                        id
+                        id,
+                        DSlink
                         );
 
                     return PartialView("_previewDatastructure", m);
@@ -1419,6 +1457,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                entityPermissionManager.Dispose();
+                operationManager.Dispose();
+                subjectManager.Dispose();
+                featurePermissionManager.Dispose();
             }
         }
 
