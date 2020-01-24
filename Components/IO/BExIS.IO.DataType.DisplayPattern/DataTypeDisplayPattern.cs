@@ -22,8 +22,8 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time mm:ss",        ExcelPattern="mm:ss",               DisplayPattern="mm:ss",                     StringPattern = "mm:ss",                    RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time hh:mm",        ExcelPattern="hh:mm",               DisplayPattern="HH:mm",                     StringPattern = "HH:mm",                    RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h",          ExcelPattern=@"hh:mm:ss AM/PM",     DisplayPattern="hh:mm:ss tt",               StringPattern = "hh:mm:ss tt",              RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h hh:mm",    ExcelPattern=@"hh:mm AM/PM",        DisplayPattern="hh:mm tt",                  StringPattern = "hh:mm tt",                 RegexPattern = null}
-            //new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h hh:mm",    ExcelPattern=@"hh:mm AM/PM",        DisplayPattern="hh:mm tt",                  StringPattern = "hh:mm tt",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null}
             //new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null}
         };
 

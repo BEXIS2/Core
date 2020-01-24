@@ -4,44 +4,45 @@
 @using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc
 
-@{
-    string userName = "";
-    if (User != null && User.Identity != null)
-    {
-        userName = User.Identity.Name;
+<div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
+
+    @{
+        string userName = "";
+        if (User != null && User.Identity != null)
+        {
+            userName = User.Identity.Name;
+        }
+
     }
 
-}
-
-<div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
     <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
+            <div data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle" style="width: 100%;text-align: center;font-size: 2em;">Biodiversity Exploratories Information System</div>
             <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">
+            <!--  <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">
                 @Html.Brand(Html.GetTenant().LogoPath, Html.GetTenant().ShortName)
-            </a>
+            </a>-->
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
-            @*menubar*@
-            <ul class="nav navbar-nav">
-                @Html.MenuBar(userName)
-            </ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                @Html.LaunchBar()
-                @Html.Settings(userName)
-            </ul>
+
 
             @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
             @if (Request.IsAuthenticated)
             {
+
+                <ul class="nav navbar-nav navbar-right">
+                    @Html.LaunchBar()
+                    @Html.Settings(userName)
+                </ul>
+
                 using (Html.BeginForm("LogOff", "Account", new { Area = "" }, FormMethod.Post, new { @class = "navbar-right", id = "form_logoff" }))
                 {
                     @Html.AntiForgeryToken()
@@ -58,12 +59,14 @@
                         </li>
                     </ul>
                 }
+
             }
             else
             {
                 <ul class="nav navbar-nav navbar-right">
                     <li>@Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { id = "registerLink" })</li>
                     <li>@Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { id = "loginLink" })</li>
+                    @Html.LaunchBar()
                 </ul>
             }
 
@@ -73,6 +76,24 @@
                     @Html.RenderExtendedMenu(Html.GetTenant().ExtendedMenus.Element("ExtendedMenu"))
                 }
             </ul>
+
+            <div class="collapse navbar-collapse">
+                <div>
+                    <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand" style="height: 80px; float:left;">
+                        @Html.Brand(Html.GetTenant().LogoPath, Html.GetTenant().ShortName, 80)
+                    </a>
+                </div>
+                <div style="text-align:center;font-size:2em;margin-top:1em;color:#269926;">Biodiversity Exploratories Information System</div>
+            </div>
+
+
+
+            @*menubar*@
+            <ul class="nav navbar-nav">
+                @Html.MenuBar(userName)
+            </ul>
+
         </div>
     </div>
+
 </div>

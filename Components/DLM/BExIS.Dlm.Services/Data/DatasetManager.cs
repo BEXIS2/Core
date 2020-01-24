@@ -192,6 +192,46 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure, long datasetId)
+        {
+            Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
+            Contract.Requires(researchPlan != null && researchPlan.Id >= 0);
+            Contract.Requires(metadataStructure != null && metadataStructure.Id >= 0);
+
+            Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
+
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dataset> repo = uow.GetRepository<Dataset>();
+                var structureRepo = uow.GetReadOnlyRepository<Entities.DataStructure.DataStructure>();
+                var researchPlanRepo = uow.GetReadOnlyRepository<ResearchPlan>();
+
+                dataStructure = structureRepo.Get(dataStructure.Id);
+                researchPlan = researchPlanRepo.Get(researchPlan.Id);
+
+                Dataset dataset = new Dataset(dataStructure);
+                dataset.Id = datasetId;
+
+                dataset.ResearchPlan = researchPlan;
+                researchPlan.Datasets.Add(dataset);
+
+                dataset.MetadataStructure = metadataStructure;
+                metadataStructure.Datasets.Add(dataset);
+
+                dataset.Status = DatasetStatus.CheckedIn;
+                dataset.CheckOutUser = string.Empty;
+                dataset.LastCheckIOTimestamp = DateTime.UtcNow;
+
+                repo.Put(dataset);
+                uow.Commit();
+                // This creates the MV when there is no data tuples attached to the dataset, hence faster.
+                // However, it asks for REFRESH to tell the underlying database to mark the MV as queryable.
+                //updateMaterializedView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                return (dataset);
+            }
+        }
+
         /// <summary>
         /// Creates an empty dataset that has no data tuple, puts it into the checked-in state, and persists it in the database. At the time of creation a valid data structure, research plan, and metadata structure must be available.
         /// </summary>
@@ -2815,6 +2855,11 @@ namespace BExIS.Dlm.Services.Data
                         item.DatasetVersion = workingCopyVersion;
                         item.TupleAction = TupleAction.Created;
                         //item.Timestamp = workingCopyVersion.Timestamp;
+                        //set values
+                        if (item != null && item.VariableValues != null)
+                            item.Values = "{" + string.Join(",", item.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : '"' + v.Value.ToString().Replace(@"""", @"\""")) + '"').ToArray()) + "}";
+
+
                         if (null == item.Timestamp)
                         {
                             item.Timestamp = workingCopyVersion.Timestamp;
@@ -2872,6 +2917,7 @@ namespace BExIS.Dlm.Services.Data
                                     OriginalTuple = orginalTuple,
                                     DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
+                                    Values = orginalTuple.Values
                                 };
                                 // the tuple version as a history record to the list of history records to be added later when the edit and delete loops are finished.
                                 // the actual record persitence happens in the caller of this method.
@@ -2893,6 +2939,10 @@ namespace BExIS.Dlm.Services.Data
                             orginalTuple.XmlAmendments = edited.XmlAmendments;
                             orginalTuple.XmlVariableValues = null;
                             orginalTuple.XmlVariableValues = edited.XmlVariableValues;
+
+                            if (edited != null && edited.VariableValues != null)
+                                orginalTuple.Values = "{" + string.Join(",", edited.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : '"' + v.Value.ToString().Replace(@"""", @"\""")) + '"').ToArray()) + "}";
+
 
                             //System.Diagnostics.Debug.Print(editedVersion.XmlVariableValues.AsString());
                             //editedVersion.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
@@ -2955,6 +3005,7 @@ namespace BExIS.Dlm.Services.Data
                                     //OriginalTuple = orginalTuple,
                                     DatasetVersion = originalTuple.DatasetVersion, // latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
+                                    Values = originalTuple.Values
                                 };
                             }
 

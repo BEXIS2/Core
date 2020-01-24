@@ -64,8 +64,13 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public abstract DataTupleType TupleType { get; }
+
+        public virtual string Values { get; set; }
+
+
+
         #endregion
-     
+
         #region Associations        
 
         /// <summary>

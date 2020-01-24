@@ -1,6 +1,6 @@
 /*Default Style */
 
-:root {
+/*:root {
     --highlight-color: #ff9700;
     --bg-color-level-1: #388670;
     --bg-color-level-2: #72b1a0;
@@ -27,9 +27,9 @@
     --t-windows-titlebar-color: var(--highlight-color);
     --t-animation-container-hover-selected: var(--highlight-color);
     --bg-color-bx-selected-mousover: var(--highlight-color);
-}
+}*/
 /*Custom Style Example*/
-/*:root {
+:root {
     --bg-color-level-1: #388670;
     --bg-color-level-2: #72b1a0;
     --bg-color-level-3: #cde7cf;
@@ -57,4 +57,4 @@
     --t-animation-container-hover-selected: #01939A;
     --bg-color-bx-selected-mousover: var(--highlight-color);
 }
- */
+ 
