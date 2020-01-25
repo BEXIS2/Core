@@ -208,6 +208,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             entity.Name = "entity_name";
             entity.DataType = "string";
             Header.Add(entity);
+
             //DefaultHeader.Add(entity);
 
             foreach (XmlNode ade in headerItemXmlNodeList)
@@ -225,6 +226,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             }
 
             List<Row> RowList = new List<Row>();
+            string valueLastEntity = ""; // var to store last entity value
+            bool moreThanOneEntityFound = false; // var to set, if more than one entity name was found
+
+
             foreach (ScoreDoc sd in docs.ScoreDocs)
             {
                 Document doc = searcher.Doc(sd.Doc);
@@ -233,6 +238,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 ValueList = new List<object>();
                 ValueList.Add(doc.Get("doc_id"));
                 ValueList.Add(doc.Get("gen_entity_name"));
+
+                // check if there are more than one entities in the result list
+                if (moreThanOneEntityFound == false && ValueList[1].ToString() != valueLastEntity && valueLastEntity != "")
+                {
+                    moreThanOneEntityFound = true;
+                }
+                valueLastEntity = ValueList[1].ToString();  
 
                 foreach (XmlNode ade in headerItemXmlNodeList)
                 {
@@ -255,6 +267,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 }
                 r.Values = ValueList;
                 RowList.Add(r);
+            }
+          
+            // show column of entities, if there are more than one found
+            if (moreThanOneEntityFound == true)
+            {
+                DefaultHeader.Add(entity);
             }
 
             sro.Header = Header;
