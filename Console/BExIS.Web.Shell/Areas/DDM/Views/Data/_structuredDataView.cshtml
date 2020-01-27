@@ -325,7 +325,7 @@
 		var ext = $(this).attr("ext");
         var withunits = $("#WithUnits").prop('checked');
         console.log(withunits);
-		$("#preloaderContainer").preloader(20, "Preparing excel file...");
+		$("#preloaderContainer").preloader(20, "Preparing file...");
 
         $.ajax({
             url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })' + "?ext=" + ext + "&versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits,
