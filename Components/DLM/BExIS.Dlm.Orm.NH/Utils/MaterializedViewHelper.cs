@@ -340,7 +340,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "long", "bigint" },
                 { "int64", "bigint" },
                 { "text", "" }, // not needed -> character varying[]
-                { "string", "character varying(255)" }
+                { "string", "character varying" }
             };
 
         /// <summary>
