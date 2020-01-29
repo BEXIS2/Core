@@ -13,11 +13,11 @@
     <Export tag="menubar" id="ManageDataStructures" order="1"
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructureSearch" action="" argument=""
-            extends="./menubarRoot/Plan"/>
+            extends="./menubarRoot/collect"/>
     <Export tag="menubar" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
-            extends="./menubarRoot/Plan"/>
+            extends="./settingsRoot"/>
     
     <Export tag="lunchbar" id="helpRpm" order="1"
         title="Data Planning" description="Data Planning Help Manual" icon=""
