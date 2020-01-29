@@ -5,6 +5,11 @@ using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
+using System.IO;
+using System.Xml.Serialization;
+using System.Text;
+using Vaiona.Persistence.Api;
+using BExIS.Dlm.Entities.DataStructure;
 
 /// <summary>
 ///
@@ -51,6 +56,8 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>        
         public virtual XmlDocument XmlVariableValues { get; set; }
 
+        public virtual XmlDocument XmlVariableValues2 { get; set; }
+
         /// <summary>
         ///
         /// </summary>
@@ -88,6 +95,9 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual IList<VariableValue> VariableValues { get; set; }
+
+
+        public virtual IList<VariableValue> VariableValues2 { get; set; }
 
         /// <summary>
         /// Do not map to persistence data directly. Materialize after load
@@ -149,20 +159,6 @@ namespace BExIS.Dlm.Entities.Data
 
         #region Methods
 
-        // No need to override these functions, the base one performs the task for normal cases
-        // If you have a very special case or the performance of the generic one is not good, then override the methods
-        //public override void Dematerialize()
-        //{            
-        //    XmlVariableValues = (XmlDocument)transformer.ExportTo(VariableValues, "VariableValues", 1);            
-        //    XmlAmendments = (XmlDocument)transformer.ExportTo(Amendments, "Amendments", 1);             
-        //}
-
-        //public override void Materialize()
-        //{
-        //    VariableValues = transformer.ImportFrom<List<VariableValue>>(XmlVariableValues, null);
-        //    Amendments = transformer.ImportFrom<List<Amendment>>(XmlAmendments, null);
-        //}
-
         /// <summary>
         ///
         /// </summary>
@@ -189,6 +185,58 @@ namespace BExIS.Dlm.Entities.Data
             base.Materialize();
             VariableValues.ToList().ForEach(p => p.Tuple = this);
         }
+
+        public virtual void Materialize2(bool includeChildren = true)
+        {
+
+            using (XmlReader reader = XmlReader.Create((new StringReader(XmlVariableValues2.InnerXml))))
+            {
+                XmlSerializer xsSubmit = new XmlSerializer(typeof(List<VariableValue>));
+                this.VariableValues2 = (List<VariableValue>)xsSubmit.Deserialize(reader);
+
+                using (var uow = this.GetUnitOfWork())
+                {
+                    foreach (var item in VariableValues2)
+                    {
+                        Variable variable = uow.GetReadOnlyRepository<Variable>().Get(item.VariableId);
+                        item.Variable = variable;
+                        item.DataAttribute = variable.DataAttribute;
+                    }
+                }
+
+            }
+        }
+
+        public virtual void Dematerialize2(bool includeChildren = true)
+        {
+            XmlSerializer xsSubmit = new XmlSerializer(typeof(List<VariableValue>));
+
+            using (var sww = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    xsSubmit.Serialize(writer, this.VariableValues);
+
+                    var x = new XmlDocument();
+                    x.LoadXml(sww.ToString());
+
+                    XmlVariableValues2 = x;
+                }
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>  
+        //public override void Dematerialize(bool includeChildren = true)
+        //{
+
+
+        //}
+
         #endregion
     }
 }

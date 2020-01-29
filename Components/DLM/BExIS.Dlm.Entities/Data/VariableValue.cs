@@ -41,25 +41,36 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        [XmlIgnore]
         public IList<ParameterValue> ParameterValues { get; set; }
+
+        private DataAttribute _dataAttribute;
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>    
         [XmlIgnore]
         public DataAttribute DataAttribute
         {
             get
             {
+                if (_dataAttribute != null) return _dataAttribute;
+                
                 if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
                     return (this.Variable.DataAttribute);
                 }
                 return (null);
             }
+            set {
+                _dataAttribute = value;
+            }
         }
+
+
+        private Variable _variable;
 
         /// <summary>
         ///
@@ -71,14 +82,22 @@ namespace BExIS.Dlm.Entities.Data
         {
             get
             {
-                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (_variable != null) return _variable;
                 {
-                    Variable u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
-                        .Where(p => p.Id.Equals(this.VariableId))
-                        .Select(p => p).FirstOrDefault();
-                    return (u);
+                    if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    {
+                        Variable u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
+                            .Where(p => p.Id.Equals(this.VariableId))
+                            .Select(p => p).FirstOrDefault();
+                        return (u);
+                    }
                 }
+
+
                 return (null);
+            }
+            set{
+                _variable = value;
             }
         }
 
