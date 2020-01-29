@@ -92,6 +92,7 @@
     <Compile Include="Mapping\XmlSchemaManager.cs" />
     <Compile Include="XExtentsions.cs" />
     <Compile Include="XmlDatasetHelper.cs" />
+    <Compile Include="XmlDataTupleHelper.cs" />
     <Compile Include="XmlMetadataHelper.cs" />
     <Compile Include="XmlMetadataImportHelper.cs" />
     <Compile Include="XmlMetadataWriter.cs" />
