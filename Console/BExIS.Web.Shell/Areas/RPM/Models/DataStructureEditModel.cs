@@ -190,7 +190,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 }
             }
 
-            if (dataAttribute.UsagesAsVariable.Count > 0)
+            if (dataAttribute.UsagesAsVariable.Any())
                 this.inUse = true;
             else
                 this.inUse = false;
@@ -305,7 +305,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     }
                 }
 
-                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Count > 0)
+                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Any())
                 {
                     foreach (MissingValue mv in temp)
                     {
@@ -318,7 +318,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         });
                     }
                 }
-                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Count <= 0)
+                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Any())
                 {
                     try
                     {
@@ -539,7 +539,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         this.Name = dataStructure.Name;
                         this.Description = dataStructure.Description;
 
-                        if (dataStructure.Datasets.Count > 0)
+                        if (dataStructure.Datasets.Any())
                         {
                             DatasetManager datasetManager = null;
                             try
@@ -547,10 +547,13 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 datasetManager = new DatasetManager();
                                 foreach (Dataset d in dataStructure.Datasets)
                                 {
-                                    if(datasetManager.RowCount(d.Id, null) > 0)
+                                    foreach (DatasetVersion dv in d.Versions)
                                     {
-                                        this.inUse = true;
-                                        break;
+                                        if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                        {
+                                            this.inUse = true;
+                                            break;
+                                        }
                                     }
                                 }                             
                             }
@@ -575,7 +578,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         this.Description = dataStructure.Description;
                         this.VariablePreviews = null;
 
-                        if (dataStructure.Datasets.Count > 0)
+                        if (dataStructure.Datasets.Any())
                         {
                             this.inUse = true;
                         }

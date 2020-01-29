@@ -119,10 +119,13 @@ namespace BExIS.Modules.Rpm.UI.Models
                     datasetManager = new DatasetManager();
                     foreach (Dataset d in structuredDataStructure.Datasets)
                     {
-                        if (datasetManager.RowCount(d.Id, null) > 0)
+                        foreach (DatasetVersion dv in d.Versions)
                         {
-                            this.inUse = true;
-                            break;
+                            if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                            {
+                                this.inUse = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -143,7 +146,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     this.Title = unStructuredDataStructure.Name;
                     this.Description = unStructuredDataStructure.Description;
 
-                    if (unStructuredDataStructure.Datasets != null && unStructuredDataStructure.Datasets.Count > 0)
+                    if (unStructuredDataStructure.Datasets != null && unStructuredDataStructure.Datasets.Any())
                         this.inUse = true;
                     else
                         this.inUse = false;
@@ -243,10 +246,13 @@ namespace BExIS.Modules.Rpm.UI.Models
                         datasetManager = new DatasetManager();
                         foreach (Dataset d in ds.Datasets)
                         {
-                            if (datasetManager.RowCount(d.Id, null) > 0)
+                            foreach (DatasetVersion dv in d.Versions)
                             {
-                                dataStructureResult.inUse = true;
-                                break;
+                                if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                {
+                                    dataStructureResult.inUse = true;
+                                    break;
+                                }
                             }
                         }
                     }

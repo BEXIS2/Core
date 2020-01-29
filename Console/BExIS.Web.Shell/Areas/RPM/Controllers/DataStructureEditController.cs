@@ -263,7 +263,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     return PartialView("_messageWindow", messageModel);
                 }
 
-                if (variables != null && variables.Count() > 0)
+                if (variables != null && variables.Any())
                 {
                     Variable variable = new Variable();
                     List<long> order = new List<long>();
@@ -776,7 +776,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (constraintModel.Terms != null && constraintModel.Terms.Trim() != "")
                     items = createDomainItems(constraintModel.Terms.Trim());
 
-                if (items.Count > 0)
+                if (items.Any())
                 {
                     if (constraintModel.Id == 0)
                     {
