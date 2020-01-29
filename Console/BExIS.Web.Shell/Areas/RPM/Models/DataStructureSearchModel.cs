@@ -119,12 +119,20 @@ namespace BExIS.Modules.Rpm.UI.Models
                     datasetManager = new DatasetManager();
                     foreach (Dataset d in structuredDataStructure.Datasets)
                     {
-                        foreach (DatasetVersion dv in d.Versions)
+                        if (datasetManager.RowAny(d.Id))
                         {
-                            if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                            this.inUse = true;
+                            break;
+                        }
+                        else
+                        {
+                            foreach (DatasetVersion dv in d.Versions)
                             {
-                                this.inUse = true;
-                                break;
+                                if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                {
+                                    this.inUse = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -246,12 +254,20 @@ namespace BExIS.Modules.Rpm.UI.Models
                         datasetManager = new DatasetManager();
                         foreach (Dataset d in ds.Datasets)
                         {
-                            foreach (DatasetVersion dv in d.Versions)
+                            if (datasetManager.RowAny(d.Id))
                             {
-                                if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                dataStructureResult.inUse = true;
+                                break;
+                            }
+                            else
+                            {
+                                foreach (DatasetVersion dv in d.Versions)
                                 {
-                                    dataStructureResult.inUse = true;
-                                    break;
+                                    if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                    {
+                                        dataStructureResult.inUse = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
