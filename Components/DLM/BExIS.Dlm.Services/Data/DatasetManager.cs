@@ -2942,7 +2942,7 @@ namespace BExIS.Dlm.Services.Data
 
                         //set values
                         if (item != null && item.VariableValues != null)
-                            item.Values = "{" + string.Join(",", item.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : '"' + v.Value.ToString().Replace(@"""", @"\""")) + '"').ToArray()) + "}";
+                            item.Values = "{" + string.Join(",", item.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : ('"' + v.Value.ToString().Replace(@"""", @"\""")) + '"')).ToArray()) + "}";
 
 
                         if (null == item.Timestamp)
@@ -3031,7 +3031,7 @@ namespace BExIS.Dlm.Services.Data
 
                             //set values
                             if(edited != null  && edited.VariableValues!=null)
-                                orginalTuple.Values = "{" + string.Join(",", edited.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : '"' + v.Value.ToString().Replace(@"""", @"\""")) + '"').ToArray()) + "}";
+                                orginalTuple.Values = "{" + string.Join(",", edited.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : ('"' + v.Value.ToString().Replace(@"""", @"\""")) + '"')).ToArray()) + "}";
 
 
                             orginalTuple.DatasetVersion = workingCopyVersion;
