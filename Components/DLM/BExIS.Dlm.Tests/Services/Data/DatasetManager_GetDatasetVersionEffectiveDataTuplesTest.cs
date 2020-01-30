@@ -26,6 +26,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         private string username = "David";
 
         private DatasetHelper dsHelper;
+        private long numberOfTuples = 10;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -46,9 +47,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dsHelper.PurgeAllDataStructures();
                 dsHelper.PurgeAllResearchPlans();
 
-
-                // generate Data
-                long numberOfTuples = 10000;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -105,7 +103,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversion);
 
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
+                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
             }
             finally
             {
@@ -143,7 +141,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2)); // get datatuples from the one before the latest
 
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
+                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
             }
             finally
             {
@@ -151,7 +149,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
 
         }
-
 
         [Test()]
         public void GetDataTuples_WhenCalledValid_ReturnIQueryable()
@@ -166,7 +163,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var result = datasetManager.GetDataTuples(datasetversion.Id);
                 int c = datasetManager.GetDataTuples(datasetversion.Id).Count();
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
+                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
                 Assert.That(c, Is.EqualTo(result.Count()));
 
 

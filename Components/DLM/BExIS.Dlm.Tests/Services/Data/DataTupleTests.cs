@@ -52,7 +52,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 // generate Data
-                long numberOfTuples = 1000;
+                long numberOfTuples = 300000;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -96,7 +96,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         }
 
         [Test()]
-        public void TransformDatatupleToXmlTest()
+        public void TransformDatatupleToJson()
         {
 
             //Arrange
@@ -119,21 +119,35 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 foreach (var dt in newDts)
                 {
-                    dt.Dematerialize2();
+                    //dt.Materialize2();
 
-                    dt.Materialize2();
+                    //dt.Dematerialize2(); // convert variablevalues 1 to json
+
                 }
 
 
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
+                Assert.That(result.Count(), Is.EqualTo(10000));
 
                 foreach (var dt in newDts)
                 {
-                    Assert.That(dt.VariableValues, Is.EquivalentTo(dt.VariableValues2));
-                    Assert.That(dt.XmlVariableValues, Is.EquivalentTo(dt.XmlVariableValues2));
+                    for (int i = 0; i < dt.VariableValues.Count; i++)
+                    {
+                        var vv1 = dt.VariableValues.ElementAt(i);
+                        //var vv2 = dt.VariableValues2.ElementAt(i);
+
+                        //Assert.That(vv1.DataAttribute.Id , Is.EqualTo(vv2.DataAttribute.Id));
+                        //Assert.That(vv1.Note, Is.EqualTo(vv2.Note));
+                        //Assert.That(vv1.ObtainingMethod, Is.EqualTo(vv2.ObtainingMethod));
+                        //Assert.That(vv1.ParameterValues, Is.EqualTo(vv2.ParameterValues));
+                        //Assert.That(vv1.ResultTime, Is.EqualTo(vv2.ResultTime));
+                        //Assert.That(vv1.SamplingTime, Is.EqualTo(vv2.SamplingTime));
+                        //Assert.That(vv1.Tuple.Id, Is.EqualTo(vv2.Tuple.Id));
+                        //Assert.That(vv1.Value, Is.EqualTo(vv2.Value));
+                        //Assert.That(vv1.Variable.Id, Is.EqualTo(vv2.Variable.Id));
+                        //Assert.That(vv1.VariableId, Is.EqualTo(vv2.VariableId));
+                    }
                 }
-                
             }
             catch (Exception ex)
             {

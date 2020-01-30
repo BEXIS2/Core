@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using BExIS.Dlm.Entities.DataStructure;
+using Newtonsoft.Json;
 
 /// <summary>
 ///
@@ -21,7 +22,8 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>   
+        [JsonIgnore]
         [XmlIgnore]
         public DataTuple Tuple { get; set; } // reference to the containing tuple
 
@@ -29,7 +31,8 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>     
+        [JsonProperty("vid")]
         public Int64 VariableId { get; set; } // when variable is not loaded!
 
         #endregion
@@ -42,9 +45,10 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         [XmlIgnore]
+        [JsonIgnore]
+
         public IList<ParameterValue> ParameterValues { get; set; }
 
-        private DataAttribute _dataAttribute;
 
         /// <summary>
         ///
@@ -52,21 +56,19 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>    
         [XmlIgnore]
+        [JsonIgnore]
+
         public DataAttribute DataAttribute
         {
             get
             {
-                if (_dataAttribute != null) return _dataAttribute;
-                
                 if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
                     return (this.Variable.DataAttribute);
                 }
                 return (null);
             }
-            set {
-                _dataAttribute = value;
-            }
+
         }
 
 
@@ -78,26 +80,21 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         [XmlIgnore]
+        [JsonIgnore]
+
         public Variable Variable
         {
             get
             {
-                if (_variable != null) return _variable;
+                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-                    {
-                        Variable u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
-                            .Where(p => p.Id.Equals(this.VariableId))
-                            .Select(p => p).FirstOrDefault();
-                        return (u);
-                    }
+                    Variable u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
+                        .Where(p => p.Id.Equals(this.VariableId))
+                        .Select(p => p).FirstOrDefault();
+                    return (u);
                 }
 
-
                 return (null);
-            }
-            set{
-                _variable = value;
             }
         }
 

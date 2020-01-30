@@ -250,7 +250,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
                                 iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
                             {
-                                int packageSize = 10000;
+                                int packageSize = 100000;
 
                                 TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
 

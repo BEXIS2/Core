@@ -816,6 +816,8 @@ namespace BExIS.Dlm.Services.Data
 
         public List<AbstractTuple> GetDataTuples(long datasetVersionId)
         {
+            if (datasetVersionId < 0) return new List<AbstractTuple>();
+
             var datasetVersion = DatasetVersionRepo.Get(datasetVersionId);
             var dataset = datasetVersion.Dataset;
             var previousDatasetVersionIds = getPreviousVersionIds(datasetVersion);
@@ -843,63 +845,6 @@ namespace BExIS.Dlm.Services.Data
 
           
             return originalDataTuples.Union(editedDataTuples).Union(deletedDataTuples).OrderBy(d => d.OrderNo).ThenBy(d => d.Timestamp).ToList();
-        }
-
-        public IQueryable<AbstractTuple> GetDataTuplesTest(long datasetVersionId)
-        {
-            var datasetVersion = DatasetVersionRepo.Get(datasetVersionId);
-            var dataset = datasetVersion.Dataset;
-            var previousDatasetVersionIds = getPreviousVersionIds(datasetVersion);
-
-            if (GetDatasetLatestVersionId(dataset.Id) == datasetVersion.Id)
-            {
-                if (dataset.Status == DatasetStatus.CheckedOut)
-                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>();
-
-                if (dataset.Status == DatasetStatus.CheckedIn)
-                    return DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).Cast<AbstractTuple>();
-            }
-
-
-            var o = DataTupleRepo.Query().ToSql();
-            var a = DataTupleRepo.Query(d => previousDatasetVersionIds.Contains(d.DatasetVersion.Id)).ToSql();
-
-            var b = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Edited
-                                                                    && previousDatasetVersionIds.Contains(
-                                                                        d.DatasetVersion.Id)
-                                                                    && !previousDatasetVersionIds.Contains(
-                                                                        d.ActingDatasetVersion.Id)).Cast<AbstractTuple>().ToSql();
-            var c = DataTupleVersionRepo.Query(d => d.TupleAction == TupleAction.Deleted
-                                                                    && previousDatasetVersionIds.Contains(d.DatasetVersion.Id)
-                                                                    && !previousDatasetVersionIds.Contains(d.ActingDatasetVersion.Id)).Cast<AbstractTuple>().ToSql();
-            
-            StringBuilder sqlQuery = new StringBuilder();
-            sqlQuery.Append(a)
-                    //.Append(a).Append(" ")
-                    //.Append(") ")
-                    //.Append("Union").Append(" ")
-                    //.Append("( ")
-                    //.Append(b).Append(" ")
-                    //.Append(" )")
-                    //.Append("Union").Append(" ")
-                    //.Append("( ")
-                    //.Append(c).Append(" ")
-                    //.Append(" )")
-                    .AppendLine();
-
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                Debug.WriteLine(sqlQuery.ToString());
-
-
-                var result = uow.ExecuteScalar(sqlQuery.ToString());
-
-                return result as IQueryable<AbstractTuple>;
-            }
-
-
-            return null;
         }
 
         public int GetDataTuplesCount(long datasetVersionId)
@@ -2998,7 +2943,7 @@ namespace BExIS.Dlm.Services.Data
                                     OrderNo = orginalTuple.OrderNo,
                                     Timestamp = orginalTuple.Timestamp,
                                     XmlAmendments = orginalTuple.XmlAmendments,
-                                    XmlVariableValues = orginalTuple.XmlVariableValues,
+                                    JsonVariableValues = orginalTuple.JsonVariableValues,
                                     OriginalTuple = orginalTuple,
                                     DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
@@ -3022,8 +2967,8 @@ namespace BExIS.Dlm.Services.Data
                             orginalTuple.OrderNo = edited.OrderNo;
                             orginalTuple.XmlAmendments = null;
                             orginalTuple.XmlAmendments = edited.XmlAmendments;
-                            orginalTuple.XmlVariableValues = null;
-                            orginalTuple.XmlVariableValues = edited.XmlVariableValues;
+                            //orginalTuple.XmlVariableValues = null;
+                            orginalTuple.JsonVariableValues = edited.JsonVariableValues;
 
                             //System.Diagnostics.Debug.Print(editedVersion.XmlVariableValues.AsString());
                             //editedVersion.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
@@ -3087,7 +3032,7 @@ namespace BExIS.Dlm.Services.Data
                                     OrderNo = originalTuple.OrderNo,
                                     Timestamp = originalTuple.Timestamp,
                                     XmlAmendments = originalTuple.XmlAmendments,
-                                    XmlVariableValues = originalTuple.XmlVariableValues,
+                                    JsonVariableValues = originalTuple.JsonVariableValues,
                                     //OriginalTuple = orginalTuple,
                                     DatasetVersion = originalTuple.DatasetVersion, // latestCheckedInVersion,
                                     ActingDatasetVersion = workingCopyVersion,
