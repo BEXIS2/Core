@@ -369,7 +369,7 @@
                         else if($(data).attr('id') == 'inUse') {
                             lock();
                             if(!dataStruktureInUse) {
-                                openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
+                                openCopyWindow($('.bx-rpm-datastructureheader #id').val(), $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, true, data);
                             }
                             else {
                                 storeVariables($(data).text());
@@ -421,7 +421,7 @@
                 parameters = '/?Id=0&Name=' + encodeURIComponent(name) + '&Description=' + encodeURIComponent(description) + '&isStructured=true&cssId=' + cssId + '&inUse=' + dataStruktureInUse;
                 $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                     if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
-                        openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
+                        openCopyWindow($('.bx-rpm-datastructureheader #id').val(), $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, true, data);
                     }
                     else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
                         var elems = $variableGrid.packery('getItemElements');
@@ -660,6 +660,8 @@
     }
 
     function openCopyWindow(Id, Name, Description, isSructured, dataStruktureInUse, copy, message) {
+        console.log(copy);
+        console.log(Id);
         var title = "Save Data Structure " + Name + " ("+ $('.bx-rpm-datastructureheader #id').val() +") as";
         var parameters = encodeURI('/?Id=' + Id + '&Name=' + encodeURIComponent(Name) + '&Description=' + encodeURIComponent(Description) + '&isSructured=' + isSructured + '&inUse=' + dataStruktureInUse + '&copy=' + copy);
         $.ajax({
@@ -688,7 +690,7 @@
                 if(!copy)
                 {
                     $(message).replaceAll('.bx-rpm-createDataStructureContainer .bx-rpm-message');
-                    $('.bx-rpm-createDataStructureContainer .bx-rpm-message').attr('id','message');
+                    $('.bx-rpm-createDataStructureContainer .bx-rpm-message').attr('id', 'message');
                     createWondowShowmessage();
                 }
                 resetAllTelerikIconTitles();
