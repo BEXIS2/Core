@@ -41,6 +41,7 @@
       <column name="Values" not-null="false"/>
     </property>
 
+
     <many-to-one class="DataTuple" name="OriginalTuple" column="OriginalTupleRef">
     </many-to-one>
 

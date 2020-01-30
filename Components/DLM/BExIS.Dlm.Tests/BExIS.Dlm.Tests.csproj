@@ -200,6 +200,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DataStructure\UnitManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManagerTests.cs" />
+    <Compile Include="Services\Data\DatasetManager_GetDatasetVersionEffectiveDataTuplesTest.cs" />
+    <Compile Include="Services\Data\DatasetManager_GetDataTuplesTest.cs" />
     <Compile Include="Services\Party\PartyManagerTests.cs" />
     <Compile Include="Services\Party\PartyRelationshipTypeManagerTest.cs" />
     <Compile Include="Services\Party\PartyTypeManagerTests.cs" />
