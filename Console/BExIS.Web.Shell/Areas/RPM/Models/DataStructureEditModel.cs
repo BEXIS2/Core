@@ -56,29 +56,17 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             this.AttributeFilterDictionary = new Dictionary<string, AttributeFilterStruct>();
             AttributePreviewModel attributePreviewModel = new AttributePreviewModel().fill(false);
-
+           
+            this.AttributeFilterDictionary.Add("Data Type", new AttributeFilterStruct());          
             this.AttributeFilterDictionary.Add("Unit", new AttributeFilterStruct());
-            this.AttributeFilterDictionary.Add("Data Type", new AttributeFilterStruct());
+            this.AttributeFilterDictionary.Add("Dimension", new AttributeFilterStruct());
 
             string key = "";
             FilterValueStruct value = new FilterValueStruct();
 
             foreach (AttributePreviewStruct aps in attributePreviewModel.AttributePreviews)
             {
-                key = aps.Unit.Name.ToLower().Replace(" ", "");
-                value = new FilterValueStruct();
-
-                if (this.AttributeFilterDictionary["Unit"].Values.ContainsKey(key))
-                {
-                    this.AttributeFilterDictionary["Unit"].Values[key].Appearance.Add(aps.Id);
-                }
-                else
-                {
-                    value.Name = aps.Unit.Name;
-                    value.Appearance.Add(aps.Id);
-                    this.AttributeFilterDictionary["Unit"].Values.Add(key, value);
-                }
-
+                
                 key = aps.DataType.ToLower().Replace(" ", "");
                 value = new FilterValueStruct();
 
@@ -91,6 +79,34 @@ namespace BExIS.Modules.Rpm.UI.Models
                     value.Name = aps.DataType;
                     value.Appearance.Add(aps.Id);
                     this.AttributeFilterDictionary["Data Type"].Values.Add(key, value);
+                }
+
+                key = aps.Dimension.ToLower().Replace(" ", "");
+                value = new FilterValueStruct();
+
+                if (this.AttributeFilterDictionary["Dimension"].Values.ContainsKey(key))
+                {
+                    this.AttributeFilterDictionary["Dimension"].Values[key].Appearance.Add(aps.Id);
+                }
+                else
+                {
+                    value.Name = aps.Dimension;
+                    value.Appearance.Add(aps.Id);
+                    this.AttributeFilterDictionary["Dimension"].Values.Add(key, value);
+                }
+
+                key = aps.Unit.Name.ToLower().Replace(" ", "");
+                value = new FilterValueStruct();
+
+                if (this.AttributeFilterDictionary["Unit"].Values.ContainsKey(key))
+                {
+                    this.AttributeFilterDictionary["Unit"].Values[key].Appearance.Add(aps.Id);
+                }
+                else
+                {
+                    value.Name = aps.Unit.Name;
+                    value.Appearance.Add(aps.Id);
+                    this.AttributeFilterDictionary["Unit"].Values.Add(key, value);
                 }
             }
             foreach (KeyValuePair<string, AttributeFilterStruct> kv in this.AttributeFilterDictionary)
@@ -110,6 +126,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string DataType { get; set; }
         public Dictionary<long, string> Constraints { get; set; }
         public bool inUse { get; set; }
+        public string Dimension { get; set; }
 
 
         public AttributePreviewStruct()
@@ -121,6 +138,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
             this.inUse = false;
+            this.Dimension = "";
         }
 
         public AttributePreviewStruct fill(long attributeId)
@@ -156,7 +174,9 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Description = dataAttribute.Description;
             this.Unit.Id = dataAttribute.Unit.Id;
             this.Unit.Name = dataAttribute.Unit.Name;
+            this.Unit.Description = dataAttribute.Unit.Abbreviation;
             this.DataType = dataAttribute.DataType.Name;
+            this.Dimension = dataAttribute.Unit.Dimension.Name;
 
             if (getConstraints)
             {
@@ -170,7 +190,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 }
             }
 
-            if (dataAttribute.UsagesAsVariable.Count > 0)
+            if (dataAttribute.UsagesAsVariable.Any())
                 this.inUse = true;
             else
                 this.inUse = false;
@@ -270,6 +290,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 this.isOptional = variable.IsValueOptional;
                 this.Unit.Id = variable.Unit.Id;
                 this.Unit.Name = variable.Unit.Name;
+                this.Unit.Description = variable.Unit.Abbreviation;
                 this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
                 this.DataType = variable.DataAttribute.DataType.Name;
 
@@ -284,7 +305,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     }
                 }
 
-                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Count > 0)
+                if (missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Any())
                 {
                     foreach (MissingValue mv in temp)
                     {
@@ -297,7 +318,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         });
                     }
                 }
-                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Count <= 0)
+                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Any())
                 {
                     try
                     {
@@ -371,7 +392,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 UnitStructs.Add(new ItemStruct()
                                 {
                                     Name = u.Name,
-                                    Id = u.Id
+                                    Id = u.Id,
+                                    Description = u.Abbreviation
                                 });
                                 break;
                             }
@@ -382,7 +404,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                         UnitStructs.Add(new ItemStruct()
                         {
                             Name = u.Name,
-                            Id = u.Id
+                            Id = u.Id,
+                            Description = u.Abbreviation
                         });
                     }
                 }
@@ -516,7 +539,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         this.Name = dataStructure.Name;
                         this.Description = dataStructure.Description;
 
-                        if (dataStructure.Datasets.Count > 0)
+                        if (dataStructure.Datasets.Any())
                         {
                             DatasetManager datasetManager = null;
                             try
@@ -524,10 +547,21 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 datasetManager = new DatasetManager();
                                 foreach (Dataset d in dataStructure.Datasets)
                                 {
-                                    if(datasetManager.RowCount(d.Id, null) > 0)
+                                    if (datasetManager.RowAny(d.Id))
                                     {
                                         this.inUse = true;
                                         break;
+                                    }
+                                    else
+                                    {
+                                        foreach (DatasetVersion dv in d.Versions)
+                                        {
+                                            if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                            {
+                                                this.inUse = true;
+                                                break;
+                                            }
+                                        }
                                     }
                                 }                             
                             }
@@ -552,7 +586,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         this.Description = dataStructure.Description;
                         this.VariablePreviews = null;
 
-                        if (dataStructure.Datasets.Count > 0)
+                        if (dataStructure.Datasets.Any())
                         {
                             this.inUse = true;
                         }

@@ -3,7 +3,7 @@
 @using BExIS.Dlm.Entities.DataStructure;
 @using BExIS.Modules.Ddm.UI.Helpers;
 
-@model Tuple<DataStructure, long>
+@model Tuple<DataStructure, long, string>
 
 @{
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
@@ -31,11 +31,18 @@
 
 
 @if (@Model.Item1 != null)
-{ 
-    <div style="text-align:left">
+{
+<div style="text-align:left">
+    @if (!String.IsNullOrEmpty(Model.Item3))
+    {
+        <h2><a href="@Model.Item3">@Model.Item1.Self.Name (@Model.Item1.Self.Id)</a></h2>
+    }
+    else
+    {
         <h2>@Model.Item1.Self.Name (@Model.Item1.Self.Id)</h2>
-        <p>@Model.Item1.Self.Description</p>
-    </div>
+    }
+    <p>@Model.Item1.Self.Description</p>
+</div>
     
 }
 

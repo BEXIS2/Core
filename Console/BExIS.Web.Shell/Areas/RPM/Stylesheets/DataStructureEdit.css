@@ -323,9 +323,9 @@ h2{
 
 .bx-rpm-filter .bx-rpm-filterItem{
     width:33%;
-    float:right;
-    margin: 0px 0px 2px 0px;
-    padding:0px 2px 0px 0px;
+    float:left;
+    margin: 0px 0px 0px 2px;
+    padding:0px 0px 0px 0px;
 }
 
 .bx-rpm-filter .bx-rpm-filterCategory label {

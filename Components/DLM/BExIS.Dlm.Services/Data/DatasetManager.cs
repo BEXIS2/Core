@@ -2730,6 +2730,24 @@ namespace BExIS.Dlm.Services.Data
             return mvHelper.Count(datasetId, filter);
         }
 
+        public bool RowAny(long datasetId)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            if (mvHelper.Any(datasetId) > 0)
+                return true;
+           
+            return false;
+        }
+
+        public bool RowAny(long datasetId, FilterExpression filter)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+            if (mvHelper.Any(datasetId, filter) > 0)
+                return true;
+
+            return false;
+        }
+
         private bool existsMaterializedView(long datasetId)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();

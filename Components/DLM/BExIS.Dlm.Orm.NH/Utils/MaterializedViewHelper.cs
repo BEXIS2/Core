@@ -157,7 +157,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
             selectBuilder
                 .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
-                .AppendLine(string.Format("WHERE (v.datasetref = {0} AND v.status = 2) OR (v.datasetref = {0} AND v.status = 0)", datasetId))
+                .AppendLine(string.Format("WHERE v.datasetref = {0} AND v.status in (0,2)", datasetId))
                 .Append("WITH NO DATA") //avoids refreshing the MV at the creation time, the view will not be queryable until explicitly refreshed.
                                         //.Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
@@ -276,6 +276,53 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 return -1;
             }
         }
+
+        public long Any(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0} LIMIT 1;", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        public long Any(long datasetId, FilterExpression filter)
+        {
+            var whereClause = filter?.ToSQL();
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder
+                .Append("SELECT ")
+                .Append("COUNT(id) AS cnt").Append(" ")
+                .Append("FROM ").Append(this.BuildName(datasetId).ToLower()).Append(" ") // source mat. view
+                .Append(string.IsNullOrWhiteSpace(whereClause) ? "" : "WHERE (" + whereClause + ")").Append(" ") // where
+                .Append("LIMIT 1")
+                .AppendLine()
+                ;
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
 
         public void Drop(long datasetId)
         {
