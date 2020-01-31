@@ -91,6 +91,21 @@ namespace BExIS.IO
                 return true;
             }
 
+            if (DateTime.TryParse(dateAsString, out dateTime))
+            {
+                return true;
+            }
+
+            if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
+            {
+                return true;
+            }
+
+            if (DateTime.TryParse(dateAsString, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
+            {
+                return true;
+            }
+
             return false;
         }
 
