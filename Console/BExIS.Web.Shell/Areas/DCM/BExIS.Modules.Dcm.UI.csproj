@@ -557,7 +557,6 @@
     <Content Include="Views\EasyUpload\_taskListView.cshtml" />
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
@@ -566,7 +565,6 @@
     <Content Include="Views\Attachments\Index.cshtml" />
     <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
     <Content Include="Views\EasyUploadVerification\Row.cshtml" />
-    <None Include="Properties\PublishProfiles\To BPP212.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -575,6 +573,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
