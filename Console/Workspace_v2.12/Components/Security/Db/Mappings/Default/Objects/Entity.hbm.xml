@@ -1,0 +1,38 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Objects">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Entity" table="Entities" dynamic-update="true">
+
+    <id name="Id" type="Int64">
+      <generator class="native" />
+    </id>
+
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <property name="EntityStoreType" type="System.Type, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <property name="EntityType" type="System.Type, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+
+    <set name="Children" inverse="true" cascade="save-update" lazy="true">
+      <key column="ParentRef" />
+      <one-to-many class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    </set>
+
+    <property name="Name" type="String" />
+
+    <property name="Securable" type="Boolean">
+      <column name="Securable" default="false" />
+    </property>
+    <property name="UseMetadata" type="Boolean">
+      <column name="UseMetadata" default="false" />
+    </property>
+    <many-to-one name="Parent" column="ParentRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    <set name="Permissions" inverse="true" cascade="all-delete-orphan" lazy="true">
+      <key column="EntityRef" />
+      <one-to-many class="BExIS.Security.Entities.Authorization.EntityPermission, BExIS.Security.Entities" />
+    </set>
+  </class>
+</hibernate-mapping>

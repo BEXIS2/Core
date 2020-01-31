@@ -1,0 +1,6 @@
+<stepInfos>
+	<stepInfo title="Select File" action="SelectAFile" area="DCM" controller="SubmitSelectAFile"/>
+	<stepInfo title="Specify Dataset" action="SpecifyDataset" area="DCM" controller="SubmitSpecifyDataset"/>
+	<stepInfo title="Summary" action="Summary" area="DCM" controller="SubmitSummary"/>
+</stepInfos>
+

@@ -1,0 +1,106 @@
+<DefaultPartyParameters>
+	<PartyTypes>
+		<PartyType Name="Person" >
+			<Attribute Name="FirstName" type="String" isValueOptional="false" isMain="true"/>
+			<Attribute Name="LastName" isValueOptional="false" isMain="true" />
+			<Attribute Name="Phone" type="String" />
+			<Attribute Name="Mobile" type="String" />
+			<Attribute Name="Fax" type="String" />
+			<Attribute Name="Street" type="String" />
+			<Attribute Name="ZipCode" type="String" />
+			<Attribute Name="City" type="String" />
+			<Attribute Name="Country" type="String" />
+			<Attribute Name="Website" type="String" />
+			<Attribute Name="ORCID" type="String" />
+			<Attribute Name="Atto Member" type="Boolean" />
+			<Attribute Name="E-Mail" type="String" />
+			<Attribute Name="Institute" type="String" />
+		</PartyType>
+		
+		<PartyType Name="Organization" >
+			<Attribute Name="Name" type="String" isValueOptional="false" isMain="true" />
+		</PartyType>
+		
+		<PartyType Name="Institute" >
+			<Attribute Name="Name" type="String" isValueOptional="false" isMain="true" />
+			<Attribute Name="Street" type="String" />
+			<Attribute Name="ZipCode" type="String" />
+			<Attribute Name="City" type="String" />
+			<Attribute Name="Country" type="String" />
+		</PartyType>
+
+		<PartyType Name="Project" >
+			<Attribute Name="Name" type="String" isValueOptional="false" />
+			<Attribute Name="Acronym" type="String" isValueOptional="true" />
+			<Attribute Name="Funding Organisation" type="String" isValueOptional="true" />
+			<Attribute Name="Grant ID" type="String" isValueOptional="true" />
+		</PartyType>
+		
+		<PartyType Name="Team" >
+			<Attribute Name="Name" type="String" isValueOptional="false" isMain="true" />
+		</PartyType>
+		
+		<PartyType Name="Dataset" SystemType="true" >
+			<Attribute Name="Id" type="String" isValueOptional="false" isMain="true" isUnique="true"/>
+			<Attribute Name="Name" type="String" isValueOptional="true" />
+		</PartyType>
+		
+	</PartyTypes>
+
+	<PartyRelationshipTypes>
+		<PartyRelationshipType Name="organizationEmployment" DisplayName="Organization Employment" Description="for which institute is a person working for" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Person" AllowedTarget="Organization" Title="employment" Description="for which institute is a person working for" />
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="teamMember" DisplayName="Team Member" Description="in which group is a person working for" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Person" AllowedTarget="Team" Title="Team member" Description="member of one or more group" />
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="projectMember" DisplayName="Project Member" Description="in which project is a person working for" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Person" AllowedTarget="Project" Title="project member" Description="member of one or more projects"/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="instituteMember" DisplayName="Institute Member" Description="in which institute is a person working for" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Person" AllowedTarget="Institute" Title="Institute member" Description="member of one or more Institutes"/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="organisationInstitute" DisplayName="Organization Member" Description="to which institute belongs the organization" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Institute" AllowedTarget="Organization" Title="organisation Institute" Description=""/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="projectInstitute" DisplayName="project in institute" Description="to which institute belongs the project" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Project" AllowedTarget="Institute" Title="project insitute" Description=""/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="teamInstitute" DisplayName="team in institute" Description="to which institute belongs the team" IndicatesHierarchy="false" MaxCardinality="50" MinCardinality="0" >
+			<PartyTypesPairs>
+				<PartyTypesPair AllowedSource="Team" AllowedTarget="Institute" Title="project - nstitute" Description=""/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="Owner" IndicatesHierarchy="false" >
+			<PartyTypesPairs>
+				<PartyTypesPair SourceType="Person" TargetType="Dataset" Title="Owner" PermissionsTemplate="read, download,write,delete,grant"/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+		<PartyRelationshipType Name="PI" IndicatesHierarchy="false" >
+			<PartyTypesPairs>
+				<PartyTypesPair SourceType="Person" TargetType="Dataset" Title="PI" PermissionsTemplate="read, download,write,delete,grant"/>
+			</PartyTypesPairs>
+		</PartyRelationshipType>
+		
+	</PartyRelationshipTypes>
+</DefaultPartyParameters>

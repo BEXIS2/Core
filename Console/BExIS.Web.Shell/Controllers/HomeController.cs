@@ -6,6 +6,7 @@ using BExIS.Web.Shell.Helpers;
 using Vaiona.IoC;
 using BExIS.App.Bootstrap;
 using System;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {

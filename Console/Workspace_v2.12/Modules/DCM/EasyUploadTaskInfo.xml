@@ -1,0 +1,10 @@
+<stepInfos>
+	<stepInfo title="Select File" action="SelectAFile" area="DCM" controller="EasyUploadSelectAFile"/>
+	<stepInfo title="Metadata" action="SheetSelectMetaData" area="DCM" controller="EasyUploadSheetSelectMetaData"/>
+	<stepInfo title="Sheet Structure" action="SheetDataStructure" area="DCM" controller="EasyUploadSheetDataStructure"/>
+	<stepInfo title="Select Areas" action="SelectAreas" area="DCM" controller="EasyUploadSelectAreas"/>
+	<stepInfo title="Verification" action="Verification" area="DCM" controller="EasyUploadVerification"/>
+	<!--<stepInfo title="Specify Dataset" action="SpecifyDataset" area="DCM" controller="SubmitSpecifyDataset"/>-->
+	<stepInfo title="Summary" action="Summary" area="DCM" controller="EasyUploadSummary"/>
+</stepInfos>
+

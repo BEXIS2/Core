@@ -120,11 +120,6 @@ namespace BExIS.Security.Services.Utilities
             return $"Request to dataset with id  {datasetid}";
         }
 
-        public static string GetSendRequestMessage(long datasetid, string title, string requester, string email)
-        {
-            return $"User \"{requester}\" with email <b>({email})</b> send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
-        }
-
         public static string GetSendRequestMessage(long datasetid, string title, string requester, string[] emails)
         {
             string emailsAsString = string.Join(",", emails);
