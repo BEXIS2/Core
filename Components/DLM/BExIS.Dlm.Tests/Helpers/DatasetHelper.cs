@@ -131,7 +131,7 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
-        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples)
+        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples,string username)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
@@ -140,7 +140,7 @@ namespace BExIS.Dlm.Tests.Helpers
             DatasetManager dm = new DatasetManager();
             try
             {
-                if (dm.IsDatasetCheckedOutFor(dataset.Id, "Javad") || dm.CheckOutDataset(dataset.Id, "Javad"))
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
                 {
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 
@@ -155,7 +155,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     dt.Dematerialize();
 
                     dt.Should().NotBeNull();
-                    dt.XmlVariableValues.Should().NotBeNull();
+                    //dt.XmlVariableValues.Should().NotBeNull();
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
@@ -163,7 +163,8 @@ namespace BExIS.Dlm.Tests.Helpers
                     {
                         DataTuple newDt = new DataTuple();
                         newDt.XmlAmendments = dt.XmlAmendments;
-                        newDt.XmlVariableValues = dt.XmlVariableValues; 
+                        //newDt.XmlVariableValues = dt.XmlVariableValues;
+                        newDt.JsonVariableValues = dt.JsonVariableValues;
                         newDt.Materialize();
                         newDt.OrderNo = i;
                         tuples.Add(newDt);
@@ -181,6 +182,106 @@ namespace BExIS.Dlm.Tests.Helpers
                 dm.Dispose();
             }
         }
+
+        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value)
+        {
+            dataset.Status.Should().Be(DatasetStatus.CheckedIn);
+            dataset.Should().NotBeNull();
+
+            DatasetManager dm = new DatasetManager();
+            try
+            {
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                {
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+
+                    DataTuple dt = new DataTuple();
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = value });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = 5 });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value = true });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = DateTime.Now.ToString() });
+                    dt.Dematerialize();
+
+                    dt.Should().NotBeNull();
+                    dt.JsonVariableValues.Should().NotBeNull();
+
+                    List<DataTuple> tuples = new List<DataTuple>();
+
+
+                    DataTuple newDt = new DataTuple();
+                    newDt.Id = id;
+                    newDt.XmlAmendments = dt.XmlAmendments;
+                    newDt.JsonVariableValues = dt.JsonVariableValues;
+                    newDt.Materialize();
+                    newDt.OrderNo = 1;
+                    tuples.Add(newDt);
+                    
+                    dm.EditDatasetVersion(workingCopy, null, tuples, null);
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+                }
+                return dataset;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+        public Dataset UpdateAnyTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure)
+        {
+            dataset.Status.Should().Be(DatasetStatus.CheckedIn);
+            dataset.Should().NotBeNull();
+
+            DatasetManager dm = new DatasetManager();
+            try
+            {
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                {
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+
+                    var datatuples = dm.GetDataTuples(workingCopy.Id);
+
+                    List<DataTuple> editedTuples = new List<DataTuple>();
+
+                    foreach (var dataTuple in datatuples)
+                    {
+                        var vv = dataTuple.VariableValues.Where(v => v.VariableId.Equals(dataStructure.Variables.Skip(4).First().Id)).FirstOrDefault();
+                        if (vv != null) vv.Value = DateTime.Now.ToString();
+
+                        dataTuple.Dematerialize();
+                        dataTuple.Should().NotBeNull();
+                        //dataTuple.XmlVariableValues.Should().NotBeNull();
+                        dataTuple.Materialize();
+
+                        editedTuples.Add((DataTuple)dataTuple);
+                    }
+
+                    dm.EditDatasetVersion(workingCopy, null, editedTuples, null);
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+                }
+
+                return dataset;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+
 
         public ResearchPlan CreateResearchPlan()
         {

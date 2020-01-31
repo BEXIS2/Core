@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using BExIS.Dlm.Entities.DataStructure;
+using Newtonsoft.Json;
 
 /// <summary>
 ///
@@ -21,7 +22,8 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>   
+        [JsonIgnore]
         [XmlIgnore]
         public DataTuple Tuple { get; set; } // reference to the containing tuple
 
@@ -29,7 +31,8 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>     
+        [JsonProperty("vid")]
         public Int64 VariableId { get; set; } // when variable is not loaded!
 
         #endregion
@@ -41,14 +44,20 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        [XmlIgnore]
+        [JsonIgnore]
+
         public IList<ParameterValue> ParameterValues { get; set; }
+
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>    
         [XmlIgnore]
+        [JsonIgnore]
+
         public DataAttribute DataAttribute
         {
             get
@@ -59,7 +68,11 @@ namespace BExIS.Dlm.Entities.Data
                 }
                 return (null);
             }
+
         }
+
+
+        private Variable _variable;
 
         /// <summary>
         ///
@@ -67,6 +80,8 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         [XmlIgnore]
+        [JsonIgnore]
+
         public Variable Variable
         {
             get
@@ -78,6 +93,7 @@ namespace BExIS.Dlm.Entities.Data
                         .Select(p => p).FirstOrDefault();
                     return (u);
                 }
+
                 return (null);
             }
         }

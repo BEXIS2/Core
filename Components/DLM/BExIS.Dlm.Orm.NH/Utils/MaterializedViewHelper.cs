@@ -277,6 +277,53 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
         }
 
+        public long Any(long datasetId)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0} LIMIT 1;", this.BuildName(datasetId).ToLower()));
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        public long Any(long datasetId, FilterExpression filter)
+        {
+            var whereClause = filter?.ToSQL();
+            StringBuilder mvBuilder = new StringBuilder();
+            mvBuilder
+                .Append("SELECT ")
+                .Append("COUNT(id) AS cnt").Append(" ")
+                .Append("FROM ").Append(this.BuildName(datasetId).ToLower()).Append(" ") // source mat. view
+                .Append(string.IsNullOrWhiteSpace(whereClause) ? "" : "WHERE (" + whereClause + ")").Append(" ") // where
+                .Append("LIMIT 1")
+                .AppendLine()
+                ;
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    var result = uow.ExecuteScalar(mvBuilder.ToString());
+                    return (long)result;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+
         public void Drop(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
@@ -319,8 +366,9 @@ namespace BExIS.Dlm.Orm.NH.Utils
             string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
             string accessPath = string.Format(accessPathTemplate, Id);
 
-            // string fieldDef = $"CASE {accessPath}::text WHEN '{{\"\"}}'::text THEN NULL WHEN'{{_null_null}}'::text THEN NULL ELSE cast(({accessPath}::character varying[])[1] {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
+//            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(({accessPath}::character varying[])[1] {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
             string fieldDef = $"cast((t.values::character varying[])[{order}]  {fieldType}) AS {this.BuildColumnName(Id).ToLower()}";
+
             //string fieldDef = string.Format(fieldTemplate, accessPath, fieldType, this.BuildColumnName(Id).ToLower());
             // guard the column mapping for NULL protection
             return fieldDef;
@@ -340,8 +388,8 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "int32", "integer" },
                 { "long", "bigint" },
                 { "int64", "bigint" },
-                { "text", "" }, // not needed -> character varying[]
-                { "string", "character varying" }
+                { "text", "" }, // not needed -> character varying()
+                { "string", "character varying" } //changed from 255 to unlimited to avoid data does not fit e.g. Sequence data
             };
 
         /// <summary>

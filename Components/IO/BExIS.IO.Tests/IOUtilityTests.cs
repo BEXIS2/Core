@@ -85,7 +85,7 @@ namespace BExIS.IO.Tests
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",          StringPattern = "HH:mm:ss",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time 12h",      StringPattern = "hh:mm:ss tt",              RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",          StringPattern = "yyyy",                     RegexPattern = null},
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",         StringPattern = "MMMM",                   RegexPattern = null}
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",         StringPattern = "MMMM",                   RegexPattern = null}26.11.1921
         };
         */
 

@@ -38,6 +38,11 @@
             controller="Home" action="DataTypeManager" argument=""
             extends="./settingsRoot" />
 
+    <Export tag="internalApi" id="DataStructureEdit"
+            title="DataStructure Edit" description="" icon=""
+            controller="DataStructureEdit" action="Index"
+            extends="" />
+
     <Export tag="api" id="structures"
             title="get structure" description="get Datastructure of a Dataset" icon=""
             controller="Structures" action="Get"
