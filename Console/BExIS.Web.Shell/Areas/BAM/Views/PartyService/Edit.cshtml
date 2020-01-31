@@ -82,6 +82,8 @@
     //if it is in create mode and the first tab is activate;it opens the next tab
     function submitClick()
     {
+        console.log("submitClick");
+
         if(!checkDateRange())
             return;
         if(!validateRelationships())
@@ -115,6 +117,9 @@
                 }
             });
         }
+
+        console.log("submitClick end");
+
     }
 
     function checkDateRange() {
@@ -160,10 +165,34 @@
             $form.validate($form.data("unobtrusiveValidation").options);
         });
     });
-    function onLoad(){
+    function onLoad() {
+
+        console.log("on load");
+
         partyTabStrip = $("#ShowDataTabStrip").data("t-TabStrip");
         partyTabStrip.select($(".t-item", partyTabStrip.element)[1]);
         loadCustomAttributes();
+
+        console.log("on load end");
+
+    }
+
+     function validateRelationships()
+    {
+        var valid=true;
+        if(@Model.Id != 0)
+        {
+            $.post('/BAM/PartyService/ValidateRelationships',
+            { partyId: @Model.Id },
+            function(response) {
+                if(response!=""){
+                    valid=false;
+                    //  $("#divSubmitButtons").hide();
+                }
+                $("#errorsMsgSpan").html(""+response+"");
+            });
+        }
+        return valid;
     }
 
 </script>

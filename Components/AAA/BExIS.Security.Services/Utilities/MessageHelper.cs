@@ -1,4 +1,6 @@
-﻿namespace BExIS.Security.Services.Utilities
+﻿using System.Text;
+
+namespace BExIS.Security.Services.Utilities
 {
     public class MessageHelper
     {
@@ -130,6 +132,16 @@
             return $"User \"{requester}\" with email/s <b>({emailsAsString})</b> send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
+        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
+            stringBuilder.AppendLine("<b>Intention:</b>");
+            stringBuilder.AppendLine(reason);
+
+            return stringBuilder.ToString();
+        }
+
         public static string GetTryToRegisterUserHeader()
         {
             return $"User tries to register";
@@ -165,5 +177,104 @@
         {
             return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
         }
+
+        #region upload api
+
+        public static string GetPushApiStoreHeader(long datasetid, string title)
+        {
+            return $"Receive data for dataset '{title}' ({datasetid})";
+        }
+
+        public static string GetPushApiStoreMessage(long datasetid, string userName, string[] errors = null)
+        {
+            if (errors == null) return $"Data for dataset with id: {datasetid} received and successfully buffered.";
+            else
+            {
+                StringBuilder builder = new StringBuilder($"An error has occurred during the transmission of the data.");
+                builder.Append("Errors: <br>");
+
+                foreach (string error in errors)
+                {
+                    builder.Append(error + "<br>");
+                }
+
+                return builder.ToString();
+            }
+        }
+
+        public static string GetPushApiValidateHeader(long datasetid, string title)
+        {
+            return $"Validation completed for dataset '{title}' ({datasetid})";
+        }
+
+        public static string GetPushApiValidateMessage(long datasetid, string userName, string[] errors = null)
+        {
+            if (errors == null) return $"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> is valid.";
+            else
+            {
+                StringBuilder builder = new StringBuilder($"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> not valid. <br>");
+                builder.Append("Errors: <br>");
+
+                foreach (string error in errors)
+                {
+                    builder.Append(error + "<br>");
+                }
+
+                return builder.ToString();
+            }
+        }
+
+        public static string GetPushApiUploadSuccessHeader(long datasetid, string title)
+        {
+            return $"Upload <b>completed</b> for dataset: '{title}' ({datasetid})";
+        }
+
+        public static string GetPushApiUploadSuccessMessage(long datasetid, string userName)
+        {
+            return $"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> is uploaded.";
+        }
+
+        public static string GetPushApiUploadFailHeader(long datasetid, string title)
+        {
+            return $"Upload  was not successful for dataset '{title}' ({datasetid})";
+        }
+
+        public static string GetPushApiUploadFailMessage(long datasetid, string userName, string[] errors)
+        {
+            StringBuilder builder = new StringBuilder($"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> not uploaded. <br>");
+            builder.Append("Errors: <br>");
+
+            foreach (string error in errors)
+            {
+                builder.Append(error + "<br>");
+            }
+
+            return builder.ToString();
+        }
+
+        public static string GetPushApiPKCheckHeader(long datasetid, string title)
+        {
+            return $"The verification of the primary key/s for the dataset '{title}' ({datasetid}) is completed.";
+        }
+
+        public static string GetPushApiPKCheckMessage(long datasetid, string userName, string[] errors)
+        {
+            if (errors == null || errors.Length == 0) return $"The verification of the primary key/s was successful.";
+            else
+            {
+                StringBuilder builder = new StringBuilder($"The verification of the primary key was not successful.<br>");
+                builder.AppendLine("<br>");
+                builder.AppendLine("<b>Errors:</b> <br>");
+
+                foreach (string error in errors)
+                {
+                    builder.AppendLine(error + "<br>");
+                }
+
+                return builder.ToString();
+            }
+        }
+
+        #endregion upload api
     }
 }

@@ -32,6 +32,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
+    <OutputPath>bin\TestServerRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\Libraries\Ionic.Zip.dll</HintPath>
@@ -68,6 +77,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
     <Compile Include="Export\GenericDataRepoConverter.cs" />
@@ -81,6 +91,14 @@
     <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
@@ -88,6 +106,10 @@
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
       <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455EC826-9A92-40FF-BD3B-388C288955CE}</Project>
@@ -100,6 +122,10 @@
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\Areas\SAM\BExIS.Modules.Sam.UI.csproj">
+      <Project>{DEC22F9C-47BE-4146-94BE-1C9AA969AFC3}</Project>
+      <Name>BExIS.Modules.Sam.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>

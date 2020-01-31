@@ -136,8 +136,8 @@
     text-overflow: ellipsis; 
 }
 
-.bx-rpm-options div:hover{
-    background-color: #ff9700;
+.bx-rpm-options div:hover {
+    background-color: var(--highlight-color);
     color: #ffffff;
 }
 

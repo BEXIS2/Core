@@ -152,7 +152,7 @@
                         @(Html.LabelFor(m => m.searchType))<span class="bx bx-required" title="Required">
                     </td>
                     <td>
-                         @Html.DropDownListFor(m => m.searchType, new SelectList(SearchComponentBaseType, Model.searchType), "Select, please")
+                         @Html.DropDownListFor(m => m.searchType, new SelectList(SearchComponentBaseType, Model.searchType), "Please select")
                          <label title="Search pattern to be used for this item.">?</label>
                     </td>
                 </tr>
@@ -161,7 +161,7 @@
                        @(Html.LabelFor(m => m.dataType))<span class="bx bx-required" title="Required">
                     </td>
                     <td>
-                         @Html.DropDownListFor(m => m.dataType, new SelectList(DataType, Model.dataType), "Select, please", new { title="Data type to be indexed." })
+                         @Html.DropDownListFor(m => m.dataType, new SelectList(DataType, Model.dataType), "Please select", new { title="Data type to be indexed." })
                     </td>
                 </tr>
         <tr>

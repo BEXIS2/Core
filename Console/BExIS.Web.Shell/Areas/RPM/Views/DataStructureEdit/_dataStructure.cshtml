@@ -36,7 +36,16 @@
     <table class="bx-rpm-dataStructure-functions bx-footer left">
         <tr>
             <td>
-                @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action" })
+                @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
+                {
+                    @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @id = "downloadButton" })
+                    <button class="bx-button action bx-disabled hidden" id="disableddownloadButton" disabled="disabled">Download Excel Template</button>
+                }
+                else
+                {
+                    @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action hidden", @id = "downloadButton" })
+                    <button class="bx-button action bx-disabled" id="disableddownloadButton" disabled="disabled">Download Excel Template</button>
+                }
                 @if (Model.inUse)
                 {
                     <button class="bx-button action bx-disabled" id="deleteButton" disabled="disabled" title="Can't delete Data Struture, it's used by a Dataset">Delete</button>
@@ -282,6 +291,21 @@
                 $variableGrid.packery('remove', variableElement);
                 $variableGrid.packery('layout');
             });
+
+            $variableGrid.on('click', '.bx-rpm-variable-item .bx-rpm-missing-value #addmissingvalue', function () {
+                var missingValueContainer = $(this).parents('.bx-rpm-variable-item').find('.bx-rpm-missing-value-container');
+                console.log(missingValueContainer);
+                $.get('@Url.Action("_getMissingValueElement", "DataStructureEdit", new { area = "RPM" } )', function (data) {
+                    missingValueContainer.append(data);
+                    $variableGrid.packery('layout');
+                });   
+            });
+
+            $variableGrid.on('click', '.bx-rpm-variable-item .bx-rpm-missing-value-item #deletemissingvalue', function () {
+                var missingValueElement = $(this).parents('.bx-rpm-missing-value-item');
+                missingValueElement.remove();
+                $variableGrid.packery('layout');
+            });
         }
 
         $variableGrid.on('click', '.bx-rpm-variable-item #variablecollapse', function () {
@@ -303,15 +327,25 @@
         $('.bx-rpm-dataStructure-functions #storeVariablesButton').on('click', function () {
             var elems = $variableGrid.packery('getItemElements');
             for (var i = 0; i < elems.length; i++) {
-                Id: $(elems[i]).find('#varid').text('0');
+                var mvElems = $(elems[i]).find('.bx-rpm-missing-value-item');
+
+                for (var j = 0; j < mvElems.length; j++) {
+                    $(mvElems[j]).find('#mvid').text('0');
+                    console.log(mvElems[j]);
+                }
+
+                $(elems[i]).find('#varid').text('0');
             }
             storeVariables($('.bx-rpm-dataStructure-functions #storeVariablesButton').attr('value'), true);
             window.location.href = "/RPM/DataStructureEdit?dataStructureId=" + $('.bx-rpm-dataStructure-functions #storeVariablesButton').attr('value');
         });
 
         $('.bx-rpm-dataStructure-functions #saveButton').on('click', function () {
+            $('.bx-rpm-error').addClass('hidden');
             validateName('message');
-            if(checkDuplicates()){
+            var mvcheck = checkMissingValueDuplicates();
+            var vcheck = checkDuplicates();
+            if (vcheck && mvcheck){
                 var cssId = 'message';
                 var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-datastructureheader #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-datastructureheader #description').val()) + '&isStructured=true&cssId=' + cssId + '&inUse=' + dataStruktureInUse);
                 $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
@@ -344,20 +378,46 @@
                         else {
                             storeVariables($(data).text());                                   
                         }
+
                     }
                 });
             }
+            else {
+                dublicateMessage(vcheck, mvcheck);
+            }
         });
 
+        function dublicateMessage(vcheck, mvcheck) {
+            if (!vcheck || !mvcheck) {
+                var title = "Save Data Structure " + $('.bx-rpm-datastructureheader #name').val() + " (" + $('.bx-rpm-datastructureheader #id').val() + ")";
+                var message = "Can't save Data Structure " + $('.bx-rpm-datastructureheader #name').val() +"\n";
+
+                if (!vcheck) {
+                    message = message + "duplicate Variable Names\n";
+                }
+                if (!mvcheck) {
+                    message = message + "duplicate Missing Value Names\n";
+                }
+                parameters = '/?message=' + encodeURIComponent(message) + '&hasMessage=true&cssId=warning';
+                $.get('@Url.Action("getMessageWindow", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                    createMessageWindow(data, title);
+                    $variableGrid.packery('layout');
+                });
+            }
+        }
+
         $('.bx-rpm-dataStructure-functions #saveAsButton').on('click', function () {
-            saveAs($('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val());;
+            saveAs($('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val());
         });
 
         function saveAs(name, description) {
+            $('.bx-rpm-error').addClass('hidden');
             validateName('message');
-            if(checkDuplicates()){
+            var mvcheck = checkMissingValueDuplicates();
+            var vcheck = checkDuplicates();
+            if (vcheck && mvcheck) {
                 var cssId = 'message';
-                parameters = '/?Id=0&Name=' + encodeURIComponent(name) + '&Description=' + encodeURIComponent(description) + '&isStructured=true&cssId=' + cssId + '&inUse=' + dataStruktureInUse ;
+                parameters = '/?Id=0&Name=' + encodeURIComponent(name) + '&Description=' + encodeURIComponent(description) + '&isStructured=true&cssId=' + cssId + '&inUse=' + dataStruktureInUse;
                 $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                     if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                         openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
@@ -365,11 +425,21 @@
                     else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
                         var elems = $variableGrid.packery('getItemElements');
                         for (var i = 0; i < elems.length; i++) {
-                            Id: $(elems[i]).find('#varid').text('0');
+
+                            var mvElems = $(elems[i]).find('.bx-rpm-missing-value-item');
+
+                            for (var j = 0; j < mvElems.length; j++) {
+                                $(mvElems[j]).find('#mvid').text('0');
+                            }
+
+                            $(elems[i]).find('#varid').text('0');
                         }
                         storeVariables($(data).text(), true);
                     }
                 });
+            }
+            else {
+                dublicateMessage(vcheck, mvcheck);
             }
         }
 
@@ -377,13 +447,27 @@
             var elems = $variableGrid.packery('getItemElements');
             var variables = [];
             for (var i = 0; i < elems.length; i++) {
+
+                var mvElems = $(elems[i]).find('.bx-rpm-missing-value-item');
+                var missingValues = []
+
+                for (var j = 0; j < mvElems.length; j++) {
+                    missingValues.push({
+                        Id: $(mvElems[j]).find('#mvid').text(),
+                        DisplayName: $(mvElems[j]).find('#mvlabel').val(),
+                        Description: $(mvElems[j]).find('#mvdescription').val(),
+                        Placeholder: $(mvElems[j]).find('#mvplaceholderl').text(),
+                    });
+                }
+
                 var variable = {
                     Id: $(elems[i]).find('#varid').text(),
                     AttributeId: $(elems[i]).find('#attrid').text(),
                     Lable: $(elems[i]).find('#varlabel').val(),
                     Description: $(elems[i]).find('#vardescription').val(),
                     UnitId: $(elems[i]).find('#varunit').val(),
-                    isOptional: $(elems[i]).find('#varisotional').is(':checked')
+                    isOptional: $(elems[i]).find('#varisotional').is(':checked'),
+                    MissingValues: missingValues,
                 };
                 variables.push(variable);
             }
@@ -411,7 +495,7 @@
                         });
                     }
                     changed = false;
-                    if(!reload) {
+                    if (!reload || reload == false) {
                         loadVariables(id);
                     }
                     else{
@@ -424,7 +508,7 @@
         }
 
 
-        function loadVariables(id, reload){
+        function loadVariables(id){
             $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM" } )' + "/?dataStructureId=" + id, function (data) {
                 $('#DataStructure .bx-rpm-datastructureheader').html($(data).find('.bx-rpm-datastructureheader').html());
                 $('#DataStructure .bx-rpm-variable-drag-drop').html('');
@@ -439,6 +523,15 @@
                 });
                 $variableGrid.packery('layout');
                 setFocus();
+                elems = $variableGrid.packery('getItemElements');
+                if (elems.length > 0) {
+                    $('#downloadButton').removeClass('hidden');
+                    $('#disableddownloadButton').addClass('hidden');
+                }
+                else if (elems.length == 0) {
+                    $('#downloadButton').addClass('hidden');
+                    $('#disableddownloadButton').removeClass('hidden');
+                }
                 if(dataStruktureInUse){
                     lock();
                 }
@@ -446,26 +539,39 @@
             });
         }
 
-        function checkDuplicates(){
+        function checkDuplicates() {
             var elems = $variableGrid.packery('getItemElements');
             var check = true;
             for (var i = 0; i < elems.length; i++) {
                 for (var j = 0; j < elems.length; j++){
                     if(i != j && $(elems[i]).find('#varlabel').val().trim() == $(elems[j]).find('#varlabel').val().trim()){
                         $(elems[i]).find('.bx-rpm-error').removeClass('hidden');
-                        $(elems[i]).find('.bx-rpm-message').text('Variable Name must be unique. Duplicate Variable '+ $(elems[j]).find('#varid').text());
+                        $(elems[i]).find('.bx-rpm-message').text('Variable Name must be unique. Duplicate Variable ' + $(elems[j]).find('#varid').text());
                         check = false;
+                        $variableGrid.packery('layout');
                     }
                 }
             }
-            if(!check){
-                var title = "Save Data Structure " + $('.bx-rpm-datastructureheader #name').val() + " ("+ $('.bx-rpm-datastructureheader #id').val() +")";
-                var message = "Can't save Data Structure because of duplicate Variable Names";
-                parameters = '/?message=' + encodeURIComponent(message) + '&hasMessage=true&cssId=warning';
-                $.get('@Url.Action("getMessageWindow", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
-                    createMessageWindow(data ,title);
-                    $variableGrid.packery('layout');
-                });              
+            return check;
+        }
+
+        function checkMissingValueDuplicates() {
+            var elems = $variableGrid.packery('getItemElements');
+            var check = true;
+            for (var i = 0; i < elems.length; i++) {
+                var missingvalues = $(elems[i]).find('.bx-rpm-missing-value-item');
+                for (var j = 0; j < missingvalues.length; j++) {
+                    for (var k = 0; k < missingvalues.length; k++) {
+                        if (j != k && $(missingvalues[j]).find('#mvlabel').val().trim() == $(missingvalues[k]).find('#mvlabel').val().trim()) {
+                            $('.bx-rpm-missing-value-container .bx-rpm-error#' + $(missingvalues[j]).find('#mvid').text()).removeClass('hidden');
+                            $('.bx-rpm-missing-value-container .bx-rpm-error#' + $(missingvalues[j]).find('#mvid').text()).find('.bx-rpm-message').text('Missing Value Name must be unique. Missing Value ' + $(missingvalues[k]).find('#mvid').text());                     
+                            check = false;
+                            $(elems[i]).find('.hiddenelements').removeClass('hidden');
+                            $variableGrid.packery('layout');
+                        }
+                    }
+
+                }
             }
             return check;
         }

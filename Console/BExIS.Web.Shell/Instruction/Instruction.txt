@@ -1,0 +1,37 @@
+
+1.
+Write the following javascript code to the _Layout.cshtml or Master page 
+[sample is written in mvc razor]
+
+ <script type="text/javascript">
+        var global_sess_expirationSeconds = @Session.Timeout*60;
+        var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
+        var global_LogoutUrl = '@Url.Action("logout", "Home")';
+        var global_sess_resetPage = '@Url.Action("Index", "JS")';
+</script>
+
+
+2.
+Add reference of session.warning.js in _Layout.cshtml or Master page just before the end of body tag.
+
+<script src="~/Scripts/session.warning.js"></script>
+
+
+3.
+Add reference of doc.css in _Layout.cshtml or Master page.
+
+<link href="~/Content/docs.css" rel="stylesheet" />
+
+
+4.
+Add following codes in web.config
+
+<configuration>
+	<appSettings>    
+		<add key="SessionWarningDelaySecond" value="30" />
+	</appSettings>
+	<system.web>
+		<sessionState timeout="2"></sessionState>
+	</system.web>
+</configuration>
+

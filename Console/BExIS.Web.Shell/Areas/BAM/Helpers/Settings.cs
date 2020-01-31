@@ -9,9 +9,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
 {
     public class Settings
     {
-
         private static String filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "settings.xml");
-        private static Dictionary<string,object> settings = new Dictionary<string, object>();
+        private static Dictionary<string, object> settings = new Dictionary<string, object>();
 
         /// <summary>
         /// setup settings model
@@ -24,11 +23,10 @@ namespace BExIS.Modules.Bam.UI.Helpers
 
             // set up file watcher to listen for changes
             FileSystemWatcher fw = new FileSystemWatcher();
-            fw.Path = Path.GetDirectoryName( filePath );
-            fw.Filter = Path.GetFileName( filePath );
+            fw.Path = Path.GetDirectoryName(filePath);
+            fw.Filter = Path.GetFileName(filePath);
             fw.Changed += new FileSystemEventHandler(fw_Changed);
             fw.EnableRaisingEvents = true;
-
         }
 
         /// <summary>
@@ -36,11 +34,11 @@ namespace BExIS.Modules.Bam.UI.Helpers
         /// </summary>
         /// <param name="key">the key for the parameter</param>
         /// <returns>the respective value</returns>
-        public static object get( String key )
+        public static object get(String key)
         {
-            if( settings.ContainsKey( key ) )
+            if (settings.ContainsKey(key))
             {
-                return settings[ key ];
+                return settings[key];
             }
             else
             {
@@ -54,15 +52,15 @@ namespace BExIS.Modules.Bam.UI.Helpers
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public static void set( String key, object value )
+        public static void set(String key, object value)
         {
             if (settings.ContainsKey(key))
             {
-                settings[ key ] = value;
+                settings[key] = value;
             }
             else
             {
-                settings.Add( key, value );
+                settings.Add(key, value);
             }
         }
 
@@ -125,6 +123,5 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 }
             }
         }
-
     }
 }

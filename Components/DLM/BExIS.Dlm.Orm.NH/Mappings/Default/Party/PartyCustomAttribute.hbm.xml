@@ -9,59 +9,58 @@
 
     <version name = "VersionNo" type="Int32">
       <column name = "VersionNo" />
-    </version >
+    </version>
 
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name = "Extra" not-null="false" sql-type="xml" />
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="Name" type="String" >
-      <column name="Name"  />
+    <property name="Name" type="String">
+      <column name="Name" />
     </property>
 
-    <property name="DisplayName" type="String" >
-      <column name="DisplayName"  />
+    <property name="DisplayName" type="String">
+      <column name="DisplayName" />
     </property>
 
-    <property name="Description" type="String" >
-      <column name="Description"  />
+    <property name="Description" type="String">
+      <column name="Description" />
     </property>
 
-    <property name="ValidValues" type="StringClob" length="1000000" >
-      <column name="ValidValues"  />
-    </property>
-    
-    <property name="IsValueOptional" type="yes_no" >
-      <column name="IsValueOptional"  />
+    <property name="ValidValues" type="StringClob" length="1000000">
+      <column name="ValidValues" />
     </property>
 
-      <property name="IsUnique" type="yes_no" >
-      <column name="IsUnique"  />
+    <property name="IsValueOptional" type="yes_no">
+      <column name="IsValueOptional" />
     </property>
 
-    <property name="IsMain" type="yes_no" >
-      <column name="IsMain"  />
-    </property>
-    
-    <property name="DisplayOrder" type="int" >
-      <column name="DisplayOrder"  />
+    <property name="IsUnique" type="yes_no">
+      <column name="IsUnique" />
     </property>
 
-    <property name="DataType" type="String" >
-      <column name="DataType"  />
+    <property name="IsMain" type="yes_no">
+      <column name="IsMain" />
     </property>
 
-    <property name="Condition" type="String" >
-      <column name="Condition"  />
+    <property name="DisplayOrder" type="int">
+      <column name="DisplayOrder" />
     </property>
-    
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" lazy="false" not-null="false" column="PartyTypeRef"/>
+
+    <property name="DataType" type="String">
+      <column name="DataType" />
+    </property>
+
+    <property name="Condition" type="String">
+      <column name="Condition" />
+    </property>
+
+    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" lazy="false" not-null="false" column="PartyTypeRef" cascade="save-update" />
 
     <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true" inverse="true">
-      <key column="CustomAttributeRef"/>
-      <one-to-many class="PartyCustomAttributeValue"/>
+      <key column="CustomAttributeRef" />
+      <one-to-many class="PartyCustomAttributeValue" />
     </set>
-
   </class>
 </hibernate-mapping>

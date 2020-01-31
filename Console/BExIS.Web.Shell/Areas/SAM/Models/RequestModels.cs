@@ -1,5 +1,6 @@
 ﻿using BExIS.Security.Entities.Requests;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -12,9 +13,12 @@ namespace BExIS.Modules.Sam.UI.Models
 
         public List<DecisionStatus> DecisionStatuses { get; set; }
         public long Id { get; set; }
-        public RequestStatus RequestStatus { get; set; }
-        public short Rights { get; set; }
+        public string RequestStatus { get; set; }
+
+        public string Rights { get; set; }
+
         public string Title { get; set; }
+        public string Intention { get; set; }
         public long InstanceId { get; set; }
     }
 }

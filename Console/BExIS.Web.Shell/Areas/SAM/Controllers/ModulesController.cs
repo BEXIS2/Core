@@ -34,27 +34,30 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         .OrderBy(p => int.Parse(p.Attribute("order").Value));
             foreach (var catalogEntry in q)
             {
-                ModuleGridRowModel row = new ModuleGridRowModel()
+                if (catalogEntry != null)
                 {
-                    // attributes are fetched from the catalog as well as the module's manifest
-                    Id = catalogEntry.Attribute("id").Value,
-                    Status = catalogEntry.Attribute("status").Value,
-                    Order = int.Parse(catalogEntry.Attribute("order").Value),
+                    ModuleGridRowModel row = new ModuleGridRowModel()
+                    {
+                        // attributes are fetched from the catalog as well as the module's manifest
+                        Id = catalogEntry.Attribute("id").Value,
+                        Status = catalogEntry.Attribute("status").Value,
+                        Order = int.Parse(catalogEntry.Attribute("order").Value),
 
-                    // defulat values for the other attibutes
-                    Description = "Not Loaded",
-                    Version = "Not Loaded",
-                    Loaded = false,
-                };
-                ModuleManifest manifest = ModuleManager.GetModuleManifest(catalogEntry.Attribute("id").Value);
-                if (manifest != null)
-                {
-                    row.Description = manifest.Description;
-                    row.Version = manifest.Version;
-                    row.Loaded = ModuleManager.IsLoaded(row.Id);
+                        // defulat values for the other attibutes
+                        Description = "Not Loaded",
+                        Version = "Not Loaded",
+                        Loaded = false,
+                    };
+                    ModuleManifest manifest = ModuleManager.GetModuleManifest(catalogEntry.Attribute("id").Value);
+                    if (manifest != null)
+                    {
+                        row.Description = manifest.Description;
+                        row.Version = manifest.Version;
+                        row.Loaded = ModuleManager.IsLoaded(row.Id);
+                    }
+
+                    modules.Add(row);
                 }
-
-                modules.Add(row);
             }
 
             return View(new GridModel<ModuleGridRowModel> { Data = modules });
@@ -108,14 +111,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             try
             {
-#if DEBUG
-                // this function writes into the Areas folder and may overwrite the module's resources!
-                // passing false, prevents it from copying the module's resources. Only the catalog is updated.
-                ModuleManager.Install(moduleZip, false);
-#else
-                // Installs the bundle for production.
+                //#if DEBUG
+                //                // this function writes into the Areas folder and may overwrite the module's resources!
+                //                // passing false, prevents it from copying the module's resources. Only the catalog is updated.
+                //                ModuleManager.Install(moduleZip, false);
+                //#else
+                //                // Installs the bundle for production.
+                //                ModuleManager.Install(moduleZip, true);
+                //#endif
                 ModuleManager.Install(moduleZip, true);
-#endif
             }
             catch (Exception ex)
             {

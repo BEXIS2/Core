@@ -12,7 +12,7 @@
 *@
     if (item.AggregationType == Property.AT_UNION && item.UIComponent == Property.UI_LIST)
     {
-
+        <p>multiselection of a dropdown is not supported in this version.</p>
     }
 
 @* DropBox
@@ -41,7 +41,7 @@
 *@
     if (item.AggregationType == Property.AT_UNION && item.UIComponent == Property.UI_ITEM)
     {
-      @Html.Partial("_radioButtonsView", item)
+      @Html.Partial("_checkboxButtonsView", item)
     }
 
 

@@ -28,40 +28,40 @@
       .Columns(columns =>
       {
           columns.Bound(u => u.Id);
-          columns.Bound(u => u.UserName);
+          columns.Bound(u => u.Name);
           columns.Bound(u => u.Email);
           columns.Template(@<text>
-        <button type="button" class="bx bx-grid-function bx-edit"></button>
-        <button type="button" class="bx bx-grid-function bx-group"></button>
-        <button type="button" class="bx bx-grid-function bx-trash"></button>
+                <button type="button" class="bx bx-grid-function bx-edit"></button>
+                <button type="button" class="bx bx-grid-function bx-group"></button>
+                <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
-              .ClientTemplate(
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s)\"></button>" +
-                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete User\"></button>")
-              .Width(110);
-      })
-      .ClientEvents(events =>
-      {
-          events.OnDataBound("grid_users_onDataBound");
-      })
-      .DataBinding(dataBinding => dataBinding
-          .Ajax()
-          .Select("Users_Select", "Users")
-      )
-      .Filterable()
-      .Pageable(pageable =>
-      {
-          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
-          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-          pageable.Position(GridPagerPosition.Bottom);
-      })
-      .Sortable(sortable => sortable
-          .OrderBy(orderby => orderby
-              .Add(m => m.UserName)
-              .Ascending()
-          )
-      )
+       .ClientTemplate(
+           "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s)\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete User\"></button>")
+       .Width(110);
+})
+.ClientEvents(events =>
+{
+   events.OnDataBound("grid_users_onDataBound");
+})
+.DataBinding(dataBinding => dataBinding
+   .Ajax()
+   .Select("Users_Select", "Users")
+)
+.Filterable()
+.Pageable(pageable =>
+{
+   pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+   pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+   pageable.Position(GridPagerPosition.Bottom);
+})
+.Sortable(sortable => sortable
+   .OrderBy(orderby => orderby
+       .Add(m => m.Name)
+       .Ascending()
+   )
+)
 )
 
 @section Scripts

@@ -20,6 +20,8 @@
 {
     @foreach (var item in Model.Entities)
     {
+        if (@item.Value == "Dataset") // ToDo: remove this / extend list once we have more use cases. The JavaScript needs also be adapated to allow more types. Currently only "dataset" is handled.
+        {
         <h3>@item.Value</h3>
         <ul>
 
@@ -27,6 +29,7 @@
             <li><a entityid="@item.Key" class="request">Requests</a></li>
             <li><a entityid="@item.Key" class="decision">Decisions</a></li>
         </ul>
+        }
     }
 
 }

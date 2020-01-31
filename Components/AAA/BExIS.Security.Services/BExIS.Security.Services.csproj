@@ -41,6 +41,15 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
+    <OutputPath>bin\TestServerRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -78,7 +87,11 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Services" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
@@ -100,6 +113,7 @@
     <Compile Include="Objects\FeatureManager.cs" />
     <Compile Include="Objects\IEntityStore.cs" />
     <Compile Include="Objects\OperationManager.cs" />
+    <Compile Include="Objects\EntityReferenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
     <Compile Include="Requests\RequestManager.cs" />
@@ -122,6 +136,10 @@
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
+      <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
+      <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>

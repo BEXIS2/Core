@@ -4,10 +4,13 @@ using BExIS.Security.Services.Requests;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Authorization;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Security.Entities.Requests;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -41,6 +44,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Decisions_Select(long entityId, GridCommand command)
         {
             var entityManager = new EntityManager();
+            var entityPermissionManager = new EntityPermissionManager();
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
             var decisionManager = new DecisionManager();
@@ -54,12 +58,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         Id = m.Id,
                         RequestId = m.Request.Id,
-                        Rights = m.Request.Rights,
+                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                         Status = m.Status,
+                        StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
-                        Applicant = m.Request.Applicant.Name
-                    });
+                        Applicant = m.Request.Applicant.Name,
+                        Intention = m.Request.Intention
+                    }); ;
 
             // Filtering
             var total = results.Count();
@@ -125,6 +131,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Requests_Select(long entityId, GridCommand command)
         {
             var entityManager = new EntityManager();
+            var entityPermissionManager = new EntityPermissionManager();
+
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
             var requestManager = new RequestManager();
@@ -133,7 +141,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
 
             var results = requests.Select(
-                m => new RequestGridRowModel() { Id = m.Key, InstanceId = m.Key, Title = entityStore.GetTitleById(m.Key), Rights = m.Rights, RequestStatus = m.Status });
+                m => new RequestGridRowModel()
+                {
+                    Id = m.Key,
+                    InstanceId = m.Key,
+                    Title = entityStore.GetTitleById(m.Key),
+                    Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                    RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
+                    Intention = m.Intention
+                });
 
             // Filtering
             var total = results.Count();

@@ -154,9 +154,9 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
-    <Compile Include="Helper\BAMSeedDataGenerator.cs" />
-    <Compile Include="Helper\Helper.cs" />
-    <Compile Include="Helper\Settings.cs" />
+    <Compile Include="Helpers\BAMSeedDataGenerator.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Models\AddRelationshipModel.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
@@ -171,13 +171,6 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\help\create_party_1.jpg" />
-    <Content Include="Content\Images\help\create_party_2.jpg" />
-    <Content Include="Content\Images\help\manage_parties.jpg" />
-    <Content Include="Content\Images\help\new_party_relation.jpg" />
-    <Content Include="Content\Images\help\new_party_relation2.jpg" />
-    <Content Include="Content\Images\help\registration.jpg" />
-    <Content Include="Content\Images\help\schema.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Bam.Manifest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -199,6 +192,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -240,9 +235,12 @@
     <None Include="web.Release.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
+    <None Include="Web.WebDeploy.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Content\Images\help\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -270,10 +268,23 @@
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
+      <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

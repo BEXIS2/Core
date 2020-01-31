@@ -9,8 +9,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         // GET: Test
         public ActionResult Index()
         {
-
-
             // test Reindex
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.Reload();

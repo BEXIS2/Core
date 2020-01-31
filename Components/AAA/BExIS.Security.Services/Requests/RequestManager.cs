@@ -47,7 +47,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public Request Create(long applicantId, long entityId, long key, short rights = 1)
+        public Request Create(long applicantId, long entityId, long key, short rights = 1, string intention = "")
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -89,7 +89,8 @@ namespace BExIS.Security.Services.Requests
                                     Key = key,
                                     RequestDate = DateTime.Now,
                                     Status = RequestStatus.Open,
-                                    Rights = rights
+                                    Rights = rights,
+                                    Intention = intention
                                 };
 
                                 requestRepository.Put(request);
@@ -148,6 +149,20 @@ namespace BExIS.Security.Services.Requests
                 var request =
                     requestRepository.Query(
                         m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key).FirstOrDefault();
+
+                return request != null;
+            }
+        }
+
+        public bool Exists(long applicantId, long entityId, long key, RequestStatus status)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+
+                var request =
+                    requestRepository.Query(
+                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key && m.Status == status).FirstOrDefault();
 
                 return request != null;
             }

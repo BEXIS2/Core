@@ -57,7 +57,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     do
                     {
-
                         DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
 
                         List<String> rowAsStringList = new List<string>();
@@ -134,7 +133,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                             if (_stylesheet.NumberingFormats != null)
                                             {
-
                                                 NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
 
                                                 //
@@ -162,15 +160,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                                         }
                                                     }
                                                 }
-                                            }
-                                        }
+                                            }// check numberformat not null
+                                        }// check cell format
 
+                                        //It may happen that values are in a cell, but the associated information such as numberformat or style are missing.
+                                        // In this case, we decide to display the values, even if they are incorrect.
+                                        if (string.IsNullOrEmpty(value) && (!string.IsNullOrEmpty(c?.CellValue?.Text))) value = c.CellValue.Text;
                                     }
                                     else { value = c.CellValue.Text; }
 
-
                                     rowAsStringList.Add(value);
-
                                 }//end if cell value null
                                 else
                                 {
@@ -192,7 +191,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     break;
                 }
-
             }
 
             //Make sure each row has the same number of values in it
@@ -233,7 +231,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         //Solution from https://stackoverflow.com/a/3981249
         /// <summary>
         /// Given just the column name (no row index), it will return the zero based column index.
-        /// Note: This method will only handle columns with a length of up to two (ie. A to Z and AA to ZZ). 
+        /// Note: This method will only handle columns with a length of up to two (ie. A to Z and AA to ZZ).
         /// A length of three can be implemented when needed.
         /// </summary>
         /// <param name="columnName">Column Name (ie. A or AB)</param>
@@ -276,6 +274,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         /*
          * Returns a dictionary, containing the Uris of all worksheets as keys and their names (displaynames) as values
          * */
+
         public Dictionary<Uri, String> GetWorksheetUris()
         {
             if (this.fileStream != null)
