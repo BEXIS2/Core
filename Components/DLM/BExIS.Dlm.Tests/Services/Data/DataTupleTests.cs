@@ -10,15 +10,18 @@ using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
     [TestFixture()]
-    public class DatasetManager_GetDatasetVersionEffectiveDataTuplesTest
+    public class DataTupleTests
     {
         private TestSetupHelper helper = null;
         private long datasetId = 0;
@@ -26,13 +29,13 @@ namespace BExIS.Dlm.Tests.Services.Data
         private string username = "David";
 
         private DatasetHelper dsHelper;
-        private long numberOfTuples = 10;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
 
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
@@ -47,6 +50,9 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dsHelper.PurgeAllDataStructures();
                 dsHelper.PurgeAllResearchPlans();
 
+
+                // generate Data
+                long numberOfTuples = 300000;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -90,7 +96,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         }
 
         [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_WhenCalledLatestVersionValid_ReturnListOfAbstractTuples()
+        public void TransformDatatupleToJson()
         {
 
             //Arrange
@@ -102,71 +108,50 @@ namespace BExIS.Dlm.Tests.Services.Data
                 DatasetVersion datasetversion = datasetManager.GetDatasetLatestVersion(datasetId);
                 var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversion);
 
-                //Assert
-                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
-
-        }
-
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_WhenCalledOlderVersionValid_ReturnListOfAbstractTuples()
-        {
-
-            //Arrange
-            DatasetManager datasetManager = null;
-
-            try
-            {
-                datasetManager = new DatasetManager();
-
-                //get latest datatupleid before create a new dataset and data
-                using (var uow = this.GetUnitOfWork())
+                foreach (var dt in result)
                 {
-                    var latestDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().LastOrDefault();
-                    if (latestDataTuple != null) latestDataTupleId = latestDataTuple.Id;
+                    dt.Materialize();
+
+                    dt.Dematerialize();
                 }
 
-                var dataset = datasetManager.GetDataset(datasetId);
+                var newDts = result.Cast<DataTuple>();
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1);
-                datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                foreach (var dt in newDts)
+                {
+                    //dt.Materialize2();
 
+                    //dt.Dematerialize2(); // convert variablevalues 1 to json
 
-                //Act
-                List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
-                var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2)); // get datatuples from the one before the latest
+                }
+
 
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
+                Assert.That(result.Count(), Is.EqualTo(10000));
+
+                foreach (var dt in newDts)
+                {
+                    for (int i = 0; i < dt.VariableValues.Count; i++)
+                    {
+                        var vv1 = dt.VariableValues.ElementAt(i);
+                        //var vv2 = dt.VariableValues2.ElementAt(i);
+
+                        //Assert.That(vv1.DataAttribute.Id , Is.EqualTo(vv2.DataAttribute.Id));
+                        //Assert.That(vv1.Note, Is.EqualTo(vv2.Note));
+                        //Assert.That(vv1.ObtainingMethod, Is.EqualTo(vv2.ObtainingMethod));
+                        //Assert.That(vv1.ParameterValues, Is.EqualTo(vv2.ParameterValues));
+                        //Assert.That(vv1.ResultTime, Is.EqualTo(vv2.ResultTime));
+                        //Assert.That(vv1.SamplingTime, Is.EqualTo(vv2.SamplingTime));
+                        //Assert.That(vv1.Tuple.Id, Is.EqualTo(vv2.Tuple.Id));
+                        //Assert.That(vv1.Value, Is.EqualTo(vv2.Value));
+                        //Assert.That(vv1.Variable.Id, Is.EqualTo(vv2.Variable.Id));
+                        //Assert.That(vv1.VariableId, Is.EqualTo(vv2.VariableId));
+                    }
+                }
             }
-            finally
+            catch (Exception ex)
             {
-                datasetManager.Dispose();
-            }
-
-        }
-
-        [Test()]
-        public void GetDataTuples_WhenCalledValid_ReturnIQueryable()
-        {
-            //Arrange
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-                //Act
-                DatasetVersion datasetversion = datasetManager.GetDatasetLatestVersion(datasetId);
-                var result = datasetManager.GetDataTuples(datasetversion.Id);
-                int c = datasetManager.GetDataTuples(datasetversion.Id).Count();
-                //Assert
-                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
-                Assert.That(c, Is.EqualTo(result.Count()));
-
-
+                throw (ex);
             }
             finally
             {

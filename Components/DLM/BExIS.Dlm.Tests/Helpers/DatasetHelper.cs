@@ -155,7 +155,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     dt.Dematerialize();
 
                     dt.Should().NotBeNull();
-                    dt.XmlVariableValues.Should().NotBeNull();
+                    //dt.XmlVariableValues.Should().NotBeNull();
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
@@ -163,7 +163,8 @@ namespace BExIS.Dlm.Tests.Helpers
                     {
                         DataTuple newDt = new DataTuple();
                         newDt.XmlAmendments = dt.XmlAmendments;
-                        newDt.XmlVariableValues = dt.XmlVariableValues; 
+                        //newDt.XmlVariableValues = dt.XmlVariableValues;
+                        newDt.JsonVariableValues = dt.JsonVariableValues;
                         newDt.Materialize();
                         newDt.OrderNo = i;
                         tuples.Add(newDt);
@@ -205,7 +206,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     dt.Dematerialize();
 
                     dt.Should().NotBeNull();
-                    dt.XmlVariableValues.Should().NotBeNull();
+                    dt.JsonVariableValues.Should().NotBeNull();
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
@@ -213,7 +214,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     DataTuple newDt = new DataTuple();
                     newDt.Id = id;
                     newDt.XmlAmendments = dt.XmlAmendments;
-                    newDt.XmlVariableValues = dt.XmlVariableValues;
+                    newDt.JsonVariableValues = dt.JsonVariableValues;
                     newDt.Materialize();
                     newDt.OrderNo = 1;
                     tuples.Add(newDt);
@@ -258,7 +259,7 @@ namespace BExIS.Dlm.Tests.Helpers
 
                         dataTuple.Dematerialize();
                         dataTuple.Should().NotBeNull();
-                        dataTuple.XmlVariableValues.Should().NotBeNull();
+                        //dataTuple.XmlVariableValues.Should().NotBeNull();
                         dataTuple.Materialize();
 
                         editedTuples.Add((DataTuple)dataTuple);

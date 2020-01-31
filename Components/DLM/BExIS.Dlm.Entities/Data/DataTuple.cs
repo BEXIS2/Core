@@ -5,6 +5,12 @@ using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
+using System.IO;
+using System.Xml.Serialization;
+using System.Text;
+using Vaiona.Persistence.Api;
+using BExIS.Dlm.Entities.DataStructure;
+using Newtonsoft.Json;
 
 /// <summary>
 ///
@@ -15,7 +21,6 @@ namespace BExIS.Dlm.Entities.Data
     /// Its to overcome an inheritance issue with NH: when TupleVersion is derived from DataTuple all queries on DataTuple return versions too.
     /// </summary>
     /// <remarks></remarks>
-    [AutomaticMaterializationInfo("VariableValues", typeof(List<VariableValue>), "XmlVariableValues", typeof(XmlDocument))]
     [AutomaticMaterializationInfo("Amendments", typeof(List<Amendment>), "XmlAmendments", typeof(XmlDocument))]
     public abstract class AbstractTuple : BaseEntity, IBusinessVersionedEntity
     {
@@ -49,7 +54,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public virtual XmlDocument XmlVariableValues { get; set; }
+        //public virtual XmlDocument XmlVariableValues { get; set; }
 
         /// <summary>
         ///
@@ -58,7 +63,10 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>
         public virtual XmlDocument XmlAmendments { get; set; }
 
-        public virtual String JsonVariableValues { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual string JsonVariableValues { get; set; }
 
         /// <summary>
         ///
@@ -92,6 +100,9 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>
         public virtual IList<VariableValue> VariableValues { get; set; }
 
+        //public virtual IList<VariableValue> VariableValues2 { get; set; }
+
+
         /// <summary>
         /// Do not map to persistence data directly. Materialize after load
         /// </summary>
@@ -100,6 +111,26 @@ namespace BExIS.Dlm.Entities.Data
         public virtual IList<Amendment> Amendments { get; set; }
 
         #endregion Associations
+
+        public virtual void Materialize(bool includeChildren = true)
+        {
+            base.Materialize();
+
+            if (!string.IsNullOrEmpty(JsonVariableValues))
+            {
+                VariableValues = JsonConvert.DeserializeObject<List<VariableValue>>(JsonVariableValues);
+            }
+        }
+
+        public virtual void Dematerialize(bool includeChildren = true)
+        {
+            if (VariableValues.Any())
+            {
+                this.JsonVariableValues = JsonConvert.SerializeObject(VariableValues);
+            }
+        }
+
+
     }
 
     /// <summary>
@@ -151,20 +182,6 @@ namespace BExIS.Dlm.Entities.Data
 
         #region Methods
 
-        // No need to override these functions, the base one performs the task for normal cases
-        // If you have a very special case or the performance of the generic one is not good, then override the methods
-        //public override void Dematerialize()
-        //{
-        //    XmlVariableValues = (XmlDocument)transformer.ExportTo(VariableValues, "VariableValues", 1);
-        //    XmlAmendments = (XmlDocument)transformer.ExportTo(Amendments, "Amendments", 1);
-        //}
-
-        //public override void Materialize()
-        //{
-        //    VariableValues = transformer.ImportFrom<List<VariableValue>>(XmlVariableValues, null);
-        //    Amendments = transformer.ImportFrom<List<Amendment>>(XmlAmendments, null);
-        //}
-
         /// <summary>
         ///
         /// </summary>
@@ -180,18 +197,21 @@ namespace BExIS.Dlm.Entities.Data
             //History = new List<DataTupleVersion>();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param>NA</param>
-        public override void Materialize(bool includeChildren = true)
+
+        public virtual void Materialize(bool includeChildren = true)
         {
             base.Materialize();
-            VariableValues.ToList().ForEach(p => p.Tuple = this);
+
+            if (VariableValues.Any())
+            {
+                foreach (var item in VariableValues)
+                {
+                    item.Tuple = this;
+                }
+            }
         }
 
-        #endregion Methods
+
+        #endregion
     }
 }

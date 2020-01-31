@@ -29,8 +29,8 @@
       <column name="Timestamp"  index="idx_DataTupleVersions_timestamp"/>
     </property>
 
-    <property name="XmlVariableValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <column name="XmlVariableValues" not-null="false" sql-type="xml" />
+    <property name="JsonVariableValues" type="StringClob">
+      <column name="JsonVariableValues" not-null="false" />
     </property>
 
     <property name="XmlAmendments" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

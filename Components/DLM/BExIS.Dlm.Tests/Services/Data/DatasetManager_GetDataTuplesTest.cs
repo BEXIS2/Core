@@ -24,7 +24,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         private long datasetId = 0;
         private long latestDataTupleId = 0;
         private string username = "David";
-
+        private long numberOfTuples = 10;
         private DatasetHelper dsHelper;
 
         [OneTimeSetUp]
@@ -46,8 +46,6 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 // generate Data
-                long numberOfTuples = 10;
-
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
@@ -118,7 +116,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var result = datasetManager.GetDataTuples(datasetversion.Id);
                 int c = datasetManager.GetDataTuples(datasetversion.Id).Count();
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
+                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
                 Assert.That(c, Is.EqualTo(result.Count()));
 
 
@@ -168,7 +166,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 {
                     int c = datasetManager.GetDataTuplesCount(dsv.Id);
 
-                    var result = datasetManager.GetDataTuplesTest(dsv.Id); // get datatuples from the one before the latest
+                    var result = datasetManager.GetDataTuples(dsv.Id); // get datatuples from the one before the latest
                     int cm = result.Count();
                     Assert.That(c, Is.EqualTo(10));
                     Assert.That(c, Is.EqualTo(result.Count()));
