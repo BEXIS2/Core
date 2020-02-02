@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using Vaiona.Web.Mvc.Modularity;
 
+
 namespace BExIS.Utils.WebHelpers
 {
     public static class HtmlNavigationExtensions
@@ -195,15 +196,27 @@ namespace BExIS.Utils.WebHelpers
 
         private static bool hasOperationRigths(XElement operation, string userName)
         {
+
+            string name = userName;
+            string area = operation.Attribute("area").Value.ToLower();
+            string controller = operation.Attribute("controller").Value.ToLower();
+
+            string identifier = name + "_" + area + "_" + controller;
+
+            if (System.Web.HttpContext.Current.Session[identifier] != null)
+            {
+                return (bool)System.Web.HttpContext.Current.Session[identifier];
+            }
+
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
 
             try
             {
                 //get parameters for the function to check
-                string name = userName;
-                string area = operation.Attribute("area").Value.ToLower();
-                string controller = operation.Attribute("controller").Value.ToLower();
+            //    string name = userName;
+            //    string area = operation.Attribute("area").Value.ToLower();
+            //    string controller = operation.Attribute("controller").Value.ToLower();
                 //currently the action are not check, so we use a wildcard
                 string action = "*";//operation.Attribute("action").Value.ToLower();
 
@@ -214,7 +227,9 @@ namespace BExIS.Utils.WebHelpers
 
                 ////or user has rights
                 //if (string.IsNullOrEmpty(userName)) return false;
-                return featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                System.Web.HttpContext.Current.Session[identifier] = permission;
+                return permission;
             }
             catch (Exception ex)
             {
