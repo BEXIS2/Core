@@ -3039,6 +3039,7 @@ namespace BExIS.Dlm.Services.Data
                                 tupleVersion = dataTupleVersionRepo.Get(originalTuple.Id);
                                 // there is a previous history record, with tuple action equal to Edit or even Delete!
                                 tupleVersion.TupleAction = TupleAction.Deleted;
+
                             }
                             else // there is no previous record, so create one
                             {

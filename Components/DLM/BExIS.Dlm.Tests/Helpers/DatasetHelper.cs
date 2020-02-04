@@ -242,13 +242,15 @@ namespace BExIS.Dlm.Tests.Helpers
             DatasetManager dm = new DatasetManager();
             try
             {
+                DatasetVersion dsv = dm.GetDatasetLatestVersion(dataset.Id);
+                var datatuples = dm.GetDataTuples(dsv.Id);
+
+
                 if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
                 {
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
-
-                    var datatuples = dm.GetDataTuples(workingCopy.Id);
 
                     List<DataTuple> editedTuples = new List<DataTuple>();
 

@@ -52,7 +52,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 // generate Data
-                long numberOfTuples = 300000;
+                long numberOfTuples = 10;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -127,7 +127,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10000));
+                Assert.That(result.Count(), Is.EqualTo(10));
 
                 foreach (var dt in newDts)
                 {
