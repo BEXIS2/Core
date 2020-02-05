@@ -2264,17 +2264,18 @@ namespace BExIS.Dlm.Services.Data
                 List<AbstractTuple> editedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Edited)
                                                                             && (p.DatasetVersion.Id == datasetVersion.Id)
                                                                             && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
-                                                                .Skip(pageNumber * pageSize).Take(pageSize)
+                                                                //.Skip(pageNumber * pageSize).Take(pageSize)
                                                                 .Cast<AbstractTuple>().ToList();
                 List<AbstractTuple> deletedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Deleted)
                                                                         && (versionIds.Contains(p.DatasetVersion.Id))
                                                                         && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
-                                                                   .Skip(pageNumber * pageSize).Take(pageSize)
+                                                                   //.Skip(pageNumber * pageSize).Take(pageSize)
                                                                    .Cast<AbstractTuple>().ToList();
                 // the resulting union-ned list is made by a page from editedVersion and a page from the deleted ones, so it is maximum 2 pages, but should be reduced to a page.
                 // for this reason the union is sorted by timestamp and then the first page is taken.
                 List<AbstractTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
                     .OrderBy(p => p.Timestamp)
+                    .Skip(pageNumber * pageSize)
                     .Take(pageSize)
                     .ToList();
                 return (unioned);

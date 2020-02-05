@@ -160,6 +160,50 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
+        [Test]
+        public void GetDatasetVersionEffectiveDataTuples_CalledOlderVersionWithPaging_ReturnListOfAbstractTuples()
+        {
+            //Arrange
+            DatasetManager datasetManager = null;
+            int pageSize = 4;
+            int pageNumber = 2;
+
+            try
+            {
+                datasetManager = new DatasetManager();
+
+                //get latest datatupleid before create a new dataset and data
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var latestDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().LastOrDefault();
+                    if (latestDataTuple != null) latestDataTupleId = latestDataTuple.Id;
+                }
+
+                var dataset = datasetManager.GetDataset(datasetId);
+
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1);
+                datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+
+                //Act
+                List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
+                var resultAll = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2));
+                List<long> comapreIds = resultAll.Skip(pageNumber * pageSize).Take(pageSize).Select(dt=>dt.Id).ToList();
+
+
+                var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2), pageNumber, pageSize); // get datatuples from the one before the latest
+                var resultIds = result.Select(dt => dt.Id).ToList();
+
+                //Assert
+                Assert.That(comapreIds, Is.EquivalentTo(resultIds));
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+        }
+
+
+
         //[Test()]
         //public void GetDatasetVersionEffectiveDataTuples_PageOfDataTuplesFromLatestVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
         //{
