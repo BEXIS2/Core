@@ -160,40 +160,40 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_PageOfDataTuplesFromLatestVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
-        {
-            throw new NotImplementedException();
-        }
+        //[Test()]
+        //public void GetDatasetVersionEffectiveDataTuples_PageOfDataTuplesFromLatestVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_OrderdDataTuplesFromLatestVersion_ReturnOrderedListOfAbstractTuples()
-        {
-            throw new NotImplementedException();
-        }
+        //[Test()]
+        //public void GetDatasetVersionEffectiveDataTuples_OrderdDataTuplesFromLatestVersion_ReturnOrderedListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_FilteredDataTuplesFromLatestVersion_ReturnFilteredListOfAbstractTuples()
-        {
-            throw new NotImplementedException();
-        }
+        //[Test()]
+        //public void GetDatasetVersionEffectiveDataTuples_FilteredDataTuplesFromLatestVersion_ReturnFilteredListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_PageOfDataTuplesFromHistoricalVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
-        {
-            throw new NotImplementedException();
-        }
+        //[Test()]
+        //public void GetDatasetVersionEffectiveDataTuples_PageOfDataTuplesFromHistoricalVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_OrderdDataTuplesFromHistoricalVersion_ReturnOrderedListOfAbstractTuples()
-        {
-            throw new NotImplementedException();
-        }
+        //[Test()]
+        //public void GetDatasetVersionEffectiveDataTuples_OrderdDataTuplesFromHistoricalVersion_ReturnOrderedListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Test()]
-        public void GetDatasetVersionEffectiveDataTuples_FilteredDataTuplesFromHistoricalVersion_ReturnFilteredListOfAbstractTuples()
-        {
-            throw new NotImplementedException();
-        }
+        //[Test()]
+        //public void GetDatasetVersionEffectiveDataTuples_FilteredDataTuplesFromHistoricalVersion_ReturnFilteredListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
