@@ -469,7 +469,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     #region excel reader
 
-                    int packageSize = 10000;
+                    int packageSize = 100000;
                     int numberOfRows = 0;
                     //HACK ?
                     TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;

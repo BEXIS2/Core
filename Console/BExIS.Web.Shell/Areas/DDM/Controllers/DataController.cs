@@ -40,6 +40,8 @@ using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 using System.Text;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -234,6 +236,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                 ViewData["isValid"] = isValid;
+                ViewData["show_tabs"] = getSettingsTabList();
 
                 return View(model);
             }
@@ -354,6 +357,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                 ViewData["isValid"] = isValid;
+                ViewData["show_tabs"] = getSettingsTabList();
 
                 return PartialView("ShowData", model);
             }
@@ -1393,24 +1397,60 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(new GridModel(new DataTable()));
         }
 
-        public ActionResult ShowPreviewDataStructure(long datasetID)
+        public ActionResult ShowPreviewDataStructure(long datasetID, string entityType = "Dataset")
         {
             DatasetManager dm = new DatasetManager();
             DataStructureManager dsm = new DataStructureManager();
+            EntityPermissionManager entityPermissionManager = null;
+            OperationManager operationManager = null;
+            FeaturePermissionManager featurePermissionManager = null;
+            SubjectManager subjectManager = null;
 
             try
             {
+                entityPermissionManager = new EntityPermissionManager();
+                operationManager = new OperationManager();
+                featurePermissionManager = new FeaturePermissionManager();
+                subjectManager = new SubjectManager();
+
                 using (var uow = this.GetUnitOfWork())
-                {
+                {                  
                     long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
-                    DataStructure dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
-
+                    DataStructure dataStructure = null;
                     long id = (long)datasetID;
+                    string DSlink = null;
 
-                    Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
+                    if (this.IsAccessible("RPM", "DataStructureEdit","Index"))
+                    {
+                        dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        bool structured = false;
+                        if (dataStructure != null)
+                            structured = true;
+                        else
+                            dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                                            
+                        if (structured)
+                        {
+                            if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
+                            {
+                                Feature feature = operationManager.OperationRepository.Get().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                Subject subject = subjectManager.SubjectRepository.Get().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+
+                                if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
+                                    DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
+                    }
+
+                    Tuple<DataStructure, long, string> m = new Tuple<DataStructure, long, string>(
                         dataStructure,
-                        id
+                        id,
+                        DSlink
                         );
 
                     return PartialView("_previewDatastructure", m);
@@ -1419,6 +1459,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                entityPermissionManager.Dispose();
+                operationManager.Dispose();
+                subjectManager.Dispose();
+                featurePermissionManager.Dispose();
             }
         }
 
@@ -1837,6 +1884,49 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 entityManager.Dispose();
             }
         }
+
+        private Dictionary<string, string> getSettingsTabList()
+        {
+            if (Session["SettingsTabList"] != null)
+            {
+                return (Dictionary<string, string>)Session["SettingsTabList"];
+            }
+
+            var show_tab_list = new Dictionary<string, string>();
+            show_tab_list.Add("show_primary_data_tab", "true");
+            show_tab_list.Add("show_data_structure_tab", "true");
+            show_tab_list.Add("show_link_tab", "true");
+            show_tab_list.Add("show_permission_tab", "true");
+            show_tab_list.Add("show_publish_tab", "true");
+            show_tab_list.Add("show_attachments_tab", "true");
+
+            show_tab_list.Add("show_tabs_deactivated", "true");
+
+
+            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
+            XDocument settings = XDocument.Load(filePath);
+
+            foreach (var item in show_tab_list.ToList()) {
+                try
+                {
+                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key , settings).Attribute("value")?.Value;
+
+                    if (value != null)
+                    {
+                        show_tab_list[item.Key] = value;
+                    }
+                }
+                catch(Exception e)
+                {
+                  // do nothing
+                }
+                
+            }
+
+            Session["SettingsTabList"] = show_tab_list;
+            return show_tab_list;
+       }
+
 
         #endregion helper
     }
