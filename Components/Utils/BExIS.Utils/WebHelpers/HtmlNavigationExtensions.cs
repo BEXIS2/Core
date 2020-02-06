@@ -2,6 +2,7 @@
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -203,10 +204,13 @@ namespace BExIS.Utils.WebHelpers
 
             string identifier = name + "_" + area + "_" + controller;
 
-            if (System.Web.HttpContext.Current.Session[identifier] != null)
-            {
-                return (bool)System.Web.HttpContext.Current.Session[identifier];
-            }
+
+
+                if (System.Web.HttpContext.Current.Session["menu_permission"] != null && ((Dictionary<string, bool>)System.Web.HttpContext.Current.Session["menu_permission"]).ContainsKey(identifier))
+                {
+                    return (bool)((Dictionary<string, bool>)System.Web.HttpContext.Current.Session["menu_permission"])[identifier];
+                }
+
 
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
@@ -228,7 +232,14 @@ namespace BExIS.Utils.WebHelpers
                 ////or user has rights
                 //if (string.IsNullOrEmpty(userName)) return false;
                 bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
-                System.Web.HttpContext.Current.Session[identifier] = permission;
+
+                if (System.Web.HttpContext.Current.Session["menu_permission"] == null)
+                {
+                    System.Web.HttpContext.Current.Session["menu_permission"] = new Dictionary<string, bool>();
+                }
+
+                ((Dictionary<string, bool>)System.Web.HttpContext.Current.Session["menu_permission"]).Add(identifier, permission);
+
                 return permission;
             }
             catch (Exception ex)
