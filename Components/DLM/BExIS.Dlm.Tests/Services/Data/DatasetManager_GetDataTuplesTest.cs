@@ -30,20 +30,17 @@ namespace BExIS.Dlm.Tests.Services.Data
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-
             helper = new TestSetupHelper(WebApiConfig.Register, false);
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
             dsHelper = new DatasetHelper();
 
-
             try
             {
                 dsHelper.PurgeAllDatasets();
                 dsHelper.PurgeAllDataStructures();
                 dsHelper.PurgeAllResearchPlans();
-
 
                 // generate Data
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
@@ -57,8 +54,6 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
                 datasetId = dataset.Id;
-
-
 
                 // add datatuples
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
@@ -95,7 +90,6 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 //Assert
                 Assert.That(result.Count(), Is.EqualTo(0));
-
             }
             finally
             {
@@ -104,7 +98,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         }
 
         [Test()]
-        public void GetDataTuples_WhenCalledForLatestVersion_ReturnIQueryable()
+        public void GetDataTuples_WhenCalledForLatestVersionComplete_ReturnIQueryable()
         {
             //Arrange
             DatasetManager datasetManager = new DatasetManager();
@@ -114,12 +108,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 //Act
                 DatasetVersion datasetversion = datasetManager.GetDatasetLatestVersion(datasetId);
                 var result = datasetManager.GetDataTuples(datasetversion.Id);
-                int c = datasetManager.GetDataTuples(datasetversion.Id).Count();
+                int c = datasetManager.GetDataTuplesCount(datasetversion.Id);
                 //Assert
                 Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
                 Assert.That(c, Is.EqualTo(result.Count()));
-
-
             }
             finally
             {
@@ -133,7 +125,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             //Arrange
             DatasetManager datasetManager = new DatasetManager();
             List<long> datatupleIds;
-
 
             try
             {
@@ -150,7 +141,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 {
                     datatupleIds = uow.GetReadOnlyRepository<DataTuple>().Get().Where(dt => dt.DatasetVersion.Id.Equals(datasetVersion.Id)).Select(dt => dt.Id).ToList();
                 }
-
 
                 dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, datatupleIds[0], 1000);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
@@ -185,7 +175,6 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void GetDataTuples_WhenCalledOneOlderVersion_ReturnIQueryableOfAbstractTuples()
         {
-
             //Arrange
             DatasetManager datasetManager = null;
 
@@ -205,7 +194,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-
                 //Act
                 List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
                 var result = datasetManager.GetDataTuples(datasetversions.ElementAt(datasetversions.Count - 2).Id); // get datatuples from the one before the latest
@@ -217,64 +205,42 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 datasetManager.Dispose();
             }
-
         }
 
-        [Test()]
-        public void GetDataTuples_WhenCalledValid_ReturnIQueryable()
-        {
-            //Arrange
-            DatasetManager datasetManager = new DatasetManager();
+        //[Test()]
+        //public void GetDataTuples_PageOfDataTuplesFromLatestVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-            try
-            {
-                //Act
-                DatasetVersion datasetversion = datasetManager.GetDatasetLatestVersion(datasetId);
-                var result = datasetManager.GetDataTuples(datasetversion.Id);
-                int c = datasetManager.GetDataTuples(datasetversion.Id).Count();
-                //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
-                Assert.That(c, Is.EqualTo(result.Count()));
+        //[Test()]
+        //public void GetDataTuples_OrderdDataTuplesFromLatestVersion_ReturnOrderedListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
+        //[Test()]
+        //public void GetDataTuples_FilteredDataTuplesFromLatestVersion_ReturnFilteredListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
+        //[Test()]
+        //public void GetDataTuples_PageOfDataTuplesFromHistoricalVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        }
+        //[Test()]
+        //public void GetDataTuples_OrderdDataTuplesFromHistoricalVersion_ReturnOrderedListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Test()]
-        public void GetDataTuples_Compare_ReturnIQueryable()
-        {
-            //Arrange
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-                //Act
-                DatasetVersion datasetversion = datasetManager.GetDatasetLatestVersion(datasetId);
-                //var result = datasetManager.GetDataTuples(datasetversion.Id);
-                //result.ToList();
-                int c = datasetManager.GetDatasetVersionEffectiveTuples(datasetversion).Count();
-
-                c = datasetManager.GetDataTuples(datasetversion.Id).Count();
-
-                //Assert
-                //Assert.That(result.Count(), Is.EqualTo(10));
-                //Assert.That(c, Is.EqualTo(result.Count()));
-
-                //var result2 = datasetManager.GetDatasetVersionEffectiveTuples(datasetversion);
-                
-
-
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
-        }
-
+        //[Test()]
+        //public void GetDataTuples_FilteredDataTuplesFromHistoricalVersion_ReturnFilteredListOfAbstractTuples()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
