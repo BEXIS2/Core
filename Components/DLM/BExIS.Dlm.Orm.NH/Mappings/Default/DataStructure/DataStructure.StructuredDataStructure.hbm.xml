@@ -8,9 +8,9 @@
     <many-to-one name="Indexer" class="Variable" not-null="false" column="IndexerRef"/>
     
 
-    <set name="Variables" inverse="true">
+    <set name="Variables" inverse="true"  order-by="orderno asc">
       <key column="DataStructureRef" not-null="false"/>
-      <one-to-many class="Variable"/>
+      <one-to-many class="Variable" />
     </set>
 
     <property name="TemplatePaths" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

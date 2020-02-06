@@ -9,6 +9,7 @@
     ViewBag.Title = "Primary Data";
 
     bool fullDataset = false;
+    bool latestVersion = Model.LatestVersion;
 
     long id = Model.DatasetId;
     StructuredDataStructure dataStructure = (StructuredDataStructure)Model.DataStructure;
@@ -166,12 +167,19 @@
                                             format = "{0:" + dfo.Format + "}";
 
                                                         columns.Bound(column.DataType, column.ColumnName)
-                                                           .Title(title).Format(format).Hidden(!visible);
+                                                           .Title(title)
+                                                           .Format(format)
+                                                           .Hidden(!visible)
+                                                           .Sortable(latestVersion)
+                                                           .Filterable(latestVersion);
                                                     }
                                                     else
                                                     {
                                                         columns.Bound(column.DataType, column.ColumnName)
-                                                           .Title(title).Hidden(!visible);
+                                                           .Title(title)
+                                                           .Hidden(!visible)
+                                                           .Sortable(latestVersion)
+                                                           .Filterable(latestVersion);
                                                     }
                                                 }
                                             }
