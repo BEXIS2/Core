@@ -16,7 +16,7 @@
   <Information name="MyAccount">
     <description>
       <p>This page summarizes your personal account information. Furthermore, you are able to edit that data, but there are two important facts you should be aware of:</p>
-      <ol
+      <ol>
         <li>
           Password Change - You need to enter both, <i>Password</i> and <i>Confirm Password</i>.
         </li>

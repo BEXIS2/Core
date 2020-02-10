@@ -1,0 +1,10 @@
+<stepInfos>
+	<stepInfo title="Select File" action="SelectAFile" area="DCM" controller="SubmitSelectAFile"/>
+	<stepInfo title="Get File Information" action="GetFileInformation" area="DCM" controller="SubmitGetFileInformation"/>
+	<stepInfo title="Specify Dataset" action="SpecifyDataset" area="DCM" controller="SubmitSpecifyDataset"/>
+	<stepInfo title="Choose Update Method" action="ChooseUpdateMethod" area="DCM" controller="SubmitChooseUpdateMethod"/>
+	<stepInfo title="Validation" action="Validation" area="DCM" controller="SubmitValidation"/>
+	<stepInfo title="Summary" action="Summary" area="DCM" controller="SubmitSummary"/>
+</stepInfos>
+
+

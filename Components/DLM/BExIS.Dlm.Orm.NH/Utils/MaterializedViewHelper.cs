@@ -4,9 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BExIS.Dlm.Orm.NH.Qurying;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using BExIS.Utils.NH.Querying;
 
 namespace BExIS.Dlm.Orm.NH.Utils
 {
@@ -14,8 +14,9 @@ namespace BExIS.Dlm.Orm.NH.Utils
     {
         // use this to access proper templates. All the templates are in one XML file under nativeObjects
         // they can be in default, or specific dialect folder
-        string dbDialect = AppConfiguration.DatabaseDialect;
-        List<string> columnLabels = new List<string>();
+        private string dbDialect = AppConfiguration.DatabaseDialect;
+
+        private List<string> columnLabels = new List<string>();
 
         public MaterializedViewHelper()
         {
@@ -86,7 +87,6 @@ namespace BExIS.Dlm.Orm.NH.Utils
             {
                 throw new Exception(string.Format("Could not retrieve data from dataset {0}. Check whether the corresponding view exists and is populated with data.", datasetId), ex);
             }
-
         }
 
         private DataTable applyColumnLabels(DataTable table, long datasetId)
@@ -116,7 +116,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             {
                 var columnName = row["columnname"].ToString();
                 var columnLabel = row["description"].ToString();
-                if(table.Columns.Contains(columnName))
+                if (table.Columns.Contains(columnName))
                     table.Columns[columnName].Caption = columnLabel;
             }
             return table;
@@ -129,7 +129,6 @@ namespace BExIS.Dlm.Orm.NH.Utils
         /// <param name="columnDefinitionList">A list of column definitions coming from the data structure of the dataset. Each definition conatins: variable's name, data type, order, and Id</param>
         public void Create(long datasetId, List<Tuple<string, string, int, long>> columnDefinitionList)
         {
-
             StringBuilder mvBuilder = new StringBuilder();
             // build MV's name
             mvBuilder.AppendLine(string.Format("CREATE MATERIALIZED VIEW {0} AS", this.BuildName(datasetId)));
@@ -160,7 +159,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 .AppendLine("FROM datasetversions v INNER JOIN datatuples t ON t.datasetversionref = v.id")
                 .AppendLine(string.Format("WHERE (v.datasetref = {0} AND v.status = 2) OR (v.datasetref = {0} AND v.status = 0)", datasetId))
                 .Append("WITH NO DATA") //avoids refreshing the MV at the creation time, the view will not be queryable until explicitly refreshed.
-                //.Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
+                                        //.Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
 
             // build the satetment
@@ -277,6 +276,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 return -1;
             }
         }
+
         public void Drop(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
@@ -295,7 +295,6 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
         }
 
-
         public string BuildName(long datasetId)
         {
             return "mvDataset" + datasetId; // the strings must come from the mappings, nativeObjects/templates.xml. considering dialects and hierarchy
@@ -313,14 +312,14 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // string template = @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}";
             // string template =   @"cast(unnest(cast(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
             // string template = @"unnest(xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)::character varying[]){1} AS {2}";
-            
+
             string fieldType = dbDataType(dataType);
             fieldType = !string.IsNullOrEmpty(fieldType) ? " AS " + fieldType : "";
 
             string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
             string accessPath = string.Format(accessPathTemplate, Id);
 
-            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(unnest({accessPath}::character varying[]) {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
+            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(({accessPath}::character varying[])[1] {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
             //string fieldDef = string.Format(fieldTemplate, accessPath, fieldType, this.BuildColumnName(Id).ToLower());
             // guard the column mapping for NULL protection
             return fieldDef;
@@ -341,7 +340,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "long", "bigint" },
                 { "int64", "bigint" },
                 { "text", "" }, // not needed -> character varying[]
-                { "string", "character varying(255)" } 
+                { "string", "character varying(255)" }
             };
 
         /// <summary>

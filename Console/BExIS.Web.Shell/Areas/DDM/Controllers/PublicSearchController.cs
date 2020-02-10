@@ -19,6 +19,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
             Session["Controller"] = "PublicSearch";
+            Session["PropertiesDictionary"] = null;
 
             try
             {
@@ -154,6 +155,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
         }
 
+        public ActionResult UpdateProperties()
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+            var properties = provider.UpdateProperties(provider.WorkingSearchModel.CriteriaComponent).SearchComponent.Properties;
+
+            foreach (Property p in properties)
+            {
+                if (PropertiesDic.ContainsKey(p.DataSourceKey))
+                {
+                    p.SelectedValue = PropertiesDic[p.DataSourceKey];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
+                }
+            }
+
+            return PartialView("_searchProperties", properties);
+        }
+
         public ActionResult GetDataForBreadCrumbView()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -270,7 +291,22 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return RedirectToAction(Session["SubmissionAction"].ToString()); //View("Index", provider);
+            //reset properties selected values
+            var properties = provider.WorkingSearchModel.SearchComponent.Properties;
+
+            foreach (Property p in properties)
+            {
+                if (PropertiesDic.ContainsKey(p.DataSourceKey))
+                {
+                    p.SelectedValue = PropertiesDic[p.DataSourceKey];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
+                }
+            }
+
+            return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
         }
 
         #endregion
@@ -330,13 +366,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         //+++++++++++++++++++++Properties RadioButton Action +++++++++++++++++++++++++++
-        // currently radionbuttons on View searchProperties
         [HttpPost]
-        public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
+        public ActionResult FilterByRadioButton(string value, string node, bool isChecked)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
+
+            return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
+        }
+
+        //+++++++++++++++++++++Properties ´CheckButton Action +++++++++++++++++++++++++++
+
+        [HttpPost]
+        public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+
+            UpdatePropertiesDic(node, value);
+            provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property, true);
 
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
         }

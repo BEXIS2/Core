@@ -13,7 +13,7 @@ $(document).ready(function ()
 	$("#information-container").css("top", h);
 	$(".main-content").css("margin-top", h);
 
-	$(document).resize(function () {
+	$(window).resize(function () {
 
 		var h = $(".navbar").height();
 		console.log("h = " + h);
@@ -383,8 +383,22 @@ if (jQuery.validator) {
 		var checked = false;
 		checked = $(element).is(':checked');
 		return checked;
-	}, '');
+    }, '');
+
+    jQuery.validator.addMethod('selectvalidation', function (value, element, params) {
+        if (value !== "-1")
+            return true;
+        else
+            return false;
+    });
+
+ 
+
 	if (jQuery.validator.unobtrusive) {
-		jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
+        jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
+        jQuery.validator.unobtrusive.adapters.add('selectvalidation', function (options) {
+            options.rules['selectvalidation'] = {};
+            options.messages['selectvalidation'] = options.message;
+        });
 	}
 }

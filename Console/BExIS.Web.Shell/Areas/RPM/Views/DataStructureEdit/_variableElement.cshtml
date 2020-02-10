@@ -27,8 +27,8 @@
                     {
                         <div class="bx-rpm-unit-select" id="@id">
                             @Html.TextBox("Unit", Model.Unit.Id, new { @id = "varunit", @class = "hidden bx-rpm-value" })
-                            <div class ="bx-rpm-option" onclick="javascript:openDropdown(this)">@Model.Unit.Name</div>
-                            <div class="bx bx-rpm-option-arrow t-arrow-down" onclick="javascript: $(this).parent().find('.bx-rpm-option').trigger('click')"/>
+                            <div class="bx-rpm-option" onclick="javascript:openDropdown(this)">@Model.Unit.Name</div>
+                            <div class="bx bx-rpm-option-arrow t-arrow-down" onclick="javascript: $(this).parent().find('.bx-rpm-option').trigger('click')" />
                             <div class="bx-rpm-options" style="display:none">
                                 @foreach (ItemStruct item in Model.convertibleUnits)
                                 {
@@ -39,7 +39,7 @@
                     }
                     else
                     {
-                            @Model.Unit.Name
+                        @Model.Unit.Name
                         @Html.TextBox("Unit", Model.Unit.Id, new { @id = "varunit", @class = "hidden" })
                     }
                 </div>
@@ -65,6 +65,30 @@
                 <div class="bx-rpm-text">@Html.TextArea("Description", @Model.Description, new { @class = "bx-rpm-textarea description", @id = "vardescription" })</div>
             </td>
         </tr>
+
+        @if (Model.MissingValues != null)
+        {
+        <tr class="hidden hiddenelements bx-rpm-missing-value">
+            <td colspan="5">
+                <div class="bx-rpm-label">Missing Values</div>
+            </td>
+            <td class="bx-rpm-add" title="Add Missing Value"><span id="addmissingvalue" class="bx fa-plus"></span></td>
+        </tr>
+        <tr class="hidden hiddenelements">
+            <td colspan="6">
+                <table class="bx-rpm-missing-value-container">
+                    @if (Model.MissingValues.Count > 0)
+                    {
+                        foreach (MissingValueStruct mvs in Model.MissingValues)
+                        {
+                            @Html.Partial("_missingValueElement", mvs)
+                        }
+                    }
+                </table>
+            </td>
+        </tr>
+        }
+
         @if (Model.Constraints.Count > 0)
         {
             <tr class="hidden hiddenelements">

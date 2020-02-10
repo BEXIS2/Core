@@ -21,6 +21,7 @@ namespace BExIS.Utils.Data.Helpers
             var o5 = operationManager.Find("Shell", "PrivacyPolicy", "*") ?? operationManager.Create("Shell", "PrivacyPolicy", "*");
             var o6 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
             var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
+            var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
         }
 
         public void Dispose()

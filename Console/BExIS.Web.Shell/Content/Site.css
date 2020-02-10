@@ -49,7 +49,7 @@ leftPane, #rightPane {
     margin: 10px;
 }
 
-/* HEADINGS   
+/* HEADINGS
 ----------------------------------------------------------*/
 h1, h2, h3, h4, h5, h6 {
     font-size: 1.5em;
@@ -86,16 +86,16 @@ li {
     line-height: 1.6;
 }
 
-/* this rule styles <h2> tags that are the 
+/* this rule styles <h2> tags that are the
 first child of the left and right table columns */
 .rightColumn > h1, .rightColumn > h2, .leftColumn > h1, .leftColumn > h2 {
     margin-top: 0;
 }
 
-/* PRIMARY LAYOUT ELEMENTS   
+/* PRIMARY LAYOUT ELEMENTS
 ----------------------------------------------------------*/
 
-/* you can specify a greater or lesser percentage for the 
+/* you can specify a greater or lesser percentage for the
 page width. Or, you can specify an exact pixel width. */
 .page {
     width: 99%;
@@ -158,7 +158,7 @@ footer, #footer {
         text-decoration: none;
     }
 
-/* MENU   
+/* MENU
 ----------------------------------------------------------*/
 #menu {
     position: relative;
@@ -177,16 +177,16 @@ footer, #footer {
         line-height: 1.8em;
     }
 
-/* Information 
+/* Information
 -----------------------------------------------------------*/
 
 #information-container {
     background-color: black;
     color: white;
-    top:50px;
+    top: 50px;
 }
 
-/* FORM LAYOUT ELEMENTS   
+/* FORM LAYOUT ELEMENTS
 ----------------------------------------------------------*/
 fieldset {
     border: 1px solid #ddd;
@@ -202,7 +202,6 @@ legend {
 textarea {
     min-height: 75px;
 }
-
 
 /* TABLE
 ----------------------------------------------------------*/
@@ -221,7 +220,6 @@ table {
         float: none;
     }
 
-
     table th {
         color: black;
         margin: 3px 0 3px 0;
@@ -234,7 +232,6 @@ table {
 
     table th, table td {
         border-right: solid 4px white;
-
     }
 
     table tr {
@@ -248,9 +245,7 @@ table {
         margin-right: 5px;
     }
 
-
-
-/* MISC  
+/* MISC
 ----------------------------------------------------------*/
 .clear {
     clear: both;

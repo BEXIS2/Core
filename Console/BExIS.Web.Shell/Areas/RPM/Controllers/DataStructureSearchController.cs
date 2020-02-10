@@ -12,6 +12,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc;
 using Vaiona.Persistence.Api;
+using System.Linq;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -187,10 +188,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             Name = Server.UrlDecode(Name);
             Description = Server.UrlDecode(Description);
             DataStructureManager dataStructureManager = null;
+            MissingValueManager missingValueManager = null;
             try
             {
 
                 dataStructureManager = new DataStructureManager();
+                missingValueManager = new MissingValueManager();
 
 
                 if (!isStructured)
@@ -238,6 +241,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             {
                                 variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label.Trim(), v.DefaultValue, v.MissingValue, v.Description.Trim(), v.Unit);
                                 order.Add(variable.Id);
+                                List<MissingValue> missingValues = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(v.Id)).ToList();
+                                foreach(MissingValue mv in missingValues)
+                                {
+                                    missingValueManager.Create(mv.DisplayName, mv.Description, variable, mv.Placeholder);
+                                }
                             }
                             DataStructureIO.setVariableOrder(dataStructureCopy, order);
                         }

@@ -8,13 +8,13 @@ namespace BExIS.Utils.WebHelpers
 {
     public static class HtmlTenantExtensions
     {
-        public static MvcHtmlString Brand(this HtmlHelper htmlHelper, string path, string name)
+        public static MvcHtmlString Brand(this HtmlHelper htmlHelper, string path, string name, int height = 40)
         {
             byte[] image = File.ReadAllBytes(path);
             string mime = MimeMapping.GetMimeMapping(path);
 
 
-            return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' alt='{name}' style='height: 40px; margin-top: -10px;' />");
+            return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' alt='{name}' style='height: {height}px; margin-top: -10px;' />");
         }
 
         public static MvcHtmlString Logo(this HtmlHelper htmlHelper, string path)

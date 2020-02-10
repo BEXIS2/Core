@@ -51,8 +51,6 @@ namespace BExIS.App.Testing
             httpSessionMock.Setup(x => x["CurrentTenant"]).Returns(tenant);
             httpCtxMock.Setup(ctx => ctx.Session).Returns(httpSessionMock.Object);
 
-
-
             if (!string.IsNullOrWhiteSpace(userName))
             {
                 var validPrincipal = new ClaimsPrincipal(

@@ -1,4 +1,4 @@
-﻿
+﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
@@ -15,6 +15,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -29,7 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View();
         }
 
-
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult DatasetAttachements(long datasetId, long versionId)
         {
             ViewBag.datasetId = datasetId;
@@ -37,12 +38,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult Download(long datasetId, String fileName)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
             return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult Delete(long datasetId, String fileName)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
@@ -53,10 +56,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
             if (contentDescriptor == null)
                 throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
+
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
-            dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
+
+            datasetVersion.ModificationInfo = new EntityAuditInfo()
+            {
+                Performer = GetUsernameOrDefault(),
+                Comment = "Attachment",
+                ActionType = AuditActionType.Delete
+            };
+
             dm.EditDatasetVersion(datasetVersion, null, null, null);
-            dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
+            dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
             dm?.Dispose();
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
@@ -123,10 +135,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
-            // The Name of the Upload component is "attachments"                            
+            // The Name of the Upload component is "attachments"
             if (attachments != null)
             {
                 Session["FileInfos"] = attachments;
@@ -136,6 +149,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
+        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
         public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
             var filemNames = "";
@@ -145,6 +159,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
                 DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+
                 foreach (var file in attachments)
                 {
                     var fileName = Path.GetFileName(file.FileName);
@@ -156,15 +171,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     file.SaveAs(destinationPath);
                     AddFileInContentDiscriptor(datasetVersion, fileName, description);
                 }
+
+                //set modification
+                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                {
+                    Performer = GetUsernameOrDefault(),
+                    Comment = "Attachment",
+                    ActionType = AuditActionType.Create
+                };
+
+                string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
+
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
             }
             dm?.Dispose();
         }
 
         private string AddFileInContentDiscriptor(DatasetVersion datasetVersion, String fileName, String description)
         {
-
             string dataPath = AppConfiguration.DataPath;
             string storePath = Path.Combine(dataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments");
             int lastOrderContentDescriptor = 0;
@@ -178,7 +203,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 MimeType = MimeMapping.GetMimeMapping(fileName),
                 URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
                 DatasetVersion = datasetVersion,
-
             };
             // replace the URI and description in case they have a same name
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
@@ -204,6 +228,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return storePath;
         }
+
         private XmlDocument SetDescription(XmlNode extraField, string description)
         {
             XmlNode newExtra;
@@ -229,6 +254,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             return source;
         }
+
         private string GetDescription(XmlNode extra)
         {
             if ((XmlDocument)extra != null)
@@ -241,6 +267,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             return "";
         }
+
         public string GetUsernameOrDefault()
         {
             string username = string.Empty;
@@ -252,8 +279,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
-
     }
-
-
 }

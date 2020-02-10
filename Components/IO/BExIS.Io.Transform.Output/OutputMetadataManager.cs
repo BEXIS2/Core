@@ -26,6 +26,8 @@ namespace BExIS.IO.Transform.Output
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                // if mapping file not exists
+                if (string.IsNullOrEmpty(mappingFileName)) return "";
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -48,14 +50,12 @@ namespace BExIS.IO.Transform.Output
             }
             catch (Exception ex)
             {
-
                 return ex.Message;
             }
             finally
             {
                 datasetManager.Dispose();
             }
-
         }
 
         public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
@@ -69,6 +69,9 @@ namespace BExIS.IO.Transform.Output
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                // no mapping files with mappingName exist
+                if (string.IsNullOrEmpty(mappingFileName)) return null;
+
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -85,9 +88,7 @@ namespace BExIS.IO.Transform.Output
                         storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
                     else
                         storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_" + mappingName, ".xml");
-
                 }
-
             }
             catch (Exception ex)
             {
@@ -99,7 +100,6 @@ namespace BExIS.IO.Transform.Output
 
         public static string GetSchemaDirectoryPath(long datasetId)
         {
-
             DatasetManager datasetManager = new DatasetManager();
 
             try
@@ -180,16 +180,16 @@ namespace BExIS.IO.Transform.Output
 
             try
             {
-
-
-
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 MetadataStructure metadataStructure = metadataMetadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                 string mappingName = metadataStructure.Name;
 
                 string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                //if mapping file not exist
+                if (string.IsNullOrEmpty(mappingFileName)) return "";
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
@@ -212,8 +212,7 @@ namespace BExIS.IO.Transform.Output
                         ".xml");
                 }
 
-                return OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, filename, ".xml");
-
+                return OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, filename, ".xml");
             }
             catch (Exception ex)
             {
@@ -224,12 +223,10 @@ namespace BExIS.IO.Transform.Output
                 datasetManager.Dispose();
                 metadataMetadataStructureManager.Dispose();
             }
-            return "";
         }
 
         private static void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
         {
-
             string name = "";
             string mimeType = "";
 
@@ -239,9 +236,11 @@ namespace BExIS.IO.Transform.Output
                 mimeType = "text/xml";
             }
 
+            DatasetManager dm = new DatasetManager();
+            int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
             // create the generated FileStream and determine its location
-            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title, ext);
             //Register the generated data FileStream as a resource of the current dataset version
             //ContentDescriptor generatedDescriptor = new ContentDescriptor()
             //{
@@ -252,14 +251,12 @@ namespace BExIS.IO.Transform.Output
             //    DatasetVersion = datasetVersion,
             //};
 
-            DatasetManager dm = new DatasetManager();
-
             try
             {
                 datasetVersion = dm.GetDatasetVersion(datasetVersion.Id);
 
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-                {   // remove the one contentdesciptor 
+                {   // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
                         if (cd.Name == name)
@@ -282,7 +279,6 @@ namespace BExIS.IO.Transform.Output
             {
                 dm.Dispose();
             }
-
         }
     }
 }

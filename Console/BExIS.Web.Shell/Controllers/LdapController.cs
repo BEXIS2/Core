@@ -124,7 +124,7 @@ namespace BExIS.Web.Shell.Controllers
                         await userManager.UpdateAsync(user);
 
                         var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                        await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
+                        await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
 
                         ViewBag.Message = "Before you can log in to complete your registration please check your email and verify your email address.";
 

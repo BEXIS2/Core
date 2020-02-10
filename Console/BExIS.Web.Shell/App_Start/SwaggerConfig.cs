@@ -1,5 +1,6 @@
 using BExIS.Web.Shell;
 using Swashbuckle.Application;
+using System.Linq;
 using System.Web.Http;
 using WebActivatorEx;
 
@@ -12,8 +13,6 @@ namespace BExIS.Web.Shell
         public static void Register()
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
-
-
 
             GlobalConfiguration.Configuration
                 .EnableSwagger(c =>
@@ -172,7 +171,7 @@ namespace BExIS.Web.Shell
                         // with the same path (sans query string) and HTTP method. You can workaround this by providing a
                         // custom strategy to pick a winner or merge the descriptions for the purposes of the Swagger docs
                         //
-                        //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                        c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
                         // Wrap the default SwaggerGenerator with additional behavior (e.g. caching) or provide an
                         // alternative implementation for ISwaggerProvider with the CustomProvider option.
@@ -183,7 +182,6 @@ namespace BExIS.Web.Shell
                         .Description("Filling bearer token here")
                         .Name("Authorization")
                         .In("header");
-
                     })
                 .EnableSwaggerUi("apihelp/{*assetPath}", c =>
                      {
@@ -260,7 +258,6 @@ namespace BExIS.Web.Shell
                          //
                          //c.EnableApiKeySupport("apiKey", "header");
                      });
-
         }
 
         private static string GetXmlCommentsPath()

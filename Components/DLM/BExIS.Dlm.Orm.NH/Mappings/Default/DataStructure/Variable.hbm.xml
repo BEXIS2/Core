@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Variable" table="Variables" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_Variables_id"/>
+      <column name="Id" index="idx_Variables_id" />
       <generator class="native" />
     </id>
 
@@ -29,7 +29,7 @@
     </property>
 
     <property name="Label" type="String">
-      <column name="Label" index="idx_Variables_label"/>
+      <column name="Label" index="idx_Variables_label" />
     </property>
 
     <property name="Description" type="StringClob">
@@ -40,20 +40,18 @@
       <column name="DefaultValue" />
     </property>
 
-    <property name="MissingValue" type="String">
-      <column name="MissingValue" />
-    </property>
-    
-    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef"/>
-    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef"/>
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef"/>
-
-    <set name="Parameters" inverse="true">
-      <key column="VariableRef" not-null="false"/>
-      <one-to-many class="Parameter"/>
+    <set name="MissingValues" inverse="true">
+      <key column="VariableRef" not-null="false" />
+      <one-to-many class="MissingValue" />
     </set>
 
+    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef" />
+    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" />
+    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef" />
 
+    <set name="Parameters" inverse="true">
+      <key column="VariableRef" not-null="false" />
+      <one-to-many class="Parameter" />
+    </set>
   </class>
-
 </hibernate-mapping>

@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<BExIS.Modules.Ato.UI.Models.CategoryModel>
-
+@using BExIS.Modules.Ato.UI.Models
 <div>
     @foreach (var category in Model)
     {
@@ -10,17 +10,33 @@
         </div>
         <p>@category.Description</p>
 
-        foreach (var file in category.FileModels)
+        foreach (var basic in category.BasicModels)
         {
-            <h3>@Html.Raw(file.Header)</h3>
-            @file.InfoText
-            <br>
+            <h3>@Html.Raw(basic.Header)</h3>
+            @basic.InfoText
 
-            <br>
-            @Html.ActionLink(string.Concat(file.Name), "Download", new { fileName = file.FileName }, htmlAttributes: new { @class = "t-button action", id = "file.FileName", target = "_blank" })
-            <br>
-            <br>
+            if (basic is FileModel)
+            {
+                FileModel tmp = (FileModel)basic;
+
+                <br>
+                <br>
+                @Html.ActionLink(string.Concat(tmp.Name), "Download", new { fileName = tmp.FileName }, htmlAttributes: new { @class = "t-button action", id = "file.FileName", target = "_blank" })
+                <br>
+                <br>
+            }
+
+            if (basic is LinkModel)
+            {
+                LinkModel tmp = (LinkModel)basic;
+
+                <br>
+                <br>
+                <a href="@tmp.Link" target="_blank">@tmp.Link</a>
+                <br>
+                <br>
+            }
+            <hr />
         }
-        <hr />
     }
 </div>

@@ -52,8 +52,8 @@
                     }
                     else if (partyCustomAttr.DataType == "bool" || partyCustomAttr.DataType == "boolean")
                     {
-                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()"  @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>True</label>
-                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @(partyCustomAttributeValueStr == "false" ? "checked" : "") value="false" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>False</label>
+                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>True</label>
+                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @((partyCustomAttributeValueStr == "false" || partyCustomAttributeValueStr == "") ? "checked" : "" ) value="false" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>False</label>
                     }
                     else
                     {
@@ -81,10 +81,14 @@
             condition = $(this).attr("condition");
             if (condition.length) {
                 var cond = parsePartyCondition(condition);
-                if (eval(cond))
+                if (eval(cond)){
                     $(element).show();
-                else
+                    $(element).find('input').prop("disabled", false); // set enabled to tell jquery-validation to use
+                }
+                else{
                     $(element).hide();
+                    $(element).find('input').prop("disabled", true); // set disabled to tell jquery-validation to ignore
+                }
             }
         });
         

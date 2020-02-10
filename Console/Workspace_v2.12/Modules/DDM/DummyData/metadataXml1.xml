@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<metaProfile>
+  <general>
+    <id label="ID">12569</id>
+    <versionID source="intern">1.1.0</versionID>
+    <lineage source="intern">
+      <datasetid source="intern">10001</datasetid>
+      <version source="intern">1.0.0</version>
+    </lineage>
+    <title>Erbsen beim sammeln beobachten</title>
+    <language>de</language>
+    <owners>
+      <owner number="1">Nicole Wäschke</owner>
+      <owner number="2">Christine Herbst</owner>
+      <owner number="3">Elisabeth Obermaier</owner>
+      <owner number="4">Torsten Meiners</owner>
+    </owners>
+    <contact>
+      <author>Nicole Wäschke</author>
+      <projectName>ChemoDiversity</projectName>
+      <projectLeader>Dr. Torsten Meiners</projectLeader>
+      <institute>FreeUniverstity of Berlin</institute>
+      <address>
+        <street>Haderslebener Str.9</street>
+        <zipCode>12163</zipCode>
+        <city>Berlin</city>
+      </address>
+      <email>nicole.waeschke@fu-berlin.de</email>
+      <phone>030/83853992</phone>
+    </contact>
+  </general>
+  <researchObjects>
+    <landuse>
+      <grassland>yes</grassland>
+      <forest>no</forest>
+    </landuse>
+    <plotLevel>EP</plotLevel>
+    <taxa>
+      <taxon number="1">vascular plants</taxon>
+      <taxon number="2">arthropods</taxon>
+    </taxa>
+    <processes>
+      <process number="1">vegetation complexity</process>
+      <process number="2">plant diversity</process>
+      <process number="3">host parasitoid interaction</process>
+    </processes>
+    <services>
+      <service number="1">none</service>
+    </services>
+  </researchObjects>
+  <methodology>
+    <introduction input="textarea">Fertilization experiment since 2009. Investigation of Plantago lanceolata, the surrounding vegetation structure and diversity as well as one parasitoid and two snout beetles.</introduction>
+    <measurements>
+      <theory input="textarea">Fertilization influences plant species diversity, but how do these changes in plant composition affect vegetation structure and upper trophic levels is not known.</theory>
+      <type input="textarea">Measurement of different plant and vegetation parameters.</type>
+    </measurements>
+    <equipment>
+      <instruments input="textarea">Radien mit 15 cm und 1m Durchmesser, Aufnahmetafel für die horizontale Deckung der Vegetation, Meterstab zur Messung verschiedener Höhen.</instruments>
+      <calibration input="textarea">none</calibration>
+      <procedures input="textarea">Fertilization in spring and autumn 2009 as well as in spring 2010. </procedures>
+    </equipment>
+  </methodology>
+  <description>
+    <acronyms>
+      <acronymPair number="1">
+        <acronym number="1">HDnumber</acronym>
+        <meaning number="1">Horizontal deviation in different heigth</meaning>
+      </acronymPair>
+      <acronymPair number="2">
+        <acronym number="2">K</acronym>
+        <meaning number="2">none fertilized subplot</meaning>
+      </acronymPair>
+      <acronymPair number="3">
+        <acronym number="3">GMV</acronym>
+        <meaning number="3">generalized mean vegetation heigth</meaning>
+      </acronymPair>
+      <acronymPair number="4">
+        <acronym number="4">VVC</acronym>
+        <meaning number="4">vertical vegetation cover</meaning>
+      </acronymPair>
+    </acronyms>
+    <keywords>
+      <keyword number="1">Vegetationsstruktur</keyword>
+    </keywords>
+  </description>
+  <time>
+    <when>
+      <format>yyyy/MM/dd</format>
+      <startDate>2009/11/01</startDate>
+      <endDate>2012/11/01</endDate>
+    </when>
+    <dateEntry>2011-05-11</dateEntry>
+    <dateLastModified>2011-02-02</dateLastModified>
+  </time>
+  <data>
+    <fileName source="intern">12569_020211_113329_Matrix_Struktur_Kontrolle_Alb_Hainich_Schorfheide_2010_110201.xls;</fileName>
+    <fileType>structuredData</fileType>
+    <manipulations input="textarea">none</manipulations>
+    <errors>none</errors>
+    <qualityLevel>raw</qualityLevel>
+    <dataStatus>complete</dataStatus>
+  </data>
+</metaProfile>

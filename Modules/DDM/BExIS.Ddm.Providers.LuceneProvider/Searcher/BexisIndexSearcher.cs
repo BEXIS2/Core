@@ -1,5 +1,6 @@
 ﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
+using BExIS.Dlm.Services.Data;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -18,13 +19,13 @@ using SearchResult = BExIS.Utils.Models.SearchResult;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public static class BexisIndexSearcher
     {
         private static string luceneIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisSearchIndex");
@@ -42,39 +43,39 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] facetFields { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] storedFields { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] categoryFields { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string[] propertyFields { get; set; }
 
         private static Boolean isInit = false;
-        static XmlDocument configXML;
+        private static XmlDocument configXML;
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>    
+        /// <param></param>
         /// <returns></returns>
         public static string[] getCategoryFields() { init(); return categoryFields; }
 
@@ -83,7 +84,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>   
+        /// <param></param>
         /// <returns></returns>
         public static string[] getStoredFields() { init(); return storedFields; }
 
@@ -92,7 +93,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public static IndexReader getIndexReader()
         {
@@ -105,7 +106,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>      
+        /// <param>NA</param>
         /// <returns></returns>
         public static IndexSearcher getIndexSearcher()
         {
@@ -117,7 +118,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         private static void init()
         {
             if (!isInit) { BexisIndexSearcherInit(); isInit = true; }
@@ -127,7 +128,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         private static void BexisIndexSearcherInit()
         {
             List<string> facetFieldList = new List<string>();
@@ -155,7 +156,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -164,8 +165,26 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <returns></returns>
         public static SearchResult search(Query query, List<XmlNode> headerItemXmlNodeList)
         {
+            int n = 0;
+            DatasetManager dm = null;
+            try
+            {
+                dm = new DatasetManager();
+                n = dm.DatasetRepo.Get().Count;
 
-            TopDocs docs = searcher.Search(query, 1000);
+                if (n == 0) n = 1000;
+            }
+            catch
+            {
+                n = 1000;
+            }
+            finally
+            {
+                dm.Dispose();
+                if (n <= 0)
+                    n = 1000;
+            }
+            TopDocs docs = searcher.Search(query, n);
             SearchResult sro = new SearchResult();
             sro.PageSize = 10;
             sro.CurrentPage = 1;
@@ -183,6 +202,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             Header.Add(id);
             DefaultHeader.Add(id);
 
+            // create entity
+            HeaderItem entity = new HeaderItem();
+            entity.DisplayName = "Entity name";
+            entity.Name = "entity_name";
+            entity.DataType = "string";
+            Header.Add(entity);
+            //DefaultHeader.Add(entity);
+
             foreach (XmlNode ade in headerItemXmlNodeList)
             {
                 HeaderItem hi = new HeaderItem();
@@ -195,7 +222,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 {
                     DefaultHeader.Add(hi);
                 }
-
             }
 
             List<Row> RowList = new List<Row>();
@@ -206,6 +232,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 List<object> ValueList = new List<object>();
                 ValueList = new List<object>();
                 ValueList.Add(doc.Get("doc_id"));
+                ValueList.Add(doc.Get("gen_entity_name"));
 
                 foreach (XmlNode ade in headerItemXmlNodeList)
                 {
@@ -237,7 +264,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -304,7 +331,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -342,6 +369,39 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 l.Add(c);
             }
             return l;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="query"></param>
+        /// <param name="facets"></param>
+        /// <returns></returns>
+        public static IEnumerable<Property> propertySearch(Query query, IEnumerable<Property> properties)
+        {
+            foreach (Property p in properties)
+            {
+                SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + p.Name });
+                SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                int cCount = 0;
+
+                List<string> tmp = new List<string>();
+
+                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                {
+                    if (!String.IsNullOrEmpty(hpg.Name.ToString()))
+                    {
+                        if ((int)hpg.HitCount > 0)
+                            tmp.Add(hpg.Name.ToString());
+                    }
+                }
+
+                p.Values = tmp;
+
+            }
+            return properties;
         }
     }
 }

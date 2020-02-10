@@ -6,14 +6,14 @@ using System.Linq;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.ValueCheck
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
-    public class DataTypeCheck:IValueCheck
+    /// <remarks></remarks>
+    public class DataTypeCheck : IValueCheck
     {
         # region private
 
@@ -30,47 +30,46 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ValueType AppliedTo
+        {
+            get
             {
-                get
-                {
-                    return appliedTo;
-                }
+                return appliedTo;
             }
+        }
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public string Name
-            {
-                get { return name; }
-            }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public string Name
+        {
+            get { return name; }
+        }
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public string DataType
-            {
-                get { return dataType; }
-            }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public string DataType
+        {
+            get { return dataType; }
+        }
 
-            public DecimalCharacter GetDecimalCharacter
-            {
-                get { return decimalCharacter; }
-            }
-            
+        public DecimalCharacter GetDecimalCharacter
+        {
+            get { return decimalCharacter; }
+        }
 
-            #endregion
+        #endregion get
 
         #endregion
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -131,7 +130,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                             //if(double.TryParse(value,NumberStyles.Number,CultureInfo.InvariantCulture, out convertedValue))
                             //{
-
                             //Try to figure out the structure and then parse as double - return Error if structure doesn't fit or parsing fails
                             try
                             {
@@ -168,7 +166,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         {
                                             return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
                                         }
-
                                     }
                                     else
                                     {
@@ -181,7 +178,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                             }
-                               
+
                             //}
                             //else
                             //{
@@ -192,7 +189,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                     case "Decimal":
                         {
                             /*
-                             * Same idea as for double but for decimal you have to explicitly allow 
+                             * Same idea as for double but for decimal you have to explicitly allow
                              * scientific notation with the flags NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint
                              **/
                             try
@@ -230,7 +227,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         {
                                             return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
                                         }
-
                                     }
                                     else
                                     {
@@ -245,10 +241,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
                         }
 
-                    case "DateTime": 
+                    case "DateTime":
                         {
-
-                            
                             DateTime dateTime;
                             if (IOUtility.IsDate(value, pattern, out dateTime))
                             {
@@ -268,7 +262,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
 
                             return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-
                         }
 
                     case "Char":
@@ -288,16 +281,16 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                         {
                             return value;
                         }
-                        
+
                     //TODO Boolean check
                     case "Boolean":
                         {
                             //Accept 0 and 1
-                            if(value == "0")
+                            if (value == "0")
                             {
                                 return false;
                             }
-                            else if(value == "1")
+                            else if (value == "1")
                             {
                                 return true;
                             }
@@ -315,21 +308,20 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 }
                             }
                         }
-
                 }
             }
             return value;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="name"></param>
         /// <param name="dataType"></param>
         /// <param name="pattern"></param>
-        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern="")
+        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern = "")
         {
             this.appliedTo = ValueType.Number;
             this.name = name;
