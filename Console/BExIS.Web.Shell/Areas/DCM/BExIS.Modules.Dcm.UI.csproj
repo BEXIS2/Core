@@ -557,6 +557,7 @@
     <Content Include="Views\EasyUpload\_taskListView.cshtml" />
     <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
     <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
