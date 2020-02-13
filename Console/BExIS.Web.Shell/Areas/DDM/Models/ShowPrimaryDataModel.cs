@@ -38,9 +38,11 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public bool DownloadAccess { get; set; }
 
+        public bool HasEditRight { get; set; }
+
         public Dictionary<string, string> AsciiFileDownloadSupport { get; set; }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, int versionId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string, string> supportedAsciiFileTypes, bool latestVersion)
+        public static ShowPrimaryDataModel Convert(long datasetId, int versionId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess, Dictionary<string, string> supportedAsciiFileTypes, bool latestVersion, bool hasEditRights)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.Data = data;
@@ -54,11 +56,12 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.DisplayFormats = getDisplayFormatObjects(dataStructure as StructuredDataStructure);
             model.AsciiFileDownloadSupport = supportedAsciiFileTypes;
             model.LatestVersion = latestVersion;
+            model.HasEditRight = hasEditRights;
 
             return model;
         }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, int versionId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess, Dictionary<string, string> asciiFileDownloadSupport, bool latestVersion)
+        public static ShowPrimaryDataModel Convert(long datasetId, int versionId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess, Dictionary<string, string> asciiFileDownloadSupport, bool latestVersion, bool hasEditRights)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.FileList = ConvertContentDiscriptorsToFileInfos(dataFileList);
@@ -71,6 +74,8 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.DownloadAccess = downloadAccess;
             model.AsciiFileDownloadSupport = asciiFileDownloadSupport;
             model.LatestVersion = latestVersion;
+            model.HasEditRight = hasEditRights;
+
 
             return model;
         }

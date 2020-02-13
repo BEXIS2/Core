@@ -600,7 +600,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             table,
                             downloadAccess,
                             iOUtility.GetSupportedAsciiFiles(),
-                            latestVersion));
+                            latestVersion,
+                            hasUserRights(datasetID, RightType.Write)
+                            ));
                     }
 
                     if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
@@ -616,7 +618,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
                                 downloadAccess,
                                 iOUtility.GetSupportedAsciiFiles(),
-                                latestVersion));
+                                latestVersion,
+                                hasUserRights(datasetID, RightType.Write)
+                                ));
                     }
                 }
                 else
