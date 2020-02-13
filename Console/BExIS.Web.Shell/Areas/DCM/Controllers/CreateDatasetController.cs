@@ -433,22 +433,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public ActionResult Submit(bool valid)
+        public JsonResult Submit(bool valid)
         {
-            // create and submit Dataset
-            long datasetId = SubmitDataset(valid);
+            try
+            {
+                // create and submit Dataset
+                long datasetId = SubmitDataset(valid);
 
-            bool editMode = false;
+                return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { result = "error", message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
 
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.EDIT_MODE))
-                editMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
-
-            if (editMode)
-                return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = false, fromEditMode = true });
-            else
-                return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = true });
         }
 
         /// <summary>
