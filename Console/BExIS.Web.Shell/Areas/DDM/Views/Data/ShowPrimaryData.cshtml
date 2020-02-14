@@ -7,11 +7,11 @@
 
     <div class="ShowData_Main">
 
-        <div class="ddm-showprimarydata-options row">
+        <div class="row">
             <div class="col-md-1 col-xs-1">
             @if (Model.HasEditRight)
             {
-                @Html.ActionLink("Upload", "UploadWizard", "Submit", new { area = "DCM", @Model.DataStructureType, @Model.DatasetId }, new { @class = "bx-button function" })
+                @Html.ActionLink("Upload", "UploadWizard", "Submit", new { area = "DCM", type = @Model.DataStructureType, datasetid = @Model.DatasetId }, new { @class = "bx-button function" })
             }
             </div>
         </div>

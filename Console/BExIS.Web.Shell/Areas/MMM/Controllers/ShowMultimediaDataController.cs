@@ -24,6 +24,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Authorization;
 using Vaiona.Persistence.Api;
 using Vaiona.Entities.Common;
+using BExIS.Utils.Data.Upload;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -32,11 +33,17 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         // GET: ShowMultimediaData
         public ActionResult Index(long datasetID, string entityType = "Dataset")
         {
+            ViewData["id"] = datasetID;
+
             EntityPermissionManager entityPermissionManager = null;
             try
             {
                 entityPermissionManager = new EntityPermissionManager();
+
+                ViewData["edit"] = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), datasetID, RightType.Write);
+
                 bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), datasetID, RightType.Read);
+
                 if (access)
                 {
                     
@@ -59,6 +66,8 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
         public ActionResult multimediaData(long datasetID, long versionId = 0, string entityType = "Dataset")
         {
+            ViewData["Id"] = datasetID;
+
             EntityPermissionManager entityPermissionManager = null;
             DatasetManager datasetManager = null;
             try
@@ -68,6 +77,9 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 bool isLatestVersion = false;
                 if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
                     isLatestVersion = true;
+                
+                ViewData["edit"] = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), datasetID, RightType.Write);
+
                 bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), datasetID, RightType.Read);
                 Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), datasetID, RightType.Delete));
                 if (access)
