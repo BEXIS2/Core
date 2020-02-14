@@ -10,10 +10,12 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Export;
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -192,6 +194,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
                     int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
+                    string title = "";
+
                     #region metadata
 
                     LoggerFactory.LogCustom("Metadata Start");
@@ -215,7 +219,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
 
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
 
                         switch (format)
                         {
@@ -347,6 +351,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogCustom("Return");
 
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
+
                     return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
             }
@@ -467,5 +478,21 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());
         }
+
+        #region helper
+
+        public string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        #endregion
     }
 }
