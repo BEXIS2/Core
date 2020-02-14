@@ -5,30 +5,36 @@
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Modules.Ddm.UI.Models;
 
-<div class="ShowData_Main">
-        @*<div class="ShowData_Header">
-            <h3>@Model.DatasetTitle</h3>
-        </div>*@
+    <div class="ShowData_Main">
+
+        <div class="ddm-showprimarydata-options row">
+            <div class="col-md-1 col-xs-1">
+            @if (Model.HasEditRight)
+            {
+                @Html.ActionLink("Upload", "UploadWizard", "Submit", new { area = "DCM", @Model.DataStructureType, @Model.DatasetId }, new { @class = "bx-button function" })
+            }
+            </div>
+        </div>
 
         <div class="ShowDataContent">
 
             @Html.ValidationSummary()
-            
+
             @if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
             {
                 @Html.Partial("_structuredDataView", Model)
-                 
+
             }
 
 
             @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
             {
                 @Html.Partial("_unstructuredDataView", Model)
-                 
+
             }
 
         </div>
-</div>
+    </div>
 
 
 

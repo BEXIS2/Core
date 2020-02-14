@@ -116,85 +116,85 @@
 </div>
 <br />
 @(Html.Telerik().Grid(Model.Data)
-                                    .Name("PrimaryDataResultGrid")
-                                        .DataBinding(dataBinding => dataBinding
-                                                .Ajax()
-                                                .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "ddm" }, { "datasetId", id }, { "versionId", Model.VersionId } })
-                                                .OperationMode(GridOperationMode.Server)
-                                             )
+                .Name("PrimaryDataResultGrid")
+                    .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "ddm" }, { "datasetId", id }, { "versionId", Model.VersionId } })
+                    .OperationMode(GridOperationMode.Server)
+                    )
 
-                                            .EnableCustomBinding(true)
-                                            .HtmlAttributes(new { @class = "primaryDataResultGrid " + @tableClass })
-                                            .ClientEvents(events => events
-                                                     .OnLoad("PrimaryDataResultGrid_OnLoad")
-                                                     .OnDataBound("PrimaryData_OnCommand")
-                                                     .OnColumnHide("PrimaryData_OnCommand")
-                                                     .OnColumnShow("PrimaryData_OnCommand")
-                                                )
+                .EnableCustomBinding(true)
+                .HtmlAttributes(new { @class = "primaryDataResultGrid " + @tableClass })
+                .ClientEvents(events => events
+                            .OnLoad("PrimaryDataResultGrid_OnLoad")
+                            .OnDataBound("PrimaryData_OnCommand")
+                            .OnColumnHide("PrimaryData_OnCommand")
+                            .OnColumnShow("PrimaryData_OnCommand")
+                    )
 
-                                        .Columns(columns =>
-                                        {
-                                            for (int i = 0; i < Model.Data.Columns.Count; i++)
-                                            {
+            .Columns(columns =>
+            {
+            for (int i = 0; i < Model.Data.Columns.Count; i++)
+            {
 
-                                                DataColumn column = Model.Data.Columns[i];
+                DataColumn column = Model.Data.Columns[i];
 
-                                                string title;
-                                                bool visible = false;
+                string title;
+                bool visible = false;
 
-                                                if (column.Caption == "")
-                                                {
-                                                    title = column.ColumnName;
-                                                }
-                                                else
-                                                {
-                                                    title = column.Caption;
-                                                }
+                if (column.Caption == "")
+                {
+                    title = column.ColumnName;
+                }
+                else
+                {
+                    title = column.Caption;
+                }
 
-                                                if (column.ColumnName.ToLower().StartsWith("var"))
-                                                {
-                                                    visible = true;
+                if (column.ColumnName.ToLower().StartsWith("var"))
+                {
+                    visible = true;
 
-                                                    DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
+                    DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
 
-                                                    string format = "";
+                    string format = "";
 
-                                                    if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
-                                                    {
-                                            //string unit = "";
-                                            //if (dfo.Unit != "None") unit = dfo.Unit;
+                    if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+                    {
+                        //string unit = "";
+                        //if (dfo.Unit != "None") unit = dfo.Unit;
 
-                                            format = "{0:" + dfo.Format + "}";
+                        format = "{0:" + dfo.Format + "}";
 
-                                                        columns.Bound(column.DataType, column.ColumnName)
-                                                           .Title(title)
-                                                           .Format(format)
-                                                           .Hidden(!visible)
-                                                           .Sortable(latestVersion)
-                                                           .Filterable(latestVersion);
-                                                    }
-                                                    else
-                                                    {
-                                                        columns.Bound(column.DataType, column.ColumnName)
-                                                           .Title(title)
-                                                           .Hidden(!visible)
-                                                           .Sortable(latestVersion)
-                                                           .Filterable(latestVersion);
-                                                    }
-                                                }
-                                            }
-                                        })
+                        columns.Bound(column.DataType, column.ColumnName)
+                .Title(title)
+                .Format(format)
+                .Hidden(!visible)
+                .Sortable(latestVersion)
+                .Filterable(latestVersion);
+                    }
+                    else
+                    {
+                        columns.Bound(column.DataType, column.ColumnName)
+                .Title(title)
+                .Hidden(!visible)
+                .Sortable(latestVersion)
+                .Filterable(latestVersion);
+                    }
+                }
+            }
+        })
 
-                                        .Pageable(paging =>
-                                            paging.PageSize(100, new int[] { 10, 20, 50, 100, 500 })
-                                                .Style(pagerStyles)
-                                                .Position(GridPagerPosition.Both)
-                                                .Total(total)
-                                                )
+        .Pageable(paging =>
+            paging.PageSize(100, new int[] { 10, 20, 50, 100, 500 })
+                .Style(pagerStyles)
+                .Position(GridPagerPosition.Both)
+                .Total(total)
+                )
 
-                                        .Sortable()
-                                        .Filterable()
-                                        .ColumnContextMenu()
+        .Sortable()
+        .Filterable()
+        .ColumnContextMenu()
 
     //.Groupable()
 
