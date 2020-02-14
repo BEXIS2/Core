@@ -414,7 +414,7 @@ namespace BExIS.IO.Transform.Output
                 int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
                 // create the generated FileStream and determine its location
-                string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, versionNr, "data", ext);
+                string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, versionNr, "data"+ nameExt, ext);
                 //Register the generated data FileStream as a resource of the current dataset version
                 //ContentDescriptor generatedDescriptor = new ContentDescriptor()
                 //{
