@@ -15,5 +15,6 @@
 
     <property name="Module" type="String" />
     <property name="Value" type="String" />
+    <property name="Date" type="DateTime" />
   </class>
 </hibernate-mapping>

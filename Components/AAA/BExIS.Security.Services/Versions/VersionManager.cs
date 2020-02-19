@@ -53,6 +53,9 @@ namespace BExIS.Security.Services.Versions
                 var repo = uow.GetRepository<Version>();
                 repo.Merge(entity);
                 var merged = repo.Get(entity.Id);
+
+                merged.Date = DateTime.Now;
+
                 repo.Put(merged);
                 uow.Commit();
             }
@@ -84,7 +87,8 @@ namespace BExIS.Security.Services.Versions
                 var version = new Version()
                 {
                     Module = module,
-                    Value = value
+                    Value = value,
+                    Date = DateTime.Now
                 };
 
                 var versionRepository = uow.GetRepository<Version>();

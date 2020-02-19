@@ -11,6 +11,8 @@ namespace BExIS.Security.Entities.Versions
     {
         public long Id { get; set; }
         public string Module { get; set; }
-        public string Value { get; set; }  
+        public string Value { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }
