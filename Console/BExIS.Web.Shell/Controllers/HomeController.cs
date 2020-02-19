@@ -56,5 +56,13 @@ namespace BExIS.Web.Shell.Controllers
 
             return View();
         }
+
+        [DoesNotNeedDataAccess]
+        public ActionResult Version()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
+
+            return View();
+        }
     }
 }
