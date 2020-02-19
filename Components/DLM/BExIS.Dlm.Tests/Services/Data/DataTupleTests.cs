@@ -52,7 +52,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 // generate Data
-                long numberOfTuples = 10;
+                long numberOfTuples = 50000;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -70,13 +70,10 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 // add datatuples
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
-                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username);
 
+       
 
-
-                //dm.SyncView(ds.Id, ViewCreationBehavior.Create);
-                //dm.SyncView(ds.Id, ViewCreationBehavior.Refresh);
-                dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
             }
             finally
             {

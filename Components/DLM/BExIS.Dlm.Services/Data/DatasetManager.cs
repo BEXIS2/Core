@@ -60,7 +60,7 @@ namespace BExIS.Dlm.Services.Data
     /// </remarks>
     public class DatasetManager : IDisposable
     {
-        public const long BIG_DATASET_SIZE_THRESHOLD = 5000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
+        public const long BIG_DATASET_SIZE_THRESHOLD = 500000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
         public int PreferedBatchSize { get; set; }
         private IUnitOfWork guow = null;
 
@@ -2651,7 +2651,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true, bool throwExceptionOnUnstructured = false)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = false, bool throwExceptionOnUnstructured = false)
         {
             if (behavior == ViewCreationBehavior.None) // do not use this one! (behavior.HasFlag(ViewCreationBehavior.None))
                 return;

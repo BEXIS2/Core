@@ -137,6 +137,8 @@ namespace BExIS.Dlm.Tests.Helpers
             dataset.Should().NotBeNull();
             numberOfTuples.Should().BeGreaterThan(0);
 
+            var r = new Random();
+
             DatasetManager dm = new DatasetManager();
             try
             {
@@ -147,9 +149,9 @@ namespace BExIS.Dlm.Tests.Helpers
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
                     DataTuple dt = new DataTuple();
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = 22 });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next()});
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = 5 });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = r.Next() });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value =  true});
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
                     dt.Dematerialize();
@@ -282,8 +284,6 @@ namespace BExIS.Dlm.Tests.Helpers
                 dm.Dispose();
             }
         }
-
-
 
         public ResearchPlan CreateResearchPlan()
         {
