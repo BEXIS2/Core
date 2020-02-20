@@ -10,6 +10,8 @@ using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
@@ -20,6 +22,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
@@ -30,7 +33,7 @@ using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitSummaryController : BaseController
+    public class SubmitSummaryController : AsyncController
     {
         private TaskManager TaskManager;
         private FileStream Stream;
@@ -38,8 +41,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private static IDictionary<Guid, int> tasks = new Dictionary<Guid, int>();
 
         private UploadHelper uploadWizardHelper = new UploadHelper();
-        //
+
+        private Dictionary<string, object> _bus = new Dictionary<string, object>(); 
+
+
         // GET: /DCM/Summary/
+
+        private User _user;
 
         [HttpGet]
         public ActionResult Summary(int index)
@@ -56,61 +64,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             SummaryModel model = new SummaryModel();
             model.StepInfo = TaskManager.Current();
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
-            {
-                model.DatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-            }
+            model = updateModel(model);
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
-            {
-                model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-            }
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
-            {
-                model.DataStructureId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))
-            {
-                model.DataStructureTitle = TaskManager.Bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.RESEARCHPLAN_ID))
-            {
-                model.ResearchPlanId = Convert.ToInt32(TaskManager.Bus[TaskManager.RESEARCHPLAN_ID].ToString());
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.RESEARCHPLAN_TITLE))
-            {
-                model.ResearchPlanTitle = TaskManager.Bus[TaskManager.RESEARCHPLAN_TITLE].ToString();
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.TITLE))
-            {
-                model.DatasetTitle = TaskManager.Bus[TaskManager.TITLE].ToString();
-            }
-
-            /*
-            if (TaskManager.Bus.ContainsKey(TaskManager.AUTHOR))
-            {
-                model.Author = TaskManager.Bus[TaskManager.AUTHOR].ToString();
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.OWNER))
-            {
-                model.Owner = TaskManager.Bus[TaskManager.OWNER].ToString();
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.PROJECTNAME))
-            {
-                model.ProjectName = TaskManager.Bus[TaskManager.PROJECTNAME].ToString();
-            }
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.INSTITUTE))
-            {
-                model.ProjectInstitute = TaskManager.Bus[TaskManager.INSTITUTE].ToString();
-            }*/
 
             return PartialView(model);
         }
@@ -119,117 +75,95 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Summary(object[] data)
         {
             TaskManager = (TaskManager)Session["TaskManager"];
+
+            _bus = TaskManager.Bus;
+
             SummaryModel model = new SummaryModel();
 
             model.StepInfo = TaskManager.Current();
-            model.ErrorList = FinishUpload(TaskManager);
 
-            if (model.ErrorList.Count > 0)
-            {
-                #region set summary
+            Task.Run(() => FinishUpload());
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
-                {
-                    model.DatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-                }
+            // send email after starting the upload
+            var es = new EmailService();
+            var user = GetUser();
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
-                {
-                    model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                }
+            es.Send("upload is starting",
+                "...",
+                new List<string>() { user.Email },
+                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                );
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
-                {
-                    model.DataStructureId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
-                }
+            // set model for the page
+            #region set summary
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))
-                {
-                    model.DataStructureTitle = TaskManager.Bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
-                }
+            model = updateModel(model);
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.RESEARCHPLAN_ID))
-                {
-                    model.ResearchPlanId = Convert.ToInt32(TaskManager.Bus[TaskManager.RESEARCHPLAN_ID].ToString());
-                }
+            #endregion set summary
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.RESEARCHPLAN_TITLE))
-                {
-                    model.ResearchPlanTitle = TaskManager.Bus[TaskManager.RESEARCHPLAN_TITLE].ToString();
-                }
-
-                #endregion set summary
-
-                //ToDo: remove all changed from dataset and version
-                return PartialView(model);
-            }
-            else
-            {
-                //ToDo: remove all changed from dataset and version
-                return null;
-            }
+            //ToDo: remove all changed from dataset and version
+            return PartialView(model);
         }
 
         //temporary solution: norman :FinishUpload2
-        public List<Error> FinishUpload(TaskManager taskManager)
+        public async Task<List<Error>> FinishUpload()
         {
             DataStructureManager dsm = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
             IOUtility iOUtility = new IOUtility();
+            List<Error> temp = new List<Error>();
+            long id = 0;
+            string title = "";
 
             try
             {
-                List<Error> temp = new List<Error>();
+
                 DatasetVersion workingCopy = new DatasetVersion();
                 //datatuple list
                 List<DataTuple> rows = new List<DataTuple>();
-                Dataset ds = null;
+                //Dataset ds = null;
                 bool inputWasAltered = false;
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID) && TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
+                if (_bus.ContainsKey(TaskManager.DATASET_ID) && _bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
                 {
-                    long id = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-                    long iddsd = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
-
-                    ds = dm.GetDataset(id);
-                    // Javad: Please check if the dataset does exists!!
+                    id = Convert.ToInt32(_bus[TaskManager.DATASET_ID]);
+                    long iddsd = Convert.ToInt32(_bus[TaskManager.DATASTRUCTURE_ID]);
 
                     //GetValues from the previus version
                     // Status
-                    DatasetVersion latestVersion = dm.GetDatasetLatestVersion(ds);
+                    DatasetVersion latestVersion = dm.GetDatasetLatestVersion(id);
                     string status = DatasetStateInfo.NotValid.ToString();
                     if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
 
                     #region Progress Informations
 
-                    if (TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGESIZE))
+                    if (_bus.ContainsKey(TaskManager.CURRENTPACKAGESIZE))
                     {
-                        TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = 0;
+                        _bus[TaskManager.CURRENTPACKAGESIZE] = 0;
                     }
                     else
                     {
-                        TaskManager.Bus.Add(TaskManager.CURRENTPACKAGESIZE, 0);
+                        _bus.Add(TaskManager.CURRENTPACKAGESIZE, 0);
                     }
 
-                    if (TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGE))
+                    if (_bus.ContainsKey(TaskManager.CURRENTPACKAGE))
                     {
-                        TaskManager.Bus[TaskManager.CURRENTPACKAGE] = 0;
+                        _bus[TaskManager.CURRENTPACKAGE] = 0;
                     }
                     else
                     {
-                        TaskManager.Bus.Add(TaskManager.CURRENTPACKAGE, 0);
+                        _bus.Add(TaskManager.CURRENTPACKAGE, 0);
                     }
 
                     #endregion Progress Informations
 
                     #region structured data
 
-                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Structured))
+                    if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && _bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Structured))
                     {
-                        string title = "";
-                        long datasetid = ds.Id;
+                        long datasetid = id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                        title = xmlDatasetHelper.GetInformation(ds.Id, NameAttributeValues.title);
+                        title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
 
                         int numberOfRows = 0;
 
@@ -238,7 +172,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //Stopwatch fullTime = Stopwatch.StartNew();
 
                             //Stopwatch loadDT = Stopwatch.StartNew();
-                            List<long> datatupleFromDatabaseIds = dm.GetDatasetVersionEffectiveTupleIds(dm.GetDatasetLatestVersion(ds.Id));
+                            List<long> datatupleFromDatabaseIds = dm.GetDatasetVersionEffectiveTupleIds(dm.GetDatasetLatestVersion(id));
                             //loadDT.Stop();
                             //Debug.WriteLine("Load DT From Db Time " + loadDT.Elapsed.TotalSeconds.ToString());
 
@@ -247,21 +181,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #region excel reader
 
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
-                                iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (_bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
+                                iOUtility.IsSupportedExcelFile(_bus[TaskManager.EXTENTION].ToString()))
                             {
                                 int packageSize = 100000;
 
-                                TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
+                                _bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
 
                                 int counter = 0;
 
                                 //schleife
-                                dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
-                                if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
-                                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
+                                dm.CheckOutDatasetIfNot(id, GetUser().Name); // there are cases, the dataset does not get checked out!!
+                                if (!dm.IsDatasetCheckedOutFor(id, GetUser().Name))
+                                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", id, GetUser().Name));
 
-                                workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                                workingCopy = dm.GetDatasetWorkingCopy(id);
 
                                 //set StateInfo of the previus version
                                 if (workingCopy.StateInfo == null)
@@ -279,26 +213,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 ExcelReader reader = null;
                                 ExcelFileReaderInfo excelFileReaderInfo = null;
 
-                                if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
-                                    excelFileReaderInfo = (ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
+                                if (iOUtility.IsSupportedExcelFile(_bus[TaskManager.EXTENTION].ToString()))
+                                    excelFileReaderInfo = (ExcelFileReaderInfo)_bus[TaskManager.FILE_READER_INFO];
 
                                 reader = new ExcelReader(sds, excelFileReaderInfo);
 
                                 do
                                 {
                                     counter++;
-                                    TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
+                                    _bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                     //open stream
-                                    Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                                    Stream = reader.Open(_bus[TaskManager.FILEPATH].ToString());
 
-                                    if (iOUtility.IsSupportedExcelFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                                    if (iOUtility.IsSupportedExcelFile(_bus[TaskManager.EXTENTION].ToString()))
                                     {
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        rows = reader.ReadFile(Stream, _bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
                                     else
                                     {
-                                        rows = reader.ReadTemplateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        rows = reader.ReadTemplateFile(Stream, _bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
 
                                     //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
@@ -310,21 +244,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     else
                                     {
                                         //XXX Add packagesize to excel read function
-                                        if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        if (_bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
+                                            if (_bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)_bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
                                             {
                                                 dm.EditDatasetVersion(workingCopy, rows, null, null);
                                                 //Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
                                                 //Debug.WriteLine("----");
                                             }
                                             else
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
+                                            if (_bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
                                             {
                                                 if (rows.Count() > 0)
                                                 {
                                                     Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                    splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                                    splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)_bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
 
                                                     dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                 }
@@ -345,22 +279,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #region ascii reader
 
-                            if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
+                            if (iOUtility.IsSupportedAsciiFile(_bus[TaskManager.EXTENTION].ToString()))
                             {
                                 // open file
-                                AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO]);
-                                //Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                                AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)_bus[TaskManager.FILE_READER_INFO]);
+                                //Stream = reader.Open(_bus[TaskManager.FILEPATH].ToString());
 
                                 //DatasetManager dm = new DatasetManager();
                                 //Dataset ds = dm.GetDataset(id);
 
                                 Stopwatch totalTime = Stopwatch.StartNew();
 
-                                if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
+                                if (dm.IsDatasetCheckedOutFor(id, GetUser().Name) || dm.CheckOutDataset(id, GetUser().Name))
                                 {
-                                    workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                                    workingCopy = dm.GetDatasetWorkingCopy(id);
                                     int packageSize = 100000;
-                                    TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
+                                    _bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
                                     //schleife
                                     int counter = 0;
 
@@ -381,10 +315,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     {
                                         counter++;
                                         inputWasAltered = false;
-                                        TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
+                                        _bus[TaskManager.CURRENTPACKAGE] = counter;
 
-                                        Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id, packageSize);
+                                        Stream = reader.Open(_bus[TaskManager.FILEPATH].ToString());
+                                        rows = reader.ReadFile(Stream, _bus[TaskManager.FILENAME].ToString(), id, packageSize);
                                         Stream.Close();
 
                                         if (reader.ErrorMessages.Count > 0)
@@ -396,19 +330,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             //return temp;
                                         }
 
-                                        if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        if (_bus.ContainsKey(TaskManager.DATASET_STATUS))
                                         {
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)TaskManager.Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
+                                            if (_bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)_bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
                                             {
                                                 dm.EditDatasetVersion(workingCopy, rows, null, null);
                                             }
                                             else
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
+                                            if (_bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
                                             {
                                                 if (rows.Count() > 0)
                                                 {
                                                     //Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<AbstractTuple>>();
-                                                    var splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                                    var splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)_bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                     dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                     inputWasAltered = true;
                                                 }
@@ -419,7 +353,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             if (rows.Count() > 0)
                                             {
                                                 Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                                splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)_bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                 inputWasAltered = true;
                                             }
@@ -471,16 +405,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #region set System value into metadata
 
-                            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                            if (_bus.ContainsKey(TaskManager.DATASET_STATUS))
                             {
-                                bool newdataset = TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new");
+                                bool newdataset = _bus[TaskManager.DATASET_STATUS].ToString().Equals("new");
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
                                 //set modification
                                 workingCopy.ModificationInfo = new EntityAuditInfo()
                                 {
-                                    Performer = GetUsernameOrDefault(),
+                                    Performer = GetUser().Name,
                                     Comment = "Data",
                                     ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
                                 };
@@ -493,12 +427,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             // ToDo: Get Comment from ui and users
                             MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
-                            dm.CheckInDataset(ds.Id, numberOfRows + " rows", GetUsernameOrDefault());
+                            dm.CheckInDataset(id, numberOfRows + " rows", GetUser().Name);
 
                             //send email
                             var es = new EmailService();
                             es.Send(MessageHelper.GetUpdateDatasetHeader(),
-                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, GetUsernameOrDefault()),
+                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, GetUser().Name),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
                         }
@@ -513,6 +447,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                         finally
                         {
+
                         }
                     }
 
@@ -520,14 +455,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     #region unstructured data
 
-                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
+                    if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && _bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
                     {
                         // checkout the dataset, apply the changes, and check it in.
-                        if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
+                        if (dm.IsDatasetCheckedOutFor(id, GetUser().Name) || dm.CheckOutDataset(id, GetUser().Name))
                         {
                             try
                             {
-                                workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                                workingCopy = dm.GetDatasetWorkingCopy(id);
 
                                 using (var unitOfWork = this.GetUnitOfWork())
                                 {
@@ -554,7 +489,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 //set modification
                                 workingCopy.ModificationInfo = new EntityAuditInfo()
                                 {
-                                    Performer = GetUsernameOrDefault(),
+                                    Performer = GetUser().Name,
                                     Comment = "File",
                                     ActionType = AuditActionType.Create
                                 };
@@ -563,13 +498,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 //filename
                                 string filename = "";
-                                if (TaskManager.Bus.ContainsKey(TaskManager.FILENAME))
+                                if (_bus.ContainsKey(TaskManager.FILENAME))
                                 {
-                                    filename = TaskManager.Bus[TaskManager.FILENAME]?.ToString();
+                                    filename = _bus[TaskManager.FILENAME]?.ToString();
                                 }
 
                                 // ToDo: Get Comment from ui and users
-                                dm.CheckInDataset(ds.Id, filename, GetUsernameOrDefault(), ViewCreationBehavior.None);
+                                dm.CheckInDataset(id, filename, GetUser().Name, ViewCreationBehavior.None);
                             }
                             catch (Exception ex)
                             {
@@ -587,33 +522,68 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (temp.Count <= 0)
                 {
-                    dm.CheckInDataset(ds.Id, "no update on data tuples", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    dm.CheckInDataset(id, "no update on data tuples", GetUser().Name, ViewCreationBehavior.None);
                 }
                 else
                 {
-                    dm.UndoCheckoutDataset(ds.Id, GetUsernameOrDefault());
+                    dm.UndoCheckoutDataset(id, GetUser().Name);
                 }
-                return temp;
+
+            }
+            catch (Exception ex)
+            {
+                temp.Add(new Error(ErrorType.Dataset, ex.Message));
+
+                dm.CheckInDataset(id, "no update on data tuples", GetUser().Name, ViewCreationBehavior.None);
             }
             finally
             {
+                var user = GetUser();
+
+                if (temp.Any())
+                {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
+                        MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
+                        new List<string> { ConfigurationManager.AppSettings["SystemEmail"], user.Email });
+
+                }
+                else
+                {
+                    var es = new EmailService();
+                    es.Send("upload success",
+                        "yeah",
+                        new List<string> { ConfigurationManager.AppSettings["SystemEmail"], user.Email });
+                }
+
                 dm.Dispose();
                 dsm.Dispose();
             }
+
+            return temp;
         }
 
         #region private methods
 
-        public string GetUsernameOrDefault()
+        private User GetUser()
         {
-            string username = string.Empty;
-            try
+            if (_user == null)
             {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
 
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+                string username = string.Empty;
+
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                }
+                catch { return null; }
+
+                UserManager userManager = new UserManager();
+
+                _user = userManager.FindByNameAsync(username).Result;
+            }
+
+            return _user;
         }
 
         private string SaveFileInContentDiscriptor(DatasetVersion datasetVersion)
@@ -624,11 +594,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // the function is available in the abstract class datawriter
                 ExcelWriter excelWriter = new ExcelWriter();
                 // Move Original File to its permanent location
-                String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-                string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
+                String tempPath = _bus[TaskManager.FILEPATH].ToString();
+                string originalFileName = _bus[TaskManager.FILENAME].ToString();
                 string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
                 string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
-                string extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+                string extention = _bus[TaskManager.EXTENTION].ToString();
 
                 Debug.WriteLine("extention : " + extention);
 
@@ -664,17 +634,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
             //dataset id and data structure id are available via datasetVersion properties,why you are passing them via the BUS? Javad
-            long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
-            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
+            long datasetId = Convert.ToInt64(_bus[TaskManager.DATASET_ID]);
+            long dataStructureId = Convert.ToInt64(_bus[TaskManager.DATASTRUCTURE_ID]);
 
-            string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-            string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
+            string title = _bus[TaskManager.DATASET_TITLE].ToString();
+            string ext = ".xlsm";// _bus[TaskManager.EXTENTION].ToString();
 
             ExcelWriter excelWriter = new ExcelWriter();
 
             // Move Original File to its permanent location
-            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-            string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
+            String tempPath = _bus[TaskManager.FILEPATH].ToString();
+            string originalFileName = _bus[TaskManager.FILENAME].ToString();
             string storePath = excelWriter.GetFullStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
             string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
 
@@ -722,6 +692,49 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
 
             return metadata;
+        }
+
+        private SummaryModel updateModel(SummaryModel model)
+        {
+
+            TaskManager = (TaskManager)Session["TaskManager"];
+
+            if (_bus.ContainsKey(TaskManager.DATASET_ID))
+            {
+                model.DatasetId = Convert.ToInt32(_bus[TaskManager.DATASET_ID]);
+            }
+
+            if (_bus.ContainsKey(TaskManager.DATASET_TITLE))
+            {
+                model.DatasetTitle = _bus[TaskManager.DATASET_TITLE].ToString();
+            }
+
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
+            {
+                model.DataStructureId = Convert.ToInt32(_bus[TaskManager.DATASTRUCTURE_ID]);
+            }
+
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))
+            {
+                model.DataStructureTitle = _bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
+            }
+
+            if (_bus.ContainsKey(TaskManager.RESEARCHPLAN_ID))
+            {
+                model.ResearchPlanId = Convert.ToInt32(_bus[TaskManager.RESEARCHPLAN_ID].ToString());
+            }
+
+            if (_bus.ContainsKey(TaskManager.RESEARCHPLAN_TITLE))
+            {
+                model.ResearchPlanTitle = _bus[TaskManager.RESEARCHPLAN_TITLE].ToString();
+            }
+
+            if (_bus.ContainsKey(TaskManager.TITLE))
+            {
+                model.DatasetTitle = _bus[TaskManager.TITLE].ToString();
+            }
+
+            return model;
         }
 
         #endregion private methods

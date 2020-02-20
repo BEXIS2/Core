@@ -72,6 +72,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager = (TaskManager)Session["TaskManager"];
                     TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TYPE, type);
 
+                    if(datasetid>0) TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
+
                     Session["TaskManager"] = TaskManager;
                 }
                 catch (Exception e)
