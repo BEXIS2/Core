@@ -26,11 +26,21 @@ namespace BExIS.Security.Services.Versions
 
         public IReadOnlyRepository<Version> VersionRepository { get; }
 
-        public IQueryable<Version> Operations => VersionRepository.Query();
+        public IQueryable<Version> Versions => VersionRepository.Query();
+
+        public Version LatestVersion => VersionRepository.Query().OrderByDescending(v => v.Date).FirstOrDefault();
 
         public void Dispose()
         {
             Dispose(true);
+        }
+
+        public Version GetLatestVersion(string module = "Shell")
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                return !Exists(module) ? null : VersionRepository.Query(v => string.Equals(v.Module, module, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(v => v.Date).FirstOrDefault();
+            }
         }
 
         protected void Dispose(bool disposing)
@@ -39,8 +49,7 @@ namespace BExIS.Security.Services.Versions
             {
                 if (disposing)
                 {
-                    if (_guow != null)
-                        _guow.Dispose();
+                    _guow?.Dispose();
                     _isDisposed = true;
                 }
             }
@@ -74,6 +83,19 @@ namespace BExIS.Security.Services.Versions
                     return false;
 
                 return operationRepository.Query(v => v.Module.ToUpperInvariant() == module.ToUpperInvariant() && v.Value.ToUpperInvariant() == value.ToUpperInvariant()).Count() == 1;
+            }
+        }
+
+        public bool Exists(string module)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var operationRepository = uow.GetReadOnlyRepository<Version>();
+
+                if (string.IsNullOrEmpty(module))
+                    return false;
+
+                return operationRepository.Query(v => v.Module.ToUpperInvariant() == module.ToUpperInvariant()).Any();
             }
         }
 
