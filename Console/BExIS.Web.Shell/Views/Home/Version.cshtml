@@ -1,7 +1,12 @@
-﻿
+﻿@model BExIS.Web.Shell.Models.VersionModel
+
 @{
     ViewBag.Title = "Version";
 }
 
 <h2>Version</h2>
 
+
+Site: @Html.DisplayFor(m => m.Site)
+Database: @Html.DisplayFor(m => m.Database)
+Workspace: @Html.DisplayFor(m => m.Workspace)
