@@ -422,6 +422,7 @@
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
+    <Compile Include="Models\VersionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
