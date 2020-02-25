@@ -24,27 +24,8 @@ namespace BExIS.Xml.Helpers
                     {
                         Id = id,
                         Title = datasetHelper.GetInformation(id, NameAttributeValues.title),
-                        Version = dm.GetDataset(id).Versions.Count,
+                        Version = dm.GetDatasetVersionCount(id)
                     });
-
-                    /*
-                     * 
-                     * foreach (var id in datasetIds)
-                    {
-                        title = datasetHelper.GetInformation(id, NameAttributeValues.title);
-                        version = dm.GetDataset(id).Versions.Count;
-
-                        var et = new EntityStoreItem()
-                        {
-                            Id = id,
-                            Title = title,
-                            Version = version
-                        };
-
-                        entities.Add(et);
-                    }
-
-    */
 
                     return entities.ToList();
                 }

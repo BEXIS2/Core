@@ -1561,6 +1561,37 @@ namespace BExIS.Dlm.Services.Data
             return 0;
         }
 
+        public int GetDatasetVersionCount(long datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var count = datasetVersionRepo.Query(dsv => dsv.Dataset.Id.Equals(datasetId)).Count();
+
+                return count;
+            }
+        }
+
+        public string GetMetadataValueFromDatasetVersion(long id, string xpath)
+        {
+            /*select unnest(xpath('/Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType/text()',Metadata)) 
+                from datasetversions where Id = 1*/
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("SELECT unnest(xpath('/");
+            sb.Append(xpath);
+            sb.Append("/text()',Metadata))");
+            sb.Append("from datasetversions where Id ="+ id);
+
+            string value = "";
+
+            value = guow.ExecuteDynamic<String>(sb.ToString());
+
+            return value;
+
+        }
+
         #endregion DatasetVersion
 
         #region Private Methods

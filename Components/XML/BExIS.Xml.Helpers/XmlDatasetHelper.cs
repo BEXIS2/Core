@@ -27,16 +27,51 @@ namespace BExIS.Xml.Helpers
             try
             {
                 //DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
-                var datasetIds = new List<long>() { datasetid };
+                var dataset = dm.GetDataset(datasetid);
 
-                var version = dm.GetDatasetLatestVersions(datasetIds, true).FirstOrDefault();
+                if (!dm.IsDatasetCheckedIn(datasetid)) return string.Empty;
 
-                if (version == null) return string.Empty;
-                return GetInformationFromVersion(version.Id, name);
+                var versionId = dm.GetDatasetLatestVersionId(datasetid);
+
+                return GetInformationFromVersionTest(versionId, dataset.MetadataStructure.Id, name);
             }
             finally
             {
                 dm.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Information in metadata is stored as xml
+        /// get back the vale of an attribute
+        /// e.g. title  = "dataset title"
+        /// /// </summary>
+        /// <param name="datasetVersion"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string GetInformationFromVersionTest(long datasetVersionId,long metadataStructureId, NameAttributeValues name)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            using (var unitOfWork = this.GetUnitOfWork())
+            {
+                if (datasetVersionId <= 0) return String.Empty;
+                if (metadataStructureId <= 0) return String.Empty;
+
+                MetadataStructureManager msm = new MetadataStructureManager();
+                MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+
+                if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
+
+
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                    xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+
+                return dm.GetMetadataValueFromDatasetVersion(datasetVersionId, xpath);
+
             }
         }
 

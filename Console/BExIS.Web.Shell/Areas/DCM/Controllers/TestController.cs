@@ -1,7 +1,12 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Helpers;
+using BExIS.Xml.Helpers;
 using System;
 using System.Configuration;
 using System.Diagnostics;
@@ -76,6 +81,69 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return View("index");
         }
+
+        public ActionResult CreateTestDatasets(int n)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            ResearchPlanManager researchPlanManager = new ResearchPlanManager();
+
+
+            try
+            {
+                var structure = dataStructureManager.UnStructuredDataStructureRepo.Get(1);
+                var metadatastructure = metadataStructureManager.Repo.Get(1);
+                var researchplan = researchPlanManager.Repo.Get(1);
+                var xmlDatasetHelper = new XmlDatasetHelper();
+
+                var xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadatastructure.Id);
+
+                for (int i = 0; i < n; i++)
+                {
+                   var dataset =  datasetManager.CreateEmptyDataset(structure, researchplan, metadatastructure);
+
+
+                    if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "test") || datasetManager.CheckOutDataset(dataset.Id, "test"))
+                    {
+                        DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(dataset.Id);
+
+                        datasetManager.EditDatasetVersion(workingCopy, null, null, null);
+                        datasetManager.CheckInDataset(dataset.Id, "", "test", ViewCreationBehavior.None);
+
+                      
+                        workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(metadataXml);
+
+                        string xpath = xmlDatasetHelper.GetInformationPath(metadatastructure.Id, NameAttributeValues.title);
+
+                        workingCopy.Metadata.SelectSingleNode(xpath).InnerText = i.ToString();
+
+                        datasetManager.EditDatasetVersion(workingCopy, null, null, null);
+                        datasetManager.CheckInDataset(dataset.Id, "", "test", ViewCreationBehavior.None);
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+                dataStructureManager.Dispose();
+                metadataStructureManager.Dispose();
+                researchPlanManager.Dispose();
+            }
+
+
+            return View("Index");
+        }
+
+        
     }
 
 }
