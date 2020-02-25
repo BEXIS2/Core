@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Party;
+using BExIS.Dlm.Entities.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
@@ -1627,14 +1628,33 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private string createEditedBy(string performer)
         {
-            var user = GetUsernameOrDefault();
-            if (user != "DEFAULT")
+
+            using (PartyManager partyManager = new PartyManager())
             {
-                return "by " + performer + ", ";
-            }
-            else
-            {
-                return "";
+                var identityUserService = new IdentityUserService();
+                var user_performer = identityUserService.FindByNameAsync(performer);
+
+                // Replace account name by party name if exists
+                if (user_performer != null)
+                {
+                    Party party = partyManager.GetPartyByUser(user_performer.Result.Id);
+
+                    if (party != null)
+                    {
+                        performer = party.Name;
+                    }
+                }
+
+                // check if a user is logged in, if not do not show performer
+                var user = GetUsernameOrDefault();
+                if (user != "DEFAULT")
+                {
+                    return "by " + performer + ", ";
+                }
+                else
+                {
+                    return "";
+                }
             }
             
         }
