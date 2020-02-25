@@ -124,17 +124,17 @@ namespace BExIS.Modules.Rpm.UI.Models
                             this.inUse = true;
                             break;
                         }
-                        else
+                       /* else
                         {
                             foreach (DatasetVersion dv in d.Versions)
                             {
-                                if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
                                 {
                                     this.inUse = true;
                                     break;
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
                 finally
@@ -259,17 +259,17 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 dataStructureResult.inUse = true;
                                 break;
                             }
-                            else
+                           /* else
                             {
                                 foreach (DatasetVersion dv in d.Versions)
                                 {
-                                    if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                    if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
                                     {
                                         dataStructureResult.inUse = true;
                                         break;
                                     }
                                 }
-                            }
+                            }*/
                         }
                     }
                     finally

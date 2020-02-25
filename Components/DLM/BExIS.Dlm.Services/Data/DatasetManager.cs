@@ -1858,10 +1858,11 @@ namespace BExIS.Dlm.Services.Data
 
             // be sure you are working on the latest version (working copy). applyTupleChanges takes the working copy from the DB
             List<DataTupleVersion> tobeAdded = new List<DataTupleVersion>();
+            List<DataTupleVersion> versionTobeEdited = new List<DataTupleVersion>();
             List<DataTuple> tobeDeleted = new List<DataTuple>();
             List<DataTuple> tobeEdited = new List<DataTuple>();
 
-            DatasetVersion editedVersion = applyTupleChanges(workingCopyDatasetVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            DatasetVersion editedVersion = applyTupleChanges(workingCopyDatasetVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, ref versionTobeEdited, createdTuples, editedTuples, deletedTuples, unchangedTuples);
 
             #region main code
 
@@ -1908,6 +1909,44 @@ namespace BExIS.Dlm.Services.Data
 
             #region <<------ experimental code ------>>
 
+
+            /*
+            if the case occurs that the link to the datatuple must be removed from the 
+            datatupleversions because the datatuple is deleted,
+            this must happen before.
+            */
+            if (versionTobeEdited.Any() && tobeDeleted.Any())
+            {
+                // if datatuple versions need to be updated
+                using (var uow = this.GetUnitOfWork())
+                {
+                    if (versionTobeEdited != null && versionTobeEdited.Count > 0)
+                    {
+                        int batchSize = uow.PersistenceManager.PreferredPushSize;
+                        List<DataTupleVersion> processedTuples = null;
+                        long iterations = versionTobeEdited.Count / batchSize;
+                        if (iterations * batchSize < versionTobeEdited.Count)
+                            iterations++;
+                        for (int round = 0; round < iterations; round++)
+                        {
+
+                            processedTuples = versionTobeEdited.Skip(round * batchSize).Take(batchSize).ToList();
+
+                            foreach (var pT in processedTuples)
+                            {
+                                var repo = uow.GetRepository<DataTupleVersion>();
+                                repo.Merge(pT);
+                                var merged = repo.Get(pT.Id);
+                                repo.Put(merged);
+                            }
+
+                            uow.Commit();
+                        }
+                    }
+                }
+            }
+        
+
             // Check the same scenario using stateless session/ BulkUnitOfWork
             using (IUnitOfWork uow = this.GetBulkUnitOfWork())
             {
@@ -1948,12 +1987,8 @@ namespace BExIS.Dlm.Services.Data
                         processedTuples.Clear();
                         GC.Collect();
                     }
-                }
-                //foreach (var editedTuple in tobeEdited)
-                //{
-                //    editedTuple.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
-                //    System.Diagnostics.Debug.Print(editedTuple.XmlVariableValues.AsString());
-                //}
+                }   
+
                 if (tobeDeleted != null && tobeDeleted.Count > 0)
                 {
                     int batchSize = uow.PersistenceManager.PreferredPushSize;
@@ -1996,6 +2031,7 @@ namespace BExIS.Dlm.Services.Data
 
             // be sure you are working on the latest version (working copy). applyTupleChanges takes the working copy from the DB
             List<DataTupleVersion> tobeAdded = new List<DataTupleVersion>();
+            List<DataTupleVersion> versionsTobeEdited = new List<DataTupleVersion>();
             List<DataTuple> tobeDeleted = new List<DataTuple>();
             List<DataTuple> tobeEdited = new List<DataTuple>();
 
@@ -2010,7 +2046,7 @@ namespace BExIS.Dlm.Services.Data
                     tobeDeleted.Clear();
                     tobeEdited.Clear();
                     var processingTuples = createdTuples.Skip(round * this.PreferedBatchSize).Take(this.PreferedBatchSize).ToList();
-                    editedVersion = applyTupleChanges(editedVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, processingTuples, null, null, unchangedTuples);
+                    editedVersion = applyTupleChanges(editedVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited,ref versionsTobeEdited, processingTuples, null, null, unchangedTuples);
                     using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                     {
                         createTuples(processingTuples, uow);
@@ -2039,9 +2075,10 @@ namespace BExIS.Dlm.Services.Data
                     tobeAdded.Clear();
                     tobeDeleted.Clear();
                     tobeEdited.Clear();
+                    versionsTobeEdited.Clear();
 
                     var processingTuples = editedTuples.Skip(round * this.PreferedBatchSize).Take(this.PreferedBatchSize).ToList();
-                    editedVersion = applyTupleChanges(editedVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, null, processingTuples, null, unchangedTuples);
+                    editedVersion = applyTupleChanges(editedVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, ref versionsTobeEdited, null, processingTuples, null, unchangedTuples);
                     using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                     {
                         createTuples(null, uow);
@@ -2070,9 +2107,10 @@ namespace BExIS.Dlm.Services.Data
                     tobeAdded.Clear();
                     tobeDeleted.Clear();
                     tobeEdited.Clear();
+                    versionsTobeEdited.Clear();
 
                     var processingTuples = deletedTuples.Skip(round * this.PreferedBatchSize).Take(this.PreferedBatchSize).ToList();
-                    editedVersion = applyTupleChanges(editedVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, null, null, processingTuples, unchangedTuples);
+                    editedVersion = applyTupleChanges(editedVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, ref versionsTobeEdited, null, null, processingTuples, unchangedTuples);
                     using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                     {
                         createTuples(null, uow);
@@ -2266,17 +2304,18 @@ namespace BExIS.Dlm.Services.Data
                 List<AbstractTuple> editedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Edited)
                                                                             && (p.DatasetVersion.Id == datasetVersion.Id)
                                                                             && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
-                                                                .Skip(pageNumber * pageSize).Take(pageSize)
+                                                                //.Skip(pageNumber * pageSize).Take(pageSize)
                                                                 .Cast<AbstractTuple>().ToList();
                 List<AbstractTuple> deletedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Deleted)
                                                                         && (versionIds.Contains(p.DatasetVersion.Id))
                                                                         && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
-                                                                   .Skip(pageNumber * pageSize).Take(pageSize)
+                                                                   //.Skip(pageNumber * pageSize).Take(pageSize)
                                                                    .Cast<AbstractTuple>().ToList();
                 // the resulting union-ned list is made by a page from editedVersion and a page from the deleted ones, so it is maximum 2 pages, but should be reduced to a page.
                 // for this reason the union is sorted by timestamp and then the first page is taken.
                 List<AbstractTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
                     .OrderBy(p => p.Timestamp)
+                    .Skip(pageNumber * pageSize)
                     .Take(pageSize)
                     .ToList();
                 return (unioned);
@@ -2907,7 +2946,7 @@ namespace BExIS.Dlm.Services.Data
         }
 
         private DatasetVersion applyTupleChanges(DatasetVersion workingCopyVersion
-            , ref List<DataTupleVersion> tupleVersionsTobeAdded, ref List<DataTuple> tuplesTobeDeleted, ref List<DataTuple> tuplesTobeEdited
+            , ref List<DataTupleVersion> tupleVersionsTobeAdded, ref List<DataTuple> tuplesTobeDeleted, ref List<DataTuple> tuplesTobeEdited, ref List<DataTupleVersion> tupleVersionsTobeEdited
             , ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -2915,6 +2954,7 @@ namespace BExIS.Dlm.Services.Data
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 var dataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
                 var dataTupleVersionRepo = uow.GetReadOnlyRepository<DataTupleVersion>();
+
 
                 // do nothing with unchanged for now
 
@@ -3070,7 +3110,7 @@ namespace BExIS.Dlm.Services.Data
                         DataTupleIterator tupleIterator = new DataTupleIterator(deletedTuples.ToList(), this);
                         // load the ID all the tuple versions that are already linked to the tobe deleted tuples.
                         //This reduces the number of selects on the tuple versions, because most of the tuples have no version
-                        List<long> tupleVersionIds = dataTupleVersionRepo.Query(p => deletedTuples.Contains(p.OriginalTuple.Id)).Select(p => p.Id).ToList();
+                        var tupleVersionIds = dataTupleVersionRepo.Query(p => deletedTuples.Contains(p.OriginalTuple.Id)).Select(p => new Tuple<long,long>(p.Id,p.OriginalTuple.Id)).ToList();
                         foreach (var deleted in tupleIterator)
                         {
                             DataTuple originalTuple = (DataTuple)deleted; // DataTupleRepo.Get(deleted.Id);// latestVersionEffectiveTuples.Where(p => p.Id == deleted.Id).Single();
@@ -3078,29 +3118,31 @@ namespace BExIS.Dlm.Services.Data
 
                             DataTupleVersion tupleVersion;
                             // check if the tuple has a history record
-                            if (tupleVersionIds.Contains(originalTuple.Id))
+                            foreach (var v in tupleVersionIds)
                             {
-                                tupleVersion = dataTupleVersionRepo.Get(originalTuple.Id);
-                                // there is a previous history record, with tuple action equal to Edit or even Delete!
-                                tupleVersion.TupleAction = TupleAction.Deleted;
+                                //get tuple version
+                                var tVersion = dataTupleVersionRepo.Get(v.Item1);
+                                tVersion.OriginalTuple = null;
+
+                                tupleVersionsTobeEdited.Add(tVersion);
                             }
-                            else // there is no previous record, so create one
+
+
+                            tupleVersion = new DataTupleVersion()
                             {
-                                tupleVersion = new DataTupleVersion()
-                                {
-                                    TupleAction = TupleAction.Deleted,
-                                    Extra = originalTuple.Extra,
-                                    //Id = orginalTuple.Id,
-                                    OrderNo = originalTuple.OrderNo,
-                                    Timestamp = originalTuple.Timestamp,
-                                    XmlAmendments = originalTuple.XmlAmendments,
-                                    JsonVariableValues = originalTuple.JsonVariableValues,
-                                    //OriginalTuple = orginalTuple,
-                                    DatasetVersion = originalTuple.DatasetVersion, // latestCheckedInVersion,
-                                    ActingDatasetVersion = workingCopyVersion,
-                                    Values = originalTuple.Values
-                                };
-                            }
+                                TupleAction = TupleAction.Deleted,
+                                Extra = originalTuple.Extra,
+                                //Id = orginalTuple.Id,
+                                OrderNo = originalTuple.OrderNo,
+                                Timestamp = originalTuple.Timestamp,
+                                XmlAmendments = originalTuple.XmlAmendments,
+                                JsonVariableValues = originalTuple.JsonVariableValues,
+                                //OriginalTuple = orginalTuple,
+                                DatasetVersion = originalTuple.DatasetVersion, // latestCheckedInVersion,
+                                ActingDatasetVersion = workingCopyVersion,
+                                Values = originalTuple.Values
+                            };
+                            
 
                             tupleVersion.OriginalTuple = null;
 
