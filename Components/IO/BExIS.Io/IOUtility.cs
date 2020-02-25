@@ -175,6 +175,23 @@ namespace BExIS.IO
                 return tmp.ToString(new CultureInfo("en-us"));
             }
 
+            if (DateTime.TryParse(dateAsString, out tmp))
+            {
+                return tmp.ToString(new CultureInfo("en-us"));
+            }
+
+            if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.None, out tmp))
+            {
+                return tmp.ToString(new CultureInfo("en-us")); 
+            }
+
+            if (DateTime.TryParse(dateAsString, new CultureInfo("de-DE", false), DateTimeStyles.None, out tmp))
+            {
+                return tmp.ToString(new CultureInfo("en-us")); 
+            }
+
+
+
             return "";
         }
 
