@@ -545,23 +545,14 @@
                 valid: valid
             },
             function (response) {
-                    $('#MetadataEditor').replaceWith(response);
 
-                $.when().then(
-                    function () {
-                        $('html, body').animate({ scrollTop: 0 }, "slow");
-                    }
-                ).then(
-                    function () {
-                        bindMinimap(true);
-                    }
-                )
-                .then(
-                    function () {
-                         // trigger save event
-                        $(document).trigger("save");
-                    }
-                )
+                if (response.result == 'error') {
+                    alert(response.message)
+                }
+                else if (response.result == 'redirect'){
+                    window.location = response.url;
+                }
+
             });
     }
 

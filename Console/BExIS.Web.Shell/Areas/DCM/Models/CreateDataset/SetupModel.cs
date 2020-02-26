@@ -3,9 +3,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 {
+    public enum DataStructureOptions
+    {
+        [Display(Name = "Existing")]
+        Existing,
+
+        [Display(Name = "New File")]
+        CreateNewFile,
+
+        [Display(Name = "New Data Structure")]
+        CreateNewStructure
+    }
+
     public class SetupModel
     {
         [Display(Name = "Dataset")]
+        [Required]
         public long SelectedDatasetId { get; set; }
 
         [Display(Name = "Metadata Structure")]
@@ -13,7 +26,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public long SelectedMetadataStructureId { get; set; }
 
         [Display(Name = "Data Structure")]
-        [Required(ErrorMessage = "Please select a data structure.")]
+        //[Required(ErrorMessage = "Please select a data structure.")]
         public long SelectedDataStructureId { get; set; }
 
         public List<ListViewItem> MetadataStructureViewList { get; set; }
@@ -26,6 +39,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public bool BlockDatastructureId { get; set; }
         public bool BlockMetadataStructureId { get; set; }
 
+        public DataStructureOptions DataStructureOptions { get; set; }
+
         public SetupModel()
         {
             SelectedMetadataStructureId = -1;
@@ -36,10 +51,11 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             DataStructureViewList = new List<ListViewItemWithType>();
             BlockDatastructureId = false;
 
-
             SelectedDatasetId = -1;
             DatasetViewList = new List<ListViewItem>();
             BlockDatasetId = false;
+
+            DataStructureOptions = DataStructureOptions.Existing;
         }
     }
 }

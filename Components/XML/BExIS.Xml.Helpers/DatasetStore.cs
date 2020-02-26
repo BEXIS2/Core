@@ -24,8 +24,9 @@ namespace BExIS.Xml.Helpers
                     {
                         Id = id,
                         Title = datasetHelper.GetInformation(id, NameAttributeValues.title),
-                        Version = dm.GetDataset(id).Versions.Count,
+                        Version = dm.GetDatasetVersionCount(id)
                     });
+
                     return entities.ToList();
                 }
                 finally

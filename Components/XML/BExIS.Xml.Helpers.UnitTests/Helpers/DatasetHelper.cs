@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using NUnit.Framework;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BExIS.Dlm.Tests.Helpers
+namespace BExIS.Xml.Helpers.UnitTests.Helpers
 {
     public class DatasetHelper
     {
@@ -121,7 +122,7 @@ namespace BExIS.Dlm.Tests.Helpers
                 dsManager.AddVariableUsage(dataStructure, dataAttribute5, true, "var5UT", "", "", "Used for unit testing");
                 return dataStructure;
             }
-            catch(Exception ex) { return null; }
+            catch (Exception ex) { return null; }
             finally
             {
                 unitManager.Dispose();
@@ -131,7 +132,7 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
-        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples,string username)
+        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples, string username)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
@@ -149,10 +150,10 @@ namespace BExIS.Dlm.Tests.Helpers
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
                     DataTuple dt = new DataTuple();
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next()});
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next() });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = r.Next() });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value =  true});
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value = true });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
                     dt.Dematerialize();
 
@@ -176,7 +177,8 @@ namespace BExIS.Dlm.Tests.Helpers
                 }
                 return dataset;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return null;
             }
             finally
@@ -212,7 +214,6 @@ namespace BExIS.Dlm.Tests.Helpers
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
-
                     DataTuple newDt = new DataTuple();
                     newDt.Id = id;
                     newDt.XmlAmendments = dt.XmlAmendments;
@@ -220,7 +221,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     newDt.Materialize();
                     newDt.OrderNo = 1;
                     tuples.Add(newDt);
-                    
+
                     dm.EditDatasetVersion(workingCopy, null, tuples, null);
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
                 }
@@ -246,7 +247,6 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(dataset.Id);
                 var datatuples = dm.GetDataTuples(dsv.Id);
-
 
                 if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
                 {
@@ -297,6 +297,5 @@ namespace BExIS.Dlm.Tests.Helpers
                 researchPlanManager.Dispose();
             }
         }
-
     }
 }

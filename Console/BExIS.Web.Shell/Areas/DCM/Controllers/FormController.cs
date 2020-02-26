@@ -3439,7 +3439,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // prepare view to write it to the file
                 byte[] content = Encoding.ASCII.GetBytes(view.ToString());
 
-                return File(content, "application/xhtml+xml", "metadata.htm");
+                return File(content, "application/xhtml+xml", entityId + "_metadata.htm");
             }
 
             return Content("no metadata html file is loaded.");

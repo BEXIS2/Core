@@ -441,6 +441,9 @@ namespace BExIS.IO.Transform.Input
                         if (index == this.Info.Variables)
                         {
                             dsdIsOk = ValidateDatastructure(line, seperator);
+
+                            // if data is not in the correct order, create a dictionary with the new position
+
                         }
 
                         if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line))

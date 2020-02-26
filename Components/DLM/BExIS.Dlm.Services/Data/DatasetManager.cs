@@ -60,7 +60,7 @@ namespace BExIS.Dlm.Services.Data
     /// </remarks>
     public class DatasetManager : IDisposable
     {
-        public const long BIG_DATASET_SIZE_THRESHOLD = 5000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
+        public const long BIG_DATASET_SIZE_THRESHOLD = 500000 * 10; // 5k tuples and 10 variables, hence 50k cells. It takes up to 5 minutes.
         public int PreferedBatchSize { get; set; }
         private IUnitOfWork guow = null;
 
@@ -1601,6 +1601,37 @@ namespace BExIS.Dlm.Services.Data
             return 0;
         }
 
+        public int GetDatasetVersionCount(long datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var count = datasetVersionRepo.Query(dsv => dsv.Dataset.Id.Equals(datasetId)).Count();
+
+                return count;
+            }
+        }
+
+        public string GetMetadataValueFromDatasetVersion(long id, string xpath)
+        {
+            /*select unnest(xpath('/Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType/text()',Metadata)) 
+                from datasetversions where Id = 1*/
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("SELECT unnest(xpath('/");
+            sb.Append(xpath);
+            sb.Append("/text()',Metadata))");
+            sb.Append("from datasetversions where Id ="+ id);
+
+            string value = "";
+
+            value = guow.ExecuteDynamic<String>(sb.ToString());
+
+            return value;
+
+        }
+
         #endregion DatasetVersion
 
         #region Private Methods
@@ -2691,7 +2722,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = true, bool throwExceptionOnUnstructured = false)
+        private void updateMaterializedView(long datasetId, ViewCreationBehavior behavior, bool enforceSizeCheck = false, bool throwExceptionOnUnstructured = false)
         {
             if (behavior == ViewCreationBehavior.None) // do not use this one! (behavior.HasFlag(ViewCreationBehavior.None))
                 return;

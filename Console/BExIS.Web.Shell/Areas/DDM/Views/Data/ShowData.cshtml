@@ -307,8 +307,11 @@
 		}
 	}
 
-	function OnSelectShowDataTabStrip(e) {
+    function OnSelectShowDataTabStrip(e) {
+
 		if (e.item.id == "metadata") {
+
+            $("#MetadataEditor").show();
 
 			setTimeout(function () {
 				bindMinimap(true);
@@ -324,7 +327,10 @@
 			}, 120);
 
 		}
-		else {
+        else {
+
+            $("#MetadataEditor").hide();
+
 			$(".miniregion").remove();
 			$(".minimap").remove();
 

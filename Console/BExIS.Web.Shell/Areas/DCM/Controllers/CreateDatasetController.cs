@@ -211,6 +211,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 Model.BlockMetadataStructureId = true;
 
+                Model.DataStructureOptions = DataStructureOptions.Existing;
+
                 //add to Bus
                 TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
                 TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, dataset.MetadataStructure.Id);
@@ -224,7 +226,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             DatasetManager datasetManager = new DatasetManager();
+            DataStructureManager dataStructureManager = new DataStructureManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            string username = GetUsernameOrDefault();
 
             try
             {
@@ -236,8 +240,39 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 model = LoadLists(model);
 
+                if (model.DataStructureOptions == DataStructureOptions.Existing && model.SelectedDataStructureId == 0)
+                    ModelState.AddModelError("SelectedDataStructureId", "Please select a data structure.");
+
                 if (ModelState.IsValid)
                 {
+                   
+                    // create new structure if its not exist
+                    if (model.DataStructureOptions != DataStructureOptions.Existing)
+                    {
+                        string name = "New created for " + username + "_" + DateTime.Now.Ticks;
+
+                        //create unstructured
+                        if (model.DataStructureOptions == DataStructureOptions.CreateNewFile)
+                        {
+                            var d = dataStructureManager.CreateUnStructuredDataStructure(name, "");
+                            if (d != null) model.SelectedDataStructureId = d.Id;
+                        }
+
+                        //create structured
+                        if (model.DataStructureOptions == DataStructureOptions.CreateNewStructure)
+                        {
+                            var d = dataStructureManager.CreateStructuredDataStructure(name, "","","",DataStructureCategory.Generic);
+                            if (d != null) model.SelectedDataStructureId = d.Id;
+                        }
+
+                        if (model.SelectedDataStructureId <= 0)
+                        {
+                            ModelState.AddModelError("DataStructureOptions", "It was not possible to create a data structure");
+                            return View("Index", model);
+                        }
+                    }
+
+                    //check combination of datatstructure options and data structure selection
                     TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                     TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
 
@@ -433,22 +468,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public ActionResult Submit(bool valid)
+        public JsonResult Submit(bool valid)
         {
-            // create and submit Dataset
-            long datasetId = SubmitDataset(valid);
+            try
+            {
+                // create and submit Dataset
+                long datasetId = SubmitDataset(valid);
 
-            bool editMode = false;
-
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.EDIT_MODE))
-                editMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
-
-            if (editMode)
-                return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = false, fromEditMode = true });
-            else
-                return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = true, created = true });
+                return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { result = "error", message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         /// <summary>
