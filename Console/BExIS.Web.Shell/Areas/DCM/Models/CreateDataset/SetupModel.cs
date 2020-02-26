@@ -5,6 +5,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 {
     public enum DataStructureOptions
     {
+        [Display(Name = "Existing")]
         Existing,
 
         [Display(Name = "New File")]
@@ -17,6 +18,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
     public class SetupModel
     {
         [Display(Name = "Dataset")]
+        [Required]
         public long SelectedDatasetId { get; set; }
 
         [Display(Name = "Metadata Structure")]
@@ -24,6 +26,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public long SelectedMetadataStructureId { get; set; }
 
         [Display(Name = "Data Structure")]
+        //[Required(ErrorMessage = "Please select a data structure.")]
         public long SelectedDataStructureId { get; set; }
 
         public List<ListViewItem> MetadataStructureViewList { get; set; }
