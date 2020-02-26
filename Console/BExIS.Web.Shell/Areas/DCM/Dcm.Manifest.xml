@@ -20,7 +20,7 @@
             controller="ManageMetadataStructure" action="Index" argument=""
             extends="./settingsRoot" />
 
-    <Export tag="menubar" id="collect" order="1"
+    <Export tag="menubar" id="collect" order="3"
             title="Upload" description="Quick access to Data Collection Area" icon=""
             controller="" action=""
             extends="./menubarRoot" />
