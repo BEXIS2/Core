@@ -236,8 +236,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 model = LoadLists(model);
 
+                if (model.DataStructureOptions == DataStructureOptions.Existing && model.SelectedDataStructureId == 0)
+                    ModelState.AddModelError("SelectedDataStructureId", "error");
+
                 if (ModelState.IsValid)
                 {
+                    // create new structure if its not exist
+                    if (model.DataStructureOptions != DataStructureOptions.Existing)
+                    {
+                        //create unstructured
+
+                        //create structured
+                    }
+
+                    //check combination of datatstructure options and data structure selection
                     TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                     TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
 
@@ -446,7 +458,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 return Json(new { result = "error", message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
-
         }
 
         /// <summary>
