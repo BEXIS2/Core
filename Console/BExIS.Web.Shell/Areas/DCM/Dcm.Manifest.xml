@@ -28,15 +28,15 @@
             title="Create Dataset" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="uploaddata" order="2"
-            title="Upload Data" description="Upload data to a dataset" icon=""
+    <Export tag="menubar" id="uploaddata" order="4"
+            title="Update Data" description="Upload data to a dataset" icon=""
             controller="Submit" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="importdata" order="3"
+   <!-- <Export tag="menubar" id="importdata" order="5"
             title="Import Data" description="Import datastructure and data from an excel file" icon=""
             controller="EasyUpload" action="index"
-            extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="createDataset" order="4"
+            extends="./menubarRoot/collect" />-->
+    <Export tag="menubar" id="createDataset" order="5"
             title="Push Big File" description="Push big file to the server to use it later" icon=""
             controller="Push" action="index"
             extends="./menubarRoot/collect" />

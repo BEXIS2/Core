@@ -10,8 +10,8 @@
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
   </Dependencies>
   <Exports>
-    <Export tag="menubar" id="ManageDataStructures" order="1"
-            title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
+    <Export tag="menubar" id="ManageDataStructures" order="3"
+            title="Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructureSearch" action="" argument=""
             extends="./menubarRoot/collect"/>
     <Export tag="menubar" id="ManageUnits" order="2"
