@@ -168,13 +168,13 @@
                                                   .HtmlAttributes(new { id = "datastructure" });
 
                                           }
-                                          if (show_tabs["show_link_tab"] == "true" )
+                                          if (show_tabs["show_link_tab"] == "true")
                                           {
                                               tabs.Add()
                                                   .Text("Links")
                                                   .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
                                                   .HtmlAttributes(new { id = "showreferences" });
-
+                                          }
                                           if (show_tabs["show_permission_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.GrantAccess == false))
                                           {
                                               tabs.Add()
