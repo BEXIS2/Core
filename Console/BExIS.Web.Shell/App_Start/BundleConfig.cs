@@ -1,4 +1,5 @@
 ﻿using System.Web.Optimization;
+using Microsoft.Web.Helpers;
 
 namespace BExIS.Web.Shell
 {
@@ -63,7 +64,17 @@ namespace BExIS.Web.Shell
                 "~/Content/handsontable/handsontable.full.css",
                 "~/Content/DataTables/media/css/jquery.dataTables.css",
                 "~/Content/Site.css"));
+   
 
+            bundles.Add(new StyleBundle("~/bundles/general_bexis").Include(
+                
+                 "~/Themes/Default/Styles/bexis-custom-style.css",
+                 "~/Themes/Default/Styles/bexis-jquery-ui.css",
+                 "~/Themes/Default/Styles/bexis-font-awesome-extension.css",
+                 "~/Themes/Default/Styles/bexis-elements.css",
+                 "~/Themes/Default/Styles/bexis-datatables-net.css",
+                 "~/Themes/Default/Styles/bexis-telerik.css"
+                ));
             BundleTable.EnableOptimizations = true;
         }
     }

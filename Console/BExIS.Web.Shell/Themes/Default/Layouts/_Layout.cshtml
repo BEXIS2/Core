@@ -22,15 +22,16 @@
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/bundles/general_bexis")
 
-    @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
+    @*(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
                                                                 .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-custom-style.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-datatables-net.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))
+                                                               /*       .Add("~" + Themes.GetResourcePath("Styles", "bexis-custom-style.css"))
+                                                            .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
+                                                           .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
+                                                           .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
+                                                           .Add("~" + Themes.GetResourcePath("Styles", "bexis-datatables-net.css"))
+                                                        /*    .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))*/
                                                         //.Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
 
                                                         //.Add("telerik.common.css")
@@ -39,7 +40,7 @@
                                                         //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
                                                         // add RTL support when internationalization is enabled
                                                         .Combined(true)
-                                                        .Compress(true)))
+                                                        .Compress(true))) *@
 
     @Scripts.Render("~/bundles/modernizr")
 
