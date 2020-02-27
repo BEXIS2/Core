@@ -48,7 +48,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 {
     public class DataController : BaseController
-    {
+    {  
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
@@ -1435,8 +1435,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         else
                             dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
 
-                        if (structured)
-                        {
+                    //    if (structured)
+                    //    {
                             if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
                             {
                                 Feature feature = operationManager.OperationRepository.Get().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
@@ -1444,9 +1444,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
+                    //        }
                             }
                         }
-                    }
                     else
                     {
                         dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
@@ -1634,7 +1634,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var user_performer = identityUserService.FindByNameAsync(performer);
 
                 // Replace account name by party name if exists
-                if (user_performer != null)
+                if (user_performer.Result != null)
                 {
                     Party party = partyManager.GetPartyByUser(user_performer.Result.Id);
 

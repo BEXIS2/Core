@@ -5,14 +5,18 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 {
     public enum DataStructureOptions
     {
-        [Display(Name = "Existing")]
-        Existing,
+        [Display(Name = "Tabular data (new)")]
+        CreateNewStructure,
 
-        [Display(Name = "New File")]
+        [Display(Name = "File (new)")]
         CreateNewFile,
 
-        [Display(Name = "New Data Structure")]
-        CreateNewStructure
+        [Display(Name = "Existing tabular data structure")]
+        Existing_structured,
+
+        [Display(Name = "Existing file data structure")]
+        Existing_unstructured
+
     }
 
     public class SetupModel
@@ -28,10 +32,11 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         [Display(Name = "Data Structure")]
         //[Required(ErrorMessage = "Please select a data structure.")]
         public long SelectedDataStructureId { get; set; }
+        public long SelectedDataStructureId_ { get; set; }
 
         public List<ListViewItem> MetadataStructureViewList { get; set; }
 
-        public List<ListViewItemWithType> DataStructureViewList { get; set; }
+        public List<ListViewItemWithType> DataStructureViewList_unstructured { get; set; }
 
         public List<ListViewItem> DatasetViewList { get; set; }
 
@@ -40,6 +45,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         public bool BlockMetadataStructureId { get; set; }
 
         public DataStructureOptions DataStructureOptions { get; set; }
+        public List<ListViewItemWithType> DataStructureViewList_structured { get; internal set; }
 
         public SetupModel()
         {
@@ -48,14 +54,15 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             BlockMetadataStructureId = false;
 
             SelectedDataStructureId = -1;
-            DataStructureViewList = new List<ListViewItemWithType>();
+            SelectedDataStructureId_ = -1;
+            DataStructureViewList_unstructured = new List<ListViewItemWithType>();
             BlockDatastructureId = false;
 
             SelectedDatasetId = -1;
             DatasetViewList = new List<ListViewItem>();
             BlockDatasetId = false;
 
-            DataStructureOptions = DataStructureOptions.Existing;
+            DataStructureOptions = DataStructureOptions.CreateNewStructure;
         }
     }
 }
