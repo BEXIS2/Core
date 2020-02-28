@@ -269,7 +269,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (user != null)
                             {
                                 Party party = partyManager.GetPartyByUser(user.Result.Id);
-                                name = "New created for " + party.Name + "_" +DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                                if (party != null)
+                                {
+                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                                }
                             }
 
                             //create unstructured
@@ -370,7 +373,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public ActionResult ShowListOfDatasets()
         {
-            List<ListViewItem> datasets = LoadDatasetViewList();
+            List<ListViewItem> datasets = new List<ListViewItem>();
+
+            // Load list from Session, if exists
+            if (Session["DatasetViewList"] != null)
+            {
+                datasets = (List<ListViewItem>)Session["DatasetViewList"];
+            }
+            else
+            {
+                datasets = LoadDatasetViewList();
+                Session["DatasetViewList"] = datasets;
+            }
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
                 datasets,
@@ -815,12 +829,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
+                // Do not load the description, if more than 50 datasets in the list
+                bool show_description = true;
+                if (datasetIds.Count() > 50)
+                {
+                    show_description = false;
+                }
+                string description = "";
+
                 foreach (long id in datasetIds)
                 {
                     if (datasetManager.IsDatasetCheckedIn(id))
                     {
                         string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                        string description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                        if (show_description == true)
+                        {
+                            description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                        }
 
                         temp.Add(new ListViewItem(id, title, description));
                     }
