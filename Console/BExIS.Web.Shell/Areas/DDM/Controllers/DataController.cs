@@ -593,6 +593,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
 
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
+
                         return PartialView(ShowPrimaryDataModel.Convert(
                             datasetID,
                             versionId,
