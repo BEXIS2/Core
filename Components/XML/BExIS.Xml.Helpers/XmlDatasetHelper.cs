@@ -113,7 +113,7 @@ namespace BExIS.Xml.Helpers
 
                 return GetInformationFromVersion(
                     datasetVersion.Id,
-                    datasetVersion.Dataset.Id,
+                    datasetVersion.Dataset.MetadataStructure.Id,
                     name);
             }
         }

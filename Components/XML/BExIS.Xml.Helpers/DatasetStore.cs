@@ -26,14 +26,14 @@ namespace BExIS.Xml.Helpers
                     List<long> metadataStructureIds = metadataStructureManager.Repo.Query().Select(m => m.Id).ToList();
 
                     List<long> metadataSturctureIdsForDatasets = new List<long>();
-                    metadataStructureIds.ForEach(m => xmlDatasetHelper.HasEntity(m, _entityName));
+                    metadataSturctureIdsForDatasets = metadataStructureIds.Where(m => xmlDatasetHelper.HasEntity(m, _entityName)).ToList();
 
-                    foreach (var msid in metadataStructureIds)
+                    foreach (var msid in metadataSturctureIdsForDatasets)
                     {
                         // get all datasets based on metadata data structure id
                         var datasetIds = dm.DatasetRepo.Query(d => d.MetadataStructure.Id.Equals(msid)).Select(d => d.Id).ToList();
 
-                        if (!datasetIds.Any()) break;
+                        if (!datasetIds.Any()) continue;
 
                         List<Tuple<long, long, string>> x = new List<Tuple<long, long, string>>();
 
