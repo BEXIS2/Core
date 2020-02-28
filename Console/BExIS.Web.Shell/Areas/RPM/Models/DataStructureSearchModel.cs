@@ -9,6 +9,8 @@ using System.Xml.Linq;
 using BExIS.Modules.Rpm.UI.Classes;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
+using Vaiona.Persistence.Api;
+
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -238,28 +240,30 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
             DataStructureManager dataStructureManager = null;
-            try
+            DatasetManager datasetManager = null;
+           
+                try
             {
                 dataStructureManager = new DataStructureManager();
-                foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
-                {
-                    dataStructureResult = new DataStructureResultStruct();
-                    dataStructureResult.Id = ds.Id;
-                    dataStructureResult.Title = ds.Name;
-                    dataStructureResult.Description = ds.Description;
+                datasetManager = new DatasetManager();
 
-                    DatasetManager datasetManager = null;                    
-                    try
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
                     {
-                        datasetManager = new DatasetManager();
+                        dataStructureResult = new DataStructureResultStruct();
+                        dataStructureResult.Id = ds.Id;
+                        dataStructureResult.Title = ds.Name;
+                        dataStructureResult.Description = ds.Description;
+
                         foreach (Dataset d in ds.Datasets)
                         {
-                            if (datasetManager.RowAny(d.Id))
+                            if (datasetManager.RowAny(d.Id, uow))
                             {
                                 dataStructureResult.inUse = true;
                                 break;
                             }
-                           /* else
+                            /* else
                             {
                                 foreach (DatasetVersion dv in d.Versions)
                                 {
@@ -271,20 +275,15 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 }
                             }*/
                         }
+
+                        dataStructureResult.Structured = true;
+
+                        if (previewIds != null && previewIds.Contains(ds.Id))
+                            dataStructureResult.Preview = true;
+
+                        this.dataStructureResults.Add(dataStructureResult);
                     }
-                    finally
-                    {
-                        datasetManager.Dispose();
-                    }
-
-                    dataStructureResult.Structured = true;
-
-                    if (previewIds != null && previewIds.Contains(ds.Id))
-                        dataStructureResult.Preview = true;
-
-                    this.dataStructureResults.Add(dataStructureResult);
                 }
-
                 foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
                 {
                     dataStructureResult = new DataStructureResultStruct();
@@ -305,6 +304,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             finally
             {
                 dataStructureManager.Dispose();
+                datasetManager.Dispose();
             }
         }
 

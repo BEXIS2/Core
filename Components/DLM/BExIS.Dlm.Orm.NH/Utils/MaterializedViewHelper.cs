@@ -277,22 +277,34 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
         }
 
-        public long Any(long datasetId)
+        public bool Any(long datasetId)
+        {
+            using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+            {
+                return Any(datasetId, uow);
+            }  
+        }
+
+        public bool Any(long datasetId, IUnitOfWork uow)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0} LIMIT 1;", this.BuildName(datasetId).ToLower()));
+            mvBuilder.AppendLine(string.Format("SELECT id AS cnt FROM {0} LIMIT 1;", this.BuildName(datasetId).ToLower()));
             // execute the statement
             try
             {
-                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                
                 {
-                    var result = uow.ExecuteScalar(mvBuilder.ToString());
-                    return (long)result;
+                    long result = (long)uow.ExecuteScalar(mvBuilder.ToString());
+                    if (result > 0)
+                    {
+                        return true;
+                    }
+                    return false;
                 }
             }
             catch
             {
-                return -1;
+                return false;
             }
         }
 
