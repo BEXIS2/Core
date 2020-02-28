@@ -1635,7 +1635,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var user_performer = identityUserService.FindByNameAsync(performer);
 
                 // Replace account name by party name if exists
-                if (user_performer != null)
+                if (user_performer.Result != null)
                 {
                     Party party = partyManager.GetPartyByUser(user_performer.Result.Id);
 
