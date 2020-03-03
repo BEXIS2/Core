@@ -592,6 +592,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             table = dm.GetDatasetVersionTuples(versionId, 0, 100);
                             Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
+                        
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
                         return PartialView(ShowPrimaryDataModel.Convert(
                             datasetID,
@@ -1634,7 +1636,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var user_performer = identityUserService.FindByNameAsync(performer);
 
                 // Replace account name by party name if exists
-                if (user_performer != null)
+                if (user_performer.Result != null)
                 {
                     Party party = partyManager.GetPartyByUser(user_performer.Result.Id);
 
