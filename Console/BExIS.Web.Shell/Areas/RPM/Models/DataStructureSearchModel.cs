@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using BExIS.Modules.Rpm.UI.Classes;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -238,53 +239,52 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
             DataStructureManager dataStructureManager = null;
+            DatasetManager datasetManager = null;
+
             try
             {
                 dataStructureManager = new DataStructureManager();
-                foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
-                {
-                    dataStructureResult = new DataStructureResultStruct();
-                    dataStructureResult.Id = ds.Id;
-                    dataStructureResult.Title = ds.Name;
-                    dataStructureResult.Description = ds.Description;
+                datasetManager = new DatasetManager();
 
-                    DatasetManager datasetManager = null;                    
-                    try
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
                     {
-                        datasetManager = new DatasetManager();
+                        dataStructureResult = new DataStructureResultStruct();
+                        dataStructureResult.Id = ds.Id;
+                        dataStructureResult.Title = ds.Name;
+                        dataStructureResult.Description = ds.Description;
+
                         foreach (Dataset d in ds.Datasets)
                         {
-                            if (datasetManager.RowAny(d.Id))
+                            if (datasetManager.RowAny(d.Id, uow))
                             {
                                 dataStructureResult.inUse = true;
                                 break;
                             }
-                            else
+
+                            // currently not working
+                            /* else
                             {
                                 foreach (DatasetVersion dv in d.Versions)
                                 {
-                                    if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                    if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
                                     {
                                         dataStructureResult.inUse = true;
                                         break;
                                     }
                                 }
-                            }
+                            }*/
                         }
+
+                        dataStructureResult.Structured = true;
+
+                        if (previewIds != null && previewIds.Contains(ds.Id))
+                            dataStructureResult.Preview = true;
+
+                        this.dataStructureResults.Add(dataStructureResult);
                     }
-                    finally
-                    {
-                        datasetManager.Dispose();
-                    }
-
-                    dataStructureResult.Structured = true;
-
-                    if (previewIds != null && previewIds.Contains(ds.Id))
-                        dataStructureResult.Preview = true;
-
-                    this.dataStructureResults.Add(dataStructureResult);
                 }
-
                 foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
                 {
                     dataStructureResult = new DataStructureResultStruct();
@@ -292,8 +292,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                     dataStructureResult.Title = ds.Name;
                     dataStructureResult.Description = ds.Description;
 
-                    //if (ds.Datasets.Count > 0)
-                    //    dataStructureResult.inUse = true;
+                    if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+                        dataStructureResult.inUse = true;
 
                     if (previewIds != null && previewIds.Contains(ds.Id))
                         dataStructureResult.Preview = true;
@@ -305,6 +305,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             finally
             {
                 dataStructureManager.Dispose();
+                datasetManager.Dispose();
             }
         }
 
