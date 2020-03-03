@@ -48,7 +48,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 {
     public class DataController : BaseController
-    {  
+    {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
@@ -1419,14 +1419,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 subjectManager = new SubjectManager();
 
                 using (var uow = this.GetUnitOfWork())
-                {                  
+                {
                     long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
                     DataStructure dataStructure = null;
                     long id = (long)datasetID;
                     string DSlink = null;
 
-                    if (this.IsAccessible("RPM", "DataStructureEdit","Index"))
+                    if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
                     {
                         dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
                         bool structured = false;
@@ -1434,7 +1434,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             structured = true;
                         else
                             dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
-                                            
+
                         if (structured)
                         {
                             if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
@@ -1535,7 +1535,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region entity references
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        //[BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult ShowReferences(long id, int version)
         {
             var sourceTypeId = 0;
@@ -1628,7 +1628,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private string createEditedBy(string performer)
         {
-
             using (PartyManager partyManager = new PartyManager())
             {
                 var identityUserService = new IdentityUserService();
@@ -1656,20 +1655,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     return "";
                 }
             }
-            
         }
-
 
         private string getVersionInfo(DatasetVersion d)
         {
             StringBuilder sb = new StringBuilder();
-            
+
             // modification, Performer and Comment exists (as indication for new version type tracking)
             if (d.ModificationInfo != null &&
-                !string.IsNullOrEmpty(d.ModificationInfo.Performer) && 
+                !string.IsNullOrEmpty(d.ModificationInfo.Performer) &&
                 !string.IsNullOrEmpty(d.ModificationInfo.Comment))
             {
-                
                 // Metadata cration & edit
                 if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
@@ -1704,7 +1700,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     sb.Append(String.Format("Data deleted ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
-                // attachment 
+                // attachment
                 else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
                     sb.Append(String.Format("Attachtment uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
@@ -1713,8 +1709,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     sb.Append(String.Format("Attachtment deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-
-
                 else
                 {
                     sb.Append(d.ModificationInfo.Comment);
@@ -1737,16 +1731,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         sb.Append(Truncate(d.ChangeDescription, 30));
                     }
-
                 }
-                
             }
             else
             {
                 sb.Append(String.Format("{0} ({1})", Truncate(d.ChangeDescription, 30), d.Timestamp.ToString("dd.MM.yyyy")));
             }
-
-
 
             return sb.ToString();
         }
@@ -1926,31 +1916,29 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             show_tab_list.Add("show_tabs_deactivated", "true");
 
-
             string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
             XDocument settings = XDocument.Load(filePath);
 
-            foreach (var item in show_tab_list.ToList()) {
+            foreach (var item in show_tab_list.ToList())
+            {
                 try
                 {
-                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key , settings).Attribute("value")?.Value;
+                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key, settings).Attribute("value")?.Value;
 
                     if (value != null)
                     {
                         show_tab_list[item.Key] = value;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                  // do nothing
+                    // do nothing
                 }
-                
             }
 
             Session["SettingsTabList"] = show_tab_list;
             return show_tab_list;
-       }
-
+        }
 
         #endregion helper
     }
