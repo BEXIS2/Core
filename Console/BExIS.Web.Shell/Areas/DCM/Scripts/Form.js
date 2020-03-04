@@ -569,13 +569,15 @@ function OnClose(e) {
     console.log(e.target.value);
     //var value = e.target.value;
 
-    var id = e.target.id;
-    var tAutoComplete = $('#' + id).data("tAutoComplete");
+    var uiid = e.target.id;
+    var substr = e.target.id.split('_');
+    var id = substr[0];
+    var tAutoComplete = $('#' + uiid).data("tAutoComplete");
     console.log(tAutoComplete);
     var value = tAutoComplete.value();
     console.log(value);
 
-    var type = $('#' + id).attr("type");
+    var type = $('#' + uiid).attr("type");
     var start = 0;
     var end = 0;
     var partyid = 0;
@@ -597,33 +599,40 @@ function OnClose(e) {
             console.log("partyid = " + partyid);
 
             if (partyid !== "0") {
+
                 // check if mapping to this metadata attribute is simple or complex.
                 // complex means, that the attribute is defined in the context of the parent
                 // e.g. name of User
                 // simple means, that the attribute is not defined in the context of the
                 // e.g. DataCreator Name in Contacts as list of contacts
 
-                $.get('/DCM/Form/HasComplexMapping',
-                    {
-                        id: id,
-                        type: type
-                    },
-                    function (response) {
+                if ($(e.target).attr("simple") !== null) {
+
+                    var simple = $(e.target).attr("simple");
+                    var xpath = $(e.target).attr("xpath");
+
+                    if (simple === "True") {
+
+                        UpdateSimpleMappingWithParty(uiid, xpath, partyid);
                     }
-                ;
-
-                // find parent
-                parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
-                console.log("parent");
-                console.log(parent);
-
-                if (parent !== null) {
-                    parentid = $(parent).attr("id");
-                    number = $(parent).attr("number");
-                    UpdateWithParty(parentid, number, partyid);
                 }
 
-                afterClosed = true;
+                var complex;
+                if ($(e.target).attr("complex") !== null) {
+
+                    complex = $(e.target).attr("complex");
+                    if (complex === true) {
+                        parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
+                        console.log("parent");
+                        console.log(parent);
+
+                        if (parent !== null) {
+                            parentid = $(parent).attr("id");
+                            number = $(parent).attr("number");
+                            UpdateWithParty(parentid, number, partyid);
+                        }
+                    }
+                }
             }
         }
     }
@@ -717,6 +726,21 @@ function UpdateWithParty(componentId, number, partyid) {
             //alert("test");
             autosize($('textarea'));
         })
+}
+
+function UpdateSimpleMappingWithParty(componentId, xpath, partyid)
+{
+    $.post('/DCM/Form/UpdateSimpleUsageWithParty',
+        {
+            xpath: xpath,
+            partyId: partyid
+        },
+        function (response) {
+
+            if (response) {
+                $("#" + componentId).attr("partyid", partyid);
+            }
+        });
 }
 
 function Add(e) {

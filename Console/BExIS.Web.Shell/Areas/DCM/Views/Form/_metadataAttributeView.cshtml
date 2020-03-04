@@ -7,6 +7,7 @@
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
+    string xpath = ((string)ViewData["Xpath"]) + "//"+Model.DisplayName+"[1]//" +Model.MetadataAttributeName+"[" + Model.NumberOfSourceInPackage +"]";
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
@@ -23,6 +24,9 @@
     string displayName = "";
 
     string autoCompleteType = "";
+
+    bool hasSimpleMapping = Model.PartySimpleMappingExist;
+    bool hasComplexMapping = Model.PartyComplexMappingExist;
 
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
     displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
@@ -202,7 +206,16 @@
                                             .Name(@idInput)
                                             .Encode(false)
                                             .Value(value)
-                                            .HtmlAttributes(new { idbyxpath = @idByXpath, @class = "bx-metadataFormTextInput " + @errorClass, title = @errorMessage, onKeyUp = "OnKeyUpTextInput(this)", test = Model.Id, type = autoCompleteType })
+                                            .HtmlAttributes(new { idbyxpath = @idByXpath, 
+                                                @class = "bx-metadataFormTextInput " + @errorClass, 
+                                                title = @errorMessage, 
+                                                onKeyUp = "OnKeyUpTextInput(this)", 
+                                                test = Model.Id, 
+                                                type = autoCompleteType,
+                                                simple = hasSimpleMapping,
+                                                complex = hasComplexMapping,
+                                                xpath = xpath
+                                                })
                                             .ClientEvents(events => events
                                                 .OnChange("OnChangeTextInput")
                                                 .OnClose("OnClose"))

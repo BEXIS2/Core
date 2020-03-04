@@ -1331,6 +1331,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
 
+        public JsonResult UpdateSimpleUsageWithParty(string xpath, long partyId)
+        {
+
+            try
+            {
+                AddXmlAttribute(xpath, "partyid", partyId.ToString());
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(false, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
         {
             ViewData["ShowOptional"] = true;
@@ -1380,6 +1395,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
+
+
 
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
@@ -2445,12 +2462,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             };
         }
 
-        public JsonResult HasComplexMapping(long id, string type)
-        {
-            bool hasComplexMapping = false;
-
-            return Json(hasComplexMapping, JsonRequestBehavior.AllowGet)
-        }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
         {
