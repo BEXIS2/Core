@@ -2823,10 +2823,17 @@ namespace BExIS.Dlm.Services.Data
         public bool RowAny(long datasetId)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-            if (mvHelper.Any(datasetId) > 0)
-                return true;
 
-            return false;
+            return mvHelper.Any(datasetId);
+
+        }
+
+        public bool RowAny(long datasetId, IUnitOfWork uow)
+        {
+            MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+
+            return mvHelper.Any(datasetId, uow);
+
         }
 
         public bool RowAny(long datasetId, FilterExpression filter)
