@@ -33,11 +33,9 @@ function setTabIndex() {
  ******************************************/
 
 $(window).scroll(function () {
-
     if ($("#MetadataEditor").is(':visible')) {
         bindMinimap();
     }
-
 });
 
 var originalMinimapTop = 0;
@@ -566,6 +564,7 @@ function OnClickDown(e) {
     }
 }
 
+// Autocomplete
 function OnClose(e) {
     console.log(e.target.value);
     //var value = e.target.value;
@@ -598,8 +597,22 @@ function OnClose(e) {
             console.log("partyid = " + partyid);
 
             if (partyid !== "0") {
-                // find parent
+                // check if mapping to this metadata attribute is simple or complex.
+                // complex means, that the attribute is defined in the context of the parent
+                // e.g. name of User
+                // simple means, that the attribute is not defined in the context of the
+                // e.g. DataCreator Name in Contacts as list of contacts
 
+                $.get('/DCM/Form/HasComplexMapping',
+                    {
+                        id: id,
+                        type: type
+                    },
+                    function (response) {
+                    }
+                ;
+
+                // find parent
                 parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
                 console.log("parent");
                 console.log(parent);

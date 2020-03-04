@@ -722,7 +722,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
                 }
-
             }
 
             ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
@@ -2416,6 +2415,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
                         }
+                        else
+                        if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataAttributeUsage, text);
+                        }
                         break;
                     }
             }
@@ -2439,6 +2443,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Data = list,
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
+        }
+
+        public JsonResult HasComplexMapping(long id, string type)
+        {
+            bool hasComplexMapping = false;
+
+            return Json(hasComplexMapping, JsonRequestBehavior.AllowGet)
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
