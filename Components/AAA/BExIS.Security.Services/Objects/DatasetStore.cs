@@ -4,6 +4,11 @@ namespace BExIS.Security.Services.Objects
 {
     public class DatasetStore : IEntityStore
     {
+        public int CountEntities()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public int CountVersions(long id)
         {
             throw new System.NotImplementedException();
@@ -19,6 +24,11 @@ namespace BExIS.Security.Services.Objects
             }
 
             return datasets;
+        }
+
+        public List<EntityStoreItem> GetEntities(int skip, int take)
+        {
+            throw new System.NotImplementedException();
         }
 
         public string GetTitleById(long id)
