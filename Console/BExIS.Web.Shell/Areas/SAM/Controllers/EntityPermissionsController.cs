@@ -101,12 +101,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Instances", entityId);
         }
 
-        [GridAction]
-        public ActionResult Instances_Select(long entityId)
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Instances_Select(GridCommand command,long entityId)
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
             //var userManager = new UserManager();
+
+            var skip = (command.Page-1) * command.PageSize;
+            var take = command.PageSize;
 
             try
             {
@@ -114,8 +117,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 //var user = userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
                 //var keys = entityPermissionManager.GetKeys(user?.Id, entityId, RightType.Grant);
                 //var instances = instanceStore.GetEntities().Where(i => keys.Contains(i.Id)).Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
-                var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
-                return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
+                var instances = instanceStore.GetEntities(skip,take).Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                var count = instanceStore.CountEntities();
+                
+                return View(new GridModel<EntityInstanceGridRowModel> { Data = instances,Total = count });
             }
             finally
             {
