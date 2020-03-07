@@ -2416,6 +2416,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
                         }
+                        else if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataAttributeUsage, text);
+                        }
+
                         break;
                     }
             }

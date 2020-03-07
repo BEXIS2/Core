@@ -102,7 +102,7 @@ function bindMinimap(create) {
     ////var miniregionoffset = topContainer - originalMiniRegionTop;
     var positionMinimap = parseInt(originalMinimapTop) + parseInt(scrollmax);
 
-    console.log("position : " + positionMinimap + "(topContainer - scrollpostion) :" + (topContainer - scrollpostion) + "menubar : " + menubar);
+    //console.log("position : " + positionMinimap + "(topContainer - scrollpostion) :" + (topContainer - scrollpostion) + "menubar : " + menubar);
 
     $(".minimap").css("top", positionMinimap);
 }

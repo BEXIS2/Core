@@ -592,6 +592,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             table = dm.GetDatasetVersionTuples(versionId, 0, 100);
                             Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
+                        
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 

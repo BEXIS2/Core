@@ -282,7 +282,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             using (IUnitOfWork uow = this.GetBulkUnitOfWork())
             {
                 return Any(datasetId, uow);
-            }  
+            }
         }
 
         public bool Any(long datasetId, IUnitOfWork uow)
@@ -292,7 +292,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // execute the statement
             try
             {
-                
+
                 {
                     long result = (long)uow.ExecuteScalar(mvBuilder.ToString());
                     if (result > 0)

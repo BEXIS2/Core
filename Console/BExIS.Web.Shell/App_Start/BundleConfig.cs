@@ -67,7 +67,7 @@ namespace BExIS.Web.Shell
    
 
             bundles.Add(new StyleBundle("~/bundles/general_bexis").Include(
-                
+
                  "~/Themes/Default/Styles/bexis-custom-style.css",
                  "~/Themes/Default/Styles/bexis-jquery-ui.css",
                  "~/Themes/Default/Styles/bexis-font-awesome-extension.css",
@@ -75,6 +75,7 @@ namespace BExIS.Web.Shell
                  "~/Themes/Default/Styles/bexis-datatables-net.css",
                  "~/Themes/Default/Styles/bexis-telerik.css"
                 ));
+
             BundleTable.EnableOptimizations = true;
         }
     }

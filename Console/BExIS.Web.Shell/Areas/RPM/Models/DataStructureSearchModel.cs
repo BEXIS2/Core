@@ -241,7 +241,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
             DataStructureManager dataStructureManager = null;
             DatasetManager datasetManager = null;
-           
+
                 try
             {
                 dataStructureManager = new DataStructureManager();
@@ -263,6 +263,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 dataStructureResult.inUse = true;
                                 break;
                             }
+
+                            // currently not working
                             /* else
                             {
                                 foreach (DatasetVersion dv in d.Versions)
@@ -291,8 +293,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                     dataStructureResult.Title = ds.Name;
                     dataStructureResult.Description = ds.Description;
 
-                    //if (ds.Datasets.Count > 0)
-                    //    dataStructureResult.inUse = true;
+                    if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+                        dataStructureResult.inUse = true;
 
                     if (previewIds != null && previewIds.Contains(ds.Id))
                         dataStructureResult.Preview = true;
