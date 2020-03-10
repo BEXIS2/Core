@@ -19,7 +19,7 @@ namespace BExIS.Xml.Helpers
 
         public List<EntityStoreItem> GetEntities(int skip, int take)
         {
-            bool withPaging = (take >= 0);
+            bool withPaging = (take > 0);
 
 
             using (var uow = this.GetUnitOfWork())
