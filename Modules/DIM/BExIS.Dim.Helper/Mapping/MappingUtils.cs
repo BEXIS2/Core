@@ -368,6 +368,7 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
+                    //if party is the parent
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
                         .Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
@@ -376,7 +377,93 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType)
                         ).ToList();
 
+
                     return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// if a simple attr is direct mapped to a PartyCustomType without context informations about th parent
+        /// in the database mappings for level 1 & 2 existing for the simple attribute
+        /// level one means then simple to a complex
+        /// level two means then simple to a complex/simple
+        /// </summary>
+        /// <param name="targetId"></param>
+        /// <param name="targetType"></param>
+        /// <returns></returns>
+        public static bool ExistSimpleMappingWithPartyCustomType(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    //if party is the parent
+                    var mappingsWhenPartyIsParent = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                            m.Level.Equals(2)
+                        ).ToList();
+
+                    //if party same lvel like target
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                            m.Level.Equals(1)
+                        ).ToList();
+
+                    return (mappings.Any() && mappingsWhenPartyIsParent.Any());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// if a simple attr is mapped to a party with context informations about the parent
+        /// in the database mappings for level 1 & 2 existing for the simple attribute
+        /// level one means then parent to a complex
+        /// level two means then simple to a complex/simple
+        /// </summary>
+        /// <param name="targetId"></param>
+        /// <param name="targetType"></param>
+        /// <returns></returns>
+        public static bool ExistComplexMappingWithPartyCustomType(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    //if party is the parent
+                    var mappingsWhenPartyIsParent = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                            m.Level.Equals(2)
+                        ).ToList();
+
+                    //if party same level like target
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                            m.Level.Equals(1)
+                        ).ToList();
+
+                    return (!mappings.Any() && mappingsWhenPartyIsParent.Any());
                 }
             }
             catch (Exception ex)
@@ -391,6 +478,7 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
+                    //if party is the parent
                     var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
                         .Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
@@ -400,6 +488,92 @@ namespace BExIS.Dim.Helpers.Mapping
                         ).ToList();
 
                     return mappings.Any();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// if a simple attr is direct mapped to a party without context informations about th parent
+        /// in the database mappings for level 1 & 2 existing for the simple attribute
+        /// level one means then simple to a complex
+        /// level two means then simple to a complex/simple
+        /// </summary>
+        /// <param name="targetId"></param>
+        /// <param name="targetType"></param>
+        /// <returns></returns>
+        public static bool ExistSimpleMappingWithParty(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    //if party is the parent
+                    var mappingsWhenPartyIsParent = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.PartyType) &&
+                            m.Level.Equals(2)
+                        ).ToList();
+
+                    //if party same lvel like target
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.Type.Equals(LinkElementType.PartyType) &&
+                            m.Level.Equals(1)
+                        ).ToList();
+
+                    return (mappings.Any() && mappingsWhenPartyIsParent.Any());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// if a simple attr is mapped to a party with context informations about the parent
+        /// in the database mappings for level 1 & 2 existing for the simple attribute
+        /// level one means then parent to a complex
+        /// level two means then simple to a complex/simple
+        /// </summary>
+        /// <param name="targetId"></param>
+        /// <param name="targetType"></param>
+        /// <returns></returns>
+        public static bool ExistComplexMappingWithParty(long targetId, LinkElementType targetType)
+        {
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    //if party is the parent
+                    var mappingsWhenPartyIsParent = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Parent != null &&
+                            m.Parent.Source.Type.Equals(LinkElementType.PartyType) &&
+                            m.Level.Equals(2)
+                        ).ToList();
+
+                    //if party same level like target
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                        .Where(m =>
+                            m.Target.ElementId.Equals(targetId) &&
+                            m.Target.Type.Equals(targetType) &&
+                            m.Source.Type.Equals(LinkElementType.PartyType) &&
+                            m.Level.Equals(1)
+                        ).ToList();
+
+                    return (!mappings.Any() && mappingsWhenPartyIsParent.Any());
                 }
             }
             catch (Exception ex)

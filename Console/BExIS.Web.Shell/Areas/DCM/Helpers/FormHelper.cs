@@ -62,11 +62,19 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             bool entityMappingExist = false;
             bool partyMappingExist = false;
 
+            string metadataAttributeName = "";
+
+            //simple
+            bool partySimpleMappingExist = false;
+            //complex
+            bool partyComplexMappingExist = false;
+
             if (current is MetadataNestedAttributeUsage)
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)current;
                 metadataAttribute = mnau.Member;
                 type = LinkElementType.MetadataNestedAttributeUsage;
+        
             }
             else
             {
@@ -94,6 +102,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     }
                 }
             }
+
+            //set metadata attr name
+            metadataAttributeName = metadataAttribute.Name;
+
             //load displayPattern
             DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(metadataAttribute.DataType.Extra);
             string displayPattern = "";
@@ -107,6 +119,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // check if a mapping for parties exits
             partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
 
+
+            // check if mapping to this metadata attribute is simple or complex.
+            // complex means, that the attribute is defined in the context of the parent
+            // e.g. name of User
+            // simple means, that the attribute is not defined in the context of the
+            // e.g. DataCreator Name in Contacts as list of contacts
+            partySimpleMappingExist = hasSimpleMapping(current.Id, type);
+            partyComplexMappingExist = hasComplexMapping(current.Id, type);
+
             // check if a mapping for entites exits
             entityMappingExist = MappingUtils.ExistMappingWithEntity(current.Id, type);
 
@@ -116,6 +137,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Number = 1,
                 ParentModelNumber = packageModelNumber,
                 MetadataStructureId = metadataStructureId,
+                MetadataAttributeName = metadataAttributeName,
                 Parent = parent,
                 Source = current,
                 DisplayName = current.Label,
@@ -136,6 +158,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Locked = locked,
                 EntityMappingExist = entityMappingExist,
                 PartyMappingExist = partyMappingExist,
+                PartySimpleMappingExist = partySimpleMappingExist,
+                PartyComplexMappingExist = partyComplexMappingExist,
                 LowerBoundary = lowerBoundary,
                 UpperBoundary = upperBoundary,
             };
@@ -156,6 +180,28 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
 
             return list;
+        }
+
+        private static bool hasComplexMapping(long id, LinkElementType type)
+        {
+            if (MappingUtils.ExistComplexMappingWithParty(id, type) || 
+                MappingUtils.ExistComplexMappingWithPartyCustomType(id,type))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool hasSimpleMapping(long id, LinkElementType type)
+        {
+            if (MappingUtils.ExistSimpleMappingWithParty(id, type) ||
+                MappingUtils.ExistSimpleMappingWithPartyCustomType(id, type))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

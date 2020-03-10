@@ -7,7 +7,7 @@
 @model BExIS.Modules.Rpm.UI.Models.UnitManagerModel
 
 @*<header>*@
-    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />
 @*</header> *@
 
 @{
@@ -15,14 +15,14 @@
 
     string windowName = "Create Unit";
 
-    if (Model.editUnitModel.Unit != new Unit())
+    if (Model.EditUnitModel.Unit != new Unit())
     {
-        if (!string.IsNullOrEmpty(Model.editUnitModel.Unit.Name))
+        if (!string.IsNullOrEmpty(Model.EditUnitModel.Unit.Name))
         {
-            windowName = "Edit Unit: " + Model.editUnitModel.Unit.Name + " (Id: " + Model.editUnitModel.Unit.Id + ")";
+            windowName = "Edit Unit: " + Model.EditUnitModel.Unit.Name + " (Id: " + Model.EditUnitModel.Unit.Id + ")";
         }
     }
-    
+
 }
 
 @*@{
@@ -30,7 +30,7 @@
 }*@
 
 @section Scripts{
-  
+
 }
 
 @section Information
@@ -76,7 +76,7 @@
                                     }
                                 }
                                 }
-                              @temp 
+                              @temp
                         </text>
                     )
                     .Title("Associated Data Types");
@@ -84,7 +84,7 @@
                                     .HtmlAttributes(new { @style ="max-width:500px" });
                 columns.Template(
                     @<text>
-                            
+
                             @if (item.inUse)
                             {
                                 <div>
@@ -97,16 +97,14 @@
                                 <div>
                                     @Html.ActionLink(" ", "openUnitWindow", "Unit", new { id = item.Unit.Id }, new { @class = "bx bx-grid-function bx-edit ", title = "Edit Unit \"" + item.Unit.Name + "\"" })
                                     @Html.ActionLink(" ", "deletUnit", "Unit", new { id = item.Unit.Id }, new { @class = "bx bx-grid-function bx-trash",title = "Delete Unit \""+item.Unit.Name+"\"", onclick = "return confirm('Are you sure you want to delete the Unit " + item.Unit.Name + " ?')" })
-                            
                                 </div>
                             }
-                            
                         </text>
                 ).Title("")
                     .Width(70)
                     .ClientTemplate(
                         @Html.ActionLink(" ", "openUnitWindow", "Unit", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-edit" }).ToHtmlString() +
-                        @Html.ActionLink(" ", "deletUnit", "Unit", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete the Unit " + Model.editUnitModel.Unit.Name + " ?')" }).ToHtmlString()
+                        @Html.ActionLink(" ", "deletUnit", "Unit", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete the Unit " + Model.EditUnitModel.Unit.Name + " ?')" }).ToHtmlString()
                         );
             })
             .ClientEvents(events=>events.OnDataBound("onDataBound"))
@@ -121,12 +119,12 @@
                             .Modal(true)
                             .Visible((bool)Session["Window"])
                             .Content(@<text>
-                                        @Html.Partial("_editUnit", Model.editUnitModel)
+                                        @Html.Partial("_editUnit", Model.EditUnitModel)
                                         </text>)
                             .Render()
                             ;
-        
-                    }        
+
+                    }
     </div>
 @{Session["Window"] = false;}
 
@@ -159,9 +157,8 @@
 
         window.location.href = '/RPM/Unit/UnitManager';
     }
-
 </script>
-   
+
 @*<script type="text/javascript">
 
     $(".test")
