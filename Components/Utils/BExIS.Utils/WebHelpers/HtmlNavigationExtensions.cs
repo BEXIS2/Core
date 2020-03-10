@@ -47,7 +47,7 @@ namespace BExIS.Utils.WebHelpers
                         if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
                             sb.Append(@"/").Append(child.Attribute("action").Value);
 
-                        sb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
+                        sb.Append("' target=\"_blank\" >").Append(child.Attribute("title").Value).Append("</a></li>");
                     }
 
                     sb.Append($"</ul></li>");
