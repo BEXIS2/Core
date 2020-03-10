@@ -311,6 +311,7 @@ namespace BExIS.Security.Services.Authorization
                         .Query(e => (subjectIds.Contains(e.Subject.Id) || e.Subject == null) && e.Entity.Id == entity.Id).AsEnumerable()
                         .Where(e => (e.Rights & (int)rightType) > 0)
                         .Select(e => e.Key)
+                        .Distinct()
                         .ToList();
             }
         }
