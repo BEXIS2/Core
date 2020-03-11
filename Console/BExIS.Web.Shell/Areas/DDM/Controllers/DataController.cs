@@ -1441,8 +1441,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
                             {
-                                Feature feature = operationManager.OperationRepository.Get().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
-                                Subject subject = subjectManager.SubjectRepository.Get().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+                                Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
 
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
