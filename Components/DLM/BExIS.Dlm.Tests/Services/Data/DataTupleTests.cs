@@ -29,6 +29,8 @@ namespace BExIS.Dlm.Tests.Services.Data
         private string username = "David";
 
         private DatasetHelper dsHelper;
+        private long numberOfTuples = 10;
+
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -52,7 +54,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 // generate Data
-                long numberOfTuples = 50000;
+                numberOfTuples = 50000;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -124,7 +126,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
 
                 //Assert
-                Assert.That(result.Count(), Is.EqualTo(10));
+                Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
 
                 foreach (var dt in newDts)
                 {
