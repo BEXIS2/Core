@@ -1259,7 +1259,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (var uow = this.GetUnitOfWork())
             {
-                return uow.GetReadOnlyRepository<DatasetVersion>().Get()
+                return uow.GetReadOnlyRepository<DatasetVersion>().Query()
                     .Where(dsv => dsv.Dataset.Id.Equals(datasetId))
                     .OrderBy(d => d.Timestamp)
                     .Select(d => d.Id).ToList().IndexOf(versionId) + 1;
