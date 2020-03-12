@@ -11,9 +11,10 @@
   </Dependencies>
   <Exports>
     <Export tag="menubar" id="ManageDataStructures" order="3"
-            title="Data Structures" description="Edit, Create or Delet Data Structures" icon=""
+            title="Manage Data Structure" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructureSearch" action="" argument=""
             extends="./menubarRoot/collect"/>
+    
     <Export tag="menubar" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
