@@ -300,7 +300,8 @@ namespace BExIS.Web.Shell.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
 
-            System.Web.HttpContext.Current.Session["menu_permission"] = null; // Remove permissions for menu
+            //System.Web.HttpContext.Current.Session["menu_permission"] = null; // Remove permissions for menu
+            System.Web.HttpContext.Current.Session.Abandon(); // Remove permissions for menu
             return RedirectToAction("Index", "Home");
         }
 
