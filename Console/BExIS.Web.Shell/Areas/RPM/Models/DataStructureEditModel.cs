@@ -277,7 +277,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             try
             {
                 missingValueManager = new MissingValueManager();
-                List<MissingValue> temp = missingValueManager.Repo.Get().Where(mv => mv.Variable.Id.Equals(variable.Id)).ToList();
+                List<MissingValue> temp = missingValueManager.Repo.Query(mv => mv.Variable.Id.Equals(variable.Id)).ToList();
 
                 variable.Unit = variable.Unit ?? new Unit();
                 variable.Unit.Dimension = variable.Unit.Dimension ?? new Dimension();

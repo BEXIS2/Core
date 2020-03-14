@@ -203,7 +203,8 @@ function textareaToInput(textarea) {
 
 var afterClosed = false;
 
-function OnChangeTextInput(e) {
+function OnChangeTextInput(e, ui) {
+
     var substr = e.target.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -218,7 +219,7 @@ function OnChangeTextInput(e) {
     //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
     $.post('/DCM/Form/ValidateMetadataAttributeUsage',
         {
-            value: e.value,
+            value: ui.item.value,
             id: id,
             parentid: parentid,
             parentname: parentname,

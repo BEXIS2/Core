@@ -241,7 +241,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             {
                                 variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label.Trim(), v.DefaultValue, v.MissingValue, v.Description.Trim(), v.Unit);
                                 order.Add(variable.Id);
-                                List<MissingValue> missingValues = missingValueManager.Repo.Query().Where(mv => mv.Variable.Id.Equals(v.Id)).ToList();
+                                List<MissingValue> missingValues = missingValueManager.Repo.Query(mv => mv.Variable.Id.Equals(v.Id)).ToList();
                                 foreach(MissingValue mv in missingValues)
                                 {
                                     missingValueManager.Create(mv.DisplayName, mv.Description, variable, mv.Placeholder);

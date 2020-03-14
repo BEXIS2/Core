@@ -764,7 +764,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits)
+        public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits, bool download = false)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -809,13 +809,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype, withUnits);
 
-                        LoggerFactory.LogCustom(message);
+                        //only log and send mail once
+                        if (download)
+                        {
+                            LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
-                            ConfigurationManager.AppSettings["SystemEmail"]
-                            );
+                            var es = new EmailService();
+                            es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+
+                        }
 
                         return File(path, mimetype, title + ext);
                     }
