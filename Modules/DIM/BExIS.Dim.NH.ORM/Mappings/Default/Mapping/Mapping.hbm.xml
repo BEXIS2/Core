@@ -21,12 +21,12 @@
       <column name="Level" />
     </property>
 
-    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Source" column="SourceRef">
+    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Source" column="SourceRef" lazy="false">
     </many-to-one>
-    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Target" column="TargetRef">
+    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Target" column="TargetRef" lazy="false">
     </many-to-one>
 
-    <many-to-one class="BExIS.Dim.Entities.Mapping.TransformationRule" name="TransformationRule" column="TransformationRuleRef">
+    <many-to-one class="BExIS.Dim.Entities.Mapping.TransformationRule" name="TransformationRule" column="TransformationRuleRef" lazy="false">
     </many-to-one>
 
     <many-to-one class="BExIS.Dim.Entities.Mapping.Mapping" name="Parent" column="ParentRef">
