@@ -204,7 +204,16 @@ function textareaToInput(textarea) {
 var afterClosed = false;
 
 function OnChangeTextInput(e, ui) {
+    console.log(e, ui);
+    var value;
 
+    if (ui.item === null) {
+        value = e.target.value;
+    }
+    else {
+        value = ui.item.value;
+    }
+    console.log(value);
     var substr = e.target.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -566,17 +575,16 @@ function OnClickDown(e) {
 }
 
 // Autocomplete
-function OnClose(e) {
-    console.log(e.target.value);
+function OnClose(e, ui) {
+    console.log(ui);
     //var value = e.target.value;
 
     var uiid = e.target.id;
     var substr = e.target.id.split('_');
     var id = substr[0];
-    var tAutoComplete = $('#' + uiid).data("tAutoComplete");
-    console.log(tAutoComplete);
-    var value = tAutoComplete.value();
-    console.log(value);
+   // var tAutoComplete = $('#' + uiid).data("tAutoComplete");
+   // console.log(tAutoComplete);
+    var value = ui.item.value;
 
     var type = $('#' + uiid).attr("type");
     var start = 0;
@@ -588,6 +596,9 @@ function OnClose(e) {
     var number = 0;
     var parent;
     var parentid = 0;
+
+    console.log(value);
+    console.log(type);
     // if the autocomplete type a partycustm type
     if (type === "PartyCustomType") {
         console.log("partycustomtype");

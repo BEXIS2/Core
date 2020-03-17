@@ -218,7 +218,7 @@
                                         minLength: 3,
                                         delay: 300, // this is in milliseconds
                                         change: function (event, ui) { OnChangeTextInput(event, ui); },
-
+                                        select: function (event, ui) { OnClose(event, ui); },
                                         json: true,
                                         source: function(request, response){
                                             // New request 300ms after key stroke
