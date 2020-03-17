@@ -37,7 +37,7 @@
     <div id="facetsOverlay" class="overlay">
         <div class="overlayHeader" onclick="onClickFacetOverlay()">
             @*<i class="fa fa-angle-double-left"></i>*@
-            <span>Facets</span>
+            <span style="text-transform: none;">* datasets only</span> <!--BExIS Adaptation-->
         </div>
         <div class="overlayContent">
             @if (ViewData.ModelState.IsValid)
@@ -136,5 +136,29 @@
             text-transform: uppercase;
             color: #72b1a0;
         }
+    /*BExIS adaptation*/
+    span[title~=Consortia]::after {
+        content: " *";
+    }
 
+    span[title~=ProcessandService]::after {
+        content: " *";
+    }
+
+    span[title~=EnvironmentalDescriptor]::after {
+        content: " *";
+        text-overflow: ellipsis;
+    }
+
+    span[title~=BioticDataType]::after {
+        content: " *";
+    }
+
+    span[title~=ExperimentalManipulation]::after {
+        content: " *";
+    }
+
+    span[title~=Datatype]::after {
+        content: " *";
+    }
 </style>

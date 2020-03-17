@@ -19,18 +19,18 @@
 
         if (numOfFacets <= 10)
         {
-            row_width = 240 * 2 + "px;";
+            row_width = 240 * 3 + "px;";
             colclass = "col-xs-6";
         }
         else if (numOfFacets > 10 && numOfFacets <= 20)
         {
-            row_width = 240 * 3 + "px;";
+            row_width = 240 * 4 + "px;";
             colclass = "col-xs-4";
         }
         else
         if (numOfFacets > 20 && numOfFacets <= 60)
         {
-            row_width = 240 * 4 + "px;";
+            row_width = 240 * 5 + "px;";
             colclass = "col-xs-3";
         }
         else
@@ -70,9 +70,9 @@
 
                             string displayedName;
 
-                            if (facet.Name.Length > 23)
+                            if (facet.Name.Length > 35)
                             {
-                                displayedName = System.StringExtensions.Truncate(facet.Name, 20);
+                                displayedName = System.StringExtensions.Truncate(facet.Name, 32);
                             }
                             else
                             {

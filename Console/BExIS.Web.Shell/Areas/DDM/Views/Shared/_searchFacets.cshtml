@@ -27,7 +27,7 @@
                        .BindTo<Facet>(Model.Item1.SearchComponent.Facets, (item, facet) =>
                        {
 
-                           item.Text = facet.DisplayName + " (" + facet.Count + ")";
+                           item.Text = facet.DisplayName; // BExIS Adaptation
                            item.Value = facet.Name;
                            item.Enabled = true;
                            item.Checkable = false;
