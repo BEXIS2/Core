@@ -228,7 +228,7 @@ function OnChangeTextInput(e, ui) {
     //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
     $.post('/DCM/Form/ValidateMetadataAttributeUsage',
         {
-            value: ui.item.value,
+            value: value,
             id: id,
             parentid: parentid,
             parentname: parentname,
