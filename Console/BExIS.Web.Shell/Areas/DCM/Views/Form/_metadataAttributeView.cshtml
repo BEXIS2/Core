@@ -200,7 +200,7 @@
                                     }
 
 
-                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping" id="@idInput" idbyxpath="@idByXpath" onKeyUp = "OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
+                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp = "OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
                                     <style>
                                         .ui-autocomplete-loading {
                                             background: white url("../../Images/ui-anim_basic_16x16.gif") right center no-repeat;

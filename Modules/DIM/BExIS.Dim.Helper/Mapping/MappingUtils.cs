@@ -513,7 +513,7 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Level.Equals(1)
                         ).ToList().Any();
 
-                return (!mappings_result && mappingsWhenPartyIsParent);
+                return (mappings_result && !mappingsWhenPartyIsParent);
 
             }
             catch (Exception ex)
