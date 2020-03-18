@@ -633,7 +633,7 @@ function OnClose(e, ui) {
                 if ($(e.target).attr("complex") !== null) {
 
                     complex = $(e.target).attr("complex");
-                    if (complex === true) {
+                    if (complex === "True") {
                         parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
                         console.log("parent");
                         console.log(parent);
