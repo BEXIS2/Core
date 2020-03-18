@@ -176,11 +176,8 @@
                                 }
                                 else
                                 {
-                                    //leave the below code in one line to avoid a leading emtpy line
-                                    <div class="bx-metadataForm-textArea-display">
-                                        @if (Model.Value != null)
-                                        {@Html.DisplayWithLinksFor(m => m.Value)}
-                                    </div>
+                                    //Attention: leave the below code in one line to avoid a leading emtpy line
+                                    <div class="bx-metadataForm-textArea-display">@if (Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}</div>
                                 }
                             }
 
@@ -203,7 +200,7 @@
                                     }
 
 
-                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping" id="@idInput" idbyxpath="@idByXpath" onKeyUp = "OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
+                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp = "OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
                                     <style>
                                         .ui-autocomplete-loading {
                                             background: white url("../../Images/ui-anim_basic_16x16.gif") right center no-repeat;
@@ -218,7 +215,7 @@
                                         minLength: 3,
                                         delay: 300, // this is in milliseconds
                                         change: function (event, ui) { OnChangeTextInput(event, ui); },
-
+                                        select: function (event, ui) { OnClose(event, ui); },
                                         json: true,
                                         source: function(request, response){
                                             // New request 300ms after key stroke

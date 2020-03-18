@@ -9,9 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
-
 using BExIS.Dim.Entities.Mapping;
-
 using BExIS.Security.Services.Objects;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
@@ -28,7 +26,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                   return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -46,7 +44,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                 IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                 IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                  var mapping_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -73,7 +71,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Parent.Id.Equals(parentMappingId)
                         ).ToList();
@@ -92,7 +90,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Source.ElementId.Equals(sourceId) &&
                             m.Source.Type.Equals(sourceType)
@@ -112,7 +110,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Source.ElementId.Equals(sourceId) &&
                             m.Source.Type.Equals(sourceType) &&
@@ -160,7 +158,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                    IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                     return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -184,7 +182,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Parent != null &&
                             m.Parent.Source.Type.Equals(LinkElementType.Entity) &&
@@ -209,7 +207,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Parent != null &&
                             m.Source.ElementId.Equals(entityId) &&
@@ -235,7 +233,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
                     List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
 
-                    IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                     var mapping_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetElementId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -317,7 +315,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
 
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
-                    IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                     var mapping_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetElementId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -336,7 +334,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -364,7 +362,7 @@ namespace BExIS.Dim.Helpers.Mapping
             {
               
                     //if party is the parent
-                    IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                     bool mappingsWhenPartyIsParent = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -401,7 +399,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 bool mappings_result= mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -432,7 +430,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -460,7 +458,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 bool mappings_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -498,7 +496,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 bool mappings_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -515,7 +513,7 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Level.Equals(1)
                         ).ToList().Any();
 
-                return (!mappings_result && mappingsWhenPartyIsParent);
+                return (mappings_result && !mappingsWhenPartyIsParent);
 
             }
             catch (Exception ex)
@@ -528,7 +526,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -642,7 +640,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 {
                     string value = "";
 
-                    IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                     var mapping_result = mapping.Where(m =>
                                 m.Target.ElementId.Equals(targetElementId) &&
                                 m.Target.Type.Equals(targetElementType) &&
@@ -704,7 +702,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
                 //Select all mappings where the target is mapped to a party custom attr with the party id
-                IList<Entities.Mapping.Mapping> mapping = MappingUtils.mappings();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetElementId) &&
                             m.Target.Type.Equals(targetElementType) &&
@@ -729,6 +727,37 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        public static bool ExistSystemFieldMappings(long id, LinkElementType type)
+        {
+            //Automatic System Keys starts at 100
+            //Id = 100,
+            //Version = 101,
+            //DateOfVersion = 102,
+            //MetadataCreationDate = 103,
+            //MetadataLastModfied = 104,
+            //DataFirstEntry = 105,
+            //DataLastModified = 106, // also for Dubline Core date
+
+            try
+            {
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                return mapping.Where(m =>
+                            m.Target.ElementId.Equals(id) &&
+                            m.Target.Type.Equals(type) &&
+                            100 <= m.Source.ElementId && m.Source.ElementId <= 106 &&
+                            m.Source.Type.Equals(LinkElementType.Key)
+                        ).ToList().Any();
+
+                //  return false;
+                // }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         /// <summary>
         /// Check if there is a mapping to system key nodes
         /// return true if yes
@@ -737,7 +766,7 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <param name="type"></param>
         /// <returns></returns>
         /// 
-        public static IList<Entities.Mapping.Mapping> mappings()
+        public static IList<Entities.Mapping.Mapping> CachedMappings()
         {
 
             if (System.Web.HttpContext.Current.Session["mappings"] != null)
@@ -755,34 +784,11 @@ namespace BExIS.Dim.Helpers.Mapping
             }
 
         }
-        public static bool ExistSystemFieldMappings(long id, LinkElementType type)
-        {
-            //Automatic System Keys starts at 100
-            //Id = 100,
-            //Version = 101,
-            //DateOfVersion = 102,
-            //MetadataCreationDate = 103,
-            //MetadataLastModfied = 104,
-            //DataFirstEntry = 105,
-            //DataLastModified = 106, // also for Dubline Core date
 
-            try
-            {
-                IList<Entities.Mapping.Mapping>mapping = MappingUtils.mappings();
-                return mapping.Where(m =>
-                            m.Target.ElementId.Equals(id) &&
-                            m.Target.Type.Equals(type) &&
-                            100 <= m.Source.ElementId && m.Source.ElementId <= 106 &&
-                            m.Source.Type.Equals(LinkElementType.Key)
-                        ).ToList().Any();
-              
-              //  return false;
-               // }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        public static void Clear()
+        {
+            if (System.Web.HttpContext.Current.Session["mappings"] != null)
+                System.Web.HttpContext.Current.Session.Remove("mappings");
         }
 
         #endregion GET FROM SYSTEM

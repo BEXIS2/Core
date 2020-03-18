@@ -25,10 +25,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [GridAction]
-        public ActionResult _dataStructureResultGridBinding(long[] previewIds, string searchTerms)
+        public ActionResult _dataStructureResultGridBinding(long[] previewIds, string searchTerms, bool structured = true, bool unstructured = true)
         {
             searchTerms = Server.UrlDecode(searchTerms);
-            return View(new GridModel(new DataStructureResultsModel(previewIds, searchTerms).dataStructureResults));
+            return View(new GridModel(new DataStructureResultsModel(previewIds, searchTerms, structured, unstructured).dataStructureResults));
         }
 
         [GridAction]

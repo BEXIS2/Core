@@ -193,6 +193,12 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.fill(previewIds, saerchTerms);
         }
 
+        public DataStructureResultsModel(long[] previewIds, string saerchTerms, bool structured, bool unstructured)
+        {
+            dataStructureResults = new List<DataStructureResultStruct>();
+            this.fill(previewIds, saerchTerms, structured, unstructured);
+        }
+
         private List<DataStructure> getStucturedDataStructures(string searchTerms, DataStructureManager dataStructureManager)
         {
             if (String.IsNullOrEmpty(searchTerms))
@@ -235,7 +241,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             return (results);
         }
 
-        public DataStructureResultsModel fill(long[] previewIds, string saerchTerms)
+        public DataStructureResultsModel fill(long[] previewIds, string saerchTerms, bool structured = true, bool unstructured = true)
         {
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
@@ -249,57 +255,63 @@ namespace BExIS.Modules.Rpm.UI.Models
 
                 using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                 {
-                    foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
+                    if (structured)
+                    {
+                        foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
+                        {
+                            dataStructureResult = new DataStructureResultStruct();
+                            dataStructureResult.Id = ds.Id;
+                            dataStructureResult.Title = ds.Name;
+                            dataStructureResult.Description = ds.Description;
+
+                            foreach (Dataset d in ds.Datasets)
+                            {
+                                if (datasetManager.RowAny(d.Id, uow))
+                                {
+                                    dataStructureResult.inUse = true;
+                                    break;
+                                }
+
+                                // currently not working
+                                /* else
+                                {
+                                    foreach (DatasetVersion dv in d.Versions)
+                                    {
+                                        if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
+                                        {
+                                            dataStructureResult.inUse = true;
+                                            break;
+                                        }
+                                    }
+                                }*/
+                            }
+
+                            dataStructureResult.Structured = true;
+
+                            if (previewIds != null && previewIds.Contains(ds.Id))
+                                dataStructureResult.Preview = true;
+
+                            this.dataStructureResults.Add(dataStructureResult);
+                        }
+                    }
+                }
+                if (unstructured)
+                {
+                    foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
                     {
                         dataStructureResult = new DataStructureResultStruct();
                         dataStructureResult.Id = ds.Id;
                         dataStructureResult.Title = ds.Name;
                         dataStructureResult.Description = ds.Description;
 
-                        foreach (Dataset d in ds.Datasets)
-                        {
-                            if (datasetManager.RowAny(d.Id, uow))
-                            {
-                                dataStructureResult.inUse = true;
-                                break;
-                            }
-
-                            // currently not working
-                            /* else
-                            {
-                                foreach (DatasetVersion dv in d.Versions)
-                                {
-                                    if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
-                                    {
-                                        dataStructureResult.inUse = true;
-                                        break;
-                                    }
-                                }
-                            }*/
-                        }
-
-                        dataStructureResult.Structured = true;
+                        if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+                            dataStructureResult.inUse = true;
 
                         if (previewIds != null && previewIds.Contains(ds.Id))
                             dataStructureResult.Preview = true;
 
                         this.dataStructureResults.Add(dataStructureResult);
                     }
-                }
-                foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
-                {
-                    dataStructureResult = new DataStructureResultStruct();
-                    dataStructureResult.Id = ds.Id;
-                    dataStructureResult.Title = ds.Name;
-                    dataStructureResult.Description = ds.Description;
-
-                    if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
-                        dataStructureResult.inUse = true;
-
-                    if (previewIds != null && previewIds.Contains(ds.Id))
-                        dataStructureResult.Preview = true;
-
-                    this.dataStructureResults.Add(dataStructureResult);
                 }
                 return this;
             }
