@@ -49,7 +49,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (datasetId > 0)
                 {
                     // add title to model
-                    model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
+                    { 
+                        model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                    }
                     // add seleted dataset id to model
                     model.SelectedDatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
                     // add informations of dataset to Bus 

@@ -61,7 +61,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.DatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
             }
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE]  != null)
             {
                 model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             }
