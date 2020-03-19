@@ -204,74 +204,81 @@ function textareaToInput(textarea) {
 var afterClosed = false;
 
 function OnChangeTextInput(e, ui) {
-    console.log(e, ui);
-    var value;
 
-    if (ui.item === null) {
-        value = e.target.value;
+    // after the on close event from the autocomplete component, the values change in the input fields
+    // after this changes again this change event is triggered
+    // to prevent this, a flag is set to check wheter this event is fired after a close event or not
+    if (afterClosed === false) {
+
+        console.log("on change text input");
+        var value;
+
+        if (ui.item === null) {
+            value = e.target.value;
+        }
+        else {
+            value = ui.item.value;
+        }
+        //console.log(value);
+        var substr = e.target.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var parentname = $("#" + e.id).attr("title");
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
+        var ParentStepID = substr[5];
+
+        //alert(parentid);
+        //alert(metadataStructureId);
+        //alert(ParentStepID);
+        //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
+        $.post('/DCM/Form/ValidateMetadataAttributeUsage',
+            {
+                value: value,
+                id: id,
+                parentid: parentid,
+                parentname: parentname,
+                number: number,
+                parentModelNumber: ParentModelNumber,
+                ParentStepId: ParentStepID
+            },
+            function (response) {
+                var id = e.target.id;
+                //console.log("OnChangeTextInput");
+                //console.log(id);
+
+                var index = id.lastIndexOf("_");
+                var newId = id.substr(0, index);
+                //console.log(newId);
+
+                $("#" + newId).replaceWith(response);
+                updateHeader();
+
+                //alert("test");
+                autosize($('textarea'));
+
+                //check if the parent is set to a party
+                //console.log("after change");
+                var parent = $("#" + ParentStepID)[0];
+                //console.log(parent);
+                var partyid = $(parent).attr("partyid");
+                //console.log(partyid);
+
+                var partyidConverted = TryParseInt(partyid, null)
+                //console.log("tryparse:" + partyidConverted)
+
+                //delete party informations when a party was selected before
+                if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
+                    console.log(ParentStepID);
+                    console.log(ParentModelNumber);
+
+                    UpdateWithParty(ParentStepID, ParentModelNumber, 0);
+                }
+                else {
+                    afterClosed = false;
+                }
+            })
     }
-    else {
-        value = ui.item.value;
-    }
-    console.log(value);
-    var substr = e.target.id.split('_');
-    var id = substr[0];
-    var parentid = substr[1];
-    var parentname = $("#" + e.id).attr("title");
-    var number = substr[2];
-    var ParentModelNumber = substr[3];
-    var ParentStepID = substr[5];
-
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(ParentStepID);
-    //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-    $.post('/DCM/Form/ValidateMetadataAttributeUsage',
-        {
-            value: value,
-            id: id,
-            parentid: parentid,
-            parentname: parentname,
-            number: number,
-            parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
-        },
-        function (response) {
-            var id = e.target.id;
-            //console.log("OnChangeTextInput");
-            //console.log(id);
-
-            var index = id.lastIndexOf("_");
-            var newId = id.substr(0, index);
-            //console.log(newId);
-
-            $("#" + newId).replaceWith(response);
-            updateHeader();
-
-            //alert("test");
-            autosize($('textarea'));
-
-            //check if the parent is set to a party
-            console.log("after change");
-            var parent = $("#" + ParentStepID)[0];
-            console.log(parent);
-            var partyid = $(parent).attr("partyid");
-            console.log(partyid);
-
-            var partyidConverted = TryParseInt(partyid, null)
-            console.log("tryparse:" + partyidConverted)
-
-            //delete party informations when a party was selected before
-            if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
-                console.log(ParentStepID);
-                console.log(ParentModelNumber);
-
-                UpdateWithParty(ParentStepID, ParentModelNumber, 0);
-            }
-            else {
-                afterClosed = false;
-            }
-        })
 }
 
 function OnChange(e) {
@@ -576,7 +583,15 @@ function OnClickDown(e) {
 
 // Autocomplete
 function OnClose(e, ui) {
-    console.log(ui);
+
+    console.log("OnClose start");
+
+    // after the on close event from the autocomplete component, the values change in the input fields
+    // after this changes again a change event is triggered
+    // to prevent this, a flag is set to check wheter this event is fired after a close event or not
+    afterClosed = true;
+
+    //console.log(ui);
     //var value = e.target.value;
 
     var uiid = e.target.id;
@@ -597,8 +612,8 @@ function OnClose(e, ui) {
     var parent;
     var parentid = 0;
 
-    console.log(value);
-    console.log(type);
+    //console.log(value);
+    //console.log(type);
     // if the autocomplete type a partycustm type
     if (type === "PartyCustomType") {
         console.log("partycustomtype");
@@ -620,6 +635,9 @@ function OnClose(e, ui) {
 
                 if ($(e.target).attr("simple") !== null) {
 
+                    console.log("SIMPLE start");
+
+
                     var simple = $(e.target).attr("simple");
                     var xpath = $(e.target).attr("xpath");
 
@@ -632,11 +650,14 @@ function OnClose(e, ui) {
                 var complex;
                 if ($(e.target).attr("complex") !== null) {
 
+
+                    console.log("COMPLEX start");
+
                     complex = $(e.target).attr("complex");
                     if (complex === "True") {
                         parent = $(e.target).parents(".metadataCompountAttributeUsage")[0];
-                        console.log("parent");
-                        console.log(parent);
+                        //console.log("parent");
+                        //console.log(parent);
 
                         if (parent !== null) {
                             parentid = $(parent).attr("id");
@@ -651,7 +672,7 @@ function OnClose(e, ui) {
 
     // if the autocomplete type a Entity
     if (type === "Entity") {
-        console.log("entity");
+        console.log("ENTITY STARTS");
 
         if (~value.indexOf("(") && ~value.indexOf(")")) {
             start = value.lastIndexOf("(") + 1;
@@ -681,8 +702,8 @@ function OnClose(e, ui) {
  ******************************************/
 
 function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityid, entitytypeid, value) {
-    console.log("update with entity");
-    console.log(componentId + "-" + number + "-" + entityid + "_" + entitytypeid);
+    //console.log("update with entity");
+    //console.log(componentId + "-" + number + "-" + entityid + "_" + entitytypeid);
 
     var attrId = inputid.split("_")[0];
 
@@ -703,7 +724,7 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
             value: value
         },
         function (response) {
-            console.log(componentId);
+            //console.log(componentId);
             //console.log(response);
 
             $("#" + componentId).replaceWith(response);
@@ -715,8 +736,8 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
 }
 
 function UpdateWithParty(componentId, number, partyid) {
-    console.log("update with party");
-    console.log(componentId + "-" + number + "-" + partyid);
+    console.log("update with complex mapping");
+    //console.log(componentId + "-" + number + "-" + partyid);
 
     $("#" + componentId).find(".metadataAttributeInput").each(function () {
         $(this).preloader(12, "...loading");
@@ -729,7 +750,7 @@ function UpdateWithParty(componentId, number, partyid) {
             partyId: partyid
         },
         function (response) {
-            console.log(componentId);
+            //console.log(componentId);
             //console.log(response);
 
             $("#" + componentId).replaceWith(response);
@@ -742,6 +763,9 @@ function UpdateWithParty(componentId, number, partyid) {
 
 function UpdateSimpleMappingWithParty(componentId, xpath, partyid)
 {
+    console.log("update with simple mapping");
+
+
     $.post('/DCM/Form/UpdateSimpleUsageWithParty',
         {
             xpath: xpath,
