@@ -158,8 +158,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.StepInfo = TaskManager.Current();
                 if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
+                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
+                {
                     model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                }
                 model.SelectedDatasetId = Convert.ToInt32(id);
                 return PartialView("SpecifyDataset", model);
             }
