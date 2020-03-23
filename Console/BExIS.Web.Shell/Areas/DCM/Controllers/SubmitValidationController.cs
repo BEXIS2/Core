@@ -7,6 +7,7 @@ using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -196,6 +197,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.Validated = true;
                     TaskManager.AddToBus(TaskManager.VALID, true);
                 }
+
+                List<Error> errorList = new List<Error>();
+                for (int i = 0; i < model.ErrorList.Count; i++)
+                {
+                    // Assume not duplicate.
+                    bool duplicate = false;
+                    for (int z = 0; z < i; z++)
+                    {
+                        if (model.ErrorList[z].ToString() == model.ErrorList[i].ToString())
+                        {
+                            // This is a duplicate.
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    // If not duplicate, add to result.
+                    if (!duplicate)
+                    {
+                        errorList.Add(model.ErrorList[i]);
+                    }
+                }
+
+                model.ErrorList = errorList;
 
                 return PartialView(TaskManager.Current().GetActionInfo.ActionName, model);
             }
