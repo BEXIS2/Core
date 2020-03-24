@@ -58,8 +58,10 @@ namespace BExIS.IO.Transform.Validation.DSValidation
                     if (!test)
                         errorVariables.Add(o.name);
                 }
-
-                errors.Add(new Error(ErrorType.Datastructure, "A variable of the data file does not exist in the data structure. Check your variable names in your file and data structure. Names need to be identical.", string.Join(",", errorVariables)));
+                if (errorVariables.Count > 0)
+                {
+                    errors.Add(new Error(ErrorType.Datastructure, "A variable of the data file does not exist in the data structure. Check your variable names in your file and data structure. Names need to be identical.", string.Join(",", errorVariables)));
+                }
             }
             else
             {
