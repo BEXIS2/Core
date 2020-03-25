@@ -1089,7 +1089,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied, Key.DataCreationDate, Key.DataLastModified };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
             return XmlUtility.ToXDocument(metadata);
         }
