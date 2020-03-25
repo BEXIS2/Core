@@ -156,9 +156,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
             // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
+
+            DatasetVersion latestVersion = dm.GetDatasetLatestVersion(datasetId);
+            string status = DatasetStateInfo.NotValid.ToString();
+            if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
+
             if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
                 DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+
+                //set StateInfo of the previus version
+                if (datasetVersion.StateInfo == null)
+                {
+                    datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                    {
+                        State = status
+                    };
+                }
+                else
+                {
+                    datasetVersion.StateInfo.State = status;
+                }
+
 
                 foreach (var file in attachments)
                 {
