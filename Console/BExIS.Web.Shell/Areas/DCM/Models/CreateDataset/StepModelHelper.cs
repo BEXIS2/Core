@@ -3,6 +3,7 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
@@ -135,6 +136,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
                     tmp = letter;
                 }
             }
+
+            displayName = Regex.Replace(displayName, "_", " ");
 
             return displayName;
         }
