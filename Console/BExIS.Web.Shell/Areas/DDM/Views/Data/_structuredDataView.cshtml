@@ -72,7 +72,10 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                 <li><a id="downloadExcelTemplateButton" onclick="downloadExcelTemplate(@Model.DatasetId)">Template (.xlsm)</a></li>
-                <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)">Excel (.xlsx)</a></li>
+                @if (Model.Data.Rows.Count < 1048576)
+                {
+                    <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)" class="disabled">Excel (.xlsx)</a></li>
+                }
             </ul>
         </span>
 

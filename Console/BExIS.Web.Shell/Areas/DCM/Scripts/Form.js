@@ -623,6 +623,8 @@ function OnClose(e, ui) {
             end = value.lastIndexOf(")");
             partyid = value.substr(start, end - start);
 
+            var onlyValue = value.substr(0, start-2);
+
             console.log("partyid = " + partyid);
 
             if (partyid !== "0") {
@@ -643,7 +645,7 @@ function OnClose(e, ui) {
 
                     if (simple === "True") {
 
-                        UpdateSimpleMappingWithParty(uiid, xpath, partyid);
+                        UpdateSimpleMappingWithParty(uiid, xpath, partyid, onlyValue);
                     }
                 }
 
@@ -761,9 +763,12 @@ function UpdateWithParty(componentId, number, partyid) {
         })
 }
 
-function UpdateSimpleMappingWithParty(componentId, xpath, partyid)
+function UpdateSimpleMappingWithParty(componentId, xpath, partyid, value)
 {
     console.log("update with simple mapping");
+    console.log(value);
+    console.log($("#" + componentId));
+    console.log("----------------------");
 
 
     $.post('/DCM/Form/UpdateSimpleUsageWithParty',
@@ -775,6 +780,7 @@ function UpdateSimpleMappingWithParty(componentId, xpath, partyid)
 
             if (response) {
                 $("#" + componentId).attr("partyid", partyid);
+                $("#" + componentId).val(value);
             }
         });
 }
