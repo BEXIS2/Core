@@ -42,6 +42,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
         public List<Error> Execute(List<VariableIdentifier> checkList, List<VariableIdentifier> sourceList, string sourceListName)
         {
             List<Error> errors = new List<Error>();
+            List<string> errorVariables = new List<string>();
 
             // check length
             if (checkList.Count.Equals(sourceList.Count))
@@ -57,14 +58,18 @@ namespace BExIS.IO.Transform.Validation.DSValidation
                     else
                         test = incoming.id.Equals(source.id);
 
-                    if (!test) 
-                        errors.Add(new Error(ErrorType.Datastructure, "Data structure does not have the same order. the variable from the incoming structure does not match the structure in the system", incoming.name));
-
+                    if (!test)
+                        errorVariables.Add(incoming.name);
+                       
+                }
+                if (errorVariables.Count() > 0)
+                {
+                    errors.Add(new Error(ErrorType.Datastructure, "Data structure does not have the same order. Check your variable names and order in your file and data structure. Names need to be identical.", string.Join(",", errorVariables)));
                 }
             }
             else
             {
-                errors.Add(new Error(ErrorType.Datastructure, "Datastructure does not fit. The number of variables in file do not match", sourceListName));
+                errors.Add(new Error(ErrorType.Datastructure, "Data structure does not fit. The number of variables in the file does not match with the defined number in the data structure.", sourceListName));
                 return errors;
             }
 

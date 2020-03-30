@@ -1,6 +1,9 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.CreateDataset.SetupModel
+@using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+
 @using BExIS.Modules.Dcm.UI.Models
 @using Telerik.Web.Mvc.UI
+@using BExIS.Utils.Extensions
 
 @{
     List<ListViewItem> DatasetsList = new List<ListViewItem>();
@@ -18,9 +21,10 @@
         This wizard will assist you in creating a new dataset. Please select a data structure and a metadata structure below.
         Or select a dataset as template to use the metadata structure and the metadata from the selected dataset.
         <p>
-            <a href="/DCM/Help/Index/#_Toc434570841" class = "bx-informationLink" title = "go to help" target="_blank">More</a>
+            <a href="/DCM/Help/Index/#_Toc434570841" class="bx-informationLink" title="go to help" target="_blank">More</a>
         </p>
     }
+
     @Html.ValidationSummary(true)
 
     <p>Please provide the following information.</p>
@@ -33,14 +37,14 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datasetsContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new { title = "Select a Dataset as Template" } ,
-                            new AjaxOptions
-                            {
-                                HttpMethod = "GET",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "datasetWindowContainer"
-                            },
-                            new { @class = "bx-button function", @style = "float:right", title = "Select a Dataset as Template" })
+                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new { title = "Select a Dataset as Template" },
+                             new AjaxOptions
+                             {
+                                 HttpMethod = "GET",
+                                 InsertionMode = InsertionMode.Replace,
+                                 UpdateTargetId = "datasetWindowContainer"
+                             },
+                             new { @class = "bx-button function", @style = "float:right", title = "Select a Dataset as Template" })
                     </div>
                     <div id="datasetWindowContainer"></div>
 
@@ -52,28 +56,42 @@
                         string title = Model.DatasetViewList.Where(ms => ms.Id.Equals(Model.SelectedDatasetId)).FirstOrDefault().Title;
                         @Html.HiddenFor(m => m.SelectedDatasetId)
                         @Html.Label(title)
-                        
+
                     }
                     else
                     {
                         @(Html.Telerik().DropDownList()
                               .Name("SelectedDatasetId")
                               .SelectedIndex(0)
-                              .HtmlAttributes(new {title = "Select a Dataset as Template", @class= "bx-dropdown" })
+                              .HtmlAttributes(new { title = "Select a Dataset as Template", @class = "bx-dropdown" })
                               .BindTo(new SelectList(DatasetsList, "Id", "Title", Model.SelectedDatasetId))
                               .ClientEvents(events =>
                               {
                                   events.OnChange("datasetChange");
                               })
-                              )
+                        )
                     }
                 </td>
                 <td>
                     @Html.ValidationMessageFor(m => m.SelectedDatasetId)
                 </td>
-
             </tr>
             <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    @foreach (DataStructureOptions dsoptions in Enum.GetValues(typeof(DataStructureOptions)))
+                    {
+                        var id = TagBuilder.CreateSanitizedId(string.Format("{0}_{1}_{2}", "rdbtn", typeof(DataStructureOptions), dsoptions));
+                        <div>
+                            @Html.RadioButtonFor(s => s.DataStructureOptions, dsoptions, new { id })
+                            @Html.Label(dsoptions.GetDisplayName(), new { @for = id })
+                        </div>
+                    }
+                    
+                </td>
+            </tr>
+            <tr id="ds">
                 <td style="width: 300px;">
                     @Html.LabelFor(m => m.SelectedDataStructureId) <span class="bx bx-required" title="Required"></span>
                 </td>
@@ -103,20 +121,20 @@
                         @(Html.Telerik().DropDownList()
                               .Name("SelectedDataStructureId")
                               .Placeholder("Select")
-                              .HtmlAttributes(new {title = "Select a Data Structure", @class = "bx-dropdown" })
+                              .HtmlAttributes(new { title = "Select a Data Structure", @class = "bx-dropdown"})
+                              .HiddenInputHtmlAttributes(new {data_val = "false" })
                               .SelectedIndex(0)
                               .BindTo(new SelectList(Model.DataStructureViewList, "Id", "Title", Model.SelectedDataStructureId))
                               .ClientEvents(e =>
                               {
                                   e.OnChange("onChangeDataStructure");
                               })
-                              )
+                        )
                     }
                 </td>
                 <td>
                     @Html.ValidationMessageFor(m => m.SelectedDataStructureId)
                 </td>
-
             </tr>
             <tr>
                 <td style="width: 300px;">
@@ -137,7 +155,7 @@
                                     InsertionMode = InsertionMode.Replace,
                                     UpdateTargetId = "metadatadatastructureWindowContainer"
                                 },
-                                new { @class = "bx-button function", @style = "float:right",title = "Select a Metadata Structure" })
+                                new { @class = "bx-button function", @style = "float:right", title = "Select a Metadata Structure" })
                         }
                     </div>
                     <div id="metadatadatastructureWindowContainer"></div>
@@ -148,7 +166,7 @@
                         string title = Model.MetadataStructureViewList.Where(ms => ms.Id.Equals(Model.SelectedMetadataStructureId)).FirstOrDefault().Title;
                         @Html.HiddenFor(m => m.SelectedMetadataStructureId)
                         @Html.Label(title)
-                        ;
+                        
                     }
                     else
                     {
@@ -156,37 +174,33 @@
                         @(Html.Telerik().DropDownList()
                               .Name("SelectedMetadataStructureId")
                               .Placeholder("Select")
-                              .HtmlAttributes(new {title = "Select a Metadata Structure", @class = "bx-dropdown" })
+                              .HtmlAttributes(new { title = "Select a Metadata Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
                               .BindTo(new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadataStructureId))
                               .ClientEvents(e =>
                               {
                                   e.OnChange("onChangeMetadataStructure");
                               })
-                              )
+                        )
 
                     }
                 </td>
                 <td>
                     @Html.ValidationMessageFor(m => m.SelectedMetadataStructureId)
                 </td>
-
             </tr>
         </table>
 
         <div class="bx-footer right">
             <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Next</button>
-
         </div>
 
     }
 </div>
 
-
 <script type="text/javascript">
 
     function datasetChange(e) {
-
 
         var id;
 
@@ -221,7 +235,6 @@
             })
     }
 
-
     function onChangeDataStructure() {
 
         var id;
@@ -237,6 +250,22 @@
 
             })
     }
+
+
+    $("input[Name='DataStructureOptions']").change(function () {
+        var selectedRadio = $("input[name='DataStructureOptions']:checked").val();
+
+        if (selectedRadio == "Existing") {
+            $($("#ds")[0]).show();
+            $("#SelectedDataStructureId").attr("disabled", false)
+        }
+        else {
+            $($("#ds")[0]).hide();
+            $("#SelectedDataStructureId").attr("disabled", true)
+
+        }
+    })
+
 
 </script>
 

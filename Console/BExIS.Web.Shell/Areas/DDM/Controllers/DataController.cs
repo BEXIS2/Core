@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Party;
+using BExIS.Dlm.Entities.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
@@ -47,7 +48,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 {
     public class DataController : BaseController
-    {  
+    {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
@@ -591,6 +592,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             table = dm.GetDatasetVersionTuples(versionId, 0, 100);
                             Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
+                        
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
                         return PartialView(ShowPrimaryDataModel.Convert(
                             datasetID,
@@ -759,7 +762,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits)
+        public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits, bool download = false)
         {
             if (hasUserRights(id, RightType.Read))
             {
@@ -804,13 +807,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype, withUnits);
 
-                        LoggerFactory.LogCustom(message);
+                        //only log and send mail once
+                        if (download)
+                        {
+                            LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
-                            ConfigurationManager.AppSettings["SystemEmail"]
-                            );
+                            var es = new EmailService();
+                            es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+
+                        }
 
                         return File(path, mimetype, title + ext);
                     }
@@ -1256,7 +1264,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (var uow = this.GetUnitOfWork())
             {
-                return uow.GetReadOnlyRepository<DatasetVersion>().Get()
+                return uow.GetReadOnlyRepository<DatasetVersion>().Query()
                     .Where(dsv => dsv.Dataset.Id.Equals(datasetId))
                     .OrderBy(d => d.Timestamp)
                     .Select(d => d.Id).ToList().IndexOf(versionId) + 1;
@@ -1418,14 +1426,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 subjectManager = new SubjectManager();
 
                 using (var uow = this.GetUnitOfWork())
-                {                  
+                {
                     long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
                     DataStructure dataStructure = null;
                     long id = (long)datasetID;
                     string DSlink = null;
 
-                    if (this.IsAccessible("RPM", "DataStructureEdit","Index"))
+                    if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
                     {
                         dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
                         bool structured = false;
@@ -1433,13 +1441,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             structured = true;
                         else
                             dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
-                                            
+
                         if (structured)
                         {
                             if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
                             {
-                                Feature feature = operationManager.OperationRepository.Get().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
-                                Subject subject = subjectManager.SubjectRepository.Get().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+                                Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
 
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
@@ -1534,7 +1542,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region entity references
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        //[BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
         public ActionResult ShowReferences(long id, int version)
         {
             var sourceTypeId = 0;
@@ -1627,29 +1635,44 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private string createEditedBy(string performer)
         {
-            var user = GetUsernameOrDefault();
-            if (user != "DEFAULT")
+            using (PartyManager partyManager = new PartyManager())
             {
-                return "by " + performer + ", ";
-            }
-            else
-            {
-                return "";
-            }
-            
-        }
+                var identityUserService = new IdentityUserService();
+                var user_performer = identityUserService.FindByNameAsync(performer);
 
+                // Replace account name by party name if exists
+                if (user_performer.Result != null)
+                {
+                    Party party = partyManager.GetPartyByUser(user_performer.Result.Id);
+
+                    if (party != null)
+                    {
+                        performer = party.Name;
+                    }
+                }
+
+                // check if a user is logged in, if not do not show performer
+                var user = GetUsernameOrDefault();
+                if (user != "DEFAULT")
+                {
+                    return "by " + performer + ", ";
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
 
         private string getVersionInfo(DatasetVersion d)
         {
             StringBuilder sb = new StringBuilder();
-            
+
             // modification, Performer and Comment exists (as indication for new version type tracking)
             if (d.ModificationInfo != null &&
-                !string.IsNullOrEmpty(d.ModificationInfo.Performer) && 
+                !string.IsNullOrEmpty(d.ModificationInfo.Performer) &&
                 !string.IsNullOrEmpty(d.ModificationInfo.Comment))
             {
-                
                 // Metadata cration & edit
                 if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
@@ -1684,7 +1707,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     sb.Append(String.Format("Data deleted ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
-                // attachment 
+                // attachment
                 else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
                 {
                     sb.Append(String.Format("Attachtment uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
@@ -1693,8 +1716,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     sb.Append(String.Format("Attachtment deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-
-
                 else
                 {
                     sb.Append(d.ModificationInfo.Comment);
@@ -1717,16 +1738,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         sb.Append(Truncate(d.ChangeDescription, 30));
                     }
-
                 }
-                
             }
             else
             {
                 sb.Append(String.Format("{0} ({1})", Truncate(d.ChangeDescription, 30), d.Timestamp.ToString("dd.MM.yyyy")));
             }
-
-
 
             return sb.ToString();
         }
@@ -1906,31 +1923,29 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             show_tab_list.Add("show_tabs_deactivated", "true");
 
-
             string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
             XDocument settings = XDocument.Load(filePath);
 
-            foreach (var item in show_tab_list.ToList()) {
+            foreach (var item in show_tab_list.ToList())
+            {
                 try
                 {
-                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key , settings).Attribute("value")?.Value;
+                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key, settings).Attribute("value")?.Value;
 
                     if (value != null)
                     {
                         show_tab_list[item.Key] = value;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                  // do nothing
+                    // do nothing
                 }
-                
             }
 
             Session["SettingsTabList"] = show_tab_list;
             return show_tab_list;
-       }
-
+        }
 
         #endregion helper
     }

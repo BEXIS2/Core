@@ -128,7 +128,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             FinishUploadModel finishModel = new FinishUploadModel();
             if (TaskManager != null)
             {
-                finishModel.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                // add title if exists
+                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
+                {
+                    finishModel.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                }
                 finishModel.Filename = TaskManager.Bus[TaskManager.FILENAME].ToString();
             }
 

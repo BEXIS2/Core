@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -298,6 +299,9 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            //System.Web.HttpContext.Current.Session["menu_permission"] = null; // Remove permissions for menu
+            System.Web.HttpContext.Current.Session.Abandon(); // Remove permissions for menu
             return RedirectToAction("Index", "Home");
         }
 

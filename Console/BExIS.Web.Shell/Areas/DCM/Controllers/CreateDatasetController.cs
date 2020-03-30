@@ -211,6 +211,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 Model.BlockMetadataStructureId = true;
 
+                Model.DataStructureOptions = DataStructureOptions.Existing;
+
                 //add to Bus
                 TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
                 TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, dataset.MetadataStructure.Id);
@@ -224,7 +226,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             DatasetManager datasetManager = new DatasetManager();
+            DataStructureManager dataStructureManager = new DataStructureManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            string username = GetUsernameOrDefault();
 
             try
             {
@@ -236,8 +240,39 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 model = LoadLists(model);
 
+                if (model.DataStructureOptions == DataStructureOptions.Existing && model.SelectedDataStructureId == 0)
+                    ModelState.AddModelError("SelectedDataStructureId", "Please select a data structure.");
+
                 if (ModelState.IsValid)
                 {
+                   
+                    // create new structure if its not exist
+                    if (model.DataStructureOptions != DataStructureOptions.Existing)
+                    {
+                        string name = "New created for " + username + "_" + DateTime.Now.Ticks;
+
+                        //create unstructured
+                        if (model.DataStructureOptions == DataStructureOptions.CreateNewFile)
+                        {
+                            var d = dataStructureManager.CreateUnStructuredDataStructure(name, "");
+                            if (d != null) model.SelectedDataStructureId = d.Id;
+                        }
+
+                        //create structured
+                        if (model.DataStructureOptions == DataStructureOptions.CreateNewStructure)
+                        {
+                            var d = dataStructureManager.CreateStructuredDataStructure(name, "","","",DataStructureCategory.Generic);
+                            if (d != null) model.SelectedDataStructureId = d.Id;
+                        }
+
+                        if (model.SelectedDataStructureId <= 0)
+                        {
+                            ModelState.AddModelError("DataStructureOptions", "It was not possible to create a data structure");
+                            return View("Index", model);
+                        }
+                    }
+
+                    //check combination of datatstructure options and data structure selection
                     TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                     TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
 
@@ -446,7 +481,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 return Json(new { result = "error", message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
-
         }
 
         /// <summary>
@@ -1052,10 +1086,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied, Key.DataCreationDate, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied, Key.DataLastModified };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
             return XmlUtility.ToXDocument(metadata);
         }

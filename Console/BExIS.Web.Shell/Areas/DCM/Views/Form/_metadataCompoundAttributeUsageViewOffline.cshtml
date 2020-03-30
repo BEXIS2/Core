@@ -23,6 +23,9 @@
     bool locked = false;
     bool hideOptional = false;
 
+    string displayName = "";
+    displayName = char.ToUpper(Model.DisplayName()[0]) + Model.DisplayName().Substring(1);
+
 
     string lvl = Model.Level.ToString();
     if (Model.Level >= 9)
@@ -56,7 +59,7 @@
         <div class="header @headerClass ">
             <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
                 <b>
-                    @Model.DisplayName()
+                    @displayName
 
                     @if (Model.Model.MaxCardinality > 1)
                     {

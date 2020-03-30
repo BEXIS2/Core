@@ -722,7 +722,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
                 }
-
             }
 
             ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
@@ -1332,6 +1331,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
 
+        public JsonResult UpdateSimpleUsageWithParty(string xpath, long partyId)
+        {
+
+            try
+            {
+                AddXmlAttribute(xpath, "partyid", partyId.ToString());
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(false, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
         {
             ViewData["ShowOptional"] = true;
@@ -1381,6 +1395,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
+
+
 
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
@@ -2416,6 +2432,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
                         }
+                        else if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataAttributeUsage, text);
+                        }
+
                         break;
                     }
             }
@@ -2440,6 +2461,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
+
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
         {
@@ -3431,7 +3453,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // prepare view to write it to the file
                 byte[] content = Encoding.ASCII.GetBytes(view.ToString());
 
-                return File(content, "application/xhtml+xml", "metadata.htm");
+                return File(content, "application/xhtml+xml", entityId + "_metadata.htm");
             }
 
             return Content("no metadata html file is loaded.");

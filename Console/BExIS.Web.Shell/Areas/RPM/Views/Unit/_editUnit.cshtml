@@ -8,6 +8,17 @@
     string DimDesc = "";
     string temp = "";
     HtmlString dimensionArray = new HtmlString(temp);
+
+    int dimensionIndex = 0;
+
+    if (Model.Unit.Dimension != null && Model.Unit.Dimension.Id > 0 && Model.DimensionList.Any())
+    {
+        Dimension dim = Model.DimensionList.Where(d => d.Id.Equals(Model.Unit.Dimension.Id)).FirstOrDefault();
+        if (dim != null)
+        {
+            dimensionIndex = Model.DimensionList.IndexOf(dim);
+        }
+    }
 }
 
 @if(Model.Unit != null)
