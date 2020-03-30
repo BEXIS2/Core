@@ -178,62 +178,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.ResearchPlanTitle = _bus[TaskManager.RESEARCHPLAN_TITLE].ToString();
             }
 
-        [MeasurePerformance]
-        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion)
-        {
-            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
-
-            //dataset id and data structure id are available via datasetVersion properties,why you are passing them via the BUS? Javad
-            long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
-            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
-
-            string title = "";
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
-            {
-                title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-            }
-            string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
-
-            ExcelWriter excelWriter = new ExcelWriter();
-
-            // Move Original File to its permanent location
-            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-            string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
-            string storePath = excelWriter.GetFullStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
-            string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
-
-            //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
-            FileHelper.MoveFile(tempPath, storePath);
-
-            //Register the original data as a resource of the current dataset version
-            ContentDescriptor originalDescriptor = new ContentDescriptor()
-            {
-                OrderNo = 1,
-                Name = "original",
-                MimeType = "application/xlsm",
-                URI = dynamicStorePath,
-                DatasetVersion = datasetVersion,
-            };
-
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
-            {   // remove the one contentdesciptor
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                {
-                    if (cd.Name == originalDescriptor.Name)
-                    {
-                        cd.URI = originalDescriptor.URI;
-                    }
-                }
-            }
-            else
-            {
-                model.DatasetTitle = _bus[TaskManager.TITLE].ToString();
-            }
-
             return model;
         }
-
-
     }
+
 }
