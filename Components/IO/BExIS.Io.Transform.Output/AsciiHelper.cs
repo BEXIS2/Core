@@ -81,5 +81,21 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
+        /// <summary>
+        /// Get all text seperators as char in a list
+        /// </summary>
+        /// <returns>List of char </returns>
+        public static List<char> GetAllSeperator()
+        {
+            List<char> allSeperatorsAsChar = new List<char>();
+
+            allSeperatorsAsChar.Add(',');
+            allSeperatorsAsChar.Add(';');
+            allSeperatorsAsChar.Add(' ');
+            allSeperatorsAsChar.Add('\t');
+
+            return allSeperatorsAsChar;
+        }
+
     }
 }
