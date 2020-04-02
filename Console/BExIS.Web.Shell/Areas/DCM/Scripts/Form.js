@@ -781,6 +781,7 @@ function UpdateSimpleMappingWithParty(componentId, xpath, partyid, value)
             if (response) {
                 $("#" + componentId).attr("partyid", partyid);
                 $("#" + componentId).val(value);
+                $("#" + componentId).attr("value", value);
             }
         });
 }
