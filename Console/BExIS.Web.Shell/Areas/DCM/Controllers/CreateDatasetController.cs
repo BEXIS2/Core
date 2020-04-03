@@ -287,8 +287,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(model.SelectedDatasetId);
                             TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
                                 datasetVersion.Dataset.ResearchPlan.Id);
-                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE,
-                                xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
+                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, datasetVersion.Title);
 
                             // set datastructuretype
                             TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
@@ -550,6 +549,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                             workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 
+                            workingCopy.Title = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.title);
+                            workingCopy.Description = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.description);
+
                             //check if modul exist
                             int v = 1;
                             if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
@@ -562,7 +564,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //set modifikation
                         workingCopy = setModificationInfo(workingCopy, newDataset, GetUsernameOrDefault(), "Metadata");
 
-                        title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
+                        title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
@@ -796,8 +798,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     if (datasetManager.IsDatasetCheckedIn(id))
                     {
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                        string description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                        var dsv = datasetManager.GetDatasetLatestVersion(id);
+
+                        string title = dsv.Title;
+                        string description = dsv.Description;
 
                         temp.Add(new ListViewItem(id, title, description));
                     }

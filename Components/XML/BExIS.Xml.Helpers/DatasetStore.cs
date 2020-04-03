@@ -56,42 +56,25 @@ namespace BExIS.Xml.Helpers
 
                         if (!datasetIds.Any()) continue;
 
-                        List<Tuple<long, long, string>> x = new List<Tuple<long, long, string>>();
-
                         // create tuples based on dataset id list, and get latest version of each dataset
 
                         foreach (var datasetId in datasetIds)
                         {
                             if (dm.IsDatasetCheckedIn(datasetId))
                             {
-                                x.Add(new Tuple<long, long, string>(
-                                    datasetId,
-                                    dm.GetDatasetLatestVersionId(datasetId),
-                                    string.Empty));
-                            }
-                        }
-
-                        //select versionids for the next query
-                        var verionIds = x.Select(t => t.Item2).ToList();
-
-                        var r = xmlDatasetHelper.GetInformationFromVersions(verionIds, msid, NameAttributeValues.title);
-
-                        if (r != null)
-                        {
-                            foreach (KeyValuePair<long, string> kvp in r)
-                            {
-                                long id = x.Where(t => t.Item2.Equals(kvp.Key)).FirstOrDefault().Item1;
+                                var dsv = dm.GetDatasetLatestVersion(datasetId);
 
                                 var e = new EntityStoreItem()
                                 {
-                                    Id = id,
-                                    Title = kvp.Value,
-                                    Version = dm.GetDatasetVersionCount(id)
+                                    Id = datasetId,
+                                    Title = dsv.Title,
+                                    Version = dm.GetDatasetVersionCount(datasetId)
                                 };
 
                                 entities.Add(e);
+
                             }
-                        }
+                        } 
                     }
 
                     return entities.ToList();
@@ -156,9 +139,9 @@ namespace BExIS.Xml.Helpers
 
                 try
                 {
-                    var datasetHelper = new XmlDatasetHelper();
+                    var dsv = dm.GetDatasetLatestVersion(id);
 
-                    return datasetHelper.GetInformation(id, NameAttributeValues.title);
+                    return dsv.Title;
                 }
                 finally
                 {
@@ -205,7 +188,7 @@ namespace BExIS.Xml.Helpers
                     tmp.Add(new EntityStoreItem()
                     {
                         Id = v.Id,
-                        Title = datasetHelper.GetInformationFromVersion(v.Id, NameAttributeValues.title),
+                        Title = v.Title,
                         Version = versions.IndexOf(v) + 1,
                         CommitComment = "(" + v.Timestamp.ToString("dd.MM.yyyy HH:mm") + "): " + v.ChangeDescription
                     });

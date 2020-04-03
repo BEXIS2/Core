@@ -16,6 +16,48 @@ namespace BExIS.Xml.Helpers
         #region get
 
         /// <summary>
+        /// Return a value of the attribute from the incoming metadata 
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="metadata"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string GetInformation(long datasetid, XmlDocument metadata, NameAttributeValues name)
+        {
+            DatasetManager dm = new DatasetManager();
+            try
+            {
+                
+
+                using (var unitOfWork = this.GetUnitOfWork())
+                {
+                    if (datasetid <= 0) return String.Empty;
+
+                    var dataset = dm.GetDataset(datasetid);
+
+
+                    MetadataStructureManager msm = new MetadataStructureManager();
+                    MetadataStructure metadataStructure = msm.Repo.Get(dataset.MetadataStructure.Id);
+
+                    if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
+
+                    XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                    XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                        xDoc);
+
+                    string xpath = temp.Attribute("value").Value.ToString();
+                    string value = metadata.SelectSingleNode(xpath).InnerText;
+
+                    return string.IsNullOrWhiteSpace(value) ?"not available": value;
+                }
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="datasetid"></param>
@@ -40,6 +82,7 @@ namespace BExIS.Xml.Helpers
                 dm.Dispose();
             }
         }
+
 
         /// <summary>
         /// Information in metadata is stored as xml

@@ -205,6 +205,9 @@ var afterClosed = false;
 
 function OnChangeTextInput(e, ui) {
 
+    console.log("change");
+    console.log("afterClosed : " + afterClosed);
+
     // after the on close event from the autocomplete component, the values change in the input fields
     // after this changes again this change event is triggered
     // to prevent this, a flag is set to check wheter this event is fired after a close event or not
@@ -264,7 +267,7 @@ function OnChangeTextInput(e, ui) {
                 var partyid = $(parent).attr("partyid");
                 //console.log(partyid);
 
-                var partyidConverted = TryParseInt(partyid, null)
+                var partyidConverted = TryParseInt(partyid, null);
                 //console.log("tryparse:" + partyidConverted)
 
                 //delete party informations when a party was selected before
@@ -279,6 +282,9 @@ function OnChangeTextInput(e, ui) {
                 }
             })
     }
+
+    // reset after close flag
+    afterClosed = false
 }
 
 function OnChange(e) {

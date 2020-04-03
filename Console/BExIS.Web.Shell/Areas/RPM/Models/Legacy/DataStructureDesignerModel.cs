@@ -305,7 +305,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
                 foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
                 {
-                    datasetListElement = new DatasetListElement(item.Key, xmlDatasetHelper.GetInformation(item.Value.Id, NameAttributeValues.title));
+                    datasetListElement = new DatasetListElement(item.Key, item.Value.Title);
                     datasets.Add(datasetListElement);
                 }
             }

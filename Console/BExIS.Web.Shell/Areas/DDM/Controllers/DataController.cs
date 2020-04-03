@@ -181,7 +181,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //MetadataStructureManager msm = new MetadataStructureManager();
                     //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                    title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
@@ -297,7 +297,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //MetadataStructureManager msm = new MetadataStructureManager();
                     //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                    title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
@@ -561,7 +561,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                     //TITLE
-                    string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
+                    string title = dsv.Title;
 
                     if (ds.Self.GetType() == typeof(StructuredDataStructure))
                     {
@@ -1289,7 +1289,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                     //TITLE
-                    title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                    title = datasetVersion.Title;
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
@@ -1508,8 +1508,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         long requestId = request.Id;
                         request = requestManager.FindById(requestId);
 
-                        long datasetVersionId = datasetManager.GetDatasetLatestVersion(id).Id;
-                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersionId, NameAttributeValues.title);
+                        var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        string title = datasetVersion.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;

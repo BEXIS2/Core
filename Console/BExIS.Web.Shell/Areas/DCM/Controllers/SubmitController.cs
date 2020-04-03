@@ -228,9 +228,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 if (datasetIDs.Contains(d.Id))
                                 {
-                                    temp.Add(new ListViewItem(d.Id,
-                                        xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(d).Id,
-                                            NameAttributeValues.title)));
+                                    var dsv = dm.GetDatasetLatestVersion(d);
+
+                                    temp.Add(new ListViewItem(d.Id, dsv.Title));
                                 }
                             }
                         }
@@ -249,8 +249,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (dm.IsDatasetCheckedIn(d.Id))
                                 {
                                     DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                    temp.Add(new ListViewItem(d.Id,
-                                        xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title)));
+                                    temp.Add(new ListViewItem(d.Id, datasetVersion.Title));
                                 }
                             }
                         }
@@ -327,8 +326,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // is checkedIn?
                     if (dm.IsDatasetCheckedIn(datasetid))
                     {
-                        title = xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(datasetid).Id,
-                            NameAttributeValues.title);
+                        var dsv = dm.GetDatasetLatestVersion(datasetid);
+                        title = dsv.Title;
                     }
 
                     TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);

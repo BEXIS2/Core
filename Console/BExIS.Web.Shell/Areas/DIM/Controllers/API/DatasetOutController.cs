@@ -112,17 +112,13 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                 int versionNumber = dataset.Versions.Count;
 
-                xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
-                string title = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
-                string description = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
-
                 ApiDatasetModel datasetModel = new ApiDatasetModel()
                 {
                     Id = id,
                     Version = versionNumber,
                     VersionId = datasetVersion.Id,
-                    Title = title,
-                    Description = description,
+                    Title = datasetVersion.Title,
+                    Description = datasetVersion.Description,
                     DataStructureId = dataset.DataStructure.Id,
                     MetadataStructureId = dataset.MetadataStructure.Id
                 };
@@ -194,17 +190,13 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
                 if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
 
-                xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                string description = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-
                 ApiDatasetModel datasetModel = new ApiDatasetModel()
                 {
                     Id = id,
                     Version = version,
                     VersionId = datasetVersion.Id,
-                    Title = title,
-                    Description = description,
+                    Title = datasetVersion.Title,
+                    Description = datasetVersion.Description,
                     DataStructureId = dataset.DataStructure.Id,
                     MetadataStructureId = dataset.MetadataStructure.Id
                 };

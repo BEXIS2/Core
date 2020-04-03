@@ -440,6 +440,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         try
                         {
                             dsv.Metadata = xmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
+                            dsv.Title = title;
                         }
                         catch (NullReferenceException ex)
                         {
