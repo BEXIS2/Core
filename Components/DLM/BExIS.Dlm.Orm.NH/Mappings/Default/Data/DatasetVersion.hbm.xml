@@ -67,6 +67,14 @@
     
     <!-- Mapping Dataset properties -->
 
+    <property name="Title" type="string">
+      <column name="Title"  />
+    </property>
+
+    <property name="Description" type="string">
+      <column name="Description" sql-type="varchar"/>
+    </property>
+    
     <property name="ChangeDescription" type="string">
       <column name="ChangeDescription" />
     </property>

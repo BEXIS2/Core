@@ -3444,7 +3444,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 long researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
                 long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
-                string title = xmlDatasetHelper.GetInformation(entityId, NameAttributeValues.title);
+                var entityVersion = datasetManager.GetDatasetLatestVersion(entityId);
+
+                string title = entityVersion.Title;
 
                 // get the offline version of the metadata
                 var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()

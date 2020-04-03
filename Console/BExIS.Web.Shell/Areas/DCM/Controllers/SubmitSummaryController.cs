@@ -229,7 +229,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         string title = "";
                         long datasetid = ds.Id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                        title = xmlDatasetHelper.GetInformation(ds.Id, NameAttributeValues.title);
+                        title = latestVersion.Title;
 
                         int numberOfRows = 0;
 

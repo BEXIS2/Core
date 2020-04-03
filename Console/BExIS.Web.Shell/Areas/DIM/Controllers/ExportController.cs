@@ -215,16 +215,17 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
 
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        //check wheter title is empty or not
+                        string title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
 
                         switch (format)
                         {
                             case "application/xlsx":
-                                odm.GenerateExcelFile(id, title, false);
+                                odm.GenerateExcelFile(id, datasetVersion.Title, false);
                                 break;
 
                             case "application/xlsm":
-                                odm.GenerateExcelFile(id, title, true);
+                                odm.GenerateExcelFile(id, datasetVersion.Title, true);
                                 break;
 
                             default:
@@ -427,7 +428,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             long datastructureId = dsv.Dataset.DataStructure.Id;
             long researchplanId = dsv.Dataset.ResearchPlan.Id;
 
-            string title = xmlDatasetHelper.GetInformation(dsv.Dataset.Id, NameAttributeValues.title);
+            string title = dsv.Title;
             Session["ShowDataMetadata"] = dsv.Metadata;
 
             var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()
