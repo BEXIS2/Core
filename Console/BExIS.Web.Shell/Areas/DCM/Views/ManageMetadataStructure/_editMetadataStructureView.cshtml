@@ -70,6 +70,7 @@
 
     function OnSuccess() {
 
+        alert("OnSuccess");
         $("#windowEdit").data('tWindow').destroy();
         //$("#metadataStructuresGrid .t-refresh").trigger('click');
         window.location.replace('@Url.Action("Index", "ManageMetadataStructure", new RouteValueDictionary { { "area", "DCM" } })');
@@ -87,6 +88,8 @@
     }
 
     function sendForm() {
+
+        console.log("send form");
 
         var SystemNodes = {};
 
@@ -127,8 +130,18 @@
             data: JSON.stringify(metadataStructureModel),
             dataType: "json",
             contentType: "application/json;charset=utf8",
-            success: OnSuccess(),
-            error: function (){alert("failed")}
+            success: function (data) {  
+
+                if (data === true) {
+                    OnSuccess()
+                }
+                else {
+                    alert("error")
+                }
+                },  
+            error: function () {
+                alert("failed")
+            }
 
         });
 
