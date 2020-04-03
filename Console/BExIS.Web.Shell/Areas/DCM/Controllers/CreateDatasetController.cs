@@ -831,14 +831,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
-                // Do not load the description, if more than 50 datasets in the list
-                bool show_description = true;
-                if (datasetIds.Count() > 50)
-                {
-                    show_description = false;
-                }
-                string description = "";
-
                 foreach (long id in datasetIds)
                 {
                     if (datasetManager.IsDatasetCheckedIn(id))
