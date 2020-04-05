@@ -794,15 +794,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
-                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, false);
-                foreach (var dsv in datasetVersions)
+                foreach (long id in datasetIds)
                 {
+                    if (datasetManager.IsDatasetCheckedIn(id))
+                    {
+                        var dsv = datasetManager.GetDatasetLatestVersion(id);
 
-                    string title = dsv.Title;
-                    string description = dsv.Description;
+                        string title = dsv.Title;
+                        string description = dsv.Description;
 
-                    temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
-
+                        temp.Add(new ListViewItem(id, title, description));
+                    }
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();
