@@ -476,7 +476,7 @@
     <Content Include="Images\DCM_SelectFileStructure\left-right.png" />
     <Content Include="Images\DCM_SelectFileStructure\matrix.png" />
     <Content Include="Images\DCM_SelectFileStructure\top-down.png" />
-    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Images\ui-anim_basic_16x16.gif" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\entity.reference.js" />
     <Content Include="Scripts\Form.js" />

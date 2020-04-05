@@ -347,6 +347,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     zip.Save(zipFilePath);
 
                     LoggerFactory.LogCustom("Return");
+                    LoggerFactory.LogData(id.ToString(), "Dataset download as zip", Vaiona.Entities.Logging.CrudState.Read);
 
                     return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
