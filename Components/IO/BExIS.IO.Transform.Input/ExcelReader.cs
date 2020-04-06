@@ -688,7 +688,7 @@ namespace BExIS.IO.Transform.Input
 
             if (errorList != null)
             {
-                if (errorList.Count > 0)
+                if (errorList.Distinct().ToList().Count > 0)
                 {
                     this.ErrorMessages = this.ErrorMessages.Concat(errorList).ToList();
                     return false;
@@ -791,8 +791,11 @@ namespace BExIS.IO.Transform.Input
                     }//end if cell value
                     else
                     {
-                        int index = cellReferencAsInterger - offset - 1;
-                        rowAsStringArray[index] = "";
+                        if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
+                        {
+                            int index = cellReferencAsInterger - offset - 1;
+                            rowAsStringArray[index] = "";
+                        }
                     }
                 }//end if cell null
             }//for

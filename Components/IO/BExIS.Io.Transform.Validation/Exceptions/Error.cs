@@ -131,8 +131,8 @@ namespace BExIS.IO.Transform.Validation.Exceptions
             switch(_errorType)
             {
                 case ErrorType.Value: return String.Format("{0} : Variable : {1} , Value : {2}, in Row : {3}, DataType : {4}", _issue, _name, _value, _row.ToString(), _dataType);
-                case ErrorType.Dataset: return String.Format("{0} : {1}", _issue, _name);
-                case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
+                case ErrorType.Dataset: return String.Format("{0} ({1})", _issue, _name);
+                case ErrorType.Datastructure: return String.Format("{0} ({1})", _issue, _name);
                 case ErrorType.MetadataAttribute: return String.Format("(Attribute number {3} name = <b>{0}</b> in {5} with value = {1} ) : {2} in {5} Number {4}", _name, _value, _issue , _number, _package,_packageLabel);
                 default: return String.Format("{0}", _issue);
             }

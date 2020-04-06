@@ -287,8 +287,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(model.SelectedDatasetId);
                             TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
                                 datasetVersion.Dataset.ResearchPlan.Id);
-                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE,
-                                xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
+                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, datasetVersion.Title);
 
                             // set datastructuretype
                             TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
@@ -550,6 +549,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                             workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 
+                            workingCopy.Title = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.title);
+                            workingCopy.Description = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.description);
+
                             //check if modul exist
                             int v = 1;
                             if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
@@ -562,7 +564,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //set modifikation
                         workingCopy = setModificationInfo(workingCopy, newDataset, GetUsernameOrDefault(), "Metadata");
 
-                        title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
+                        title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
@@ -792,15 +794,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
-                foreach (long id in datasetIds)
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, false);
+                foreach (var dsv in datasetVersions)
                 {
-                    if (datasetManager.IsDatasetCheckedIn(id))
-                    {
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                        string description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
 
-                        temp.Add(new ListViewItem(id, title, description));
-                    }
+                    string title = dsv.Title;
+                    string description = dsv.Description;
+
+                    temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
+
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();
@@ -1086,10 +1088,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied, Key.DataCreationDate, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied, Key.DataLastModified };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
             return XmlUtility.ToXDocument(metadata);
         }

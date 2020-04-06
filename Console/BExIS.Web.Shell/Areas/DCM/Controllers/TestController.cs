@@ -118,6 +118,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         string xpath = xmlDatasetHelper.GetInformationPath(metadatastructure.Id, NameAttributeValues.title);
 
                         workingCopy.Metadata.SelectSingleNode(xpath).InnerText = i.ToString();
+                        workingCopy.Title = i.ToString();
 
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
                         datasetManager.CheckInDataset(dataset.Id, "", "test", ViewCreationBehavior.None);

@@ -61,7 +61,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.DatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
             }
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE]  != null)
             {
                 model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             }
@@ -133,7 +133,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.DatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
                 }
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
+                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
                 {
                     model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
                 }
@@ -229,7 +229,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         string title = "";
                         long datasetid = ds.Id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                        title = xmlDatasetHelper.GetInformation(ds.Id, NameAttributeValues.title);
+                        title = latestVersion.Title;
 
                         int numberOfRows = 0;
 
@@ -667,7 +667,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
             long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
 
-            string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+            string title = "";
+
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
+            {
+                title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+            }
             string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
             ExcelWriter excelWriter = new ExcelWriter();
