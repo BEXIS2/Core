@@ -201,62 +201,36 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DataStructureManager dataStructureManager = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
 
-
             try
             {
-                ICollection<long> datasetIDs = new List<long>();
-                datasetIDs = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).ToList();
+                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).ToList();
 
+                List<ListViewItem> tempStructured = new List<ListViewItem>();
+                List<ListViewItem> tempUnStructured = new List<ListViewItem>();
 
+                var DatasetVersions = dm.GetDatasetLatestVersions(datasetIds, false);
 
-                Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
-                dmtemp = dm.GetDatasetLatestMetadataVersions();
-
-                List<ListViewItem> temp = new List<ListViewItem>();
+                foreach (var dsv in DatasetVersions)
+                {
+                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    {
+                        tempStructured.Add(new ListViewItem(dsv.Dataset.Id, dsv.Title));
+                    }
+                    else
+                    {
+                        tempUnStructured.Add(new ListViewItem(dsv.Dataset.Id, dsv.Title));
+                    }
+                }
 
                 if (dataStructureType.Equals(DataStructureType.Structured))
                 {
-                    List<StructuredDataStructure> list = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
-
-                    foreach (StructuredDataStructure sds in list)
-                    {
-                        sds.Materialize();
-
-                        foreach (Dataset d in sds.Datasets)
-                        {
-                            if (dm.IsDatasetCheckedIn(d.Id))
-                            {
-                                if (datasetIDs.Contains(d.Id))
-                                {
-                                    var dsv = dm.GetDatasetLatestVersion(d);
-
-                                    temp.Add(new ListViewItem(d.Id, dsv.Title));
-                                }
-                            }
-                        }
-                    }
+                    return tempStructured.OrderBy(p => p.Title).ToList();
                 }
                 else
                 {
-                    List<UnStructuredDataStructure> list = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
-
-                    foreach (UnStructuredDataStructure sds in list)
-                    {
-                        foreach (Dataset d in sds.Datasets)
-                        {
-                            if (datasetIDs.Contains(d.Id))
-                            {
-                                if (dm.IsDatasetCheckedIn(d.Id))
-                                {
-                                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                    temp.Add(new ListViewItem(d.Id, datasetVersion.Title));
-                                }
-                            }
-                        }
-                    }
+                    return tempUnStructured.OrderBy(p => p.Title).ToList();
                 }
-
-                return temp.OrderBy(p => p.Title).ToList();
+  
             }
             finally
             {

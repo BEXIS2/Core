@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Objects;
 using System;
@@ -58,23 +59,20 @@ namespace BExIS.Xml.Helpers
 
                         // create tuples based on dataset id list, and get latest version of each dataset
 
-                        foreach (var datasetId in datasetIds)
+                        List<DatasetVersion> datasetVersions = dm.GetDatasetLatestVersions(datasetIds, false);
+                        foreach (var dsv in datasetVersions)
                         {
-                            if (dm.IsDatasetCheckedIn(datasetId))
+
+                            var e = new EntityStoreItem()
                             {
-                                var dsv = dm.GetDatasetLatestVersion(datasetId);
+                                Id = dsv.Dataset.Id,
+                                Title = dsv.Title,
+                                Version = dm.GetDatasetVersionCount(dsv.Dataset.Id)
+                            };
 
-                                var e = new EntityStoreItem()
-                                {
-                                    Id = datasetId,
-                                    Title = dsv.Title,
-                                    Version = dm.GetDatasetVersionCount(datasetId)
-                                };
+                            entities.Add(e);
 
-                                entities.Add(e);
-
-                            }
-                        } 
+                        }
                     }
 
                     return entities.ToList();
