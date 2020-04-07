@@ -832,14 +832,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     typeof(Dataset), RightType.Write);
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, false);
-                foreach (var dsv in datasetVersions)
+                    foreach (var dsv in datasetVersions)
                 {
-
+                    
                     string title = dsv.Title;
                     string description = dsv.Description;
 
-                    temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
-
+                        temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
+                    
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();
