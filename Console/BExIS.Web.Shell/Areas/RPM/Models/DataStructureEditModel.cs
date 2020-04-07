@@ -556,7 +556,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                                     {
                                         foreach (DatasetVersion dv in d.Versions)
                                         {
-                                            if (datasetManager.GetDatasetVersionEffectiveTupleIds(dv).Any())
+                                            if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
                                             {
                                                 this.inUse = true;
                                                 break;
