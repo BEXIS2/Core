@@ -48,7 +48,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 {
     public class DataController : BaseController
-    {
+    {  
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
@@ -814,7 +814,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                             var es = new EmailService();
                             es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                                MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
 
@@ -969,7 +969,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
@@ -1129,7 +1129,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
@@ -1320,7 +1320,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
 
@@ -1356,7 +1356,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 var es = new EmailService();
                 es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                    MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                    MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );
 
@@ -1452,8 +1452,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
                             }
+                            }
                         }
-                    }
                     else
                     {
                         dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
@@ -1765,6 +1765,40 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
+
+        private string getPartyNameOrDefault()
+        {
+
+            var userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            if (userName != null)
+            {
+
+                using (var uow = this.GetUnitOfWork())
+                using (var partyManager = new PartyManager())
+                {
+
+                    var userRepository = uow.GetReadOnlyRepository<User>();
+                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        Party party = partyManager.GetPartyByUser(user.Id);
+                        if (party != null)
+                        {
+                            return party.Name;
+                        } 
+                    }
+                   
+                }
+            }
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+        } 
 
         public bool UserExist()
         {
