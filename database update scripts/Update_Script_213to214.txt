@@ -26,6 +26,13 @@ vv text;
 vv2 text;
 value text;
 
+-- for datasetversion 
+datasetversion_ids bigint[];
+t text;
+d text;
+
+
+
 BEGIN
     
 	-- DATATUPLES
@@ -181,6 +188,42 @@ BEGIN
 
 Alter Table datatuples DROP COLUMN IF EXISTS xmlvariablevalues CASCADE;
 Alter Table datatupleversions DROP COLUMN IF EXISTS xmlvariablevalues;
+
+
+-- Datasetversions - add title & description column and fill it
+Alter Table datasetversions ADD COLUMN Title Text;
+Alter Table datasetversions ADD COLUMN Description Text;
+
+datasetversion_ids:= ARRAY(select id from datasetversions);
+
+for x in 1..array_upper(datasetversion_ids,1)
+LOOP
+
+t := (Select (xpath('//' || (SELECT
+  		(xpath('//nodeRef/@value',xml_element))[1] AS "value"
+        FROM (
+          SELECT unnest(xpath('//nodeReferences',m.extra)) AS xml_element FROM datasetversions dv left join datasets ds  on ds.id = dv.datasetref left join metadatastructures m  on ds.metadatastructureref= m.id  where dv.id = x
+        ) t where (xpath('//nodeRef/@name',xml_element))[1]::varchar = 'title') || '/text()', metadata))[1] as "test"  From  datasetversions dv  where dv.id = x
+    	);
+d := (Select (xpath('//' || (SELECT
+  		(xpath('//nodeRef/@value',xml_element))[2] AS "value"
+        FROM (
+          SELECT unnest(xpath('//nodeReferences',m.extra)) AS xml_element FROM datasetversions dv left join datasets ds  on ds.id = dv.datasetref left join metadatastructures m  on ds.metadatastructureref= m.id  where dv.id = x
+        ) t where (xpath('//nodeRef/@name',xml_element))[2]::varchar = 'description') || '/text()', metadata))[1] as "test"  From  datasetversions dv  where dv.id = x
+    	);
+        
+raise notice '{"id": % , "title": % , "description": %  }', x, t, d;     
+
+UPDATE datasetversions
+SET title = t, description = d
+WHERE id = x;
+        
+end loop;
+
+-- ALTER TABLE DatasetVersions DROP Title;
+-- ALTER TABLE DatasetVersions DROP Description;
+-- Select * from datasetversions;
+-- Select title,description from datasetversions;
 
 END
 $do$
