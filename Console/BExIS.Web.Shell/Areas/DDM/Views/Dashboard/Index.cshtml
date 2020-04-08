@@ -36,7 +36,7 @@
 
 <div id="dashboard_content">
 
-    @Html.Partial("_myDatasetGridView", Model.MyDatasets)
+    @*Html.Partial("_myDatasetGridView", Model.MyDatasets) *@
 
 </div>
 
@@ -115,13 +115,16 @@
         });
 
         $(".dataset").click(function () {
+            var entityname = "Dataset";
+            var rightType = "grant";
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
 
-            $("#dashboard_content").preloader("..loading decisions");
+            $("#dashboard_content").preloader("..loading datasets");
 
             $.get("/ddm/dashboard/ShowMyDatasets",
+                {entityname, rightType },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
