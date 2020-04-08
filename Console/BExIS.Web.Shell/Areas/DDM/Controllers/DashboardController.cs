@@ -301,34 +301,31 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                        typeof(Dataset), rightTypeId);
 
-
-                foreach (long datasetId in datasetIds)
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
+                foreach (var dsv in datasetVersions)
                 {
 
                     Object[] rowArray = new Object[8];
                     string isValid = "no";
 
-                    if (datasetManager.IsDatasetCheckedIn(datasetId))
+                    if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
                     {
 
-
-                        DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                        string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
-                        string description = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.description);
+                        string title = dsv.Title;
+                        string description = dsv.Description;
 
                         if (dsv.StateInfo != null)
                         {
                             isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
                         }
 
-                        rowArray[0] = Convert.ToInt64(datasetId);
+                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
                         rowArray[1] = title;
                         rowArray[2] = description;
                     }
                     else
                     {
-                        rowArray[0] = Convert.ToInt64(datasetId);
+                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
                         rowArray[1] = "";
                         rowArray[2] = "Dataset is just in processing.";
                     }
