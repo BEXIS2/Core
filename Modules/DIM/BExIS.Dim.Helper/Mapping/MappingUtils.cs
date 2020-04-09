@@ -768,18 +768,28 @@ namespace BExIS.Dim.Helpers.Mapping
         /// 
         public static IList<Entities.Mapping.Mapping> CachedMappings()
         {
-
-            if (System.Web.HttpContext.Current.Session["mappings"] != null)
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            if (System.Web.HttpContext.Current != null)
             {
-                return (IList<Entities.Mapping.Mapping>)System.Web.HttpContext.Current.Session["mappings"];
+                if (System.Web.HttpContext.Current.Session["mappings"] != null)
+                {
+                    return (IList<Entities.Mapping.Mapping>)System.Web.HttpContext.Current.Session["mappings"];
+                }
+                else
+                {
+                    using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                    {
+                        var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get();
+                        System.Web.HttpContext.Current.Session["mappings"] = mappings;
+                        return mappings;
+                    }
+                }
             }
-            else
+            else // if the System.Web.HttpContext is not existing, mappings need to be loaded by every call
             {
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
-                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get();
-                    System.Web.HttpContext.Current.Session["mappings"] = mappings;
-                    return mappings;
+                    return uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get();
                 }
             }
 
