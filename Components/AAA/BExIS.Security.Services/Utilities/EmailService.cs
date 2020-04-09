@@ -49,8 +49,13 @@ namespace BExIS.Security.Services.Utilities
             mail.From = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
             mail.To.Add(string.Join(",", destinations));
 
+            ccs = getValidEmails(ccs);
             if (ccs != null) mail.CC.Add(string.Join(",", ccs));
+
+            bccs = getValidEmails(bccs);
             if (bccs != null) mail.Bcc.Add(string.Join(",", bccs));
+
+            replyToLists = getValidEmails(replyToLists);
             if (replyToLists != null) mail.ReplyToList.Add(string.Join(",", replyToLists));
 
             mail.Subject = AppId + subject;
@@ -161,6 +166,18 @@ namespace BExIS.Security.Services.Utilities
             {
                 return false;
             }
+        }
+
+        private List<string> getValidEmails(List<string> emails)
+        {
+            if (emails == null) return emails;
+
+            for (int i = 0; i < emails.Count; i++)
+            {
+                if (!IsValidEmail(emails[i])) emails.RemoveAt(i);
+            }
+
+            return emails.Count > 0 ? emails : null ;
         }
     }
 }
