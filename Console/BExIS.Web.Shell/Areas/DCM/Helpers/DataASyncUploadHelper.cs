@@ -33,7 +33,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         public Dictionary<string,object> Bus { get; set; }
         public User User { get; set; }
 
-
         private FileStream Stream;
 
         private UploadHelper uploadWizardHelper = new UploadHelper();
@@ -96,19 +95,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     {
                         long datasetid = id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                        title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
 
                         int numberOfRows = 0;
 
                         try
                         {
-                            //Stopwatch fullTime = Stopwatch.StartNew();
-
-                            //Stopwatch loadDT = Stopwatch.StartNew();
+                            // load all data tuple ids from the latest version
                             List<long> datatupleFromDatabaseIds = dm.GetDatasetVersionEffectiveTupleIds(dm.GetDatasetLatestVersion(id));
-                            //loadDT.Stop();
-                            //Debug.WriteLine("Load DT From Db Time " + loadDT.Elapsed.TotalSeconds.ToString());
 
+                            // load structured data structure
                             StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                             dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
 
@@ -216,18 +211,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 // open file
                                 AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)Bus[TaskManager.FILE_READER_INFO]);
-                                //Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
-
-                                //DatasetManager dm = new DatasetManager();
-                                //Dataset ds = dm.GetDataset(id);
-
-                                Stopwatch totalTime = Stopwatch.StartNew();
 
                                 if (dm.IsDatasetCheckedOutFor(id, User.Name) || dm.CheckOutDataset(id, User.Name))
                                 {
                                     workingCopy = dm.GetDatasetWorkingCopy(id);
+
+                                    //set packagsize for one loop
                                     int packageSize = 100000;
                                     Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
+
                                     //schleife
                                     int counter = 0;
 
@@ -263,28 +255,30 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                             //return temp;
                                         }
 
-                                        if (Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        if (Bus.ContainsKey(TaskManager.DATASET_STATUS)) //check wheter there is a dataset status in the upload wizard bus
                                         {
+                                            // based the dataset status and/ or the upload method
                                             if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
                                             {
-                                                dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                                dm.EditDatasetVersion(workingCopy, rows, null, null); // add all datatuples to the datasetversion
                                             }
                                             else
-                                            if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
+                                            if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit")) // datatuples allready exist
                                             {
                                                 if (rows.Count() > 0)
                                                 {
-                                                    //Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<AbstractTuple>>();
+                                                    //split the incoming datatuples to (new|edit) based on the primary keys
                                                     var splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                     dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                     inputWasAltered = true;
                                                 }
                                             }
                                         }
-                                        else
+                                        else // if there is no dataset status in the bus, use dataset status edit
                                         {
                                             if (rows.Count() > 0)
                                             {
+                                                //split the incoming datatuples to (new|edit) based on the primary keys
                                                 Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                                 splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
@@ -294,10 +288,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                         //count rows
                                         numberOfRows += rows.Count();
+
                                     } while ((rows.Count() > 0 && rows.Count() == packageSize) || inputWasAltered == true);
 
-                                    totalTime.Stop();
-                                    Debug.WriteLine(" Total Time " + totalTime.Elapsed.TotalSeconds.ToString());
                                 }
 
                                 //Stream.Close();
@@ -377,6 +370,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 "Can not upload. : " + e.Message,
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
+
+                            
                         }
                         finally
                         {
@@ -599,6 +594,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
 
