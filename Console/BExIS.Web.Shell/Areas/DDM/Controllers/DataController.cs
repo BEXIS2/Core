@@ -48,7 +48,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 {
     public class DataController : BaseController
-    {
+    {  
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
@@ -181,7 +181,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //MetadataStructureManager msm = new MetadataStructureManager();
                     //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                    title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
@@ -297,7 +297,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //MetadataStructureManager msm = new MetadataStructureManager();
                     //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                    title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title); // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
                     dataStructureId = dsv.Dataset.DataStructure.Id;
                     researchPlanId = dsv.Dataset.ResearchPlan.Id;
                     metadata = dsv.Metadata;
@@ -561,7 +561,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                     //TITLE
-                    string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
+                    string title = dsv.Title;
 
                     if (ds.Self.GetType() == typeof(StructuredDataStructure))
                     {
@@ -814,7 +814,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                             var es = new EmailService();
                             es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                                MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
 
@@ -969,7 +969,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
@@ -1129,7 +1129,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
@@ -1289,7 +1289,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                     //TITLE
-                    title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                    title = datasetVersion.Title;
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
@@ -1320,7 +1320,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
 
@@ -1356,7 +1356,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 var es = new EmailService();
                 es.Send(MessageHelper.GetDownloadDatasetHeader(),
-                    MessageHelper.GetDownloadDatasetMessage(id, title, GetUsernameOrDefault()),
+                    MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );
 
@@ -1452,8 +1452,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
                             }
+                            }
                         }
-                    }
                     else
                     {
                         dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
@@ -1508,8 +1508,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         long requestId = request.Id;
                         request = requestManager.FindById(requestId);
 
-                        long datasetVersionId = datasetManager.GetDatasetLatestVersion(id).Id;
-                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersionId, NameAttributeValues.title);
+                        var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        string title = datasetVersion.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
@@ -1765,6 +1765,40 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
+
+        private string getPartyNameOrDefault()
+        {
+
+            var userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            if (userName != null)
+            {
+
+                using (var uow = this.GetUnitOfWork())
+                using (var partyManager = new PartyManager())
+                {
+
+                    var userRepository = uow.GetReadOnlyRepository<User>();
+                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        Party party = partyManager.GetPartyByUser(user.Id);
+                        if (party != null)
+                        {
+                            return party.Name;
+                        } 
+                    }
+                   
+                }
+            }
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+        } 
 
         public bool UserExist()
         {

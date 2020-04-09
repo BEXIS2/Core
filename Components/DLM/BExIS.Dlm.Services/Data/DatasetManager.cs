@@ -270,6 +270,29 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
+        /// update datasetversion in the database
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public DatasetVersion UpdateDatasetVersion(DatasetVersion entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            Contract.Ensures(Contract.Result<DatasetVersion>() != null && Contract.Result<DatasetVersion>().Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DatasetVersion> repo = uow.GetRepository<DatasetVersion>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
+                return (merged);
+            }
+        }
+
+        /// <summary>
         /// Checks out the dataset for the specified user, in order to make it available for editing.
         /// dataset must be in CheckedIn state.
         /// </summary>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Vaiona.Logging.Aspects;
 
 /// <summary>
@@ -21,6 +22,8 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>
     public class AsciiReader : DataReader
     {
+        private Encoding encoding = Encoding.Default;
+
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
         }
@@ -31,6 +34,23 @@ namespace BExIS.IO.Transform.Input
 
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
         {
+        }
+
+        /// <summary>
+        /// If FileStream exist open a FileStream
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="File"/>
+        /// <param ="fileName">Full path of the FileStream</param>
+        public override FileStream Open(string fileName)
+        {
+            // get Encoding first
+            setEncoding(fileName);
+
+            if (File.Exists(fileName))
+                return File.Open(fileName, FileMode.Open, FileAccess.Read);
+            else
+                return null;
         }
 
         public List<List<string>> ReadFile(Stream file)
@@ -60,7 +80,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file))
+                using (StreamReader streamReader = new StreamReader(file, encoding))
                 {
                     string line;
                     int index = fri.Variables;
@@ -124,7 +144,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file))
+                using (StreamReader streamReader = new StreamReader(file, encoding))
                 {
                     string line;
                     int index = fri.Variables;
@@ -200,7 +220,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file))
+                using (StreamReader streamReader = new StreamReader(file, encoding))
                 {
                     string line;
                     int index = 1;
@@ -314,7 +334,7 @@ namespace BExIS.IO.Transform.Input
             {
                 Stopwatch totalTime = Stopwatch.StartNew();
 
-                using (StreamReader streamReader = new StreamReader(file))
+                using (StreamReader streamReader = new StreamReader(file, encoding))
                 {
                     string line;
                     //int index = fri.Variables;
@@ -429,7 +449,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file))
+                using (StreamReader streamReader = new StreamReader(file, encoding))
                 {
                     string line;
                     int index = 1;
@@ -634,5 +654,22 @@ namespace BExIS.IO.Transform.Input
         }
 
         #endregion helper methods
+
+        #region encoding
+
+        private void setEncoding(string path)
+        {
+            using (var reader = new StreamReader(path, Encoding.Default, true))
+            {
+                if (reader.Peek() >= 0) // you need this!
+                    reader.Read();
+
+                encoding = reader.CurrentEncoding;
+                reader.Close();
+            }
+
+        }
+
+        #endregion
     }
 }

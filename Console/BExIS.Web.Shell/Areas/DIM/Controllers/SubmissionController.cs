@@ -401,9 +401,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (broker != null)
                         {
                             //Store ro in db
-                            string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id,
-                                NameAttributeValues.title);
-                            publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "", "no status available");
+                            publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "no status available");
 
                             //sendToGFBIO(broker, datasetId, datasetVersion, zipfilepath);
                         }
@@ -425,8 +423,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
 
-                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                        publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
+                        publicationManager.CreatePublication(datasetVersion, broker, repository, datasetVersion.Title, 0, zipfilepath, "",
                             "no status available");
 
                         #endregion pensoft
@@ -440,9 +437,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
-                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                        publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
-                            "created");
+                        publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "","created");
 
                         #endregion GENERIC
                     }

@@ -76,7 +76,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 Session["CreateDatasetTaskmanager"] = TaskManager;
                 Session["MetadataStructureViewList"] = LoadMetadataStructureViewList();
-                Session["DataStructureViewList"] = LoadDataStructureViewList();
+                var datastructureViewList = LoadDataStructureViewList();
+                Session["DataStructureViewList_unstructured"] = datastructureViewList.Where(a => a.Type == "unstructured").ToList();
+                Session["DataStructureViewList_structured"] = datastructureViewList.Where(a => a.Type == "structured").ToList();
+
                 Session["DatasetViewList"] = LoadDatasetViewList();
 
                 setAdditionalFunctions();
@@ -211,7 +214,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 Model.BlockMetadataStructureId = true;
 
-                Model.DataStructureOptions = DataStructureOptions.Existing;
+                Model.DataStructureOptions = DataStructureOptions.CreateNewStructure;
 
                 //add to Bus
                 TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
@@ -230,6 +233,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             string username = GetUsernameOrDefault();
 
+            if (model.SelectedDataStructureId_ != -1)
+            {
+                model.SelectedDataStructureId = model.SelectedDataStructureId_;
+            }
+
             try
             {
                 if (model == null)
@@ -240,35 +248,52 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 model = LoadLists(model);
 
-                if (model.DataStructureOptions == DataStructureOptions.Existing && model.SelectedDataStructureId == 0)
+                if ((model.DataStructureOptions == DataStructureOptions.Existing_structured || model.DataStructureOptions == DataStructureOptions.Existing_unstructured) && model.SelectedDataStructureId == 0)
                     ModelState.AddModelError("SelectedDataStructureId", "Please select a data structure.");
 
                 if (ModelState.IsValid)
                 {
-                   
+
                     // create new structure if its not exist
-                    if (model.DataStructureOptions != DataStructureOptions.Existing)
+                    if (model.DataStructureOptions != DataStructureOptions.Existing_structured && model.DataStructureOptions != DataStructureOptions.Existing_unstructured)
                     {
-                        string name = "New created for " + username + "_" + DateTime.Now.Ticks;
 
-                        //create unstructured
-                        if (model.DataStructureOptions == DataStructureOptions.CreateNewFile)
+                        using (PartyManager partyManager = new PartyManager())
                         {
-                            var d = dataStructureManager.CreateUnStructuredDataStructure(name, "");
-                            if (d != null) model.SelectedDataStructureId = d.Id;
-                        }
+                            var identityUserService = new IdentityUserService();
+                            var user = identityUserService.FindByNameAsync(username);
 
-                        //create structured
-                        if (model.DataStructureOptions == DataStructureOptions.CreateNewStructure)
-                        {
-                            var d = dataStructureManager.CreateStructuredDataStructure(name, "","","",DataStructureCategory.Generic);
-                            if (d != null) model.SelectedDataStructureId = d.Id;
-                        }
+                            var name = "New data structure_"  + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                            
+                            // Replace account name by party name if exists
+                            if (user != null)
+                            {
+                                Party party = partyManager.GetPartyByUser(user.Result.Id);
+                                if (party != null)
+                                {
+                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                                }
+                            }
 
-                        if (model.SelectedDataStructureId <= 0)
-                        {
-                            ModelState.AddModelError("DataStructureOptions", "It was not possible to create a data structure");
-                            return View("Index", model);
+                            //create unstructured
+                            if (model.DataStructureOptions == DataStructureOptions.CreateNewFile)
+                            {
+                                var d = dataStructureManager.CreateUnStructuredDataStructure(name, "");
+                                if (d != null) model.SelectedDataStructureId = d.Id;
+                            }
+
+                            //create structured
+                            if (model.DataStructureOptions == DataStructureOptions.CreateNewStructure)
+                            {
+                                var d = dataStructureManager.CreateStructuredDataStructure(name, "", "", "", DataStructureCategory.Generic);
+                                if (d != null) model.SelectedDataStructureId = d.Id;
+                            }
+
+                            if (model.SelectedDataStructureId <= 0)
+                            {
+                                ModelState.AddModelError("DataStructureOptions", "It was not possible to create a data structure");
+                                return View("Index", model);
+                            }
                         }
                     }
 
@@ -287,8 +312,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(model.SelectedDatasetId);
                             TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
                                 datasetVersion.Dataset.ResearchPlan.Id);
-                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE,
-                                xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title));
+                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, datasetVersion.Title);
 
                             // set datastructuretype
                             TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
@@ -348,7 +372,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public ActionResult ShowListOfDatasets()
         {
-            List<ListViewItem> datasets = LoadDatasetViewList();
+            List<ListViewItem> datasets = new List<ListViewItem>();
+
+            // Load list from Session, if exists
+            if (Session["DatasetViewList"] != null)
+            {
+                datasets = (List<ListViewItem>)Session["DatasetViewList"];
+            }
+            else
+            {
+                datasets = LoadDatasetViewList();
+                Session["DatasetViewList"] = datasets;
+            }
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
                 datasets,
@@ -432,7 +467,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private SetupModel LoadLists(SetupModel model)
         {
             if ((List<ListViewItem>)Session["MetadataStructureViewList"] != null) model.MetadataStructureViewList = (List<ListViewItem>)Session["MetadataStructureViewList"];
-            if ((List<ListViewItemWithType>)Session["DataStructureViewList"] != null) model.DataStructureViewList = (List<ListViewItemWithType>)Session["DataStructureViewList"];
+            if ((List<ListViewItemWithType>)Session["DataStructureViewList_unstructured"] != null) model.DataStructureViewList_unstructured = (List<ListViewItemWithType>)Session["DataStructureViewList_unstructured"];
+            if ((List<ListViewItemWithType>)Session["DataStructureViewList_structured"] != null) model.DataStructureViewList_structured = (List<ListViewItemWithType>)Session["DataStructureViewList_structured"];
             if ((List<ListViewItem>)Session["DatasetViewList"] != null) model.DatasetViewList = (List<ListViewItem>)Session["DatasetViewList"];
 
             return model;
@@ -550,6 +586,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                             workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 
+                            workingCopy.Title = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.title);
+                            workingCopy.Description = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.description);
+
                             //check if modul exist
                             int v = 1;
                             if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
@@ -562,7 +601,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //set modifikation
                         workingCopy = setModificationInfo(workingCopy, newDataset, GetUsernameOrDefault(), "Metadata");
 
-                        title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
+                        title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
@@ -792,15 +831,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
                     typeof(Dataset), RightType.Write);
 
-                foreach (long id in datasetIds)
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, false);
+                    foreach (var dsv in datasetVersions)
                 {
-                    if (datasetManager.IsDatasetCheckedIn(id))
-                    {
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-                        string description = xmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+                    
+                    string title = dsv.Title;
+                    string description = dsv.Description;
 
-                        temp.Add(new ListViewItem(id, title, description));
-                    }
+                        temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
+                    
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();
@@ -844,6 +883,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 dsm.Dispose();
             }
         }
+
+
+
+
+
 
         public List<ListViewItem> LoadMetadataStructureViewList()
         {
