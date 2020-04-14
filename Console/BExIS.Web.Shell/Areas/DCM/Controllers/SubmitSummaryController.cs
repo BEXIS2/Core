@@ -25,6 +25,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
@@ -80,6 +81,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult Summary(object[] data)
         {
+            int numberOfRows = 0;
+            int cells = 0;
+            int cellLimit = 100000;
+
             TaskManager = (TaskManager)Session["TaskManager"];
             _bus = TaskManager.Bus;
 
@@ -87,28 +92,63 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model.StepInfo = TaskManager.Current();
 
-            
+            long id = Convert.ToInt32(_bus[TaskManager.DATASET_ID]);
+
             DataASyncUploadHelper asyncUploadHelper = new DataASyncUploadHelper();
             asyncUploadHelper.Bus = _bus;
             asyncUploadHelper.User = GetUser();
 
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
+            {
+                model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+            }
+
+            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+            {
+                numberOfRows = Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFROWS]);
+            }
+
+            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS) && TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES))
+            {
+                cells = Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFROWS]) + Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFVARIABLES]);
+            }
+
+            if (cells > cellLimit) //async
+            {
+                Task.Run(() => asyncUploadHelper.FinishUpload());
+
+                // send email after starting the upload
+                var es = new EmailService();
+                var user = GetUser();
+
+                es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.DatasetTitle),
+                    MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle,numberOfRows),
+                    new List<string>() { user.Email },
+                    new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                    );
+
+                
+
+                model.AsyncUpload = true;
+                model.AsyncUploadMessage = "All upload information has been entered and the upload will start now. After completion an email will be sent.";
+
+            }
+            else
+            {
+                List<Error> errors = asyncUploadHelper.FinishUpload().Result;
+                if (errors.Count == 0)
                 {
-                    model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                    return null; 
                 }
-
-            Task.Run(() => asyncUploadHelper.FinishUpload());
-
-            // send email after starting the upload
-            var es = new EmailService();
-            var user = GetUser();
-
-            es.Send("upload is starting",
-                "...",
-                new List<string>() { user.Email },
-                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
-                );
-
+                else
+                {
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError("",error.ToHtmlString());
+                    }
+                }
+            }
+            
             // set model for the page
             #region set summary
 
@@ -116,7 +156,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #endregion set summary
 
-            //ToDo: remove all changed from dataset and version
             return PartialView(model);
         }
 

@@ -123,34 +123,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult FinishUpload()
         {
             TaskManager = (TaskManager)Session["TaskManager"];
-            //TaskManager.SetCurrent(null);
 
-            FinishUploadModel finishModel = new FinishUploadModel();
-            if (TaskManager != null)
-            {
-                // add title if exists
-                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
-                {
-                    finishModel.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                }
-                finishModel.Filename = TaskManager.Bus[TaskManager.FILENAME].ToString();
-            }
-
+            long datasetId = (long)TaskManager.Bus[TaskManager.DATASET_ID];
             Session["TaskManager"] = null;
-            try
-            {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
-                XmlDocument xmlTaskInfo = new XmlDocument();
-                xmlTaskInfo.Load(path);
 
-                Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError(String.Empty, e.Message);
-            }
+            return ShowData(datasetId);
 
-            return ShowData((long)TaskManager.Bus[TaskManager.DATASET_ID]);
         }
 
         #endregion Finish
@@ -177,6 +155,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult ShowData(long id)
         {
             return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
+        }
+
+        public ActionResult ShowDashboard()
+        {
+            return RedirectToAction("Index", "Dashboard", new RouteValueDictionary { { "area", "DDM" }});
         }
 
         #endregion Navigation options

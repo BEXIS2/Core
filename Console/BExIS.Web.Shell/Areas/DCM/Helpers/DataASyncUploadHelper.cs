@@ -46,6 +46,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             List<Error> temp = new List<Error>();
             long id = 0;
             string title = "";
+            int numberOfRows = 0;
 
             try
             {
@@ -96,7 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         long datasetid = id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-                        int numberOfRows = 0;
+                        
 
                         try
                         {
@@ -479,8 +480,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 else
                 {
                     var es = new EmailService();
-                    es.Send("upload success",
-                        "yeah",
+                    es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
+                    MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows),
                         new List<string> { ConfigurationManager.AppSettings["SystemEmail"], user.Email });
                 }
 
@@ -491,8 +492,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return temp;
         }
 
-
-        
         private string SaveFileInContentDiscriptor(DatasetVersion datasetVersion)
         {
             try

@@ -119,6 +119,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                         dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
 
+                        // Add Number of Variables to the BUS
+                        if(sds != null)
+                            TaskManager.AddToBus(TaskManager.NUMBERSOFVARIABLES, sds.Variables.Count);
+
 
                         if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                         {
@@ -128,14 +132,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             reader.ValidateTemplateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
-                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
-                            {
-                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
-                            }
-                            else
-                            {
-                                TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
-                            }
+                            TaskManager.AddToBus(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
 
                         }
 
@@ -147,14 +144,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
-                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
-                            {
-                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
-                            }
-                            else
-                            {
-                                TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
-                            }
+                            TaskManager.AddToBus(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
+
                         }
 
 
@@ -165,14 +156,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), id);
                             model.ErrorList = reader.ErrorMessages;
 
-                            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
-                            {
-                                TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
-                            }
+                            TaskManager.AddToBus(TaskManager.NUMBERSOFROWS, reader.NumberOfRows);
+
                         }
-
-
-
 
                     }
                     catch (Exception ex)

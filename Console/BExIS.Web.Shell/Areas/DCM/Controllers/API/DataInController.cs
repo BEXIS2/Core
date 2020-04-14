@@ -75,7 +75,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<DataTuple> rows = new List<DataTuple>();
 
             //load from apiConfig
-            int cellLimit = 10000;
+            int cellLimit = 100000;
             if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
             {
                 Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
