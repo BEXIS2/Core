@@ -185,8 +185,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 List<long> gridCommands = datasetManager.GetDatasetLatestIds();
                 gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
 
-                foreach (long datasetId in gridCommands)
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(gridCommands, false);
+                foreach (var dsv in datasetVersions)
                 {
+                    var datasetId = dsv.Dataset.Id;
+                    
                     //get permissions
                     int rights = entityPermissionManager.GetEffectiveRights(user?.Id, entity.Id, datasetId);
 
@@ -198,8 +201,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         if (datasetManager.IsDatasetCheckedIn(datasetId))
                         {
-                            DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
-
+                            
                             string title = dsv.Title;
                             string description = dsv.Description;
 
@@ -252,9 +254,113 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="_CustomMyDatasetBinding"/>
+        /// <param name="entityname">Name of entity</param>
+        /// <param name="rightType">Type of right (write, delete, grant, read)</param>
+        /// <param name="onlyTable">Return only table without header</param>
+        /// <returns>model</returns>
+        public ActionResult ShowMyDatasets(string entityname, string rightType, string onlyTable = "false")
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+
+            List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (UserManager userManager = new UserManager())
+            using (EntityManager entityManager = new EntityManager())
+            {
+                var entity = entityManager.FindByName(entityname);
+                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+
+                var rightTypeId = RightType.Read;
+
+                if (rightType == "write")
+                {
+                    rightTypeId = RightType.Write;
+                }
+                else if (rightType == "delete")
+                {
+                    rightTypeId = RightType.Delete;
+                }
+                else if (rightType == "grant")
+                {
+                    rightTypeId = RightType.Grant;
+                }
+
+                var userName = GetUsernameOrDefault();
+                if (userName == "DEFAULT")
+                {
+                    ViewBag.userLoggedIn = false;
+                    rightTypeId = RightType.Read;
+                }
+                else
+                {
+                    ViewBag.userLoggedIn = true;
+                }
+
+
+                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
+                       typeof(Dataset), rightTypeId);
+
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
+                foreach (var dsv in datasetVersions)
+                {
+
+                    Object[] rowArray = new Object[8];
+                    string isValid = "no";
+
+                    if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
+                    {
+
+                        string title = dsv.Title;
+                        string description = dsv.Description;
+
+                        if (dsv.StateInfo != null)
+                        {
+                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                        }
+
+                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
+                        rowArray[1] = title;
+                        rowArray[2] = description;
+                    }
+                    else
+                    {
+                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
+                        rowArray[1] = "";
+                        rowArray[2] = "Dataset is just in processing.";
+                    }
+
+                    rowArray[7] = true;
+
+                    model.Add(new MyDatasetsModel(
+                       (long)rowArray[0],
+                      (string)rowArray[1],
+                       (string)rowArray[2],
+                       (bool)rowArray[7],
+                       isValid));
+
+
+                }
+            }
+            if (onlyTable == "true")
+            {
+                return PartialView("_myDatasetsView", model);
+            }
+            else
+            {
+                return PartialView("_myDatasetsViewHeader", model);
+            }
+
+        }
+
+        /// <summary>
+        /// create the model of My Dataset table
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="_CustomMyDatasetBinding"/>
         /// <param>NA</param>
         /// <returns>model</returns>
-        public ActionResult ShowMyDatasets()
+        public ActionResult ShowMyDatasets_old()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
