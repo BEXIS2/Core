@@ -288,13 +288,13 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetASyncFinishUploadHeader(long datasetid, string title)
         {
-            return $"An Upload to the dataset '{title}' ({datasetid}) is finsihed.";
+            return $"An Upload to the dataset '{title}' ({datasetid}) is finished.";
         }
 
         public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"An Upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is finsihed. <br/>");
+            stringBuilder.AppendLine($"An Upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is finished. <br/>");
             stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited to the dataset.");
 
             return stringBuilder.ToString();

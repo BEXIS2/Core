@@ -65,6 +65,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     //GetValues from the previus version
                     // Status
                     DatasetVersion latestVersion = dm.GetDatasetLatestVersion(id);
+                    title = latestVersion.Title;
                     string status = DatasetStateInfo.NotValid.ToString();
                     if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
 

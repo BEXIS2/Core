@@ -83,7 +83,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             int numberOfRows = 0;
             int cells = 0;
-            int cellLimit = 100000;
+            int cellLimit = 0;
+
+
+            //get cellLimt from settings
+            SettingsHelper settingsHelper = new SettingsHelper();
+            if (settingsHelper.KeyExist("celllimit"))
+            {
+                Int32.TryParse(settingsHelper.GetValue("celllimit"), out cellLimit);
+                if (cellLimit == 0) cellLimit = 100000;
+            }
+
 
             TaskManager = (TaskManager)Session["TaskManager"];
             _bus = TaskManager.Bus;
