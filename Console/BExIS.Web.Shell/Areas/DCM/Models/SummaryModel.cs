@@ -26,6 +26,9 @@ namespace BExIS.Modules.Dcm.UI.Models
         [Display(Name = "Research Plan Title")]
         public String ResearchPlanTitle { get; set; }
 
+        public bool AsyncUpload { get; set; }
+        public string  AsyncUploadMessage { get; set; }
+
         /*
         [Display(Name = "Dataset Owner")]
         public String  Owner { get; set; }
@@ -56,6 +59,8 @@ namespace BExIS.Modules.Dcm.UI.Models
             DataStructureId = 0;
             DatasetTitle = "";
             DataStructureTitle = "";
+            AsyncUpload = false;
+            AsyncUploadMessage = "";
         }
     }
 }

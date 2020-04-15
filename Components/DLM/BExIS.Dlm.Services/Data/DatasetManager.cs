@@ -2645,7 +2645,7 @@ namespace BExIS.Dlm.Services.Data
                         //ExtendedPropertyValues = new List<ExtendedPropertyValue>(),
                         //ContentDescriptors = new List<ContentDescriptor>(),
                         Status = DatasetVersionStatus.CheckedOut,
-                        Dataset = ds,
+                        Dataset = ds
                     };
                     // if there is a previous version, copy its metadata, content descriptors and extended property values to the newly created version
                     if (ds.Versions.Count() > 0)
@@ -2657,6 +2657,8 @@ namespace BExIS.Dlm.Services.Data
                         }
                         if (previousCheckedInVersion != null)
                         {
+                            dsNewVersion.Title = previousCheckedInVersion.Title;
+                            dsNewVersion.Description = previousCheckedInVersion.Description;
                             dsNewVersion.Metadata = previousCheckedInVersion.Metadata;
                             dsNewVersion.ExtendedPropertyValues = previousCheckedInVersion.ExtendedPropertyValues;
                             foreach (var item in previousCheckedInVersion.ContentDescriptors)
