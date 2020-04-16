@@ -1,4 +1,5 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Xml.Helpers;
 using System.IO;
 using System.Web.Mvc;
 using System.Xml.Linq;
@@ -15,12 +16,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Index()
         {
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Dcm.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
-
-            string helpurl = help.Attribute("value")?.Value;
-
+            SettingsHelper helper = new SettingsHelper();
+            string helpurl = helper.GetValue("help");
 
             return Redirect(helpurl);
 

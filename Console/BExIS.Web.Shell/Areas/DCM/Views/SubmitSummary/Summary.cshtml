@@ -40,42 +40,7 @@
                         @Model.DataStructureId
                     </td>
                 </tr>
-                @*<tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ResearchPlanTitle)</b>
-
-                    </td>
-                    <td>
-                        @Model.ResearchPlanTitle
-                    </td>
-                </tr>*@
-                 @*<tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ResearchPlanId) :</b>
-
-                    </td>
-                    <td>
-                        @Model.ResearchPlanId
-                    </td>
-                </tr>*@
-              @*   <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.NumOfVars) :</b>
-
-                    </td>
-                    <td>
-                        @Model.NumOfVars
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                       <b>@Html.LabelFor(m=>m.NumOfRows) :</b> 
-
-                    </td>
-                    <td>
-                        @Model.NumOfRows
-                    </td>
-                </tr>*@
+               
             </table>
             </div>
 
@@ -89,40 +54,7 @@
                         @Model.DatasetTitle
                     </td>
                 </tr>
-                @*<tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.Owner) :</b>
-                    </td>
-                    <td>
-                        @Model.Owner
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.Author) :</b>
-
-                    </td>
-                    <td>
-                        @Model.Author
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ProjectName) :</b>
-
-                    </td>
-                    <td>
-                        @Model.ProjectName
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ProjectInstitute) :</b>
-                    </td>
-                    <td>
-                        @Model.ProjectInstitute
-                    </td>
-                </tr>*@
+                
              </table>
 
             </div>
@@ -130,7 +62,13 @@
     </div>
 
     <div class="uploadWizardStep_Success stepper">
-        <div id="progress"></div>
+        <div id="progress">
+            @if (Model.AsyncUpload)
+            { 
+                <p>@Model.AsyncUploadMessage</p>
+            }
+
+        </div>
     </div>
     <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
