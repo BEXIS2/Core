@@ -1049,23 +1049,23 @@ namespace BExIS.Modules.Dim.UI.Helper
             }
         }
 
-        public static bool IsSimpleElement(long id)
-        {
-            MappingManager mappingManager = new MappingManager();
+        //public static bool IsSimpleElement(long id)
+        //{
+        //    MappingManager mappingManager = new MappingManager();
 
-            try
-            {
-                LinkElement le = mappingManager.GetLinkElement(id);
+        //    try
+        //    {
+        //        LinkElement le = mappingManager.GetLinkElement(id);
 
-                if (le.Complexity == LinkElementComplexity.Simple) return true;
+        //        if (le.Complexity == LinkElementComplexity.Simple) return true;
 
-                return false;
-            }
-            finally
-            {
-                mappingManager.Dispose();
-            }
-        }
+        //        return false;
+        //    }
+        //    finally
+        //    {
+        //        mappingManager.Dispose();
+        //    }
+        //}
 
         public static long GetId(long elementId, LinkElementType type, MappingManager mappingManager)
         {
