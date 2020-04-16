@@ -532,7 +532,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             try
             {
-                IEnumerable<PartyCustomAttribute> ptAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(p => p.PartyType.Id.Equals(model.ElementId));
+                IEnumerable<PartyCustomAttribute> ptAttr = partyTypeManager.PartyCustomAttributeRepository.Query().Where(p => p.PartyType.Id.Equals(model.ElementId));
 
                 foreach (var attr in ptAttr)
                 {
