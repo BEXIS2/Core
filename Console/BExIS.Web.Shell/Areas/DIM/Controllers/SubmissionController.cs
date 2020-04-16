@@ -92,7 +92,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 //todo check if datasetversion id is correct
                 List<Publication> publications =
-                    publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
+                    publicationManager.PublicationRepo.Query().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
 
                 //get versionNr
                 versionNr = datasetManager.GetDatasetVersionNr(datasetVersionId);
