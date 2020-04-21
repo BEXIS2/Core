@@ -133,7 +133,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.DatasetTitle),
                     MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle,numberOfRows),
-                    new List<string>() { user.Email },
+                    new List<string>() { user.Email },null, 
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                     );
 
