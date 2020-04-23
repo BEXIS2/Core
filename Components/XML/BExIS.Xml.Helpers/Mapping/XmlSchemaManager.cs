@@ -1272,7 +1272,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (metadataAttributeManager.MetadataAttributeRepo != null &&
                     getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1395,7 +1395,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     DataType dataType = GetDataType(datatype, typeCodename);
 
                     //unit
-                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
+                    Unit noneunit = unitManager.Repo.Query().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
                     if (noneunit == null)
                     {
                         Dimension dimension = null;
@@ -1406,13 +1406,13 @@ namespace BExIS.Xml.Helpers.Mapping
                         }
                         else
                         {
-                            dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.Equals("none")).FirstOrDefault();
+                            dimension = unitManager.DimensionRepo.Query().Where(d => d.Name.Equals("none")).FirstOrDefault();
                         }
 
                         unitManager.Create("none", "none", "If no unit is used.", dimension, MeasurementSystem.Unknown);
                         // the null dimension should be replaced bz a proper valid one. Javad 11.06
                     }
-                    temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                    temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                     if (temp == null)
                     {
@@ -1457,11 +1457,11 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         //unit
                         // it is the second time I am seeing this cose segment, would be good to factor it out to a function
-                        Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("none")).FirstOrDefault();
+                        Unit noneunit = unitManager.Repo.Query().Where(u => u.Name.Equals("none")).FirstOrDefault();
                         if (noneunit == null)
                             unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
-                        temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                        temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                         if (temp == null)
                         {
@@ -1703,9 +1703,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
+                        metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
