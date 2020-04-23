@@ -65,6 +65,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             SummaryModel model = new SummaryModel();
+            model.AsyncUpload = isASyncUpload();
             model.StepInfo = TaskManager.Current();
 
             model = updateModel(model);
@@ -82,18 +83,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Summary(object[] data)
         {
             int numberOfRows = 0;
-            int cells = 0;
-            int cellLimit = 0;
-
-
-            //get cellLimt from settings
-            SettingsHelper settingsHelper = new SettingsHelper();
-            if (settingsHelper.KeyExist("celllimit"))
-            {
-                Int32.TryParse(settingsHelper.GetValue("celllimit"), out cellLimit);
-                if (cellLimit == 0) cellLimit = 100000;
-            }
-
 
             TaskManager = (TaskManager)Session["TaskManager"];
             _bus = TaskManager.Bus;
@@ -118,12 +107,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 numberOfRows = Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFROWS]);
             }
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS) && TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES))
-            {
-                cells = Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFROWS]) + Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFVARIABLES]);
-            }
 
-            if (cells > cellLimit) //async
+
+            if (isASyncUpload()) //async
             {
                 Task.Run(() => asyncUploadHelper.FinishUpload());
 
@@ -197,37 +183,72 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = (TaskManager)Session["TaskManager"];
 
-            if (_bus.ContainsKey(TaskManager.DATASET_ID))
-            {
-                model.DatasetId = Convert.ToInt32(_bus[TaskManager.DATASET_ID]);
-            }
+            //dataset
+            if (_bus.ContainsKey(TaskManager.DATASET_ID)) model.DatasetId = Convert.ToInt32(_bus[TaskManager.DATASET_ID]);
+            if (_bus.ContainsKey(TaskManager.DATASET_TITLE))model.DatasetTitle = _bus[TaskManager.DATASET_TITLE].ToString();
+            if (_bus.ContainsKey(TaskManager.DATASET_STATUS))model.DatasetStatus = _bus[TaskManager.DATASET_STATUS].ToString();
 
-            if (_bus.ContainsKey(TaskManager.DATASET_TITLE))
-            {
-                model.DatasetTitle = _bus[TaskManager.DATASET_TITLE].ToString();
-            }
+            //datastructure
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))model.DataStructureId = Convert.ToInt32(_bus[TaskManager.DATASTRUCTURE_ID]);
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))model.DataStructureTitle = _bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE))model.DataStructureType = _bus[TaskManager.DATASTRUCTURE_TYPE].ToString();
 
-            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
-            {
-                model.DataStructureId = Convert.ToInt32(_bus[TaskManager.DATASTRUCTURE_ID]);
-            }
+            //upload
 
-            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))
+            if (_bus.ContainsKey(TaskManager.UPLOAD_METHOD))
             {
-                model.DataStructureTitle = _bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
-            }
+                model.UploadMethod = _bus[TaskManager.UPLOAD_METHOD].ToString();
 
-            if (_bus.ContainsKey(TaskManager.RESEARCHPLAN_ID))
-            {
-                model.ResearchPlanId = Convert.ToInt32(_bus[TaskManager.RESEARCHPLAN_ID].ToString());
             }
+            else model.UploadMethod = "Append";
 
-            if (_bus.ContainsKey(TaskManager.RESEARCHPLAN_TITLE))
+            if (_bus.ContainsKey(TaskManager.NUMBERSOFROWS)) model.NumberOfRows = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]);
+            if (_bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES)) model.NumberOfVariables = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]);
+            if (_bus.ContainsKey(TaskManager.PRIMARY_KEYS))
             {
-                model.ResearchPlanTitle = _bus[TaskManager.RESEARCHPLAN_TITLE].ToString();
+                string[] keys = (string[])_bus[TaskManager.NUMBERSOFROWS];
+                if (keys.Count() == 0) model.PrimaryKeys = "N/A";
+                else model.PrimaryKeys = string.Join(",",keys);
             }
+            else model.PrimaryKeys = "N/A";
+
+            //file
+            if (_bus.ContainsKey(TaskManager.FILENAME)) model.Filename = _bus[TaskManager.FILENAME].ToString();
+            if (_bus.ContainsKey(TaskManager.FILEPATH)) model.Filepath = _bus[TaskManager.FILEPATH].ToString();
+            if (_bus.ContainsKey(TaskManager.EXTENTION)) model.Extention = _bus[TaskManager.EXTENTION].ToString();
+
 
             return model;
+        }
+
+        private int getCellLimit()
+        {
+            int cellLimit = 0;
+
+            //get cellLimt from settings
+            SettingsHelper settingsHelper = new SettingsHelper();
+            if (settingsHelper.KeyExist("celllimit"))
+            {
+                Int32.TryParse(settingsHelper.GetValue("celllimit"), out cellLimit);
+                if (cellLimit == 0) cellLimit = 100000;
+            }
+
+            return cellLimit;
+        }
+
+        private bool isASyncUpload()
+        {
+            int cells = 0;
+            int cellLimit = getCellLimit();
+
+            if (_bus.ContainsKey(TaskManager.NUMBERSOFROWS) && _bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES))
+            {
+                cells = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]) + Convert.ToInt32(_bus[TaskManager.NUMBERSOFVARIABLES]);
+            }
+
+            if (cells > cellLimit) return true;
+
+            return false;
         }
     }
 
