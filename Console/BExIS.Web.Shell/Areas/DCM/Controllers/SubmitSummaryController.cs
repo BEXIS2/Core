@@ -209,7 +209,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else model.UploadMethod = "Append";
 
             if (_bus.ContainsKey(TaskManager.NUMBERSOFROWS)) model.NumberOfRows = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]);
-            if (_bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES)) model.NumberOfVariables = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]);
+            if (_bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES)) model.NumberOfVariables = Convert.ToInt32(_bus[TaskManager.NUMBERSOFVARIABLES]);
             if (_bus.ContainsKey(TaskManager.PRIMARY_KEYS))
             {
                 List<long> keys = (List<long>)_bus[TaskManager.PRIMARY_KEYS];
