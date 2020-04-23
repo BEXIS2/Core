@@ -274,28 +274,28 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetASyncStartUploadHeader(long datasetid, string title)
         {
-            return $"An Upload to the dataset '{title}' ({datasetid}) has started.";
+            return $"Data upload started";
         }
 
         public static string GetASyncStartUploadMessage(long datasetid, string title, int numberOfRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"An Upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> has started. <br/>");
-            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines are added and or edited.");
+            stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> has started. <br/>");
+            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines will be added/edited.");
 
             return stringBuilder.ToString();
         }
 
         public static string GetASyncFinishUploadHeader(long datasetid, string title)
         {
-            return $"An Upload to the dataset '{title}' ({datasetid}) is finished.";
+            return $"Data upload completed";
         }
 
         public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"An Upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is finished. <br/>");
-            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited to the dataset.");
+            stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is completed. <br/>");
+            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited.");
 
             return stringBuilder.ToString();
         }

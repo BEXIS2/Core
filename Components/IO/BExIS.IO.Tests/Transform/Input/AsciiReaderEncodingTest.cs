@@ -18,6 +18,7 @@ namespace BExIS.IO.Tests.Transform.Input
     {
 
         private string filepath;
+        private string filepathUTF8;
         private Encoding windows;
         List<string> lines;
 
@@ -28,13 +29,14 @@ namespace BExIS.IO.Tests.Transform.Input
         public void OneTimeSetUp()
         {
             // for data generation
-            int numberOfRows = 10;
+            int numberOfRows = 10000;
             int charLength = 10;
             Random random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÄÜÖ";
 
            
             filepath = Path.Combine(AppConfiguration.DataPath , "EncodingWindowsFormat_testfile.txt");
+            filepathUTF8 = Path.Combine(AppConfiguration.DataPath , "EncodingUTF8Format_testfile.txt");
 
 
             lines = new List<string>();
@@ -51,6 +53,8 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // write all text line text file to string array
             File.WriteAllLines(filepath, lines.ToArray(), windows);
+
+            File.WriteAllLines(filepathUTF8, lines.ToArray(), Encoding.UTF8);
 
         }
 
@@ -76,6 +80,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void OneTimeTearDown()
         {
             if (File.Exists(filepath)) File.Delete(filepath);
+            if (File.Exists(filepathUTF8)) File.Delete(filepathUTF8);
         }
 
         [Test]
@@ -107,7 +112,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
 
-            //Assert.That(incoming, Is.EquivalentTo(lines));
+            Assert.That(incoming, Is.EquivalentTo(lines));
 
         }
 
@@ -140,9 +145,40 @@ namespace BExIS.IO.Tests.Transform.Input
             }
 
   
-            //Assert.That(incoming, Is.EquivalentTo(lines));
+            Assert.That(incoming, Is.EquivalentTo(lines));
 
         }
 
+
+        [Test]
+        public void encoding_detectEcodingByReadFileFirst_EncodingIsUTF8Format()
+        {
+            var encoding = Encoding.Default;
+            var line = "";
+            var incoming = new List<string>();
+
+            using (var reader = new StreamReader(filepathUTF8, Encoding.Default, true))
+            {
+                if (reader.Peek() >= 0) // you need this!
+                    reader.Read();
+
+                encoding = reader.CurrentEncoding;
+
+                Assert.IsTrue(encoding.Equals(Encoding.UTF8));
+                reader.Close();
+
+            }
+
+            using (var reader = new StreamReader(filepathUTF8, encoding, true))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    incoming.Add(line);
+                }
+            }
+
+            Assert.That(incoming, Is.EquivalentTo(lines));
+
+        }
     }
 }

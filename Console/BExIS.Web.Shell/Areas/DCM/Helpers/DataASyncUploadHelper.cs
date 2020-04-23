@@ -31,11 +31,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
     public class DataASyncUploadHelper
     {
         public Dictionary<string,object> Bus { get; set; }
+        public bool RunningASync { get; set; }
         public User User { get; set; }
 
         private FileStream Stream;
 
         private UploadHelper uploadWizardHelper = new UploadHelper();
+
+
+
 
         //temporary solution: norman :FinishUpload2
         public async Task<List<Error>> FinishUpload()
@@ -468,22 +472,25 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
             finally
             {
-                var user = User;
-
-                if (temp.Any())
+                if (RunningASync)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
-                        MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
-                        new List<string> { ConfigurationManager.AppSettings["SystemEmail"], user.Email });
+                    var user = User;
 
-                }
-                else
-                {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
-                    MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows),
-                        new List<string> { ConfigurationManager.AppSettings["SystemEmail"], user.Email });
+                    if (temp.Any())
+                    {
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
+                            MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
+                            new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
+
+                    }
+                    else
+                    {
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
+                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows),
+                            new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
+                    }
                 }
 
                 dm.Dispose();
