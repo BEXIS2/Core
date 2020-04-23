@@ -43,7 +43,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private UploadHelper uploadWizardHelper = new UploadHelper();
 
-        private Dictionary<string, object> _bus = new Dictionary<string, object>(); 
+        private Dictionary<string, object> _bus = new Dictionary<string, object>();
+
+        
 
 
         // GET: /DCM/Summary/
@@ -96,6 +98,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DataASyncUploadHelper asyncUploadHelper = new DataASyncUploadHelper();
             asyncUploadHelper.Bus = _bus;
             asyncUploadHelper.User = GetUser();
+            asyncUploadHelper.RunningASync = isASyncUpload();
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
             {
@@ -109,8 +112,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
 
-            if (isASyncUpload()) //async
+            if (asyncUploadHelper.RunningASync) //async
             {
+
                 Task.Run(() => asyncUploadHelper.FinishUpload());
 
                 // send email after starting the upload
@@ -131,6 +135,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             else
             {
+
+
                 List<Error> errors = asyncUploadHelper.FinishUpload().Result;
                 if (errors.Count == 0)
                 {
@@ -206,7 +212,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (_bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES)) model.NumberOfVariables = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]);
             if (_bus.ContainsKey(TaskManager.PRIMARY_KEYS))
             {
-                string[] keys = (string[])_bus[TaskManager.NUMBERSOFROWS];
+                List<long> keys = (List<long>)_bus[TaskManager.PRIMARY_KEYS];
                 if (keys.Count() == 0) model.PrimaryKeys = "N/A";
                 else model.PrimaryKeys = string.Join(",",keys);
             }
