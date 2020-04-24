@@ -1456,7 +1456,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //        }
                             }
                             }
-                        }
+                        
+
                     else
                     {
                         dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
