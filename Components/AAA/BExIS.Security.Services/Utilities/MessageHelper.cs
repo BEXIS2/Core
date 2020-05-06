@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Configuration;
+using System.Text;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -128,8 +129,9 @@ namespace BExIS.Security.Services.Utilities
         public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
-            stringBuilder.AppendLine("<b>Intention:</b>");
+            stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
+            stringBuilder.AppendLine("<b>Intention:</b> <br/>");
+            stringBuilder.AppendLine("Login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
             stringBuilder.AppendLine(reason);
 
             return stringBuilder.ToString();

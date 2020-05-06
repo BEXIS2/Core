@@ -11,6 +11,10 @@ using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Security.Entities.Requests;
+using BExIS.Security.Entities.Subjects;
+using Vaiona.Persistence.Api;
+using BExIS.Dlm.Services.Party;
+using BExIS.Dlm.Entities.Party;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -63,7 +67,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
-                        Applicant = m.Request.Applicant.Name,
+                        Applicant = getPartyName(m.Request.Applicant),
                         Intention = m.Request.Intention
                     }); ;
 
@@ -155,6 +159,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var total = results.Count();
 
             return View(new GridModel<RequestGridRowModel> { Data = results.ToList(), Total = total });
+        }
+
+        private string getPartyName(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            using (var partyManager = new PartyManager())
+            {
+                if (user != null)
+                {
+                    Party party = partyManager.GetPartyByUser(user.Id);
+                    if (party != null)
+                    {
+                        return party.Name;
+                    }
+                }
+            }
+            return user.Name;
         }
     }
 }
