@@ -32,7 +32,12 @@
 
     <div class="ShowDataContent">
 
-        @Html.ValidationSummary()
+    @if (Html.ValidationSummary(true) != null)
+    {
+        @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationSummary(true).ToString()));
+    }
+
+
 
         @if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
         {
