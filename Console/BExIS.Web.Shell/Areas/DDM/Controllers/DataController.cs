@@ -578,11 +578,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             {
                                 long count = dm.RowCount(datasetID, null);
                                 if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 100);
-                                else ModelState.AddModelError(string.Empty, "No data is uploaded to this dataset.");
+                                else ModelState.AddModelError(string.Empty, "There is no primary data available/uploaded. <br/><br/> Please note that the data may have been uploaded to another repository and is referenced here in the metadata.");
                             }
                             catch
                             {
-                                ModelState.AddModelError(string.Empty, "Data is not available, please ask the administrator for syncing.");
+                                ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
                             }
 
                             Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
@@ -630,7 +630,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                    ModelState.AddModelError(string.Empty, "The dataset is currently being processed and is therefore locked.");
                 }
 
                 return PartialView(null);
@@ -1521,8 +1521,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault(), intention),
-                            emailDescionMaker
+                            MessageHelper.GetSendRequestMessage(id, title, getPartyNameOrDefault(), intention),
+                            new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
                             );
                     }
                 }
