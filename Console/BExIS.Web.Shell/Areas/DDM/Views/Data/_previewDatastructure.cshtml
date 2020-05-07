@@ -18,6 +18,7 @@
     {
 
         resetAllTelerikIconTitles();
+        addTooltips();
 
         for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
         {
@@ -82,7 +83,7 @@
                         if (column.ColumnName.ToLower() == "optional")
                         {
                             columns.Bound(column.DataType, column.ColumnName)
-                                .ClientTemplate("<input id='<#= " + column.ColumnName + "#>' name='<#= " + column.ColumnName + "#>' type='checkbox' value='<#= " + @dt.Columns["Optional"] + "#>' class='bx-disabled bx-ddm-checkbox' disabled = 'disabled' />").Title(column.ColumnName);
+                                .ClientTemplate("<input id='<#= " + column.ColumnName + "#>' name='<#= " + column.ColumnName + "#>' type='checkbox' value='<#= " + @dt.Columns["Optional"] + "#>' class='bx-disabled bx-ddm-checkbox' disabled = 'disabled' />").Title(column.ColumnName).Width("5%");
                         }
                         else
                         {
