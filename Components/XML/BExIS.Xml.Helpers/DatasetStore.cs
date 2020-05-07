@@ -57,12 +57,12 @@ namespace BExIS.Xml.Helpers
 
                         if (!datasetIds.Any()) continue;
 
+
                         // create tuples based on dataset id list, and get latest version of each dataset
 
                         List<DatasetVersion> datasetVersions = dm.GetDatasetLatestVersions(datasetIds, false);
                         foreach (var dsv in datasetVersions)
                         {
-
                             var e = new EntityStoreItem()
                             {
                                 Id = dsv.Dataset.Id,
@@ -71,7 +71,6 @@ namespace BExIS.Xml.Helpers
                             };
 
                             entities.Add(e);
-
                         }
                     }
 

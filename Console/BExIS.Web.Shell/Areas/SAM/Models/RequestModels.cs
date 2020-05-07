@@ -20,5 +20,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Title { get; set; }
         public string Intention { get; set; }
         public long InstanceId { get; set; }
+        public object RequestingPerson { get; internal set; }
     }
 }

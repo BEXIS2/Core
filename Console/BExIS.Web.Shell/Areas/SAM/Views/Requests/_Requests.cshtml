@@ -6,7 +6,7 @@
               .Name("grid_requests")
               .Columns(columns =>
               {
-                  columns.Bound(g => g.InstanceId);
+                  columns.Bound(g => g.InstanceId).Title("Id");
                   columns.Bound(g => g.Title);
                   columns.Bound(g => g.Intention);
                   columns.Bound(g => g.Rights);

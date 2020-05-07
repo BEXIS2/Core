@@ -185,17 +185,24 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId">The identifier of the dataset.</param>
         /// <returns>The semi-populated dataset entity if exists, or null.</returns>
         /// <remarks>The object based attributes of the entity that are persisted as XML are not populated by default. In order to fully populate the entity, call the <see cref="Materialize"/> method.</remarks>
+        public Dataset GetDataset(Int64 datasetId, IUnitOfWork uow)
+        {
+            var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
+            Dataset ds = datasetRepo.Get(datasetId);
+            //if(ds != null)
+            //    ds.Materialize();
+            return (ds);
+        }
+
         public Dataset GetDataset(Int64 datasetId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
-                Dataset ds = datasetRepo.Get(datasetId);
-                //if(ds != null)
-                //    ds.Materialize();
-                return (ds);
+                return GetDataset(datasetId, uow);
             }
         }
+    
+
 
         public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure, long datasetId)
         {
@@ -1165,6 +1172,16 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetLatestVersion(datasetId);
         }
 
+        public DatasetVersion GetDatasetLatestVersion(Int64 datasetId, IUnitOfWork uow)
+        {
+            return getDatasetLatestVersion(datasetId, uow);
+        }
+
+        public Int64 GetDatasetLatestVersionId(Int64 datasetId, IUnitOfWork uow)
+        {
+            return getDatasetLatestVersionId(datasetId, uow);
+        }
+
         public Int64 GetDatasetLatestVersionId(Int64 datasetId)
         {
             return getDatasetLatestVersionId(datasetId);
@@ -1622,11 +1639,18 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                return GetDatasetVersionCount(datasetId, uow);
+            }
+        }
+
+        public int GetDatasetVersionCount(long datasetId, IUnitOfWork uow)
+        {
+           
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
                 var count = datasetVersionRepo.Query(dsv => dsv.Dataset.Id.Equals(datasetId)).Count();
 
                 return count;
-            }
+            
         }
 
         public string GetMetadataValueFromDatasetVersion(long id, string xpath)
@@ -1723,50 +1747,63 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
-                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
-
-                DatasetVersion dsVersion = datasetVersionRepo.Query(p =>
-                    p.Dataset.Id == datasetId
-                    && p.Dataset.Status == DatasetStatus.CheckedIn
-                    && p.Status == DatasetVersionStatus.CheckedIn)
-                    .FirstOrDefault();//DatasetVersionRepo.Query(p => p.Dataset.Id == datasetId && p.Dataset.Status == DatasetStatus.CheckedIn).OrderByDescending(p => p.Timestamp).FirstOrDefault();
-                if (dsVersion != null)
-                {
-                    //dsVersion.Materialize();
-                    return (dsVersion);
-                }
-                try
-                {
-                    Dataset dataset = datasetRepo.Get(datasetId);
-                    if (dataset == null)
-                        throw new Exception(string.Format("Dataset {0} does not exist!", datasetId));
-                    if (dataset.Status == DatasetStatus.Deleted)
-                        throw new Exception(string.Format("Dataset {0} is deleted", datasetId));
-                    if (dataset.Status == DatasetStatus.CheckedOut)
-                    {
-                        throw new Exception(string.Format("Dataset {0} is checked out.", datasetId));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
-                }
-                return (null);
+                return getDatasetLatestVersion(datasetId, uow);
             }
+        }
+
+        private DatasetVersion getDatasetLatestVersion(Int64 datasetId, IUnitOfWork uow)
+        {
+
+            var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
+            var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+
+            DatasetVersion dsVersion = datasetVersionRepo.Query(p =>
+                p.Dataset.Id == datasetId
+                && p.Dataset.Status == DatasetStatus.CheckedIn
+                && p.Status == DatasetVersionStatus.CheckedIn)
+                .FirstOrDefault();
+            if (dsVersion != null)
+            {
+                //dsVersion.Materialize();
+                return (dsVersion);
+            }
+            try
+            {
+                Dataset dataset = datasetRepo.Get(datasetId);
+                if (dataset == null)
+                    throw new Exception(string.Format("Dataset {0} does not exist!", datasetId));
+                if (dataset.Status == DatasetStatus.Deleted)
+                    throw new Exception(string.Format("Dataset {0} is deleted", datasetId));
+                if (dataset.Status == DatasetStatus.CheckedOut)
+                {
+                    throw new Exception(string.Format("Dataset {0} is checked out.", datasetId));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
+            }
+            return (null);
         }
 
         private Int64 getDatasetLatestVersionId(Int64 datasetId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                return getDatasetLatestVersionId(datasetId, uow);
+            }
+        }
+
+        private Int64 getDatasetLatestVersionId(Int64 datasetId, IUnitOfWork uow)
+        {
+            
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
 
                 Int64 dsVersionId = datasetVersionRepo.Query(p =>
                     p.Dataset.Id == datasetId
                     && p.Dataset.Status == DatasetStatus.CheckedIn
-                    && p.Status == DatasetVersionStatus.CheckedIn)
+                    && p.Status == DatasetVersionStatus.CheckedIn).OrderByDescending(p => p.Id)
                     .Select(p => p.Id).FirstOrDefault();
                 if (dsVersionId > 0)
                 {
@@ -1790,7 +1827,7 @@ namespace BExIS.Dlm.Services.Data
                     throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
                 }
                 return (0);
-            }
+           
         }
 
         private DatasetVersion getDatasetWorkingCopy(Int64 datasetId)
