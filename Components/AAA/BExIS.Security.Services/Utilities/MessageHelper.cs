@@ -131,8 +131,34 @@ namespace BExIS.Security.Services.Utilities
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
             stringBuilder.AppendLine("<b>Intention:</b> <br/>");
-            stringBuilder.AppendLine("Login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
+            stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
             stringBuilder.AppendLine(reason);
+
+            return stringBuilder.ToString();
+        }
+
+        public static string GetAcceptRequestHeader(long datasetid)
+        {
+            return $"Request to dataset with id  {datasetid} granted";
+        }
+
+        public static string GetAcceptRequestMessage(long datasetid, string title)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Permission for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> granted.<br/>");
+
+            return stringBuilder.ToString();
+        }
+
+        public static string GetRejectedRequestHeader(long datasetid)
+        {
+            return $"Request to dataset with id  {datasetid} rejected";
+        }
+
+        public static string GetRejectedRequestMessage(long datasetid, string title)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Permission for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> rejected.<br/>");
 
             return stringBuilder.ToString();
         }
