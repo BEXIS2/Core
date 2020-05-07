@@ -265,7 +265,7 @@ namespace BExIS.IO.Transform.Input
             else
                 Position++;
 
-            int endPosition = (Position + packageSize)-1;
+            int endPosition = Position + packageSize;
 
             if (endPosition > this._areaOfData.EndRow)
                 endPosition = this._areaOfData.EndRow;
@@ -359,7 +359,7 @@ namespace BExIS.IO.Transform.Input
                 else
                     Position++;
 
-                int endPosition = (Position + packageSize) - 1;
+                int endPosition = Position + packageSize;
 
                 if (endPosition > endRowData)
                     endPosition = endRowData;
@@ -435,7 +435,7 @@ namespace BExIS.IO.Transform.Input
 
             if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
             {
-                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, (Position + packageSize)-1);
+                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, Position + packageSize);
                 Position += packageSize;
             }
 

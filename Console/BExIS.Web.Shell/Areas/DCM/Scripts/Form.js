@@ -235,7 +235,6 @@ function OnChangeTextInput(e, ui) {
         //alert(metadataStructureId);
         //alert(ParentStepID);
         //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-       
         $.post('/DCM/Form/ValidateMetadataAttributeUsage',
             {
                 value: value,
@@ -651,10 +650,8 @@ function OnClose(e, ui) {
                     var xpath = $(e.target).attr("xpath");
 
                     if (simple === "True") {
-                        
-                        afterClosed = false;
+
                         UpdateSimpleMappingWithParty(uiid, xpath, partyid, onlyValue);
-                        console.log(afterClosed);
                     }
                 }
 

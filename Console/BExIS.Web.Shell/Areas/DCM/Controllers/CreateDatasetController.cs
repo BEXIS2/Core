@@ -1,4 +1,5 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
+using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -15,6 +16,7 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
@@ -231,7 +233,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             string username = GetUsernameOrDefault();
 
-            if (model.SelectedDataStructureId_ > 0)
+            if (model.SelectedDataStructureId_ != -1)
             {
                 model.SelectedDataStructureId = model.SelectedDataStructureId_;
             }
@@ -565,10 +567,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                             entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-                            if (1 == 1)
-                            {
-                                entityPermissionManager.Create<User>("Admin", "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-                            }
                         }
                     }
                     else

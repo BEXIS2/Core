@@ -8,7 +8,7 @@
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
       <column name="Id" index="idx_Datasets_id"/>
-      <generator class="native" />
+      <!--<generator class="native" />-->
     </id>
 
     <!--&BaseEntityProperties;-->

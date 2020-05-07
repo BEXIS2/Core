@@ -96,8 +96,8 @@ namespace BExIS.Xml.Helpers
         {
             DatasetManager dm = new DatasetManager();
 
-            //using (var unitOfWork = this.GetUnitOfWork())
-            //{
+            using (var unitOfWork = this.GetUnitOfWork())
+            {
                 if (datasetVersionId <= 0) return String.Empty;
                 if (metadataStructureId <= 0) return String.Empty;
 
@@ -113,22 +113,15 @@ namespace BExIS.Xml.Helpers
                 string xpath = temp.Attribute("value").Value.ToString();
 
                 return dm.GetMetadataValueFromDatasetVersion(datasetVersionId, xpath);
-          //  }
-            }
-
-        public Dictionary<long, string> GetInformationFromVersions(List<long> datasetVersionIds, long metadataStructureId, NameAttributeValues name)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                return GetInformationFromVersions(datasetVersionIds, metadataStructureId, name, uow);
             }
         }
 
-        public Dictionary<long, string> GetInformationFromVersions(List<long> datasetVersionIds, long metadataStructureId, NameAttributeValues name, IUnitOfWork uow)
+        public Dictionary<long, string> GetInformationFromVersions(List<long> datasetVersionIds, long metadataStructureId, NameAttributeValues name)
         {
             DatasetManager dm = new DatasetManager();
 
-            
+            using (var unitOfWork = this.GetUnitOfWork())
+            {
                 if (datasetVersionIds.Any(d => d <= 0)) return null;
                 if (metadataStructureId <= 0) return null;
 
@@ -144,8 +137,8 @@ namespace BExIS.Xml.Helpers
                 string xpath = temp.Attribute("value").Value.ToString();
 
                 return dm.GetMetadataValueFromDatasetVersion(datasetVersionIds, xpath);
-            
             }
+        }
 
         /// <summary>
         /// Information in metadata is stored as xml
