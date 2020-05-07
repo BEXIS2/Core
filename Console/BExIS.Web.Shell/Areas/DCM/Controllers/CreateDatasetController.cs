@@ -233,7 +233,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             string username = GetUsernameOrDefault();
 
-            if (model.SelectedDataStructureId_ != -1)
+            if (model.SelectedDataStructureId_ > 0)
             {
                 model.SelectedDataStructureId = model.SelectedDataStructureId_;
             }
