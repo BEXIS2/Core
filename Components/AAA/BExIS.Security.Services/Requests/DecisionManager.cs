@@ -2,10 +2,7 @@
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -93,14 +90,6 @@ namespace BExIS.Security.Services.Requests
 
                                 entityPermissionRepository.Put(entityPermission);
                             }
-
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetAcceptRequestHeader(request.Key),
-                                MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
-                                new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
-                                );
-
-
                         }
                     }
                 }
@@ -170,13 +159,6 @@ namespace BExIS.Security.Services.Requests
                             requestRepository.Merge(request);
                             var mergedRequest = requestRepository.Get(request.Id);
                             requestRepository.Put(mergedRequest);
-
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetRejectedRequestHeader(request.Key),
-                                MessageHelper.GetRejectedRequestMessage(request.Key, "title"),
-                                new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
-                                );
-
                         }
                     }
 

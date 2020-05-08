@@ -15,6 +15,9 @@ using BExIS.Security.Entities.Subjects;
 using Vaiona.Persistence.Api;
 using BExIS.Dlm.Services.Party;
 using BExIS.Dlm.Entities.Party;
+using BExIS.Security.Services.Utilities;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -28,6 +31,27 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 decisionManager.Accept(decisionId, "");
+
+                var es = new EmailService();
+                var entityManager = new EntityManager();
+
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var requestRepository = uow.GetRepository<Request>();
+                    var request = requestRepository.Get(decisionId);
+
+                    if (request != null)
+                    {
+                        var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
+
+                        es.Send(MessageHelper.GetAcceptRequestHeader(request.Key),
+                            MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
+                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        );
+                    }
+                }
+
+
             }
             catch (Exception e)
             {
@@ -110,6 +134,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 decisionManager.Reject(requestId, "");
+
+                var es = new EmailService();
+                var entityManager = new EntityManager();
+
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var requestRepository = uow.GetRepository<Request>();
+                    var request = requestRepository.Get(requestId);
+
+                    if (request != null)
+                    {
+                        var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
+
+                        es.Send(MessageHelper.GetRejectedRequestHeader(request.Key),
+                        MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
+                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        );
+                    }
+                }
             }
             catch (Exception e)
             {
