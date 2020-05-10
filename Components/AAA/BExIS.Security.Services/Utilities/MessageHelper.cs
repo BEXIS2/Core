@@ -116,23 +116,62 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> has registered.";
         }
 
-        public static string GetSendRequestHeader(long datasetid)
+        public static string GetSendRequestHeader(long datasetid, string requester)
         {
-            return $"Request to dataset with id  {datasetid}";
+            return $"Data request from {requester} for dataset with id = {datasetid}";
         }
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester)
         {
-            return $"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+            return $"User \"{requester}\" sent a data request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
-            stringBuilder.AppendLine("<b>Intention:</b> <br/>");
-            stringBuilder.AppendLine("Login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
-            stringBuilder.AppendLine(reason);
+            stringBuilder.AppendLine($"User \"{requester}\" sent a data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
+            stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
+            stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
+
+
+            return stringBuilder.ToString();
+        }
+
+        public static string GetWithdrawRequestHeader(long datasetid, string requester)
+        {
+            return $"Data request from {requester} for dataset with id = {datasetid} withdrawn";
+        }
+
+        public static string GetWithdrawRequestMessage(long datasetid, string title, string requester)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Dataset request from User \"{requester}\" for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> was withdrawn.<br/>");
+         
+            return stringBuilder.ToString();
+        }
+
+        public static string GetAcceptRequestHeader(long datasetid, string requester)
+        {
+            return $"Data request from {requester} for dataset with id = {datasetid} granted";
+        }
+
+        public static string GetAcceptRequestMessage(long datasetid, string title)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Permission for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> granted.<br/>");
+
+            return stringBuilder.ToString();
+        }
+
+        public static string GetRejectedRequestHeader(long datasetid, string requester)
+        {
+            return $"Data request from {requester} for dataset with id = {datasetid} rejected";
+        }
+
+        public static string GetRejectedRequestMessage(long datasetid, string title)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> rejected.<br/>");
 
             return stringBuilder.ToString();
         }

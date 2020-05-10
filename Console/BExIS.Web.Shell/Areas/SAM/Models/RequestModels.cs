@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Requests;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -20,5 +21,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Title { get; set; }
         public string Intention { get; set; }
         public long InstanceId { get; set; }
+        public DateTime RequestDate { get; set; }
     }
 }
