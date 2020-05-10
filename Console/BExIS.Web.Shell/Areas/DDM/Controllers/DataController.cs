@@ -1513,11 +1513,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+                        string applicant = getPartyNameOrDefault();
 
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, getPartyNameOrDefault(), intention),
+                        es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
+                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention),
                             new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
                             );
                     }
