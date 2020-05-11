@@ -159,6 +159,7 @@
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\FilesController.cs" />
+    <Compile Include="Controllers\RequestsAdminController.cs" />
     <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
@@ -279,6 +280,9 @@
     <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\Files\FileList.cshtml" />
     <Content Include="Views\Files\_FolderContentAsList.cshtml" />
+    <Content Include="Views\RequestsAdmin\_DecisionsAdmin.cshtml" />
+    <Content Include="Views\RequestsAdmin\Index.cshtml" />
+    <Content Include="Views\RequestsAdmin\_Entities.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
