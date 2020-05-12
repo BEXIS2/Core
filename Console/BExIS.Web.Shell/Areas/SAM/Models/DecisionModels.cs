@@ -23,6 +23,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public string StatusAsText { get; set; }
         public DateTime DecisionDate { get; set; }
         public DateTime RequestDate { get; set; }
-
+        public string DecisionMaker { get; internal set; }
     }
 }
