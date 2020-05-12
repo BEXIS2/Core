@@ -208,10 +208,7 @@ function OnChangeTextInput(e, ui) {
     console.log("change");
     console.log("afterClosed : " + afterClosed);
 
-    // after the on close event from the autocomplete component, the values change in the input fields
-    // after this changes again this change event is triggered
-    // to prevent this, a flag is set to check wheter this event is fired after a close event or not
-    if (afterClosed === false) {
+
 
         console.log("on change text input");
         var value;
@@ -230,6 +227,15 @@ function OnChangeTextInput(e, ui) {
         var number = substr[2];
         var ParentModelNumber = substr[3];
         var ParentStepID = substr[5];
+
+        // after close a autocomplete there is a id in the value, 
+        // this should be removed before send to the server
+        if (afterClosed === true) {
+            if (~value.indexOf("(") && ~value.indexOf(")")) {
+                var start = value.lastIndexOf("(") + 1;
+                value = value.substr(0, start - 2);
+            }
+        }
 
         //alert(parentid);
         //alert(metadataStructureId);
@@ -260,28 +266,34 @@ function OnChangeTextInput(e, ui) {
                 //alert("test");
                 autosize($('textarea'));
 
-                //check if the parent is set to a party
-                //console.log("after change");
-                var parent = $("#" + ParentStepID)[0];
-                //console.log(parent);
-                var partyid = $(parent).attr("partyid");
-                //console.log(partyid);
+                // after the on close event from the autocomplete component, the values change in the input fields
+                // after this changes again this change event is triggered
+                // to prevent this, a flag is set to check wheter this event is fired after a close event or not
+                if (afterClosed === false) {
 
-                var partyidConverted = TryParseInt(partyid, null);
-                //console.log("tryparse:" + partyidConverted)
+                    //check if the parent is set to a party
+                    //console.log("after change");
+                    var parent = $("#" + ParentStepID)[0];
+                    //console.log(parent);
+                    var partyid = $(parent).attr("partyid");
+                    //console.log(partyid);
 
-                //delete party informations when a party was selected before
-                if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
-                    console.log(ParentStepID);
-                    console.log(ParentModelNumber);
+                    var partyidConverted = TryParseInt(partyid, null);
+                    //console.log("tryparse:" + partyidConverted)
 
-                    UpdateWithParty(ParentStepID, ParentModelNumber, 0);
-                }
-                else {
-                    afterClosed = false;
+                    //delete party informations when a party was selected before
+                    if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
+                        console.log(ParentStepID);
+                        console.log(ParentModelNumber);
+
+                        UpdateWithParty(ParentStepID, ParentModelNumber, 0);
+                    }
+                    else {
+                        afterClosed = false;
+                    }
                 }
             })
-    }
+    
 
     // reset after close flag
     afterClosed = false
