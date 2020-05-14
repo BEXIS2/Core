@@ -1828,7 +1828,7 @@ namespace BExIS.Dlm.Services.Data
             Dataset dataset = datasetVersion.Dataset;
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Provided dataset version {0} belongs to deleted dataset {1}.", datasetVersion.Id, dataset.Id));
-            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Timestamp).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
+            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Id).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
             if (datasetVersion.Id > latestVersionId)
                 throw new Exception(string.Format("Invalid version id. The dataset version id {0} is greater than the latest version number!", datasetVersion.Id));
 
@@ -1854,7 +1854,7 @@ namespace BExIS.Dlm.Services.Data
             Dataset dataset = datasetVersion.Dataset;
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Provided dataset version {0} belongs to deleted dataset {1}.", datasetVersion.Id, dataset.Id));
-            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Timestamp).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
+            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Id).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
             if (datasetVersion.Id > latestVersionId)
                 throw new Exception(string.Format("Invalid version id. The dataset version id {0} is greater than the latest version number!", datasetVersion.Id));
 
@@ -1881,7 +1881,7 @@ namespace BExIS.Dlm.Services.Data
             Dataset dataset = datasetVersion.Dataset;
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Provided dataset version {0} belongs to deleted dataset {1}.", datasetVersion.Id, dataset.Id));
-            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Timestamp).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
+            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Id).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
             if (datasetVersion.Id > latestVersionId)
                 throw new Exception(string.Format("Invalid version id. The dataset version id {0} is greater than the latest version number!", datasetVersion.Id));
 
@@ -1906,7 +1906,7 @@ namespace BExIS.Dlm.Services.Data
             Dataset dataset = datasetVersion.Dataset;
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Provided dataset version {0} belongs to deleted dataset {1}.", datasetVersion.Id, dataset.Id));
-            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Timestamp).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
+            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Id).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
             if (datasetVersion.Id > latestVersionId)
                 throw new Exception(string.Format("Invalid version id. The dataset version id {0} is greater than the latest version number!", datasetVersion.Id));
 
@@ -3084,7 +3084,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     // latest version is the latest checked in version. it is the previous version in comparison to the working copy version.
                     // the checks to see whether the dataset is checked out are considered to be done before
-                    DatasetVersion latestCheckedInVersion = workingCopyVersion.Dataset.Versions.OrderByDescending(p => p.Timestamp).FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn);
+                    DatasetVersion latestCheckedInVersion = workingCopyVersion.Dataset.Versions.OrderByDescending(p => p.Id).FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn);
                     if (latestCheckedInVersion == null) // there is no previous version, means its the first version. In this case there is no need to handle deleted and editedVersion items!
                         return (workingCopyVersion);
 
