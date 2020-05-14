@@ -205,11 +205,8 @@ var afterClosed = false;
 
 function OnChangeTextInput(e, ui) {
 
-    console.log("change");
-    console.log("afterClosed : " + afterClosed);
-
-
-
+        console.log("change");
+        console.log("afterClosed : " + afterClosed);
         console.log("on change text input");
         var value;
 
@@ -234,6 +231,8 @@ function OnChangeTextInput(e, ui) {
             if (~value.indexOf("(") && ~value.indexOf(")")) {
                 var start = value.lastIndexOf("(") + 1;
                 value = value.substr(0, start - 2);
+
+                console.log("--> after autocomplete the value from the selection needs to be cutted");
             }
         }
 
@@ -252,24 +251,34 @@ function OnChangeTextInput(e, ui) {
                 ParentStepId: ParentStepID
             },
             function (response) {
-                var id = e.target.id;
-                //console.log("OnChangeTextInput");
-                //console.log(id);
-
-                var index = id.lastIndexOf("_");
-                var newId = id.substr(0, index);
-                //console.log(newId);
-
-                $("#" + newId).replaceWith(response);
-                updateHeader();
-
-                //alert("test");
-                autosize($('textarea'));
 
                 // after the on close event from the autocomplete component, the values change in the input fields
                 // after this changes again this change event is triggered
                 // to prevent this, a flag is set to check wheter this event is fired after a close event or not
                 if (afterClosed === false) {
+
+                    console.log("after validate value on server");
+                    console.log("afterClosed : " + afterClosed);
+                    console.log("if : " + (afterClosed === false));
+
+                    var id = e.target.id;
+                    //console.log("OnChangeTextInput");
+                    //console.log(id);
+
+                    var index = id.lastIndexOf("_");
+                    var newId = id.substr(0, index);
+                    //console.log(newId);
+
+                    $("#" + newId).replaceWith(response);
+                    updateHeader();
+
+                    //alert("test");
+                    autosize($('textarea'));
+
+
+
+                    console.log("--> only runs when autocomplete is not used");
+
 
                     //check if the parent is set to a party
                     //console.log("after change");
@@ -292,11 +301,14 @@ function OnChangeTextInput(e, ui) {
                         afterClosed = false;
                     }
                 }
+                else {
+                    afterClosed = false;
+                }
             })
     
 
     // reset after close flag
-    afterClosed = false
+    //afterClosed = false
 }
 
 function OnChange(e) {
