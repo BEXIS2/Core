@@ -15,7 +15,7 @@
  
 
 ### Enhancements
-- Dataset versions and links: Hide "edited by" info for non-logged in users ([#432](https://github.com/BEXIS2/Core/issues/432)), Show versions ordered decending ([#431](https://github.com/BEXIS2/Core/issues/431)), open linked datasets in new tab ([#449](https://github.com/BEXIS2/Core/issues/449), [#481](https://github.com/BEXIS2/Core/issues/481))
+- Dataset versions and links: Hide "edited by" info for non-logged in users ([#432](https://github.com/BEXIS2/Core/issues/432)), Show versions ordered descending ([#431](https://github.com/BEXIS2/Core/issues/431)), open linked datasets in new tab ([#449](https://github.com/BEXIS2/Core/issues/449), [#481](https://github.com/BEXIS2/Core/issues/481))
 
 
 - More Unit tests add & setup of Jenkins test server ([#434](https://github.com/BEXIS2/Core/issues/434), [#466](https://github.com/BEXIS2/Core/issues/466))
@@ -33,15 +33,15 @@
 
 - Menu show permissions stored in session to reduce page loading time ([#439](https://github.com/BEXIS2/Core/issues/439))
 
-- Logout resets user specific session variables ([#456](https://github.com/BEXIS2/Core/issues/456))
+- Logout resets user-specific session variables ([#456](https://github.com/BEXIS2/Core/issues/456))
 
-- Replace dynamic retrivial of title and description, by a static storage to increase loading time for e.g. links, datasets, ...([#498](https://github.com/BEXIS2/Core/issues/498), [#478](https://github.com/BEXIS2/Core/issues/478))
+- Replace dynamic retrieval of title and description, by a static storage to increase loading time e.g. links, datasets, ...([#498](https://github.com/BEXIS2/Core/issues/498), [#478](https://github.com/BEXIS2/Core/issues/478))
 
 - Reduce loading time for data structures ([#459](https://github.com/BEXIS2/Core/issues/459))
  
-- Open help page in new tab ([#491](https://github.com/BEXIS2/Core/issues/491))
+- Open help page in a new tab ([#491](https://github.com/BEXIS2/Core/issues/491))
 
-- Version update of some used libaries ([#504](https://github.com/BEXIS2/Core/issues/504))
+- Version update of some used libraries ([#504](https://github.com/BEXIS2/Core/issues/504))
 
 - Autocomplete in form: cancel previous request ([#502](https://github.com/BEXIS2/Core/issues/502))
 
@@ -78,7 +78,7 @@
 
 - Fix user names shown instead of names in dataset view ([#476](https://github.com/BEXIS2/Core/issues/476))
 
-- Fix missing value applied to wrong column ([#484](https://github.com/BEXIS2/Core/issues/484))
+- Fix missing value applied to the wrong column ([#484](https://github.com/BEXIS2/Core/issues/484))
 
 - Fix Excel template converts numbers with dot to date ([#469](https://github.com/BEXIS2/Core/issues/469))
 
@@ -94,15 +94,15 @@
 
 - Fix empty title breaks data upload ([#508](https://github.com/BEXIS2/Core/issues/508))
 
-- Fix mapped identifier alsways set to metadata structure id ([#514](https://github.com/BEXIS2/Core/issues/514))
+- Fix mapped identifier always set to metadata structure id ([#514](https://github.com/BEXIS2/Core/issues/514))
 
 - Fix dataLastModifiedDate identical with metadateLastModificationDate ([#515](https://github.com/BEXIS2/Core/issues/515))
 
 - Fix upload attachment resets metadata status (valid/non-valid) ([#516](https://github.com/BEXIS2/Core/issues/516))
 
-- Fix excel download allowed for more than 1 mio rows ([#513](https://github.com/BEXIS2/Core/issues/513))
+- Fix excel download allowed for more than 1 Mio rows ([#513](https://github.com/BEXIS2/Core/issues/513))
 
-- Fix assumed encoding of uploaded file not allways correct / problems with special chars ([#512](https://github.com/BEXIS2/Core/issues/512))
+- Fix assumed encoding of uploaded file not always correct / problems with special chars ([#512](https://github.com/BEXIS2/Core/issues/512))
 
 - Fix CSV download does not escape strings correct ([#518](https://github.com/BEXIS2/Core/issues/518))
 
@@ -112,7 +112,7 @@
 
 - Fix display pattern for DateTime not applied on export ([#534](https://github.com/BEXIS2/Core/issues/534))
 
-- Fix JavaScript / Telerik Grid data parse probleme ([#536](https://github.com/BEXIS2/Core/issues/536))
+- Fix JavaScript / Telerik Grid data parse problem ([#536](https://github.com/BEXIS2/Core/issues/536))
 
 - Fix get latest version ordered by time instead id ([#538](https://github.com/BEXIS2/Core/issues/538))
 
