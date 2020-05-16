@@ -5,15 +5,64 @@
 
 - Asynchronous data upload  ([#510](https://github.com/BEXIS2/Core/issues/510))
 
-- Improved data upload workflow (New: create data structure during upload and change before first data upload)  ([#482](https://github.com/BEXIS2/Core/issues/482), [#64](https://github.com/BEXIS2/Core/issues/64))
+- Improved data upload workflow (New: create data structure during upload and change before first data upload)  ([#482](https://github.com/BEXIS2/Core/issues/482), [#64](https://github.com/BEXIS2/Core/issues/64), ([#452](https://github.com/BEXIS2/Core/issues/452), ([#463](https://github.com/BEXIS2/Core/issues/463))
 
-- Improved internal data storage and management (Data storage in XML changed to JSON; faster creation of materialized views (size limitation for direct creation removed))
+
+- Improved internal data storage and management (Data storage in XML changed to JSON; faster creation of materialized views (size limitation for direct creation removed)) (([#471](https://github.com/BEXIS2/Core/issues/471), ([#437](https://github.com/BEXIS2/Core/issues/437))
+
+
+
+ 
 
 ### Enhancements
+- Dataset versions and links: Hide "edited by" info for non-logged in users ([#432](https://github.com/BEXIS2/Core/issues/432)), Show versions ordered decending (([#431](https://github.com/BEXIS2/Core/issues/431)), open linked datasets in new tab (([#449](https://github.com/BEXIS2/Core/issues/449))
+
+
+- More Unit tests add & setup of Jenkins test server (([#434](https://github.com/BEXIS2/Core/issues/434), ([#466](https://github.com/BEXIS2/Core/issues/466))
+
+
+- UI Improvements for data structure view & edit (e.g show description, replace ID by column index, ..) (([#438](https://github.com/BEXIS2/Core/issues/438))
+
+- UI Improvements publish tab (([#450](https://github.com/BEXIS2/Core/issues/450))
+
+- UI Improvements for Search: Show hidden entity type column, if more than one found (([#458](https://github.com/BEXIS2/Core/issues/458))
+
+- Dataset view: Allow to hide tabs via settings (hide and hide on missing permission) (([#455](https://github.com/BEXIS2/Core/issues/455))
+
+- Multimedia Module: Add usage with different entity types (([#454](https://github.com/BEXIS2/Core/issues/454))
+ 
+
+
 
 
 
 ### Bugs
+- User registration: Fix validation does not work for relationships and boolean fields ([#429](https://github.com/BEXIS2/Core/issues/429))
+
+- Entity permissions: Fix entity type shown instead of name ((([#436](https://github.com/BEXIS2/Core/issues/436))
+
+- Missing jQuery images added (([#440](https://github.com/BEXIS2/Core/issues/440))
+
+- Add missing index to variables table (([#442](https://github.com/BEXIS2/Core/issues/442))
+
+- Fix varchar fields in materialized views limited to 255 (([#460](https://github.com/BEXIS2/Core/issues/460))
+
+- Fix wrong message shown during file preparation for download (([#444](https://github.com/BEXIS2/Core/issues/444))
+
+- Fix paging primary data view (([#465](https://github.com/BEXIS2/Core/issues/465))
+
+- Fix BAM seed data creation (([#215](https://github.com/BEXIS2/Core/issues/215), ([#227](https://github.com/BEXIS2/Core/issues/227))
+
+- Fix 2.13 Update script incomplete (([#443](https://github.com/BEXIS2/Core/issues/443))
+
+
+
+
+
+
+
+
+
 
 
 
