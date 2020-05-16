@@ -1,9 +1,13 @@
 # BEXIS 2.14 Release Notes
 
 ### Features
+- Revision and enhancement for data permission requests (New: Admin view to manage requests; Withdraw requests; Changed: Email notification (e.g. send also BCC to Sysadmin); Layout (replacement of telerik)) ([#532](https://github.com/BEXIS2/Core/issues/532))
 
+- Asynchronous data upload  ([#510](https://github.com/BEXIS2/Core/issues/510))
 
+- Improved data upload workflow (New: create data structure during upload and change before first data upload)  ([#482](https://github.com/BEXIS2/Core/issues/482), [#64](https://github.com/BEXIS2/Core/issues/64))
 
+- Improved internal data storage and management (Data storage in XML changed to JSON; faster creation of materialized views (size limitation for direct creation removed))
 
 ### Enhancements
 
