@@ -80,7 +80,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 if (partyType.Any())
                 {
                     DataTable dt = new DataTable();
-                    var parties = partyManager.PartyRepository.Get(cc => cc.PartyType.Id == partyType.First().Id);
+                    var parties = partyManager.PartyRepository.Get(cc => cc.PartyType.Id == partyType.First().Id).OrderBy(cc => cc.Name);
                     ViewBag.partyDataTable = Helper.getPartyDataTable(partyType.First(), parties.ToList());
                     ViewBag.partyTypeId = partyType.First().Id;
                     return PartialView("_partiesDynamicGridPartial");
