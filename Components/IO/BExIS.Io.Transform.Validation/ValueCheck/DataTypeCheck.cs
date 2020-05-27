@@ -22,6 +22,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         private string dataType = "";
         private DecimalCharacter decimalCharacter;
         private string pattern;
+        private CultureInfo culture;
         public IOUtility IOUtility = new IOUtility();
 
         #region get
@@ -244,21 +245,21 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                     case "DateTime":
                         {
                             DateTime dateTime;
-                            if (IOUtility.IsDate(value, pattern, out dateTime))
-                            {
-                                return dateTime;
-                            }
 
-                            double dateAsDouble;
-                            if (double.TryParse(value, out dateAsDouble))
-                            {
-                                if (IOUtility.IsDate(value, out dateTime))
+
+                            if (!string.IsNullOrEmpty(pattern))
+                            { 
+                                if(IOUtility.ConvertToDate(value, pattern, out dateTime, culture))
+                                {
                                     return dateTime;
+                                }
                             }
-
-                            if (IOUtility.IsDate(value, out dateTime))
+                            else
                             {
-                                return dateTime;
+                                if (IOUtility.TryConvertDate(value, out dateTime))
+                                {
+                                    return dateTime;
+                                }
                             }
 
                             return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
@@ -321,13 +322,14 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         /// <param name="name"></param>
         /// <param name="dataType"></param>
         /// <param name="pattern"></param>
-        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern = "")
+        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern = "", CultureInfo cultureInfo = null )
         {
             this.appliedTo = ValueType.Number;
             this.name = name;
             this.dataType = dataType;
             this.decimalCharacter = decimalCharacter;
             this.pattern = pattern;
+            this.culture = cultureInfo;
         }
     }
 }
