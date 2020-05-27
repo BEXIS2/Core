@@ -6,6 +6,9 @@ using FluentAssertions;
 using System.Collections.Generic;
 using System;
 using System.Globalization;
+using BExIS.IO.Transform.Validation.ValueCheck;
+using BExIS.IO.Transform.Validation.Exceptions;
+using NHibernate.Criterion;
 
 namespace BExIS.IO.Tests
 {
@@ -72,6 +75,38 @@ namespace BExIS.IO.Tests
             }
         }
 
+        [Test()]
+        public void CompareDateTimeValidationAndConvertion()
+        {
+            IOUtility iOUtility = new IOUtility();
+
+            foreach (var dt in DateTimeCases)
+            {
+                DateTime result;
+                iOUtility.ConvertToDate(dt.InputDateTimeString, dt.Pattern, out result, dt.CultureInfo);
+                DataTypeCheck check = new DataTypeCheck("dtCheck", "DateTime", DecimalCharacter.point, dt.Pattern, dt.CultureInfo);
+                var checkresult = check.Execute(dt.InputDateTimeString, 1);
+
+                if (dt.ItMatch)
+                {
+                    result.ToString(new CultureInfo("en-US", false)).Should().NotBeNull("can´t convert : " + dt.InputDateTimeString + " with pattern:" + dt.Pattern);
+                    result.ToString(new CultureInfo("en-US", false)).Should().Match(dt.OutputDateTimeString, "not match :" + result + " - " + dt.OutputDateTimeString);
+                    //checkresult.Should(typeof(DateTime))
+                    //Assert.IsInstanceOf<DateTime>(checkresult, "xyz");
+                    checkresult.Should().BeOfType<DateTime>();
+                }
+                else
+                {
+                    if (result != null) result.ToString(new CultureInfo("en-US", false)).Should().NotMatch(dt.OutputDateTimeString, "should not match :" + result + " - " + dt.OutputDateTimeString);
+                    else
+                    {
+                        result.ToString(new CultureInfo("en-US", false)).Should().BeNullOrEmpty();
+                        checkresult.Should().BeOfType<Error>();
+                    }
+                }
+            }
+        }
+
         #region Helper
 
         /*
@@ -95,6 +130,10 @@ namespace BExIS.IO.Tests
 
             cases.Add(new DateTimeHelperUTObject("2017-10-24T11:00:00", "yyyy-MM-ddThh:mm:ss", "10/24/2017 11:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("2017-10-24T13:00:00", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", true));
+            cases.Add(new DateTimeHelperUTObject("2017-10-24T1:00:00", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", false));
+            cases.Add(new DateTimeHelperUTObject("5/10/2014", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", false));
+            cases.Add(new DateTimeHelperUTObject("2014/12/20", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", false));
+
             cases.Add(new DateTimeHelperUTObject("2017-10-24", "yyyy-MM-dd", "10/24/2017 12:00:00 AM", true));
 
             cases.Add(new DateTimeHelperUTObject("10/24/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", true));
@@ -117,6 +156,7 @@ namespace BExIS.IO.Tests
 
             cases.Add(new DateTimeHelperUTObject("23:00", "HH:mm", "1/1/0001 11:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("11:00", "HH:mm", "1/1/0001 11:00:00 PM", false));
+            cases.Add(new DateTimeHelperUTObject("11:00:11", "HH:mm", "1/1/0001 11:00:00 PM", false));
 
             cases.Add(new DateTimeHelperUTObject("11:00:00 PM", "hh:mm:ss tt", "1/1/0001 11:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("13:00:00 AM", "hh:mm:ss tt", "1/1/0001 11:00:00 PM", false));
