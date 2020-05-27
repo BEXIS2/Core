@@ -150,7 +150,8 @@ namespace BExIS.Security.Services.Subjects
             if (string.IsNullOrEmpty(role.Name))
                 return Task.FromResult(0);
 
-            if (FindByNameAsync(role.Name) != null)
+            var existingRole = FindByNameAsync(role.Name).Result;
+            if(existingRole != null && !existingRole.Id.Equals(role.Id))
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
