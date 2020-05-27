@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
 using System;
+using System.Configuration;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -71,7 +72,7 @@ namespace BExIS.Security.Services.Requests
                     {
                         var partyRelationship =
                             partyRelationshipRepository.Query(
-                                    m => m.PartyRelationshipType.Title == "Owner" && m.TargetParty.Id == dataset_party.Id)
+                                    m => m.PartyRelationshipType.Title == ConfigurationManager.AppSettings["OwnerPartyRelationshipType"]  && m.TargetParty.Id == dataset_party.Id)
                                 .FirstOrDefault();
 
                         if (partyRelationship != null)

@@ -261,8 +261,10 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     return dateTime;
                                 }
                             }
-
-                            return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            if (!string.IsNullOrEmpty(pattern))
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType, pattern });
+                            else
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                         }
 
                     case "Char":

@@ -117,7 +117,7 @@
 
                 if (result) {
                     $.post("/sam/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
-                        $("#grid_decisions .t-refresh").trigger('click');
+                        $(".decision").trigger('click');
                     });
                 }
             });

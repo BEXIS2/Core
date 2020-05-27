@@ -30,14 +30,16 @@ namespace BExIS.Modules.Ddm.UI.Models
         public bool IsOwn { get; set; }
 
         public string IsValid { get; set; }
+        public string Type { get; set; }
 
-        public MyDatasetsModel(long id, string title, string description, bool isOwn, string isValid)
+        public MyDatasetsModel(long id, string title, string description, bool isOwn, string isValid, string type)
         {
             Id = id;
             Title = title;
             Description = description;
             IsOwn = isOwn;
             IsValid = isValid;
+            Type = type;
         }
 
     }

@@ -266,7 +266,7 @@ namespace BExIS.IO.Transform.Input
                     /// generating a datatuple from the line
                     /// </summary>
                     /// <remarks></remarks>
-                    while ((line = streamReader.ReadLine()) != null && items <= packageSize - 1)
+                    while ((line = streamReader.ReadLine()) != null && line.Trim().Count() > 0 && items <= packageSize - 1)
                     {
                         if (Position >= this.Info.Data)
                         {

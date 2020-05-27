@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
@@ -307,6 +308,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     Object[] rowArray = new Object[8];
                     string isValid = "no";
+                    
+                    string type = "file";
+                    if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
+                    {
+                        type = "tabular";
+                    }
+
 
                     if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
                     {
@@ -314,7 +322,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         string title = dsv.Title;
                         string description = dsv.Description;
 
-                        if (dsv.StateInfo != null)
+                            if (dsv.StateInfo != null)
                         {
                             isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
                         }
@@ -322,12 +330,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
                         rowArray[1] = title;
                         rowArray[2] = description;
+                        rowArray[3] = type;
                     }
                     else
                     {
                         rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
                         rowArray[1] = "";
                         rowArray[2] = "Dataset is just in processing.";
+                        rowArray[3] = type;
                     }
 
                     rowArray[7] = true;
@@ -337,7 +347,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                       (string)rowArray[1],
                        (string)rowArray[2],
                        (bool)rowArray[7],
-                       isValid));
+                       isValid, (string)rowArray[3]));
 
 
                 }
