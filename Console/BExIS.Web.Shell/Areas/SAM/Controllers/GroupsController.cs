@@ -199,12 +199,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
+                // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
+                // check if a group with the incoming id exist
                 var group = groupManager.FindByIdAsync(model.Id).Result;
                 if (group == null) return PartialView("_Update", model);
 
-                // check wheter group name exist
+                // check group name exist
                 if (groupManager.FindByNameAsync(model.Name).Result != null &&
                     !groupManager.FindByNameAsync(model.Name).Result.Id.Equals(model.Id))
                 {
