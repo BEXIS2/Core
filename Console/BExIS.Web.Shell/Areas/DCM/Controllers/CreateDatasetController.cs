@@ -1,5 +1,4 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -16,7 +15,6 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
-using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
@@ -566,7 +564,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (GetUsernameOrDefault() != "DEFAULT")
                         {
                             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                            entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                            entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, new List<RightType>() { RightType.Read, RightType.Write });
+                            entityPermissionManager.Create<Group>("administrator", "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                         }
                     }
                     else
