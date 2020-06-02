@@ -240,15 +240,18 @@
                                                 data: request,
                                                 dataType: "json",
                                                 success: function( data ){
-                  
+
+                                                    console.log(data);
+
                                                     var list = [];
                                                     for (i = 0; i < data.length; i++) { 
                                                         list.push(data[i]["Text"]);                    
                                                     }
                 
                                                     cache[ term ] = list;
-                                                    response( list );
-                                                }
+                                                    response(list);
+
+                                                }//success
                                             }));
                                          }
                                          });

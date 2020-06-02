@@ -225,5 +225,12 @@ end loop;
 -- Select * from datasetversions;
 -- Select title,description from datasetversions;
 
+-- update descriptions from different Tables
+ALTER TABLE groups
+ALTER COLUMN description TYPE character varying;
+
+ALTER TABLE parties
+ALTER COLUMN description TYPE character varying;
+
 END
 $do$

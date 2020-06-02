@@ -12,6 +12,7 @@
             <th title="Title">Title</th>
             <th title="Description">Description</th>
             <th title="is valid">Metadata <br />complete</th>
+            <th title="Tabular">Tabular</th>
             <th title="d"></th>
 
 
@@ -28,13 +29,18 @@
             <td>@m.Title</td>
             <td>@m.Description</td>
             <td>@m.IsValid</td>
+            <td>
+                @if (m.Type == "tabular")
+                {
+                    <span class="bx fa-check"></span>
+                }            </td>
             <td class="dt-body-center">
                 <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="Show dataset"> </a>
             </td>
         </tr>
         }
     </tbody>
-
+</table>
 
 
     <script type="text/javascript">

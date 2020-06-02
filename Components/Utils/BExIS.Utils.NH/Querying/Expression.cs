@@ -147,7 +147,7 @@ namespace BExIS.Utils.NH.Querying
 
         public override string ToLINQ()
         {
-            return string.Format(BinaryOperator.TranslationToLINQ[this.Operator].Item2, this.Left.ToSQL(), this.Right.ToSQL());
+            return string.Format(BinaryOperator.TranslationToLINQ[this.Operator].Item2, this.Left.ToLINQ(), this.Right.ToLINQ());
         }
     }
 

@@ -8,6 +8,7 @@ using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -478,7 +479,7 @@ namespace BExIS.IO.Transform.Input
                 if (displayPattern != null) pattern = displayPattern.StringPattern;
             }
 
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues);
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture);
 
             return vvm;
         }

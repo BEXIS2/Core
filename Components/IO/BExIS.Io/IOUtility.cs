@@ -143,6 +143,53 @@ namespace BExIS.IO
             return null;
         }
 
+        /// <summary>
+        /// Convert a Datetime as string to a datetime .
+        /// </summary>
+        /// <param name="dateAsString"></param>
+        /// <returns></returns>
+        public virtual bool TryConvertDate(string dateAsString, out DateTime dateTime)
+        {
+          
+
+            if (DateTime.TryParse(dateAsString, out dateTime))
+            {
+                //return dateTime.ToString(CultureInfo.InvariantCulture);
+                return true;
+            }
+
+            if (DateTime.TryParse(dateAsString, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
+            {
+                return true;
+            }
+
+            if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
+            {
+                return true;
+            }
+
+            if (DateTime.TryParse(dateAsString, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            {
+                return true;
+            }
+
+            //Date might still be in OA-Date-Format (happens for Libre-Office dates)
+            double valueAsDouble;
+            if (double.TryParse(dateAsString, out valueAsDouble))
+            {
+                try
+                {
+                    dateTime = DateTime.FromOADate(valueAsDouble);
+                    return true;
+                }
+                catch (ArgumentException e)
+                {
+                }
+            }
+
+            return false;
+        }
+
 
         /// <summary>
         /// try to convert a string with a pattern to a datetime

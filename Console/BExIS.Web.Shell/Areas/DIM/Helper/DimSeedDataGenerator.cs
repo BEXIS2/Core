@@ -12,6 +12,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
@@ -752,7 +753,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                         // add releationship type mapping
 
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.DisplayName.ToLower().Equals("owner"));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"]));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
@@ -890,7 +891,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         #region owner relationship
 
                         //Metadata/creator/creatorType/individualName
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.DisplayName.ToLower().Equals("owner"));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"]));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(

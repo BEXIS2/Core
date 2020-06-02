@@ -3453,7 +3453,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 });
 
                 // prepare view to write it to the file
-                byte[] content = Encoding.ASCII.GetBytes(view.ToString());
+                byte[] content = Encoding.UTF8.GetBytes(view.ToString());
 
                 return File(content, "application/xhtml+xml", entityId + "_metadata.htm");
             }

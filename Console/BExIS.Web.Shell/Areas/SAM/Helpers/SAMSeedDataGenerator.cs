@@ -69,6 +69,9 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 var documentManagementOperation = operationManager.Find("SAM", "Files", "*") ?? operationManager.Create("SAM", "Files", "*", documentManagementFeature);
 
                 // Request
+                var requestManagementFeature = featureManager.FindByName("Request Management") ?? featureManager.Create("Request Management", "", administrationFeature);
+                var requestManagementOperation = operationManager.Find("SAM", "RequestsAdmin", "*") ?? operationManager.Create("SAM", "RequestsAdmin", "*", requestManagementFeature);
+                
                 var requestOperation = operationManager.Find("SAM", "Requests", "*") ?? operationManager.Create("SAM", "Requests", "*");
 
                 // Help

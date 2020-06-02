@@ -119,22 +119,30 @@ namespace BExIS.IO.Transform.Input
 
         private void loadProperties(Stream file)
         {
-            this.FileStream = file;
-
-            // open excel file
-            spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
-
-            if (spreadsheetDocument != null)
+            try
             {
-                if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
-                {
-                    Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
-                }
+                this.FileStream = file;
 
-                if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+                // open excel file
+                spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
+
+                if (spreadsheetDocument != null)
                 {
-                    ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
+                    if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
+                    {
+                        Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
+                    }
+
+                    if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+                    {
+                        ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                this.FileStream.Close();
+                throw new NotSupportedException("This Excel file is not created by common programs. Please open the file in Excel, save it and try again.");
             }
         }
 

@@ -56,10 +56,17 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourcePartyType.Id && item.TargetPartyType.Parties.Any()).ToList();
                             //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
+                            
                             if (defaultPartyTypePair == null)
                                 defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
                             if (defaultPartyTypePair != null)
+                            {
+                                if (defaultPartyTypePair.TargetPartyType.Parties != null)
+                                {
+                                    defaultPartyTypePair.TargetPartyType.Parties = defaultPartyTypePair.TargetPartyType.Parties.OrderBy(item => item.Name).ToList(); // order parties by name
+                                }
                                 allowedPartyTypePairs.Add(partyRelationshipType.DisplayName, defaultPartyTypePair);
+                            }
                         }
                     }
                     partyTypeAccountModel.PartyRelationshipsTypes.Add(partyType, allowedPartyTypePairs);

@@ -1,0 +1,40 @@
+﻿@section LeftPane
+{
+    @Html.Partial("_Entities")
+}
+<div id="content_requests_and_decisions"></div>
+
+@section Scripts
+{
+<script type="text/javascript">
+
+    $("#treeView_entities li div").click(function (e){
+        $(e.target).find(".t-in").trigger("click");
+    });
+
+    function getTreeView() {
+        return $('#treeView_entities').data('tTreeView');
+    }
+
+    function treeView_entities_onSelect(e) {
+        var entityId = getTreeView().getItemValue(e.item);
+        var prevSelectedDiv = $(".bx-selected");
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
+
+        $('#content_requests_and_decisions').empty();
+
+        $.get('@Url.Action("Decisions", "RequestsAdmin")',
+            { EntityId: entityId , Status: "Open"},
+            function (contentData) {
+
+                $('#content_requests_and_decisions').html(contentData);
+
+                truncateTitle();
+            });
+    }
+
+</script>
+}

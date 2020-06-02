@@ -21,18 +21,27 @@ using System.Configuration;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class RequestsController : Controller
+    public class RequestsAdminController : Controller
     {
-        public ActionResult Decisions(long entityId)
+        public ActionResult Decisions(long entityId, string status = "")
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
             var decisionManager = new DecisionManager();
+            IQueryable<Decision> decisions = null;
 
-            // Source + Transformation - Data
-            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
+            if (status == "Open")
+            {
+                ViewData["status"] = "Open";
+                decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.Request.Status == 0);
+            }
+            else
+            {
+                decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
+            }
+           
 
             List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
 
@@ -49,13 +58,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
                         Applicant = getPartyName(m.Request.Applicant),
+                        DecisionMaker = getPartyName(m.DecisionMaker),
                         Intention = m.Request.Intention,
                         RequestDate = m.Request.RequestDate
                     });
 
 
             }
-            return PartialView("_Decisions", model.OrderBy(x=>x.Status).ThenBy(n => n.Id));
+            ViewData["entityID"] = entityId;
+
+            return PartialView("_DecisionsAdmin", model.OrderBy(x=>x.Status).ThenBy(n => n.Id));
         }
 
         public ActionResult Index()
@@ -104,14 +116,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
                         string applicant = getPartyName(request.Applicant);
+                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
 
                         es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
                             MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
-                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] , emailDescionMaker }
                         );
                     }
                 }
-
 
             }
             catch (Exception e)
@@ -145,10 +157,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
                         string applicant = getPartyName(request.Applicant);
+                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
 
                         es.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
                         MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] , emailDescionMaker }
                         );
                     }
                 }
@@ -189,7 +202,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                         es.Send(MessageHelper.GetWithdrawRequestHeader(request.Key, applicant),
                         MessageHelper.GetWithdrawRequestMessage(request.Key, entityStore.GetTitleById(request.Key), applicant),
-                        new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }
                         );
                     }
                 }
@@ -202,45 +215,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 decisionManager.Dispose();
             }
-        }
-
-        public ActionResult Requests_And_Decisions(long entityId)
-        {
-            return PartialView("_Requests_And_Decisions", entityId);
-        }
-
-        public ActionResult Requests(long entityId)
-        {
-            var entityManager = new EntityManager();
-            var entityPermissionManager = new EntityPermissionManager();
-
-            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-
-            var requestManager = new RequestManager();
-
-            // Source + Transformation - Data
-            var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
-
-            List<RequestGridRowModel> model = new List<RequestGridRowModel>();
-
-            foreach (var m in requests)
-            {
-                model.Add(
-                    new RequestGridRowModel()
-                    {
-                        Id = m.Id,
-                        InstanceId = m.Key,
-                        Title = entityStore.GetTitleById(m.Key),
-                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
-                        RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
-                        Intention = m.Intention,
-                        RequestDate = m.RequestDate
-                    }
-                    );
-            }
-
-
-            return PartialView("_Requests", model);
         }
 
         private string getPartyName(User user)
