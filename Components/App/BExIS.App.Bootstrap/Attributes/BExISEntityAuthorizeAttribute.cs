@@ -34,7 +34,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 if (filterContext.HttpContext.User.Identity.IsAuthenticated)
                     userName = filterContext.HttpContext.User.Identity.Name;
 
-                if (!entityPermissionManager.HasEffectiveRight(userName, entityName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))
+                if (!entityPermissionManager.HasEffectiveRight(userName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))
                 {
                     filterContext.Result = new RedirectToRouteResult(new
                         RouteValueDictionary{

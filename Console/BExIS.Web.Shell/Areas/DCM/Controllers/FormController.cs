@@ -3271,7 +3271,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
