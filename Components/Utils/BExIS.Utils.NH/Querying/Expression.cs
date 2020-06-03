@@ -56,7 +56,7 @@ namespace BExIS.Utils.NH.Querying
 
         public override string ToLINQ()
         {
-            return string.Format(StringOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value);
+            return string.Format(StringOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value.ToString().ToLower());
         }
     }
 
