@@ -10,14 +10,14 @@ namespace BExIS.App.Bootstrap.Attributes
 {
     public class BExISEntityAuthorizeAttribute : ActionFilterAttribute
     {
-        private string entityName;
+        //private string entityName;
         private Type entityType;
         private string keyName;
         private RightType rightType;
 
-        public BExISEntityAuthorizeAttribute(string entityName, Type entityType, string keyName, RightType rightType)
+        public BExISEntityAuthorizeAttribute(Type entityType, string keyName, RightType rightType)
         {
-            this.entityName = entityName;
+            //this.entityName = entityName;
             this.entityType = entityType;
             this.keyName = keyName;
             this.rightType = rightType;
