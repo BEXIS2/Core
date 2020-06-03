@@ -191,6 +191,7 @@ namespace BExIS.Dlm.Tests.Helpers
             dataset.Should().NotBeNull();
 
             DatasetManager dm = new DatasetManager();
+           
             try
             {
                 if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
@@ -198,6 +199,8 @@ namespace BExIS.Dlm.Tests.Helpers
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+
+                    DataTuple oldDt = dm.DataTupleRepo.Get(id);
 
                     DataTuple dt = new DataTuple();
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = value });
@@ -218,7 +221,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     newDt.XmlAmendments = dt.XmlAmendments;
                     newDt.JsonVariableValues = dt.JsonVariableValues;
                     newDt.Materialize();
-                    newDt.OrderNo = 1;
+                    newDt.OrderNo = oldDt.OrderNo;
                     tuples.Add(newDt);
                     
                     dm.EditDatasetVersion(workingCopy, null, tuples, null);
