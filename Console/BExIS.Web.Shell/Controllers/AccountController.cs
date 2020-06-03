@@ -326,7 +326,7 @@ namespace BExIS.Web.Shell.Controllers
                 if (!ModelState.IsValid) return View(model);
 
 
-                var user = new User { UserName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
 
                 var result = await identityUserService.CreateAsync(user, model.Password);
                 if (result.Succeeded)

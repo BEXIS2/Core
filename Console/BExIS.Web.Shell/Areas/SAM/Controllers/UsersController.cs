@@ -48,7 +48,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (!ModelState.IsValid) return PartialView("_Create", model);
 
-                var user = new User { UserName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
 
                 var result = await identityUserService.CreateAsync(user);
                 if (result.Succeeded)

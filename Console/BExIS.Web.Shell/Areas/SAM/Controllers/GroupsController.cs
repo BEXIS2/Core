@@ -65,6 +65,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 var group = new Group()
                 {
                     Name = model.Name,
+                    DisplayName = model.Name,
                     Description = model.Description
                 };
 
@@ -215,6 +216,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 group.Name = model.Name;
+                group.DisplayName = group.Name;
                 group.Description = model.Description;
 
                 groupManager.UpdateAsync(group);
