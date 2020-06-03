@@ -322,13 +322,18 @@ namespace BExIS.Modules.Bam.UI.Controllers
         }
 
         [HttpPost]
-        public string DeletePartyRelationship(int id)
+        public string DeletePartyRelationship(int id, long selectedParty)
         {
             PartyManager partyManager = null;
             try
             {
                 partyManager = new PartyManager();
-                partyManager.RemovePartyRelationship(partyManager.PartyRelationshipRepository.Get(id));
+                var prs = partyManager.PartyRelationshipRepository.Get(id);
+
+                //remove a releationship must defines with a direction, because the cardinality of the releationshiptype
+                int direction = prs.SourceParty.Id.Equals(selectedParty) ? 0 : 1;
+
+                partyManager.RemovePartyRelationship(partyManager.PartyRelationshipRepository.Get(id), direction);
                 return "successfull";
             }
             catch (Exception ex)

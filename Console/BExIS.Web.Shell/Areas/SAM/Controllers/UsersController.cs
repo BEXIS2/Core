@@ -165,11 +165,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
+                // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
+                // check if a user with the incoming id exist
                 var user = userManager.FindByIdAsync(model.Id).Result;
                 if (user == null) return PartialView("_Update", model);
 
+                // if the email is changed, the system needs to check, if the incoming email allready exist by a other user or not
                 if (user.Email != model.Email)
                 {
                     // check duplicate email cause of client validation is not working in a telerik window :(

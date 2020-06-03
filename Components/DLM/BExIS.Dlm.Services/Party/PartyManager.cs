@@ -451,7 +451,13 @@ namespace BExIS.Dlm.Services.Party
             return true;
         }
 
-        public bool RemovePartyRelationship(PartyRelationship partyRelationship)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="partyRelationship"></param>
+        /// <param name="direction">0 = Source, 1 = target</param>
+        /// <returns></returns>
+        public bool RemovePartyRelationship(PartyRelationship partyRelationship, int direction = 0)
         {
             Contract.Requires(partyRelationship != null);
             Contract.Requires(partyRelationship.Id >= 0, "Provided entity must have a permanent ID");
@@ -459,8 +465,15 @@ namespace BExIS.Dlm.Services.Party
             {
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
                 partyRelationship = repoPR.Reload(partyRelationship);
-                var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationship.PartyRelationshipType.Id)
+
+                var cnt = 0;
+
+                if(direction == 0)
+                    cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationship.PartyRelationshipType.Id)
                                       && (item.SourceParty != null && item.SourceParty.Id == partyRelationship.SourceParty.Id)).Count();
+                else if(direction == 1)
+                    cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationship.PartyRelationshipType.Id)
+                                      && (item.TargetParty != null && item.TargetParty.Id == partyRelationship.TargetParty.Id)).Count();
 
                 if (partyRelationship.PartyRelationshipType.MinCardinality >= cnt)
                     BexisException.Throw(partyRelationship, String.Format("At least {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete);

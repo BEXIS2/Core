@@ -25,6 +25,16 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        public override long Index
+        {
+            get { return this.OriginalTuple.Id; }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DatasetVersion ActingDatasetVersion { get; set; }
 
         /// <summary>
