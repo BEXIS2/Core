@@ -108,18 +108,18 @@ namespace BExIS.Utils.NH.Querying
     {
         public static Dictionary<Operation, Tuple<string, string>> Translation = new Dictionary<Operation, Tuple<string, string>>()
         {
-            { Operation.Equals,             Tuple.Create("=",  "({0}) = ('{1}')") },
-            { Operation.StartsWith,         Tuple.Create("ST", "({0}) LIKE ('{1}%')") },
-            { Operation.Contains,           Tuple.Create("ST", "({0}) LIKE ('%{1}%')") },
-            { Operation.EndsWith,           Tuple.Create("EW", "({0}) LIKE ('%{1}')") },
+            { Operation.Equals,             Tuple.Create("=",  "LOWER({0}) = ('{1}')") },
+            { Operation.StartsWith,         Tuple.Create("ST", "({0}) ILIKE ('{1}%')") },
+            { Operation.Contains,           Tuple.Create("ST", "({0}) ILIKE ('%{1}%')") },
+            { Operation.EndsWith,           Tuple.Create("EW", "({0}) ILIKE ('%{1}')") },
         };
 
         public static Dictionary<Operation, Tuple<string, string>> TranslationToLINQ = new Dictionary<Operation, Tuple<string, string>>()
         {
-            { Operation.Equals,             Tuple.Create("=",  "{0}.ToString() = \"{1}\"") },
-            { Operation.StartsWith,         Tuple.Create("ST", "{0}.Contains(\"{1}\")") },
-            { Operation.Contains,           Tuple.Create("ST", "{0}.Contains(\"{1}\")") },
-            { Operation.EndsWith,           Tuple.Create("EW", "{0}.Contains(\"{1}\")") }
+            { Operation.Equals,             Tuple.Create("=",  "{0}.ToString().ToLower() = \"{1}\"") },
+            { Operation.StartsWith,         Tuple.Create("ST", "{0}.ToLower().Contains(\"{1}\")") },
+            { Operation.Contains,           Tuple.Create("ST", "{0}.ToLower().Contains(\"{1}\")") },
+            { Operation.EndsWith,           Tuple.Create("EW", "{0}.ToLower().Contains(\"{1}\")") }
         };
 
         public enum Operation

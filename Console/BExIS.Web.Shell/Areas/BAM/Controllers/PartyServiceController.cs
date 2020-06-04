@@ -131,6 +131,19 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 userTask.Wait();
                 var user = userTask.Result;
                 partyManager.AddPartyUser(party, user.Id);
+
+                //set FullName in user
+                var p = partyManager.GetParty(party.Id);
+                string displayName = String.Join(" ",
+                    p.CustomAttributeValues.
+                    Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                    OrderBy(ca => ca.CustomAttribute.Id).
+                    Select(ca => ca.Value).ToArray());
+
+                user.DisplayName = displayName;
+                userManager.UpdateAsync(user);
+
+
                 return RedirectToAction("Index");
             }
             finally
@@ -208,7 +221,20 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 if (partyModel.Id == 0)
                     return RedirectToAction("Index", "Home");
                 else
+                {
                     party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues, null);
+
+                    var p = partyManager.GetParty(party.Id);
+                    string displayName = String.Join(" ",
+                        p.CustomAttributeValues.
+                        Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                        OrderBy(ca => ca.CustomAttribute.Id).
+                        Select(ca=>ca.Value).ToArray());
+
+                    user.DisplayName = displayName;
+                    userManager.UpdateAsync(user);
+
+                }
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             finally

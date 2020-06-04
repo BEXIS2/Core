@@ -2376,7 +2376,7 @@ namespace BExIS.Dlm.Services.Data
                 List<AbstractTuple> tuples = dataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).Cast<AbstractTuple>().ToList();
 
                 List<AbstractTuple> editedTuples = dataTupleVersionRepo.Query(p => (p.TupleAction == TupleAction.Edited)
-                                                                            && (p.DatasetVersion.Id == datasetVersion.Id)
+                                                                            && (versionIds.Contains(p.DatasetVersion.Id)) // (p.DatasetVersion.Id == datasetVersion.Id)
                                                                             && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
                                                                 //.Skip(pageNumber * pageSize).Take(pageSize)
                                                                 .Cast<AbstractTuple>().ToList();
@@ -2388,7 +2388,7 @@ namespace BExIS.Dlm.Services.Data
                 // the resulting union-ned list is made by a page from editedVersion and a page from the deleted ones, so it is maximum 2 pages, but should be reduced to a page.
                 // for this reason the union is sorted by timestamp and then the first page is taken.
                 List<AbstractTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
-                    .OrderBy(p => p.Timestamp)
+                    .OrderBy(p => p.Index)
                     .Skip(pageNumber * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -3070,7 +3070,7 @@ namespace BExIS.Dlm.Services.Data
                         if (item != null && item.VariableValues != null)
                             item.Values = "{" + string.Join(",", item.VariableValues.Select(v => (string.IsNullOrEmpty(v.Value.ToString()) ? "null" : ('"' + v.Value.ToString().Replace(@"""", @"\""")) + '"')).ToArray()) + "}";
 
-                        if (null == item.Timestamp)
+                        if (null == item.Timestamp || item.Timestamp.ToOADate() == 0)
                         {
                             item.Timestamp = workingCopyVersion.Timestamp;
                         }

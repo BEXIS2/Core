@@ -20,7 +20,7 @@
                         <div>
                             @Html.ActionLink(" ", "View", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-show whiteText", title = "View Party \"" + item.Name + "\"" })
                             @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-edit whiteText", title = "Edit Party \"" + item.Name + "\"" })
-                            @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-trash whiteText", title = "Delete Party \"" + item.Name + "\"" })
+                            @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Id}, new { @class = "bx bx-grid-function bx-trash whiteText", title = "Delete Party \"" + item.Name + "\"" })
                         </div>
                     </text>
                         ).ClientTemplate("<div><a title=\"View Party\" href=\"/BAM/Party/View/<#= Id #>\" class=\"bx bx-grid-function bx-show whiteText\"> </a><a title=\"Edit Party\" href=\"/BAM/Party/CreateEdit/<#= Id #>\" class=\"bx bx-grid-function bx-edit whiteText\"> </a><a title=\"Delete Party\" href=\"/BAM/Party/DeleteConfirm/<#= Id #>\" class=\"bx bx-grid-function bx-trash  whiteText\"> </a></div>");
