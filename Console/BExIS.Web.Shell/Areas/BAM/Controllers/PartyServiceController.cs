@@ -4,9 +4,7 @@ using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 
@@ -56,7 +54,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourcePartyType.Id && item.TargetPartyType.Parties.Any()).ToList();
                             //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
-                            
+
                             if (defaultPartyTypePair == null)
                                 defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
                             if (defaultPartyTypePair != null)
@@ -116,6 +114,15 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyRelationshipManager = new PartyRelationshipTypeManager();
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+
+                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+
+                if (partyCustomAttributeValues.ContainsKey("3"))
+                {
+                    partyCustomAttributeValues["3"] = user.Email;
+                }
                 //Create party
                 party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                 if (partyRelationships != null)
@@ -127,9 +134,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                         partyManager.AddPartyRelationship(party, TargetParty, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, TargetParty.EndDate, partyRelationship.Scope);
                     }
-                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-                userTask.Wait();
-                var user = userTask.Result;
+
                 partyManager.AddPartyUser(party, user.Id);
 
                 //set FullName in user
@@ -229,7 +234,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         p.CustomAttributeValues.
                         Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
                         OrderBy(ca => ca.CustomAttribute.Id).
-                        Select(ca=>ca.Value).ToArray());
+                        Select(ca => ca.Value).ToArray());
 
                     user.DisplayName = displayName;
                     userManager.UpdateAsync(user);
@@ -249,9 +254,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// </summary>
         /// <param name="Id">PartyType Id</param>
         /// <returns></returns>
+        [HttpGet]
         public ActionResult LoadPartyCustomAttr(int id)
         {
             PartyManager partyManager = null;
+            UserManager userManager = null;
             try
             {
                 long partyId = 0;
@@ -261,11 +268,22 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     partyManager = new PartyManager();
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
                 }
+                else { 
+                    userManager = new UserManager();
+                    var userName = HttpContext.User.Identity.Name;
+                    var userTask = userManager.FindByNameAsync(userName);
+                    userTask.Wait();
+                    var user = userTask.Result;
+
+                    ViewBag.email = user.Email;
+                }
+
                 var customAttrList = new List<PartyCustomAttribute>();
                 PartyTypeManager partyTypeManager = new PartyTypeManager();
                 IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);
                 if (partyType != null)
                     customAttrList = partyType.First().CustomAttributes.ToList();
+
                 return PartialView("_customAttributesPartial", customAttrList);
             }
             finally
