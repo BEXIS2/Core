@@ -63,7 +63,7 @@ namespace BExIS.Dim.Helpers.Export
                             OutputDataManager odm = new OutputDataManager();
                             // apply selection and projection
 
-                            odm.GenerateAsciiFile(datasetId, datasetVersion.Title, broker.PrimaryDataFormat, false);
+                            odm.GenerateAsciiFile(datasetId, datasetVersion.Id, broker.PrimaryDataFormat, false);
                         }
 
                         int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
