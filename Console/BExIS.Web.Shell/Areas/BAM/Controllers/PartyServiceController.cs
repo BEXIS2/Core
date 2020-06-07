@@ -119,10 +119,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 userTask.Wait();
                 var user = userTask.Result;
 
-                if (partyCustomAttributeValues.ContainsKey("3"))
-                {
-                    partyCustomAttributeValues["3"] = user.Email;
-                }
                 //Create party
                 party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                 if (partyRelationships != null)
@@ -254,22 +250,30 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// </summary>
         /// <param name="Id">PartyType Id</param>
         /// <returns></returns>
-        [HttpGet]
         public ActionResult LoadPartyCustomAttr(int id)
         {
             PartyManager partyManager = null;
             UserManager userManager = null;
             try
             {
+                userManager = new UserManager();
                 long partyId = 0;
                 var partyIdStr = HttpContext.Request.Params["partyId"];
                 if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
                 {
                     partyManager = new PartyManager();
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
+                    
+                    var userId = partyManager.GetUserIdByParty(partyId);
+                    var userTask = userManager.FindByIdAsync(userId);
+                    userTask.Wait();
+                    var user = userTask.Result;
+                    ViewBag.email = user.Email;
+
                 }
+                // if no user is linked assume it is the user registration
                 else { 
-                    userManager = new UserManager();
+                    
                     var userName = HttpContext.User.Identity.Name;
                     var userTask = userManager.FindByNameAsync(userName);
                     userTask.Wait();

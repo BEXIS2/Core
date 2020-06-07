@@ -1,4 +1,5 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
@@ -162,7 +163,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Update(UpdateUserModel model)
         {
             var userManager = new UserManager();
-
+            var partyManager = new PartyManager();
+            var partyTypeManager = new PartyTypeManager();
             try
             {
                 // check wheter model is valid or not
@@ -182,6 +184,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 user.Email = model.Email;
+
+                // Update email in party
+                var party = partyManager.GetPartyByUser(user.Id);
+                
+                var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == "Email")).FirstOrDefault();
+                partyManager.AddPartyCustomAttributeValue(party, nameProp, user.Email);
 
                 userManager.UpdateAsync(user);
                 return Json(new { success = true });
