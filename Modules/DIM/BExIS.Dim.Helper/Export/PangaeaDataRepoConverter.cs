@@ -130,7 +130,6 @@ namespace BExIS.Dim.Helpers.Export
                     string filepath = outputDataManager.GenerateAsciiFile(
                         datasetId,
                         datasetVersionId,
-                        fileName,
                         "text/txt",
                         false);
 

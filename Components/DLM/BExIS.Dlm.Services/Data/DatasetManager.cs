@@ -258,9 +258,11 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<Dataset> repo = uow.GetRepository<Dataset>();
                 var structureRepo = uow.GetReadOnlyRepository<Entities.DataStructure.DataStructure>();
                 var researchPlanRepo = uow.GetReadOnlyRepository<ResearchPlan>();
+                var metadataStructureRepo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
 
                 dataStructure = structureRepo.Get(dataStructure.Id);
                 researchPlan = researchPlanRepo.Get(researchPlan.Id);
+                metadataStructure = metadataStructureRepo.Get(metadataStructure.Id);
 
                 Dataset dataset = new Dataset(dataStructure);
 
@@ -1580,6 +1582,24 @@ namespace BExIS.Dlm.Services.Data
                     workingCopyDatasetVersion.StateInfo = stateInfo;
 
                 return editDatasetVersion(workingCopyDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            }
+        }
+
+        public long GetDatasetVersionId(long id, int versionNr)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+   
+
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetVersions = datasetVersionRepo.Query().Where(dsv=>dsv.Dataset.Id.Equals(id)).OrderBy(dsv=>dsv.Timestamp);
+
+                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr-1))
+                {
+                    return datasetVersions.ToList().ElementAt(versionNr - 1).Id;
+                }
+
+                return 0;
             }
         }
 

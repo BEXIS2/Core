@@ -661,10 +661,13 @@ namespace BExIS.Dim.Helpers.Mapping
                                     .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(partyid))
                                     .FirstOrDefault();
 
-                            List<string> regExResultList = transform(attrValue.Value, mapping_element.TransformationRule);
-                            string placeHolderName = attrValue.CustomAttribute.Name;
+                            if (attrValue != null)
+                            {
+                                List<string> regExResultList = transform(attrValue.Value, mapping_element.TransformationRule);
+                                string placeHolderName = attrValue.CustomAttribute.Name;
 
-                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                mask = setOrReplace(mask, regExResultList, placeHolderName);
+                            }
                         }
 
                         if (mask.ToLower().Contains(value.ToLower()))
