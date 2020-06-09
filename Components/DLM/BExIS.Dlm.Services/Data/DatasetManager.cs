@@ -218,9 +218,11 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<Dataset> repo = uow.GetRepository<Dataset>();
                 var structureRepo = uow.GetReadOnlyRepository<Entities.DataStructure.DataStructure>();
                 var researchPlanRepo = uow.GetReadOnlyRepository<ResearchPlan>();
+                var metadataStructureRepo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
 
                 dataStructure = structureRepo.Get(dataStructure.Id);
                 researchPlan = researchPlanRepo.Get(researchPlan.Id);
+                metadataStructure = metadataStructureRepo.Get(metadataStructure.Id);
 
                 Dataset dataset = new Dataset(dataStructure);
 
