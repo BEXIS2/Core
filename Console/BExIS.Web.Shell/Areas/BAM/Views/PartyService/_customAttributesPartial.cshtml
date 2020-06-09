@@ -44,7 +44,7 @@
                     if (partyCustomAttr.Name == ViewBag.PersonEmailAttributeName)
                     {
                         var email = "";
-                        if (partyCustomAttributeValueStr == "")
+                        if (partyCustomAttributeValueStr == "" && ViewBag.userRegistration == "true")
                         {
                             email = ViewBag.email;
                         }
@@ -53,8 +53,14 @@
                             email = partyCustomAttributeValueStr;
                         }
 
+                        var disabled = "";
+                        if (ViewBag.userRegistration == "true")
+                        {
+                            disabled = "disabled";
+                        }
 
-                        <input type="text" disabled id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@email" ) />
+
+                        <input type="text" @disabled id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@email" ) />
                     
                     }
                     else if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
