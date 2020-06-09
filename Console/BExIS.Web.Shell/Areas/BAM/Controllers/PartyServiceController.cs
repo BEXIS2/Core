@@ -252,15 +252,42 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult LoadPartyCustomAttr(int id)
         {
             PartyManager partyManager = null;
+            UserManager userManager = null;
             try
             {
+                userManager = new UserManager();
                 long partyId = 0;
                 var partyIdStr = HttpContext.Request.Params["partyId"];
                 if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
                 {
                     partyManager = new PartyManager();
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
+
+                    var userId = partyManager.GetUserIdByParty(partyId);
+                    var userTask = userManager.FindByIdAsync(userId);
+                    userTask.Wait();
+                    var user = userTask.Result;
+                    ViewBag.email = user.Email;
+
                 }
+                // if no user is linked assume it is the user registration
+                else
+                {
+
+                    var userName = HttpContext.User.Identity.Name;
+                    var userTask = userManager.FindByNameAsync(userName);
+                    userTask.Wait();
+                    var user = userTask.Result;
+
+                    ViewBag.email = user.Email;
+                }
+
+                // Add attribute name for email
+                if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                {
+                    ViewBag.PersonEmailAttributeName = ConfigurationManager.AppSettings["PersonEmailAttributeName"];
+                }
+
                 var customAttrList = new List<PartyCustomAttribute>();
                 PartyTypeManager partyTypeManager = new PartyTypeManager();
                 IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);
