@@ -123,7 +123,7 @@
 
 - Fix empty lines during data import not allowed ([#570](https://github.com/BEXIS2/Core/issues/570))
 
-- Fix errors in unit seed data
+- Fix errors in unit and dimension seed data
 
 - Fix tuple order in datasetversions are random ([#539](https://github.com/BEXIS2/Core/issues/539))
 
