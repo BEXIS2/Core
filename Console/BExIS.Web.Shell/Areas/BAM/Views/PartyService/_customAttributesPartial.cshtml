@@ -41,27 +41,43 @@
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
+                    if (partyCustomAttr.Name == ViewBag.PersonEmailAttributeName)
                     {
-                        <select onchange="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") AttributeName="@partyCustomAttr.Name.ToLower()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;" id="partyCustomAttributeValues[@partyCustomAttr.Id]">
-                            @foreach (var option in partyCustomAttr.ValidValues.Split(','))
+                        var email = "";
+                        if (partyCustomAttributeValueStr == "")
+                        {
+                            email = ViewBag.email;
+                        }
+                        else
+                        {
+                            email = partyCustomAttributeValueStr;
+                        }
+
+
+                        <input type="text" disabled id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@email" ) />
+                    
+                    }
+                    else if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
+                    {
+                        <select onchange = "$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name = "partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") AttributeName = "@partyCustomAttr.Name.ToLower()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;" id="partyCustomAttributeValues[@partyCustomAttr.Id]">
+                            @foreach(var option in partyCustomAttr.ValidValues.Split(','))
                             {
-                                <option value="@option" @(partyCustomAttributeValueStr == @option ? "selected='selected'" : "")>@option</option>
-                            }
+                                <option value = "@option" @(partyCustomAttributeValueStr == @option? "selected='selected'" : "")>@option</option>
+    }
                         </select>
                     }
                     else if (partyCustomAttr.DataType == "bool" || partyCustomAttr.DataType == "boolean")
                     {
-                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>True</label>
-                        <input type="radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @((partyCustomAttributeValueStr == "false" || partyCustomAttributeValueStr == "") ? "checked" : "" ) value="false" @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") /><label>False</label>
+                        <input type = "radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" @(partyCustomAttr.IsUnique? "isUniqe='true'" : "") /><label>True</label>
+                        <input type = "radio" Onclick="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" name="partyCustomAttributeValues[@partyCustomAttr.Id]" id="partyCustomAttributeValues[@partyCustomAttr.Id]" AttributeName="@partyCustomAttr.Name.ToLower()" @((partyCustomAttributeValueStr == "false" || partyCustomAttributeValueStr == "") ? "checked" : "" ) value="false" @(partyCustomAttr.IsUnique? "isUniqe='true'" : "") /><label>False</label>
                     }
                     else
                     {
-                        <input type="text" onKeyUp="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" @(!partyCustomAttr.IsValueOptional ? Html.Raw("data-val=\"true\" data-val-required=\"This field is required.\"") : Html.Raw("")) @(partyCustomAttr.IsUnique ? "isUniqe='true'" : "") />
+                        <input type = "text" onKeyUp="$('#tblPartyCustomAttributes').trigger('partyCustomAttributesChanged');" id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" @(!partyCustomAttr.IsValueOptional? Html.Raw("data-val=\"true\" data-val-required=\"This field is required.\"") : Html.Raw("")) @(partyCustomAttr.IsUnique? "isUniqe='true'" : "") />
                         @Html.ValidationMessage("partyCustomAttributeValues[" + @partyCustomAttr.Id + "]");
                     }
                     if (!string.IsNullOrEmpty(@partyCustomAttr.Description))
-                    {<img src="~/Content/Images/info.png" data-toggle="tooltip" title="@partyCustomAttr.Description" />}
+                    {<img src = "~/Content/Images/info.png" data-toggle="tooltip" title="@partyCustomAttr.Description" />}
                 }
             </td>
         </tr>
