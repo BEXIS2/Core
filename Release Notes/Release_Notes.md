@@ -50,8 +50,9 @@
 
 - Metadata form: Add party mapping for simple components ([#489](https://github.com/BEXIS2/Core/issues/489))
 
+- UI improvement Party: Sort lists by name ([#544](https://github.com/BEXIS2/Core/issues/544)) and filter case-insensitive ([#578](https://github.com/BEXIS2/Core/issues/578), [#549](https://github.com/BEXIS2/Core/issues/549))
 
-
+- Fixed "Owner" role replaced by setting ([#545](https://github.com/BEXIS2/Core/issues/545))
 
 
 
@@ -116,9 +117,17 @@
 
 - Fix get latest version ordered by time instead id ([#538](https://github.com/BEXIS2/Core/issues/538))
 
+- Fix wrong enconding for metadata download as html ([#566](https://github.com/BEXIS2/Core/issues/566))
 
+- Fix party description field in the db to short ([#546](https://github.com/BEXIS2/Core/issues/546), [#547](https://github.com/BEXIS2/Core/issues/547))
 
+- Fix empty lines during data import not allowed ([#570](https://github.com/BEXIS2/Core/issues/570))
 
+- Fix errors in unit and dimension seed data
+
+- Fix tuple order in datasetversions are random ([#539](https://github.com/BEXIS2/Core/issues/539))
+
+- Fix wrong help link ([#564](https://github.com/BEXIS2/Core/issues/564))
 
 
 
