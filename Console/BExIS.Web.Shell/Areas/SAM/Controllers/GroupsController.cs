@@ -127,6 +127,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 else
                 {
                     groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
+                    count = groupManager.Groups.Count();
+
                 }
 
                 return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
