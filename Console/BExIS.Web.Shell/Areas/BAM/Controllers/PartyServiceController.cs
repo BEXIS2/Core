@@ -204,10 +204,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
         {
             var party = new Party();
             PartyManager partyManager = null;
+            PartyTypeManager partyTypeManager = null;
             UserManager userManager = null;
             try
             {
                 partyManager = new PartyManager();
+                partyTypeManager = new PartyTypeManager();
                 userManager = new UserManager();
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
@@ -232,6 +234,18 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         Select(ca=>ca.Value).ToArray());
 
                     user.DisplayName = displayName;
+
+                    if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                    {
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        if (nameProp != null)
+                        {               
+                            var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
+                            user.Email = entity.Value;
+                        }
+                    }
+                    
+
                     userManager.UpdateAsync(user);
 
                 }
@@ -258,6 +272,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 userManager = new UserManager();
                 long partyId = 0;
                 var partyIdStr = HttpContext.Request.Params["partyId"];
+
+                ViewBag.userRegistration = HttpContext.Request.Params["userReg"];
+
                 if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
                 {
                     partyManager = new PartyManager();
@@ -267,7 +284,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     var userTask = userManager.FindByIdAsync(userId);
                     userTask.Wait();
                     var user = userTask.Result;
-                    ViewBag.email = user.Email;
+                    if (user != null)
+                    {
+                        ViewBag.email = user.Email;
+                    }
 
                 }
                 // if no user is linked assume it is the user registration

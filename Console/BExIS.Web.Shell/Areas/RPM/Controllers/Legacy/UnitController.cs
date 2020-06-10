@@ -184,10 +184,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 check = false;
             }
 
-            if (!String.IsNullOrEmpty(unit.Dimension.Specification) && RegExHelper.IsMatch(unit.Dimension.Specification,RegExHelper.DIMENSION_SPECIFICATION))
+            if ((!String.IsNullOrEmpty(unit.Dimension.Specification) && RegExHelper.IsMatch(unit.Dimension.Specification,RegExHelper.DIMENSION_SPECIFICATION)) || String.IsNullOrEmpty(unit.Dimension.Specification))
             {
                 Session["dimensionSpecificationMsg"] = null;
             }
+
             else
             {
                 Session["dimensionSpecificationMsg"] = "not valid.";
