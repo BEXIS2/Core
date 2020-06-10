@@ -226,6 +226,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 else
                 {
                     users = userManager.Users.Select(UserGridRowModel.Convert).ToList();
+                    count = userManager.Users.Count();
                 }
 
                 return View(new GridModel<UserGridRowModel> { Data = users, Total = count });
