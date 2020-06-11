@@ -136,7 +136,7 @@ namespace BExIS.Dim.Helpers.Export
                         if (manifest != null)
                         {
                             string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
-                                datasetVersion.Id, "manifest", ".xml");
+                                versionNr, "manifest", ".xml");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
 
                             manifest.Save(fullFilePath);
@@ -175,6 +175,8 @@ namespace BExIS.Dim.Helpers.Export
         {
             string name = "";
             string mimeType = "";
+            DatasetManager dm = new DatasetManager();
+
 
             if (ext.Contains("csv"))
             {
@@ -182,8 +184,10 @@ namespace BExIS.Dim.Helpers.Export
                 mimeType = "text/comma-separated-values";
             }
 
+            var versionNr = dm.GetDatasetVersionNr(datasetVersion);
+
             // create the generated FileStream and determine its location
-            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title,
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
                 ext);
             //Register the generated data FileStream as a resource of the current dataset version
             //ContentDescriptor generatedDescriptor = new ContentDescriptor()
@@ -195,7 +199,6 @@ namespace BExIS.Dim.Helpers.Export
             //    DatasetVersion = datasetVersion,
             //};
 
-            DatasetManager dm = new DatasetManager();
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
             {
                 // remove the one contentdesciptor
