@@ -97,7 +97,7 @@
                         //    @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = "<#= id #>", dataAttributeModel.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttributeModel.Name + " ?')" }).ToHtmlString()
                         //);
                 })
-                .ClientEvents(events=>events.OnDataBound("onDataBound"))
+                .ClientEvents(events=>events.OnLoad("onDataBound"))
     )
 <div style="position:absolute; left:calc(50% - 478px); top:15%;">
     @{ Html.Telerik().Window()
