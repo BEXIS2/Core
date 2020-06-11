@@ -369,38 +369,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="format"></param>
+        /// <param name="version">version id </param>
+        /// <returns></returns>
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadZip(long id, string format, int version = -1)
+        public ActionResult DownloadZip(long id, string format, long version = -1)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            long datasetVersionId = 0;
-            try
-            {
-                
-
-                if (version > -1)
-                {
-
-
-                    datasetVersionId = datasetManager.GetDatasetVersionId(id, version); ;
-                }
-                else
-                {
-                
-
-                
-                    datasetVersionId = datasetManager.GetDatasetLatestVersionId(id);
-                
-                }
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
 
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", datasetVersionId }, { "format", format } });
+                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
 
                 //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
             }
