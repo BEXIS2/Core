@@ -128,6 +128,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.DatasetId = -1;
             }
 
+            // set latest version to true, as this view is only called from edit actions, which are only possible for the latest version
+            Model.LatestVersion = true;
+
+
+
             ViewData["Locked"] = locked;
 
             return PartialView("MetadataEditor", Model);
