@@ -1505,8 +1505,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention),
-                            new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
+                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
                             );
                     }
                 }
