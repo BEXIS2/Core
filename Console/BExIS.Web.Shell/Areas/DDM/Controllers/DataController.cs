@@ -1917,8 +1917,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var exist = ownerRelationships.Count() > 0 ? true : false;
                 return exist;
             }
-            catch
+            catch(Exception ex)
             {
+                LoggerFactory.LogCustom(ex.Message);
                 return false;
             }
             finally
