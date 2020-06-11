@@ -27,7 +27,7 @@
             </td>
             <td class="datatype">
                 <div class="bx-rpm-label">Data Type</div>
-                <div class="bx-rpm-text" title="@Model.DataType">@Model.DataType</div>
+                <div class="bx-rpm-text" title="@Model.DataType">@Model.DataType @if (@Model.DisplayPattern != null && @Model.DisplayPattern.Length > 0){<br />@Model.DisplayPattern}</div>
             </td>
             @*@if (Model.inUse)
             {

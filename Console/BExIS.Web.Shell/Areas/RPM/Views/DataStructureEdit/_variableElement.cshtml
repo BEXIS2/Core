@@ -47,7 +47,7 @@
             </td>
             <td class="datatype">
                 <div class="bx-rpm-label">Data Type</div>
-                <div class="bx-rpm-text" id="vardatatype">@Model.DataType</div>
+                <div class="bx-rpm-text" id="vardatatype">@Model.DataType @if (@Model.DisplayPattern != null && @Model.DisplayPattern.Length > 0){<br />@Model.DisplayPattern}</div>
             </td>
             <td class="isoptional">
                 <div class="bx-rpm-label">Optional</div>
@@ -132,11 +132,11 @@
                             </td>
                             <td class="unit">
                                 <div class="bx-rpm-label">Unit</div>
-                                <div class="bx-rpm-text" title="@Model.Attribute.Unit.Name">@Model.Attribute.Unit.Name</div>
+                                <div class="bx-rpm-text" title="@Model.Attribute.Unit.Name">@Model.Attribute.Unit.Name </div>
                             </td>
                             <td class="datatype">
                                 <div class="bx-rpm-label">Data Type</div>
-                                <div class="bx-rpm-text" title="@Model.Attribute.DataType">@Model.Attribute.DataType</div>
+                                <div class="bx-rpm-text" title="@Model.Attribute.DataType">@Model.Attribute.DataType @if(@Model.DisplayPattern != null&& @Model.DisplayPattern.Length > 0) {<br />@Model.DisplayPattern}</div>
                             </td>
                         </tr>
                         <tr>

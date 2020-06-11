@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Rpm.UI.Classes;
 using System;
 using System.Collections.Generic;
@@ -127,6 +128,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public Dictionary<long, string> Constraints { get; set; }
         public bool inUse { get; set; }
         public string Dimension { get; set; }
+        public string DisplayPattern { get; set; }
 
 
         public AttributePreviewStruct()
@@ -139,6 +141,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Constraints = new Dictionary<long, string>();
             this.inUse = false;
             this.Dimension = "";
+            this.DisplayPattern = "";
         }
 
         public AttributePreviewStruct fill(long attributeId)
@@ -177,6 +180,11 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Unit.Description = dataAttribute.Unit.Abbreviation;
             this.DataType = dataAttribute.DataType.Name;
             this.Dimension = dataAttribute.Unit.Dimension.Name;
+            var displayPattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+            if (displayPattern != null)
+            {
+                this.DisplayPattern = displayPattern.StringPattern;
+            }
 
             if (getConstraints)
             {
@@ -221,6 +229,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public List<ItemStruct> convertibleUnits { get; set; }
         public AttributePreviewStruct Attribute { get; set; }
         public List<MissingValueStruct> MissingValues { get; set; }
+        public string DisplayPattern { get; private set; }
 
         public VariablePreviewStruct()
         {
@@ -293,6 +302,12 @@ namespace BExIS.Modules.Rpm.UI.Models
                 this.Unit.Description = variable.Unit.Abbreviation;
                 this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
                 this.DataType = variable.DataAttribute.DataType.Name;
+
+                var displayPattern = DataTypeDisplayPattern.Materialize(variable.DataAttribute.DataType.Extra);
+                if (displayPattern != null)
+                {
+                    this.DisplayPattern = displayPattern.StringPattern;
+                }
 
                 TypeCode typeCode = TypeCode.String;
 
