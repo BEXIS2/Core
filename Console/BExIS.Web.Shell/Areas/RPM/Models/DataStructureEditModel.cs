@@ -234,7 +234,6 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Id = 0;
             this.Name = "";
             this.Description = "";
-            this.isOptional = true;
             this.Unit = new ItemStruct();
             this.convertibleUnits = new List<ItemStruct>();
             this.DataType = "";
@@ -243,6 +242,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.inUse = false;           
             this.MissingValues = new List<MissingValueStruct>();
             this.DisplayPattern = "";
+            this.isOptional = true;
         }
 
         public new VariablePreviewStruct fill(long attributeId)
@@ -253,6 +253,33 @@ namespace BExIS.Modules.Rpm.UI.Models
         public new VariablePreviewStruct fill(long attributeId, bool getConstraints)
         {
             DataContainerManager dataAttributeManager = null;
+
+            XmlDocument settings = new XmlDocument();
+            bool optional = true;
+
+            try
+            {
+                string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
+                settings.Load(filePath);
+            }
+            catch
+            {
+                settings = null;
+            }
+
+            if (settings != null)
+            {
+                try
+                {
+                    XmlNode optionalDefault = settings.GetElementsByTagName("optionalDefault")[0];
+                    optional = Convert.ToBoolean(optionalDefault.InnerText);
+                }
+                catch
+                {
+                    optional = true;
+                }
+            }
+
             try
             {
                 dataAttributeManager = new DataContainerManager();
@@ -262,8 +289,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                     Label = dataAttribute.Name,
                     Description = "",
                     Unit = dataAttribute.Unit,
-                    DataAttribute = dataAttribute
-                    
+                    DataAttribute = dataAttribute,
+                    IsValueOptional = optional
                 };
                 return this.fill(variable, getConstraints);
             }
@@ -281,6 +308,17 @@ namespace BExIS.Modules.Rpm.UI.Models
         public VariablePreviewStruct fill(Variable variable, bool getConstraints)
         {
             MissingValueManager missingValueManager = null;
+            XmlDocument settings = new XmlDocument();
+
+            try
+            {
+                string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
+                settings.Load(filePath);
+            }
+            catch
+            {
+                settings = null;
+            }
 
             try
             {
@@ -330,13 +368,10 @@ namespace BExIS.Modules.Rpm.UI.Models
                         });
                     }
                 }
-                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Any())
+                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && settings != null)
                 {
                     try
                     {
-                        string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
-                        XmlDocument settings = new XmlDocument();
-                        settings.Load(filePath);
                         XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
 
                         foreach(XmlNode xn in missingValues)
