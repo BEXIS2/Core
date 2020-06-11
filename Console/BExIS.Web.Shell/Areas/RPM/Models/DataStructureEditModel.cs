@@ -180,11 +180,10 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Unit.Description = dataAttribute.Unit.Abbreviation;
             this.DataType = dataAttribute.DataType.Name;
             this.Dimension = dataAttribute.Unit.Dimension.Name;
-            var displayPattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+
+            DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
             if (displayPattern != null)
-            {
                 this.DisplayPattern = displayPattern.StringPattern;
-            }
 
             if (getConstraints)
             {
@@ -229,7 +228,6 @@ namespace BExIS.Modules.Rpm.UI.Models
         public List<ItemStruct> convertibleUnits { get; set; }
         public AttributePreviewStruct Attribute { get; set; }
         public List<MissingValueStruct> MissingValues { get; set; }
-        public string DisplayPattern { get; private set; }
 
         public VariablePreviewStruct()
         {
@@ -244,6 +242,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Attribute = new AttributePreviewStruct();
             this.inUse = false;           
             this.MissingValues = new List<MissingValueStruct>();
+            this.DisplayPattern = "";
         }
 
         public new VariablePreviewStruct fill(long attributeId)
@@ -303,11 +302,9 @@ namespace BExIS.Modules.Rpm.UI.Models
                 this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
                 this.DataType = variable.DataAttribute.DataType.Name;
 
-                var displayPattern = DataTypeDisplayPattern.Materialize(variable.DataAttribute.DataType.Extra);
+                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(variable.DataAttribute.DataType.Extra);
                 if (displayPattern != null)
-                {
                     this.DisplayPattern = displayPattern.StringPattern;
-                }
 
                 TypeCode typeCode = TypeCode.String;
 

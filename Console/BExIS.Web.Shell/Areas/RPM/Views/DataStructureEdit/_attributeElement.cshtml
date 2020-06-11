@@ -27,7 +27,7 @@
             </td>
             <td class="datatype">
                 <div class="bx-rpm-label">Data Type</div>
-                <div class="bx-rpm-text" title="@Model.DataType">@Model.DataType @if (@Model.DisplayPattern != null && @Model.DisplayPattern.Length > 0){<br />@Model.DisplayPattern}</div>
+                <div class="bx-rpm-text" title="@Model.DataType">@Model.DataType</div>
             </td>
             @*@if (Model.inUse)
             {
@@ -47,6 +47,12 @@
             </td>
             <td class="unit">
                 <div class="bx-rpm-label" title="@Model.Unit.Name">@Model.Unit.Name</div>
+            </td>
+            <td class="datatype">
+                @if (!String.IsNullOrEmpty(Model.DisplayPattern))
+                {
+                    <div class="bx-rpm-label" title="@Model.DisplayPattern">@Model.DisplayPattern</div>
+                }
             </td>
         </tr>
         <tr class="hidden hiddenelements">
