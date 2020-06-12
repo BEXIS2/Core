@@ -278,6 +278,26 @@ namespace BExIS.Modules.Rpm.UI.Models
                 {
                     optional = true;
                 }
+
+                try
+                {
+                    XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
+
+                    foreach (XmlNode xn in missingValues)
+                    {
+                        this.MissingValues.Add(new MissingValueStruct()
+                        {
+                            Id = 0,
+                            DisplayName = xn["placeholder"].InnerText,
+                            Description = xn["description"].InnerText
+                        });
+                    }
+
+                }
+                catch
+                {
+                    this.MissingValues = new List<MissingValueStruct>();
+                }
             }
 
             try
@@ -308,17 +328,6 @@ namespace BExIS.Modules.Rpm.UI.Models
         public VariablePreviewStruct fill(Variable variable, bool getConstraints)
         {
             MissingValueManager missingValueManager = null;
-            XmlDocument settings = new XmlDocument();
-
-            try
-            {
-                string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
-                settings.Load(filePath);
-            }
-            catch
-            {
-                settings = null;
-            }
 
             try
             {
@@ -367,28 +376,6 @@ namespace BExIS.Modules.Rpm.UI.Models
                             Placeholder = mv.Placeholder
                         });
                     }
-                }
-                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && settings != null)
-                {
-                    try
-                    {
-                        XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
-
-                        foreach(XmlNode xn in missingValues)
-                        {
-                            MissingValues.Add(new MissingValueStruct() {
-                                Id = 0,
-                                DisplayName = xn["placeholder"].InnerText,
-                                Description = xn["description"].InnerText
-                            });
-                        }
-                        
-                    }
-                    catch
-                    {
-                        this.MissingValues = new List<MissingValueStruct>();
-                    }
-
                 }
                 else if(missingValueManager.getPlaceholder(typeCode, this.Id) == null)
                 {
