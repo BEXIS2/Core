@@ -393,6 +393,7 @@ namespace BExIS.IO.Transform.Output
             {
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+                dataStructure.Variables = dataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
             }
 
             return dataStructure;
