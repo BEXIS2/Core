@@ -126,10 +126,10 @@ namespace BExIS.Security.Services.Utilities
             return $"User \"{requester}\" sent a data request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
-        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
+        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason, string email)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"User \"{requester}\" sent a data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
+            stringBuilder.AppendLine($"User \"{requester}\" (\"{email}\") sent a data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
             stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
             stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
 
