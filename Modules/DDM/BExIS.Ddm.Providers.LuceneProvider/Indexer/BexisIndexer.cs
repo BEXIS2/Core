@@ -7,6 +7,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using Lucene.Net.Analysis;
@@ -16,6 +17,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -182,6 +184,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     catch (Exception ex)
                     {
                         errors.Add(string.Format("Enountered a probelm indexing dataset '{0}'. Details: {1}", id, ex.Message));
+                    }
+                    finally
+                    {
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetSearchReIndexHeader(),
+                            MessageHelper.GetSearchReIndexMessage(errors),
+                            ConfigurationManager.AppSettings["SystemEmail"]);
+                        
                     }
                 }
                 //GC.Collect();
