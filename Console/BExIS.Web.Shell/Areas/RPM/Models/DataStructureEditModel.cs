@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Rpm.UI.Classes;
 using System;
 using System.Collections.Generic;
@@ -127,6 +128,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public Dictionary<long, string> Constraints { get; set; }
         public bool inUse { get; set; }
         public string Dimension { get; set; }
+        public string DisplayPattern { get; set; }
 
 
         public AttributePreviewStruct()
@@ -139,6 +141,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Constraints = new Dictionary<long, string>();
             this.inUse = false;
             this.Dimension = "";
+            this.DisplayPattern = "";
         }
 
         public AttributePreviewStruct fill(long attributeId)
@@ -177,6 +180,10 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Unit.Description = dataAttribute.Unit.Abbreviation;
             this.DataType = dataAttribute.DataType.Name;
             this.Dimension = dataAttribute.Unit.Dimension.Name;
+
+            DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+            if (displayPattern != null)
+                this.DisplayPattern = displayPattern.StringPattern;
 
             if (getConstraints)
             {
@@ -227,7 +234,6 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Id = 0;
             this.Name = "";
             this.Description = "";
-            this.isOptional = true;
             this.Unit = new ItemStruct();
             this.convertibleUnits = new List<ItemStruct>();
             this.DataType = "";
@@ -235,6 +241,8 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.Attribute = new AttributePreviewStruct();
             this.inUse = false;           
             this.MissingValues = new List<MissingValueStruct>();
+            this.DisplayPattern = "";
+            this.isOptional = true;
         }
 
         public new VariablePreviewStruct fill(long attributeId)
@@ -245,6 +253,53 @@ namespace BExIS.Modules.Rpm.UI.Models
         public new VariablePreviewStruct fill(long attributeId, bool getConstraints)
         {
             DataContainerManager dataAttributeManager = null;
+
+            XmlDocument settings = new XmlDocument();
+            bool optional = true;
+
+            try
+            {
+                string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
+                settings.Load(filePath);
+            }
+            catch
+            {
+                settings = null;
+            }
+
+            if (settings != null)
+            {
+                try
+                {
+                    XmlNode optionalDefault = settings.GetElementsByTagName("optionalDefault")[0];
+                    optional = Convert.ToBoolean(optionalDefault.InnerText);
+                }
+                catch
+                {
+                    optional = true;
+                }
+
+                try
+                {
+                    XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
+
+                    foreach (XmlNode xn in missingValues)
+                    {
+                        this.MissingValues.Add(new MissingValueStruct()
+                        {
+                            Id = 0,
+                            DisplayName = xn["placeholder"].InnerText,
+                            Description = xn["description"].InnerText
+                        });
+                    }
+
+                }
+                catch
+                {
+                    this.MissingValues = new List<MissingValueStruct>();
+                }
+            }
+
             try
             {
                 dataAttributeManager = new DataContainerManager();
@@ -254,8 +309,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                     Label = dataAttribute.Name,
                     Description = "",
                     Unit = dataAttribute.Unit,
-                    DataAttribute = dataAttribute
-                    
+                    DataAttribute = dataAttribute,
+                    IsValueOptional = optional
                 };
                 return this.fill(variable, getConstraints);
             }
@@ -294,6 +349,10 @@ namespace BExIS.Modules.Rpm.UI.Models
                 this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
                 this.DataType = variable.DataAttribute.DataType.Name;
 
+                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(variable.DataAttribute.DataType.Extra);
+                if (displayPattern != null)
+                    this.DisplayPattern = displayPattern.StringPattern;
+
                 TypeCode typeCode = TypeCode.String;
 
                 foreach (TypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
@@ -317,31 +376,6 @@ namespace BExIS.Modules.Rpm.UI.Models
                             Placeholder = mv.Placeholder
                         });
                     }
-                }
-                else if(missingValueManager.getPlaceholder(typeCode, this.Id) != null && temp.Any())
-                {
-                    try
-                    {
-                        string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
-                        XmlDocument settings = new XmlDocument();
-                        settings.Load(filePath);
-                        XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
-
-                        foreach(XmlNode xn in missingValues)
-                        {
-                            MissingValues.Add(new MissingValueStruct() {
-                                Id = 0,
-                                DisplayName = xn["placeholder"].InnerText,
-                                Description = xn["description"].InnerText
-                            });
-                        }
-                        
-                    }
-                    catch
-                    {
-                        this.MissingValues = new List<MissingValueStruct>();
-                    }
-
                 }
                 else if(missingValueManager.getPlaceholder(typeCode, this.Id) == null)
                 {

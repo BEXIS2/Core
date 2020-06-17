@@ -560,24 +560,15 @@ namespace BExIS.Xml.Helpers.Mapping
                 string xpathFromRoot = "";
 
                 int count = 0;
-                //foreach (XmlSchemaObject obj in Schema.Items)
-                //{
-                //    if (obj is XmlSchemaElement)
-                //    {
-                //        count++;
-                //        if (count > 1)
-                //        {
-                //            throw new Exception("Root node is not able to declare");
-                //        }
-                //    }
-                //}
 
                 foreach (XmlSchemaObject obj in Schema.Items)
                 {
                     if (obj is XmlSchemaElement)
+                    {
                         root = (XmlSchemaElement)obj;
-                    //HACK find first xsd element
-                    break;
+                        //HACK find first xsd element
+                        break;
+                    }
                 }
 
                 if (String.IsNullOrEmpty(nameOfStartNode))
@@ -614,19 +605,34 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     #region root with only simple type childrens
 
-                    XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
+                    XmlSchemaAnnotation annotation = null;
+                    string name  = "";
 
-                    MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
+                    if (root is XmlSchemaElement)
+                    {
+                        XmlSchemaElement rootAsElement = (XmlSchemaElement)root;
+                        name = rootAsElement.Name;
+                        annotation = rootAsElement.Annotation;
+                    }
+                    else
+                    if (root is XmlSchemaGroup)
+                    {
+                        XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
+                        name = rootAsGroup.Name;
+                        annotation = rootAsGroup.Annotation;
+                    }
+
+                    MetadataPackage package = getExistingMetadataPackage(name);
 
                     if (package == null)
                     {
-                        package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                        package = mdpManager.Create(name, GetDescription(annotation), true);
                         createdPackagesDic.Add(package.Id, package.Name);
                     }
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                     {
-                        string xpath = "Metadata/" + rootAsGroup.Name;
+                        string xpath = "Metadata/" + name;
 
                         foreach (XmlSchemaElement child in childrenOfRoot)
                         {
@@ -635,21 +641,21 @@ namespace BExIS.Xml.Helpers.Mapping
 
                             if (XmlSchemaUtility.IsSimpleType(child))
                             {
-                                addMetadataAttributeToMetadataPackageUsage(package, child, xpath, rootAsGroup.Name);
+                                addMetadataAttributeToMetadataPackageUsage(package, child, xpath, name);
                             }
                             else
                             {
                                 List<string> parents = new List<string>();
-                                parents.Add(rootAsGroup.Name);
+                                parents.Add(name);
 
-                                MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, rootAsGroup.Name, mamManager);
+                                MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, name, mamManager);
 
                                 // add compound to package
                                 addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
                             }
                         }
 
-                        mdsManager.AddMetadataPackageUsage(test, package, rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), 1, 1);
+                        mdsManager.AddMetadataPackageUsage(test, package, name, GetDescription(annotation), 1, 1);
                     }
 
                     #endregion root with only simple type childrens

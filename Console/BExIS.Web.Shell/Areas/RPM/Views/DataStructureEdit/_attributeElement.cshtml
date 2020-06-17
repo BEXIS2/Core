@@ -48,6 +48,12 @@
             <td class="unit">
                 <div class="bx-rpm-label" title="@Model.Unit.Name">@Model.Unit.Name</div>
             </td>
+            <td class="datatype">
+                @if (!String.IsNullOrEmpty(Model.DisplayPattern))
+                {
+                    <div class="bx-rpm-label" title="@Model.DisplayPattern">@Model.DisplayPattern</div>
+                }
+            </td>
         </tr>
         <tr class="hidden hiddenelements">
             <td colspan="7" class="description">

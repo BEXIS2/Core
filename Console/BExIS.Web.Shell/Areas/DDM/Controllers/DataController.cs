@@ -369,38 +369,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="format"></param>
+        /// <param name="version">version id </param>
+        /// <returns></returns>
         [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadZip(long id, string format, int version = -1)
+        public ActionResult DownloadZip(long id, string format, long version = -1)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            long datasetVersionId = 0;
-            try
-            {
-                
-
-                if (version > -1)
-                {
-
-
-                    datasetVersionId = datasetManager.GetDatasetVersionId(id, version); ;
-                }
-                else
-                {
-                
-
-                
-                    datasetVersionId = datasetManager.GetDatasetLatestVersionId(id);
-                
-                }
-            }
-            finally
-            {
-                datasetManager.Dispose();
-            }
 
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", datasetVersionId }, { "format", format } });
+                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
 
                 //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
             }
@@ -1527,8 +1509,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention),
-                            new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
+                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
                             );
                     }
                 }
@@ -1939,8 +1921,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var exist = ownerRelationships.Count() > 0 ? true : false;
                 return exist;
             }
-            catch
+            catch(Exception ex)
             {
+                LoggerFactory.LogCustom(ex.Message);
                 return false;
             }
             finally

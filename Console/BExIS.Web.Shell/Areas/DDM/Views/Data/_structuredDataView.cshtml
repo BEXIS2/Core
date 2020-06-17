@@ -65,7 +65,7 @@
 
             <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>*@
 
-            if (Model.Data.Rows.Count < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+            if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
             {
                 <span class="dropdown">
                     <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
