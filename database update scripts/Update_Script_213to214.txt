@@ -234,3 +234,42 @@ ALTER COLUMN description TYPE character varying;
 
 END
 $do$
+
+-- UPDATE Dimensions
+UPDATE dimensions SET specification='L(1,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 2;
+UPDATE dimensions SET specification='L(0,0)M(1,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 3;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(1,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 4;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(0,0)I(1,0)?(0,0)N(0,0)J(0,0)' where id = 5;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(0,0)I(0,0)?(1,0)N(0,0)J(0,0)' where id = 6;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(0,0)I(0,0)?(0,0)N(1,0)J(0,0)' where id = 7;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(1,0)' where id = 8;
+UPDATE dimensions SET specification='L(2,0)M(1,0)T(0,3)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 9;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(0,1)I(0,0)?(0,0)N(1,0)J(0,0)' where id = 10;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(0,1)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 11;
+UPDATE dimensions SET specification='L(0,2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 12;
+UPDATE dimensions SET specification='L(0,0)M(0,1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 13;
+UPDATE dimensions SET specification='L(1,0)M(0,0)T(0,1)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 14;
+UPDATE dimensions SET specification='L(2,0)M(0,1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 15;
+UPDATE dimensions SET specification='L(0,2)M(1,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 16;
+UPDATE dimensions SET specification='L(0,3)M(1,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 17;
+UPDATE dimensions SET specification='L(3,0)M(0,1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 18;
+UPDATE dimensions SET specification='L(0,0)M(0,1)T(0,1)I(0,0)?(0,0)N(1,0)J(0,0)' where id = 19;
+UPDATE dimensions SET specification='L(0,0)M(1,0)T(0,3)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 20;
+UPDATE dimensions SET specification='L(1,0)M(0,1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 21;
+UPDATE dimensions SET specification='L(0,0)M(0,1)T(0,0)I(0,0)?(0,0)N(1,0)J(0,0)' where id = 22;
+UPDATE dimensions SET specification='L(0,2)M(0,0)T(0,1)I(0,0)?(0,0)N(1,0)J(0,0)' where id = 23;
+UPDATE dimensions SET specification='L(2,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 24;
+UPDATE dimensions SET specification='L(3,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 25;
+UPDATE dimensions SET specification='L(0,1)M(1,0)T(0,2)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 26;
+UPDATE dimensions SET specification='L(2,0)M(1,0)T(0,3)I(0,1)?(0,0)N(0,0)J(0,0)' where id = 27;
+UPDATE dimensions SET specification='L(2,0)M(1,0)T(0,2)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 28;
+UPDATE dimensions SET specification='L(0,0)M(1,0)T(0,2)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 29;
+UPDATE dimensions SET specification='L(0,0)M(0,0)T(1,0)I(1,0)?(0,0)N(0,0)J(0,0)' where id = 30;
+UPDATE dimensions SET specification='L(0,1)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 31;
+UPDATE dimensions SET specification='L(2,0)M(1,0)T(0,3)I(0,2)?(0,0)N(0,0)J(0,0)' where id = 32;
+UPDATE dimensions SET specification='L(0,3)M(0,1)T(3,0)I(2,0)?(0,0)N(0,0)J(0,0)' where id = 33;
+UPDATE dimensions SET specification='L(0,0)M(1,1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 34;
+UPDATE dimensions SET specification='L(3,3)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 35;
+UPDATE dimensions SET specification='L(2,2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 36;
+UPDATE dimensions SET specification='L(3,2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 37;
+
