@@ -77,7 +77,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Write))
+                    if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Write))
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
