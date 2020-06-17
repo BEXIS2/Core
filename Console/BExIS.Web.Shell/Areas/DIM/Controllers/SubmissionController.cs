@@ -39,7 +39,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
         /// </summary>
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult publishData(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -47,7 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View("_showPublishDataView", model);
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -74,9 +74,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 model.DatasetId = datasetId;
 
                 //Todo Download Rigths -> currently set read rigths for this case
-                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset",
+                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                     typeof(Dataset), datasetId, RightType.Read);
-                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset",
+                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                     typeof(Dataset), datasetId, RightType.Write);
 
                 List<long> versions = new List<long>();
@@ -359,7 +359,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return null;
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
             PublicationManager publicationManager = new PublicationManager();

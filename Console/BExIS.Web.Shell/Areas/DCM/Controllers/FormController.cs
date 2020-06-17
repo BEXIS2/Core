@@ -51,7 +51,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Load Metadata formular actions
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult EditMetadata(long datasetId, bool locked = false, bool created = false)
         {
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });
@@ -3276,7 +3276,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
