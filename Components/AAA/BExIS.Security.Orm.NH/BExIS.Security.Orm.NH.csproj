@@ -74,6 +74,7 @@
     <Content Include="Mappings\Default\Subjects\User.hbm.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Mappings\Default\Versions\Version.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
