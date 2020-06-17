@@ -51,7 +51,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {  
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Grant)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
         {
             var entityManager = new EntityManager();
@@ -187,8 +187,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     metadata = dsv.Metadata;
 
                     // check if the user has download rights
-                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                        "Dataset", typeof(Dataset), id, RightType.Read);
+                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
 
                     // check if a reuqest of this dataset exist
                     if (!downloadAccess)
@@ -225,8 +224,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     MetadataStructureId = metadataStructureId,
                     DataStructureId = dataStructureId,
                     ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
+                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
+                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
                     DataStructureType = dataStructureType,
                     DownloadAccess = downloadAccess,
                     RequestExist = requestExist,
@@ -308,8 +307,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
                     // check if the user has download rights
-                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                        "Dataset", typeof(Dataset), id, RightType.Read);
+                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
 
                     // check if a reuqest of this dataset exist
                     if (!downloadAccess)
@@ -346,8 +344,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     MetadataStructureId = metadataStructureId,
                     DataStructureId = dataStructureId,
                     ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant),
+                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
+                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
                     DataStructureType = dataStructureType,
                     DownloadAccess = downloadAccess,
                     RequestExist = requestExist,
@@ -369,14 +367,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="format"></param>
-        /// <param name="version">version id </param>
-        /// <returns></returns>
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadZip(long id, string format, long version = -1)
         {
 
@@ -520,7 +511,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         //[MeasurePerformance
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetID", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetID", RightType.Read)]
         public ActionResult ShowPrimaryData(long datasetID, int versionId)
         {
             Session["Filter"] = null;
@@ -545,8 +536,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
                     // TODO: refactor Download Right not existing, so i set it to read
-                    bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                        "Dataset", typeof(Dataset), datasetID, RightType.Read);
+                    bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
 
                     //TITLE
                     string title = dsv.Title;
@@ -690,7 +680,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareAscii(long id, string ext, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -751,7 +741,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits, bool download = false)
         {
             if (hasUserRights(id, RightType.Read))
@@ -835,7 +825,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareExcelData(long id, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -901,7 +891,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAsExcelData(long id, long versionid, bool latest, bool withUnits)
         {
             if (hasUserRights(id, RightType.Read))
@@ -988,7 +978,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public JsonResult PrepareExcelTemplateData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1060,7 +1050,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAsExcelTemplateData(long id, long versionid, bool latest)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1266,7 +1256,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region download FileStream
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAllFiles(long id)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1334,7 +1324,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return Content("User has no rights.");
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadFile(long id, string path, string mimeType)
         {
             if (hasUserRights(id, RightType.Read))
@@ -1433,7 +1423,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     //    if (structured)
                     //    {
-                            if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, entityType, typeof(Dataset), id, RightType.Write))
+                            if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write))
                             {
                                 Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
                                 Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
@@ -1534,7 +1524,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region entity references
 
-        //[BExISEntityAuthorize("Dataset", typeof(Dataset), "id", RightType.Read)]
+        //[BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult ShowReferences(long id, int version)
         {
             var sourceTypeId = 0;
@@ -1858,7 +1848,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, rightType);
+            return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
         }

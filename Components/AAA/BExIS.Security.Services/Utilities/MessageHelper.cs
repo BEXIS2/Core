@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 
 namespace BExIS.Security.Services.Utilities
@@ -339,6 +340,32 @@ namespace BExIS.Security.Services.Utilities
             stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited.");
 
             return stringBuilder.ToString();
+        }
+
+        #endregion
+
+        #region serach index
+
+        public static string GetSearchReIndexHeader()
+        {
+            return $"Search index was completed ";
+        }
+
+        public static string GetSearchReIndexMessage(List<string> errors = null)
+        { 
+            string message = $"The creation of the search index is finished.";
+
+            if (errors != null && errors.Count>0)
+            {
+                message += $"the following errors have occurred. </br>";
+
+                foreach (var item in errors)
+                {
+                    message += $"" + errors + "</br>";
+                }
+            }
+
+            return message;
         }
 
         #endregion

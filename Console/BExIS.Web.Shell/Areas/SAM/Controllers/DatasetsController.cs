@@ -61,7 +61,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (user != null)
                 {
                     // is the user allowed to delete this dataset
-                    if (entityPermissionManager.HasEffectiveRight(user, entityManager.FindByName("Dataset"), id, Security.Entities.Authorization.RightType.Delete))
+                    if (entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete))
                     {
                         //try delete the dataset
                         if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
@@ -223,7 +223,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (user != null)
                 {
                     // is the user allowed to delete this dataset
-                    if (entityPermissionManager.HasEffectiveRight(user, entityManager.FindByName("Dataset"), id, Security.Entities.Authorization.RightType.Delete))
+                    if (entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete))
                     {
                         if (dm.PurgeDataset(id))
                         {
