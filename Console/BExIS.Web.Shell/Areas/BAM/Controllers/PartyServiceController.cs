@@ -4,6 +4,7 @@ using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
