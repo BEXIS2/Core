@@ -9,4 +9,5 @@
       <description>not available</description>
     </missingValue>
   </missingValues>
+  <optionalDefault>true</optionalDefault>
 </settings>

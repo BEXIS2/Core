@@ -27,7 +27,7 @@
         columns.Bound(m=>m.Id)
             .Width("15%")
             .Title("Subject Id");
-        columns.Bound(m=>m.Name)
+        columns.Bound(m=>m.DisplayName)
             .Width("15%")
             .Title("Subject Name");
         columns.Bound(m => m.Type)
@@ -60,7 +60,7 @@
       })
       .Sortable(sortable => sortable
           .OrderBy(orderby => orderby
-              .Add(m => m.Name)
+              .Add(m => m.DisplayName)
               .Ascending()
           )
       )

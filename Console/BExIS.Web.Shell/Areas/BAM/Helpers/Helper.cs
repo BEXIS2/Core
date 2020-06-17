@@ -172,7 +172,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value;
                     newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
                 }
-                partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
+                party.CustomAttributeValues = partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value)).ToList();
                 //if (systemPartyRelationships != null)
                 //{
                 //    foreach (var systemPartyRel in systemPartyRelationships.Where(item => item.Id != long.MaxValue))

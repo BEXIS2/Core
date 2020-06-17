@@ -12,6 +12,7 @@ using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
+using BExIS.Utils.Helpers;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -183,6 +184,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 check = false;
             }
 
+            if ((!String.IsNullOrEmpty(unit.Dimension.Specification) && RegExHelper.IsMatch(unit.Dimension.Specification,RegExHelper.DIMENSION_SPECIFICATION)) || String.IsNullOrEmpty(unit.Dimension.Specification))
+            {
+                Session["dimensionSpecificationMsg"] = null;
+            }
+
+            else
+            {
+                Session["dimensionSpecificationMsg"] = "not valid.";
+                check = false;
+            }
+
             return check;
         }
 
@@ -259,6 +271,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                     Session["Window"] = true;
                     Session["dimensionMsg"] = null;
+                    Session["dimensionSpecificationMsg"] = null;
                 }
                 else
                 {
@@ -269,6 +282,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Session["dataTypeMsg"] = null;
                     Session["Window"] = true;
                     Session["dimensionMsg"] = null;
+                    Session["dimensionSpecificationMsg"] = null;
                 }
             }
             finally

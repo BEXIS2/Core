@@ -47,7 +47,7 @@
               .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
           columns.Bound(m => m.Id)
               .Width("20%");
-          columns.Bound(m => m.Name)
+          columns.Bound(m => m.DisplayName).Title("Name")
             .Width("22%");
           columns.Bound(m => m.Type)
             .Width("22%")
@@ -69,7 +69,7 @@
       })
       .Sortable(sortable => sortable
           .OrderBy(orderby => orderby
-              .Add(m => m.Name)
+              .Add(m => m.DisplayName)
               .Ascending()
           )
       )

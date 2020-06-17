@@ -23,6 +23,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         private TestSetupHelper helper = null;
         private long datasetId = 0;
         private long latestDataTupleId = 0;
+        private long firstDataTupleId = 0;
         private string username = "David";
 
         private DatasetHelper dsHelper;
@@ -172,22 +173,30 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 datasetManager = new DatasetManager();
 
+                var latestDatasetVersionId = datasetManager.GetDatasetLatestVersionId(datasetId);
+
                 //get latest datatupleid before create a new dataset and data
                 using (var uow = this.GetUnitOfWork())
                 {
                     var latestDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().LastOrDefault();
+                    var firstDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().Where(dt=>dt.DatasetVersion.Id.Equals(latestDatasetVersionId)).FirstOrDefault();
                     if (latestDataTuple != null) latestDataTupleId = latestDataTuple.Id;
+                    if (firstDataTuple != null) firstDataTupleId = firstDataTuple.Id;
                 }
 
                 var dataset = datasetManager.GetDataset(datasetId);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, firstDataTupleId, 1);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 2);
+                datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+
 
                 //Act
                 List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
                 var resultAll = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2));
-                List<long> comapreIds = resultAll.Skip(pageNumber * pageSize).Take(pageSize).Select(dt=>dt.Id).ToList();
+                List<long> comapreIds = resultAll.OrderBy(dt=>dt.OrderNo).Skip(pageNumber * pageSize).Take(pageSize).Select(dt=>dt.Id).ToList();
 
 
                 var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2), pageNumber, pageSize); // get datatuples from the one before the latest

@@ -65,6 +65,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 var group = new Group()
                 {
                     Name = model.Name,
+                    DisplayName = model.Name,
                     Description = model.Description
                 };
 
@@ -126,6 +127,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 else
                 {
                     groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
+                    count = groupManager.Groups.Count();
+
                 }
 
                 return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
@@ -215,6 +218,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 group.Name = model.Name;
+                group.DisplayName = group.Name;
                 group.Description = model.Description;
 
                 groupManager.UpdateAsync(group);

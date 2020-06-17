@@ -476,7 +476,7 @@ namespace BExIS.Dlm.Services.Party
                                       && (item.TargetParty != null && item.TargetParty.Id == partyRelationship.TargetParty.Id)).Count();
 
                 if (partyRelationship.PartyRelationshipType.MinCardinality >= cnt)
-                    BexisException.Throw(partyRelationship, String.Format("Atleast {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete);
+                    BexisException.Throw(partyRelationship, String.Format("At least {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete);
                 var entity = repoPR.Reload(partyRelationship);
                 repoPR.Delete(entity);
                 uow.Commit();
@@ -498,7 +498,7 @@ namespace BExIS.Dlm.Services.Party
                 foreach (var entity in entities)
                 {
                     if (entity.PartyRelationshipType.MinCardinality > (entity.PartyRelationshipType.PartyRelationships.Count() - 1))
-                        BexisException.Throw(entity, String.Format("Atleast {0} party relation is required.", entity.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete, true);
+                        BexisException.Throw(entity, String.Format("At least {0} party relation is required.", entity.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete, true);
                     var latest = repoPR.Reload(entity);
                     repoPR.Delete(latest);
                 }

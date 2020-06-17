@@ -370,29 +370,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadZip(long id, string format, long version = -1)
         {
-            long datasetVersionId = 0;
-
-            if (version > -1)
-            {
-                datasetVersionId = version;
-            }
-            else
-            {
-                DatasetManager datasetManager = new DatasetManager();
-
-                try
-                {
-                    datasetVersionId = datasetManager.GetDatasetLatestVersionId(id);
-                }
-                finally
-                {
-                    datasetManager.Dispose();
-                }
-            }
 
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "format", format } });
+                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
 
                 //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
             }
@@ -736,7 +717,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //full dataset
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype, withUnits);
+                        path = ioOutputDataManager.GenerateAsciiFile(id, versionid, mimetype, withUnits);
 
                         LoggerFactory.LogCustom(message);
                     }
@@ -802,7 +783,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else
                     {
-                        path = ioOutputDataManager.GenerateAsciiFile(id, title, mimetype, withUnits);
+                        path = ioOutputDataManager.GenerateAsciiFile(id, versionid, mimetype, withUnits);
 
                         //only log and send mail once
                         if (download)
@@ -887,7 +868,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title, false, null, withUnits);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
                     }
 
@@ -961,7 +942,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title, false, null, withUnits);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
@@ -1023,8 +1004,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //create a history dátaset
                     if (!latest)
                     {
-                        DataTable datatable = getHistoryData(versionid);
-                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
+                        
+                        path = outputDataManager.GenerateExcelFile(id, versionid, true);
 
                         //return File(path, mimetype, title + "_v" + versionNumber + ext);
                     }
@@ -1034,7 +1015,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         #region generate a subset of a dataset
 
                         DataTable datatable = getFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, true, datatable);
 
                         LoggerFactory.LogCustom(message);
 
@@ -1046,7 +1027,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title, true);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, true);
                         LoggerFactory.LogCustom(message);
                     }
 
@@ -1096,8 +1077,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //create a history dátaset
                     if (!latest)
                     {
-                        DataTable datatable = getHistoryData(versionid);
-                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, true, null);
 
                         return File(path, mimetype, title + "_v" + versionNumber + ext);
                     }
@@ -1109,7 +1089,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo filter datatuples
 
                         DataTable datatable = getFilteredData(id);
-                        path = outputDataManager.GenerateExcelFile(id, title, true, datatable);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, true, datatable);
 
                         LoggerFactory.LogCustom(message);
 
@@ -1121,7 +1101,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //filter not in use
                     else
                     {
-                        path = outputDataManager.GenerateExcelFile(id, title, true);
+                        path = outputDataManager.GenerateExcelFile(id, versionid, true);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
@@ -1515,8 +1495,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention),
-                            new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
+                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
                             );
                     }
                 }
@@ -1927,8 +1907,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var exist = ownerRelationships.Count() > 0 ? true : false;
                 return exist;
             }
-            catch
+            catch(Exception ex)
             {
+                LoggerFactory.LogCustom(ex.Message);
                 return false;
             }
             finally

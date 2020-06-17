@@ -131,7 +131,6 @@
                 }
             </div>
         </div>
-
         @if (@Model != null)
         {
             if (ViewData.ModelState.IsValid)
@@ -158,14 +157,18 @@
                                                   .Text("Primary Data")
                                                   .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
                                                   .HtmlAttributes(new { id = "primarydata" })
-                                                  .Enabled(@Model.ViewAccess);
+                                                  //.Enabled(@Model.ViewAccess);
+                                                  .Enabled(false);
+
                                           }
                                           if (show_tabs["show_data_structure_tab"] == "true")
                                           {
                                               tabs.Add()
                                                   .Text("Data Structure")
                                                   .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
-                                                  .HtmlAttributes(new { id = "datastructure" });
+                                                  .HtmlAttributes(new { id = "datastructure" })
+                                                  .Enabled(false);
+
 
                                           }
                                           if (show_tabs["show_link_tab"] == "true")
@@ -173,7 +176,9 @@
                                               tabs.Add()
                                                 .Text("Links")
                                                 .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
-                                                .HtmlAttributes(new { id = "showreferences" });
+                                                .HtmlAttributes(new { id = "showreferences" })
+                                                .Enabled(false);
+                                                
                                           }
 
                                           if (show_tabs["show_permission_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.GrantAccess == false))
@@ -182,7 +187,9 @@
                                                   .Text("Dataset Permissions")
                                                   .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
                                                   .HtmlAttributes(new { id = "datapermissions" })
-                                                  .Enabled(@Model.GrantAccess);
+                                                  //.Enabled(@Model.GrantAccess);
+                                                  .Enabled(false);
+
                                           }
                                           if (show_tabs["show_publish_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.ViewAccess == false))
                                           {
@@ -190,7 +197,8 @@
                                                     .Text("Publish")
                                                     //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
                                                     .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-                                                    .Enabled(@Model.ViewAccess)
+                                                    //.Enabled(@Model.ViewAccess)
+                                                    .Enabled(false)
                                                     .HtmlAttributes(new { id = "prepare" });
                                           }
                                           if (show_tabs["show_attachments_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.ViewAccess == false))
@@ -199,7 +207,9 @@
                                               .Text("Attachments")
                                               .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
                                               .HtmlAttributes(new { id = "attachements" })
-                                              .Enabled(@Model.ViewAccess);
+                                              //.Enabled(@Model.ViewAccess);
+                                              .Enabled(false);
+
 
                                           }
                                       })
@@ -210,7 +220,6 @@
                 @Html.ValidationSummary(true);
             }
         }
-
         <script type="text/javascript">
 
 	function grid_subjects_onDataBound() {
@@ -240,6 +249,8 @@
 
 	$(document).ready(function () {
 
+        console.log("ready");
+
 		$("#preloaderContainer").preloader(20, "Loading...");
 		resetAllTelerikIconTitles();
 
@@ -255,7 +266,9 @@
             })
         })
 
-		$(document).bind("MetadataFormIsReady", function () {
+        $(document).bind("MetadataFormIsReady", function () {
+
+            console.log("metadata ready");
 			//alert("m is ready");
 			var viewAccess = '@Model.ViewAccess';
 			var grantAccess = '@Model.GrantAccess';
@@ -265,14 +278,14 @@
 			//console.log(viewAccess);
 			//console.log(grantAccess);
 
-			$("li#datastructure").removeClass("t-state-disabled");
+            $("li#datastructure").removeClass("t-state-disabled");
+            $("li#showreferences").removeClass("t-state-disabled");
 			//console.log($(tabStrip).find("li #datastructure"));
 
 			if (viewAccess === "True") {
 				$("li#primarydata").removeClass("t-state-disabled");
 				$("li#prepare").removeClass("t-state-disabled");
 				$("li#attachements").removeClass("t-state-disabled");
-                $("li#showreferences").removeClass("t-state-disabled");
 				$("li#attachements").removeClass("t-state-disabled");
 
 			}
