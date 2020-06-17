@@ -355,7 +355,7 @@ namespace BExIS.Security.Services.Utilities
         { 
             string message = $"The creation of the search index is finished.";
 
-            if (errors != null)
+            if (errors != null && errors.Count>0)
             {
                 message += $"the following errors have occurred. </br>";
 
