@@ -34,7 +34,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         ///
         /// </summary>
         /// <param name="datasetVersionId"></param>
-        /// <param name="metadataFormat">name of the internal metadatastructure, if empty then </param>
         /// <param name="primaryDataFormat">mimetype like text/csv, text/plain</param>
         /// <returns></returns>
         public ActionResult GetZipOfDatasetVersion(long datasetVersionId, string primaryDataFormat = "")
@@ -172,7 +171,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        public ActionResult GenerateZip(long id, string format)
+        public ActionResult GenerateZip(long id,long versionid, string format)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             DatasetManager dm = new DatasetManager();
@@ -187,9 +186,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 using (var uow = this.GetUnitOfWork())
                 {
                     LoggerFactory.LogCustom("Generate Zip Start");
-
-                    long dsId = dm.GetDatasetLatestVersion(id).Id;
-                    DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    long dsvId = versionid;
+                    if(dsvId == 0)dsvId = dm.GetDatasetLatestVersion(id).Id;
+                    DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                     int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
                     #region metadata
@@ -215,20 +214,21 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
 
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        //check wheter title is empty or not
+                        string title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
 
                         switch (format)
                         {
                             case "application/xlsx":
-                                odm.GenerateExcelFile(id, title, false);
+                                odm.GenerateExcelFile(id, datasetVersion.Id, false);
                                 break;
 
                             case "application/xlsm":
-                                odm.GenerateExcelFile(id, title, true);
+                                odm.GenerateExcelFile(id, datasetVersion.Id, true);
                                 break;
 
                             default:
-                                odm.GenerateAsciiFile(id, title, format, false);
+                                odm.GenerateAsciiFile(id, datasetVersion.Id, format, false);
                                 break;
                         }
                     }
@@ -284,7 +284,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //generate datastructure as html
                         try
                         {
-                            DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                            DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                             generateDataStructureHtml(ds);
                         }
                         catch (Exception ex)
@@ -427,7 +427,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             long datastructureId = dsv.Dataset.DataStructure.Id;
             long researchplanId = dsv.Dataset.ResearchPlan.Id;
 
-            string title = xmlDatasetHelper.GetInformation(dsv.Dataset.Id, NameAttributeValues.title);
+            string title = dsv.Title;
             Session["ShowDataMetadata"] = dsv.Metadata;
 
             var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()

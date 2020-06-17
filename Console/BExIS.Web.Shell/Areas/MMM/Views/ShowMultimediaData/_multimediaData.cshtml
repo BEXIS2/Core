@@ -467,11 +467,11 @@
 
     function layoutImgWindow()
     {
-        $('#imgModal .modal-body #content .mmm-exif div').css({ 'max-height': parseInt(window.innerHeight * 0.4) + 'px' });
-        $('#imgModal .modal-body #content .mmm-map #map').css({ 'height': parseInt(window.innerHeight * 0.4) + 'px' });
-        $('#imgModal .modal-body #content .mmm-image').css({ 'max-height': parseInt(window.innerHeight * 0.8) + 'px'});
-        $('#imgModal .modal-body #content .mmm-image img').css({ 'max-height': parseInt(window.innerHeight * 0.8) + 'px' });
-        $('#imgModal .modal-body #content .mmm-image video').css({ 'max-height': parseInt(window.innerHeight * 0.8) + 'px' });
+        $('#imgModal .modal-body #content .mmm-exif div').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
+        //$('#imgModal .modal-body #content .mmm-map #map').css({ 'height': parseInt(window.innerHeight * 0.4) + 'px' });
+        $('#imgModal .modal-body #content .mmm-image').css({ 'height': parseInt(window.innerHeight * 0.8) + 'px'});
+        $('#imgModal .modal-body #content .mmm-image img').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
+        $('#imgModal .modal-body #content .mmm-image video').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
 
         var path = $('#imgModal .modal-body #content .mmm-image').attr('path');
 

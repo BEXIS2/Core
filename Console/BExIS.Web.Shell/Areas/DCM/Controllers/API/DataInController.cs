@@ -75,7 +75,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<DataTuple> rows = new List<DataTuple>();
 
             //load from apiConfig
-            int cellLimit = 10000;
+            int cellLimit = 100000;
             if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
             {
                 Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
@@ -130,8 +130,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "Dataset not exist.");
                 }
 
-                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                string title = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
+                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(dataset);
+                string title = dsv.Title;
 
                 if ((data.Data.Count() * data.Columns.Count()) > cellLimit)
                 {
@@ -344,8 +344,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (dataset == null)
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset not exist.");
 
-                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                string title = xmlDatasetHelper.GetInformation(dataset, NameAttributeValues.title);
+                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(dataset);
+                string title = dsv.Title;
 
                 if ((data.Data.Count() * data.Columns.Count()) > cellLimit)
                 {

@@ -1,4 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Modules.Dim.UI.Models.Mapping;
@@ -335,6 +336,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 mappingManager.Dispose();
+                MappingUtils.Clear();
             }
         }
 
@@ -359,6 +361,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
 
                 return Json(ex.Message);
+            }
+            finally
+            {
+                MappingUtils.Clear();
             }
         }
 

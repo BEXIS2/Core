@@ -56,10 +56,17 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourcePartyType.Id && item.TargetPartyType.Parties.Any()).ToList();
                             //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
+                            
                             if (defaultPartyTypePair == null)
                                 defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
                             if (defaultPartyTypePair != null)
+                            {
+                                if (defaultPartyTypePair.TargetPartyType.Parties != null)
+                                {
+                                    defaultPartyTypePair.TargetPartyType.Parties = defaultPartyTypePair.TargetPartyType.Parties.OrderBy(item => item.Name).ToList(); // order parties by name
+                                }
                                 allowedPartyTypePairs.Add(partyRelationshipType.DisplayName, defaultPartyTypePair);
+                            }
                         }
                     }
                     partyTypeAccountModel.PartyRelationshipsTypes.Add(partyType, allowedPartyTypePairs);
@@ -124,6 +131,19 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 userTask.Wait();
                 var user = userTask.Result;
                 partyManager.AddPartyUser(party, user.Id);
+
+                //set FullName in user
+                var p = partyManager.GetParty(party.Id);
+                string displayName = String.Join(" ",
+                    p.CustomAttributeValues.
+                    Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                    OrderBy(ca => ca.CustomAttribute.Id).
+                    Select(ca => ca.Value).ToArray());
+
+                user.DisplayName = displayName;
+                userManager.UpdateAsync(user);
+
+
                 return RedirectToAction("Index");
             }
             finally
@@ -184,10 +204,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
         {
             var party = new Party();
             PartyManager partyManager = null;
+            PartyTypeManager partyTypeManager = null;
             UserManager userManager = null;
             try
             {
                 partyManager = new PartyManager();
+                partyTypeManager = new PartyTypeManager();
                 userManager = new UserManager();
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
@@ -201,7 +223,32 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 if (partyModel.Id == 0)
                     return RedirectToAction("Index", "Home");
                 else
+                {
                     party = Helpers.Helper.EditParty(partyModel, partyCustomAttributeValues, null);
+
+                    var p = partyManager.GetParty(party.Id);
+                    string displayName = String.Join(" ",
+                        p.CustomAttributeValues.
+                        Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                        OrderBy(ca => ca.CustomAttribute.Id).
+                        Select(ca=>ca.Value).ToArray());
+
+                    user.DisplayName = displayName;
+
+                    if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                    {
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        if (nameProp != null)
+                        {               
+                            var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
+                            user.Email = entity.Value;
+                        }
+                    }
+                    
+
+                    userManager.UpdateAsync(user);
+
+                }
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             finally
@@ -219,15 +266,48 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult LoadPartyCustomAttr(int id)
         {
             PartyManager partyManager = null;
+            UserManager userManager = null;
             try
             {
+                userManager = new UserManager();
                 long partyId = 0;
                 var partyIdStr = HttpContext.Request.Params["partyId"];
+
+                ViewBag.userRegistration = HttpContext.Request.Params["userReg"];
+
                 if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
                 {
                     partyManager = new PartyManager();
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
+
+                    var userId = partyManager.GetUserIdByParty(partyId);
+                    var userTask = userManager.FindByIdAsync(userId);
+                    userTask.Wait();
+                    var user = userTask.Result;
+                    if (user != null)
+                    {
+                        ViewBag.email = user.Email;
+                    }
+
                 }
+                // if no user is linked assume it is the user registration
+                else
+                {
+
+                    var userName = HttpContext.User.Identity.Name;
+                    var userTask = userManager.FindByNameAsync(userName);
+                    userTask.Wait();
+                    var user = userTask.Result;
+
+                    ViewBag.email = user.Email;
+                }
+
+                // Add attribute name for email
+                if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                {
+                    ViewBag.PersonEmailAttributeName = ConfigurationManager.AppSettings["PersonEmailAttributeName"];
+                }
+
                 var customAttrList = new List<PartyCustomAttribute>();
                 PartyTypeManager partyTypeManager = new PartyTypeManager();
                 IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);

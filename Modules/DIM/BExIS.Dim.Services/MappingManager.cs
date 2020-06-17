@@ -59,19 +59,17 @@ namespace BExIS.Dim.Services
             return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get();
         }
 
-        public LinkElement GetLinkElement(long id)
-        {
-            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Id.Equals(id));
-        }
-
-        public LinkElement GetLinkElement(LinkElementType type)
-        {
-            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Type.Equals(type));
-        }
-
-        //public LinkElement GetLinkElement(LinkElementType type, long parentid)
+        //public LinkElement GetLinkElement(long id)
         //{
-        //    return LinkElementRepo.Get().FirstOrDefault(le => le.Type.Equals(type) && le.Parent.Id.Equals(parentid));
+        //    using (var uow = this.GetUnitOfWork())
+        //    {
+        //        return uow.GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Id.Equals(id));
+        //    }
+        //}
+
+        //public LinkElement GetLinkElement(LinkElementType type)
+        //{
+        //    return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Type.Equals(type));
         //}
 
         public LinkElement GetLinkElement(long elementid, LinkElementType type)
@@ -188,13 +186,13 @@ namespace BExIS.Dim.Services
 
         public IEnumerable<Mapping> GetChildMapping(long id)
         {
-            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().Where(m => m.Parent != null &&
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(id));
         }
 
         public IEnumerable<Mapping> GetChildMapping(long id, long level)
         {
-            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().Where(m => m.Parent != null &&
+            return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(id) &&
             m.Level.Equals(level));
         }

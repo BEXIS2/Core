@@ -25,7 +25,7 @@
     </property>
 
     <property name="Description" type="String" not-null="false">
-      <column name="Description"  />
+      <column name="Description"  sql-type="text" />
     </property>
 
     <property name="StartDate" type="DateTime" not-null="false" >

@@ -5,7 +5,7 @@
 
     <!-- Mapping Entity properties -->
     <property name="MatchingPhrase" type="String">
-      <column name="MatchingPhrase" />
+      <column name="MatchingPhrase" sql-type="text"/>
     </property>
 
     <property name="CaseSensitive" type="yes_no">

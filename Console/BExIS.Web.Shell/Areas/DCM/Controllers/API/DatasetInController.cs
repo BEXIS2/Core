@@ -146,7 +146,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     workingCopy.Metadata = XmlUtility.ToXmlDocument(xdoc);
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.title, dataset.Title);
+                    workingCopy.Title = dataset.Title;
                     workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.description, dataset.Description);
+                    workingCopy.Description = dataset.Description;
+
 
                     ////set modification
                     workingCopy.ModificationInfo = new EntityAuditInfo()

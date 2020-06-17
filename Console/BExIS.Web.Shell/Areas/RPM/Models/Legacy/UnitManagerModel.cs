@@ -9,8 +9,8 @@ namespace BExIS.Modules.Rpm.UI.Models
 {
     public class EditUnitModel
     {
-        public bool inUse {get; set;}
-        public Unit Unit {get; set;}
+        public bool inUse { get; set; }
+        public Unit Unit { get; set; }
         public List<DataType> DataTypeList;
         public List<Dimension> DimensionList;
 
@@ -28,12 +28,33 @@ namespace BExIS.Modules.Rpm.UI.Models
             setup(unit, listView);
         }
 
-        public EditUnitModel(long unitId , bool listView = false)
+        public EditUnitModel(long unitId, bool listView = false)
         {
             if (unitId > 0)
                 setup(unitId, listView);
             else
                 setup();
+        }
+
+        public void ReloadLists()
+        {
+            DataTypeList = new List<DataType>();
+            DimensionList = new List<Dimension>();
+
+            UnitManager unitManager = null;
+            DataTypeManager dataTypeManager = null;
+            try
+            {
+                dataTypeManager = new DataTypeManager();
+                unitManager = new UnitManager();
+                DataTypeList = dataTypeManager.Repo.Get().ToList();
+                DimensionList = unitManager.DimensionRepo.Get().ToList();
+            }
+            finally
+            {
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
+            }
         }
 
         private void setup()
@@ -90,7 +111,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             if (!listView)
                 setup();
 
-            this.Unit = unit;             
+            this.Unit = unit;
             inUse = unitInUse(Unit);
         }
 
@@ -121,22 +142,29 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class UnitManagerModel
     {
-        UnitManager unitManager = null;
+        private UnitManager unitManager = null;
         public List<EditUnitModel> editUnitModelList = new List<EditUnitModel>();
 
-        public EditUnitModel editUnitModel;
+        public EditUnitModel EditUnitModel;
 
         public UnitManagerModel()
         {
             setup();
-            editUnitModel = new EditUnitModel();
+            EditUnitModel = new EditUnitModel();
         }
 
         public UnitManagerModel(long unitId)
         {
             setup();
-            editUnitModel = new EditUnitModel(unitId);
+            EditUnitModel = new EditUnitModel(unitId);
+        }
 
+        public UnitManagerModel(EditUnitModel editUnitModel)
+        {
+            setup();
+            EditUnitModel = editUnitModel;
+
+            EditUnitModel.ReloadLists();
         }
 
         private void setup()
@@ -163,6 +191,5 @@ namespace BExIS.Modules.Rpm.UI.Models
                 unitManager.Dispose();
             }
         }
-
-    } 
+    }
 }

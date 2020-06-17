@@ -7,6 +7,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using Lucene.Net.Analysis;
@@ -16,6 +17,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -164,10 +166,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
             DatasetManager dm = new DatasetManager();
-
+            List<string> errors = new List<string>();
             try
             {
-                List<string> errors = new List<string>();
+                
                 IList<long> ids = dm.GetDatasetLatestIds();
 
                 //ToDo only enitities from type dataset should be indexed in this index
@@ -201,6 +203,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 dm.Dispose();
                 GC.Collect();
+
+                var es = new EmailService();
+                es.Send(MessageHelper.GetSearchReIndexHeader(),
+                    MessageHelper.GetSearchReIndexMessage(errors),
+                    ConfigurationManager.AppSettings["SystemEmail"]);
+
             }
         }
 

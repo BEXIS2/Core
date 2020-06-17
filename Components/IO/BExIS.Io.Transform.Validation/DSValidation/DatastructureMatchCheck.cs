@@ -42,6 +42,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
         public List<Error> Execute(List<VariableIdentifier> checkList, List<VariableIdentifier> sourceList, string sourceListName)
         {
             List<Error> errors = new List<Error>();
+            List<string> errorVariables = new List<string>();
 
             // check length
             if (checkList.Count.Equals(sourceList.Count))
@@ -54,13 +55,17 @@ namespace BExIS.IO.Transform.Validation.DSValidation
                     else
                         test = sourceList.Select(p => p.id.Equals(o.id)).Contains(true);
 
-                    if (!test) errors.Add(new Error(ErrorType.Datastructure, "A variable of the data file does not exist in the data structure", o.name));
-
+                    if (!test)
+                        errorVariables.Add(o.name);
+                }
+                if (errorVariables.Count > 0)
+                {
+                    errors.Add(new Error(ErrorType.Datastructure, "A variable of the data file does not exist in the data structure. Check your variable names in your file and data structure. Names need to be identical.", string.Join(",", errorVariables)));
                 }
             }
             else
             {
-                errors.Add(new Error(ErrorType.Datastructure, "Datastructure does not fit. The number of variables in file do not match", sourceListName));
+                errors.Add(new Error(ErrorType.Datastructure, "Data structure does not fit. The number of variables in the file does not match with the defined number in the data structure.", sourceListName));
                 return errors;
             }
 

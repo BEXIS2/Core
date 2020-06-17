@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Requests;
+using System;
 using System.ComponentModel;
 
 namespace BExIS.Modules.Sam.UI.Models
@@ -20,5 +21,8 @@ namespace BExIS.Modules.Sam.UI.Models
 
         [DisplayName("Status")]
         public string StatusAsText { get; set; }
+        public DateTime DecisionDate { get; set; }
+        public DateTime RequestDate { get; set; }
+        public string DecisionMaker { get; internal set; }
     }
 }

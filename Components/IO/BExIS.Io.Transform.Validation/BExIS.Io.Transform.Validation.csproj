@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DSValidation\DatastructureOrderCheck.cs" />
     <Compile Include="DSValidation\DatastructureMatchCheck.cs" />
     <Compile Include="DSValidation\VariableIdentifier.cs" />
     <Compile Include="Exceptions\Error.cs" />

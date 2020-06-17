@@ -46,7 +46,9 @@
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()
+                .OperationMode(GridOperationMode.Client)
                 .Select("Instances_Select", "EntityPermissions", new { EntityId = Model })
+                
         )
         .ClientEvents(events =>
         {

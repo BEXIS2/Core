@@ -11,37 +11,19 @@ using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Security.Entities.Requests;
+using BExIS.Security.Entities.Subjects;
+using Vaiona.Persistence.Api;
+using BExIS.Dlm.Services.Party;
+using BExIS.Dlm.Entities.Party;
+using BExIS.Security.Services.Utilities;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class RequestsController : Controller
     {
-        [HttpPost]
-        public void Accept(long decisionId)
-        {
-            var decisionManager = new DecisionManager();
-
-            try
-            {
-                decisionManager.Accept(decisionId, "");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
-            }
-        }
-
         public ActionResult Decisions(long entityId)
-        {
-            return PartialView("_Decisions", entityId);
-        }
-
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Decisions_Select(long entityId, GridCommand command)
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
@@ -52,8 +34,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             // Source + Transformation - Data
             var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
 
-            var results = decisions.Select(
-                m =>
+            List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
+
+            foreach (var m in decisions)
+            {
+                model.Add(
                     new DecisionGridRowModel()
                     {
                         Id = m.Id,
@@ -63,14 +48,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                         InstanceId = m.Request.Key,
                         Title = entityStore.GetTitleById(m.Request.Key),
-                        Applicant = m.Request.Applicant.Name,
-                        Intention = m.Request.Intention
-                    }); ;
+                        Applicant = getPartyName(m.Request.Applicant),
+                        Intention = m.Request.Intention,
+                        RequestDate = m.Request.RequestDate
+                    });
 
-            // Filtering
-            var total = results.Count();
 
-            return View(new GridModel<DecisionGridRowModel> { Data = results.ToList(), Total = total });
+            }
+            return PartialView("_Decisions", model.OrderBy(x=>x.Status).ThenBy(n => n.Id));
         }
 
         public ActionResult Index()
@@ -99,13 +84,35 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public void Reject(long requestId)
+        public void Accept(long decisionId)
         {
             var decisionManager = new DecisionManager();
 
             try
             {
-                decisionManager.Reject(requestId, "");
+                decisionManager.Accept(decisionId, "");
+
+                var es = new EmailService();
+                var entityManager = new EntityManager();
+
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var requestRepository = uow.GetRepository<Request>();
+                    var request = requestRepository.Get(decisionId);
+
+                    if (request != null)
+                    {
+                        var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
+                        string applicant = getPartyName(request.Applicant);
+
+                        es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
+                            MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
+                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        );
+                    }
+                }
+
+
             }
             catch (Exception e)
             {
@@ -117,9 +124,84 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        public ActionResult Requests(long entityId)
+        [HttpPost]
+        public void Reject(long requestId)
         {
-            return PartialView("_Requests", entityId);
+            var decisionManager = new DecisionManager();
+
+            try
+            {
+                decisionManager.Reject(requestId, "");
+
+                var es = new EmailService();
+                var entityManager = new EntityManager();
+
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var requestRepository = uow.GetRepository<Request>();
+                    var request = requestRepository.Get(requestId);
+
+                    if (request != null)
+                    {
+                        var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
+                        string applicant = getPartyName(request.Applicant);
+
+                        es.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
+                        MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
+                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                decisionManager.Dispose();
+            }
+        }
+
+        [HttpPost]
+        public void Withdraw(long requestId)
+        {
+            var decisionManager = new DecisionManager();
+
+            try
+            {
+                decisionManager.Withdraw(requestId);
+
+                var es = new EmailService();
+                var entityManager = new EntityManager();
+
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var requestRepository = uow.GetRepository<Request>();
+                    var request = requestRepository.Get(requestId);
+
+                    if (request != null)
+                    {
+                        var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
+
+                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+                        string applicant = getPartyName(request.Applicant);
+
+                        es.Send(MessageHelper.GetWithdrawRequestHeader(request.Key, applicant),
+                        MessageHelper.GetWithdrawRequestMessage(request.Key, entityStore.GetTitleById(request.Key), applicant),
+                        new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                decisionManager.Dispose();
+            }
         }
 
         public ActionResult Requests_And_Decisions(long entityId)
@@ -127,8 +209,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Requests_And_Decisions", entityId);
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Requests_Select(long entityId, GridCommand command)
+        public ActionResult Requests(long entityId)
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
@@ -140,21 +221,43 @@ namespace BExIS.Modules.Sam.UI.Controllers
             // Source + Transformation - Data
             var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
 
-            var results = requests.Select(
-                m => new RequestGridRowModel()
+            List<RequestGridRowModel> model = new List<RequestGridRowModel>();
+
+            foreach (var m in requests)
+            {
+                model.Add(
+                    new RequestGridRowModel()
+                    {
+                        Id = m.Id,
+                        InstanceId = m.Key,
+                        Title = entityStore.GetTitleById(m.Key),
+                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                        RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
+                        Intention = m.Intention,
+                        RequestDate = m.RequestDate
+                    }
+                    );
+            }
+
+
+            return PartialView("_Requests", model);
+        }
+
+        private string getPartyName(User user)
+        {
+            using (var uow = this.GetUnitOfWork())
+            using (var partyManager = new PartyManager())
+            {
+                if (user != null)
                 {
-                    Id = m.Key,
-                    InstanceId = m.Key,
-                    Title = entityStore.GetTitleById(m.Key),
-                    Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
-                    RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
-                    Intention = m.Intention
-                });
-
-            // Filtering
-            var total = results.Count();
-
-            return View(new GridModel<RequestGridRowModel> { Data = results.ToList(), Total = total });
+                    Party party = partyManager.GetPartyByUser(user.Id);
+                    if (party != null)
+                    {
+                        return party.Name;
+                    }
+                }
+            }
+            return user.Name;
         }
     }
 }

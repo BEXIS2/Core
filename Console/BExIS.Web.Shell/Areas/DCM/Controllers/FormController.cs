@@ -128,6 +128,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.DatasetId = -1;
             }
 
+            // set latest version to true, as this view is only called from edit actions, which are only possible for the latest version
+            Model.LatestVersion = true;
+
+
+
             ViewData["Locked"] = locked;
 
             return PartialView("MetadataEditor", Model);
@@ -722,7 +727,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
                 }
-
             }
 
             ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
@@ -1332,6 +1336,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
 
+        public JsonResult UpdateSimpleUsageWithParty(string xpath, long partyId)
+        {
+
+            try
+            {
+                AddXmlAttribute(xpath, "partyid", partyId.ToString());
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(false, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
         {
             ViewData["ShowOptional"] = true;
@@ -1381,6 +1400,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
+
+
 
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
@@ -2416,6 +2437,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
                         }
+                        else if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataAttributeUsage, text);
+                        }
+
                         break;
                     }
             }
@@ -2440,6 +2466,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
+
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
         {
@@ -3414,7 +3441,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 long researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
                 long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
-                string title = xmlDatasetHelper.GetInformation(entityId, NameAttributeValues.title);
+                var entityVersion = datasetManager.GetDatasetLatestVersion(entityId);
+
+                string title = entityVersion.Title;
 
                 // get the offline version of the metadata
                 var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()
@@ -3429,9 +3458,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 });
 
                 // prepare view to write it to the file
-                byte[] content = Encoding.ASCII.GetBytes(view.ToString());
+                byte[] content = Encoding.UTF8.GetBytes(view.ToString());
 
-                return File(content, "application/xhtml+xml", "metadata.htm");
+                return File(content, "application/xhtml+xml", entityId + "_metadata.htm");
             }
 
             return Content("no metadata html file is loaded.");

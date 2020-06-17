@@ -38,9 +38,9 @@ namespace BExIS.IO.Transform.Output
                 gfbioDataCenterFormularObject.DatasetId = datasetId;
                 gfbioDataCenterFormularObject.DatasetVersion = datasetVersion.Id;
                 gfbioDataCenterFormularObject.License = "";
-                gfbioDataCenterFormularObject.DatasetTitle = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                gfbioDataCenterFormularObject.DatasetLabel = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                gfbioDataCenterFormularObject.DatasetDescription = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+                gfbioDataCenterFormularObject.DatasetTitle = datasetVersion.Title;
+                gfbioDataCenterFormularObject.DatasetLabel = datasetVersion.Title;
+                gfbioDataCenterFormularObject.DatasetDescription = datasetVersion.Description;
                 //gfbioDataCenterFormularObject.DatasetAuthors = new List<string>();
 
 
@@ -77,8 +77,8 @@ namespace BExIS.IO.Transform.Output
 
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-                string title = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                string description = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+                string title = datasetVersion.Title;
+                string description = datasetVersion.Description;
 
                 return gfbioPangaeaFormularObject;
             }

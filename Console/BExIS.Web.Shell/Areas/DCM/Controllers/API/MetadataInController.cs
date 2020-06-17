@@ -156,6 +156,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(id);
                         workingCopy.Metadata = completeMetadata;
+                        workingCopy.Title = xmlDatasetHelper.GetInformation(id, completeMetadata, NameAttributeValues.title);
+                        workingCopy.Description = xmlDatasetHelper.GetInformation(id, completeMetadata, NameAttributeValues.description);
 
                         //check if modul exist
                         int v = 1;
@@ -165,7 +167,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
                         workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
 
-                        title = xmlDatasetHelper.GetInformationFromVersion(workingCopy.Id, NameAttributeValues.title);
+                        title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);

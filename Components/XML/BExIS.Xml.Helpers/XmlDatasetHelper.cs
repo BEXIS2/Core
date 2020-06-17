@@ -16,6 +16,48 @@ namespace BExIS.Xml.Helpers
         #region get
 
         /// <summary>
+        /// Return a value of the attribute from the incoming metadata 
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="metadata"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string GetInformation(long datasetid, XmlDocument metadata, NameAttributeValues name)
+        {
+            DatasetManager dm = new DatasetManager();
+            try
+            {
+                
+
+                using (var unitOfWork = this.GetUnitOfWork())
+                {
+                    if (datasetid <= 0) return String.Empty;
+
+                    var dataset = dm.GetDataset(datasetid);
+
+
+                    MetadataStructureManager msm = new MetadataStructureManager();
+                    MetadataStructure metadataStructure = msm.Repo.Get(dataset.MetadataStructure.Id);
+
+                    if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
+
+                    XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                    XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                        xDoc);
+
+                    string xpath = temp.Attribute("value").Value.ToString();
+                    string value = metadata.SelectSingleNode(xpath).InnerText;
+
+                    return string.IsNullOrWhiteSpace(value) ?"not available": value;
+                }
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="datasetid"></param>
@@ -27,16 +69,74 @@ namespace BExIS.Xml.Helpers
             try
             {
                 //DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetid);
-                var datasetIds = new List<long>() { datasetid };
+                var dataset = dm.GetDataset(datasetid);
 
-                var version = dm.GetDatasetLatestVersions(datasetIds, true).FirstOrDefault();
+                if (!dm.IsDatasetCheckedIn(datasetid)) return string.Empty;
 
-                if (version == null) return string.Empty;
-                return GetInformationFromVersion(version.Id, name);
+                var versionId = dm.GetDatasetLatestVersionId(datasetid);
+
+                return GetInformationFromVersion(versionId, dataset.MetadataStructure.Id, name);
             }
             finally
             {
                 dm.Dispose();
+            }
+        }
+
+
+        /// <summary>
+        /// Information in metadata is stored as xml
+        /// get back the vale of an attribute
+        /// e.g. title  = "dataset title"
+        /// /// </summary>
+        /// <param name="datasetVersion"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string GetInformationFromVersion(long datasetVersionId, long metadataStructureId, NameAttributeValues name)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            using (var unitOfWork = this.GetUnitOfWork())
+            {
+                if (datasetVersionId <= 0) return String.Empty;
+                if (metadataStructureId <= 0) return String.Empty;
+
+                MetadataStructureManager msm = new MetadataStructureManager();
+                MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+
+                if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
+
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                    xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+
+                return dm.GetMetadataValueFromDatasetVersion(datasetVersionId, xpath);
+            }
+        }
+
+        public Dictionary<long, string> GetInformationFromVersions(List<long> datasetVersionIds, long metadataStructureId, NameAttributeValues name)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            using (var unitOfWork = this.GetUnitOfWork())
+            {
+                if (datasetVersionIds.Any(d => d <= 0)) return null;
+                if (metadataStructureId <= 0) return null;
+
+                MetadataStructureManager msm = new MetadataStructureManager();
+                MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+
+                if ((XmlDocument)metadataStructure.Extra == null) return null;
+
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                    xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+
+                return dm.GetMetadataValueFromDatasetVersion(datasetVersionIds, xpath);
             }
         }
 
@@ -54,29 +154,10 @@ namespace BExIS.Xml.Helpers
             {
                 DatasetVersion datasetVersion = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(datasetVersionId);
 
-                // get MetadataStructure
-                if (datasetVersion != null && datasetVersion.Dataset != null &&
-                    datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
-                {
-                    MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                    if ((XmlDocument)metadataStructure.Extra != null)
-                    {
-                        XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-                        XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
-                            xDoc);
-
-                        string xpath = temp.Attribute("value").Value.ToString();
-
-                        XmlNode node = datasetVersion.Metadata.SelectSingleNode(xpath);
-
-                        string title = "";
-                        if (node != null)
-                            title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-                        return title;
-                    }
-                }
-                return string.Empty;
+                return GetInformationFromVersion(
+                    datasetVersion.Id,
+                    datasetVersion.Dataset.MetadataStructure.Id,
+                    name);
             }
         }
 
@@ -95,7 +176,7 @@ namespace BExIS.Xml.Helpers
             {
                 DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
 
-                return GetInformationFromVersion(datasetVersion.Id, name);
+                return GetInformationFromVersion(datasetVersion.Id, dataset.MetadataStructure.Id, name);
             }
             finally
             {
@@ -521,6 +602,30 @@ namespace BExIS.Xml.Helpers
                             tmpEntityClassPath = entity.Attribute("value").Value.ToLower();
 
                         if (tmpEntityClassPath.Equals(entityClassPath.ToLower())) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool HasEntity(long metadataStructureId, string name)
+        {
+            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
+            // get MetadataStructure
+            if (metadataStructure != null && metadataStructure.Extra != null)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
+                if (tmp.Any())
+                {
+                    foreach (var entity in tmp)
+                    {
+                        string tmpname = "";
+                        if (entity.HasAttributes && entity.Attribute("name") != null)
+                            tmpname = entity.Attribute("name").Value.ToLower();
+
+                        if (tmpname.Equals(name.ToLower())) return true;
                     }
                 }
             }

@@ -61,7 +61,7 @@ namespace BExIS.Web.Shell.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
-            return View();
+            return RedirectToAction("Index");
         }
 
         [DoesNotNeedDataAccess]
