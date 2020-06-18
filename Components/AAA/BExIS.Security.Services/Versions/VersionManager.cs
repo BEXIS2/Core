@@ -39,7 +39,7 @@ namespace BExIS.Security.Services.Versions
         {
             using (var uow = this.GetUnitOfWork())
             {
-                return !Exists(module) ? null : VersionRepository.Query(v => string.Equals(v.Module, module, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(v => v.Date).FirstOrDefault();
+                return !Exists(module) ? null : VersionRepository.Query(v => v.Module.Equals(module)).OrderByDescending(v => v.Date).FirstOrDefault();
             }
         }
 
