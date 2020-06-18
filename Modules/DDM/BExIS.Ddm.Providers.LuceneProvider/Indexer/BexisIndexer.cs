@@ -625,7 +625,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         List<string> primaryDataStringToindex = null;
                         using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
                         {
-                            primaryDataStringToindex = getAllStringValuesFromTable(table); // should take the table
+                            primaryDataStringToindex = getAllStringValuesFromTable(table).Distinct().ToList(); // should take the table
                             table.Dispose();
                         }
 
