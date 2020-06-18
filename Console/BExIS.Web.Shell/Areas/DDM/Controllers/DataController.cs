@@ -1460,7 +1460,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //ToDo send emails to owner & requester
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id),
-                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault(), intention),
+                            MessageHelper.GetSendRequestMessage(id, title, GetUsernameOrDefault(), intention, request.Applicant.Email),
                             emailDescionMaker
                             );
                     }

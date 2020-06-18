@@ -28,5 +28,6 @@ namespace BExIS.Security.Entities.Requests
         public virtual DateTime RequestDate { get; set; }
         public virtual short Rights { get; set; }
         public virtual RequestStatus Status { get; set; }
+        public virtual string Email { get; set; }
     }
 }

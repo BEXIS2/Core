@@ -124,13 +124,13 @@ namespace BExIS.Security.Services.Utilities
         {
             string emailsAsString = string.Join(",", emails);
 
-            return $"User \"{requester}\" with email/s <b>({emailsAsString})</b> send a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+            return $"User \"{requester}\" with email/s <b>({emailsAsString})</b> sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
-        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
+        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason, string email)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"User \"{requester}\" sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
+            stringBuilder.AppendLine($"User <b>\"{requester}\"</b> with email <b>{email}</b> sent a request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> <br/>");
             stringBuilder.AppendLine("<b>Intention:</b>");
             stringBuilder.AppendLine(reason);
 
