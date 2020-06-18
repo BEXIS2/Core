@@ -26,9 +26,9 @@ namespace BExIS.Utils.Data.Helpers
             var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
 
             var versionManager = new VersionManager();
-            if (!versionManager.Exists("Shell", "2.13.0"))
+            if (!versionManager.Exists("Shell", "2.14.0"))
             {
-                versionManager.Create("Shell", "2.13.0");
+                versionManager.Create("Shell", "2.14.0");
             }
         }
 

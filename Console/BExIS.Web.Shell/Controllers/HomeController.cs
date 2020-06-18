@@ -72,7 +72,7 @@ namespace BExIS.Web.Shell.Controllers
 
             // Database
             var versionManager = new VersionManager();
-            var database = versionManager.GetLatestVersion("Shell").Value;
+            var database = versionManager.GetLatestVersion().Value;
 
             // Workspace
             string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
