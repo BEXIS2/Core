@@ -262,7 +262,7 @@
 	function OnDataBound() {
 		addTooltips();
 		resetAllTelerikIconTitles();
-
+        //console.log("OnDataBound");
         //  $("table.scrollable td:nth-child(" + lastIndex + ")").addClass(rightStyle);
 
         var allMissingValuesString = '@compareValues';
@@ -283,10 +283,10 @@
                         var kvpString = currentMVSArray[i];
                         var displayname = kvpString.split("|")[0]
                         var placeholder = kvpString.split("|")[1]
-                        console.log("c" + i + "-" + displayname + " - " + placeholder);
-
+                        //console.log("c" + i + "-" + displayname + " - " + placeholder + " " + this.innerHTML);
+                        
                         //check if the value is a missing value and replace it
-                        if (this.innerHTML == placeholder) {
+                        if (this.innerHTML.toUpperCase() == placeholder) {
                             this.innerHTML = displayname;
                         }
 

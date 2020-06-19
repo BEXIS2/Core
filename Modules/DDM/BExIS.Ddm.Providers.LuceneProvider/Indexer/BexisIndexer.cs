@@ -620,51 +620,55 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     int fetchSize = dm.PreferedBatchSize;
                     long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
                     long noOfFetchs = tupleSize / fetchSize + 1;
-                    for (int round = 0; round < noOfFetchs; round++)
+
+                    if (tupleSize > 0)
                     {
-                        List<string> primaryDataStringToindex = null;
-                        using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
+                        for (int round = 0; round < noOfFetchs; round++)
                         {
-                            primaryDataStringToindex = getAllStringValuesFromTable(table); // should take the table
-                            table.Dispose();
-                        }
-
-                        foreach (XmlNode category in categoryNodes)
-                        {
-                            String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
-                            String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
-                            String analysing = category.Attributes.GetNamedItem("analysed").Value;
-                            float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
-                            var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
-
-                            if (analysing.ToLower().Equals("yes"))
+                            List<string> primaryDataStringToindex = null;
+                            using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
                             {
-                                toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
+                                primaryDataStringToindex = getAllStringValuesFromTable(table); // should take the table
+                                table.Dispose();
                             }
 
-                            if (category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
+                            foreach (XmlNode category in categoryNodes)
                             {
-                                if (primaryDataStringToindex != null && primaryDataStringToindex.Count > 0)
-                                {
+                                String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
+                                String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
+                                String analysing = category.Attributes.GetNamedItem("analysed").Value;
+                                float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
+                                var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
 
-                                    foreach (string pDataValue in primaryDataStringToindex)
-                                    // Loop through List with foreach
+                                if (analysing.ToLower().Equals("yes"))
+                                {
+                                    toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
+                                }
+
+                                if (category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
+                                {
+                                    if (primaryDataStringToindex != null && primaryDataStringToindex.Count > 0)
                                     {
-                                        Field a = new Field("category_" + lucene_name, pDataValue,
-                                            Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                                        a.Boost = boosting;
-                                        dataset.Add(a);
-                                        dataset.Add(new Field("ng_" + lucene_name, pDataValue,
-                                            Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                        dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
-                                            Lucene.Net.Documents.Field.Index.ANALYZED));
-                                        writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                                        writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                        primaryDataStringToindex = primaryDataStringToindex.Distinct().ToList();
+                                        foreach (string pDataValue in primaryDataStringToindex)
+                                        // Loop through List with foreach
+                                        {
+                                            Field a = new Field("category_" + lucene_name, pDataValue,
+                                                Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                                            a.Boost = boosting;
+                                            dataset.Add(a);
+                                            dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                                                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                                                Lucene.Net.Documents.Field.Index.ANALYZED));
+                                            writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                                            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
             }
