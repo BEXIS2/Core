@@ -3278,13 +3278,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(entityId);
             long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-
-
             try
             {
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), entityName, typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
