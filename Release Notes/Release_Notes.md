@@ -1,7 +1,7 @@
 # BEXIS 2.14 Release Notes
 
 ### Features
-- Revision and enhancement for data permission requests (New: Admin view to manage requests; Withdraw requests; Changed: Email notification (e.g. send also BCC to Sysadmin); Layout (replacement of telerik)) ([#532](https://github.com/BEXIS2/Core/issues/532))
+- Revision and enhancement for data permission requests (New: Admin view to manage requests; Withdraw requests; Changed: Email notification (e.g. send also CC to Sysadmin); Layout (replacement of telerik)) ([#532](https://github.com/BEXIS2/Core/issues/532), ([#582](https://github.com/BEXIS2/Core/issues/582))
 
 - Asynchronous data upload  ([#510](https://github.com/BEXIS2/Core/issues/510))
 
@@ -21,7 +21,7 @@
 - More Unit tests add & setup of Jenkins test server ([#434](https://github.com/BEXIS2/Core/issues/434), [#466](https://github.com/BEXIS2/Core/issues/466))
 
 
-- UI Improvements for data structure view & edit (e.g show description, replace ID by column index, split tabular and file, reorder view ..) ([#438](https://github.com/BEXIS2/Core/issues/438), [#501](https://github.com/BEXIS2/Core/issues/501), [#507](https://github.com/BEXIS2/Core/issues/507), [#521](https://github.com/BEXIS2/Core/issues/521))
+- UI Improvements for data structure view & edit (e.g show description, replace ID by column index, split tabular and file, reorder view,show display pattern for datetime  ..) ([#438](https://github.com/BEXIS2/Core/issues/438), [#501](https://github.com/BEXIS2/Core/issues/501), [#507](https://github.com/BEXIS2/Core/issues/507), [#521](https://github.com/BEXIS2/Core/issues/521), [#569](https://github.com/BEXIS2/Core/issues/569))
 
 - UI Improvements publish tab ([#450](https://github.com/BEXIS2/Core/issues/450))
 
@@ -36,6 +36,8 @@
 - Logout resets user-specific session variables ([#456](https://github.com/BEXIS2/Core/issues/456))
 
 - Replace dynamic retrieval of title and description, by a static storage to increase loading time e.g. links, datasets, ...([#498](https://github.com/BEXIS2/Core/issues/498), [#478](https://github.com/BEXIS2/Core/issues/478))
+
+- Replace dynamic retrieval of user name, by a static storage as display name for each user/subject ([#556](https://github.com/BEXIS2/Core/issues/556))
 
 - Reduce loading time for data structures ([#459](https://github.com/BEXIS2/Core/issues/459))
  
@@ -54,6 +56,17 @@
 
 - Fixed "Owner" role replaced by setting ([#545](https://github.com/BEXIS2/Core/issues/545))
 
+- User email can be linked to party and is updated on change (both sides) ([#56](https://github.com/BEXIS2/Core/issues/56))
+
+- Set default selection for "optional" during data structure creation by setting ([#583](https://github.com/BEXIS2/Core/issues/583))
+
+- XSD import: Root can be now a element ot group ([#590](https://github.com/BEXIS2/Core/issues/590))
+
+- Improve creation of primary data index ([#596](https://github.com/BEXIS2/Core/issues/596))
+
+- Add generic entity permission checks ([#519](https://github.com/BEXIS2/Core/issues/519))
+
+- Add version information ([#475](https://github.com/BEXIS2/Core/issues/475))
 
 
 ### Bugs
@@ -79,7 +92,7 @@
 
 - Fix user names shown instead of names in dataset view ([#476](https://github.com/BEXIS2/Core/issues/476))
 
-- Fix missing value applied to the wrong column ([#484](https://github.com/BEXIS2/Core/issues/484))
+- Fix missing value applied to the wrong column and not after paging ([#484](https://github.com/BEXIS2/Core/issues/484), [#595](https://github.com/BEXIS2/Core/issues/595))
 
 - Fix Excel template converts numbers with dot to date ([#469](https://github.com/BEXIS2/Core/issues/469))
 
@@ -125,11 +138,27 @@
 
 - Fix errors in unit and dimension seed data
 
+- Fix dimension specification validation during creation of new unit ([#563](https://github.com/BEXIS2/Core/issues/563))
+
 - Fix tuple order in datasetversions are random ([#539](https://github.com/BEXIS2/Core/issues/539))
 
 - Fix wrong help link ([#564](https://github.com/BEXIS2/Core/issues/564))
 
+- Fix metadata display content overlay during initial load ([#581](https://github.com/BEXIS2/Core/issues/581))
 
+- Fix user and groups are not filter- or sortable ([#555](https://github.com/BEXIS2/Core/issues/555))
+
+- Fix error during delete of relationships ([#553](https://github.com/BEXIS2/Core/issues/553))
+
+- Fix download of versions does not contain the correct primary data and version number ([#580](https://github.com/BEXIS2/Core/issues/580), [#585](https://github.com/BEXIS2/Core/issues/585))
+
+- Fix search details column was sortable ([#586](https://github.com/BEXIS2/Core/issues/586))
+
+- Fix edit metadata not possible after cancel ([#448](https://github.com/BEXIS2/Core/issues/448))
+
+- Fix missing tooltip for variable template view ([#258](https://github.com/BEXIS2/Core/issues/258))
+
+- Fix missing values restored after deleting them ([#589](https://github.com/BEXIS2/Core/issues/589))
 
 
 
