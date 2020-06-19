@@ -232,8 +232,6 @@ ALTER COLUMN description TYPE character varying;
 ALTER TABLE parties
 ALTER COLUMN description TYPE character varying;
 
-END
-$do$
 
 -- UPDATE Dimensions
 UPDATE dimensions SET specification='L(1,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 2;
@@ -273,3 +271,44 @@ UPDATE dimensions SET specification='L(3,3)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)'
 UPDATE dimensions SET specification='L(2,2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 36;
 UPDATE dimensions SET specification='L(3,2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 37;
 
+-- Table: public.versions
+
+-- DROP TABLE public.versions;
+-- DROP SEQUENCE versions_id_seq;
+
+CREATE SEQUENCE public.versions_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.versions_id_seq
+    OWNER TO postgres;
+
+CREATE TABLE public.versions
+(
+    id bigint NOT NULL DEFAULT nextval('versions_id_seq'::regclass),
+    versionno integer NOT NULL,
+    extra xml,
+    module character varying(255) COLLATE pg_catalog."default",
+    value character varying(255) COLLATE pg_catalog."default",
+    date timestamp without time zone,
+    CONSTRAINT versions_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.versions
+    OWNER to postgres;
+
+INSERT INTO public.versions(
+	id, versionno, extra, module, value, date)
+	VALUES (1, 1, null, 'Shell', '2.14.0',NOW());
+
+
+
+END
+$do$
