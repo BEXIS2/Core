@@ -31,6 +31,11 @@ datasetversion_ids bigint[];
 t text;
 d text;
 
+-- User DisplayName
+pu_user_ids bigint[];
+partyid bigint;
+partyname text;
+x bigint;
 
 
 BEGIN
@@ -42,8 +47,9 @@ BEGIN
 	
     datatuple_ids := ARRAY(Select id from datatuples as t);
 
-    for x in 1..array_upper(datatuple_ids,1)
+    for y in 1..array_upper(datatuple_ids,1)
     LOOP
+        x = datatuple_ids[y];
         --get one datatuple
         xml_data := (Select xmlvariablevalues from datatuples as t where t.id=x);
         
@@ -115,8 +121,10 @@ BEGIN
 
 	datatuple_ids := ARRAY(Select id from datatupleversions as t);
 	
-    for x in 1..array_upper(datatuple_ids,1)
+    for y in 1..array_upper(datatuple_ids,1)
     LOOP
+
+        x = datatuple_ids[y];
         --get one datatuple
         xml_data := (Select xmlvariablevalues from datatupleversions as t where t.id=x);
         
@@ -196,9 +204,9 @@ Alter Table datasetversions ADD COLUMN Description Text;
 
 datasetversion_ids:= ARRAY(select id from datasetversions);
 
-for x in 1..array_upper(datasetversion_ids,1)
+for y in 1..array_upper(datasetversion_ids,1)
 LOOP
-
+    x = datasetversion_ids[y];   
 t := (Select (xpath('//' || (SELECT
   		(xpath('//nodeRef/@value',xml_element))[1] AS "value"
         FROM (
@@ -239,8 +247,39 @@ ALTER TABLE public.users
 ALTER TABLE public.users
     ADD COLUMN displayname character varying(255) COLLATE pg_catalog."default";
 
+-- Update Displayname
 
+pu_user_ids := ARRAY(Select userid from partyusers as t);
+ raise notice 'pu_user_ids : % ',pu_user_ids;
+-- select id, name, displayname from users order by id;
+-- select id,name from parties;
+-- select * from partyusers;
 
+-- update all displaynames with username
+
+update 
+	public.users
+set 
+	displayname = name; 
+
+-- check if party exist and replace with party name
+
+for y in 1..array_upper(pu_user_ids,1)
+Loop
+	x = pu_user_ids[y];
+	raise notice 'x : % ',x;
+	partyid:= (Select partyref from partyusers where userid = x);
+	raise notice 'partyid : % ',partyid;
+	partyname:= (Select name from parties where id = partyid);
+	raise notice 'partyname : % ',partyname;
+	Update
+		users
+	Set
+		displayname = partyname
+	Where
+		id = x;
+	
+END LOOP;
 
 -- UPDATE Dimensions
 UPDATE dimensions SET specification='L(1,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 2;
@@ -341,6 +380,8 @@ CREATE INDEX idx_datastructureref_variables
     ON public.variables USING btree
     (datastructureref ASC NULLS LAST)
     TABLESPACE pg_default;
-    
+
+
+
 END
 $do$
