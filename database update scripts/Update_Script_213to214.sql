@@ -247,8 +247,11 @@ ALTER TABLE public.users
 ALTER TABLE public.users
     ADD COLUMN displayname character varying(255) COLLATE pg_catalog."default";
 
--- Update Displayname
+ALTER TABLE public.groups
+    ADD COLUMN displayname character varying(255) COLLATE pg_catalog."default";
 
+-- Update Displayname User
+ 
 pu_user_ids := ARRAY(Select userid from partyusers as t);
  raise notice 'pu_user_ids : % ',pu_user_ids;
 -- select id, name, displayname from users order by id;
@@ -261,7 +264,6 @@ update
 	public.users
 set 
 	displayname = name; 
-
 -- check if party exist and replace with party name
 
 for y in 1..array_upper(pu_user_ids,1)
@@ -280,6 +282,13 @@ Loop
 		id = x;
 	
 END LOOP;
+
+-- update displayname groups
+
+update 
+	public.groups
+set 
+	displayname = name; 
 
 -- UPDATE Dimensions
 UPDATE dimensions SET specification='L(1,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 2;
