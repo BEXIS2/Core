@@ -232,6 +232,15 @@ ALTER COLUMN description TYPE character varying;
 ALTER TABLE parties
 ALTER COLUMN description TYPE character varying;
 
+-- DisplayName  User And Group
+ALTER TABLE public.users
+    ALTER COLUMN token TYPE character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE public.users
+    ADD COLUMN displayname character varying(255) COLLATE pg_catalog."default";
+
+
+
 
 -- UPDATE Dimensions
 UPDATE dimensions SET specification='L(1,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)' where id = 2;
@@ -310,5 +319,28 @@ INSERT INTO public.versions(
 
 
 
+-- change matching phrase data type
+
+ALTER TABLE public.constraints
+    ALTER COLUMN matchingphrase TYPE text ;
+
+-- Drop Missing Value in Variable
+ALTER TABLE public.variables DROP COLUMN missingvalue;
+
+
+-- Create Index
+CREATE INDEX "None"
+    ON public.variables(unitref);
+	
+CREATE INDEX idx_dataattributeref_variables
+    ON public.variables USING btree
+    (dataattributeref ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+CREATE INDEX idx_datastructureref_variables
+    ON public.variables USING btree
+    (datastructureref ASC NULLS LAST)
+    TABLESPACE pg_default;
+    
 END
 $do$
