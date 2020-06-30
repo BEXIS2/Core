@@ -136,7 +136,7 @@
 
 # All CHANGED Files 
 
-$ git diff --stat origin/dev..origin/releases/2.13 --no-merges
+$ git diff --stat origin/releases/2.13..origin/releases/2.14 --no-merges
 
  | File| Changes |
  |---|---|
