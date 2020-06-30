@@ -46,72 +46,74 @@ BEGIN
 	Alter Table datatuples ADD COLUMN values Text;
 	
     datatuple_ids := ARRAY(Select id from datatuples as t);
+    IF array_length(datatuple_ids, 1)>0
+    THEN
+        for y in 1..array_upper(datatuple_ids,1)
+        LOOP
+            x = datatuple_ids[y];
+            --get one datatuple
+            xml_data := (Select xmlvariablevalues from datatuples as t where t.id=x);
+            
+            -- get ids
+            varIds := (select xpath('/Content/Item/Property[@Name="VariableId"]/@value',xml_data)::text[] x);
+            values := (select xpath('/Content/Item/Property[@Name="Value"]/@value',xml_data)::text[] x);
+            
+            raise notice 'DATATUPLE START: %',x;
 
-    for y in 1..array_upper(datatuple_ids,1)
-    LOOP
-        x = datatuple_ids[y];
-        --get one datatuple
-        xml_data := (Select xmlvariablevalues from datatuples as t where t.id=x);
+            datatupleAsJson := '';
+            valuesAsJson := '';
+            
+            for i in 1..array_upper(varIds,1) loop
+                                
+            raise notice '{"vid": % , "v": % }', varIds[i],values[i];
+            
+            -- json column
+            vv := (Select CONCAT('{ "vid": "',varIds[i],'", "v": "',values[i],'"}'));
+            
+            datatupleAsJson := (SELECT
+            CASE WHEN i=1 Then (Select CONCAT(datatupleAsJson,vv))
+                ELSE (Select CONCAT(datatupleAsJson, ',',vv))
+            END);
+
+            -- values column
+            value = values[i];
+
+                -- if  value is empty
+                IF (value = '') IS NOT FALSE  THEN value = 'null';
+                END IF;
+                -- if value is _null_null
+                IF (value = '_null_null') THEN value = 'null';   
+                END IF;
+
+                IF (value = 'null') THEN vv2 :=(Select CONCAT(value));
+                ELSE vv2 :=(Select CONCAT('"',value,'"'));
+                END IF;
+
+            valuesAsJson := (SELECT
+            CASE WHEN i=1 Then (Select CONCAT(valuesAsJson,vv2))
+                ELSE (Select CONCAT(valuesAsJson, ',',vv2))
+            END);
+
+            end loop;
+
+            datatupleAsJson := (Select CONCAT('[',datatupleAsJson, ']'));
+            valuesAsJson := (Select CONCAT('{',valuesAsJson, '}'));
+            
+            raise notice 'JSON : % ',datatupleAsJson;
+            raise notice 'VALUES : % ', valuesAsJson;
+            
+            raise notice '------------------------';
+            
+            -- insert json into json variable column
+            
+            UPDATE datatuples
+            SET jsonvariablevalues = datatupleAsJson, values = valuesAsJson
+            WHERE id = x;
+            
         
-        -- get ids
-        varIds := (select xpath('/Content/Item/Property[@Name="VariableId"]/@value',xml_data)::text[] x);
-        values := (select xpath('/Content/Item/Property[@Name="Value"]/@value',xml_data)::text[] x);
-        
-        raise notice 'DATATUPLE START: %',x;
-
-        datatupleAsJson := '';
-		valuesAsJson := '';
-        
-		for i in 1..array_upper(varIds,1) loop
-							 
-		raise notice '{"vid": % , "v": % }', varIds[i],values[i];
-		
-		-- json column
-		vv := (Select CONCAT('{ "vid": "',varIds[i],'", "v": "',values[i],'"}'));
-		
-		datatupleAsJson := (SELECT
-		CASE WHEN i=1 Then (Select CONCAT(datatupleAsJson,vv))
-			ELSE (Select CONCAT(datatupleAsJson, ',',vv))
-		END);
-
-		-- values column
-        value = values[i];
-
-            -- if  value is empty
-            IF (value = '') IS NOT FALSE  THEN value = 'null';
-            END IF;
-            -- if value is _null_null
-            IF (value = '_null_null') THEN value = 'null';   
-            END IF;
-
-            IF (value = 'null') THEN vv2 :=(Select CONCAT(value));
-            ELSE vv2 :=(Select CONCAT('"',value,'"'));
-            END IF;
-
-		valuesAsJson := (SELECT
-		CASE WHEN i=1 Then (Select CONCAT(valuesAsJson,vv2))
-			ELSE (Select CONCAT(valuesAsJson, ',',vv2))
-		END);
-
-        end loop;
-
-        datatupleAsJson := (Select CONCAT('[',datatupleAsJson, ']'));
-		valuesAsJson := (Select CONCAT('{',valuesAsJson, '}'));
-		
-        raise notice 'JSON : % ',datatupleAsJson;
- 		raise notice 'VALUES : % ', valuesAsJson;
-		
-        raise notice '------------------------';
-		
-		-- insert json into json variable column
-		
-		UPDATE datatuples
-		SET jsonvariablevalues = datatupleAsJson, values = valuesAsJson
-		WHERE id = x;
-		
-	
-		
-    END LOOP;
+            
+        END LOOP;
+    END IF;
 	
 	-- DATATUPLES END
 	-- DATATUPLEVERSIONS
@@ -120,75 +122,77 @@ BEGIN
     Alter Table datatupleversions ADD COLUMN values Text;
 
 	datatuple_ids := ARRAY(Select id from datatupleversions as t);
-	
-    for y in 1..array_upper(datatuple_ids,1)
-    LOOP
 
-        x = datatuple_ids[y];
-        --get one datatuple
-        xml_data := (Select xmlvariablevalues from datatupleversions as t where t.id=x);
-        
-        -- get ids
-        varIds := (select xpath('/Content/Item/Property[@Name="VariableId"]/@value',xml_data)::text[] x);
-        values := (select xpath('/Content/Item/Property[@Name="Value"]/@value',xml_data)::text[] x);
-        
-        raise notice 'DATATUPLE Versions START: %',x;
+	IF array_length(datatuple_ids, 1)>0
+    THEN
+        for y in 1..array_upper(datatuple_ids,1)
+        LOOP
 
-        datatupleAsJson := '';
-		valuesAsJson := '';
-        
-		for i in 1..array_upper(varIds,1) loop
-							 
-		raise notice '{"vid": % , "v": % }', varIds[i],values[i];
-		
+            x = datatuple_ids[y];
+            --get one datatuple
+            xml_data := (Select xmlvariablevalues from datatupleversions as t where t.id=x);
+            
+            -- get ids
+            varIds := (select xpath('/Content/Item/Property[@Name="VariableId"]/@value',xml_data)::text[] x);
+            values := (select xpath('/Content/Item/Property[@Name="Value"]/@value',xml_data)::text[] x);
+            
+            raise notice 'DATATUPLE Versions START: %',x;
+
+            datatupleAsJson := '';
+            valuesAsJson := '';
+            
+            for i in 1..array_upper(varIds,1) loop
+                                
+            raise notice '{"vid": % , "v": % }', varIds[i],values[i];
+            
 
 
-		-- json column
-		vv := (Select CONCAT('{ "vid": "',varIds[i],'", "v": "',values[i],'"}'));
-		
-		datatupleAsJson := (SELECT
-		CASE WHEN i=1 Then (Select CONCAT(datatupleAsJson,vv))
-			ELSE (Select CONCAT(datatupleAsJson, ',',vv))
-		END);
+            -- json column
+            vv := (Select CONCAT('{ "vid": "',varIds[i],'", "v": "',values[i],'"}'));
+            
+            datatupleAsJson := (SELECT
+            CASE WHEN i=1 Then (Select CONCAT(datatupleAsJson,vv))
+                ELSE (Select CONCAT(datatupleAsJson, ',',vv))
+            END);
 
-		-- values column
+            -- values column
 
-        value = values[i];
+            value = values[i];
 
-            -- if  value is empty
-            IF (value = '') IS NOT FALSE  THEN value = 'null';
-            END IF;
-            -- if value is _null_null
-            IF (value = '_null_null') THEN value = 'null';   
-            END IF;
+                -- if  value is empty
+                IF (value = '') IS NOT FALSE  THEN value = 'null';
+                END IF;
+                -- if value is _null_null
+                IF (value = '_null_null') THEN value = 'null';   
+                END IF;
 
-            IF (value = 'null') THEN vv2 :=(Select CONCAT(value));
-            ELSE vv2 :=(Select CONCAT('"',value,'"'));
-            END IF;
+                IF (value = 'null') THEN vv2 :=(Select CONCAT(value));
+                ELSE vv2 :=(Select CONCAT('"',value,'"'));
+                END IF;
 
-		valuesAsJson := (SELECT
-		CASE WHEN i=1 Then (Select CONCAT(valuesAsJson,vv2))
-			ELSE (Select CONCAT(valuesAsJson, ',',vv2))
-		END);
+            valuesAsJson := (SELECT
+            CASE WHEN i=1 Then (Select CONCAT(valuesAsJson,vv2))
+                ELSE (Select CONCAT(valuesAsJson, ',',vv2))
+            END);
 
-        end loop;
+            end loop;
 
-        datatupleAsJson := (Select CONCAT('[',datatupleAsJson, ']'));
-		valuesAsJson := (Select CONCAT('{',valuesAsJson, '}'));
-		
-        raise notice 'JSON : % ',datatupleAsJson;
- 		raise notice 'VALUES : % ', valuesAsJson;
-		
-        raise notice '------------------------';
-		
-		-- insert json into json variable column
-		
-		UPDATE datatupleversions
-		SET jsonvariablevalues = datatupleAsJson, values = valuesAsJson
-        WHERE id = x;
-        
-    END LOOP;
-
+            datatupleAsJson := (Select CONCAT('[',datatupleAsJson, ']'));
+            valuesAsJson := (Select CONCAT('{',valuesAsJson, '}'));
+            
+            raise notice 'JSON : % ',datatupleAsJson;
+            raise notice 'VALUES : % ', valuesAsJson;
+            
+            raise notice '------------------------';
+            
+            -- insert json into json variable column
+            
+            UPDATE datatupleversions
+            SET jsonvariablevalues = datatupleAsJson, values = valuesAsJson
+            WHERE id = x;
+            
+        END LOOP;
+    END IF;
 	-- DATATUPLEVERSIONS END
 	
 -- Select jsonvariablevalues, values from datatuples;
