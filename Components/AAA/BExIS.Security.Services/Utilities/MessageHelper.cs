@@ -333,11 +333,12 @@ namespace BExIS.Security.Services.Utilities
             return $"Data upload completed";
         }
 
-        public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows)
+        public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows, int numberOfSkippedRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is completed. <br/>");
             stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited.");
+            stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> lines will be skipped.");
 
             return stringBuilder.ToString();
         }

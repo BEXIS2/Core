@@ -11,6 +11,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Models;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
@@ -51,6 +52,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             long id = 0;
             string title = "";
             int numberOfRows = 0;
+            int numberOfSkippedRows = 0;
 
             try
             {
@@ -159,14 +161,17 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //open stream
                                     Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
-
-                                    if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
+                                    rows = new List<DataTuple>();
+                                    if (reader.Position < excelFileReaderInfo.DataEndRow)
                                     {
-                                        rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                    }
-                                    else
-                                    {
-                                        rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
+                                        {
+                                            rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        }
+                                        else
+                                        {
+                                            rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        }
                                     }
 
                                     //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
@@ -206,7 +211,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //count rows
                                     numberOfRows += rows.Count();
-                                } while (rows.Count() > 0 && rows.Count() == packageSize);
+                                } while (rows.Count() > 0 && rows.Count() <= packageSize);
+
+                                numberOfSkippedRows = reader.NumberOSkippedfRows;
                             }
 
                             #endregion excel reader
@@ -295,7 +302,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         //count rows
                                         numberOfRows += rows.Count();
 
-                                    } while ((rows.Count() > 0 && rows.Count() == packageSize) || inputWasAltered == true);
+                                    } while ((rows.Count() > 0 && rows.Count() <= packageSize) || inputWasAltered == true);
+
+                                    numberOfSkippedRows = reader.NumberOSkippedfRows;
 
                                 }
 
@@ -488,7 +497,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     {
                         var es = new EmailService();
                         es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
-                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows),
+                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows,numberOfSkippedRows),
                             new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
                     }
                 }
