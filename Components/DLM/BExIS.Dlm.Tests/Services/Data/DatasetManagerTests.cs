@@ -200,12 +200,12 @@ namespace BExIS.Dlm.Tests.Services.Data
                     }
                 );
 
-            fex.ToSQL().Should().Be($"(({var1Name}) > (12)) AND (({var2Name}) LIKE ('%Test'))");
+            fex.ToSQL().Should().Be($"(({var1Name}) > (12)) AND (({var2Name}) ILIKE ('%Test'))");
 
             // this is to show how to apply a NOT operator on any other expression.
             // It can be applied on Numeric, String, Date, and any other type of expression
             FilterExpression notFex = UnaryFilterExpression.Not(fex);
-            notFex.ToSQL().Should().Be($"NOT ((({var1Name}) > (12)) AND (({var2Name}) LIKE ('%Test')))");
+            notFex.ToSQL().Should().Be($"NOT ((({var1Name}) > (12)) AND (({var2Name}) ILIKE ('%Test')))");
             notFex.ToSQL().Should().Be($"NOT ({fex.ToSQL()})");
 
             OrderByExpression orderByExpr = new OrderByExpression(

@@ -51,7 +51,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Load Metadata formular actions
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult EditMetadata(long datasetId, bool locked = false, bool created = false)
         {
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });
@@ -127,6 +127,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.EditAccessRight = false;
                 Model.DatasetId = -1;
             }
+
+            // set latest version to true, as this view is only called from edit actions, which are only possible for the latest version
+            Model.LatestVersion = true;
+
+
 
             ViewData["Locked"] = locked;
 
@@ -3271,7 +3276,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
@@ -3453,7 +3458,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 });
 
                 // prepare view to write it to the file
-                byte[] content = Encoding.ASCII.GetBytes(view.ToString());
+                byte[] content = Encoding.UTF8.GetBytes(view.ToString());
 
                 return File(content, "application/xhtml+xml", entityId + "_metadata.htm");
             }

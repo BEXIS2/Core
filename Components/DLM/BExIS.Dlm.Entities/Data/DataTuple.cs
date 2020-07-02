@@ -82,6 +82,13 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>
         public abstract DataTupleType TupleType { get; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public abstract long Index { get; }
+
         #endregion Attributes
 
         #region Associations
@@ -167,6 +174,16 @@ namespace BExIS.Dlm.Entities.Data
         public override DataTupleType TupleType
         {
             get { return DataTupleType.Original; }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public override long Index
+        {
+            get { return this.Id; }
         }
 
         #region Associations

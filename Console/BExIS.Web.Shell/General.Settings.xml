@@ -11,4 +11,7 @@
   <entry key="landingPageForUsers" value="ddm, Home, index" type="String" />
   <!-- landing page for users , when they logged in successfuly -->
   <entry key="faq" value="https://github.com/BEXIS2/Core/wiki/FAQ" type="string" />
+
+  <entry key="version" value="2.14" type="string" />
+
 </settings>

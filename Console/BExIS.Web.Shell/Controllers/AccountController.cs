@@ -232,6 +232,7 @@ namespace BExIS.Web.Shell.Controllers
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             var identityUserService = new IdentityUserService();
@@ -317,6 +318,7 @@ namespace BExIS.Web.Shell.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             var identityUserService = new IdentityUserService();
@@ -326,7 +328,7 @@ namespace BExIS.Web.Shell.Controllers
                 if (!ModelState.IsValid) return View(model);
 
 
-                var user = new User { UserName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
 
                 var result = await identityUserService.CreateAsync(user, model.Password);
                 if (result.Succeeded)

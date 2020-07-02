@@ -238,7 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var entity = entityManager.FindByName("Dataset");
                 if (entity == null) return false;
-                return entityPermissionManager.HasEffectiveRight(user.UserName, entity.Name, typeof(Dataset), instanceId, rightType);
+                return entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), instanceId, rightType);
 
                 #endregion security permissions and authorisations check
             }

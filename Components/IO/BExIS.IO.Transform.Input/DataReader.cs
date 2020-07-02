@@ -8,6 +8,8 @@ using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -42,6 +44,7 @@ namespace BExIS.IO.Transform.Input
         //public bool EndOfFile { get; protected set; }
 
         public int NumberOfRows { get; set; }
+        public int NumberOSkippedfRows { get; set; }
 
         #endregion public
 
@@ -318,6 +321,7 @@ namespace BExIS.IO.Transform.Input
         /// <returns>List of errors or null</returns>
         public List<Error> ValidateRow(List<string> row, int indexOfRow)
         {
+            
             List<Error> errors = new List<Error>();
 
             // number of variables in datastructure
@@ -383,6 +387,7 @@ namespace BExIS.IO.Transform.Input
             }
 
             NumberOfRows++;
+
 
             return errors;
         }
@@ -478,7 +483,7 @@ namespace BExIS.IO.Transform.Input
                 if (displayPattern != null) pattern = displayPattern.StringPattern;
             }
 
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues);
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture);
 
             return vvm;
         }

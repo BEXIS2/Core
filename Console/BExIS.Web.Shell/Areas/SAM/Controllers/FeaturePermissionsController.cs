@@ -184,19 +184,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     subjects = subjectManager.Subjects.ToList();
                 }
 
-                using (PartyManager partyManager = new PartyManager())
 
                 foreach (var subject in subjects)
                 {
                     var rightType = featurePermissionManager.GetPermissionType(subject.Id, feature.Id);
                     var hasAccess = featurePermissionManager.HasAccess(subject.Id, feature.Id);
-
-                    // Replace account name by party name todo: check performance. If to slow retieve first all party entities and select in result
-                    Party party = partyManager.GetPartyByUser(subject.Id);
-                    if (party != null)
-                    {
-                        subject.Name = party.Name;
-                    }
 
                     featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
                 }

@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 
 namespace BExIS.Security.Services.Utilities
@@ -126,10 +127,10 @@ namespace BExIS.Security.Services.Utilities
             return $"User \"{requester}\" sent a data request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
         }
 
-        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason)
+        public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason, string email)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"User \"{requester}\" sent a data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
+            stringBuilder.AppendLine($"User \"{requester}\" (\"{email}\") sent a data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
             stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
             stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
 
@@ -332,13 +333,40 @@ namespace BExIS.Security.Services.Utilities
             return $"Data upload completed";
         }
 
-        public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows)
+        public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows, int numberOfSkippedRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is completed. <br/>");
             stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited.");
+            stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> lines will be skipped.");
 
             return stringBuilder.ToString();
+        }
+
+        #endregion
+
+        #region serach index
+
+        public static string GetSearchReIndexHeader()
+        {
+            return $"Search index was completed ";
+        }
+
+        public static string GetSearchReIndexMessage(List<string> errors = null)
+        { 
+            string message = $"The creation of the search index is finished.";
+
+            if (errors != null && errors.Count>0)
+            {
+                message += $"the following errors have occurred. </br>";
+
+                foreach (var item in errors)
+                {
+                    message += $"" + errors + "</br>";
+                }
+            }
+
+            return message;
         }
 
         #endregion

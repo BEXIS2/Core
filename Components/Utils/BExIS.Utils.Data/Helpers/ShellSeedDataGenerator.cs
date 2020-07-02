@@ -1,5 +1,6 @@
 ﻿using BExIS.Security.Services.Objects;
 using System;
+using BExIS.Security.Services.Versions;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Utils.Data.Helpers
@@ -23,6 +24,12 @@ namespace BExIS.Utils.Data.Helpers
             var o6 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
             var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
             var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
+
+            var versionManager = new VersionManager();
+            if (!versionManager.Exists("Shell", "2.14.0"))
+            {
+                versionManager.Create("Shell", "2.14.0");
+            }
         }
 
         public void Dispose()
