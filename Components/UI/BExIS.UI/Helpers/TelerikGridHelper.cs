@@ -430,29 +430,44 @@ namespace BExIS.UI.Helpers
                         };
                     }
                 case FilterOperator.IsEqualTo: // can be a string or a number
-                    {
-                        //if (fd.MemberType.Equals(typeof(string)))
-                        //{
+                {
+                        if (fd.ConvertedValue is int)
+                        {
+                            return new FilterNumberItemExpression()
+                            {
+                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member },
+                                Operator = NumberOperator.Operation.Equals,
+                                Value = fd.Value
+                            };
+                        }
+                        else
+                        if (fd.ConvertedValue is Double)
+                        {
+                            return new FilterNumberItemExpression()
+                            {
+                                Field = new Field() { DataType = DataType.Double, Name = fd.Member },
+                                Operator = NumberOperator.Operation.Equals,
+                                Value = fd.Value
+                            };
+                        }
+                        else
+                        if (fd.ConvertedValue is DateTime)
+                        {
+                            return new FilterDateTimeItemExpression()
+                            {
+                                Field = new Field() { DataType = DataType.DateTime, Name = fd.Member },
+                                Operator = DateTimeOperator.Operation.Equals,
+                                Value = fd.Value
+                            };
+                        }
+
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
-                            ,
-                            Operator = StringOperator.Operation.Equals
-                            ,
+                            Field = new Field() { DataType = DataType.String, Name = fd.Member },
+                            Operator = StringOperator.Operation.Equals,
                             Value = fd.Value
+
                         };
-                        //}
-                        //else
-                        //{
-                        //    return new FilterNumberItemExpression()
-                        //    {
-                        //        Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
-                        //        ,
-                        //        Operator = NumberOperator.Operation.Equals
-                        //        ,
-                        //        Value = fd.Value
-                        //    };
-                        //}
                     }
                 case FilterOperator.IsNotEqualTo:
                     {

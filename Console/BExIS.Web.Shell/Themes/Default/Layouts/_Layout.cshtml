@@ -22,24 +22,25 @@
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/bundles/general_bexis")
 
-    @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
-                                                                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-custom-style.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-datatables-net.css"))
-                                                                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))
-                                                        //.Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
+    @*(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
+                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/"
+                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-custom-style.css"))
+                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-jquery-ui.css"))
+                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-font-awesome-extension.css"))
+                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-elements.css"))
+                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-datatables-net.css"))
+                        .Add("~" + Themes.GetResourcePath("Styles", "bexis-telerik.css"))
+        //.Add("~" + Themes.GetResourcePath("Styles", "bexis-metadata.css"))
 
-                                                        //.Add("telerik.common.css")
-                                                        //.Add("~" + Themes.GetResourcePath("Styles", "Copy of telerik.default.min.css"))
-                                                        //.Add("~" + Themes.GetResourcePath("Styles", "telerik.default.min.css"))
-                                                        //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
-                                                        // add RTL support when internationalization is enabled
-                                                        .Combined(true)
-                                                        .Compress(true)))
+        //.Add("telerik.common.css")
+        //.Add("~" + Themes.GetResourcePath("Styles", "Copy of telerik.default.min.css"))
+        //.Add("~" + Themes.GetResourcePath("Styles", "telerik.default.min.css"))
+        //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
+        // add RTL support when internationalization is enabled
+        .Combined(true)
+        .Compress(true)))*@
 
     @Scripts.Render("~/bundles/modernizr")
 
@@ -52,8 +53,8 @@
     @Scripts.Render("~/bundles/handsontable")
     @Scripts.Render("~/bundles/dataTables")
     @Scripts.Render("~/bundles/bexis")
-   
 
+    <link href="~/Content/docs.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -121,7 +122,17 @@
     )
 
     @Html.RenderAuto("Footer")
-    @RenderSection("Scripts", false)
+    
+<script type="text/javascript">
+    var global_sess_expirationSeconds = @Session.Timeout*60;
+    var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
+    var global_LogoutUrl = '@Url.Action("ClearSession", "Account", new { area = ""})';
+    var global_sess_resetPage = '@Url.Action("Index", "JS", new { area = ""})';
+</script>
+
+<script src="~/Scripts/session.warning.js"></script>
+
+@RenderSection("Scripts", false)
 
 </body>
 </html>

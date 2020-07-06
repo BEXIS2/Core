@@ -202,6 +202,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             Header.Add(id);
             DefaultHeader.Add(id);
 
+            // create entity
+            HeaderItem entity = new HeaderItem();
+            entity.DisplayName = "Entity name";
+            entity.Name = "entity_name";
+            entity.DataType = "string";
+            Header.Add(entity);
+
+            //DefaultHeader.Add(entity);
+
             foreach (XmlNode ade in headerItemXmlNodeList)
             {
                 HeaderItem hi = new HeaderItem();
@@ -217,6 +226,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             }
 
             List<Row> RowList = new List<Row>();
+            string valueLastEntity = ""; // var to store last entity value
+            bool moreThanOneEntityFound = false; // var to set, if more than one entity name was found
+
+
             foreach (ScoreDoc sd in docs.ScoreDocs)
             {
                 Document doc = searcher.Doc(sd.Doc);
@@ -224,6 +237,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 List<object> ValueList = new List<object>();
                 ValueList = new List<object>();
                 ValueList.Add(doc.Get("doc_id"));
+                ValueList.Add(doc.Get("gen_entity_name"));
+
+                // check if there are more than one entities in the result list
+                if (moreThanOneEntityFound == false && ValueList[1].ToString() != valueLastEntity && valueLastEntity != "")
+                {
+                    moreThanOneEntityFound = true;
+                }
+                valueLastEntity = ValueList[1].ToString();  
 
                 foreach (XmlNode ade in headerItemXmlNodeList)
                 {
@@ -246,6 +267,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 }
                 r.Values = ValueList;
                 RowList.Add(r);
+            }
+          
+            // show column of entities, if there are more than one found
+            if (moreThanOneEntityFound == true)
+            {
+                DefaultHeader.Add(entity);
             }
 
             sro.Header = Header;
@@ -360,6 +387,39 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 l.Add(c);
             }
             return l;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="query"></param>
+        /// <param name="facets"></param>
+        /// <returns></returns>
+        public static IEnumerable<Property> propertySearch(Query query, IEnumerable<Property> properties)
+        {
+            foreach (Property p in properties)
+            {
+                SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + p.Name });
+                SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                int cCount = 0;
+
+                List<string> tmp = new List<string>();
+
+                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                {
+                    if (!String.IsNullOrEmpty(hpg.Name.ToString()))
+                    {
+                        if ((int)hpg.HitCount > 0)
+                            tmp.Add(hpg.Name.ToString());
+                    }
+                }
+
+                p.Values = tmp;
+
+            }
+            return properties;
         }
     }
 }

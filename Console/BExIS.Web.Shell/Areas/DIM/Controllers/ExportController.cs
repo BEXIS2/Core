@@ -20,6 +20,7 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
+using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
@@ -33,7 +34,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         ///
         /// </summary>
         /// <param name="datasetVersionId"></param>
-        /// <param name="metadataFormat">name of the internal metadatastructure, if empty then </param>
         /// <param name="primaryDataFormat">mimetype like text/csv, text/plain</param>
         /// <returns></returns>
         public ActionResult GetZipOfDatasetVersion(long datasetVersionId, string primaryDataFormat = "")
@@ -171,7 +171,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        public ActionResult GenerateZip(long id, string format)
+        public ActionResult GenerateZip(long id,long versionid, string format)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             DatasetManager dm = new DatasetManager();
@@ -185,11 +185,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 using (var uow = this.GetUnitOfWork())
                 {
-                    long dsId = dm.GetDatasetLatestVersion(id).Id;
-                    DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    LoggerFactory.LogCustom("Generate Zip Start");
+                    long dsvId = versionid;
+                    if(dsvId == 0)dsvId = dm.GetDatasetLatestVersion(id).Id;
+                    DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                     int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
                     #region metadata
+
+                    LoggerFactory.LogCustom("Metadata Start");
 
                     //metadata as xml output
                     XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
@@ -202,31 +206,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region primary data
 
+                    LoggerFactory.LogCustom("Primary Data Start");
+
                     // check the data sturcture type ...
                     if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
 
-                        string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        //check wheter title is empty or not
+                        string title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
 
                         switch (format)
                         {
                             case "application/xlsx":
-                                odm.GenerateExcelFile(id, title, false);
+                                odm.GenerateExcelFile(id, datasetVersion.Id, false);
                                 break;
 
                             case "application/xlsm":
-                                odm.GenerateExcelFile(id, title, true);
+                                odm.GenerateExcelFile(id, datasetVersion.Id, true);
                                 break;
 
                             default:
-                                odm.GenerateAsciiFile(id, title, format, false);
+                                odm.GenerateAsciiFile(id, datasetVersion.Id, format, false);
                                 break;
                         }
                     }
 
                     #endregion primary data
+
+                    LoggerFactory.LogCustom("check zip on server Start");
 
                     string zipName = publishingManager.GetZipFileName(id, versionNr);
                     string zipPath = publishingManager.GetDirectoryPath(id, brokerName);
@@ -248,6 +257,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     //ToDo put that functiom to the outputDatatructureManager
 
                     #region datatructure
+
+                    LoggerFactory.LogCustom("Datastructure Start");
 
                     long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
                     DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
@@ -273,7 +284,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //generate datastructure as html
                         try
                         {
-                            DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                            DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                             generateDataStructureHtml(ds);
                         }
                         catch (Exception ex)
@@ -283,6 +294,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
 
                     #endregion datatructure
+
+                    LoggerFactory.LogCustom("Zip Start");
 
                     ZipFile zip = new ZipFile();
 
@@ -308,9 +321,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
 
                     // add xsd of the metadata schema
+                    LoggerFactory.LogCustom("Schema Start");
+
                     string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
                     if (Directory.Exists(xsdDirectoryPath))
                         zip.AddDirectory(xsdDirectoryPath, "Schema");
+
+                    LoggerFactory.LogCustom("Manifest Start");
 
                     XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
 
@@ -324,10 +341,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         zip.AddFile(fullFilePath, "");
                     }
 
+                    LoggerFactory.LogCustom("Save zip Start");
+
                     zip.Save(zipFilePath);
+
+                    LoggerFactory.LogCustom("Return");
 
                     return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
+            }
+            catch (Exception ex)
+            {
+                LoggerFactory.LogCustom("Error: " + ex.Message);
+                return null;
             }
             finally
             {
@@ -401,7 +427,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             long datastructureId = dsv.Dataset.DataStructure.Id;
             long researchplanId = dsv.Dataset.ResearchPlan.Id;
 
-            string title = xmlDatasetHelper.GetInformation(dsv.Dataset.Id, NameAttributeValues.title);
+            string title = dsv.Title;
             Session["ShowDataMetadata"] = dsv.Metadata;
 
             var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()

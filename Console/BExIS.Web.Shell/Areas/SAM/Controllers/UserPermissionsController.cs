@@ -1,4 +1,6 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Dlm.Entities.Party;
+using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using System.Collections.Generic;
@@ -82,13 +84,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
                     var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
 
-                    // Replace account name by party name todo: check performance. If to slow retieve first all party entities and select in result
-                    Party party = partyManager.GetPartyByUser(subject.Id);
-                    if (party != null)
-                    {
-                        subject.Name = party.Name;
-                    }
-
+     
                     subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                 }
 

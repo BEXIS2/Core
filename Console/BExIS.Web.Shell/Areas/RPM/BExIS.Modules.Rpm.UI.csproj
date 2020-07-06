@@ -160,19 +160,7 @@
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\Images\Help\add_variables.png" />
-    <Content Include="Content\Images\Help\copy_data_structure.png" />
-    <Content Include="Content\Images\Help\create_data_structure.png" />
-    <Content Include="Content\Images\Help\create_data_type.png" />
-    <Content Include="Content\Images\Help\create_unit.png" />
-    <Content Include="Content\Images\Help\create_variable.png" />
-    <Content Include="Content\Images\Help\delete_button.png" />
-    <Content Include="Content\Images\Help\edit_button.png" />
-    <Content Include="Content\Images\Help\Help_img6.png" />
-    <Content Include="Content\Images\Help\main_menu.png" />
-    <Content Include="Content\Images\Help\manage_data_type.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Properties\PublishProfiles\WebDeploy.pubxml.user" />
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -220,8 +208,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\TestServer_release.pubxml" />
+    <None Include="Properties\PublishProfiles\TestServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
-    <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -326,12 +315,18 @@
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
       <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
+      <Name>BExIS.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\Images\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="MetadataPackage" table="MetadataPackages" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_MetadataPackages_id"/>
+      <column name="Id" index="idx_MetadataPackages_id" />
       <generator class="native" />
     </id>
 
@@ -22,14 +22,14 @@
         <column name="State" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="StateTimestamp" not-null="false"/>
+        <column name="StateTimestamp" not-null="false" />
       </property>
       <property name="Comment" type="string">
         <column name="StateComment" />
       </property>
     </component>
 
-    <component name="CreationInfo" >
+    <component name="CreationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="C_ActionType" />
       </property>
@@ -40,11 +40,11 @@
         <column name="C_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="C_Timestamp" not-null="false"/>
+        <column name="C_Timestamp" not-null="false" />
       </property>
     </component>
 
-    <component name="ModificationInfo" >
+    <component name="ModificationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="M_ActionType" />
       </property>
@@ -55,18 +55,18 @@
         <column name="M_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="M_Timestamp" not-null="false"/>
+        <column name="M_Timestamp" not-null="false" />
       </property>
     </component>
 
     <!-- Mapping Entity properties -->
 
     <property name="Name" type="string">
-      <column name="Name" index="idx_MetadataPackages_name"/>
+      <column name="Name" index="idx_MetadataPackages_name" />
     </property>
 
-    <property name="Description" type="string">
-      <column name="Description" />
+    <property name="Description" type="StringClob">
+      <column name="Description" sql-type="text" />
     </property>
 
     <property name="IsEnabled" type="yes_no">
@@ -82,13 +82,12 @@
       <one-to-many class="MetadataAttributeUsage" />
     </set>
 
-    <set name="UsedIn" inverse="true" order-by="Id" cascade="all-delete-orphan"> <!--cascade only insert, update, set null in case of delete-->
+    <set name="UsedIn" inverse="true" order-by="Id" cascade="all-delete-orphan">
+      <!--cascade only insert, update, set null in case of delete-->
       <key>
         <column name="MetadataPackageRef" />
       </key>
       <one-to-many class="MetadataPackageUsage" />
     </set>
-
   </class>
-
 </hibernate-mapping>

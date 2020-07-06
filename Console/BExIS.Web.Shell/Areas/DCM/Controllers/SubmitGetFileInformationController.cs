@@ -19,7 +19,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitGetFileInformationController : Controller
     {
-
         private TaskManager TaskManager;
         //
         // GET: /DCM/GetFileInformation/
@@ -38,7 +37,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove if existing
                 TaskManager.RemoveExecutedStep(TaskManager.Current());
             }
-
 
             //if its a template jumping direkt to the next step
             if (TaskManager.Bus[TaskManager.IS_TEMPLATE].ToString().Equals("true"))
@@ -65,7 +63,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (iOUtility.IsSupportedExcelFile(model.Extention))
                         model.FileInfoModel = GetFileInfoModel((ExcelFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
-
                 }
                 else
                 {
@@ -81,7 +78,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
-
                 return PartialView(model);
             }
 
@@ -91,7 +87,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult GetFileInformation()
         {
-
             IOUtility iOUtility = new IOUtility();
 
             TaskManager = (TaskManager)Session["TaskManager"];
@@ -121,7 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.ErrorList.Add(new Error(ErrorType.Other, "Data is not set."));
                     }
 
-                    if(model.ErrorList.Count==0) TaskManager.Current().SetValid(true);
+                    if (model.ErrorList.Count == 0) TaskManager.Current().SetValid(true);
                 }
                 else
                 {
@@ -129,10 +124,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-
-            if(!TaskManager.Current().IsValid())
+            if (!TaskManager.Current().IsValid())
             {
-                
                 model.StepInfo = TaskManager.Current();
                 model.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
                 model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
@@ -237,10 +230,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #region ascii FileStream info
+
         [HttpPost]
         public ActionResult SaveAsciiFileInfos(FileInfoModel info)
         {
-
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
             AsciiFileReaderInfo asciiFileReaderInfo = new AsciiFileReaderInfo();
@@ -274,7 +267,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (iOUtility.IsSupportedAsciiFile(TaskManager.Bus[TaskManager.EXTENTION].ToString()))
             {
-
                 AsciiFileReaderInfo info = (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
 
                 switch (name)
@@ -292,22 +284,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Session["TaskManager"] = TaskManager;
             }
 
-
             return Content("");
         }
 
-
-        #endregion
+        #endregion ascii FileStream info
 
         #region excel FileStream info
 
-  
         [HttpPost]
         public ActionResult ChangeWorksheet(string sheetIdentifier)
         {
             TaskManager = (TaskManager)Session["TaskManager"];
 
             #region Generate table for selected sheet
+
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
             string jsonTable = "[]";
@@ -316,7 +306,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 //FileStream for the users file
                 fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
 
                 //Transforms the content of the file into a 2d-json-array
                 UploadUIHelper uploadUIHelper = new UploadUIHelper(fis);
@@ -340,7 +329,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     fis.Close();
                 }
             }
-            #endregion
+
+            #endregion Generate table for selected sheet
+
             //Send back the table-data
             return Content(jsonTable, "application/json");
         }
@@ -348,6 +339,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /*
          * Save the selected area either as data area or as header area
          * */
+
         [HttpPost]
         public ActionResult SelectedAreaToBus()
         {
@@ -355,7 +347,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string dataArea = null;
             string worksheeturi = "";
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
-            
 
             foreach (string key in Request.Form.AllKeys)
             {
@@ -368,8 +359,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     headerArea = Request.Form[key];
                 }
             }
-
-            
 
             FileInfoModel model = new FileInfoModel();
 
@@ -419,7 +408,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
 
-
                 TaskManager.AddToBus(TaskManager.SHEET_DATA_AREA, model.DataArea);
             }
 
@@ -461,12 +449,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 worksheeturi = TaskManager.Bus[TaskManager.ACTIVE_WOKSHEET_URI].ToString();
             }
 
-
             // STore in the excelfilereader info
 
             int[] areaDataValues = null;
             int[] areaHeaderValues = null;
-
 
             //load or create FILE_READER_INFO
             ExcelFileReaderInfo excelFileReaderInfo = new ExcelFileReaderInfo();
@@ -484,7 +470,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     areaDataValuesList.Add(JsonConvert.DeserializeObject<int[]>(area));
                 }
 
-                if (areaDataValuesList != null && areaDataValuesList.Count>0)
+                if (areaDataValuesList != null && areaDataValuesList.Count > 0)
                 {
                     areaDataValues = areaDataValuesList[0];
                     if (areaDataValues != null)
@@ -498,17 +484,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         excelFileReaderInfo.DataEndColumn = areaDataValues[3] + 1;
                         excelFileReaderInfo.Offset = areaDataValues[1];
                     }
-                }   
+                }
             }
-                
 
             if (TaskManager.Bus.ContainsKey(TaskManager.SHEET_HEADER_AREA))
             {
-
                 string selectedHeaderAreaJsonArray = TaskManager.Bus[TaskManager.SHEET_HEADER_AREA].ToString();
-                    
 
-                if (!string.IsNullOrEmpty(selectedHeaderAreaJsonArray) )
+                if (!string.IsNullOrEmpty(selectedHeaderAreaJsonArray))
                 {
                     areaHeaderValues = JsonConvert.DeserializeObject<int[]>(selectedHeaderAreaJsonArray);
                     if (areaHeaderValues != null)
@@ -525,8 +508,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             excelFileReaderInfo.Orientation = Orientation.columnwise;
             excelFileReaderInfo.WorksheetUri = worksheeturi;
 
-
-            //reset 
+            //reset
             if (string.IsNullOrEmpty(dataArea) && string.IsNullOrEmpty(headerArea))
             {
                 excelFileReaderInfo = new ExcelFileReaderInfo();
@@ -543,16 +525,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             TaskManager.AddToBus(TaskManager.FILE_READER_INFO, excelFileReaderInfo);
-            
 
             Session["TaskManager"] = TaskManager;
 
             return PartialView("_xlsFormularView", model);
         }
 
-        #endregion
+        #endregion excel FileStream info
 
-        #endregion
-
+        #endregion private methods
     }
 }

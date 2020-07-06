@@ -77,29 +77,36 @@
 {
     <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
-    @if (Model.JsPath.Length > 2)
-    {
-        <script src="@Url.Content(Model.JsPath)"></script>
-    }
 
 }
 <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
 @section Information
 {
-    <p>
-        Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
-        Mandatory fields are indicated with an red asterisk.
-    </p>
-    <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
+    @if (Model.HeaderHelp.Length > 2)
+    {
+        @Html.Raw(Model.HeaderHelp);
+    }
+    else
+    {
+        <p>
+            Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
+            Mandatory fields are indicated with an red asterisk.
+        </p>
+        <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
 
-    <p>
-        More information
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
-    </p>
+        <p>
+            More information
+            @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
+        </p>
+    }
 }
 
 <div id="MetadataEditor" style="width: 89%">
+    @if (Model.DatasetId != -1)
+    {
+        <span id="datasetId" style="display:none">@Model.DatasetId</span>
+    }
     <div>
         <table>
             <tr>
@@ -200,7 +207,7 @@
                 {
 
                     <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                    <td>
+                    <td id="upload">
                         Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
                         to add primary data to this dataset.
                     </td>
@@ -219,15 +226,15 @@
     </div>
 
     @if (ViewBag.isValid == "no")
-        {
-            <div id="view-warning-container">
-                <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
-                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                    This metadata dataset is not complete.
-                </div>
+    {
+        <div id="view-warning-container">
+            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                This metadata dataset is not complete.
             </div>
-    	  }	
-	
+        </div>
+    }
+
     <div style="overflow: auto;">
 
         <div class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white; background-color:#a1bbb6">
@@ -243,7 +250,7 @@
             if (element.Level == 0)
             {
                 displayName = char.ToUpper(element.UsageName[0]) + element.UsageName.Substring(1);
-	        displayName = Regex.Replace(displayName, "((?<=[a-z])[A-Z])", " $1");
+                displayName = Regex.Replace(displayName, "((?<=[a-z])[A-Z])", " $1");
                 id_label_container_1 = element.StepId + "_1_LabelContainerMenu";
                 id_label_container = element.StepId + "_Menu";
                 <div id="@id_label_container" class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white;">
@@ -274,7 +281,7 @@
         <div class="bx-footer right">
 
             <!-- only from editmode you have the option to reset-->
-            <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+            <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
 
             @*@if (@Model.FromEditMode)
                 {
@@ -283,14 +290,24 @@
 
             @if (@submit.IsComplete())
             {
-                <button onclick="submit()" class="bx-button action">Save</button>
+                <button id="save" onclick="submit()" class="bx-button action">Save</button>
             }
 
             @if (@Model.FromEditMode)
             {
-                <button onclick="cancel()" class="bx-button action">Cancel</button>
+                <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
             }
         </div>
+    }
+
+    <!--include additional JavaScript file at the bottum-->
+    @if (ViewData["MetadataStructureID"] != null && (long)ViewData["MetadataStructureID"] != -1)
+    {
+        <script src="@Url.Content("~/ddm/Data/getFile/?metadataStructureId=" + (long)ViewData["MetadataStructureID"] )" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
     }
 
     <script>
@@ -321,7 +338,7 @@
             bindMinimap();
         });
 
-function SelectFileProcess_OnSelect(e) {
+            function SelectFileProcess_OnSelect(e) {
 
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
@@ -350,11 +367,11 @@ function SelectFileProcess_OnSelect(e) {
         $(".t-upload-button span").text("Import");
     }
 
-/*
-Is Extention from selected file
-in list of supported files
-*/
-function IsExtentionValid(fileExtention) {
+            /*
+            Is Extention from selected file
+            in list of supported files
+            */
+            function IsExtentionValid(fileExtention) {
     var extListAsString = ".xml";
     var extList = extListAsString.split(',');
 
@@ -365,9 +382,9 @@ function IsExtentionValid(fileExtention) {
     }
 
     return false;
-}
+            }
 
-function OnSuccess(e) {
+            function OnSuccess(e) {
     //alert("on success");
 
     $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
@@ -383,7 +400,7 @@ function OnSuccess(e) {
             //    loadExternalXml();
             //}
         });
-}
+        }
 
     function loadExternalXml() {
 
@@ -528,23 +545,14 @@ function OnSuccess(e) {
                 valid: valid
             },
             function (response) {
-                    $('#MetadataEditor').replaceWith(response);
 
-                $.when().then(
-                    function () {
-                        $('html, body').animate({ scrollTop: 0 }, "slow");
-                    }
-                ).then(
-                    function () {
-                        bindMinimap(true);
-                    }
-                )
-                .then(
-                    function () {
-                         // trigger save event
-                        $(document).trigger("save");
-                    }
-                )
+                if (response.result == 'error') {
+                    alert(response.message)
+                }
+                else if (response.result == 'redirect'){
+                    window.location = response.url;
+                }
+
             });
     }
 

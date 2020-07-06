@@ -60,16 +60,21 @@ namespace BExIS.IO.Transform.Input
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
             NumberOfRows = 0;
+            NumberOSkippedfRows = 0;
+
         }
 
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
         {
+            NumberOSkippedfRows = 0;
             NumberOfRows = 0;
         }
 
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
         {
             NumberOfRows = 0;
+            NumberOSkippedfRows = 0;
+
         }
 
         public override FileStream Open(string fileName)
@@ -119,22 +124,30 @@ namespace BExIS.IO.Transform.Input
 
         private void loadProperties(Stream file)
         {
-            this.FileStream = file;
-
-            // open excel file
-            spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
-
-            if (spreadsheetDocument != null)
+            try
             {
-                if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
-                {
-                    Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
-                }
+                this.FileStream = file;
 
-                if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+                // open excel file
+                spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
+
+                if (spreadsheetDocument != null)
                 {
-                    ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
+                    if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application != null)
+                    {
+                        Application = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.Application.InnerText;
+                    }
+
+                    if (spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion != null)
+                    {
+                        ApplicationVersion = spreadsheetDocument.ExtendedFilePropertiesPart.Properties.ApplicationVersion.InnerText;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                this.FileStream.Close();
+                throw new NotSupportedException("This Excel file is not created by common programs. Please open the file in Excel, save it and try again.");
             }
         }
 
@@ -262,10 +275,8 @@ namespace BExIS.IO.Transform.Input
             {
                 Position = this._areaOfData.StartRow;
             }
-            else
-                Position++;
 
-            int endPosition = Position + packageSize;
+            int endPosition = (Position + packageSize)-1;
 
             if (endPosition > this._areaOfData.EndRow)
                 endPosition = this._areaOfData.EndRow;
@@ -356,10 +367,10 @@ namespace BExIS.IO.Transform.Input
                 {
                     Position = fri.DataStartRow;
                 }
-                else
-                    Position++;
+                //else
+                //    Position++;
 
-                int endPosition = Position + packageSize;
+                int endPosition = (Position + packageSize) - 1;
 
                 if (endPosition > endRowData)
                     endPosition = endRowData;
@@ -435,7 +446,7 @@ namespace BExIS.IO.Transform.Input
 
             if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
             {
-                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, Position + packageSize);
+                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, (Position + packageSize)-1);
                 Position += packageSize;
             }
 
@@ -522,37 +533,26 @@ namespace BExIS.IO.Transform.Input
                         if (reader.HasAttributes)
                             rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                        if (endRow == 0)
+                        if (rowNum >= startRow && ((rowNum <= endRow)||(endRow == 0)))
                         {
-                            if (rowNum >= startRow)
-                            {
-                                Row row = (Row)reader.LoadCurrentElement();
+                            Row row = (Row)reader.LoadCurrentElement();
 
-                                //this.errorMessages = this.errorMessages.Union(Validate(RowToList(row), Convert.ToInt32(row.RowIndex.ToString()))).ToList();
+                            if (!IsEmpty(row))
+                            {
                                 this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
                                 count++;
                             }
                         }
-                        else
-                        {
-                            if (rowNum >= startRow && rowNum <= endRow)
-                            {
-                                Row row = (Row)reader.LoadCurrentElement();
-
-                                if (!IsEmpty(row))
-                                {
-                                    this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
-                                }
-
-                                //this.errorMessages = this.errorMessages.Union(Validate(RowToList(row), Convert.ToInt32(row.RowIndex.ToString()))).ToList();
-                                count++;
-                            }
-                        }
+                        
                     } while (reader.ReadNextSibling()); // Skip to the next row
 
                     break;
                 }
             }
+            // (12 - 2) - 10 = 0
+            NumberOSkippedfRows += ((endRow+1) - startRow) - count;
+            Debug.WriteLine("NumberOSkippedfRows += ((endRow+1) - startRow) - count");
+            Debug.WriteLine(NumberOSkippedfRows + " += (" + endRow + 1 + " - " + startRow + ") - " + count + ");");
         }
 
         #endregion read file
@@ -688,7 +688,7 @@ namespace BExIS.IO.Transform.Input
 
             if (errorList != null)
             {
-                if (errorList.Count > 0)
+                if (errorList.Distinct().ToList().Count > 0)
                 {
                     this.ErrorMessages = this.ErrorMessages.Concat(errorList).ToList();
                     return false;
@@ -791,8 +791,11 @@ namespace BExIS.IO.Transform.Input
                     }//end if cell value
                     else
                     {
-                        int index = cellReferencAsInterger - offset - 1;
-                        rowAsStringArray[index] = "";
+                        if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
+                        {
+                            int index = cellReferencAsInterger - offset - 1;
+                            rowAsStringArray[index] = "";
+                        }
                     }
                 }//end if cell null
             }//for

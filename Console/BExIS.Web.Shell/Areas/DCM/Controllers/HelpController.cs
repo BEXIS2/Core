@@ -1,4 +1,9 @@
-﻿using System.Web.Mvc;
+﻿using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Xml.Helpers;
+using System.IO;
+using System.Web.Mvc;
+using System.Xml.Linq;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
@@ -11,10 +16,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Collection Manual", this.Session.GetTenant());
-            return View();
-        }
+            SettingsHelper helper = new SettingsHelper();
+            string helpurl = helper.GetValue("help");
+
+            return Redirect(helpurl);
 
         }
+
+    }
 }
 

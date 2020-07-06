@@ -20,8 +20,21 @@
 <div class="bx-rpm-searchBar">
     @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
     <div class="bx bx-button function bx-search" onclick="javascript:loadResults()"></div>
-    <div class="bx-rpm-resetSearch"><a onclick="javascript:resetSearch()">reset Search</a></div>
+    <table>
+        <tr>
+            <td>
+                <div class="bx-rpm-filter">
+                    <input type="checkbox" class="bx-rpm-checkbox" id="strucured" checked="checked" /> Tablular
+                    <input type="checkbox" class="bx-rpm-checkbox" id="unstrucured" checked="checked" /> File
+                </div>
+            </td>
+            <td>
+                <div class="bx-rpm-resetSearch"><a onclick="javascript:resetSearch()">reset Search</a></div>
+            </td>
+        </tr>
+    </table>
 </div>
+
 
 <div id="SearchResults">
     @Html.Partial("_datatructureSearchResult", "")
@@ -46,9 +59,14 @@
             loadResults();
         }
 
+        $('.bx-rpm-checkbox').on('change', function() {
+            loadResults();
+        });
+
         function loadResults() {
             $('.bx-rpm-searchBar #SearchBox').val($('.bx-rpm-searchBar #SearchBox').val().trim());
-            var parameters = encodeURI('/?searchTerms=' + encodeURIComponent($('.bx-rpm-searchBar #SearchBox').val()));
+            console.log($('.bx-rpm-filter #strucured').is(':checked'));
+            var parameters = encodeURI('/?searchTerms=' + encodeURIComponent($('.bx-rpm-searchBar #SearchBox').val()) + "&structured=" + $('.bx-rpm-filter #strucured').is(':checked') + "&unstructured=" + $('.bx-rpm-filter #unstrucured').is(':checked'));
             $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM" })' + parameters, function (data) {
                 $('#SearchResults').html(data);
             });

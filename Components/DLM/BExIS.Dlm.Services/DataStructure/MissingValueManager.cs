@@ -63,7 +63,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Int16:
                         try
                         {
-                            List<short> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToInt16(mv.Placeholder)).ToList();
+                            List<short> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToInt16(mv.Placeholder)).ToList();
                             short temp = short.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > short.MinValue + 1)
                             {
@@ -79,7 +79,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Int32:
                         try
                         {
-                            List<int> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToInt32(mv.Placeholder)).ToList();
+                            List<int> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToInt32(mv.Placeholder)).ToList();
                             int temp = int.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > int.MinValue + 1)
                             {
@@ -95,7 +95,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Int64:
                         try
                         {
-                            List<long> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToInt64(mv.Placeholder)).ToList();
+                            List<long> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToInt64(mv.Placeholder)).ToList();
                             long temp = long.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > long.MinValue + 1)
                             {
@@ -111,7 +111,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.UInt16:
                         try
                         {
-                            List<ushort> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToUInt16(mv.Placeholder)).ToList();
+                            List<ushort> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToUInt16(mv.Placeholder)).ToList();
                             ushort temp = ushort.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > ushort.MinValue + 1)
                             {
@@ -127,7 +127,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.UInt32:
                         try
                         {
-                            List<uint> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToUInt32(mv.Placeholder)).ToList();
+                            List<uint> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToUInt32(mv.Placeholder)).ToList();
                             uint temp = uint.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > uint.MinValue + 1)
                             {
@@ -143,7 +143,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.UInt64:
                         try
                         {
-                            List<ulong> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToUInt64(mv.Placeholder)).ToList();
+                            List<ulong> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToUInt64(mv.Placeholder)).ToList();
                             ulong temp = ulong.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > ulong.MinValue + 1)
                             {
@@ -159,7 +159,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Double:
                         try
                         {
-                            List<string> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => mv.Placeholder).ToList();
+                            List<string> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => mv.Placeholder).ToList();
                             double temp = double.MaxValue / 10 - 1.0;
                             while (placeholders.Contains(temp.ToString(format)) && temp > double.MinValue / 10 + 1.0)
                             {
@@ -175,7 +175,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Decimal:
                         try
                         {
-                            List<decimal> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToDecimal(mv.Placeholder)).ToList();
+                            List<decimal> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToDecimal(mv.Placeholder)).ToList();
                             decimal temp = decimal.MaxValue - (decimal)1.0;
                             while (placeholders.Contains(temp) && temp > decimal.MinValue + (decimal)1.0)
                             {
@@ -191,7 +191,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Single:
                         try
                         {
-                            List<float> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToSingle(mv.Placeholder)).ToList();
+                            List<float> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToSingle(mv.Placeholder)).ToList();
                             float temp = float.MaxValue - (float)1.0;
                             while (placeholders.Contains(temp) && temp > float.MinValue + (float)1.0)
                             {
@@ -207,12 +207,23 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.DateTime:
                         try
                         {
-                            List<DateTime> placeholders = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToDateTime(mv.Placeholder)).ToList();
+                            List<DateTime> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToDateTime(mv.Placeholder)).ToList();
                             DateTime temp = DateTime.MaxValue.AddHours(-1);
                             while (placeholders.Contains(temp))
                             {
                                 temp = temp.AddHours(-1);
                             }
+                            return temp.ToString(format);
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+
+                    case TypeCode.String:
+                        try
+                        {
+                            int temp = DateTime.Now.GetHashCode();
                             return temp.ToString(format);
                         }
                         catch
@@ -233,7 +244,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<MissingValue> repo = uow.GetRepository<MissingValue>();
 
-                List<MissingValue> missingValues = repo.Get().Where(mv => mv.Variable.Id.Equals(variableId)).ToList();
+                List<MissingValue> missingValues = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).ToList();
 
                 switch (typeCode)
                 {
@@ -431,6 +442,21 @@ namespace BExIS.Dlm.Services.DataStructure
                                 return true;
                             }
                             return false;
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+
+                    case TypeCode.String:
+                        try
+                        {
+                            foreach (MissingValue mv in missingValues)
+                            {
+                                if (mv.Id != missingvalueId && placeholder == mv.Placeholder)
+                                    return false;
+                            }
+                            return true;
                         }
                         catch
                         {

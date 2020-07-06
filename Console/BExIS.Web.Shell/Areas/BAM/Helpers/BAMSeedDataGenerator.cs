@@ -84,9 +84,15 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.Load(xDoc.CreateReader());
                 var partyTypesNodeList = xmlDoc.SelectNodes("//PartyTypes");
+
+                var deleteAbleAttr = new List<PartyCustomAttribute>();
+                var deleteAbleAttrValues = new List<PartyCustomAttributeValue>();
+
                 if (partyTypesNodeList.Count > 0)
                     foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
                     {
+                        if (!(partyTypeNode is XmlElement)) continue;
+
                         //Convert xmAttributeCollection to list to skipt the case sensitive and null problems
                         var attributes = new List<XmlAttribute>();
                         foreach (XmlAttribute att in partyTypeNode.Attributes)
@@ -106,6 +112,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
                             var customAttrs = new List<PartyCustomAttribute>();
                             foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                             {
+                                if (!(customAttrNode is XmlElement)) continue;
+
                                 var customAttrNodeAttributes = new List<XmlAttribute>();
                                 foreach (XmlAttribute att in customAttrNode.Attributes)
                                 {
@@ -127,16 +135,22 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                     Condition = partyCustomAttr.Condition
                                 });
                             }
+
                             if (!customAttrs.Any(c => c.IsMain))
                                 customAttrs[0].IsMain = true;
+
                             foreach (var customAttr in customAttrs)
                                 partyTypeManager.CreatePartyCustomAttribute(customAttr);
                         }
-                        else
+                        else //partytype exist
                         {
-                            var customAttrs = new List<PartyCustomAttribute>();
+                            var newCustomAttrs = new List<PartyCustomAttribute>();
+                            var existingCustomAttrs = new List<PartyCustomAttribute>();
+
                             foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                             {
+                                if (!(customAttrNode is XmlElement)) continue;
+
                                 var attributesList = new List<XmlAttribute>();
                                 foreach (XmlAttribute att in customAttrNode.Attributes)
                                 {
@@ -154,7 +168,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                     }
 
                                     PartyCustomAttribute partyCustomAttr = ParsePartyCustomAttribute(customAttrNodeAttributes);
-                                    customAttrs.Add(new PartyCustomAttribute()
+                                    newCustomAttrs.Add(new PartyCustomAttribute()
                                     {
                                         DataType = partyCustomAttr.DataType,
                                         Description = partyCustomAttr.Description,
@@ -168,11 +182,37 @@ namespace BExIS.Modules.Bam.UI.Helpers
                                         Condition = partyCustomAttr.Condition
                                     });
                                 }
-                            }
-                            if (!customAttrs.Any(c => c.IsMain) && !partyType.CustomAttributes.Any(c => c.IsMain))
+                                else //update if exist
+                                {
+                                    //add to existingCustomAttr list
+                                    var existingAttr = partyType.CustomAttributes.Where(item => item.Name == customAttrName).FirstOrDefault();
+                                    if (existingAttr != null) existingCustomAttrs.Add(existingAttr);
+                                }
+                            }// end foreach customAttrNode
+
+                            if (!newCustomAttrs.Any(c => c.IsMain) && !partyType.CustomAttributes.Any(c => c.IsMain))
                                 throw new Exception("There is no main field. Each party type needs at least one main field.");
-                            foreach (var customAttr in customAttrs)
+
+                            // create all custom Attr´s
+                            foreach (var customAttr in newCustomAttrs)
                                 partyTypeManager.CreatePartyCustomAttribute(customAttr);
+
+                            // Delete all attrs that are no longer in the partytype.xml
+                            newCustomAttrs.AddRange(existingCustomAttrs);
+                            var currentListOfAttr = partyType.CustomAttributes;
+
+                            foreach (var attr in currentListOfAttr)
+                            {
+                                if (!newCustomAttrs.Any(a => a.Id.Equals(attr.Id)))
+                                {
+                                    deleteAbleAttr.Add(attr);
+                                    //select all value that are created based on the attr
+                                    // the values need to delete befor the attr itself
+                                    deleteAbleAttrValues.AddRange(
+                                        partyManager.PartyCustomAttributeValueRepository.Query()
+                                        .Where(v => v.CustomAttribute.Id.Equals(attr.Id)));
+                                }
+                            }
                         }
                     }
                 var partyRelationshipTypesNodeList = xmlDoc.SelectNodes("//PartyRelationshipTypes");
@@ -180,6 +220,8 @@ namespace BExIS.Modules.Bam.UI.Helpers
 
                     foreach (XmlNode partyRelationshipTypesNode in partyRelationshipTypesNodeList[0].ChildNodes)
                     {
+                        if (!(partyRelationshipTypesNode is XmlElement)) continue;
+
                         var customAttrNodeAttributes = new List<XmlAttribute>();
                         foreach (XmlAttribute att in partyRelationshipTypesNode.Attributes)
                         {
@@ -255,6 +297,22 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     var partyRelationshipTypePairs = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.SourcePartyType.Id == partyType.Id && !cc.TargetPartyType.SystemType);
                     foreach (var partyTypePair in partyRelationshipTypePairs)
                         partyManager.UpdateOrAddPartyGridCustomColumn(partyType, null, partyTypePair);
+                }
+
+                if (deleteAbleAttr.Any())
+                {
+                    //delete all existing PartyCustomAttrValues
+                    deleteAbleAttrValues.ForEach(a => partyManager.RemovePartyCustomAttributeValue(a));
+
+                    // Delete all GridColumns of the CustomAttribute
+                    var listOfIds = deleteAbleAttr.Select(d => d.Id);
+                    var gridColumns = partyManager.PartyCustomGridColumnsRepository.Get();
+                    var listOfGridColumns = gridColumns.Where(c => c.CustomAttribute != null && listOfIds.Contains(c.CustomAttribute.Id)).ToList();
+
+                    listOfGridColumns.ForEach(c => partyManager.RemovePartyGridCustomColumn(c.Id));
+
+                    // add CustomAttribute Grid Columns
+                    deleteAbleAttr.ForEach(a => partyTypeManager.DeletePartyCustomAttribute(a));
                 }
             }
             catch (Exception ex)

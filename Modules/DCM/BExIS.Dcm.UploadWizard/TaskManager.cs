@@ -53,9 +53,9 @@ namespace BExIS.Dcm.UploadWizard
         public static string SHEET_JSON_DATA = "SheetJsonData";
         public static string ACTIVE_WOKSHEET_URI = "ActiveWorksheetUri";
 
-
         public static string UPLOAD_METHOD = "UPLOAD_METHOD";
         public static string NUMBERSOFROWS = "NUMBERSOFROWS";
+        public static string NUMBERSOFVARIABLES = "NUMBERSOFVARIABLES";
         public static string CURRENTPACKAGE = "CURRENTPACKAGE";
         public static string CURRENTPACKAGESIZE = "CURRENTPACKAGE";
 

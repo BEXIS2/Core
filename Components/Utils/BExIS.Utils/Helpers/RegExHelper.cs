@@ -8,11 +8,12 @@ namespace BExIS.Utils.Helpers
         public static string FILENAME_REGEX = "[^\\/:*?<>|\"]+";
         public static string FILENAME_INVALID_CHARS_REGEX = "[\\\"/:*?<>|]+";
 
-        public static string LUCENE_INVALID_CHARS_REGEX = "[\\-&&\\^+||!(){}[\\]~*?:\"]";
+        public static string LUCENE_INVALID_CHARS_REGEX = "[\\-&&\\^+||!(){}_[\\]~*?:\"]";
+
+        public static string DIMENSION_SPECIFICATION = @"L\([0-9],[0-9]\)M\([0-9],[0-9]\)T\([0-9],[0-9]\)I\([0-9],[0-9]\)\?\([0-9],[0-9]\)N\([0-9],[0-9]\)J\([0-9],[0-9]\)";
 
         public static bool IsFilenameValid(string name)
         {
-
             if (string.IsNullOrEmpty(name)) return false;
             Regex r = new Regex(FILENAME_INVALID_CHARS_REGEX);
 

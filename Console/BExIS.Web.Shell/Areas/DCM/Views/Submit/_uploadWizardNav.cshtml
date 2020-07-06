@@ -10,40 +10,46 @@
     int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
     
 }
-<div id="NavDiv">
+    <div id="NavDiv">
 
-    @if (!(Model.Current() == null))
-    { 
-    <table id="NavigationTable">
-        <tr>
-            <td id="Nav_Left">
-                @if (!Model.Prev().IsEmpty())
-                {   
-                    <button id="prevBt" onclick"PrevButton_OnClick()"  class="t-button action" title="@Model.Prev().title" >Prev</button>
-               }
-            </td>
-            <td id="Nav_Pages">
-                 ( @currentPage  of   @Model.StepInfos.Count )
-            </td>
-            <td id="Nav_Options">
-               @Html.ActionLink("Cancel", "CancelUpload", "Submit", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button action",  @style="float:right" })
-            </td>
-            <td id="Nav_Right">
-                 @if (!Model.Next().IsEmpty())
-                 { 
-                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="@Model.Next().title">Next</button>
-                 }
+        @if (!(Model.Current() == null))
+        {
+            <table id="NavigationTable">
+                <tr>
+                    <td id="Nav_Left">
+                        @if (!Model.Prev().IsEmpty())
+                        {
+                            <button id="prevBt" onclick"PrevButton_OnClick()" class="t-button action" title="@Model.Prev().title">Prev</button>
+                        }
+                    </td>
+                    <td id="Nav_Pages">
+                        ( @currentPage  of   @Model.StepInfos.Count )
+                    </td>
+                    <td id="Nav_Options">
+                        @Html.ActionLink("Cancel", "CancelUpload", "Submit", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button action", @style = "float:right" })
+                    </td>
+                    <td id="Nav_Right">
+                        @if (!Model.Next().IsEmpty())
+                        {
+                            <button id="nextBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="@Model.Next().title">Next</button>
+                        }
 
-                @if (Model.Current().Equals(Model.Finish()))
-                { 
-                    <button id="finishBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="Finish">Finish</button>
-                }
+                        @if (Model.Current().Equals(Model.Finish()))
+                        {
+                            <button id="finishBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="Finish">Finish</button>
+                        }
 
-            </td>
-        </tr>
-    </table>
-    }
-</div>
+
+                    </td>
+                </tr>
+            </table>
+
+            <div id="async_finsihed" style="display:none;">
+                @Html.ActionLink("Dashboard", "ShowDashboard", "Submit", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button action", @style = "float:right" })
+            </div>
+
+        }
+    </div>
 <script type="text/javascript">              
       
     $("#prevBt").click(function(){
@@ -97,7 +103,7 @@
 
     function StartUpload()
     {
-        $('.uploadWizardStep').preloader(16, "Upload wizard step is loading.");
+        $('.uploadWizardStep').preloader(16, "Please wait while your data is being imported.");
         $.ajax({
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -106,12 +112,12 @@
             url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName } })',
             success: function (result)
             {
-
                 if (result == !null || result != "")
                 {
                     $('#StepView').html(result);
-                    NavigationRefresh();
+                    //NavigationRefresh();
                     TaskListRefresh();
+                    HideNavigation();
                     
                 }
                 else
@@ -121,7 +127,12 @@
             }
         });
     }
-    
+
+    function HideNavigation() {
+        console.log("hide");
+        $("#NavigationTable").hide();
+        $("#async_finsihed").show();
+    }
 
     function NavigationRefresh()
     {

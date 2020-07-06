@@ -7,7 +7,9 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Models;
+using BExIS.Xml.Helpers;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -15,6 +17,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -110,7 +113,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     categoryXmlNodeList.Add(fieldProperty);
                     Category c = new Category();
                     c.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
-                    c.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value; ;
+                    c.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
                     c.DefaultValue = "nothing";
                     AllCategories.Add(c);
                 }
@@ -163,10 +166,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
             DatasetManager dm = new DatasetManager();
-
+            List<string> errors = new List<string>();
             try
             {
-                List<string> errors = new List<string>();
+                
                 IList<long> ids = dm.GetDatasetLatestIds();
 
                 //ToDo only enitities from type dataset should be indexed in this index
@@ -200,6 +203,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 dm.Dispose();
                 GC.Collect();
+
+                var es = new EmailService();
+                es.Send(MessageHelper.GetSearchReIndexHeader(),
+                    MessageHelper.GetSearchReIndexMessage(errors),
+                    ConfigurationManager.AppSettings["SystemEmail"]);
+
             }
         }
 
@@ -369,6 +378,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
             ///
             dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id) ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            dataset.Add(new Field("gen_entity_name", xmlDatasetHelper.GetEntityName(id), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+
 
             foreach (XmlNode facet in facetNodes)
             {
@@ -607,51 +620,55 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     int fetchSize = dm.PreferedBatchSize;
                     long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
                     long noOfFetchs = tupleSize / fetchSize + 1;
-                    for (int round = 0; round < noOfFetchs; round++)
+
+                    if (tupleSize > 0)
                     {
-                        List<string> primaryDataStringToindex = null;
-                        using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
+                        for (int round = 0; round < noOfFetchs; round++)
                         {
-                            primaryDataStringToindex = getAllStringValuesFromTable(table); // should take the table
-                            table.Dispose();
-                        }
-
-                        foreach (XmlNode category in categoryNodes)
-                        {
-                            String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
-                            String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
-                            String analysing = category.Attributes.GetNamedItem("analysed").Value;
-                            float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
-                            var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
-
-                            if (analysing.ToLower().Equals("yes"))
+                            List<string> primaryDataStringToindex = null;
+                            using (DataTable table = dm.GetLatestDatasetVersionTuples(dsv.Dataset.Id, round, fetchSize))
                             {
-                                toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
+                                primaryDataStringToindex = getAllStringValuesFromTable(table); // should take the table
+                                table.Dispose();
                             }
 
-                            if (category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
+                            foreach (XmlNode category in categoryNodes)
                             {
-                                if (primaryDataStringToindex != null && primaryDataStringToindex.Count > 0)
-                                {
+                                String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
+                                String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
+                                String analysing = category.Attributes.GetNamedItem("analysed").Value;
+                                float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
+                                var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
 
-                                    foreach (string pDataValue in primaryDataStringToindex)
-                                    // Loop through List with foreach
+                                if (analysing.ToLower().Equals("yes"))
+                                {
+                                    toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
+                                }
+
+                                if (category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
+                                {
+                                    if (primaryDataStringToindex != null && primaryDataStringToindex.Count > 0)
                                     {
-                                        Field a = new Field("category_" + lucene_name, pDataValue,
-                                            Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                                        a.Boost = boosting;
-                                        dataset.Add(a);
-                                        dataset.Add(new Field("ng_" + lucene_name, pDataValue,
-                                            Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                        dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
-                                            Lucene.Net.Documents.Field.Index.ANALYZED));
-                                        writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                                        writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                        primaryDataStringToindex = primaryDataStringToindex.Distinct().ToList();
+                                        foreach (string pDataValue in primaryDataStringToindex)
+                                        // Loop through List with foreach
+                                        {
+                                            Field a = new Field("category_" + lucene_name, pDataValue,
+                                                Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                                            a.Boost = boosting;
+                                            dataset.Add(a);
+                                            dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                                                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                                                Lucene.Net.Documents.Field.Index.ANALYZED));
+                                            writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                                            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
             }

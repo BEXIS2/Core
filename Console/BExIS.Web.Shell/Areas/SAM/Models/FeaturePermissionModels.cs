@@ -10,7 +10,8 @@ namespace BExIS.Modules.Sam.UI.Models
         public int FeaturePermissionType { get; set; }
         public long Id { get; set; }
 
-        public string Name { get; set; }
+        
+        public string DisplayName { get; set; }
 
         public string Type { get; set; }
 
@@ -21,7 +22,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 FeatureId = featureId,
 
                 Id = subject.Id,
-                Name = subject.Name,
+                DisplayName = subject.DisplayName,
                 Type = subject is User ? "User" : "Group",
 
                 EffectiveRight = effectiveRight,

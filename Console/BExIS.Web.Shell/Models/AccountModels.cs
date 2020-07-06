@@ -63,12 +63,13 @@ namespace BExIS.Web.Shell.Models
         public string Authenticator { get; set; }
 
         [Required]
-        [Display(Name = "User Name")]
+        [Display(Name = "Email or Username")]
         public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
+        [System.Web.Mvc.AllowHtml]
         public string Password { get; set; }
 
         [Display(Name = "Remember me")]
@@ -97,7 +98,7 @@ namespace BExIS.Web.Shell.Models
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "User Name")]
+        [Display(Name = "Username")]
         public string UserName { get; set; }
 
         [Required]
@@ -114,6 +115,7 @@ namespace BExIS.Web.Shell.Models
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
+        [System.Web.Mvc.AllowHtml]
         public string Password { get; set; }
 
         [Display(Name = "Terms and Conditions")]

@@ -56,7 +56,7 @@ namespace BExIS.Utils.NH.Querying
 
         public override string ToLINQ()
         {
-            return string.Format(StringOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value);
+            return string.Format(StringOperator.TranslationToLINQ[this.Operator].Item2, this.Field.Name, this.Value.ToString().ToLower());
         }
     }
 
@@ -147,7 +147,7 @@ namespace BExIS.Utils.NH.Querying
 
         public override string ToLINQ()
         {
-            return string.Format(BinaryOperator.TranslationToLINQ[this.Operator].Item2, this.Left.ToSQL(), this.Right.ToSQL());
+            return string.Format(BinaryOperator.TranslationToLINQ[this.Operator].Item2, this.Left.ToLINQ(), this.Right.ToLINQ());
         }
     }
 

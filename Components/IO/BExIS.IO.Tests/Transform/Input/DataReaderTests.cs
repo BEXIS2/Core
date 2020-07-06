@@ -76,6 +76,12 @@ namespace BExIS.IO.Tests.Transform.Input
         /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
+            var dsHelper = new DatasetHelper();
+
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
+            helper.Dispose();
         }
 
         #region Read Row

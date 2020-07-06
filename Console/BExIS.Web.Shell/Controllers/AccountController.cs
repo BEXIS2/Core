@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -220,10 +221,18 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
+        public ActionResult ClearSession()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            return RedirectToAction("SessionTimeout", "Home", new { area = "" });
+        }
+
         //
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             var identityUserService = new IdentityUserService();
@@ -235,14 +244,26 @@ namespace BExIS.Web.Shell.Controllers
                     return View(model);
                 }
 
-                // Require the user to have a confirmed email before they can log on.
+                
 
-                var user = await identityUserService.FindByNameAsync(model.UserName);
+                // Search for user by email, if not found search by user name
+                var user = await identityUserService.FindByEmailAsync(model.UserName);
+
+                if (user != null)
+                {
+                    model.UserName = user.UserName;
+                }
+                else
+                { 
+                    user = await identityUserService.FindByNameAsync(model.UserName);
+                }
+                
+                // Require the user to have a confirmed email before they can log on.
                 if (user != null)
                 {
                     if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
                     {
-                        ViewBag.errorMessage = "You must have a confirmed email address to log in.";
+                        ViewBag.errorMessage = "You must have a confirmed email address to log in. Please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
                         return View("Error");
                     }
                 }
@@ -250,6 +271,7 @@ namespace BExIS.Web.Shell.Controllers
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, change to shouldLockout: true
                 var signInManager = new SignInManager(AuthenticationManager);
+
                 var result =
                     await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
                 switch (result)
@@ -278,6 +300,9 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            //System.Web.HttpContext.Current.Session["menu_permission"] = null; // Remove permissions for menu
+            System.Web.HttpContext.Current.Session.Abandon(); // Remove permissions for menu
             return RedirectToAction("Index", "Home");
         }
 
@@ -293,6 +318,7 @@ namespace BExIS.Web.Shell.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             var identityUserService = new IdentityUserService();
@@ -302,7 +328,7 @@ namespace BExIS.Web.Shell.Controllers
                 if (!ModelState.IsValid) return View(model);
 
 
-                var user = new User { UserName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
 
                 var result = await identityUserService.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -313,7 +339,7 @@ namespace BExIS.Web.Shell.Controllers
                     // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
                     // E-Mail-Nachricht mit diesem Link senden
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
+                    await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
@@ -405,6 +431,8 @@ namespace BExIS.Web.Shell.Controllers
 
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
+                
+                var applicationName = AppConfiguration.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,
                     $"<p>Dear user,</p>" +

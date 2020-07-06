@@ -207,6 +207,7 @@ namespace BExIS.Utils.Models
         /// <remarks></remarks>
         /// <seealso cref=""/>
         public IEnumerable<string> Values { get; set; }
+        public string SelectedValue { get; set; }
     }
 
     /// <summary>

@@ -1,4 +1,6 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.Dlm.Services.Party;
+using BExIS.Dlm.Entities.Party;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -181,6 +183,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     subjects = subjectManager.Subjects.ToList();
                 }
+
 
                 foreach (var subject in subjects)
                 {

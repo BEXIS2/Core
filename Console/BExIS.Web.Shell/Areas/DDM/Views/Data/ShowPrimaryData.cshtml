@@ -5,29 +5,54 @@
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Modules.Ddm.UI.Models;
 
+@{
+
+    string lable_upload = "Upload";
+
+    if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
+    {
+        if (Model.Data.Rows.Count > 0)
+        {
+            lable_upload = "Update or Append";
+        }
+    }
+
+}
+
 <div class="ShowData_Main">
-        @*<div class="ShowData_Header">
-            <h3>@Model.DatasetTitle</h3>
-        </div>*@
 
-        <div class="ShowDataContent">
-
-            @Html.ValidationSummary()
-            
-            @if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
+    <div class="row">
+        <div class="col-md-2 col-xs-2">
+            @if (Model.HasEditRight)
             {
-                @Html.Partial("_structuredDataView", Model)
-                 
+                @Html.ActionLink(@lable_upload, "UploadWizard", "Submit", new { area = "DCM", type = @Model.DataStructureType, datasetid = @Model.DatasetId }, new { @class = "bx-button function", @style = "float:left" })
             }
-
-
-            @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
-            {
-                @Html.Partial("_unstructuredDataView", Model)
-                 
-            }
-
         </div>
+    </div>
+
+    <div class="ShowDataContent">
+
+    @if (Html.ValidationSummary(true) != null)
+    {
+        @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationSummary(true).ToString()));
+    }
+
+
+
+        @if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
+        {
+            @Html.Partial("_structuredDataView", Model)
+
+        }
+
+
+        @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
+        {
+            @Html.Partial("_unstructuredDataView", Model)
+
+        }
+
+    </div>
 </div>
 
 

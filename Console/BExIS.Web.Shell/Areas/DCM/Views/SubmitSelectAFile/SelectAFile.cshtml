@@ -25,11 +25,19 @@
             fileExtListAsString = s;
         }
     }
+
+    string selectedFile = "";
+    if (Model.SelectedFileName != "")
+    {
+        selectedFile = "Selected files";
+    }
+
+
 }
 
 <div id="Step1" class="uploadWizardStep">
 
-    <div class="uploadWizardStep_Main">
+    <div class="uploadWizardStep_Main" style="width: 100%;">
         <div class="uploadWizardStep_Header stepper">
 
             <h3>@Model.StepInfo.title</h3>
@@ -53,19 +61,19 @@
 
                     <td>
                         @(Html.Telerik().Upload()
-                                        .Name("SelectFileUploader")
-                                        .Multiple(false)
-                                        .ShowFileList(false)
-                                        .HtmlAttributes(new { title = "Browse" })
-                                        .ClientEvents(events =>
-                                            events.OnSelect("SelectFileProcess_OnSelect")
-                                                    .OnRemove("SelectFileProcess_OnRemove")
-                                                    .OnSuccess("SelectFileProcess_OnSuccess")
+                                                        .Name("SelectFileUploader")
+                                                        .Multiple(false)
+                                                        .ShowFileList(false)
+                                                        .HtmlAttributes(new { title = "Browse" })
+                                                        .ClientEvents(events =>
+                                                            events.OnSelect("SelectFileProcess_OnSelect")
+                                                                    .OnRemove("SelectFileProcess_OnRemove")
+                                                                    .OnSuccess("SelectFileProcess_OnSuccess")
 
-                                        )
-                                        .Async(async => async
-                                            .Save("SelectFileProcess", @Model.StepInfo.PostActionInfo.ControllerName)
-                                            .AutoUpload(true))
+                                                        )
+                                                        .Async(async => async
+                                                            .Save("SelectFileProcess", @Model.StepInfo.PostActionInfo.ControllerName)
+                                                            .AutoUpload(true))
 
                         )
                     </td>
@@ -78,10 +86,10 @@
 
                     <td>
                         @(Html.Telerik().DropDownList()
-                                            .Placeholder("Please select")
-                                            .Name("SelectedServerFileName")
-                                            .BindTo(new SelectList(Model.serverFileList))
-                                            .ClientEvents(e => e.OnChange("SelectedServerFileName_onChange")))
+                                                            .Placeholder("Please select")
+                                                            .Name("SelectedServerFileName")
+                                                            .BindTo(new SelectList(Model.serverFileList))
+                                                            .ClientEvents(e => e.OnChange("SelectedServerFileName_onChange")))
 
                         @*@Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList), "Select")*@@*, new { disabled = "disabled" })*@
                     </td>
@@ -89,41 +97,50 @@
                         Select a data file previously uploaded to the server.
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <div class="uploadWizardStep_Success stepper">
+                            <div id="fileNameDiv">
+                                @if (Model.SelectedFileName != "")
+                                {@Model.SelectedFileName}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="fileNameDivHelp">
+                            @if (Model.SelectedFileName != "")
+                            {<span>Selected file.</span>}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="uploadWizardStep_Error stepper">
+                            @if (Model != null)
+                            {
+                                if (Model.ErrorList != null)
+                                {
+                                    if (Model.ErrorList.Count == 0)
+                                    {
+                                    }
+                                    else
+                                    {
+                                        <ul>
+                                            @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                                            {
+                                                <li>@s.ToString()</li>
+                                            }
+                                        </ul>
+                                    }
+                                }
+                            }
+                        </div>
+                    </td>
+                </tr>
+
             </table>
         </div>
     </div>
-
-    <div class="uploadWizardStep_Success stepper">
-        <div id="fileNameDiv">
-            @if (Model.SelectedFileName != "")
-            {@Model.SelectedFileName}
-    </div>
-</div>
-
-<div class="uploadWizardStep_Error stepper">
-    @if (Model != null)
-    {
-        if (Model.ErrorList != null)
-        {
-            if (Model.ErrorList.Count == 0)
-            {
-
-
-            }
-            else
-            {
-                <ul>
-                    @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                    {
-                        <li>@s.ToString()</li>
-                    }
-                </ul>
-
-            }
-        }
-
-    }
-</div>
 
 </div>
 
@@ -228,6 +245,7 @@
 
         $('.uploadWizardStep_Error').empty();
         $('#fileNameDiv').text(e.files[0].name);
+        $('#fileNameDivHelp').text("Selected file.");
     }
 
     function SelectedServerFileName_onChange()
@@ -243,6 +261,7 @@
 
                     $('.uploadWizardStep_Error').empty();
                     $('#fileNameDiv').text(value);
+                    $('#fileNameDivHelp').text("Selected file.");
                 });
     }
 

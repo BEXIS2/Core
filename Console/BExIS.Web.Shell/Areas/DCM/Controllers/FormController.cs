@@ -51,7 +51,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Load Metadata formular actions
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult EditMetadata(long datasetId, bool locked = false, bool created = false)
         {
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });
@@ -128,6 +128,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.DatasetId = -1;
             }
 
+            // set latest version to true, as this view is only called from edit actions, which are only possible for the latest version
+            Model.LatestVersion = true;
+
+
+
             ViewData["Locked"] = locked;
 
             return PartialView("MetadataEditor", Model);
@@ -195,10 +200,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
-            //Add JavaScript file
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
             {
-                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
             }
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.LOCKED))
@@ -206,6 +217,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["Locked"] = (bool)TaskManager.Bus[CreateTaskmanager.LOCKED];
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -354,12 +366,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
-            //Add JavaScript file
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
             {
-                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
             }
 
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+            }
+
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -590,10 +609,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
             }
 
-            //Add JavaScript file
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+            //Replace the title of the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
             {
-                Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+            }
+
+            //Replace the description in the info box on top
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+            {
+                Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
             }
 
             Model.Created = created;
@@ -610,6 +635,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 Model.DatasetTitle = "No Title available.";
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return PartialView("MetadataEditor", Model);
         }
 
@@ -690,13 +716,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
                 }
 
-                //Add JavaScript file
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.JS_PATH))
+                //Replace the title of the info box on top
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
                 {
-                    Model.JsPath = Convert.ToString(TaskManager.Bus[CreateTaskmanager.JS_PATH]);
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+                }
+
+                //Replace the description in the info box on top
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+                {
+                    Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
                 }
             }
 
+            ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
             return View("MetadataEditor", Model);
         }
 
@@ -1303,6 +1336,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
 
+        public JsonResult UpdateSimpleUsageWithParty(string xpath, long partyId)
+        {
+
+            try
+            {
+                AddXmlAttribute(xpath, "partyid", partyId.ToString());
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(false, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult UpdateComplexUsageWithParty(int stepId, int number, long partyId)
         {
             ViewData["ShowOptional"] = true;
@@ -1352,6 +1400,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
+
+
 
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
@@ -2387,6 +2437,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataNestedAttributeUsage, text);
                         }
+                        else if (MappingUtils.PartyAttrIsMain(id, LinkElementType.MetadataAttributeUsage))
+                        {
+                            x = MappingUtils.GetAllMatchesInSystem(id, LinkElementType.MetadataAttributeUsage, text);
+                        }
+
                         break;
                     }
             }
@@ -2411,6 +2466,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
+
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
         {
@@ -3220,7 +3276,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);
             }
             finally
             {
@@ -3385,7 +3441,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 long researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
                 long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
-                string title = xmlDatasetHelper.GetInformation(entityId, NameAttributeValues.title);
+                var entityVersion = datasetManager.GetDatasetLatestVersion(entityId);
+
+                string title = entityVersion.Title;
 
                 // get the offline version of the metadata
                 var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()
@@ -3400,9 +3458,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 });
 
                 // prepare view to write it to the file
-                byte[] content = Encoding.ASCII.GetBytes(view.ToString());
+                byte[] content = Encoding.UTF8.GetBytes(view.ToString());
 
-                return File(content, "application/xhtml+xml", "metadata.htm");
+                return File(content, "application/xhtml+xml", entityId + "_metadata.htm");
             }
 
             return Content("no metadata html file is loaded.");

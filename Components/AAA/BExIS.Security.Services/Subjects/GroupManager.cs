@@ -74,6 +74,8 @@ namespace BExIS.Security.Services.Subjects
                         return Groups.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
 
+                    count = count = Groups.Count();
+
                     // without filter and order
                     return Groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 }
@@ -86,7 +88,13 @@ namespace BExIS.Security.Services.Subjects
 
         public Task CreateAsync(Group role)
         {
+            if (role == null)
+                return Task.FromResult(0);
+
             if (string.IsNullOrEmpty(role.Name))
+                return Task.FromResult(0);
+
+            if (FindByNameAsync(role.Name)?.Result != null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
@@ -127,6 +135,8 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<Group> FindByNameAsync(string roleName)
         {
+            roleName = roleName.Trim();
+
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();
@@ -136,6 +146,15 @@ namespace BExIS.Security.Services.Subjects
 
         public Task UpdateAsync(Group role)
         {
+            if (role == null)
+                return Task.FromResult(0);
+
+            if (string.IsNullOrEmpty(role.Name))
+                return Task.FromResult(0);
+
+            if (FindByIdAsync(role.Id)?.Result == null)
+                return Task.FromResult(0);
+
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();

@@ -2,49 +2,49 @@
 
 @model BExIS.Utils.Models.Property
 
-<div>
+    <div>
 
-<p class="PropertyHeader">@Model.DisplayName</p>
+        <p class="PropertyHeader">@Model.DisplayName</p>
 
 
-@{  string value = "";
-    int i = 0;
+        @{ 
+            string value = "";
+            int i = 0;
 
-    string controller = Session["Controller"].ToString();
-   }
+            if (!string.IsNullOrEmpty(Model.SelectedValue))
+            {
+                i = Model.Values.ToList().IndexOf(Model.SelectedValue)+1;
+            }
 
-@if (this.Session["PropertiesDictionary"] as Dictionary<string, string> !=null)
-{
-    Dictionary<string, string> dic = this.Session["PropertiesDictionary"] as Dictionary<string, string>;
-    value = ((dic != null && dic.ContainsKey(Model.DataSourceKey)) ? dic[Model.DataSourceKey] : Model.DefaultValue); //HtmlHelpers.GetSelectedValueInDictionary(Model.DataSourceKey, Model.DefaultValue, this.Session["PropertiesDictionary"] as Dictionary<string, string>); 
-}
 
-@if (value == "" || this.Session["PropertiesDictionary"] as Dictionary<string, string> == null)
-{
-   value = Model.DefaultValue;
-}
-    
- 
-
-@foreach (string s in @Model.Values)
-    {
-        if (s != value)
-        {
-            i++;
+            string controller = Session["Controller"].ToString();
         }
-        else { break; }
-    }
+
+        @if (this.Session["PropertiesDictionary"] as Dictionary<string, string> != null)
+        {
+            Dictionary<string, string> dic = this.Session["PropertiesDictionary"] as Dictionary<string, string>;
+            value = ((dic != null && dic.ContainsKey(Model.DataSourceKey)) ? dic[Model.DataSourceKey] : Model.DefaultValue); //HtmlHelpers.GetSelectedValueInDictionary(Model.DataSourceKey, Model.DefaultValue, this.Session["PropertiesDictionary"] as Dictionary<string, string>);
+        }
+
+        @if (value == "" || this.Session["PropertiesDictionary"] as Dictionary<string, string> == null)
+        {
+            value = Model.DefaultValue;
+        }
+
+        @if (Model.Values.Count() > 0)
+        {
+            @(Html.Telerik().DropDownList()
+                            .Name(Model.DataSourceKey)
+                            .Placeholder("Select, please")
+                            .SelectedIndex(i)
+                            .BindTo(new SelectList(Model.Values))
+                        .ClientEvents(events => events
+                        .OnChange("onChange"))
+            )
+        }
 
 
-
-@(Html.Telerik().DropDownList()
-             .Name(Model.DataSourceKey)
-             .SelectedIndex(i)
-             .BindTo(new SelectList(Model.Values))
-            .ClientEvents(events => events
-            .OnChange("onChange"))
-)
-</div>
+    </div>
 <script type="text/javascript">
     function onChange(e) {
       
@@ -56,18 +56,26 @@
 
         $.post('@Url.Action("FilterByDropDown", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: value, node: node }, function (response) {
             //alert(response);
-
+            console.log("update header");
+            //console.log(response);
             $(".searchBreadcrumbNavigation").html(response);
+
+            $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                console.log("update Properties");
+                console.log(response);
+                $("#searchProperties").html(response);
+            })
+        
+
         });
 
-        $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
-            $("#resultContent").html(response);
-
-        })
-
         $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+            console.log("update facets");
+            console.log(response);
             $("#searchTreeView").html(response);
         })
+
+
         
 
         refreshGrid();

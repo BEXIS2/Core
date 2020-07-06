@@ -20,10 +20,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         /// <summary>
         /// is called when the Search View is selected
-        /// 
+        ///
         /// </summary>
         /// <param name="model">from type SearchDataModel</param>
         /// <returns></returns>
@@ -33,7 +32,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
             Session["Controller"] = "Home";
-
+            Session["PropertiesDictionary"] = null;
 
             try
             {
@@ -68,7 +67,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
             Session["Controller"] = "Home";
-
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
@@ -124,7 +122,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult _AutoCompleteAjaxLoading(string text)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
+            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10);
+            IEnumerable<TextValue> textvalues = model.SearchComponent.TextBoxSearchValues;
+
+            return new JsonResult { Data = new SelectList(textvalues, "Value", "Name") };
         }
 
         /// <summary>
@@ -140,8 +141,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Session["SearchType"] = value;
         }
 
-        #endregion
-
+        #endregion SearchHeader
 
         #region Treeview - _searchFacets
 
@@ -168,6 +168,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
+        }
+
+        public ActionResult UpdateProperties()
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+            var properties = provider.UpdateProperties(provider.WorkingSearchModel.CriteriaComponent).SearchComponent.Properties;
+
+            foreach (Property p in properties)
+            {
+                if (PropertiesDic.ContainsKey(p.DataSourceKey))
+                {
+                    p.SelectedValue = PropertiesDic[p.DataSourceKey];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
+                }
+            }
+
+            return PartialView("_searchProperties", properties);
         }
 
         public ActionResult GetDataForBreadCrumbView()
@@ -230,11 +250,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
             return View("Index", provider);
-
         }
 
         /// <summary>
-        /// When the user click on the more button in the treeview 
+        /// When the user click on the more button in the treeview
         /// a window pops up an show all categories from the main categorie
         /// </summary>
         /// <param name="parent">name of the parent where the more button is inside</param>
@@ -257,14 +276,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
         }
 
-        #endregion
+        #endregion Treeview - _searchFacets
 
         #region BreadcrumbView
+
         //+++++++++++++++++++++BreadCrumb Update Data +++++++++++++++++++++++++++
 
         /// <summary>
         /// Is called when the user click on the labels in the breadcrumb view
-        /// 
+        ///
         /// </summary>
         /// <param name="value">selected value</param>
         /// <param name="parent">patrent of selected value</param>
@@ -286,12 +306,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
+
+            //reset properties selected values
+            var properties = provider.WorkingSearchModel.SearchComponent.Properties;
+
+            foreach (Property p in properties)
+            {
+                if (PropertiesDic.ContainsKey(p.DataSourceKey))
+                {
+                    p.SelectedValue = PropertiesDic[p.DataSourceKey];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
+                }
+            }
+
+
             return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
         }
 
-        #endregion
+        #endregion BreadcrumbView
 
         #region Datagrid
+
         // +++++++++++++++++++++ DataGRID Action +++++++++++++++++++++++++++
 
         [GridAction]
@@ -303,7 +341,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(new GridModel(table));
         }
 
-
         public ActionResult SetResultViewVar(string key, string value)
         {
             Session[key] = value;
@@ -311,9 +348,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return this.Json(new { success = true });
         }
 
-        #endregion
+        #endregion Datagrid
 
         #region Properties _searchProperties
+
         //+++++++++++++++++++++ Properties Sliders Action +++++++++++++++++++++++++++
         [HttpPost]
         public ActionResult FilterByRangeSlider(int start, int end, string parent)
@@ -342,6 +380,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
 
+
+
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent, 10, 1));
         }
 
@@ -369,7 +409,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
         }
 
-
         public void UpdatePropertiesDic(string name, string value)
         {
             if (name != null)
@@ -392,7 +431,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         /// <summary>
-        /// Remove a property from the Dictionary 
+        /// Remove a property from the Dictionary
         /// </summary>
         /// <example>
         /// grassland: all | yes | no
@@ -423,7 +462,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
         }
-        #endregion
+
+        #endregion Properties _searchProperties
 
         #region Dictionary (Search/Properties)
 
@@ -438,7 +478,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        #endregion
+        #endregion Dictionary (Search/Properties)
 
         #region Session && Session  getter/setter
 
@@ -481,7 +521,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             else return new List<Facet>();
         }
 
-
         private void SetSelectAbleCategoryList(IEnumerable<Facet> cl)
         {
             Session["SelectAbleCategories"] = cl;
@@ -509,7 +548,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Session["SearchType"] = filter;
         }
 
-        #endregion
-
+        #endregion Session && Session  getter/setter
     }
 }

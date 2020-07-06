@@ -57,6 +57,13 @@
             $.post('@Url.Action("FilterByRadioButton", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: e.value, node: e.name, isChecked: e.checked }, function (response) {
                 // alert(response);
                 $(".searchBreadcrumbNavigation").html(response);
+
+                     $.post('@Url.Action("UpdateProperties", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+                        console.log("update Properties");
+                        //console.log(response);
+                        $("#searchProperties").html(response);
+                    })
+
             });
 
 //            $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
@@ -67,8 +74,9 @@
             $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
                 $("#searchTreeView").html(response);
             })
-        
 
+
+       
             e.disabled = true;
             refreshGrid();
             e.disabled = false;

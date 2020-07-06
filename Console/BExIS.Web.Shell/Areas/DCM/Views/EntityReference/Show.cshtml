@@ -48,11 +48,11 @@
                             <td class="dt-body-center">
 
 
-                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
+                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show", @target = "_blank" })
 
                                 @if (!srm.Target.LatestVersion)
                                 {
-                                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward", @target = "_blank" })
                                 }
 
                                 @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
@@ -97,11 +97,11 @@
                             <td class="dt-body-center">
 
 
-                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show" })
+                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show", @target = "_blank" })
 
                                 @if (!srm.Source.LatestVersion)
                                 {
-                                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward" })
+                                    @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward", @target = "_blank" })
                                 }
                                 @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
                                 {

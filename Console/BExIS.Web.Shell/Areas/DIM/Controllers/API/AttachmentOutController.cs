@@ -121,7 +121,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
@@ -211,7 +211,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 

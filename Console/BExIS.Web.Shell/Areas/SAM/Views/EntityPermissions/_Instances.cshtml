@@ -15,6 +15,15 @@
 
 @model long
 
+<script type="text/javascript">
+
+    function change_position_count() {
+        $(".t-status-text").css('margin-top', '25px');
+        console.log("load");
+    }
+</script>
+
+
     @(Html.Telerik().Grid<EntityInstanceGridRowModel>()
         .Name("grid_instances")
       .DataKeys(keys =>
@@ -37,12 +46,15 @@
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()
+                .OperationMode(GridOperationMode.Client)
                 .Select("Instances_Select", "EntityPermissions", new { EntityId = Model })
+                
         )
         .ClientEvents(events =>
         {
             events.OnRowSelect("grid_instances_onRowSelect");
             events.OnDataBound("grid_instances_onDataBound");
+            events.OnLoad("change_position_count");
         })
         .Filterable()
         .Sortable(sortable => sortable

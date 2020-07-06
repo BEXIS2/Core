@@ -3,9 +3,27 @@
 @{
     int tabIndex = 0;
 
-    if (ViewData["TabIndex"] != null )
+    if (ViewData["TabIndex"] != null)
     {
         tabIndex = Convert.ToInt32(ViewData["TabIndex"].ToString());
+    }
+
+    var show_tabs = new Dictionary<string, string>();
+
+    if (ViewData["show_tabs"] != null)
+    {
+        show_tabs = (Dictionary<string, string>)ViewData["show_tabs"];
+    }
+    else
+    {
+        show_tabs.Add("show_primary_data_tab", "true");
+        show_tabs.Add("show_data_structure_tab", "true");
+        show_tabs.Add("show_link_tab", "true");
+        show_tabs.Add("show_permission_tab", "true");
+        show_tabs.Add("show_publish_tab", "true");
+        show_tabs.Add("show_attachments_tab", "true");
+
+        show_tabs.Add("show_tabs_deactivated", "true"); // "false" = also hide request button, if not available in addition to deactivated tabs
     }
 
 }
@@ -22,49 +40,44 @@
 
 }
 
-
-
 @*load sctipts from dcm for the metadata. *@
 @section scripts
 {
-        <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/Form.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Dcm/Scripts/minimap/minimap.js")" type="text/javascript"></script>
 }
-    <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
-
-
+<link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
 <div id="showData">
-       <div id="showData">
+    <div id="showData">
         <h1>@Model.Title</h1>
 
         @if (!Model.LatestVersion)
-    {
-        <div id="view-warning-container">
+        {
+            <div id="view-warning-container">
 
-            <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
-                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;"onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+                <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
+                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                    Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+                </div>
             </div>
-        </div>
-    }
+        }
 
-
-    <div id="view-header" class="row" >
+        <div id="view-header" class="row">
             <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-		<div class="row">
+                <div class="row">
                     <div class="col-md-6" style="white-space: nowrap;display: flex;">
-                        <div><b>Dataset id:</b> @Model.Id
+                        <div>
+                            <b>Dataset id:</b> @Model.Id
                             <b style="padding-left: 5px;">Version:</b>
-                            @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown" , @style = "border:none;" })
+                            @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-xs-2 col-md-2 col-lg-2">
                 <div id="preloaderContainer"></div>
-
             </div>
 
             <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
@@ -110,15 +123,14 @@
                     }
                     else
                     {
-                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                        if (show_tabs["show_tabs_deactivated"] == "true")
+                        {
+                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                        }
                     }
                 }
-
-
             </div>
         </div>
-
-
         @if (@Model != null)
         {
             if (ViewData.ModelState.IsValid)
@@ -130,51 +142,76 @@
                                       .Items(tabs =>
                                       {
 
-                          //ToDo Recator Modularity -> load metadata from from dcm
+                                          //ToDo Recator Modularity -> load metadata from from dcm
 
-                                         tabs.Add()
-                                            .Text("Metadata")
-                                            .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion })
-                                            .HtmlAttributes(new { id = "metadata" })
-                                            .Enabled(false);
+                                          // Allways show Metadata and data structure tab
 
                                           tabs.Add()
-                                              .Text("Primary Data")
-                                              .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
-                                              .Enabled(@Model.ViewAccess)
-                                              .HtmlAttributes(new { id = "primarydata" })
-                                              .Enabled(false);
+                                             .Text("Metadata")
+                                             .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion, isValid = ViewBag.isValid })
+                                             .HtmlAttributes(new { id = "metadata" });
 
-                                          tabs.Add()
-                                              .Text("Data Structure")
-                                              .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
-                                              .HtmlAttributes(new { id = "datastructure" })
-                                              .Enabled(false);
+                                          if (show_tabs["show_primary_data_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.ViewAccess == false))
+                                          {
+                                              tabs.Add()
+                                                  .Text("Primary Data")
+                                                  .LoadContentFrom("ShowPrimaryData", "Data", new { area = "ddm", datasetID = @Model.Id, versionId = Model.VersionId })
+                                                  .HtmlAttributes(new { id = "primarydata" })
+                                                  //.Enabled(@Model.ViewAccess);
+                                                  .Enabled(false);
 
-                                          tabs.Add()
-                                              .Text("Links")
-                                              .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
-                                              .Enabled(false)
-                                              .HtmlAttributes(new { id = "showreferences" });
+                                          }
+                                          if (show_tabs["show_data_structure_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                  .Text("Data Structure")
+                                                  .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "ddm", datasetID = @Model.Id })
+                                                  .HtmlAttributes(new { id = "datastructure" })
+                                                  .Enabled(false);
 
-                                          tabs.Add()
-                                              .Text("Dataset Permissions")
-                                              .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
-                                              .Enabled(false)
-                                              .HtmlAttributes(new { id = "datapermissions" });
 
-                                          tabs.Add()
-                                              .Text("Publish")
-                                                //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
-                                                .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
-                                                .Enabled(false)
-                                                .HtmlAttributes(new { id = "prepare" });
-                                          tabs.Add()
+                                          }
+                                          if (show_tabs["show_link_tab"] == "true")
+                                          {
+                                              tabs.Add()
+                                                .Text("Links")
+                                                .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
+                                                .HtmlAttributes(new { id = "showreferences" })
+                                                .Enabled(false);
+                                                
+                                          }
+
+                                          if (show_tabs["show_permission_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.GrantAccess == false))
+                                          {
+                                              tabs.Add()
+                                                  .Text("Dataset Permissions")
+                                                  .LoadContentFrom("DatasetPermissions", "Data", new { area = "ddm", datasetId = @Model.Id })
+                                                  .HtmlAttributes(new { id = "datapermissions" })
+                                                  //.Enabled(@Model.GrantAccess);
+                                                  .Enabled(false);
+
+                                          }
+                                          if (show_tabs["show_publish_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.ViewAccess == false))
+                                          {
+                                              tabs.Add()
+                                                    .Text("Publish")
+                                                    //.Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                                                    .LoadContentFrom("getPublishDataPartialView", "Submission", new { area = "dim", datasetId = @Model.Id })
+                                                    //.Enabled(@Model.ViewAccess)
+                                                    .Enabled(false)
+                                                    .HtmlAttributes(new { id = "prepare" });
+                                          }
+                                          if (show_tabs["show_attachments_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.ViewAccess == false))
+                                          {
+                                              tabs.Add()
                                               .Text("Attachments")
                                               .LoadContentFrom("DatasetAttachements", "Attachments", new { area = "dcm", datasetId = @Model.Id, versionId = Model.VersionId })
-                                              .Enabled(false)
-                                              .HtmlAttributes(new { id = "attachements" });
+                                              .HtmlAttributes(new { id = "attachements" })
+                                              //.Enabled(@Model.ViewAccess);
+                                              .Enabled(false);
 
+
+                                          }
                                       })
                                       .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
             }
@@ -183,9 +220,7 @@
                 @Html.ValidationSummary(true);
             }
         }
-
-
-<script type="text/javascript">
+        <script type="text/javascript">
 
 	function grid_subjects_onDataBound() {
 		addTooltips();
@@ -214,6 +249,8 @@
 
 	$(document).ready(function () {
 
+        console.log("ready");
+
 		$("#preloaderContainer").preloader(20, "Loading...");
 		resetAllTelerikIconTitles();
 
@@ -229,7 +266,9 @@
             })
         })
 
-		$(document).bind("MetadataFormIsReady", function () {
+        $(document).bind("MetadataFormIsReady", function () {
+
+            console.log("metadata ready");
 			//alert("m is ready");
 			var viewAccess = '@Model.ViewAccess';
 			var grantAccess = '@Model.GrantAccess';
@@ -239,19 +278,20 @@
 			//console.log(viewAccess);
 			//console.log(grantAccess);
 
-			$("li#datastructure").removeClass("t-state-disabled");
+            $("li#datastructure").removeClass("t-state-disabled");
+            $("li#showreferences").removeClass("t-state-disabled");
 			//console.log($(tabStrip).find("li #datastructure"));
 
 			if (viewAccess === "True") {
 				$("li#primarydata").removeClass("t-state-disabled");
 				$("li#prepare").removeClass("t-state-disabled");
 				$("li#attachements").removeClass("t-state-disabled");
-				$("li#showreferences").removeClass("t-state-disabled");
+				$("li#attachements").removeClass("t-state-disabled");
+
 			}
 
 			if (grantAccess === "True") {
 				$(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
-				$("li#attachements").removeClass("t-state-disabled");
 			}
 
 			//console.log($("li", tabStrip.element));
@@ -273,8 +313,11 @@
 		}
 	}
 
-	function OnSelectShowDataTabStrip(e) {
+    function OnSelectShowDataTabStrip(e) {
+
 		if (e.item.id == "metadata") {
+
+            $("#MetadataEditor").show();
 
 			setTimeout(function () {
 				bindMinimap(true);
@@ -290,7 +333,10 @@
 			}, 120);
 
 		}
-		else {
+        else {
+
+            $("#MetadataEditor").hide();
+
 			$(".miniregion").remove();
 			$(".minimap").remove();
 
@@ -337,13 +383,10 @@
         var versionNumber = $("#VersionSelect").val();
         selectVersion(@Model.Id, versionNumber);
     });
-    
+
    function selectVersion(datasetId, versionNumber) {
         var redirectURL = '@Url.Action("Show","Data")';
         window.location.href = redirectURL + "/" + datasetId + "?version=" + versionNumber;
    }
- 
-</script>
-
-</div>
-
+        </script>
+    </div>

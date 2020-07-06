@@ -127,6 +127,7 @@
     <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\MessageHelper.cs" />
     <Compile Include="Utilities\SmsService.cs" />
+    <Compile Include="Versions\VersionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Modules\SAM\BExIS.Sam.Providers.Ldap\BExIS.Sam.Providers.Ldap.csproj">

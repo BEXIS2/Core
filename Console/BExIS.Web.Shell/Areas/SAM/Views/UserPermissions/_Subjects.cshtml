@@ -18,7 +18,7 @@
     })
     .Columns(columns =>
     {
-        columns.Bound(m => m.Name)
+        columns.Bound(m => m.DisplayName)
             .Width("15%");
         columns.Bound(m => m.Type)
             .Width("15%");
@@ -48,7 +48,7 @@
       })
       .Sortable(sortable => sortable
           .OrderBy(orderby => orderby
-              .Add(m => m.Name)
+              .Add(m => m.DisplayName)
               .Ascending()
           )
       )
