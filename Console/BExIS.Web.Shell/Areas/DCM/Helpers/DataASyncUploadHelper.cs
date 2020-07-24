@@ -409,7 +409,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 using (var unitOfWork = this.GetUnitOfWork())
                                 {
-                                    workingCopy = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(workingCopy.Id);
+                                    workingCopy.VersionNo += 1;
 
                                     //set StateInfo of the previus version
                                     if (workingCopy.StateInfo == null)
