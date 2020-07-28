@@ -126,6 +126,10 @@
     <add key="usePersonEmailAttributeName" value ="false"/>
     <add key="PersonEmailAttributeName" value ="Email"/>
 
+<!-- Allow to use the user email within the party person; change party email on changed user email -->
+    <add key="usePersonEmailAttributeName" value ="false"/>
+    <add key="PersonEmailAttributeName" value ="Email"/>
+
 ...
 
 
