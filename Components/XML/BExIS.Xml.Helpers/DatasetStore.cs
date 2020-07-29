@@ -141,6 +141,10 @@ namespace BExIS.Xml.Helpers
 
                     return dsv.Title;
                 }
+                catch
+                {
+                    return String.Empty;
+                }
                 finally
                 {
                     dm.Dispose();
@@ -209,5 +213,24 @@ namespace BExIS.Xml.Helpers
             return true;
         }
 
+        public bool Exist(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = null;
+
+            try
+            {
+                dataset = dm.GetDataset(id);
+                return dataset!=null? true:false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
     }
 }
