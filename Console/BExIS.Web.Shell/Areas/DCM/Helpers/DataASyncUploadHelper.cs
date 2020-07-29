@@ -26,6 +26,7 @@ using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -519,8 +520,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 // Move Original File to its permanent location
                 String tempPath = Bus[TaskManager.FILEPATH].ToString();
                 string originalFileName = Bus[TaskManager.FILENAME].ToString();
-                string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
-                string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                //string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                string storePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), originalFileName);
+                string dynamicStorePath = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), originalFileName);
                 string extention = Bus[TaskManager.EXTENTION].ToString();
 
                 Debug.WriteLine("extention : " + extention);
