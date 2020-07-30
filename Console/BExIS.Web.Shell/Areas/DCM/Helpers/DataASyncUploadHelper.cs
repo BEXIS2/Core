@@ -527,7 +527,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 Debug.WriteLine("extention : " + extention);
 
-                //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
+                //check if directory exist
+                // if folder not exist
+                var directory = Path.GetDirectoryName(storePath);
+                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
                 FileHelper.MoveFile(tempPath, storePath);
 
                 string mimeType = MimeMapping.GetMimeMapping(originalFileName);
