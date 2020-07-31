@@ -532,6 +532,19 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 var directory = Path.GetDirectoryName(storePath);
                 if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
+                // check if file exist allready and if yes change the name
+                int count = 1;
+                string fileNameOnly = Path.GetFileNameWithoutExtension(storePath);
+                string extension = Path.GetExtension(storePath);
+
+                while (File.Exists(storePath))
+                {
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count++);
+                    storePath = Path.Combine(directory, tempFileName + extension);
+                    dynamicStorePath = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), tempFileName + extension);
+                    Bus[TaskManager.FILENAME] = tempFileName + extension;
+                }
+
                 FileHelper.MoveFile(tempPath, storePath);
 
                 string mimeType = MimeMapping.GetMimeMapping(originalFileName);
