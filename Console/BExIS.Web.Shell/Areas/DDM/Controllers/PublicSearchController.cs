@@ -40,7 +40,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 ModelState.AddModelError(String.Empty, e.Message);
 
-                return View("Index");
+                return View("Error");
             }
         }
 

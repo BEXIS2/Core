@@ -441,6 +441,7 @@
     <Content Include="Views\Shared\_checkboxButtonsView.cshtml" />
     <Content Include="Views\Dashboard\_myDatasetsView.cshtml" />
     <Content Include="Views\Dashboard\_myDatasetsViewHeader.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
