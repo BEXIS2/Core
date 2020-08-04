@@ -219,7 +219,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // apply selection and projection
 
                         //check wheter title is empty or not
-                        string title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
+                        title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
 
                         switch (format)
                         {

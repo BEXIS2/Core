@@ -145,6 +145,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Xml.Helpers.UnitTests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Services.Tests", "Components\AAA\BExIS.Security.Services.Tests\BExIS.Security.Services.Tests.csproj", "{F6638B42-1D60-4925-AE87-FDB80C03DBAC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ATO", "ATO", "{78ADB0AF-425B-4A0A-9A7C-D693531FC2FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Ato.UI", "Console\BExIS.Web.Shell\Areas\ATO\BExIS.Modules.Ato.UI.csproj", "{5EACC614-1F10-4047-8310-4D82517BDFF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1007,6 +1011,24 @@ Global
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC}.TestServerRelease|x86.Build.0 = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Debug|x86.Build.0 = Debug|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Release|x86.ActiveCfg = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.Release|x86.Build.0 = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{5EACC614-1F10-4047-8310-4D82517BDFF0}.TestServerRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1077,10 +1099,12 @@ Global
 		{44DD2A5E-0D2F-4FAB-B297-4211441030B7} = {6C18F986-A56C-4366-88A4-7046E8901929}
 		{64F809C2-48F4-47FA-840C-6EFB046D3A6A} = {36639C81-78C6-4C77-B856-41B8291942DA}
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC} = {946EB891-B5C8-4E03-B953-69583E886E57}
+		{78ADB0AF-425B-4A0A-9A7C-D693531FC2FC} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
+		{5EACC614-1F10-4047-8310-4D82517BDFF0} = {78ADB0AF-425B-4A0A-9A7C-D693531FC2FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
