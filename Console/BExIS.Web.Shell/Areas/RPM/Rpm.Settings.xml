@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.13/Manuals/RPM/Manual.md" type="String"/>
+  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14/Manuals/RPM/Manual.md" type="String"/>
   <entry key="key2" value="value2" type="String"/>
   <entry key="key3" value="21" type="Int16"/>
   <missingValues>
@@ -13,4 +13,5 @@
       <description>not exist</description>
     </missingValue>
   </missingValues>
+  <optionalDefault>true</optionalDefault>
 </settings>

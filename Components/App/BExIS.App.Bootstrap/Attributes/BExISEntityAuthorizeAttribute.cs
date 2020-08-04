@@ -10,14 +10,14 @@ namespace BExIS.App.Bootstrap.Attributes
 {
     public class BExISEntityAuthorizeAttribute : ActionFilterAttribute
     {
-        private string entityName;
+        //private string entityName;
         private Type entityType;
         private string keyName;
         private RightType rightType;
 
-        public BExISEntityAuthorizeAttribute(string entityName, Type entityType, string keyName, RightType rightType)
+        public BExISEntityAuthorizeAttribute(Type entityType, string keyName, RightType rightType)
         {
-            this.entityName = entityName;
+            //this.entityName = entityName;
             this.entityType = entityType;
             this.keyName = keyName;
             this.rightType = rightType;
@@ -34,7 +34,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 if (filterContext.HttpContext.User.Identity.IsAuthenticated)
                     userName = filterContext.HttpContext.User.Identity.Name;
 
-                if (!entityPermissionManager.HasEffectiveRight(userName, entityName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))
+                if (!entityPermissionManager.HasEffectiveRight(userName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))
                 {
                     filterContext.Result = new RedirectToRouteResult(new
                         RouteValueDictionary{

@@ -9,5 +9,6 @@ namespace BExIS.Security.Entities.Subjects
         public virtual ICollection<EntityPermission> EntityPermissions { get; set; }
         public virtual ICollection<FeaturePermission> FeaturePermissions { get; set; }
         public virtual string Name { get; set; }
+        public virtual string DisplayName { get; set; }
     }
 }

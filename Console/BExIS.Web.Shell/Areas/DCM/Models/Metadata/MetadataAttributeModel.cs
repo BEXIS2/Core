@@ -17,6 +17,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public BaseUsage Source { get; set; }
         public BaseUsage Parent { get; set; }
         public long MetadataAttributeId { get; set; }
+        public string MetadataAttributeName { get; set; }
         public String DisplayName { get; set; }
         public String Discription { get; set; }
         public int MinCardinality { get; set; }
@@ -34,6 +35,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         #region Mapping Variables
 
         public bool PartyMappingExist { get; set; }
+
+        public bool PartyComplexMappingExist { get; set; }
+
+        public bool PartySimpleMappingExist { get; set; }
+
         public bool EntityMappingExist { get; set; }
 
         //url to the show view of the entity

@@ -149,7 +149,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 if (isPublic || user != null)
                 {
-                    if (isPublic || entityPermissionManager.HasEffectiveRight(user.Name, "Dataset", typeof(Dataset), id, RightType.Read))
+                    if (isPublic || entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
                     {
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
@@ -167,7 +167,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
-                            string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                            string title = datasetVersion.Title;
 
                             // check the data sturcture type ...
                             if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
@@ -226,7 +226,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(version - 1);
 
-                            string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                            string title = datasetVersion.Title;
 
                             // check the data sturcture type ...
                             if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)

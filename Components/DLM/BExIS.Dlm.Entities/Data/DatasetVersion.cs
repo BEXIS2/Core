@@ -29,10 +29,10 @@ namespace BExIS.Dlm.Entities.Data
     {
         #region Attributes
 
-        /// Mapping metadata and extended properties as component, makes them fields of Dataset table! this is good for performance (no need for joins) and 
-        /// also helps to reduce the complexity of content versioning, as there are less associations.
-        //public virtual string Title { get; set; }
-        //public virtual string Description { get; set; } // Description of the dataset not the changes made in this version.
+        // Mapping metadata and extended properties as component, makes them fields of Dataset table! this is good for performance (no need for joins) and 
+        // also helps to reduce the complexity of content versioning, as there are less associations.
+        public virtual string Title { get; set; }
+        public virtual string Description { get; set; } // Description of the dataset not the changes made in this version.
 
         /// <summary>
         ///

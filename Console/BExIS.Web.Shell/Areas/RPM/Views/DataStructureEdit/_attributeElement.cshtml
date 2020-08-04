@@ -23,7 +23,7 @@
             </td>
             <td class="unit">
                 <div class="bx-rpm-label">Unit</div>
-                <div class="bx-rpm-text" title="@Model.Unit.Name">@Model.Unit.Name</div>
+                <div class="bx-rpm-text" title="@Model.Unit.Name">@Model.Unit.Description</div>
             </td>
             <td class="datatype">
                 <div class="bx-rpm-label">Data Type</div>
@@ -40,6 +40,21 @@
             <td class="bx-rpm-expand" title="Show Details"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
             <td class="bx-rpm-select" title="Add Variable" onclick="javascript:addVariable(@Model.Id,'@Model.Name')"><span class="bx bx-next bx-button function small"></span></td>
         </tr>
+        <tr class="">
+            <td class="id"></td>
+            <td class="name">
+                <div class="bx-rpm-label hiddenelements" title="@Model.Description">@Model.Description</div>
+            </td>
+            <td class="unit">
+                <div class="bx-rpm-label" title="@Model.Unit.Name">@Model.Unit.Name</div>
+            </td>
+            <td class="datatype">
+                @if (!String.IsNullOrEmpty(Model.DisplayPattern))
+                {
+                    <div class="bx-rpm-label" title="@Model.DisplayPattern">@Model.DisplayPattern</div>
+                }
+            </td>
+        </tr>
         <tr class="hidden hiddenelements">
             <td colspan="7" class="description">
                 <div class="bx-rpm-label">Description</div>
@@ -52,7 +67,7 @@
         @if (Model.Constraints.Count > 0)
         {
             <tr class="hidden hiddenelements">
-                <td colspan="7">
+                <td colspan="7" class="constraints">
                     <div class="bx-rpm-label">Constraints</div>
                     <div class="bx-rpm-text">
                         <ul>

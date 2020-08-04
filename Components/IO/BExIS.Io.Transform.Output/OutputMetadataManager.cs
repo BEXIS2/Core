@@ -79,7 +79,7 @@ namespace BExIS.IO.Transform.Output
 
                 newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
 
-                string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                string title = datasetVersion.Title;
 
                 // store in content descriptor
                 if (storing)
@@ -197,7 +197,7 @@ namespace BExIS.IO.Transform.Output
 
                 newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
 
-                string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                string title = datasetVersion.Title;
 
                 // store in content descriptor
                 string filename = "metadata";

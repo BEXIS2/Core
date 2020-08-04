@@ -69,12 +69,14 @@
                     }
                 }
                 if (count > 0) {
+                    $('#' + id).parent('.bx-rpm-filterItem').removeClass('hidden');
                     $('#' + id).removeClass('disabled');
                     $('#' + id).removeAttr('disabled', 'disabled');
                     $('#' + id + '_label').removeClass('disabled');
                     $('#' + id + '_label_count').html('(' + count + ')');
                 }
                 else {
+                    $('#' + id).parent('.bx-rpm-filterItem').addClass('hidden');
                     $('#' + id).addClass('disabled');
                     $('#' + id).attr('disabled', 'disabled');
                     $('#' + id + '_label').addClass('disabled');
@@ -83,6 +85,7 @@
 
             }
             else {
+                $('#' + id).parent('.bx-rpm-filterItem').removeClass('hidden');
                 $('#' + id).removeClass('disabled');
                 $('#' + id).removeAttr('disabled', 'disabled');
                 $('#' + id + '_label').removeClass('disabled');

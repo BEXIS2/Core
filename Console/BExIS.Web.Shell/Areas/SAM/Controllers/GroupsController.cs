@@ -65,6 +65,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 var group = new Group()
                 {
                     Name = model.Name,
+                    DisplayName = model.Name,
                     Description = model.Description
                 };
 
@@ -126,6 +127,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 else
                 {
                     groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
+                    count = groupManager.Groups.Count();
+
                 }
 
                 return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
@@ -199,19 +202,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
+                // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
+                // check if a group with the incoming id exist
                 var group = groupManager.FindByIdAsync(model.Id).Result;
                 if (group == null) return PartialView("_Update", model);
 
-                // check wheter group name exist
-                if (groupManager.FindByNameAsync(model.Name).Result != null)
+                // check group name exist
+                if (groupManager.FindByNameAsync(model.Name).Result != null &&
+                    !groupManager.FindByNameAsync(model.Name).Result.Id.Equals(model.Id))
                 {
                     ModelState.AddModelError("Name", "The name exists already.");
                     if (!ModelState.IsValid) return PartialView("_Update", model);
                 }
 
                 group.Name = model.Name;
+                group.DisplayName = group.Name;
                 group.Description = model.Description;
 
                 groupManager.UpdateAsync(group);

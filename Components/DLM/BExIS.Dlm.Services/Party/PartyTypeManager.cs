@@ -399,11 +399,11 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyStatusType> repo = uow.GetRepository<PartyStatusType>();
                 var latest = repo.Reload(entity);
                 if (latest.Statuses.Count() > 0)
-                    BexisException.Throw(latest, "There are some relevent 'PartStatus' to this entity.", BexisException.ExceptionType.Delete);
+                    BexisException.Throw(latest, "There are some relevent 'PartyStatus' to this entity.", BexisException.ExceptionType.Delete);
 
                 //Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.
                 if (latest.PartyType.StatusTypes.Count() > 1)
-                    BexisException.Throw(latest, "Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete);
+                    BexisException.Throw(latest, "At least one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete);
                 //delete the entity
                 repo.Delete(latest);
                 // commit changes
@@ -429,7 +429,7 @@ namespace BExIS.Dlm.Services.Party
                         BexisException.Throw(entity, "There are some relevent party status to this entity.", BexisException.ExceptionType.Delete, true);
                     //Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.
                     if (latest.PartyType.StatusTypes.Count() > 1)
-                        BexisException.Throw(latest, "Atleast one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete, true);
+                        BexisException.Throw(latest, "At least one 'PartyStatusType' is required for each 'PartyType' and 'PartyType' for this entity just has this 'PartyStatusType'.", BexisException.ExceptionType.Delete, true);
                     //delete the entity
                     repo.Delete(latest);
                 }

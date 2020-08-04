@@ -40,7 +40,9 @@ CREATE TABLE IF NOT EXISTS public.missingvalues (
 	CONSTRAINT missingvalues_pkey PRIMARY KEY (id)
 );
 
-ALTER TABLE IF NOT EXISTS public.missingvalues ADD CONSTRAINT fk9b8ae33d70fe39a FOREIGN KEY (variableref) REFERENCES variables(id);
+ALTER TABLE public.missingvalues DROP CONSTRAINT IF EXISTS fk9b8ae33d70fe39a;
+
+ALTER TABLE public.missingvalues ADD CONSTRAINT fk9b8ae33d70fe39a FOREIGN KEY (variableref) REFERENCES variables(id);
 
 
 -- DROP SEQUENCE public.missingvalues_id_seq;

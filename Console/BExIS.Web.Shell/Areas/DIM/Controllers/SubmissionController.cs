@@ -39,7 +39,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
         /// </summary>
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult publishData(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -47,7 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View("_showPublishDataView", model);
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
@@ -74,9 +74,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 model.DatasetId = datasetId;
 
                 //Todo Download Rigths -> currently set read rigths for this case
-                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset",
+                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                     typeof(Dataset), datasetId, RightType.Read);
-                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, "Dataset",
+                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
                     typeof(Dataset), datasetId, RightType.Write);
 
                 List<long> versions = new List<long>();
@@ -92,7 +92,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 //todo check if datasetversion id is correct
                 List<Publication> publications =
-                    publicationManager.PublicationRepo.Get().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
+                    publicationManager.PublicationRepo.Query().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
 
                 //get versionNr
                 versionNr = datasetManager.GetDatasetVersionNr(datasetVersionId);
@@ -359,7 +359,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return null;
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)
         {
             PublicationManager publicationManager = new PublicationManager();
@@ -401,9 +401,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (broker != null)
                         {
                             //Store ro in db
-                            string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id,
-                                NameAttributeValues.title);
-                            publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "", "no status available");
+                            publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "no status available");
 
                             //sendToGFBIO(broker, datasetId, datasetVersion, zipfilepath);
                         }
@@ -425,8 +423,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
 
-                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                        publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "",
+                        publicationManager.CreatePublication(datasetVersion, broker, repository, datasetVersion.Title, 0, zipfilepath, "",
                             "no status available");
 
                         #endregion pensoft
@@ -440,9 +437,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             publicationManager.BrokerRepo.Get()
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
-                        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                        publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
-                            "created");
+                        publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "","created");
 
                         #endregion GENERIC
                     }

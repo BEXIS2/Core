@@ -69,6 +69,16 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
@@ -149,6 +159,7 @@
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\FilesController.cs" />
+    <Compile Include="Controllers\RequestsAdminController.cs" />
     <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
@@ -184,7 +195,6 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Properties\PublishProfiles\WebDeploy.pubxml.user" />
     <Content Include="Sam.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -203,8 +213,9 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\TestServer_release.pubxml" />
+    <None Include="Properties\PublishProfiles\TestServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
-    <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -269,6 +280,9 @@
     <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\Files\FileList.cshtml" />
     <Content Include="Views\Files\_FolderContentAsList.cshtml" />
+    <Content Include="Views\RequestsAdmin\_DecisionsAdmin.cshtml" />
+    <Content Include="Views\RequestsAdmin\Index.cshtml" />
+    <Content Include="Views\RequestsAdmin\_Entities.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

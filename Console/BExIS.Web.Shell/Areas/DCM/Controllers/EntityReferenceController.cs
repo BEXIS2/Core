@@ -81,7 +81,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<SelectListItem> tmp = new List<SelectListItem>();
 
             if (id > 0)
-                helper.GetEntities(id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Title, Value = e.Id.ToString() }));
+                helper.GetEntities(id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Title + " (" + e.Id + ")", Value = e.Id.ToString() }));
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
@@ -93,7 +93,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (id > 0)
                 tmp = helper.GetEntityVersions(id, type);
-                var tmpDecending = tmp.OrderByDescending(x => x.Value).ToList();
+            var tmpDecending = tmp.OrderByDescending(x => x.Value).ToList();
 
             return Json(tmpDecending, JsonRequestBehavior.AllowGet);
         }
@@ -238,7 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var entity = entityManager.FindByName("Dataset");
                 if (entity == null) return false;
-                return entityPermissionManager.HasEffectiveRight(user.UserName, entity.Name, typeof(Dataset), instanceId, rightType);
+                return entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), instanceId, rightType);
 
                 #endregion security permissions and authorisations check
             }

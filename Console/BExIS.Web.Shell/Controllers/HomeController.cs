@@ -6,6 +6,13 @@ using BExIS.Web.Shell.Helpers;
 using Vaiona.IoC;
 using BExIS.App.Bootstrap;
 using System;
+using System.Configuration;
+using System.IO;
+using System.Xml.Linq;
+using BExIS.Security.Services.Versions;
+using BExIS.Web.Shell.Models;
+using BExIS.Xml.Helpers;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
@@ -55,7 +62,36 @@ namespace BExIS.Web.Shell.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
-            return View();
+            return RedirectToAction("Index");
+        }
+
+        [DoesNotNeedDataAccess]
+        public ActionResult Version()
+        {
+            // Site
+            var site = ConfigurationManager.AppSettings["ApplicationVersion"];
+
+            // Database
+            var versionManager = new VersionManager();
+            var database = versionManager.GetLatestVersion().Value;
+
+            // Workspace
+            string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
+            XDocument settings = XDocument.Load(filePath);
+            XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
+            var workspace = entry.Attribute("value")?.Value;
+
+
+            var model = new VersionModel()
+            {
+                Site = site,
+                Database = database,
+                Workspace = workspace
+            };
+
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
+
+            return View(model);
         }
     }
 }

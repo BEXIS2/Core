@@ -8,6 +8,17 @@
     string DimDesc = "";
     string temp = "";
     HtmlString dimensionArray = new HtmlString(temp);
+
+    int dimensionIndex = 0;
+
+    if (Model.Unit.Dimension != null && Model.Unit.Dimension.Id > 0 && Model.DimensionList.Any())
+    {
+        Dimension dim = Model.DimensionList.Where(d => d.Id.Equals(Model.Unit.Dimension.Id)).FirstOrDefault();
+        if (dim != null)
+        {
+            dimensionIndex = Model.DimensionList.IndexOf(dim);
+        }
+    }
 }
 
 @if(Model.Unit != null)
@@ -81,6 +92,9 @@
                     Dimension Name <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td>
+
+                    
+
                     @(Html.Telerik().ComboBox()
                         .Name("Unit_Dimension_Name_ComboBox")
                         .Placeholder("Select or Enter")
@@ -115,11 +129,18 @@
                                     temp = temp + ",[" + d.Id + ",'" + d.Specification + "','" + d.Description + "']";
                                 }
                             }
+
+                            if (Model.Unit.Dimension != null && !string.IsNullOrEmpty(Model.Unit.Dimension.Name))
+                            {
+                                item.Add().Text(Model.Unit.Dimension.Name.ToString()).Value(Model.Unit.Dimension.Id.ToString()).Selected(true);
+                            }
+
                             dimensionArray = new HtmlString(temp);
                         })
                         .SelectedIndex(0)
-                        .ClientEvents(e => e.OnChange("dimensionChange")))
-                        
+                        .ClientEvents(e => e.OnChange("dimensionChange"))
+                        )
+
                         @(Html.HiddenFor(m => Model.Unit.Dimension.Id, new { @class = "hidden" }))
                         @(Html.HiddenFor(m => Model.Unit.Dimension.Name, new { @class = "hidden" }))
                 </td>
@@ -131,8 +152,10 @@
                     Dimension Specification
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Unit.Dimension.Specification, new { @class = "bx-input", @tabindex = "3", @placeholder = "L(0,0)M(0,0)T(0,0)I(0,0)Θ(0,0)N(0,0)J(0,0)"}))
+                    @(Html.TextBoxFor(m => Model.Unit.Dimension.Specification, new { @class = "bx-input", @tabindex = "3", @placeholder = "L(0,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0)"}))
                 </td>
+                <td></td>
+                <td class="bx-errorMsg">@Session["dimensionSpecificationMsg"]</td>
             </tr>
             <tr>
                 <td>
@@ -172,14 +195,14 @@
             })
                 .ClientEvents(events => events.OnDataBound("onDataBound"))
             )
-        <div class="bx-errorMsg bx-rpm-functions">
-                @Session["dataTypeMsg"]
-        </div>
-        <div class="bx-rpm-submit bx-rpm-buttons">
-            <button name="create" value="create" type="submit" class="bx-button action"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
-            @Html.ActionLink("Cancel", "UnitManager", "Unit", new { area = "RPM", @class = "bx-button action", @title = "Cancel", @tabindex = "7" })
-        </div>       
-    }
+                    <div class="bx-errorMsg bx-rpm-functions">
+                        @Session["dataTypeMsg"]
+                    </div>
+                    <div class="bx-rpm-submit bx-rpm-buttons">
+                        <button name="create" value="create" type="submit" class="bx-button action" id="saveButton" title="Save The Unit" tabindex="6">Save</button>
+                        @Html.ActionLink("Cancel", "UnitManager", "Unit", new { area = "RPM", @class = "bx-button action", @title = "Cancel", @tabindex = "7" })
+                    </div>
+                    }
 
 </div>
 }
@@ -197,12 +220,14 @@ else
     }
 
     $(document).ready(function () {
+        console.log("document ready")
         dimensionChange();
     })
 
-
     function dimensionChange()
     {
+        console.log("on change")
+
         var temp = $("#Unit_Dimension_Name_ComboBox").val();
         if (isNaN(parseInt(temp)))
         {
@@ -212,10 +237,10 @@ else
         $('#Unit_Dimension_Id').val(temp);
         $('#Unit_Dimension_Name').val($("#Unit_Dimension_Name_ComboBox-input").val());
 
-        var dimensionArray = [@dimensionArray];
-       
-        
         if (temp != 0) {
+
+            var dimensionArray = [@dimensionArray];
+
             for (var i = 0; i < dimensionArray.length; i++) {
                 if (dimensionArray[i][0] == temp) {
                     $('#Unit_Dimension_Specification').val(dimensionArray[i][1]);
@@ -231,12 +256,16 @@ else
             }
         }
         else {
-            $('#Unit_Dimension_Specification').val('');
+
+            console.log($('#Unit_Dimension_Name').val());
+            console.log($('#Unit_Dimension_Name_ComboBox-input').val());
+
+            $('#Unit_Dimension_Specification').val('@Model.Unit.Dimension.Specification');
             $('#Unit_Dimension_Specification').prop('disabled', false);
             $('#Unit_Dimension_Description').text('');
         }
     }
-   
+
     $('.checkBox').change(function () {
         if ($(this).attr('checked'))
             $(this).attr('checked', true);
