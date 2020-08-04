@@ -38,20 +38,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             foreach (var m in decisions)
             {
-                model.Add(
-                    new DecisionGridRowModel()
-                    {
-                        Id = m.Id,
-                        RequestId = m.Request.Id,
-                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                // add the descicion to the model if the entity exist in the database
+                // exclude when enity was deleted
+                if (entityStore.Exist(m.Request.Key))
+                {
+                    model.Add(
+                        new DecisionGridRowModel()
+                        {
+                            Id = m.Id,
+                            RequestId = m.Request.Id,
+                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                         Status = m.Status,
-                        StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
-                        InstanceId = m.Request.Key,
-                        Title = entityStore.GetTitleById(m.Request.Key),
-                        Applicant = getPartyName(m.Request.Applicant),
-                        Intention = m.Request.Intention,
-                        RequestDate = m.Request.RequestDate
-                    });
+                            StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
+                            InstanceId = m.Request.Key,
+                            Title = entityStore.GetTitleById(m.Request.Key),
+                            Applicant = getPartyName(m.Request.Applicant),
+                            Intention = m.Request.Intention,
+                            RequestDate = m.Request.RequestDate
+                        });
+                }
 
 
             }
@@ -225,18 +230,24 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             foreach (var m in requests)
             {
-                model.Add(
-                    new RequestGridRowModel()
-                    {
-                        Id = m.Id,
-                        InstanceId = m.Key,
-                        Title = entityStore.GetTitleById(m.Key),
-                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                // add the descicion to the model if the entity exist in the database
+                // exclude when enity was deleted
+                if (entityStore.Exist(m.Key))
+                {
+
+                    model.Add(
+                        new RequestGridRowModel()
+                        {
+                            Id = m.Id,
+                            InstanceId = m.Key,
+                            Title = entityStore.GetTitleById(m.Key),
+                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                         RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
-                        Intention = m.Intention,
-                        RequestDate = m.RequestDate
-                    }
-                    );
+                            Intention = m.Intention,
+                            RequestDate = m.RequestDate
+                        }
+                        );
+                }
             }
 
 

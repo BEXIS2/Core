@@ -107,42 +107,48 @@ namespace BExIS.Modules.Bam.UI.Controllers
             UserManager userManager = null;
             try
             {
-                //check if the party blongs to the user
-                //Bind party if there is already a user associated to this party
-
                 userManager = new UserManager();
                 partyTypeManager = new PartyTypeManager();
                 partyManager = new PartyManager();
-                partyRelationshipManager = new PartyRelationshipTypeManager();
-                var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
-                var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
-                //Create party
-                party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
-                if (partyRelationships != null)
-                    foreach (var partyRelationship in partyRelationships)
-                    {
-                        //the duration is from current datetime up to the end of target party date
-                        var TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
-                        // var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
-                        var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
-                        partyManager.AddPartyRelationship(party, TargetParty, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, TargetParty.EndDate, partyRelationship.Scope);
-                    }
+
+                // check if 
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
-                partyManager.AddPartyUser(party, user.Id);
 
-                //set FullName in user
-                var p = partyManager.GetParty(party.Id);
-                string displayName = String.Join(" ",
-                    p.CustomAttributeValues.
-                    Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
-                    OrderBy(ca => ca.CustomAttribute.Id).
-                    Select(ca => ca.Value).ToArray());
+                //check if the party blongs to the user
+                //Bind party if there is already a user associated to this party
+                var partyuser = partyManager.GetPartyByUser(user.Id);
+                if (partyuser == null)
+                {
+                    partyRelationshipManager = new PartyRelationshipTypeManager();
+                    var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
+                    var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+                    //Create party
+                    party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
+                    if (partyRelationships != null)
+                        foreach (var partyRelationship in partyRelationships)
+                        {
+                            //the duration is from current datetime up to the end of target party date
+                            var TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
+                            // var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
+                            var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
+                            partyManager.AddPartyRelationship(party, TargetParty, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, TargetParty.EndDate, partyRelationship.Scope);
+                        }
 
-                user.DisplayName = displayName;
-                userManager.UpdateAsync(user);
+                    partyManager.AddPartyUser(party, user.Id);
 
+                    //set FullName in user
+                    var p = partyManager.GetParty(party.Id);
+                    string displayName = String.Join(" ",
+                        p.CustomAttributeValues.
+                        Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                        OrderBy(ca => ca.CustomAttribute.Id).
+                        Select(ca => ca.Value).ToArray());
+
+                    user.DisplayName = displayName;
+                    userManager.UpdateAsync(user);
+                }
 
                 return RedirectToAction("Index");
             }

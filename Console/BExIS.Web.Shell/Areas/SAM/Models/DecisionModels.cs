@@ -12,12 +12,16 @@ namespace BExIS.Modules.Sam.UI.Models
         public long InstanceId { get; set; }
         public long Id { get; set; }
         public long Key { get; set; }
+
+        public bool EntityExist { get; set; }
+
         public long RequestId { get; set; }
 
         public string Rights { get; set; }
 
         public string Title { get; set; }
         public DecisionStatus Status { get; set; }
+
 
         [DisplayName("Status")]
         public string StatusAsText { get; set; }

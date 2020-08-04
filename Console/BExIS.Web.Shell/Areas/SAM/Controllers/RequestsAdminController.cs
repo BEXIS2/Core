@@ -47,6 +47,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             foreach (var m in decisions)
             {
+                //check if the entity exist otherwise set a default text for the user;
+                string title = entityStore.Exist(m.Request.Key)?entityStore.GetTitleById(m.Request.Key): "Dataset currently / no longer accessible";
+                bool exist = entityStore.Exist(m.Request.Key);
+
                 model.Add(
                     new DecisionGridRowModel()
                     {
@@ -56,11 +60,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         Status = m.Status,
                         StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                         InstanceId = m.Request.Key,
-                        Title = entityStore.GetTitleById(m.Request.Key),
+                        Title = title,
                         Applicant = getPartyName(m.Request.Applicant),
                         DecisionMaker = getPartyName(m.DecisionMaker),
                         Intention = m.Request.Intention,
-                        RequestDate = m.Request.RequestDate
+                        RequestDate = m.Request.RequestDate,
+                        EntityExist = exist
                     });
 
 
