@@ -58,14 +58,14 @@ BEGIN
             varIds := (select xpath('/Content/Item/Property[@Name="VariableId"]/@value',xml_data)::text[] x);
             values := (select xpath('/Content/Item/Property[@Name="Value"]/@value',xml_data)::text[] x);
             
-            raise notice 'DATATUPLE START: %',x;
+            -- raise notice 'DATATUPLE START: %',x;
 
             datatupleAsJson := '';
             valuesAsJson := '';
             
             for i in 1..array_upper(varIds,1) loop
                                 
-            raise notice '{"vid": % , "v": % }', varIds[i],values[i];
+            -- raise notice '{"vid": % , "v": % }', varIds[i],values[i];
             
             -- json column
             vv := (Select CONCAT('{ "vid": "',varIds[i],'", "v": "',values[i],'"}'));
@@ -99,10 +99,10 @@ BEGIN
             datatupleAsJson := (Select CONCAT('[',datatupleAsJson, ']'));
             valuesAsJson := (Select CONCAT('{',valuesAsJson, '}'));
             
-            raise notice 'JSON : % ',datatupleAsJson;
-            raise notice 'VALUES : % ', valuesAsJson;
+            -- raise notice 'JSON : % ',datatupleAsJson;
+            -- raise notice 'VALUES : % ', valuesAsJson;
             
-            raise notice '------------------------';
+            -- raise notice '------------------------';
             
             -- insert json into json variable column
             
@@ -136,14 +136,14 @@ BEGIN
             varIds := (select xpath('/Content/Item/Property[@Name="VariableId"]/@value',xml_data)::text[] x);
             values := (select xpath('/Content/Item/Property[@Name="Value"]/@value',xml_data)::text[] x);
             
-            raise notice 'DATATUPLE Versions START: %',x;
+            -- raise notice 'DATATUPLE Versions START: %',x;
 
             datatupleAsJson := '';
             valuesAsJson := '';
             
             for i in 1..array_upper(varIds,1) loop
                                 
-            raise notice '{"vid": % , "v": % }', varIds[i],values[i];
+            -- raise notice '{"vid": % , "v": % }', varIds[i],values[i];
             
 
 
@@ -180,10 +180,10 @@ BEGIN
             datatupleAsJson := (Select CONCAT('[',datatupleAsJson, ']'));
             valuesAsJson := (Select CONCAT('{',valuesAsJson, '}'));
             
-            raise notice 'JSON : % ',datatupleAsJson;
-            raise notice 'VALUES : % ', valuesAsJson;
+            -- raise notice 'JSON : % ',datatupleAsJson;
+            -- raise notice 'VALUES : % ', valuesAsJson;
             
-            raise notice '------------------------';
+            -- raise notice '------------------------';
             
             -- insert json into json variable column
             
@@ -224,7 +224,7 @@ d := (Select (xpath('//' || (SELECT
         ) t where (xpath('//nodeRef/@name',xml_element))[2]::varchar = 'description') || '/text()', metadata))[1] as "test"  From  datasetversions dv  where dv.id = x
     	);
         
-raise notice '{"id": % , "title": % , "description": %  }', x, t, d;     
+-- raise notice '{"id": % , "title": % , "description": %  }', x, t, d;     
 
 UPDATE datasetversions
 SET title = t, description = d
@@ -257,7 +257,7 @@ ALTER TABLE public.groups
 -- Update Displayname User
  
 pu_user_ids := ARRAY(Select userid from partyusers as t);
- raise notice 'pu_user_ids : % ',pu_user_ids;
+ -- raise notice 'pu_user_ids : % ',pu_user_ids;
 -- select id, name, displayname from users order by id;
 -- select id,name from parties;
 -- select * from partyusers;
@@ -273,11 +273,11 @@ set
 for y in 1..array_upper(pu_user_ids,1)
 Loop
 	x = pu_user_ids[y];
-	raise notice 'x : % ',x;
+	-- raise notice 'x : % ',x;
 	partyid:= (Select partyref from partyusers where userid = x);
-	raise notice 'partyid : % ',partyid;
+	-- raise notice 'partyid : % ',partyid;
 	partyname:= (Select name from parties where id = partyid);
-	raise notice 'partyname : % ',partyname;
+	-- raise notice 'partyname : % ',partyname;
 	Update
 		users
 	Set
