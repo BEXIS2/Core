@@ -190,10 +190,8 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
-            DataStructureManager dsm = null;
-            try
+            using (DataStructureManager dsm = new DataStructureManager())
             {
-                dsm = new DataStructureManager();
                 XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
                 XmlNode order;
 
@@ -240,19 +238,13 @@ namespace BExIS.Modules.Rpm.UI.Models
                 }
                 return orderedVariables;
             }
-            finally
-            {
-                dsm.Dispose();
-            }
+        
         }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
         {
-
-            DataStructureManager dsm = null;
-            try
+            using (DataStructureManager dsm = new DataStructureManager())
             {
-                dsm = new DataStructureManager();
                 StructuredDataStructure structuredDataStructure = dsm.StructuredDataStructureRepo.Get(ID);
                 this.dataStructure = structuredDataStructure;
 
@@ -283,23 +275,18 @@ namespace BExIS.Modules.Rpm.UI.Models
                     this.dataStructure = new StructuredDataStructure();
                     return (structuredDataStructure);
                 }
-            }
-            finally
-            {
-                dsm.Dispose();
-            }
 
+            }
         }
 
         public void fillDatasetList()
         {
-            DatasetListElement datasetListElement = new DatasetListElement();
-            DatasetManager dm = null;
-            datasets = new List<DatasetListElement>();
-
-            try
+            using (DatasetManager dm = new DatasetManager())
             {
-                dm = new DatasetManager();
+
+                DatasetListElement datasetListElement = new DatasetListElement();
+                datasets = new List<DatasetListElement>();
+
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
 
@@ -308,10 +295,6 @@ namespace BExIS.Modules.Rpm.UI.Models
                     datasetListElement = new DatasetListElement(item.Key, item.Value.Title);
                     datasets.Add(datasetListElement);
                 }
-            }
-            finally
-            {
-                dm.Dispose();
             }
         }
 
@@ -332,10 +315,9 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
             else
             {
-                DataStructureManager dsm = null;
-                try
+                using (DataStructureManager dsm = new DataStructureManager())
                 {
-                    dsm = new DataStructureManager();
+
                     UnStructuredDataStructure unStructuredDataStructure = dsm.UnStructuredDataStructureRepo.Get(ID);
                     this.dataStructure = unStructuredDataStructure;
 
@@ -372,10 +354,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return (unStructuredDataStructure);
                     }
                 }
-                finally
-                {
-                    dsm.Dispose();
-                }
+                
             }
         }
 

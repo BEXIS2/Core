@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# S101: Types should be named in PascalCase
+dotnet_diagnostic.S101.severity = none
+
+# IDE0067: Objekte verwerfen, bevor Bereich verloren geht
+dotnet_diagnostic.IDE0067.severity = warning

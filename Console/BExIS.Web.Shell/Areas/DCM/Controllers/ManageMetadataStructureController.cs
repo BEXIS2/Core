@@ -268,15 +268,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.
         private List<EntityModel> GetEntityModelList()
         {
-            EntityManager entityManager = new EntityManager();
-
-            return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
-                      new EntityModel()
-                      {
-                          Name = e.Name,
-                          ClassPath = e.EntityType.FullName
-                      }
-                  ).ToList();
+            using (EntityManager entityManager = new EntityManager())
+            {
+                return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
+                          new EntityModel()
+                          {
+                              Name = e.Name,
+                              ClassPath = e.EntityType.FullName
+                          }
+                      ).ToList();
+            }
         }
 
         private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,

@@ -23,14 +23,16 @@ namespace BExIS.Modules.Bam.UI.Helpers
 
         private void AddSystemRelationshipsSamples()
         {
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            //Example for adding system parties
-            var customAttrs = new Dictionary<string, string>();
-            customAttrs.Add("Name", "test dataset");
-            Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First().Id, customAttrs);
-            customAttrs = new Dictionary<string, string>();
-            customAttrs.Add("Name", "test resource");
-            Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Resource").First().Id, customAttrs);
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            {
+                //Example for adding system parties
+                var customAttrs = new Dictionary<string, string>();
+                customAttrs.Add("Name", "test dataset");
+                Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First().Id, customAttrs);
+                customAttrs = new Dictionary<string, string>();
+                customAttrs.Add("Name", "test resource");
+                Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Resource").First().Id, customAttrs);
+            }
         }
 
         private bool createSecuritySeedData()
@@ -46,21 +48,22 @@ namespace BExIS.Modules.Bam.UI.Helpers
             //#region Security
 
             //// Tasks
-            var operationManager = new OperationManager();
-            var featureManager = new FeatureManager();
+            using (var operationManager = new OperationManager())
+            using (var featureManager = new FeatureManager())
+            {
+                var root = featureManager.FindRoots().FirstOrDefault();
+                if (featureManager.Exists("Business administration module (BAM)", root))
+                    return false;
+                var bamFeature = featureManager.Create("Business administration module (BAM)", "", root);
+                if (featureManager.Exists("Party", bamFeature))
+                    return true;
+                var partyFeature = featureManager.Create("Party", "", bamFeature);
 
-            var root = featureManager.FindRoots().FirstOrDefault();
-            if (featureManager.Exists("Business administration module (BAM)", root))
-                return false;
-            var bamFeature = featureManager.Create("Business administration module (BAM)", "", root);
-            if (featureManager.Exists("Party", bamFeature))
+                var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
+                var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
+                var partyHelp = operationManager.Create("BAM", "Help", "*");
                 return true;
-            var partyFeature = featureManager.Create("Party", "", bamFeature);
-
-            var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
-            var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
-            var partyHelp = operationManager.Create("BAM", "Help", "*");
-            return true;
+            }
         }
 
         /// <summary>
@@ -318,7 +321,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             catch (Exception ex)
             {
                 LoggerFactory.LogCustom("SeedData Failed: " + ex.Message);
-                throw ex;
+                throw;
             }
             finally
             {

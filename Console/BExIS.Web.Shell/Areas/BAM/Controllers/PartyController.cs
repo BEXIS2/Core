@@ -16,20 +16,20 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = "Manage Parties";
-            var partyTypes = new PartyTypeManager().PartyTypeRepository.Get(cc=>!cc.SystemType);
-            return View(partyTypes);
+            using (var partyTypeManager = new PartyTypeManager())
+            {
+                ViewBag.Title = "Manage Parties";
+                var partyTypes = partyTypeManager.PartyTypeRepository.Get(cc => !cc.SystemType);
+                return View(partyTypes);
+            }
         }
 
 
         public ActionResult LoadCustomGridColumns(string partyTypeTitle)
         {
-            PartyManager partyManager = null;
-            PartyTypeManager partyTypeManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-                partyManager = new PartyManager();
-                partyTypeManager = new PartyTypeManager();
                 var partyType = partyTypeManager.PartyTypeRepository.Get(cc => cc.Title.Equals(partyTypeTitle)).FirstOrDefault();
                 var partyCustomGridColumns = partyManager.GetPartyCustomGridColumns(partyType.Id, all: true);
                 //To avoid NHibernate.LazyInitializationException in view 
@@ -40,11 +40,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     else
                         partyCustomGridColumn.TypePair.Title = partyCustomGridColumn.TypePair.Title;
                 return PartialView("_partyGridFields", partyCustomGridColumns.ToList());
-            }
-            finally
-            {
-                partyManager?.Dispose();
-                partyTypeManager?.Dispose();
             }
         }
 
@@ -70,33 +65,29 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public ActionResult GetPartiesWithCustomColumn(string partyTypeTitle)
         {
-            PartyManager partyManager = null;
-            PartyTypeManager partyTypeManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-                partyManager = new PartyManager();
-                partyTypeManager = new PartyTypeManager();
                 var partyType = partyTypeManager.PartyTypeRepository.Get(cc => cc.Title.Equals(partyTypeTitle));
                 if (partyType.Any())
                 {
                     DataTable dt = new DataTable();
+
                     var parties = partyManager.PartyRepository.Get(cc => cc.PartyType.Id == partyType.First().Id).OrderBy(cc => cc.Name);
                     ViewBag.partyDataTable = Helper.getPartyDataTable(partyType.First(), parties.ToList());
                     ViewBag.partyTypeId = partyType.First().Id;
+
                     return PartialView("_partiesDynamicGridPartial");
+                    
                 }
                 else
                 {
                     var partiesForGrid = new List<partyGridModel>();
-                    foreach (Party party in partyManager.PartyRepository.Get(cc=>!cc.PartyType.SystemType))
+                    foreach (Party party in partyManager.PartyRepository.Get(cc => !cc.PartyType.SystemType))
                         partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.DisplayName, StartDate = (party.StartDate != null && party.StartDate < new DateTime(1000, 1, 1) ? "" : party.StartDate.ToString("yyyy-MM-dd")), EndDate = (party.EndDate != null && party.EndDate > new DateTime(3000, 1, 1) ? "" : party.EndDate.ToString("yyyy-MM-dd")), IsTemp = party.IsTemp });
                     return PartialView("_partiesPartial", partiesForGrid.OrderByDescending(cc => cc.IsTemp).ThenByDescending(cc => cc.StartDate).ThenBy(cc => cc.Name).ToList());
                 }
-            }
-            finally
-            {
-                partyManager?.Dispose();
-                partyTypeManager?.Dispose();
+                
             }
         }
 
@@ -227,12 +218,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public ActionResult ViewPartyDetail(int id)
         {
-            PartyManager partyManager = null;
-            PartyTypeManager partyTypeManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-                partyManager = new PartyManager();
-                partyTypeManager = new PartyTypeManager();
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
                 var model = new PartyModel();
                 model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
@@ -245,11 +233,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 model.ViewMode = true;
                 model.Name = party.Name;
                 return PartialView("View", model);
-            }
-            finally
-            {
-                partyManager = null;
-                partyTypeManager = null;
             }
         }
 
@@ -371,16 +354,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
         }
         public ActionResult LoadSystemRelationships(int id)
         {
-            PartyManager partyManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
             {
-                partyManager = new PartyManager();
                 Party party = partyManager.PartyRepository.Get(id);
                 ViewBag.Party = party;
                 var partyRelationships = partyManager.PartyRelationshipRepository.Get(cc => cc.SourceParty.Id == id && cc.TargetParty.PartyType.SystemType);
                 return PartialView("~/Areas/BAM/Views/Party/_editSystemPartyTypes.cshtml", partyRelationships);
             }
-            finally { partyManager?.Dispose(); }
         }
         /// <summary>
         /// 
@@ -389,12 +369,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <returns></returns>
         public ActionResult LoadPartyRelationshipType(int id)
         {
-            PartyRelationshipTypeManager partyRelManager = null;
-            try
+            using (PartyRelationshipTypeManager partyRelManager = new PartyRelationshipTypeManager())
+            using (PartyManager partyManager = new PartyManager())
             {
-                partyRelManager = new PartyRelationshipTypeManager();
                 var partyId = Request.Params["partyId"] != null ? long.Parse(Request.Params["partyId"]) : 0;
-                Party party = new PartyManager().PartyRepository.Get(partyId);
+                Party party = partyManager.PartyRepository.Get(partyId);
                 ViewBag.sourceParty = party;
                 var partyRelationshipTypes = partyRelManager.GetAllPartyRelationshipTypes(party.PartyType.Id, true);
                 var addpartyRelationshipModel = new List<AddRelationshipModel>();
@@ -414,10 +393,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 });
                 return PartialView("_addPartyRelationshipPartial", addRelationshipModel);
             }
-            finally
-            {
-                partyRelManager?.Dispose();
-            }
         }
         /// <summary>
         /// 
@@ -426,43 +401,36 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <returns></returns>
         public ActionResult LoadPartyRelationship(int id)
         {
-            PartyManager partyManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
             {
-                partyManager = new PartyManager();
                 PartyRelationship partyRelation = partyManager.PartyRelationshipRepository.Get(id);
                 ViewBag.viewMode = Request.Params["viewMode"] != null ? Convert.ToBoolean(Request.Params["viewMode"]) : false;
                 return PartialView("_relationshipEditViewPartial", partyRelation);
-            }
-            finally
-            {
-                partyManager?.Dispose();
             }
         }
 
         public ActionResult AddSystemSampleParties()
         {
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            //Example for adding system parties
-            var customAttrs = new Dictionary<string, string>();
-            customAttrs.Add("Name", "test dataset");
-            Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc=>cc.Title== "Dataset").First().Id, customAttrs);
-            customAttrs = new Dictionary<string, string>();
-            customAttrs.Add("Name", "test group");
-            Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Group").First().Id, customAttrs);
-            return RedirectToAction("Index");
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            {
+                //Example for adding system parties
+                var customAttrs = new Dictionary<string, string>();
+                customAttrs.Add("Name", "test dataset");
+                Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First().Id, customAttrs);
+                customAttrs = new Dictionary<string, string>();
+                customAttrs.Add("Name", "test group");
+                Helper.CreateParty(DateTime.MinValue, DateTime.MaxValue, "", partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Group").First().Id, customAttrs);
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
         public bool EditPartyRelationship(PartyRelationship partyRelationship)
         {
-            PartyManager partyManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
             {
-                partyManager = new PartyManager();
                 return partyManager.UpdatePartyRelationship(partyRelationship.Id, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope,partyRelationship.Permission);
             }
-            finally { partyManager?.Dispose(); }
         }
 
         private List<PartyRelationship> ConvertDictionaryToPartyRelationships(Dictionary<string, string> partyRelationshipsDic, Party sourceParty, PartyManager partyManager)

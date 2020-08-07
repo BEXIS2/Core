@@ -730,124 +730,124 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <seealso cref=""/>        
         public void updateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
         {
-
-            try
+            using (DatasetManager dm = new DatasetManager())
             {
-                if (!isIndexConfigured)
+                try
                 {
-                    this.configureBexisIndexing(false);
-                }
-                foreach (KeyValuePair<long, IndexingAction> pair in datasetsToIndex)
-                {
-                    DatasetManager dm = new DatasetManager();
-
-                    if (pair.Value == IndexingAction.CREATE)
+                    if (!isIndexConfigured)
                     {
-                        Query query = new TermQuery(new Term("doc_id", pair.Key.ToString()));
-                        TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
+                        this.configureBexisIndexing(false);
+                    }
+                    foreach (KeyValuePair<long, IndexingAction> pair in datasetsToIndex)
+                    {
+                        if (pair.Value == IndexingAction.CREATE)
+                        {
+                            Query query = new TermQuery(new Term("doc_id", pair.Key.ToString()));
+                            TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
 
-                        if (tds.TotalHits < 1) { writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key)); }
-                        else
+                            if (tds.TotalHits < 1) { writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key)); }
+                            else
+                            {
+                                indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
+                                autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
+                                writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key));
+                            }
+                        }
+                        else if (pair.Value == IndexingAction.DELETE)
+                        {
+                            indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
+                            autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
+                        }
+                        else if (pair.Value == IndexingAction.UPDATE)
                         {
                             indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
                             autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
                             writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key));
                         }
                     }
-                    else if (pair.Value == IndexingAction.DELETE)
-                    {
-                        indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
-                        autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
-                    }
-                    else if (pair.Value == IndexingAction.UPDATE)
-                    {
-                        indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
-                        autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
-                        writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key));
-                    }
+                    indexWriter.Commit();
+                    autoCompleteIndexWriter.Commit();
+                    BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+                    BexisIndexSearcher._Reader = indexWriter.GetReader();
+                    BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+
                 }
-                indexWriter.Commit();
-                autoCompleteIndexWriter.Commit();
-                BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
-                BexisIndexSearcher._Reader = indexWriter.GetReader();
-                BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    autoCompleteIndexWriter.Dispose();
+                    indexWriter.Dispose();
 
-
+                    BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+                    BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+                }
 
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                autoCompleteIndexWriter.Dispose();
-                indexWriter.Dispose();
-
-                BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
-                BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
-            }
-
         }
 
         public void updateSingleDatasetIndex(long datasetId, IndexingAction indAction)
         {
-            try
+            using (DatasetManager dm = new DatasetManager())
             {
-
-                if (!isIndexConfigured)
+                try
                 {
-                    this.configureBexisIndexing(false);
-                }
-                DatasetManager dm = new DatasetManager();
-                if (indAction == IndexingAction.CREATE)
-                {
-                    Query query = new TermQuery(new Term("doc_id", datasetId.ToString()));
-                    TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
 
-                    this.includePrimaryData = false;
+                    if (!isIndexConfigured)
+                    {
+                        this.configureBexisIndexing(false);
+                    }
 
-                    if (tds.TotalHits < 1) { writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId)); }
-                    else
+                    if (indAction == IndexingAction.CREATE)
+                    {
+                        Query query = new TermQuery(new Term("doc_id", datasetId.ToString()));
+                        TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
+
+                        this.includePrimaryData = false;
+
+                        if (tds.TotalHits < 1) { writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId)); }
+                        else
+                        {
+                            indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
+                            autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
+                            writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId));
+                        }
+                    }
+                    else if (indAction == IndexingAction.DELETE)
+                    {
+                        indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
+                        autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
+                    }
+                    else if (indAction == IndexingAction.UPDATE)
                     {
                         indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
                         autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
                         writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId));
                     }
+
+                    indexWriter.Commit();
+                    autoCompleteIndexWriter.Commit();
+                    BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+                    BexisIndexSearcher._Reader = indexWriter.GetReader();
+                    BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+
+
                 }
-                else if (indAction == IndexingAction.DELETE)
+                catch (Exception ex)
                 {
-                    indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
-                    autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
+                    throw ex;
                 }
-                else if (indAction == IndexingAction.UPDATE)
+                finally
                 {
-                    indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
-                    autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
-                    writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId));
+                    BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+                    BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+
+                    indexWriter.Dispose();
+                    autoCompleteIndexWriter.Dispose();
                 }
-
-                indexWriter.Commit();
-                autoCompleteIndexWriter.Commit();
-                BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
-                BexisIndexSearcher._Reader = indexWriter.GetReader();
-                BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
-
-
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
-                BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
-
-                indexWriter.Dispose();
-                autoCompleteIndexWriter.Dispose();
-            }
-
         }
 
 

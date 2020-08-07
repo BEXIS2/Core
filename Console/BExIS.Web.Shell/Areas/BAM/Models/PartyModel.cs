@@ -33,8 +33,13 @@ namespace BExIS.Modules.Bam.UI.Models
             get
             {
                 if (Id != 0)
-                    return new Dlm.Services.Party.PartyManager().PartyRelationshipRepository.Get
-                        (item => item.SourceParty.Id == Id || item.TargetParty.Id == Id).ToList();
+                {
+                    using (var partyManager = new Dlm.Services.Party.PartyManager())
+                    {
+                        return partyManager.PartyRelationshipRepository.Get
+                            (item => item.SourceParty.Id == Id || item.TargetParty.Id == Id).ToList();
+                    }
+                }
                 else
                     return null;
             }

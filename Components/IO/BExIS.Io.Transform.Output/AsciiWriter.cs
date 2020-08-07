@@ -290,7 +290,7 @@ namespace BExIS.IO.Transform.Output
                 string value = row[i].ToString();
 
                 // check if the value is a missing value and should be replaced
-                var variable = dataStructure.Variables.ElementAt(i);
+                Variable variable = dataStructure.Variables.ElementAt(i);
 
                 if (variable != null)
                 {
@@ -306,6 +306,7 @@ namespace BExIS.IO.Transform.Output
                     // checking for missing values
                     if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
                     {
+
                         value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
                     }
                 }

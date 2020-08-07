@@ -123,15 +123,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public bool SchemaNameExist(string SchemaName)
         {
 
-            MetadataStructureManager msm = new MetadataStructureManager();
+            using (MetadataStructureManager msm = new MetadataStructureManager())
+            {
 
-            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
+                if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

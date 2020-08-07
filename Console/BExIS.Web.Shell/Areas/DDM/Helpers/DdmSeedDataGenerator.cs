@@ -13,10 +13,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
     {
         public void GenerateSeedData()
         {
-            FeatureManager featureManager = new FeatureManager();
-            OperationManager operationManager = new OperationManager();
-
-            try
+            using (FeatureManager featureManager = new FeatureManager())
+            using (OperationManager operationManager = new OperationManager())
+            using (var featurePermissionManager = new FeaturePermissionManager())
             {
 
                 #region SECURITY
@@ -86,7 +85,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
                 operationManager.Create("DDM", "Data", "*", SearchFeature);
 
-                var featurePermissionManager = new FeaturePermissionManager();
+
 
                 if (!featurePermissionManager.Exists(null, SearchFeature.Id, PermissionType.Grant))
                     featurePermissionManager.Create(null, SearchFeature.Id, PermissionType.Grant);
@@ -107,11 +106,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 #endregion
 
                 #endregion
-            }
-            finally
-            {
-                featureManager.Dispose();
-                operationManager.Dispose();
+                
+
             }
 
         }

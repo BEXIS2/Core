@@ -163,11 +163,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Update(UpdateUserModel model)
         {
-            var userManager = new UserManager();
-            var partyManager = new PartyManager();
-            var partyTypeManager = new PartyTypeManager();
-            try
+            using (var userManager = new UserManager())
+            using (var partyManager = new PartyManager())
+            using (var partyTypeManager = new PartyTypeManager())
             {
+    
                 // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
@@ -200,10 +200,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 userManager.UpdateAsync(user);
                 return Json(new { success = true });
-            }
-            finally
-            {
-                userManager.Dispose();
+
             }
         }
 

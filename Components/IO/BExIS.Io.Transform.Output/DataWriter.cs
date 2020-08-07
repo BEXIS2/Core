@@ -80,7 +80,7 @@ namespace BExIS.IO.Transform.Output
         #endregion protected
 
         //managers
-        protected DatasetManager DatasetManager = new DatasetManager();
+        protected DatasetManager DatasetManager;
 
         protected IOUtility IOUtility;
 
@@ -137,26 +137,6 @@ namespace BExIS.IO.Transform.Output
                 return null;
         }
 
-        //public string CreateFile(string filepath)
-        //{
-        //    string dicrectoryPath = Path.GetDirectoryName(filepath);
-        //    createDirectoriesIfNotExist(dicrectoryPath);
-
-        //    try
-        //    {
-        //        if (!File.Exists(filepath))
-        //        {
-        //            File.Create(filepath).Close();
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string message = ex.Message.ToString();
-        //    }
-
-        //    return filepath;
-        //}
 
         public string CreateFile(string path, string filename)
         {
@@ -346,38 +326,39 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public string GetDataStructureTemplatePath(long dataStructureId, string extension)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-
-            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-            string dataStructureTitle = dataStructure.Name;
-            // load datastructure from db an get the filepath from this object
-
-            ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
-            string path = "";
-
-            if (dataStructure.TemplatePaths != null)
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+                StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                string dataStructureTitle = dataStructure.Name;
+                // load datastructure from db an get the filepath from this object
 
-                XmlNodeList resource = resources.ChildNodes;
+                ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
+                string path = "";
 
-                foreach (XmlNode x in resource)
+                if (dataStructure.TemplatePaths != null)
                 {
-                    if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                        if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
-                        {
-                            path = x.Attributes.GetNamedItem("Path").Value;
-                        }
-                        else
-                        {
-                            path = provider.CreateTemplate(dataStructure);
-                        }
+                    XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+
+                    XmlNodeList resource = resources.ChildNodes;
+
+                    foreach (XmlNode x in resource)
+                    {
+                        if (x.Attributes.GetNamedItem("Type").Value == "Excel")
+                            if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
+                            {
+                                path = x.Attributes.GetNamedItem("Path").Value;
+                            }
+                            else
+                            {
+                                path = provider.CreateTemplate(dataStructure);
+                            }
+                    }
+                    //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                    return Path.Combine(AppConfiguration.DataPath, path);
                 }
-                //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                path = provider.CreateTemplate(dataStructure);
                 return Path.Combine(AppConfiguration.DataPath, path);
             }
-            path = provider.CreateTemplate(dataStructure);
-            return Path.Combine(AppConfiguration.DataPath, path);
         }
 
         /// <summary>
@@ -391,9 +372,14 @@ namespace BExIS.IO.Transform.Output
         {
             if (dataStructure == null)
             {
-                DataStructureManager dataStructureManager = new DataStructureManager();
-                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
-                dataStructure.Variables = dataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
+                {
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+                    dataStructure.Variables = dataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
+
+                    dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables.Select(v=>v.DataAttribute));
+                    dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables.Select(v=>v.MissingValues));
+                }
             }
 
             return dataStructure;

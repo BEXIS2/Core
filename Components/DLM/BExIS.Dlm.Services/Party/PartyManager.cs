@@ -141,10 +141,13 @@ namespace BExIS.Dlm.Services.Party
         /// <returns>Party</returns>
         public PartyX Create(PartyType partyType, string description, DateTime? startDate, DateTime? endDate, Dictionary<string, string> partyCustomAttributeValues)
         {
-            var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
-            var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
-            AddPartyCustomAttributeValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
-            return PartyRepository.Reload(party);
+            using (var partyTypeManager = new PartyTypeManager())
+            {
+                var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+                var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
+                AddPartyCustomAttributeValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues, partyType));
+                return PartyRepository.Reload(party);
+            }
         }
 
         /// <summary>
@@ -158,10 +161,13 @@ namespace BExIS.Dlm.Services.Party
         /// <returns>Party</returns>
         public PartyX Create(PartyType partyType, string description, DateTime? startDate, DateTime? endDate, Dictionary<long, string> partyCustomAttributeValues)
         {
-            var partyStatusType = new PartyTypeManager().GetStatusType(partyType, "Created");
-            var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
-            AddPartyCustomAttributeValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
-            return PartyRepository.Reload(party);
+            using (var partyTypeManager = new PartyTypeManager())
+            {
+                var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+                var party = Create(partyType, "", description, startDate, endDate, partyStatusType, false);
+                AddPartyCustomAttributeValues(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
+                return PartyRepository.Reload(party);
+            }
         }
 
         public bool Delete(PartyX entity)
@@ -973,27 +979,31 @@ namespace BExIS.Dlm.Services.Party
 
         public Dictionary<PartyRelationshipType, int> ValidateRelationships(long partyId)
         {
-            var partyManager = new PartyManager();
-            var party = partyManager.PartyRepository.Get(partyId);
-            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(party.PartyType.Id).Where(cc => cc.MinCardinality > 0);
-            var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.SourceParty.Id == party.Id);
-            var requiredPartyRelationTypeCount = new Dictionary<PartyRelationshipType, int>();
-            foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
+
+            using (var partyManager = new PartyManager())
+            using (var partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                //if all the type pair have condition and current party doesn't have any of this conditions, this relation type will be skipped
-                if (requiredPartyRelationType.AssociatedPairs.Count(cc => !String.IsNullOrEmpty(cc.ConditionSource)) == requiredPartyRelationType.AssociatedPairs.Count)
+                var party = partyManager.PartyRepository.Get(partyId);
+                var requiredPartyRelationTypes = partyRelationshipTypeManager.GetAllPartyRelationshipTypes(party.PartyType.Id).Where(cc => cc.MinCardinality > 0);
+                var partyRelations = partyManager.PartyRelationshipRepository.Get(cc => cc.SourceParty.Id == party.Id);
+                var requiredPartyRelationTypeCount = new Dictionary<PartyRelationshipType, int>();
+                foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
                 {
-                    bool passConditions = false;
-                    foreach (var partyTypePair in requiredPartyRelationType.AssociatedPairs)
-                        if (CheckCondition(partyTypePair.ConditionSource, partyId))
-                            passConditions = true;
-                    if (!passConditions)
-                        continue;
+                    //if all the type pair have condition and current party doesn't have any of this conditions, this relation type will be skipped
+                    if (requiredPartyRelationType.AssociatedPairs.Count(cc => !String.IsNullOrEmpty(cc.ConditionSource)) == requiredPartyRelationType.AssociatedPairs.Count)
+                    {
+                        bool passConditions = false;
+                        foreach (var partyTypePair in requiredPartyRelationType.AssociatedPairs)
+                            if (CheckCondition(partyTypePair.ConditionSource, partyId))
+                                passConditions = true;
+                        if (!passConditions)
+                            continue;
+                    }
+                    if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
+                        requiredPartyRelationTypeCount.Add(requiredPartyRelationType, requiredPartyRelationType.MinCardinality - partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count());
                 }
-                if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
-                    requiredPartyRelationTypeCount.Add(requiredPartyRelationType, requiredPartyRelationType.MinCardinality - partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count());
+                return requiredPartyRelationTypeCount;
             }
-            return requiredPartyRelationTypeCount;
         }
 
         public bool CheckCondition(String condition, long partyId)
@@ -1053,17 +1063,20 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<long, string> partyCustomAttributes)
         {
-            var result = new Dictionary<PartyCustomAttribute, string>();
-            var partyTypeManager = new PartyTypeManager();
-            foreach (var partyCustomAttribute in partyCustomAttributes)
+            
+            using (var partyTypeManager = new PartyTypeManager())
             {
-                var customAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(partyCustomAttribute.Key);
-                if (customAttribute != null && customAttribute.Id != 0)
-                    result.Add(customAttribute, partyCustomAttribute.Value);
-                else
-                    throw new Exception("Error in custom attribute values.");
+                var result = new Dictionary<PartyCustomAttribute, string>();
+                foreach (var partyCustomAttribute in partyCustomAttributes)
+                {
+                    var customAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(partyCustomAttribute.Key);
+                    if (customAttribute != null && customAttribute.Id != 0)
+                        result.Add(customAttribute, partyCustomAttribute.Value);
+                    else
+                        throw new Exception("Error in custom attribute values.");
+                }
+                return result;
             }
-            return result;
         }
 
         /// <summary>
@@ -1073,16 +1086,18 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<string, string> partyCustomAttributes, PartyType partyType)
         {
-            var result = new Dictionary<PartyCustomAttribute, string>();
-            var partyTypeManager = new PartyTypeManager();
-            foreach (var partyCustomAttribute in partyCustomAttributes)
+            using (var partyTypeManager = new PartyTypeManager())
             {
-                var customAttribiute = partyTypeManager.PartyCustomAttributeRepository.Get(cc => cc.Name == partyCustomAttribute.Key && cc.PartyType == partyType).FirstOrDefault();
-                if (customAttribiute == null)
-                    BexisException.Throw(customAttribiute, "There is no custom attribute with name of " + partyCustomAttribute.Key + " for this party type!");
-                result.Add(customAttribiute, partyCustomAttribute.Value);
+                var result = new Dictionary<PartyCustomAttribute, string>();
+                foreach (var partyCustomAttribute in partyCustomAttributes)
+                {
+                    var customAttribiute = partyTypeManager.PartyCustomAttributeRepository.Get(cc => cc.Name == partyCustomAttribute.Key && cc.PartyType == partyType).FirstOrDefault();
+                    if (customAttribiute == null)
+                        BexisException.Throw(customAttribiute, "There is no custom attribute with name of " + partyCustomAttribute.Key + " for this party type!");
+                    result.Add(customAttribiute, partyCustomAttribute.Value);
+                }
+                return result;
             }
-            return result;
         }
 
         /// <summary>

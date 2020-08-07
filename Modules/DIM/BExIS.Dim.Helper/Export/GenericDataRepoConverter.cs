@@ -175,51 +175,53 @@ namespace BExIS.Dim.Helpers.Export
         {
             string name = "";
             string mimeType = "";
-            DatasetManager dm = new DatasetManager();
-
-
-            if (ext.Contains("csv"))
+            using (DatasetManager dm = new DatasetManager())
             {
-                name = "datastructure";
-                mimeType = "text/comma-separated-values";
-            }
 
-            var versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
-            // create the generated FileStream and determine its location
-            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
-                ext);
-            //Register the generated data FileStream as a resource of the current dataset version
-            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
-            //{
-            //    OrderNo = 1,
-            //    Name = name,
-            //    MimeType = mimeType,
-            //    URI = dynamicPath,
-            //    DatasetVersion = datasetVersion,
-            //};
-
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-            {
-                // remove the one contentdesciptor
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                if (ext.Contains("csv"))
                 {
-                    if (cd.Name == name)
+                    name = "datastructure";
+                    mimeType = "text/comma-separated-values";
+                }
+
+                var versionNr = dm.GetDatasetVersionNr(datasetVersion);
+
+                // create the generated FileStream and determine its location
+                string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
+                    ext);
+                //Register the generated data FileStream as a resource of the current dataset version
+                //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+                //{
+                //    OrderNo = 1,
+                //    Name = name,
+                //    MimeType = mimeType,
+                //    URI = dynamicPath,
+                //    DatasetVersion = datasetVersion,
+                //};
+
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                {
+                    // remove the one contentdesciptor
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        cd.URI = dynamicPath;
-                        dm.UpdateContentDescriptor(cd);
+                        if (cd.Name == name)
+                        {
+                            cd.URI = dynamicPath;
+                            dm.UpdateContentDescriptor(cd);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
-                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
-            }
+                else
+                {
+                    // add current contentdesciptor to list
+                    //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                    dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+                }
 
-            //dm.EditDatasetVersion(datasetVersion, null, null, null);
-            return dynamicPath;
+                //dm.EditDatasetVersion(datasetVersion, null, null, null);
+                return dynamicPath;
+            }
         }
 
         public GenericDataRepoConverter(Repository datarepo)

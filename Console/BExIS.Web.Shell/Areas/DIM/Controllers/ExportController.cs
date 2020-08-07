@@ -275,15 +275,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string json = OutputDataStructureManager.GetVariableListAsJson(dataStructureId);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw ex;
-                        }
+  
 
-                        //generate datastructure as html
-                        try
-                        {
+                            //generate datastructure as html
                             DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                             generateDataStructureHtml(ds);
                         }
@@ -380,43 +374,47 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 name = title;
                 mimeType = "application/html";
             }
-            DatasetManager dm = new DatasetManager();
-            int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
-            // create the generated FileStream and determine its location
-            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
-                ext);
-            //Register the generated data FileStream as a resource of the current dataset version
-            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
-            //{
-            //    OrderNo = 1,
-            //    Name = name,
-            //    MimeType = mimeType,
-            //    URI = dynamicPath,
-            //    DatasetVersion = datasetVersion,
-            //};
-
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+            using (DatasetManager dm = new DatasetManager())
             {
-                // remove the one contentdesciptor
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                int versionNr = dm.GetDatasetVersionNr(datasetVersion);
+
+                // create the generated FileStream and determine its location
+                string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
+                    ext);
+                //Register the generated data FileStream as a resource of the current dataset version
+                //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+                //{
+                //    OrderNo = 1,
+                //    Name = name,
+                //    MimeType = mimeType,
+                //    URI = dynamicPath,
+                //    DatasetVersion = datasetVersion,
+                //};
+
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
                 {
-                    if (cd.Name == name)
+                    // remove the one contentdesciptor
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        cd.URI = dynamicPath;
-                        dm.UpdateContentDescriptor(cd);
+                        if (cd.Name == name)
+                        {
+                            cd.URI = dynamicPath;
+                            dm.UpdateContentDescriptor(cd);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
-                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
-            }
+                else
+                {
+                    // add current contentdesciptor to list
+                    //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                    dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+                }
 
-            //dm.EditDatasetVersion(datasetVersion, null, null, null);
-            return dynamicPath;
+                //dm.EditDatasetVersion(datasetVersion, null, null, null);
+                return dynamicPath;
+            }
+           
         }
 
         private void generateMetadataHtml(DatasetVersion dsv)
