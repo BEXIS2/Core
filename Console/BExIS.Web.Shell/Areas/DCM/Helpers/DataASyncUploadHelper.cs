@@ -11,6 +11,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Models;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
@@ -25,6 +26,7 @@ using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -51,6 +53,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             long id = 0;
             string title = "";
             int numberOfRows = 0;
+            int numberOfSkippedRows = 0;
 
             try
             {
@@ -159,14 +162,17 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //open stream
                                     Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
-
-                                    if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
+                                    rows = new List<DataTuple>();
+                                    if (reader.Position < excelFileReaderInfo.DataEndRow)
                                     {
-                                        rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                    }
-                                    else
-                                    {
-                                        rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
+                                        {
+                                            rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        }
+                                        else
+                                        {
+                                            rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        }
                                     }
 
                                     //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
@@ -206,7 +212,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //count rows
                                     numberOfRows += rows.Count();
-                                } while (rows.Count() > 0 && rows.Count() == packageSize);
+                                } while (rows.Count() > 0 && rows.Count() <= packageSize);
+
+                                numberOfSkippedRows = reader.NumberOSkippedfRows;
                             }
 
                             #endregion excel reader
@@ -295,7 +303,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         //count rows
                                         numberOfRows += rows.Count();
 
-                                    } while ((rows.Count() > 0 && rows.Count() == packageSize) || inputWasAltered == true);
+                                    } while ((rows.Count() > 0 && rows.Count() <= packageSize) || inputWasAltered == true);
+
+                                    numberOfSkippedRows = reader.NumberOSkippedfRows;
 
                                 }
 
@@ -400,7 +410,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 using (var unitOfWork = this.GetUnitOfWork())
                                 {
-                                    workingCopy = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(workingCopy.Id);
+                                    workingCopy.VersionNo += 1;
 
                                     //set StateInfo of the previus version
                                     if (workingCopy.StateInfo == null)
@@ -488,7 +498,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     {
                         var es = new EmailService();
                         es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
-                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows),
+                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows,numberOfSkippedRows),
                             new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
                     }
                 }
@@ -510,13 +520,31 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 // Move Original File to its permanent location
                 String tempPath = Bus[TaskManager.FILEPATH].ToString();
                 string originalFileName = Bus[TaskManager.FILENAME].ToString();
-                string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
-                string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                //string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                string storePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), originalFileName);
+                string dynamicStorePath = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), originalFileName);
                 string extention = Bus[TaskManager.EXTENTION].ToString();
 
                 Debug.WriteLine("extention : " + extention);
 
-                //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
+                //check if directory exist
+                // if folder not exist
+                var directory = Path.GetDirectoryName(storePath);
+                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                // check if file exist allready and if yes change the name
+                int count = 1;
+                string fileNameOnly = Path.GetFileNameWithoutExtension(storePath);
+                string extension = Path.GetExtension(storePath);
+
+                while (File.Exists(storePath))
+                {
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count++);
+                    storePath = Path.Combine(directory, tempFileName + extension);
+                    dynamicStorePath = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), tempFileName + extension);
+                    Bus[TaskManager.FILENAME] = tempFileName + extension;
+                }
+
                 FileHelper.MoveFile(tempPath, storePath);
 
                 string mimeType = MimeMapping.GetMimeMapping(originalFileName);

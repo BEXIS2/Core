@@ -60,16 +60,21 @@ namespace BExIS.IO.Transform.Input
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
             NumberOfRows = 0;
+            NumberOSkippedfRows = 0;
+
         }
 
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
         {
+            NumberOSkippedfRows = 0;
             NumberOfRows = 0;
         }
 
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
         {
             NumberOfRows = 0;
+            NumberOSkippedfRows = 0;
+
         }
 
         public override FileStream Open(string fileName)
@@ -270,8 +275,6 @@ namespace BExIS.IO.Transform.Input
             {
                 Position = this._areaOfData.StartRow;
             }
-            else
-                Position++;
 
             int endPosition = (Position + packageSize)-1;
 
@@ -364,8 +367,8 @@ namespace BExIS.IO.Transform.Input
                 {
                     Position = fri.DataStartRow;
                 }
-                else
-                    Position++;
+                //else
+                //    Position++;
 
                 int endPosition = (Position + packageSize) - 1;
 
@@ -530,37 +533,26 @@ namespace BExIS.IO.Transform.Input
                         if (reader.HasAttributes)
                             rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                        if (endRow == 0)
+                        if (rowNum >= startRow && ((rowNum <= endRow)||(endRow == 0)))
                         {
-                            if (rowNum >= startRow)
-                            {
-                                Row row = (Row)reader.LoadCurrentElement();
+                            Row row = (Row)reader.LoadCurrentElement();
 
-                                //this.errorMessages = this.errorMessages.Union(Validate(RowToList(row), Convert.ToInt32(row.RowIndex.ToString()))).ToList();
+                            if (!IsEmpty(row))
+                            {
                                 this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
                                 count++;
                             }
                         }
-                        else
-                        {
-                            if (rowNum >= startRow && rowNum <= endRow)
-                            {
-                                Row row = (Row)reader.LoadCurrentElement();
-
-                                if (!IsEmpty(row))
-                                {
-                                    this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
-                                }
-
-                                //this.errorMessages = this.errorMessages.Union(Validate(RowToList(row), Convert.ToInt32(row.RowIndex.ToString()))).ToList();
-                                count++;
-                            }
-                        }
+                        
                     } while (reader.ReadNextSibling()); // Skip to the next row
 
                     break;
                 }
             }
+            // (12 - 2) - 10 = 0
+            NumberOSkippedfRows += ((endRow+1) - startRow) - count;
+            Debug.WriteLine("NumberOSkippedfRows += ((endRow+1) - startRow) - count");
+            Debug.WriteLine(NumberOSkippedfRows + " += (" + endRow + 1 + " - " + startRow + ") - " + count + ");");
         }
 
         #endregion read file

@@ -91,7 +91,8 @@ namespace BExIS.IO.Transform.Input
                         if (index >= Info.Data)
                         {
                             // return List of VariablesValues, and error messages
-                            tmp.Add(rowToList(line, seperator));
+                            if (!isEmpty(line, seperator))
+                                tmp.Add(rowToList(line, seperator));
                         }
 
                         index++;
@@ -160,7 +161,8 @@ namespace BExIS.IO.Transform.Input
                         if (index >= this.Info.Data)
                         {
                             // return List of VariablesValues, and error messages
-                            this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
+                            if (!isEmpty(line, seperator))
+                                this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
                         }
 
                         index++;
@@ -271,6 +273,7 @@ namespace BExIS.IO.Transform.Input
                         if (Position >= this.Info.Data)
                         {
                             // return List of VariablesValues, and error messages
+                            if (!isEmpty(line, seperator))
                             this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
                         }
 
@@ -466,12 +469,13 @@ namespace BExIS.IO.Transform.Input
 
                         }
 
-                        if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line))
+                        if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line) && !isEmpty(line,seperator))
                         {
                             this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(rowToList(line, seperator), index)).ToList();
                         }
 
                         index++;
+
                     }
                 }
             }
@@ -651,6 +655,21 @@ namespace BExIS.IO.Transform.Input
             }
 
             return values;
+        }
+
+        private bool isEmpty(string line, char seperator)
+        {
+            string tmp = line.Replace(seperator,' ');
+
+            if (string.IsNullOrWhiteSpace(tmp))
+            { 
+                NumberOSkippedfRows++;
+                Debug.WriteLine(tmp);
+                Debug.WriteLine("NumberOSkippedfRows"+ NumberOSkippedfRows);
+                return true;
+            }
+
+            return false;
         }
 
         #endregion helper methods

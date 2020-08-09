@@ -1325,11 +1325,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadFile(long id, string path, string mimeType)
+        public ActionResult DownloadFile(long id,long version, string path, string mimeType)
         {
             if (hasUserRights(id, RightType.Read))
             {
-                string title = path.Split('\\').Last();
+                string title = id+"_"+version+"_"+path.Split('\\').Last();
                 string message = string.Format("file was downloaded");
                 LoggerFactory.LogCustom(message);
 

@@ -51,8 +51,11 @@
                     <td>
                         @if (m.Status == 0)
                         {
-                            <button type="button" class="bx bx-grid-function bx-check" value="@m.Id"></button>
-                            <button type="button" class="bx bx-grid-function bx-delete" value="@m.Id"></button>
+                            if (m.EntityExist == true)
+                            {
+                                <button type="button" class="bx bx-grid-function bx-check" value="@m.Id"></button>
+                                <button type="button" class="bx bx-grid-function bx-delete" value="@m.Id"></button>
+                            }
                             <button type="button" class="bx bx-grid-function bx-withdraw bx-trash" value="@m.RequestId"></button>
                         }
                     </td>

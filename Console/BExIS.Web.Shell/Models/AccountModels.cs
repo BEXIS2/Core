@@ -69,6 +69,7 @@ namespace BExIS.Web.Shell.Models
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
+        [System.Web.Mvc.AllowHtml]
         public string Password { get; set; }
 
         [Display(Name = "Remember me")]
@@ -114,6 +115,7 @@ namespace BExIS.Web.Shell.Models
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
+        [System.Web.Mvc.AllowHtml]
         public string Password { get; set; }
 
         [Display(Name = "Terms and Conditions")]

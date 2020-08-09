@@ -103,7 +103,7 @@
                     }
                     else
                     {
-                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "" })">Download</a>
+                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id,version = Model.VersionId, format = "" })">Download</a>
                     }
                 }
                 else

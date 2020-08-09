@@ -53,6 +53,9 @@ namespace BExIS.Web.Shell.Controllers
                 return View();
 
             var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
+
+
+
             return Content(result.ToHtmlString(), "text/html");
         }
 

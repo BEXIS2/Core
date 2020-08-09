@@ -283,6 +283,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Session["Window"] = true;
                     Session["dimensionMsg"] = null;
                     Session["dimensionSpecificationMsg"] = null;
+                    Session["checked"] = null;
                 }
             }
             finally
