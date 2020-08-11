@@ -76,6 +76,9 @@
     </Content>
     <Content Include="Mappings\Default\Versions\Version.hbm.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Security\Db\Mappings"
