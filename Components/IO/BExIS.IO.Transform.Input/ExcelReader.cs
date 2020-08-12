@@ -467,43 +467,45 @@ namespace BExIS.IO.Transform.Input
         {
             List<List<string>> temp = new List<List<string>>();
 
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-            int count = 0;
-            int rowNum = 0;
-
-            while (reader.Read())
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
             {
-                if (reader.ElementType == typeof(Row))
+                int count = 0;
+                int rowNum = 0;
+
+                while (reader.Read())
                 {
-                    do
+                    if (reader.ElementType == typeof(Row))
                     {
-                        if (reader.HasAttributes)
-                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                        if (endRow == 0)
+                        do
                         {
-                            if (rowNum >= startRow)
+                            if (reader.HasAttributes)
+                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
+
+                            if (endRow == 0)
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (rowNum >= startRow)
+                                {
+                                    Row row = (Row)reader.LoadCurrentElement();
 
-                                temp.Add(RowToList(row, variableList));
+                                    temp.Add(RowToList(row, variableList));
 
-                                count++;
+                                    count++;
+                                }
                             }
-                        }
-                        else
-                        {
-                            if (rowNum >= startRow && rowNum <= endRow)
+                            else
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (rowNum >= startRow && rowNum <= endRow)
+                                {
+                                    Row row = (Row)reader.LoadCurrentElement();
 
-                                temp.Add(RowToList(row, variableList));
-                                count++;
+                                    temp.Add(RowToList(row, variableList));
+                                    count++;
+                                }
                             }
-                        }
-                    } while (reader.ReadNextSibling()); // Skip to the next row
+                        } while (reader.ReadNextSibling()); // Skip to the next row
 
-                    break;
+                        break;
+                    }
                 }
             }
 
@@ -520,39 +522,41 @@ namespace BExIS.IO.Transform.Input
         /// <param name="endRow">end row</param>
         protected void ReadRows(WorksheetPart worksheetPart, int startRow, int endRow)
         {
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-            int count = 0;
-            int rowNum = 0;
-
-            while (reader.Read())
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
             {
-                if (reader.ElementType == typeof(Row))
+                int count = 0;
+                int rowNum = 0;
+
+                while (reader.Read())
                 {
-                    do
+                    if (reader.ElementType == typeof(Row))
                     {
-                        if (reader.HasAttributes)
-                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                        if (rowNum >= startRow && ((rowNum <= endRow)||(endRow == 0)))
+                        do
                         {
-                            Row row = (Row)reader.LoadCurrentElement();
+                            if (reader.HasAttributes)
+                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                            if (!IsEmpty(row))
+                            if (rowNum >= startRow && ((rowNum <= endRow) || (endRow == 0)))
                             {
-                                this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
-                                count++;
-                            }
-                        }
-                        
-                    } while (reader.ReadNextSibling()); // Skip to the next row
+                                Row row = (Row)reader.LoadCurrentElement();
 
-                    break;
+                                if (!IsEmpty(row))
+                                {
+                                    this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
+                                    count++;
+                                }
+                            }
+
+                        } while (reader.ReadNextSibling()); // Skip to the next row
+
+                        break;
+                    }
                 }
+                // (12 - 2) - 10 = 0
+                NumberOSkippedfRows += ((endRow + 1) - startRow) - count;
+                Debug.WriteLine("NumberOSkippedfRows += ((endRow+1) - startRow) - count");
+                Debug.WriteLine(NumberOSkippedfRows + " += (" + endRow + 1 + " - " + startRow + ") - " + count + ");");
             }
-            // (12 - 2) - 10 = 0
-            NumberOSkippedfRows += ((endRow+1) - startRow) - count;
-            Debug.WriteLine("NumberOSkippedfRows += ((endRow+1) - startRow) - count");
-            Debug.WriteLine(NumberOSkippedfRows + " += (" + endRow + 1 + " - " + startRow + ") - " + count + ");");
         }
 
         #endregion read file
@@ -710,29 +714,31 @@ namespace BExIS.IO.Transform.Input
         {
             //NEW OPENXMLREADER
 
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-            int count = 0;
-            int rowNum = 0;
-
-            while (reader.Read())
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
             {
-                if (reader.ElementType == typeof(Row))
+                int count = 0;
+                int rowNum = 0;
+
+                while (reader.Read())
                 {
-                    do
+                    if (reader.ElementType == typeof(Row))
                     {
-                        if (reader.HasAttributes)
-                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                        if (rowNum >= startRow && rowNum <= endRow)
+                        do
                         {
-                            Row row = (Row)reader.LoadCurrentElement();
+                            if (reader.HasAttributes)
+                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                            this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(RowToList(row), rowNum)).ToList();
-                            count++;
-                        }
-                    } while (reader.ReadNextSibling()); // Skip to the next row
+                            if (rowNum >= startRow && rowNum <= endRow)
+                            {
+                                Row row = (Row)reader.LoadCurrentElement();
 
-                    break;
+                                this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(RowToList(row), rowNum)).ToList();
+                                count++;
+                            }
+                        } while (reader.ReadNextSibling()); // Skip to the next row
+
+                        break;
+                    }
                 }
             }
         }
@@ -949,57 +955,59 @@ namespace BExIS.IO.Transform.Input
             //NEW OPENXMLREADER
             if (this.SubmitedVariableIdentifiers == null || this.SubmitedVariableIdentifiers.Count == 0)
             {
-                OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-                int rowNum = 0;
-
-                // read variable rows to get name and id from area variable
-                while (reader.Read())
+                using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
                 {
-                    if (reader.ElementType == typeof(Row))
+                    int rowNum = 0;
+
+                    // read variable rows to get name and id from area variable
+                    while (reader.Read())
                     {
-                        do
+                        if (reader.ElementType == typeof(Row))
                         {
-                            if (reader.HasAttributes)
-                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                            if (rowNum >= startRow && rowNum <= endRow)
+                            do
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (reader.HasAttributes)
+                                    rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                                if (row.Hidden == null) VariableIdentifierRows.Add(RowToList(row));
-                                else if (row.Hidden != true) VariableIdentifierRows.Add(RowToList(row));
-                            }
-                        } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
-                        break;
-                    }
-                }
-
-                // convert variable rows to VariableIdentifiers
-                if (VariableIdentifierRows != null)
-                {
-                    foreach (List<string> l in VariableIdentifierRows)
-                    {
-                        //create headerVariables
-                        if (SubmitedVariableIdentifiers.Count == 0)
-                        {
-                            foreach (string s in l)
-                            {
-                                VariableIdentifier hv = new VariableIdentifier();
-                                hv.name = s;
-                                SubmitedVariableIdentifiers.Add(hv);
-                            }
-                        }
-                        else
-                        {
-                            foreach (string s in l)
-                            {
-                                if (!string.IsNullOrEmpty(s))
+                                if (rowNum >= startRow && rowNum <= endRow)
                                 {
-                                    int id = 0;
-                                    if (int.TryParse(s, out id))
+                                    Row row = (Row)reader.LoadCurrentElement();
+
+                                    if (row.Hidden == null) VariableIdentifierRows.Add(RowToList(row));
+                                    else if (row.Hidden != true) VariableIdentifierRows.Add(RowToList(row));
+                                }
+                            } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
+                            break;
+                        }
+                    }
+
+                    // convert variable rows to VariableIdentifiers
+                    if (VariableIdentifierRows != null)
+                    {
+                        foreach (List<string> l in VariableIdentifierRows)
+                        {
+                            //create headerVariables
+                            if (SubmitedVariableIdentifiers.Count == 0)
+                            {
+                                foreach (string s in l)
+                                {
+                                    VariableIdentifier hv = new VariableIdentifier();
+                                    hv.name = s;
+                                    SubmitedVariableIdentifiers.Add(hv);
+                                }
+                            }
+                            else
+                            {
+                                foreach (string s in l)
+                                {
+                                    if (!string.IsNullOrEmpty(s))
                                     {
-                                        int index = l.IndexOf(s);
-                                        SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                        int id = 0;
+                                        if (int.TryParse(s, out id))
+                                        {
+                                            int index = l.IndexOf(s);
+                                            SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                        }
                                     }
                                 }
                             }

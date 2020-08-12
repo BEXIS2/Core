@@ -896,30 +896,33 @@ namespace BExIS.IO.Transform.Output
             //NEW OPENXMLREADER
             if (this.VariableIdentifiers == null || this.VariableIdentifiers.Count == 0)
             {
-                OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-                int rowNum = 0;
-
-                // read variable rows to get name and id from area variable
-                while (reader.Read())
+                using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
                 {
-                    if (reader.ElementType == typeof(Row))
+                    int rowNum = 0;
+
+                    // read variable rows to get name and id from area variable
+                    while (reader.Read())
                     {
-                        do
+                        if (reader.ElementType == typeof(Row))
                         {
-                            if (reader.HasAttributes)
-                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                            if (rowNum >= startRow && rowNum <= endRow)
+                            do
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (reader.HasAttributes)
+                                    rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                                if (row.Hidden == null) VariableIdentifierRows.Add(rowToList(row));
-                                else if (row.Hidden != true) VariableIdentifierRows.Add(rowToList(row));
-                            }
-                        } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
-                        break;
+                                if (rowNum >= startRow && rowNum <= endRow)
+                                {
+                                    Row row = (Row)reader.LoadCurrentElement();
+
+                                    if (row.Hidden == null) VariableIdentifierRows.Add(rowToList(row));
+                                    else if (row.Hidden != true) VariableIdentifierRows.Add(rowToList(row));
+                                }
+                            } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
+                            break;
+                        }
                     }
                 }
+
 
                 // convert variable rows to VariableIdentifiers
                 if (VariableIdentifierRows != null)
@@ -947,10 +950,12 @@ namespace BExIS.IO.Transform.Output
                         }
                     }
                 }
+
             }
 
             if (this.VariableIdentifiers != null) return this.VariableIdentifiers;
             else return null;
+
         }
 
         /// <summary>

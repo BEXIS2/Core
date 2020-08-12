@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Kopie von &quot;BEXIS2&quot;" Description="Diese Regeln zielen auf die kritischsten Probleme in Ihrem Code ab, einschließlich potenzieller Sicherheitslücken, Anwendungsabstürzen und anderer entscheidender Logik- und Entwurfsfehler. Sie sollten diesen Regelsatz in alle benutzerdefinierten Regelsätze einbinden, die Sie für Ihre Projekte erstellen." ToolsVersion="16.0">
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Features" RuleNamespace="Microsoft.CodeAnalysis.Features">
-    <Rule Id="IDE0067" Action="Error" />
+    <Rule Id="IDE0067" Action="Warning" />
   </Rules>
 </RuleSet>
