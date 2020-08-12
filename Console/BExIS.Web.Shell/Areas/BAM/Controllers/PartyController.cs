@@ -121,6 +121,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
                 var model = new PartyModel();
                 model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get(cc => !cc.SystemType).ToList();
+                model.PartyRelationships = getPartyRelationships(id);
                 Party party = partyManager.PartyRepository.Get(id);
                 model.Description = party.Description;
                 model.Id = party.Id;
@@ -193,6 +194,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
                 var model = new PartyModel();
                 model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
+                model.PartyRelationships = getPartyRelationships(id);
                 Party party = partyManager.PartyRepository.Get(id);
                 model.Description = party.Description;
                 model.PartyType = party.PartyType;
@@ -224,6 +226,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
                 var model = new PartyModel();
                 model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get().ToList();
+                model.PartyRelationships = getPartyRelationships(id);
+
                 Party party = partyManager.PartyRepository.Get(id);
                 model.Description = party.Description;
                 model.EndDate = party.EndDate;
@@ -348,6 +352,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 model.PartyType = party.PartyType;
                 model.StartDate = party.StartDate;
                 model.Name = party.Name;
+                model.PartyRelationships = getPartyRelationships(id);
+
                 return PartialView("~/Areas/BAM/Views/PartyService/_partyRelationshipsPartial.cshtml", model);
             }
             finally { partyManager?.Dispose(); }
@@ -488,6 +494,42 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     }
             }
             return partyRelationships;
+        }
+
+        /// <summary>
+        /// get all party releationships without system releationships like to entites like dataset
+        /// </summary>
+        /// <param name="partyId"></param>
+        /// <returns></returns>
+        private List<PartyRelationshipModel> getPartyRelationships(long partyId)
+        {
+            using (var partyManager = new PartyManager())
+            {
+                var temp = new List<PartyRelationshipModel>();
+
+                var rList = partyManager.PartyRelationshipRepository.Get
+                   (item => (item.SourceParty.Id == partyId || item.TargetParty.Id == partyId)
+                   && (item.TargetParty.PartyType.SystemType == false && item.SourceParty.PartyType.SystemType == false)).ToList();
+
+                partyManager.PartyRelationshipRepository.LoadIfNot(rList.Select(r => r.TargetParty));
+                partyManager.PartyRelationshipRepository.LoadIfNot(rList.Select(r => r.TargetParty.PartyType));
+
+                foreach (var r in rList)
+                {
+                    temp.Add(new PartyRelationshipModel()
+                    {
+                        Id = r.Id,
+                        Title = r.Title,
+                        Description = r.Description,
+                        SourceName = r.SourceParty.Name,
+                        TargetName = r.TargetParty.Name,
+                        StartDate = r.StartDate,
+                        EndDate = r.EndDate
+                    });
+                }
+
+                return temp;
+            }
         }
     }
 }

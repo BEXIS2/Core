@@ -14,6 +14,7 @@ namespace BExIS.Modules.Bam.UI.Models
         {
             PartyType = new PartyType();
             PartyTypeList = new List<PartyType>();
+            PartyRelationships = new List<PartyRelationshipModel>();
             Errors = new List<Error>();
         }
         public long Id { get; set; }
@@ -28,34 +29,22 @@ namespace BExIS.Modules.Bam.UI.Models
         [Display(Name = "Metadata Structure")]
         [Required(ErrorMessage = "Please select a party type.")]
         public List<PartyType> PartyTypeList { get; set; }
-        public List<PartyRelationship> PartyRelationships
-        {
-            get
-            {
-                if (Id != 0)
-                {
-                    using (var partyManager = new Dlm.Services.Party.PartyManager())
-                    {
-                        return partyManager.PartyRelationshipRepository.Get
-                            (item => item.SourceParty.Id == Id || item.TargetParty.Id == Id).ToList();
-                    }
-                }
-                else
-                    return null;
-            }
-        }
+        public List<PartyRelationshipModel> PartyRelationships { get; set; }
+
     }
 
-    //public class PartyRelationshipTypeModel : Dlm.Entities.Party.PartyRelationshipType
-    //{
+    public class PartyRelationshipModel
+    {
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
 
-    //    public int CurrentCardinality
-    //    {
-    //        get;
-    //    }
-    //    public PartyRelationshipTypeModel(int partyId)
-    //    {
+        public string SourceName { get; set; }
+        public string TargetName { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Type { get; set; }
+    }
 
-    //    }
-    //}
+
 }
