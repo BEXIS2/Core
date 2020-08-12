@@ -156,9 +156,12 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             if (FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, path)))
             {
                 EntityPermissionManager entityPermissionManager = null;
+                DatasetManager datasetManager = null;
                 try
                 {
                     entityPermissionManager = new EntityPermissionManager();
+                    datasetManager = new DatasetManager();
+
                     DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
                     string entityType = (string)Session["EntityType"];
                     long datasetID = datasetInfo.DatasetId;
@@ -169,7 +172,13 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         FileInfo fileInfo = new FileInfo(path);
                         Session["DatasetInfo"] = datasetInfo;
                         Session["EntityType"] = entityType;
-                        return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), fileInfo.Name);
+
+                        // after 2.14.1 files are stored in original names
+                        // by download only the files, the user need to know th edataset id and the version number
+                        int versionNr = datasetManager.GetDatasetVersionNr(datasetInfo.DatasetVersionId);
+                        string filename = datasetInfo.DatasetId + "_" + versionNr + "_" + fileInfo.Name;
+
+                        return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), filename);
                     }
                     else
                     {
@@ -177,13 +186,14 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         return null;
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
                     return null;
                 }
                 finally
                 {
                     entityPermissionManager.Dispose();
+                    datasetManager.Dispose();
                 }
             }
             else

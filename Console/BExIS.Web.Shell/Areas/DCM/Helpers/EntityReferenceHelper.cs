@@ -24,6 +24,21 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
         }
 
+        public bool EntityExist(long id, long typeId)
+        {
+            EntityManager entityManager = new EntityManager();
+
+            try
+            {
+                var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(typeId).EntityStoreType);
+                return instanceStore.Exist(id);
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
+        }
+
         public string GetEntityTitle(long id, long typeId, int version = 0)
         {
             EntityManager entityManager = new EntityManager();
@@ -194,29 +209,34 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
             ReferenceModel tmp = new ReferenceModel();
 
-            tmp.Target = new ReferenceElementModel(
-                entityReference.TargetId,
-                entityReference.TargetVersion,
-                entityReference.TargetEntityId,
-                GetEntityTitle(entityReference.TargetId, entityReference.TargetEntityId, entityReference.TargetVersion),
-                GetEntityTypeName(entityReference.TargetEntityId),
-                entityReference.TargetVersion == CountVersions(entityReference.TargetId, entityReference.TargetEntityId) ? true : false
-                );
+            if (EntityExist(entityReference.TargetId, entityReference.TargetEntityId) && EntityExist(entityReference.SourceId, entityReference.SourceEntityId))
+            {
+                tmp.Target = new ReferenceElementModel(
+                    entityReference.TargetId,
+                    entityReference.TargetVersion,
+                    entityReference.TargetEntityId,
+                    GetEntityTitle(entityReference.TargetId, entityReference.TargetEntityId, entityReference.TargetVersion),
+                    GetEntityTypeName(entityReference.TargetEntityId),
+                    entityReference.TargetVersion == CountVersions(entityReference.TargetId, entityReference.TargetEntityId) ? true : false
+                    );
 
-            tmp.Source = new ReferenceElementModel(
-                entityReference.SourceId,
-                entityReference.SourceVersion,
-                entityReference.SourceEntityId,
-                GetEntityTitle(entityReference.SourceId, entityReference.SourceEntityId, entityReference.SourceVersion),
-                GetEntityTypeName(entityReference.SourceEntityId),
-                entityReference.SourceVersion == CountVersions(entityReference.SourceId, entityReference.SourceEntityId) ? true : false
-                );
+                tmp.Source = new ReferenceElementModel(
+                    entityReference.SourceId,
+                    entityReference.SourceVersion,
+                    entityReference.SourceEntityId,
+                    GetEntityTitle(entityReference.SourceId, entityReference.SourceEntityId, entityReference.SourceVersion),
+                    GetEntityTypeName(entityReference.SourceEntityId),
+                    entityReference.SourceVersion == CountVersions(entityReference.SourceId, entityReference.SourceEntityId) ? true : false
+                    );
 
-            tmp.Context = entityReference.Context;
-            tmp.ReferenceType = entityReference.ReferenceType;
-            tmp.RefId = entityReference.Id;
+                tmp.Context = entityReference.Context;
+                tmp.ReferenceType = entityReference.ReferenceType;
+                tmp.RefId = entityReference.Id;
 
-            return tmp;
+                return tmp;
+            }
+
+            return null;
         }
 
         public List<ReferenceModel> GetAllReferences(long id, long typeid)
@@ -230,11 +250,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 // get all references where incoming is source
                 var list = entityReferenceManager.References.Where(r => r.SourceId.Equals(id) && r.SourceEntityId.Equals(typeid)).ToList();
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
+                tmp.RemoveAll(item => item == null);
 
                 //get all refs where incoming is taret
                 list = entityReferenceManager.References.Where(r => r.TargetId.Equals(id) && r.TargetEntityId.Equals(typeid)).ToList();
-
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
+                tmp.RemoveAll(item => item == null);
+
             }
             catch (Exception ex)
             {
@@ -263,6 +285,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         r.TargetVersion <= version).ToList();
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
+                tmp.RemoveAll(item => item == null);
+
             }
             catch (Exception ex)
             {
@@ -289,7 +313,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             r.SourceId.Equals(id) &&
                             r.SourceEntityId.Equals(typeid) &&
                             r.SourceVersion <= version).ToList();
+
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
+                tmp.RemoveAll(item => item == null);
+
             }
             catch (Exception ex)
             {

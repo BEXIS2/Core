@@ -14,6 +14,11 @@ namespace BExIS.Security.Services.Objects
             throw new System.NotImplementedException();
         }
 
+        public bool Exist(long id)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public List<EntityStoreItem> GetEntities()
         {
             var datasets = new List<EntityStoreItem>();

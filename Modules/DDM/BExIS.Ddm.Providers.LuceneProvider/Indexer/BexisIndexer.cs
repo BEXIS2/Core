@@ -199,6 +199,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 if (errors.Count > 0)
                     throw new Exception(string.Join("\n\r", errors));
             }
+            catch(Exception ex)
+            {
+                throw ex;
+
+            }
             finally
             {
                 dm.Dispose();
@@ -340,8 +345,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             this.Index();
             SearchProvider.Providers.Values.Where(p => p.IsAlive).ToList().ForEach(p => ((SearchProvider)p.Target).Reload());
             IndexReader _Reader = indexWriter.GetReader().Reopen();
-            BexisIndexSearcher.searcher.IndexReader.Dispose();
-            BexisIndexSearcher.searcher.Dispose();
+
+            if (BexisIndexSearcher.searcher != null)
+            {
+                if(BexisIndexSearcher.searcher.IndexReader!=null)BexisIndexSearcher.searcher?.IndexReader?.Dispose();
+                BexisIndexSearcher.searcher.Dispose();
+            }
+
+            
             BexisIndexSearcher.searcher = new IndexSearcher(_Reader);
             BexisIndexSearcher._Reader = _Reader;
             indexWriter.GetReader().Dispose();

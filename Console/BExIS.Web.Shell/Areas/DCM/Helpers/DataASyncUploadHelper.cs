@@ -26,6 +26,7 @@ using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -409,7 +410,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 using (var unitOfWork = this.GetUnitOfWork())
                                 {
-                                    workingCopy = unitOfWork.GetReadOnlyRepository<DatasetVersion>().Get(workingCopy.Id);
+                                    workingCopy.VersionNo += 1;
 
                                     //set StateInfo of the previus version
                                     if (workingCopy.StateInfo == null)
@@ -519,13 +520,31 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 // Move Original File to its permanent location
                 String tempPath = Bus[TaskManager.FILEPATH].ToString();
                 string originalFileName = Bus[TaskManager.FILENAME].ToString();
-                string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
-                string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                //string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                string storePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), originalFileName);
+                string dynamicStorePath = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), originalFileName);
                 string extention = Bus[TaskManager.EXTENTION].ToString();
 
                 Debug.WriteLine("extention : " + extention);
 
-                //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
+                //check if directory exist
+                // if folder not exist
+                var directory = Path.GetDirectoryName(storePath);
+                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                // check if file exist allready and if yes change the name
+                int count = 1;
+                string fileNameOnly = Path.GetFileNameWithoutExtension(storePath);
+                string extension = Path.GetExtension(storePath);
+
+                while (File.Exists(storePath))
+                {
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count++);
+                    storePath = Path.Combine(directory, tempFileName + extension);
+                    dynamicStorePath = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), tempFileName + extension);
+                    Bus[TaskManager.FILENAME] = tempFileName + extension;
+                }
+
                 FileHelper.MoveFile(tempPath, storePath);
 
                 string mimeType = MimeMapping.GetMimeMapping(originalFileName);

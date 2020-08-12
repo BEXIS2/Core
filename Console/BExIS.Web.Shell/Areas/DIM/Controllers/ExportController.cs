@@ -187,7 +187,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     LoggerFactory.LogCustom("Generate Zip Start");
                     long dsvId = versionid;
-                    if(dsvId == 0)dsvId = dm.GetDatasetLatestVersion(id).Id;
+                    if(dsvId <= 0)dsvId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                     int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
