@@ -1,7 +1,7 @@
 ﻿[*.cs]
 
-# S101: Types should be named in PascalCase
-dotnet_diagnostic.S101.severity = none
+# Set CA2000: Dispose objects before losing scope to error
+dotnet_diagnostic.CA2000.severity = error
 
-# IDE0067: Objekte verwerfen, bevor Bereich verloren geht
-dotnet_diagnostic.IDE0067.severity = warning
+# Exclude from CA2000
+dotnet_code_quality.CA2000.excluded_symbol_names = T:System.Data.DataTable
