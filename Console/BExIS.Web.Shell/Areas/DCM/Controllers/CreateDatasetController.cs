@@ -1179,7 +1179,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     long metadataStrutcureId = datasetVersion.Dataset.MetadataStructure.Id;
 
                     //get entity type like dataset or sample
-                    string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
+                    string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
                     Entity entityType = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
 
                     //get id of the entity type

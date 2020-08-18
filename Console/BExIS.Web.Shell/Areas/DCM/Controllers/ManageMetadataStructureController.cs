@@ -55,6 +55,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult DownloadSchema(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            ZipFile zip = new ZipFile();
 
             try
             {
@@ -63,7 +64,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
 
-                ZipFile zip = new ZipFile();
+               
                 if (Directory.Exists(path))
                     zip.AddDirectory(path);
 
@@ -78,6 +79,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 metadataStructureManager.Dispose();
+                zip.Dispose();
             }
         }
 

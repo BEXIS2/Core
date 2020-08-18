@@ -22,6 +22,8 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+
     public class TestController : BaseController
     {
         public ActionResult About()
@@ -104,6 +106,7 @@ namespace BExIS.Web.Shell.Controllers
             //expected.Tuples.ForEach(p => p.Amendments.Clear());
             //expected.Tuples.ForEach(p => p.Materialize());
         }
+
 
         //[RecordCall]
         //[LogExceptions]

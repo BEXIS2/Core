@@ -35,50 +35,52 @@ namespace BExIS.Xml.Helpers
             //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", "ABCD", "ABCD_2.06.XSD");
             //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", "eml", "eml.xsd");
 
-            XmlTextReader xsd_file = new XmlTextReader(path);
-            XmlSchema schema_file = new XmlSchema();
-            schema_file = XmlSchema.Read(xsd_file, ValidationCallback);
-
-            // Add the customer schema to a new XmlSchemaSet and compile it.
-            // Any schema validation warnings and errors encountered reading or
-            // compiling the schema are handled by the ValidationEventHandler delegate.
-            XmlSchemaSet schemaSet = new XmlSchemaSet();
-            schemaSet.ValidationEventHandler += new ValidationEventHandler(ValidationCallback);
-            schemaSet.Add(schema_file);
-            schemaSet.Compile();
-
-            // Retrieve the compiled XmlSchema object from the XmlSchemaSet
-            // by iterating over the Schemas property.
-            XmlSchema customerSchema = null;
-            foreach (XmlSchema schema in schemaSet.Schemas())
+            using (XmlTextReader xsd_file = new XmlTextReader(path))
             {
-                customerSchema = schema;
-            }
+                XmlSchema schema_file = new XmlSchema();
+                schema_file = XmlSchema.Read(xsd_file, ValidationCallback);
 
-            // Iterate over each XmlSchemaElement in the Values collection
-            // of the Elements property.
-            foreach (XmlSchemaElement element in customerSchema.Elements.Values)
-            {
-                readXmlSchemaElement(element, null);
-            }
-            Debug.WriteLine("-------------------------------------------------");
-            Debug.WriteLine("-------------metadataAttributeNames--------------");
-            Debug.WriteLine("-------------------------------------------------");
-            if (metadataAttributeNames.Count > 0)
-            {
-                metadataAttributeNames.ForEach(p => Debug.WriteLine(p));
-            }
+                // Add the customer schema to a new XmlSchemaSet and compile it.
+                // Any schema validation warnings and errors encountered reading or
+                // compiling the schema are handled by the ValidationEventHandler delegate.
+                XmlSchemaSet schemaSet = new XmlSchemaSet();
+                schemaSet.ValidationEventHandler += new ValidationEventHandler(ValidationCallback);
+                schemaSet.Add(schema_file);
+                schemaSet.Compile();
 
-            Debug.WriteLine("-------------metadataPackageNames--------------");
-            Debug.WriteLine("-------------------------------------------------");
-            if (metadataPackageNames.Count > 0)
-            {
-                metadataPackageNames.ForEach(p => Debug.WriteLine(p));
+                // Retrieve the compiled XmlSchema object from the XmlSchemaSet
+                // by iterating over the Schemas property.
+                XmlSchema customerSchema = null;
+                foreach (XmlSchema schema in schemaSet.Schemas())
+                {
+                    customerSchema = schema;
+                }
+
+                // Iterate over each XmlSchemaElement in the Values collection
+                // of the Elements property.
+                foreach (XmlSchemaElement element in customerSchema.Elements.Values)
+                {
+                    readXmlSchemaElement(element, null);
+                }
+                Debug.WriteLine("-------------------------------------------------");
+                Debug.WriteLine("-------------metadataAttributeNames--------------");
+                Debug.WriteLine("-------------------------------------------------");
+                if (metadataAttributeNames.Count > 0)
+                {
+                    metadataAttributeNames.ForEach(p => Debug.WriteLine(p));
+                }
+
+                Debug.WriteLine("-------------metadataPackageNames--------------");
+                Debug.WriteLine("-------------------------------------------------");
+                if (metadataPackageNames.Count > 0)
+                {
+                    metadataPackageNames.ForEach(p => Debug.WriteLine(p));
+                }
+                Debug.WriteLine("-------------------------------------------------");
+                Debug.WriteLine("Packages :" + packages);
+                Debug.WriteLine("PackagesAsParents :" + metadataPackageNames.Count);
+                Debug.WriteLine("Attributes :" + metadataAttributeNames.Count);
             }
-            Debug.WriteLine("-------------------------------------------------");
-            Debug.WriteLine("Packages :" + packages);
-            Debug.WriteLine("PackagesAsParents :" + metadataPackageNames.Count);
-            Debug.WriteLine("Attributes :" + metadataAttributeNames.Count);
         }
 
         private void readXmlSchemaElement(XmlSchemaElement element, XmlSchemaElement parent)

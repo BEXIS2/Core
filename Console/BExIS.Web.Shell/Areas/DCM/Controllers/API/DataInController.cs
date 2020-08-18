@@ -264,6 +264,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 entityPermissionManager.Dispose();
                 dataStructureManager.Dispose();
                 userManager.Dispose();
+                request.Dispose();
             }
         }
 
@@ -530,6 +531,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 entityPermissionManager.Dispose();
                 dataStructureManager.Dispose();
                 userManager.Dispose();
+                request.Dispose();
             }
         }
 

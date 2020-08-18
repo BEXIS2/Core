@@ -43,6 +43,7 @@ using Vaiona.Web.Mvc.Modularity;
 using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -93,38 +94,41 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
             long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-
-            //ToDo in the entity table there must be the information
-            using (EntityManager entityManager = new EntityManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
 
-                string moduleId = "";
-                Tuple<string, string, string> action = null;
-                string defaultAction = "ShowData";
-
-                if (entity != null && entity.Extra != null)
+                //ToDo in the entity table there must be the information
+                using (EntityManager entityManager = new EntityManager())
                 {
-                    var node = entity.Extra.SelectSingleNode("extra/modules/module");
+                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
 
-                    if (node != null) moduleId = node.Attributes["value"].Value;
+                    string moduleId = "";
+                    Tuple<string, string, string> action = null;
+                    string defaultAction = "ShowData";
 
-                    string modus = "show";
+                    if (entity != null && entity.Extra != null)
+                    {
+                        var node = entity.Extra.SelectSingleNode("extra/modules/module");
 
-                    action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
-                }
-                if (action == null) RedirectToAction(defaultAction, new { id, version });
+                        if (node != null) moduleId = node.Attributes["value"].Value;
 
-                try
-                {
-                    if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
-                    else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
-                }
-                catch
-                {
-                    return RedirectToAction(defaultAction, new { id, version });
+                        string modus = "show";
+
+                        action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
+                    }
+                    if (action == null) RedirectToAction(defaultAction, new { id, version });
+
+                    try
+                    {
+                        if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
+                        else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
+                    }
+                    catch
+                    {
+                        return RedirectToAction(defaultAction, new { id, version });
+                    }
                 }
             }
         }
@@ -1282,17 +1286,19 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                     }
 
-                    ZipFile zip = new ZipFile();
-
-                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    using (ZipFile zip = new ZipFile())
                     {
-                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                        string name = cd.URI.Split('\\').Last();
 
-                        zip.AddFile(path, "");
+                        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                        {
+                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                            string name = cd.URI.Split('\\').Last();
+
+                            zip.AddFile(path, "");
+                        }
+
+                        zip.Save(zipPath);
                     }
-
-                    zip.Save(zipPath);
 
                     string message = string.Format("all files from dataset {0} version {1} was downloaded.", datasetVersion.Dataset.Id,
                             datasetVersion.Id);
@@ -1515,22 +1521,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
             long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-
-            //ToDo in the entity table there must be the information
-            using (EntityManager entityManager = new EntityManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
 
-                var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
+                //ToDo in the entity table there must be the information
+                using (EntityManager entityManager = new EntityManager())
+                {
+                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+
+                    var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
                 {
                     { "sourceId", id },
                     { "sourceTypeId", entity.Id },
                     { "sourceVersion", version }
                 });
 
-                return Content(view.ToHtmlString(), "text/html");
+                    return Content(view.ToHtmlString(), "text/html");
+                }
             }
         }
 

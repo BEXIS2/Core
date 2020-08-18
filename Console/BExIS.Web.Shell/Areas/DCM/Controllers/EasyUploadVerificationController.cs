@@ -141,60 +141,62 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 FileStream fis = null;
                 fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                ExcelPackage ep = new ExcelPackage(fis);
-                fis.Close();
-
-                ExcelWorkbook excelWorkbook = ep.Workbook;
-                ExcelWorksheet firstWorksheet = excelWorkbook.Worksheets[1];
-
-                string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
-
-                SheetFormat sheetFormat = 0;
-                Enum.TryParse<SheetFormat>(sheetFormatString, true, out sheetFormat);
-
-                headers = GetExcelHeaderFields(firstWorksheet, sheetFormat, selectedHeaderAreaJson);
-
-                headers = makeHeaderUnique(headers);
-
-                suggestions = new List<EasyUploadSuggestion>();
-
-                if (!model.Rows.Any())
+                using (ExcelPackage ep = new ExcelPackage(fis))
                 {
+                    fis.Close();
 
-                    foreach (string varName in headers)
+                    ExcelWorkbook excelWorkbook = ep.Workbook;
+                    ExcelWorksheet firstWorksheet = excelWorkbook.Worksheets[1];
+
+                    string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
+
+                    SheetFormat sheetFormat = 0;
+                    Enum.TryParse<SheetFormat>(sheetFormatString, true, out sheetFormat);
+
+                    headers = GetExcelHeaderFields(firstWorksheet, sheetFormat, selectedHeaderAreaJson);
+
+                    headers = makeHeaderUnique(headers);
+
+                    suggestions = new List<EasyUploadSuggestion>();
+
+                    if (!model.Rows.Any())
                     {
-                        #region suggestions
 
-                        //Add a variable to the suggestions if the names are similar
-                        suggestions = getSuggestions(varName, dataAttributeInfos);
+                        foreach (string varName in headers)
+                        {
+                            #region suggestions
 
-                        #endregion
+                            //Add a variable to the suggestions if the names are similar
+                            suggestions = getSuggestions(varName, dataAttributeInfos);
 
-                        //set rowmodel
-                        RowModel row = new RowModel(
-                            headers.IndexOf(varName),
-                            varName,
-                            null,
-                            null,
-                            null,
-                            suggestions,
-                            unitInfos,
-                            dataAttributeInfos,
-                            dataTypeInfos
-                            );
+                            #endregion
 
-                        model.Rows.Add(row);
+                            //set rowmodel
+                            RowModel row = new RowModel(
+                                headers.IndexOf(varName),
+                                varName,
+                                null,
+                                null,
+                                null,
+                                suggestions,
+                                unitInfos,
+                                dataAttributeInfos,
+                                dataTypeInfos
+                                );
 
-                        TaskManager.AddToBus(EasyUploadTaskManager.ROWS, model.Rows);
-                        TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, RowsToTuples());
+                            model.Rows.Add(row);
+
+                            TaskManager.AddToBus(EasyUploadTaskManager.ROWS, model.Rows);
+                            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, RowsToTuples());
+                        }
                     }
+
+                    TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, headers);
+
+                    model.StepInfo = TaskManager.Current();
+
+                    return PartialView(model);
                 }
-
-                TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, headers);
-
-                model.StepInfo = TaskManager.Current();
-
-                return PartialView(model);
             }
         }
 

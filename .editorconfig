@@ -4,4 +4,8 @@
 dotnet_diagnostic.CA2000.severity = error
 
 # Exclude from CA2000
-dotnet_code_quality.CA2000.excluded_symbol_names = T:System.Data.DataTable
+dotnet_code_quality.CA2000.excluded_symbol_names = T:System.Data.DataTable | T:System.IO.File | T:System.IO.FileStream | T:Lucene.Net.Analysis.Standard.StandardTokenizer | T:Lucene.Net.Analysis.Standard.StandardFilter | T:Lucene.Net.Analysis.LowerCaseFilter | T:Lucene.Net.Analysis.StopFilter | T:BExIS.Security.Services.Subjects.IdentityUserService | T:BExIS.Ddm.Providers.LuceneProvider.Indexer.BexisAnalyzer | T:BExIS.Ddm.Providers.LuceneProvider.Indexer.NGramAnalyzer | T:Lucene.Net.Store.FSDirectory | T:Lucene.Net.Analysis.Standard.StandardAnalyzer
+
+
+
+

@@ -165,8 +165,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
 
-                    XmlReader test = XmlReader.Create(dataPath, settings);
-                    include.Schema = XmlSchema.Read(test, verifyErrors);
+                    using (XmlReader test = XmlReader.Create(dataPath, settings))
+                    {
+                        include.Schema = XmlSchema.Read(test, verifyErrors);
+                    }
                 }
 
                 xmlSchemaSet.Add(include.Schema);

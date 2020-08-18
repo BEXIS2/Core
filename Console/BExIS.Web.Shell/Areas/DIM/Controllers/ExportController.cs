@@ -187,7 +187,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     LoggerFactory.LogCustom("Generate Zip Start");
                     long dsvId = versionid;
-                    if(dsvId <= 0)dsvId = dm.GetDatasetLatestVersion(id).Id;
+                    if (dsvId <= 0) dsvId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                     int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
@@ -215,7 +215,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // apply selection and projection
 
                         //check wheter title is empty or not
-                        string title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
+                        string title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
 
                         switch (format)
                         {
@@ -275,7 +275,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string json = OutputDataStructureManager.GetVariableListAsJson(dataStructureId);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
-  
+
 
                             //generate datastructure as html
                             DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
@@ -291,57 +291,59 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogCustom("Zip Start");
 
-                    ZipFile zip = new ZipFile();
-
-                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    using (ZipFile zip = new ZipFile())
                     {
-                        bool addFile = true;
 
-                        if (cd.Name.ToLower().Contains("generated"))
+                        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
-                            if (!cd.MimeType.ToLower().Equals(format)) addFile = false;
-                        }
+                            bool addFile = true;
 
-                        if (addFile)
-                        {
-                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                            string name = cd.URI.Split('\\').Last();
-
-                            if (FileHelper.FileExist(path))
+                            if (cd.Name.ToLower().Contains("generated"))
                             {
-                                zip.AddFile(path, "");
+                                if (!cd.MimeType.ToLower().Equals(format)) addFile = false;
+                            }
+
+                            if (addFile)
+                            {
+                                string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                                string name = cd.URI.Split('\\').Last();
+
+                                if (FileHelper.FileExist(path))
+                                {
+                                    zip.AddFile(path, "");
+                                }
                             }
                         }
+
+                        // add xsd of the metadata schema
+                        LoggerFactory.LogCustom("Schema Start");
+
+                        string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
+                        if (Directory.Exists(xsdDirectoryPath))
+                            zip.AddDirectory(xsdDirectoryPath, "Schema");
+
+                        LoggerFactory.LogCustom("Manifest Start");
+
+                        XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
+
+                        if (manifest != null)
+                        {
+                            string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
+                                versionNr, "manifest", ".xml");
+                            string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+
+                            manifest.Save(fullFilePath);
+                            zip.AddFile(fullFilePath, "");
+                        }
+
+                        LoggerFactory.LogCustom("Save zip Start");
+
+                        zip.Save(zipFilePath);
+
+                        LoggerFactory.LogCustom("Return");
+
+                        return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                     }
-
-                    // add xsd of the metadata schema
-                    LoggerFactory.LogCustom("Schema Start");
-
-                    string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
-                    if (Directory.Exists(xsdDirectoryPath))
-                        zip.AddDirectory(xsdDirectoryPath, "Schema");
-
-                    LoggerFactory.LogCustom("Manifest Start");
-
-                    XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
-
-                    if (manifest != null)
-                    {
-                        string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                            versionNr, "manifest", ".xml");
-                        string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
-
-                        manifest.Save(fullFilePath);
-                        zip.AddFile(fullFilePath, "");
-                    }
-
-                    LoggerFactory.LogCustom("Save zip Start");
-
-                    zip.Save(zipFilePath);
-
-                    LoggerFactory.LogCustom("Return");
-
-                    return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
             }
             catch (Exception ex)
