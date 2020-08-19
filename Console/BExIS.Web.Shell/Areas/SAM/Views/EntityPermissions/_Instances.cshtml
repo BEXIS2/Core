@@ -62,7 +62,7 @@
                 .Add(r => r.Id).Descending()))
       .Pageable(pageable =>
       {
-          pageable.PageSize(20, new[] { 10, 20, 50, 100 });
+          pageable.PageSize(1500, new[] { 10, 20, 50, 100, 500, 1500 });
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })
