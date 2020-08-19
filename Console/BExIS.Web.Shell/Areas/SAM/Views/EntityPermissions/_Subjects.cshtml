@@ -54,7 +54,7 @@
       .Filterable()
       .Pageable(pageable =>
       {
-          pageable.PageSize(50, new[] { 10, 20, 50, 100, 200 });
+          pageable.PageSize(1000, new[] { 10, 20, 50, 100, 200, 500, 1000 });
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })
