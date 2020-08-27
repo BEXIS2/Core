@@ -22,11 +22,13 @@ namespace BExIS.Modules.Bam.UI.Helpers
             reloadSettings();
 
             // set up file watcher to listen for changes
-            FileSystemWatcher fw = new FileSystemWatcher();
-            fw.Path = Path.GetDirectoryName(filePath);
-            fw.Filter = Path.GetFileName(filePath);
-            fw.Changed += new FileSystemEventHandler(fw_Changed);
-            fw.EnableRaisingEvents = true;
+            using (FileSystemWatcher fw = new FileSystemWatcher())
+            {
+                fw.Path = Path.GetDirectoryName(filePath);
+                fw.Filter = Path.GetFileName(filePath);
+                fw.Changed += new FileSystemEventHandler(fw_Changed);
+                fw.EnableRaisingEvents = true;
+            }
         }
 
         /// <summary>
