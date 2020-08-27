@@ -77,7 +77,7 @@ namespace BExIS.IO.Transform.Output
         protected override void Init(string file, long dataStructureId)
         {
             // store pointer to dataStructure
-            dataStructure = GetDataStructure(dataStructureId);
+            //dataStructure = GetDataStructure(dataStructureId);
 
             // create the file
             CreateFile(file);

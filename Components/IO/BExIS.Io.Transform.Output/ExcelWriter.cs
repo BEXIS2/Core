@@ -1092,8 +1092,9 @@ namespace BExIS.IO.Transform.Output
         /// <param name="dataStructureId"></param>
         protected override void Init(string filePath, long dataStructureId)
         {
+
             // loading datastructure
-            dataStructure = GetDataStructure(dataStructureId);
+            //dataStructure = GetDataStructure(dataStructureId);
 
             // open excel file
             spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
