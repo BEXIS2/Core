@@ -121,7 +121,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             if (Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm") ||
                                 iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
                             {
-                                int packageSize = 100000;
+                                int packageSize = 10000;
 
                                 Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
 
@@ -163,16 +163,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     //open stream
                                     Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
                                     rows = new List<DataTuple>();
-                                    if (reader.Position < excelFileReaderInfo.DataEndRow)
+                                    
+                                    if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
                                     {
-                                        if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
-                                        {
+                                        if (reader.Position < excelFileReaderInfo.DataEndRow)
                                             rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                        }
-                                        else
-                                        {
-                                            rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                        }
+                                    }
+                                    else
+                                    {
+                                        rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
 
                                     //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
