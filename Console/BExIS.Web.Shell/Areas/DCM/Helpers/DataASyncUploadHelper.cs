@@ -163,16 +163,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     //open stream
                                     Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
                                     rows = new List<DataTuple>();
-                                    if (reader.Position < excelFileReaderInfo.DataEndRow)
+                                    
+                                    if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
                                     {
-                                        if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
-                                        {
+                                        if (reader.Position < excelFileReaderInfo.DataEndRow)
                                             rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                        }
-                                        else
-                                        {
-                                            rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                        }
+                                    }
+                                    else
+                                    {
+                                        rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
 
                                     //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
