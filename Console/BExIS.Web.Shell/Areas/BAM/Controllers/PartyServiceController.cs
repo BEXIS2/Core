@@ -101,15 +101,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
         [HttpPost]
         public ActionResult CreateUserParty(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships)
         {
-            PartyTypeManager partyTypeManager = null;
-            PartyManager partyManager = null;
-            PartyRelationshipTypeManager partyRelationshipManager = null;
-            UserManager userManager = null;
-            try
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyRelationshipTypeManager partyRelationshipManager = new PartyRelationshipTypeManager())
+            using (UserManager userManager = new UserManager())
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                userManager = new UserManager();
-                partyTypeManager = new PartyTypeManager();
-                partyManager = new PartyManager();
 
                 // check if 
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
@@ -121,7 +118,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyuser = partyManager.GetPartyByUser(user.Id);
                 if (partyuser == null)
                 {
-                    partyRelationshipManager = new PartyRelationshipTypeManager();
+
                     var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                     var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                     //Create party
@@ -151,12 +148,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
 
                 return RedirectToAction("Index");
-            }
-            finally
-            {
-                partyTypeManager?.Dispose();
-                partyManager?.Dispose();
-                partyRelationshipManager?.Dispose();
             }
         }
 
@@ -209,14 +200,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult Edit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
         {
             var party = new Party();
-            PartyManager partyManager = null;
-            PartyTypeManager partyTypeManager = null;
-            UserManager userManager = null;
-            try
-            {
-                partyManager = new PartyManager();
-                partyTypeManager = new PartyTypeManager();
-                userManager = new UserManager();
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (UserManager userManager = new UserManager())
+            { 
+    
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
 
@@ -257,11 +245,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
-            finally
-            {
-                partyManager?.Dispose();
-                userManager?.Dispose();
-            }
+            
         }
 
         /// <summary>
@@ -271,11 +255,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <returns></returns>
         public ActionResult LoadPartyCustomAttr(int id)
         {
-            PartyManager partyManager = null;
-            UserManager userManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
+            using (UserManager userManager = new UserManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-                userManager = new UserManager();
+
                 long partyId = 0;
                 var partyIdStr = HttpContext.Request.Params["partyId"];
 
@@ -283,7 +267,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                 if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
                 {
-                    partyManager = new PartyManager();
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
 
                     var userId = partyManager.GetUserIdByParty(partyId);
@@ -315,30 +298,25 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
 
                 var customAttrList = new List<PartyCustomAttribute>();
-                PartyTypeManager partyTypeManager = new PartyTypeManager();
+                
                 IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);
                 if (partyType != null)
                     customAttrList = partyType.First().CustomAttributes.ToList();
                 return PartialView("_customAttributesPartial", customAttrList);
             }
-            finally
-            {
-                partyManager?.Dispose();
-            }
+  
         }
 
         [HttpGet]
         public Boolean CheckUniqeness(int partyTypeId, int partyId, string hash)
         {
-            PartyManager partyManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-                partyManager = new PartyManager();
-                PartyType partyType = new PartyTypeManager().PartyTypeRepository.Get(partyTypeId);
+                PartyType partyType = partyTypeManager.PartyTypeRepository.Get(partyTypeId);
                 Party party = partyManager.PartyRepository.Get(partyId);
                 return partyManager.CheckUniqueness(partyManager.PartyRepository, partyType, hash, party);
             }
-            finally { partyManager?.Dispose(); }
         }
 
         public Dictionary<string, string[]> GetPartyTypesForAccount()

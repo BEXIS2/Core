@@ -24,14 +24,17 @@ namespace BExIS.Dlm.Services.Helpers
                 dt.TableName = "Primary data table";
             else
                 dt.TableName = tableName;
-            DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
-            var tupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
 
-            if (tupleIds != null && tupleIds.Count > 0 && sds != null)
+            using (DataStructureManager dsm = new DataStructureManager())
             {
-                buildTheHeader(sds, dt);
-                buildTheBody(datasetManager, tupleIds, dt, sds);
+                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
+                var tupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+
+                if (tupleIds != null && tupleIds.Count > 0 && sds != null)
+                {
+                    buildTheHeader(sds, dt);
+                    buildTheBody(datasetManager, tupleIds, dt, sds);
+                }
             }
 
             return dt;

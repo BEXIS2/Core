@@ -187,15 +187,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             Name = Server.UrlDecode(Name);
             Description = Server.UrlDecode(Description);
-            DataStructureManager dataStructureManager = null;
-            MissingValueManager missingValueManager = null;
-            try
+
+            using(DataStructureManager dataStructureManager = new DataStructureManager())
+            using(MissingValueManager missingValueManager = new MissingValueManager())
             {
-
-                dataStructureManager = new DataStructureManager();
-                missingValueManager = new MissingValueManager();
-
-
                 if (!isStructured)
                 {
                     UnStructuredDataStructure dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>().Get(Id);
@@ -255,10 +250,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 return PartialView("_message", new MessageModel());
             }
-            finally
-            {
-                dataStructureManager.Dispose();
-            }
+
         }
     }
 }

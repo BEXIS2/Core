@@ -36,11 +36,6 @@ namespace BExIS.Xml.Helpers.Mapping
         public Dictionary<string, List<Constraint>> ConvertedSimpleTypes { get; set; }
 
         private List<string> additionalFiles { get; set; }
-        //private DataContainerManager dataContainerManager = new DataContainerManager();
-        //private MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
-        //private MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-        //private DataTypeManager dataTypeManager = new DataTypeManager();
-        //private UnitManager unitManager = new UnitManager();
 
         private string SchemaName = "";
         private string xsdFilePath = "";
@@ -170,8 +165,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
 
-                    XmlReader test = XmlReader.Create(dataPath, settings);
-                    include.Schema = XmlSchema.Read(test, verifyErrors);
+                    using (XmlReader test = XmlReader.Create(dataPath, settings))
+                    {
+                        include.Schema = XmlSchema.Read(test, verifyErrors);
+                    }
                 }
 
                 xmlSchemaSet.Add(include.Schema);
@@ -499,7 +496,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public Dictionary<string, List<Constraint>> ConvertSimpleTypes()
         {
-            MetadataAttributeManager mam = new MetadataAttributeManager();
+            //MetadataAttributeManager mam = new MetadataAttributeManager();
             //List<XmlSchemaElement> elementsWithSimpleType = this.GetAllElementsTypeIsSimpleType();
 
             //foreach(XmlSchemaElement element in elementsWithSimpleType)
@@ -514,11 +511,9 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public long GenerateMetadataStructure(string nameOfStartNode, string schemaName)
         {
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataAttributeManager mamManager = new MetadataAttributeManager();
-
-            try
+            using (MetadataStructureManager mdsManager = new MetadataStructureManager())
+            using (MetadataPackageManager mdpManager = new MetadataPackageManager())
+            using (MetadataAttributeManager mamManager = new MetadataAttributeManager())
             {
                 if (!String.IsNullOrEmpty(schemaName))
                     SchemaName = schemaName;
@@ -606,7 +601,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     #region root with only simple type childrens
 
                     XmlSchemaAnnotation annotation = null;
-                    string name  = "";
+                    string name = "";
 
                     if (root is XmlSchemaElement)
                     {
@@ -887,11 +882,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 return test.Id;
             }
-            finally
-            {
-                mdsManager.Dispose();
-                mdpManager.Dispose();
-            }
+
         }
 
         private string findPathFromRoot(XmlSchemaElement element, string name, string path)

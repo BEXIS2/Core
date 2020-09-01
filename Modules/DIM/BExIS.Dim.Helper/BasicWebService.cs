@@ -72,23 +72,25 @@ namespace BExIS.Dim.Helpers
 
                     //client.
                     var parameterDic = new Dictionary<string, string> { { "requestJson", body } };
-                    var encodedContent = new FormUrlEncodedContent(parameterDic);
+                    using (var encodedContent = new FormUrlEncodedContent(parameterDic))
+                    {
 
-                    //test@testerer.de:WSTest
-                    var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
+                        //test@testerer.de:WSTest
+                        var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 
-                    // "basic "+ Convert.ToBase64String(byteArray)
-                    AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-                    client.DefaultRequestHeaders.Authorization = ahv;
+                        // "basic "+ Convert.ToBase64String(byteArray)
+                        AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                        client.DefaultRequestHeaders.Authorization = ahv;
 
-                    string requesturl = url + parameters;
+                        string requesturl = url + parameters;
 
-                    //HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
-                    HttpResponseMessage response = await client.PostAsync(requesturl, encodedContent);
-                    Debug.WriteLine(requesturl);
-                    //Debug.WriteLine(Server.UrlEncode(parameters));
-                    response.EnsureSuccessStatusCode();
-                    returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                        //HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
+                        HttpResponseMessage response = await client.PostAsync(requesturl, encodedContent);
+                        Debug.WriteLine(requesturl);
+                        //Debug.WriteLine(Server.UrlEncode(parameters));
+                        response.EnsureSuccessStatusCode();
+                        returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                    }
 
                 }
                 return returnValue;

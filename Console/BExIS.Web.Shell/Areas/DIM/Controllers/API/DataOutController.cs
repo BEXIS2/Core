@@ -128,7 +128,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 #region is public
 
-                entityManager = new EntityManager();
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 

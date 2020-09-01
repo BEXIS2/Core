@@ -129,13 +129,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Permissions_Select(long subjectId, long entityId, long instanceId)
         {
-            var entityPermissionManager = new EntityPermissionManager();
-            var subjectManager = new SubjectManager();
-            var partyManager = new PartyManager();
-            var entityManager = new EntityManager();
-
-            try
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var subjectManager = new SubjectManager())
+            using (var partyManager = new PartyManager())
+            using (var entityManager = new EntityManager())
             {
+
                 var subject = subjectManager.SubjectRepository.Get(subjectId);
 
                 var entityPermissions = new List<ReferredEntityPermissionGridRowModel>();
@@ -179,11 +178,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return View(new GridModel<ReferredEntityPermissionGridRowModel> { Data = entityPermissions });
             }
-            finally
-            {
-                subjectManager.Dispose();
-                entityPermissionManager.Dispose();
-            }
+       
         }
 
         public void RemoveInstanceFromPublic(long entityId, long instanceId)

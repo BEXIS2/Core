@@ -52,133 +52,128 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
             long datasetId = 0;
             long researchPlanId = 1;
 
-            DatasetManager datasetManager = new DatasetManager();
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            ResearchPlanManager researchPlanManager = new ResearchPlanManager();
-            UserManager userManager = new UserManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
+            using (ResearchPlanManager researchPlanManager = new ResearchPlanManager())
+            using (UserManager userManager = new UserManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                #region security
-
-                string token = this.Request.Headers.Authorization?.Parameter;
-
-                if (String.IsNullOrEmpty(token))
+                try
                 {
-                    request.Content = new StringContent("Bearer token not exist.");
+                    #region security
 
-                    return request;
-                }
+                    string token = this.Request.Headers.Authorization?.Parameter;
 
-                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-
-                if (user == null)
-                {
-                    request.Content = new StringContent("Token is not valid.");
-
-                    return request;
-                }
-
-                #endregion security
-
-                #region incomming values check
-
-                // check incomming values
-                if (dataset.Title == null) error += "title not existing.";
-                if (dataset.Description == null) error += "description not existing.";
-                if (dataset.MetadataStructureId == 0) error += "metadata structure id should not be null. ";
-                if (dataset.DataStructureId == 0) error += "datastructure id should not be null. ";
-
-                if (!string.IsNullOrEmpty(error))
-                {
-                    request.Content = new StringContent(error);
-
-                    return request;
-                }
-
-                #endregion incomming values check
-
-                #region create dataset
-
-                DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
-                //if datastructure is not a structured one
-                if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
-
-                if (dataStructure == null)
-                {
-                    request.Content = new StringContent("A data structure with id " + dataset.DataStructureId + "does not exist.");
-                    return request;
-                }
-
-                ResearchPlan rp = researchPlanManager.Repo.Get(researchPlanId);
-
-                if (rp == null)
-                {
-                    request.Content = new StringContent("A research plan with id " + researchPlanId + "does not exist.");
-                    return request;
-                }
-
-                MetadataStructureManager msm = new MetadataStructureManager();
-                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructureId);
-
-                if (metadataStructure == null)
-                {
-                    request.Content = new StringContent("A metadata structure with id " + dataset.MetadataStructureId + "does not exist.");
-                    return request;
-                }
-
-                var newDataset = datasetManager.CreateEmptyDataset(dataStructure, rp, metadataStructure);
-                datasetId = newDataset.Id;
-
-                // add security
-                entityPermissionManager.Create<User>(user.UserName, "Dataset", typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
-
-                //add title and description to the metadata
-
-                if (datasetManager.IsDatasetCheckedOutFor(datasetId, user.UserName) || datasetManager.CheckOutDataset(datasetId, user.UserName))
-                {
-                    DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
-
-                    XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                    XDocument xdoc = xmlMetadataWriter.CreateMetadataXml(dataset.MetadataStructureId);
-                    workingCopy.Metadata = XmlUtility.ToXmlDocument(xdoc);
-                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                    workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.title, dataset.Title);
-                    workingCopy.Title = dataset.Title;
-                    workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.description, dataset.Description);
-                    workingCopy.Description = dataset.Description;
-
-
-                    ////set modification
-                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                    if (String.IsNullOrEmpty(token))
                     {
-                        Performer = user.UserName,
-                        Comment = "Metadata",
-                        ActionType = AuditActionType.Create
-                    };
+                        request.Content = new StringContent("Bearer token not exist.");
 
-                    datasetManager.EditDatasetVersion(workingCopy, null, null, null);
-                    datasetManager.CheckInDataset(datasetId, "Title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
+                        return request;
+                    }
+
+                    user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                    if (user == null)
+                    {
+                        request.Content = new StringContent("Token is not valid.");
+
+                        return request;
+                    }
+
+                    #endregion security
+
+                    #region incomming values check
+
+                    // check incomming values
+                    if (dataset.Title == null) error += "title not existing.";
+                    if (dataset.Description == null) error += "description not existing.";
+                    if (dataset.MetadataStructureId == 0) error += "metadata structure id should not be null. ";
+                    if (dataset.DataStructureId == 0) error += "datastructure id should not be null. ";
+
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        request.Content = new StringContent(error);
+
+                        return request;
+                    }
+
+                    #endregion incomming values check
+
+                    #region create dataset
+
+                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
+                    //if datastructure is not a structured one
+                    if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
+
+                    if (dataStructure == null)
+                    {
+                        request.Content = new StringContent("A data structure with id " + dataset.DataStructureId + "does not exist.");
+                        return request;
+                    }
+
+                    ResearchPlan rp = researchPlanManager.Repo.Get(researchPlanId);
+
+                    if (rp == null)
+                    {
+                        request.Content = new StringContent("A research plan with id " + researchPlanId + "does not exist.");
+                        return request;
+                    }
+
+                    MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructureId);
+
+                    if (metadataStructure == null)
+                    {
+                        request.Content = new StringContent("A metadata structure with id " + dataset.MetadataStructureId + "does not exist.");
+                        return request;
+                    }
+
+                    var newDataset = datasetManager.CreateEmptyDataset(dataStructure, rp, metadataStructure);
+                    datasetId = newDataset.Id;
+
+                    // add security
+                    entityPermissionManager.Create<User>(user.UserName, "Dataset", typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+
+                    //add title and description to the metadata
+
+                    if (datasetManager.IsDatasetCheckedOutFor(datasetId, user.UserName) || datasetManager.CheckOutDataset(datasetId, user.UserName))
+                    {
+                        DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
+
+                        XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                        XDocument xdoc = xmlMetadataWriter.CreateMetadataXml(dataset.MetadataStructureId);
+                        workingCopy.Metadata = XmlUtility.ToXmlDocument(xdoc);
+                        XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                        workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.title, dataset.Title);
+                        workingCopy.Title = dataset.Title;
+                        workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.description, dataset.Description);
+                        workingCopy.Description = dataset.Description;
+
+
+                        ////set modification
+                        workingCopy.ModificationInfo = new EntityAuditInfo()
+                        {
+                            Performer = user.UserName,
+                            Comment = "Metadata",
+                            ActionType = AuditActionType.Create
+                        };
+
+                        datasetManager.EditDatasetVersion(workingCopy, null, null, null);
+                        datasetManager.CheckInDataset(datasetId, "Title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
+                    }
+
+                    request.Content = new StringContent("the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");
+                    return request;
+
+                    #endregion create dataset
                 }
+                catch (Exception ex)
+                {
+                    request.Content = new StringContent(ex.Message);
+                    return request;
+                }
+            }
 
-                request.Content = new StringContent("the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");
-                return request;
-
-                #endregion create dataset
-            }
-            catch (Exception ex)
-            {
-                request.Content = new StringContent(ex.Message);
-                return request;
-            }
-            finally
-            {
-                datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
-            }
         }
 
         // PUT api/<controller>/5

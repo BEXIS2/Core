@@ -106,7 +106,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             result = new StopFilter(true, result, stoptable);
             //result = new GermanStemFilter(result, excltable);
             //result = new PorterStemFilter(result);
-            result = new SynonymFilter(result, SynonymEngine); // injects the synonyms. 
+            result = new SynonymFilter(result, SynonymEngine); // injects the synonyms. #
+       
             return result;
         }
 

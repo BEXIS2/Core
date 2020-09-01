@@ -424,8 +424,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             }
             else
             {
-                QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new SimpleAnalyzer());
-                bexisSearching = parser.Parse("*:*");
+                using (var sa = new SimpleAnalyzer())
+                {
+                    QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", sa);
+                    bexisSearching = parser.Parse("*:*");
+                }
             }
         }
 

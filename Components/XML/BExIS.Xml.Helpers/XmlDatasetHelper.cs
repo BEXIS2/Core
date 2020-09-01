@@ -24,37 +24,31 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public string GetInformation(long datasetid, XmlDocument metadata, NameAttributeValues name)
         {
-            DatasetManager dm = new DatasetManager();
-            try
+            
+
+            using (var unitOfWork = this.GetUnitOfWork())
+            using (DatasetManager dm = new DatasetManager())
+            using (MetadataStructureManager msm = new MetadataStructureManager())
             {
-                
+                if (datasetid <= 0) return String.Empty;
 
-                using (var unitOfWork = this.GetUnitOfWork())
-                {
-                    if (datasetid <= 0) return String.Empty;
-
-                    var dataset = dm.GetDataset(datasetid);
+                var dataset = dm.GetDataset(datasetid);
 
 
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    MetadataStructure metadataStructure = msm.Repo.Get(dataset.MetadataStructure.Id);
+                MetadataStructure metadataStructure = msm.Repo.Get(dataset.MetadataStructure.Id);
 
-                    if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
+                if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
 
-                    XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-                    XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
-                        xDoc);
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                    xDoc);
 
-                    string xpath = temp.Attribute("value").Value.ToString();
-                    string value = metadata.SelectSingleNode(xpath).InnerText;
+                string xpath = temp.Attribute("value").Value.ToString();
+                string value = metadata.SelectSingleNode(xpath).InnerText;
 
-                    return string.IsNullOrWhiteSpace(value) ?"not available": value;
-                }
+                return string.IsNullOrWhiteSpace(value) ? "not available" : value;
             }
-            finally
-            {
-                dm.Dispose();
-            }
+
         }
 
         /// <summary>
@@ -94,14 +88,15 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public string GetInformationFromVersion(long datasetVersionId, long metadataStructureId, NameAttributeValues name)
         {
-            DatasetManager dm = new DatasetManager();
+            
 
             using (var unitOfWork = this.GetUnitOfWork())
+            using (DatasetManager dm = new DatasetManager())
+            using (MetadataStructureManager msm = new MetadataStructureManager())
             {
                 if (datasetVersionId <= 0) return String.Empty;
                 if (metadataStructureId <= 0) return String.Empty;
 
-                MetadataStructureManager msm = new MetadataStructureManager();
                 MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
 
                 if ((XmlDocument)metadataStructure.Extra == null) return string.Empty;
@@ -118,14 +113,13 @@ namespace BExIS.Xml.Helpers
 
         public Dictionary<long, string> GetInformationFromVersions(List<long> datasetVersionIds, long metadataStructureId, NameAttributeValues name)
         {
-            DatasetManager dm = new DatasetManager();
-
             using (var unitOfWork = this.GetUnitOfWork())
+            using (DatasetManager dm = new DatasetManager())
+            using (MetadataStructureManager msm = new MetadataStructureManager())
             {
                 if (datasetVersionIds.Any(d => d <= 0)) return null;
                 if (metadataStructureId <= 0) return null;
 
-                MetadataStructureManager msm = new MetadataStructureManager();
                 MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
 
                 if ((XmlDocument)metadataStructure.Extra == null) return null;

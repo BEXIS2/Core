@@ -121,7 +121,7 @@ namespace BExIS.Security.Services.Subjects
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
         }
 
         public Task<Group> FindByIdAsync(long roleId)

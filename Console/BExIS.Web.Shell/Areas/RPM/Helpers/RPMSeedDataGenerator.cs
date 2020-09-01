@@ -22,13 +22,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
             FeatureManager featureManager = null;
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-
+            OperationManager operationManager = new OperationManager();
             try
             {
                 featureManager = new FeatureManager();
                 List<Feature> features = featureManager.FeatureRepository.Get().ToList();
-
-                OperationManager operationManager = new OperationManager();
 
                 Feature dataPlanning = features.FirstOrDefault(f => f.Name.Equals("Data Planning"));
                 if (dataPlanning == null)
@@ -110,6 +108,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             {
                 featureManager.Dispose();
                 featurePermissionManager.Dispose();
+                operationManager.Dispose();
             }
 
             //create seed data from csv files

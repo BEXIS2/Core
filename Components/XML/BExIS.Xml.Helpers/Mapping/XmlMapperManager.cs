@@ -876,24 +876,26 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private string getStorePath(long datasetVersionId, string exportTo)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            {
+                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-            Dataset dataset = datasetManager.GetDataset(datasetVersionId);
+                Dataset dataset = datasetManager.GetDataset(datasetVersionId);
 
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
+                string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
 
-            string path;
+                string path;
 
-            int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
 
-            if (string.IsNullOrEmpty(exportTo) || exportTo.ToLower().Equals("generic"))
-                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, versionNr, "metadata", ".xml");
-            else
-                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, versionNr, "metadata_" + exportTo, ".xml");
+                if (string.IsNullOrEmpty(exportTo) || exportTo.ToLower().Equals("generic"))
+                    path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, versionNr, "metadata", ".xml");
+                else
+                    path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, versionNr, "metadata_" + exportTo, ".xml");
 
-            return path;
+                return path;
+            }
         }
     }
 }

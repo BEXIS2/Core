@@ -176,9 +176,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 catch { return null; }
 
-                UserManager userManager = new UserManager();
-
-                _user = userManager.FindByNameAsync(username).Result;
+                using (UserManager userManager = new UserManager())
+                {
+                    _user = userManager.FindByNameAsync(username).Result;
+                }
             }
 
             return _user;

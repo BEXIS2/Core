@@ -200,6 +200,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 datasetManager.Dispose();
                 entityPermissionManager.Dispose();
                 userManager.Dispose();
+                request.Dispose();
             }
         }
 
