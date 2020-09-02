@@ -18,8 +18,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            var x = new DatasetManager();
-
             string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "Bam.Settings.xml");
             XDocument settings = XDocument.Load(filePath);
             XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
