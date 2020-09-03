@@ -38,6 +38,7 @@ using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Entities.Common;
+using Vaiona.Entities.Logging;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
@@ -664,6 +665,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
+
+                    string message = String.Format("error appears by create/update dataset with id: {0} , error: {1} ", datasetId.ToString(), ex.Message);
+                    LoggerFactory.LogCustom(message);
                 }
             }
             #endregion create dataset
