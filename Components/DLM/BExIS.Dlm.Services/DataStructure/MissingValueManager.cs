@@ -207,12 +207,12 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.DateTime:
                         try
                         {
-                            List<DateTime> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToDateTime(mv.Placeholder)).ToList();
+                            List<string> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => mv.Placeholder).ToList();
                             DateTime temp = DateTime.MaxValue.AddHours(-1);
-                            while (placeholders.Contains(temp))
+                            while (placeholders.Contains(temp.ToString(format)))
                             {
                                 temp = temp.AddHours(-1);
-                            }
+                            }                            
                             return temp.ToString(format);
                         }
                         catch
@@ -436,7 +436,7 @@ namespace BExIS.Dlm.Services.DataStructure
                             {
                                 foreach (MissingValue mv in missingValues)
                                 {
-                                    if (mv.Id != missingvalueId && temp == Convert.ToDateTime(mv.Placeholder))
+                                    if (mv.Id != missingvalueId && placeholder == mv.Placeholder)
                                         return false;
                                 }
                                 return true;
