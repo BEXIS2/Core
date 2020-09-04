@@ -142,7 +142,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 DatasetVersion latest = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 //update the dataset
-                dsHelper.UpdateAnyTupleForDataset(dataset, dataset.DataStructure as StructuredDataStructure);
+                dsHelper.UpdateAnyTupleForDataset(dataset, dataset.DataStructure as StructuredDataStructure, datasetManager);
                 datasetManager.CheckInDataset(datasetId, "for testing  update all datatuple", username, ViewCreationBehavior.None);
 
 
