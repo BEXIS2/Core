@@ -33,39 +33,41 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-            var dm = new DatasetManager();
-            var rsm = new ResearchPlanManager();
-            var mdm = new MetadataStructureManager();
-            dsHelper = new DatasetHelper();
-
-            try
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
             {
-                dsHelper.PurgeAllDatasets();
-                dsHelper.PurgeAllDataStructures();
-                dsHelper.PurgeAllResearchPlans();
+                dsHelper = new DatasetHelper();
 
-                // generate Data
-                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
-                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+                try
+                {
+                    dsHelper.PurgeAllDatasets();
+                    dsHelper.PurgeAllDataStructures();
+                    dsHelper.PurgeAllResearchPlans();
 
-                var rp = dsHelper.CreateResearchPlan();
-                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+                    // generate Data
+                    StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                    dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                var mds = mdm.Repo.Query().First();
-                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+                    var rp = dsHelper.CreateResearchPlan();
+                    rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                datasetId = dataset.Id;
+                    var mds = mdm.Repo.Query().First();
+                    mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                // add datatuples
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
-                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                    datasetId = dataset.Id;
 
-                dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-            }
-            finally
-            {
-                dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                    // add datatuples
+                    dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+
+                    dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                }
+                finally
+                {
+                    dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                }
             }
         }
 
@@ -124,54 +126,58 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void GetDataTuples_CallOlderVersionAfterTwoUpdates_ReturnIQueryable()
         {
-            //Arrange
-            DatasetManager datasetManager = new DatasetManager();
+            
+            
             List<long> datatupleIds;
-
+            
             try
             {
-                datasetManager = new DatasetManager();
-
-                var dataset = datasetManager.GetDataset(datasetId);
-                var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                Assert.IsNotNull(dataset);
-                Assert.IsNotNull(datasetVersion);
-
-                //get latest datatupleid before create a new dataset and data
-                using (var uow = this.GetUnitOfWork())
+                //Arrange
+                using (var datasetManager = new DatasetManager())
                 {
-                    datatupleIds = uow.GetReadOnlyRepository<DataTuple>().Get().Where(dt => dt.DatasetVersion.Id.Equals(datasetVersion.Id)).Select(dt => dt.Id).ToList();
+
+                    var dataset = datasetManager.GetDataset(datasetId);
+                    var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    Assert.IsNotNull(dataset);
+                    Assert.IsNotNull(datasetVersion);
+
+                    //get latest datatupleid before create a new dataset and data
+                    using (var uow = this.GetUnitOfWork())
+                    {
+                        datatupleIds = uow.GetReadOnlyRepository<DataTuple>().Get().Where(dt => dt.DatasetVersion.Id.Equals(datasetVersion.Id)).Select(dt => dt.Id).ToList();
+                    }
+
+                    dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, datatupleIds[0], 1000, datasetManager);
+                    datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+
+                    dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, datatupleIds[1], 2000, datasetManager);
+                    datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
                 }
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, datatupleIds[0], 1000, datasetManager);
-                datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
-
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, datatupleIds[1], 2000, datasetManager);
-                datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 //Act
-                List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
-                Assert.That(datasetversions.Count, Is.EqualTo(3));
-
-                foreach (var dsv in datasetversions)
+                using (var datasetManager = new DatasetManager())
                 {
-                    int c = datasetManager.GetDataTuplesCount(dsv.Id);
+                    List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
+                    Assert.That(datasetversions.Count, Is.EqualTo(3));
 
-                    var result = datasetManager.GetDataTuples(dsv.Id); // get datatuples from the one before the latest
-                    int cm = result.Count();
-                    Assert.That(c, Is.EqualTo(10));
-                    Assert.That(c, Is.EqualTo(result.Count()));
+                    foreach (var dsv in datasetversions)
+                    {
+                        int c = datasetManager.GetDataTuplesCount(dsv.Id);
+
+                        var result = datasetManager.GetDataTuples(dsv.Id); // get datatuples from the one before the latest
+                        int cm = result.Count();
+                        Assert.That(c, Is.EqualTo(10));
+                        Assert.That(c, Is.EqualTo(result.Count()));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            finally
-            {
-                datasetManager.Dispose();
-            }
+
         }
 
         [Test()]
