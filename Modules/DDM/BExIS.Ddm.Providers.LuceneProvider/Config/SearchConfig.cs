@@ -88,6 +88,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>        
         private static void Load()
         {
+            _Reader = BexisIndexSearcher.getIndexReader();
+
             configXML = new XmlDocument();
 
             configXML.Load(FileHelper.ConfigFilePath);
