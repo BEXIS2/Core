@@ -88,7 +88,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>        
         private static void Load()
         {
-            _Reader = BexisIndexSearcher.getIndexReader();
+            
 
             configXML = new XmlDocument();
 
@@ -134,6 +134,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         List<Facet> lcDefault = new List<Facet>();
                         try
                         {
+                            _Reader = BexisIndexSearcher.getIndexReader();
                             Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
                             using (SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName }))
                             {
@@ -160,7 +161,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         }
                         catch
                         {
-
+                            throw;
                         }
                     }
 
@@ -195,6 +196,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
                         try
                         {
+                            _Reader = BexisIndexSearcher.getIndexReader();
+
+
                             using (SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName }))
                             {
                                 SimpleFacetedSearch.Hits hits = sfs.Search(query);

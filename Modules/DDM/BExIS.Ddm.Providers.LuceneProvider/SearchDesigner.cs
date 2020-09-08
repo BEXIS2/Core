@@ -234,7 +234,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public void Reload()
         {
-            bexisIndexer.ReIndex();
+            try
+            {
+                bexisIndexer.ReIndex();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public void Dispose()
