@@ -250,7 +250,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (_bus.ContainsKey(TaskManager.NUMBERSOFROWS) && _bus.ContainsKey(TaskManager.NUMBERSOFVARIABLES))
             {
-                cells = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]) + Convert.ToInt32(_bus[TaskManager.NUMBERSOFVARIABLES]);
+                cells = Convert.ToInt32(_bus[TaskManager.NUMBERSOFROWS]) * Convert.ToInt32(_bus[TaskManager.NUMBERSOFVARIABLES]);
             }
 
             if (cells > cellLimit) return true;
