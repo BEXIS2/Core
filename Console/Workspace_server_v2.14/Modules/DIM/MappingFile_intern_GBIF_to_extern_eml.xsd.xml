@@ -1,0 +1,382 @@
+<mapping name="GBIF">
+  <header>
+    <destination namespaceUri="" prefix="dataset" sequence="" xPath="Dataset" />
+    <attributes />
+    <packages />
+    <schema abbreviation="GBIF" url="Metadata/GBIF/eml.xsd" />
+  </header>
+  <routes>
+    <route>
+      <source xPath="Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType" />
+      <destination xPath="eml/dataset/alternateIdentifier" sequence="alternateIdentifier" />
+    </route>
+    <route>
+      <source xPath="Metadata/Basic/BasicType/title/titleType" />
+      <destination xPath="eml/dataset/title" sequence="title" />
+    </route>
+    <route>
+      <source xPath="Metadata/Basic/BasicType/pubDate/pubDateType" />
+      <destination xPath="eml/dataset/pubDate" sequence="dataset" />
+    </route>
+    <route>
+      <source xPath="Metadata/Basic/BasicType/language/languageType" />
+      <destination xPath="eml/dataset/language" sequence="dataset" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/organizationName/organizationNameType" />
+      <destination xPath="eml/dataset/creator/organizationName" sequence="creator" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/individualName/individualNameType/givenName/givenNameType" />
+      <destination xPath="eml/dataset/creator/individualName/givenName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/individualName/individualNameType/surName/surNameType" />
+      <destination xPath="eml/dataset/creator/individualName/surName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/positionName/positionNameType" />
+      <destination xPath="eml/dataset/creator/positionName" sequence="creator" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/address/addressType/deliveryPoint/deliveryPointType" />
+      <destination xPath="eml/dataset/creator/address/deliveryPoint" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/address/addressType/city/cityType" />
+      <destination xPath="eml/dataset/creator/address/city" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/address/addressType/administrativeArea/administrativeAreaType" />
+      <destination xPath="eml/dataset/creator/address/administrativeArea" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/address/addressType/postalCode/postalCodeType" />
+      <destination xPath="eml/dataset/creator/address/postalCode" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/address/addressType/country/countryType" />
+      <destination xPath="eml/dataset/creator/address/country" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/phone/phoneType" />
+      <destination xPath="eml/dataset/creator/phone" sequence="creator" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/electronicMailAddress/electronicMailAddressType" />
+      <destination xPath="eml/dataset/creator/electronicMailAddress" sequence="creator" />
+    </route>
+    <route>
+      <source xPath="Metadata/creator/creatorType/onlineUrl/onlineUrlType" />
+      <destination xPath="eml/dataset/creator/onlineUrl" sequence="creator" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/organizationName/organizationNameType" />
+      <destination xPath="eml/dataset/metadataProvider/organizationName" sequence="metadataProvider" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/individualName/individualNameType/givenName/givenNameType" />
+      <destination xPath="eml/dataset/metadataProvider/individualName/givenName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/individualName/individualNameType/surName/surNameType" />
+      <destination xPath="eml/dataset/metadataProvider/individualName/surName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/positionName/positionNameType" />
+      <destination xPath="eml/dataset/metadataProvider/positionName" sequence="metadataProvider" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/address/addressType/deliveryPoint/deliveryPointType" />
+      <destination xPath="eml/dataset/metadataProvider/address/deliveryPoint" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/address/addressType/city/cityType" />
+      <destination xPath="eml/dataset/metadataProvider/address/city" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/address/addressType/administrativeArea/administrativeAreaType" />
+      <destination xPath="eml/dataset/metadataProvider/address/administrativeArea" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/address/addressType/postalCode/postalCodeType" />
+      <destination xPath="eml/dataset/metadataProvider/address/postalCode" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/address/addressType/country/countryType" />
+      <destination xPath="eml/dataset/metadataProvider/address/country" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/phone/phoneType" />
+      <destination xPath="eml/dataset/metadataProvider/phone" sequence="metadataProvider" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/electronicMailAddress/electronicMailAddressType" />
+      <destination xPath="eml/dataset/metadataProvider/electronicMailAddress" sequence="metadataProvider" />
+    </route>
+    <route>
+      <source xPath="Metadata/metadataProvider/metadataProviderType/onlineUrl/onlineUrlType" />
+      <destination xPath="eml/dataset/metadataProvider/onlineUrl" sequence="metadataProvider" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/organizationName/organizationNameType" />
+      <destination xPath="eml/dataset/associatedParty/organizationName" sequence="associatedParty" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/individualName/individualNameType/givenName/givenNameType" />
+      <destination xPath="eml/dataset/associatedParty/individualName/givenName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/individualName/individualNameType/surName/surNameType" />
+      <destination xPath="eml/dataset/associatedParty/individualName/surName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/positionName/positionNameType" />
+      <destination xPath="eml/dataset/associatedParty/positionName" sequence="associatedParty" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/address/addressType/deliveryPoint/deliveryPointType" />
+      <destination xPath="eml/dataset/associatedParty/address/deliveryPoint" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/address/addressType/city/cityType" />
+      <destination xPath="eml/dataset/associatedParty/address/city" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/address/addressType/administrativeArea/administrativeAreaType" />
+      <destination xPath="eml/dataset/associatedParty/address/administrativeArea" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/address/addressType/postalCode/postalCodeType" />
+      <destination xPath="eml/dataset/associatedParty/address/postalCode" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/address/addressType/country/countryType" />
+      <destination xPath="eml/dataset/associatedParty/address/country" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/phone/phoneType" />
+      <destination xPath="eml/dataset/associatedParty/phone" sequence="associatedParty" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/electronicMailAddress/electronicMailAddressType" />
+      <destination xPath="eml/dataset/associatedParty/electronicMailAddress" sequence="associatedParty" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/onlineUrl/onlineUrlType" />
+      <destination xPath="eml/dataset/associatedParty/onlineUrl" sequence="associatedParty" />
+    </route>
+    <route>
+      <source xPath="Metadata/associatedParty/associatedPartyType/role/roleType" />
+      <destination xPath="eml/dataset/associatedParty/role" sequence="associatedParty" />
+    </route>
+    <route>
+      <source xPath="Metadata/abstract/abstractType/para/paraType" />
+      <destination xPath="eml/dataset/abstract/para" sequence="abstract" />
+    </route>
+    <route>
+      <source xPath="Metadata/keywordSet/keywordSetType/keyword/keywordType" />
+      <destination xPath="eml/dataset/keywordSet/keyword" sequence="keyword" />
+    </route>
+    <route>
+      <source xPath="Metadata/keywordSet/keywordSetType/keywordThesaurus/keywordThesaurusType" />
+      <destination xPath="eml/dataset/keywordSet/keywordThesaurus" sequence="keywordSet" />
+    </route>
+    <route>
+      <source xPath="Metadata/additionalInfo/additionalInfoType/para/paraType" />
+      <destination xPath="eml/dataset/additionalInfo/para" sequence="additionalInfo" />
+    </route>
+    <route>
+      <source xPath="Metadata/intellectualRights/intellectualRightsType/para/paraType" />
+      <destination xPath="eml/dataset/intellectualRights/para" sequence="intellectualRights" />
+    </route>
+    <route>
+      <source xPath="Metadata/distribution/distributionType/online/onlineType/url/urlType" />
+      <destination xPath="eml/dataset/distribution/online/url" sequence="online" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/geographicCoverage/geographicCoverageType/geographicDescription/geographicDescriptionType" />
+      <destination xPath="eml/dataset/coverage/geographicCoverage/geographicDescription" sequence="geographicCoverage" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/geographicCoverage/geographicCoverageType/boundingCoordinates/boundingCoordinatesType/westBoundingCoordinate/westBoundingCoordinateType" />
+      <destination xPath="eml/dataset/coverage/geographicCoverage/boundingCoordinates/westBoundingCoordinate" sequence="boundingCoordinates" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/geographicCoverage/geographicCoverageType/boundingCoordinates/boundingCoordinatesType/eastBoundingCoordinate/eastBoundingCoordinateType" />
+      <destination xPath="eml/dataset/coverage/geographicCoverage/boundingCoordinates/eastBoundingCoordinate" sequence="boundingCoordinates" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/geographicCoverage/geographicCoverageType/boundingCoordinates/boundingCoordinatesType/northBoundingCoordinate/northBoundingCoordinateType" />
+      <destination xPath="eml/dataset/coverage/geographicCoverage/boundingCoordinates/northBoundingCoordinate" sequence="boundingCoordinates" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/geographicCoverage/geographicCoverageType/boundingCoordinates/boundingCoordinatesType/southBoundingCoordinate/southBoundingCoordinateType" />
+      <destination xPath="eml/dataset/coverage/geographicCoverage/boundingCoordinates/southBoundingCoordinate" sequence="boundingCoordinates" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/temporalCoverage/temporalCoverageType/rangeOfDates/rangeOfDatesType/beginDate/calendarDate/calendarDate2/calendarDate2Type" />
+      <destination xPath="eml/dataset/coverage/temporalCoverage/rangeOfDates/beginDate/calendarDate2" sequence="beginDate" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/temporalCoverage/temporalCoverageType/rangeOfDates/rangeOfDatesType/endDate/calendarDate/calendarDate2/calendarDate2Type" />
+      <destination xPath="eml/dataset/coverage/temporalCoverage/rangeOfDates/endDate/calendarDate2" sequence="endDate" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/temporalCoverage/temporalCoverageType/singleDateTime/calendarDate/calendarDate2/calendarDate2Type" />
+      <destination xPath="eml/dataset/coverage/temporalCoverage/singleDateTime/calendarDate2" sequence="singleDateTime" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/taxonomicCoverage/taxonomicCoverageType/generalTaxonomicCoverage/generalTaxonomicCoverageType" />
+      <destination xPath="eml/dataset/coverage/taxonomicCoverage/generalTaxonomicCoverage" sequence="taxonomicCoverage" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/taxonomicCoverage/taxonomicCoverageType/taxonomicClassification/taxonomicClassificationType/taxonRankName/taxonRankNameType" />
+      <destination xPath="eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/taxonRankName" sequence="taxonomicClassification" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/taxonomicCoverage/taxonomicCoverageType/taxonomicClassification/taxonomicClassificationType/taxonRankValue/taxonRankValueType" />
+      <destination xPath="eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/taxonRankValue" sequence="taxonomicClassification" />
+    </route>
+    <route>
+      <source xPath="Metadata/coverage/coverageType/taxonomicCoverage/taxonomicCoverageType/taxonomicClassification/taxonomicClassificationType/commonName/commonNameType" />
+      <destination xPath="eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/commonName" sequence="taxonomicClassification" />
+    </route>
+    <route>
+      <source xPath="Metadata/purpose/purposeType/para/paraType" />
+      <destination xPath="eml/dataset/purpose/para" sequence="purpose" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/organizationName/organizationNameType" />
+      <destination xPath="eml/dataset/contact/organizationName" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/individualName/individualNameType/givenName/givenNameType" />
+      <destination xPath="eml/dataset/contact/individualName/givenName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/individualName/individualNameType/surName/surNameType" />
+      <destination xPath="eml/dataset/contact/individualName/surName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/positionName/positionNameType" />
+      <destination xPath="eml/dataset/contact/positionName" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/address/addressType/deliveryPoint/deliveryPointType" />
+      <destination xPath="eml/dataset/contact/address/deliveryPoint" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/address/addressType/city/cityType" />
+      <destination xPath="eml/dataset/contact/address/city" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/address/addressType/administrativeArea/administrativeAreaType" />
+      <destination xPath="eml/dataset/contact/address/administrativeArea" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/address/addressType/postalCode/postalCodeType" />
+      <destination xPath="eml/dataset/contact/address/postalCode" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/address/addressType/country/countryType" />
+      <destination xPath="eml/dataset/contact/address/country" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/phone/phoneType" />
+      <destination xPath="eml/dataset/contact/phone" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/electronicMailAddress/electronicMailAddressType" />
+      <destination xPath="eml/dataset/contact/electronicMailAddress" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/contact/contactType/onlineUrl/onlineUrlType" />
+      <destination xPath="eml/dataset/contact/onlineUrl" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/methods/methodsType/methodStep/description/description/descriptionType/para/paraType" />
+      <destination xPath="eml/dataset/methods/methodStep/description/para" sequence="para" />
+    </route>
+    <route>
+      <source xPath="Metadata/methods/methodsType/qualityControl/description/description/descriptionType/para/paraType" />
+      <destination xPath="eml/dataset/methods/qualityControl/description/para" sequence="para" />
+    </route>
+    <route>
+      <source xPath="Metadata/methods/methodsType/sampling/samplingType/studyExtent/description/description/descriptionType/para/paraType" />
+      <destination xPath="eml/dataset/methods/sampling/studyExtent/description/para" sequence="para" />
+    </route>
+    <route>
+      <source xPath="Metadata/methods/methodsType/sampling/samplingType/samplingDescription/samplingDescriptionType/para/paraType" />
+      <destination xPath="eml/dataset/methods/sampling/samplingDescription/para" sequence="samplingDescription" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/title/titleType" />
+      <destination xPath="eml/dataset/project/title" sequence="project" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/organizationName/organizationNameType" />
+      <destination xPath="eml/dataset/project/personnel/organizationName" sequence="personnel" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/individualName/individualNameType/givenName/givenNameType" />
+      <destination xPath="eml/dataset/project/personnel/individualName/givenName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/individualName/individualNameType/surName/surNameType" />
+      <destination xPath="eml/dataset/project/personnel/individualName/surName" sequence="individualName" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/positionName/positionNameType" />
+      <destination xPath="eml/dataset/project/personnel/positionName" sequence="personnel" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/address/addressType/deliveryPoint/deliveryPointType" />
+      <destination xPath="eml/dataset/project/personnel/address/deliveryPoint" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/address/addressType/city/cityType" />
+      <destination xPath="eml/dataset/project/personnel/address/city" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/address/addressType/administrativeArea/administrativeAreaType" />
+      <destination xPath="eml/dataset/project/personnel/address/administrativeArea" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/address/addressType/postalCode/postalCodeType" />
+      <destination xPath="eml/dataset/project/personnel/address/postalCode" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/address/addressType/country/countryType" />
+      <destination xPath="eml/dataset/project/personnel/address/country" sequence="address" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/phone/phoneType" />
+      <destination xPath="eml/dataset/project/personnel/phone" sequence="personnel" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/electronicMailAddress/electronicMailAddressType" />
+      <destination xPath="eml/dataset/project/personnel/electronicMailAddress" sequence="personnel" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/onlineUrl/onlineUrlType" />
+      <destination xPath="eml/dataset/project/personnel/onlineUrl" sequence="personnel" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/personnel/agentWithRoleType/role/roleType" />
+      <destination xPath="eml/dataset/project/personnel/role" sequence="personnel" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/funding/fundingType/para/paraType" />
+      <destination xPath="eml/dataset/project/funding/para" sequence="funding" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/studyAreaDescription/studyAreaDescriptionType/descriptor/descriptorType/descriptorValue/descriptorValueType" />
+      <destination xPath="eml/dataset/project/studyAreaDescription/descriptor/descriptorValue" sequence="descriptor" />
+    </route>
+    <route>
+      <source xPath="Metadata/project/projectType/designDescription/description/description/descriptionType/para/paraType" />
+      <destination xPath="eml/dataset/project/designDescription/description/para" sequence="para" />
+    </route>
+  </routes>
+</mapping>

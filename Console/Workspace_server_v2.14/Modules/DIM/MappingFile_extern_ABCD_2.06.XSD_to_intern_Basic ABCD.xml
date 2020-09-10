@@ -1,0 +1,266 @@
+<mapping name="Basic ABCD">
+  <header>
+    <destination namespaceUri="" prefix="" sequence="" xPath="Metadata" />
+    <attributes />
+    <packages />
+    <schema abbreviation="Basic ABCD" url="Metadata/Basic ABCD/ABCD_2.06.XSD" />
+  </header>
+  <routes>
+    <route>
+      <source xPath="DataSets/DataSet/DatasetGUID" />
+      <destination xPath="Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType" sequence="BasicType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/TechnicalContacts/TechnicalContact/Name" />
+      <destination xPath="Metadata/TechnicalContacts/TechnicalContactsType/TechnicalContact/MicroAgentP/Name/NameType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/TechnicalContacts/TechnicalContact/Email" />
+      <destination xPath="Metadata/TechnicalContacts/TechnicalContactsType/TechnicalContact/MicroAgentP/Email/EmailType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/TechnicalContacts/TechnicalContact/Phone" />
+      <destination xPath="Metadata/TechnicalContacts/TechnicalContactsType/TechnicalContact/MicroAgentP/Phone/PhoneType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/TechnicalContacts/TechnicalContact/Address" />
+      <destination xPath="Metadata/TechnicalContacts/TechnicalContactsType/TechnicalContact/MicroAgentP/Address/AddressType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/ContentContacts/ContentContact/Name" />
+      <destination xPath="Metadata/ContentContacts/ContentContactsType/ContentContact/MicroAgentP/Name/NameType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/ContentContacts/ContentContact/Email" />
+      <destination xPath="Metadata/ContentContacts/ContentContactsType/ContentContact/MicroAgentP/Email/EmailType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/ContentContacts/ContentContact/Phone" />
+      <destination xPath="Metadata/ContentContacts/ContentContactsType/ContentContact/MicroAgentP/Phone/PhoneType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/ContentContacts/ContentContact/Address" />
+      <destination xPath="Metadata/ContentContacts/ContentContactsType/ContentContact/MicroAgentP/Address/AddressType" sequence="MicroAgentP" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/OtherProviders/OtherProvider" />
+      <destination xPath="Metadata/OtherProviders/OtherProvidersType/OtherProvider/OtherProviderType" sequence="OtherProviderType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Description/Representation/Title" />
+      <destination xPath="Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType" sequence="MetadataDescriptionRepr" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Description/Representation/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType" sequence="MetadataDescriptionRepr" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Description/Representation/Coverage" />
+      <destination xPath="Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Coverage/CoverageType" sequence="MetadataDescriptionRepr" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Description/Representation/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/URI/URIType" sequence="MetadataDescriptionRepr" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IconURI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IconURI/IconURIType" sequence="MetadataType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Scope/GeoecologicalTerms/GeoEcologicalTerm" />
+      <destination xPath="Metadata/Metadata/MetadataType/Scope/ScopeType/GeoecologicalTerms/GeoecologicalTermsType/GeoEcologicalTerm/GeoEcologicalTermType" sequence="GeoEcologicalTermType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Scope/TaxonomicTerms/TaxonomicTerm" />
+      <destination xPath="Metadata/Metadata/MetadataType/Scope/ScopeType/TaxonomicTerms/TaxonomicTermsType/TaxonomicTerm/TaxonomicTermType" sequence="TaxonomicTermType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Version/Major" />
+      <destination xPath="Metadata/Metadata/MetadataType/Version/VersionType/Major/MajorType" sequence="VersionType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Version/Minor" />
+      <destination xPath="Metadata/Metadata/MetadataType/Version/VersionType/Minor/MinorType" sequence="VersionType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Version/Modifier" />
+      <destination xPath="Metadata/Metadata/MetadataType/Version/VersionType/Modifier/ModifierType" sequence="VersionType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Version/DateIssued" />
+      <destination xPath="Metadata/Metadata/MetadataType/Version/VersionType/DateIssued/DateIssuedType" sequence="VersionType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/RevisionData/Creators" />
+      <destination xPath="Metadata/Metadata/MetadataType/RevisionData/RevisionData/Creators/CreatorsType" sequence="RevisionData" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/RevisionData/Contributors" />
+      <destination xPath="Metadata/Metadata/MetadataType/RevisionData/RevisionData/Contributors/ContributorsType" sequence="RevisionData" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/RevisionData/DateCreated" />
+      <destination xPath="Metadata/Metadata/MetadataType/RevisionData/RevisionData/DateCreated/DateCreatedType" sequence="RevisionData" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/RevisionData/DateModified" />
+      <destination xPath="Metadata/Metadata/MetadataType/RevisionData/RevisionData/DateModified/DateModifiedType" sequence="RevisionData" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Organisation/Name/Representation/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Organisation/Organisation/Name/Label/Representation/RepresentationType/Text/TextType" sequence="RepresentationType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Organisation/Name/Representation/Abbreviation" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Organisation/Organisation/Name/Label/Representation/RepresentationType/Abbreviation/AbbreviationType" sequence="RepresentationType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Organisation/OrgUnits/OrgUnit" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Organisation/Organisation/OrgUnits/OrgUnitsType/OrgUnit/OrgUnitType" sequence="OrgUnitType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/FullName" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/FullName/FullNameType" sequence="PersonName" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/SortingName" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/SortingName/SortingNameType" sequence="PersonName" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/AtomisedName/InheritedName" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/AtomisedName/AtomisedNameType/InheritedName/InheritedNameType" sequence="AtomisedNameType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/AtomisedName/Prefix" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/AtomisedName/AtomisedNameType/Prefix/PrefixType" sequence="AtomisedNameType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/AtomisedName/Suffix" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/AtomisedName/AtomisedNameType/Suffix/SuffixType" sequence="AtomisedNameType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/AtomisedName/GivenNames" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/AtomisedName/AtomisedNameType/GivenNames/GivenNamesType" sequence="AtomisedNameType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Person/AtomisedName/PreferredName" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Person/PersonName/AtomisedName/AtomisedNameType/PreferredName/PreferredNameType" sequence="AtomisedNameType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Roles/Role" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Roles/RolesType/Role/RoleType" sequence="RoleType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/Addresses/Address" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Addresses/AddressesType/Address/AddressType" sequence="AddressType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/TelephoneNumbers/TelephoneNumber/Number" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/TelephoneNumbers/TelephoneNumbersType/TelephoneNumber/TelephoneNumber/Number/NumberType" sequence="TelephoneNumber" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/TelephoneNumbers/TelephoneNumber/Device" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/TelephoneNumbers/TelephoneNumbersType/TelephoneNumber/TelephoneNumber/Device/DeviceType" sequence="TelephoneNumber" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/TelephoneNumbers/TelephoneNumber/UsageNotes" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/TelephoneNumbers/TelephoneNumbersType/TelephoneNumber/TelephoneNumber/UsageNotes/UsageNotesType" sequence="TelephoneNumber" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/EmailAddresses/EmailAddress" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/EmailAddresses/EmailAddressesType/EmailAddress/EmailAddressType" sequence="EmailAddressType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/URIs/URL" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/URIs/URIsType/URL/URLType" sequence="URLType" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/Owners/Owner/LogoURI" />
+      <destination xPath="Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/LogoURI/LogoURIType" sequence="Contact" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/IPRDeclarations/IPRDeclaration/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/IPRDeclarations/IPRDeclarationsType/IPRDeclaration/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/IPRDeclarations/IPRDeclaration/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/IPRDeclarations/IPRDeclarationsType/IPRDeclaration/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/IPRDeclarations/IPRDeclaration/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/IPRDeclarations/IPRDeclarationsType/IPRDeclaration/Statement/URI/URIType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Copyrights/Copyright/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Copyrights/CopyrightsType/Copyright/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Copyrights/Copyright/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Copyrights/CopyrightsType/Copyright/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Copyrights/Copyright/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Copyrights/CopyrightsType/Copyright/Statement/URI/URIType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Licenses/License/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Licenses/LicensesType/License/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Licenses/License/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Licenses/LicensesType/License/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Licenses/License/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Licenses/LicensesType/License/Statement/URI/URIType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/TermsOfUseStatements/TermsOfUse/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/TermsOfUseStatements/TermsOfUseStatementsType/TermsOfUse/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/TermsOfUseStatements/TermsOfUse/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/TermsOfUseStatements/TermsOfUseStatementsType/TermsOfUse/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/TermsOfUseStatements/TermsOfUse/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/TermsOfUseStatements/TermsOfUseStatementsType/TermsOfUse/Statement/URI/URIType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Disclaimers/Disclaimer/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Disclaimers/DisclaimersType/Disclaimer/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Disclaimers/Disclaimer/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Disclaimers/DisclaimersType/Disclaimer/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Disclaimers/Disclaimer/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Disclaimers/DisclaimersType/Disclaimer/Statement/URI/URIType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Acknowledgements/Acknowledgement/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Acknowledgements/AcknowledgementsType/Acknowledgement/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Acknowledgements/Acknowledgement/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Acknowledgements/AcknowledgementsType/Acknowledgement/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Acknowledgements/Acknowledgement/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Acknowledgements/AcknowledgementsType/Acknowledgement/Statement/URI/URIType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Citations/Citation/Text" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Citations/CitationsType/Citation/Statement/Text/TextType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Citations/Citation/Details" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Citations/CitationsType/Citation/Statement/Details/DetailsType" sequence="Statement" />
+    </route>
+    <route>
+      <source xPath="DataSets/DataSet/Metadata/IPRStatements/Citations/Citation/URI" />
+      <destination xPath="Metadata/Metadata/MetadataType/IPRStatements/IPRStatements/Citations/CitationsType/Citation/Statement/URI/URIType" sequence="Statement" />
+    </route>
+  </routes>
+</mapping>

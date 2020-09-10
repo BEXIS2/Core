@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!--
+
+Biodiversity Exploratories Information System
+
+The Biodiversity Exploratories Information System
+from the Central Data Management in the Biodiversity Exploratories project
+is published under
+Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Germany (CC BY-NC-SA 3.0)
+
+http://creativecommons.org/licenses/by-nc-sa/3.0/de/deed.en
+
+Developed by the Central Data Management of Biodiversity Exploratories
+http://www.biodiversity-exploratories.de/
+
+-->
+<xsl:stylesheet version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:bgc="http://www.bgc-jena.mpg.de"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:asp="xxx"
+xmlns:cc1="xxx"
+xmlns:exsl="urn:schemas-microsoft-com:xslt"
+extension-element-prefixes="exsl"
+>
+  <xsl:output method="html" version="4.0" indent="yes"/>
+  <xsl:template match="bgc:metaProfile">
+    <html>
+      <head>
+        <title>Metadata details</title>
+        <style type="text/css">
+          body
+          {
+          font-family: Verdana;
+          }
+
+          table
+          {
+          font-size: 12px;
+          text-align:justify;
+          background-color:#EFEFEF;
+          width: 1100px;
+          margin:25px;
+          }
+          td.alternate0
+          {
+          background-color:White;
+          padding: 10px;
+          }
+
+          td.alternate1
+          {
+          background-color:#EFEFEF;
+          padding: 8px;
+          }
+          td.key
+          {
+          background-color:#e6e6e6;
+          width: 250px;
+          padding: 4px;
+          font-weight:bold;
+          vertical-align: top;
+          }
+          div.box
+          {
+          background-color:#FFFFFF;
+
+          width: 1150px;
+
+
+          }
+          h3
+          {
+          color: #2C882B;
+          font-variant:small-caps;
+          font-weight: bold;
+          font-size: 16px;
+          margin:25px;
+
+          }
+          p.text
+          {
+
+          }
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h3>
+           
+          </h3>
+          <table>
+            <xsl:apply-templates/>
+          </table>
+        </div>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template match="bgc:general">
+    <tr>
+      <td class="key">
+        <xsl:value-of select="bgc:id/@label"/>
+      </td>
+      <td class="alternate1">
+        <xsl:value-of select="bgc:id"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="key">
+        <xsl:value-of select="bgc:datasetid/@label"/>
+      </td>
+      <td class="alternate1">
+        <xsl:value-of select="bgc:datasetid"/>
+      </td>
+    </tr>
+  </xsl:template>
+</xsl:stylesheet>

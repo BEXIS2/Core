@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<metaProfile>
+  <general>
+    <id>12570</id>
+    <versionID source="intern">1.1.1</versionID>
+    <lineage source="intern">
+      <datasetid source="intern">14131</datasetid>
+      <version source="intern">1.0.0</version>
+    </lineage>
+    <title>Mineral soil roots biomass</title>
+    <language>de</language>
+    <owners>
+      <owner number="1">David Blaa</owner>
+	  <owner number="2">Andreas Ostrowski</owner>
+    </owners>
+    <contact>
+      <author>David Blaa</author>
+      <projectName>RootSoil</projectName>
+      <projectLeader>Koenig-Ries</projectLeader>
+      <institute>UNI Jena</institute>
+      <address>
+        <street>Ernst-Abbe Platz 2</street>
+        <zipCode>07743</zipCode>
+        <city>Jena</city>
+      </address>
+      <email>dblaa@bgc-jena.mpg.de</email>
+      <phone>0173/12345678</phone>
+    </contact>
+  </general>
+  <researchObjects>
+    <landuse>
+      <grassland>no</grassland>
+      <forest>yes</forest>
+    </landuse>
+    <plotLevel>EPF</plotLevel>
+    <taxa>
+      <taxon number="1">none</taxon>
+    </taxa>
+    <processes>
+      <process number="1">water retention</process>
+	  <process number="2">soil nutrient supply</process>
+	  <process number="3">regulation of hydrological flow</process>
+    </processes>
+    <services>
+      <service number="1">erosion control</service>
+	  <service number="1">soil fertility</service>
+	  <service number="1">water supply</service>
+    </services>
+  </researchObjects>
+  <methodology>
+    <introduction input="textarea">Biomass measurements of fine roots and coarse roots.</introduction>
+    <measurements>
+      <theory input="textarea">Weighing of dried root biomass.</theory>
+      <type input="textarea">Dried root biomass.</type>
+    </measurements>
+    <equipment>
+      <instruments input="textarea">none</instruments>
+      <calibration input="textarea">none</calibration>
+      <procedures input="textarea">Cleaning of root samples from soil residues with distilled water, drying of the roots at 40°C and weighing of the samples.</procedures>
+    </equipment>
+  </methodology>
+  <description>
+    <acronyms>
+      <acronymPair number="1">
+        <acronym number="1">EPF</acronym>
+        <meaning number="1">Experimental Plot Forest</meaning>
+      </acronymPair>
+    </acronyms>
+    <keywords>
+      <keyword number="1">Roots</keyword>
+	  <keyword number="2">Biomass</keyword>
+	  
+    </keywords>
+  </description>
+  <time>
+    <when>
+      <format>M/d/yyyy</format>
+      <startDate>10/1/2011</startDate>
+      <endDate>11/1/2012</endDate>
+    </when>
+    <dateEntry>2011-02-01</dateEntry>
+    <dateLastModified>2012-05-01</dateLastModified>
+  </time>
+  <data>
+    <fileName source="intern"></fileName>
+    <fileType>structuredData</fileType>
+    <manipulations input="textarea">none</manipulations>
+    <errors>none</errors>
+    <qualityLevel>validated</qualityLevel>
+    <dataStatus>complete</dataStatus>
+  </data>
+</metaProfile>

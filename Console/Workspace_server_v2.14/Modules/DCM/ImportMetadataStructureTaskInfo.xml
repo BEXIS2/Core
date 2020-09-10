@@ -1,0 +1,7 @@
+<stepInfos>
+	<stepInfo title="Select File" action="SelectAFile" area="DCM" controller="ImportMetadataStructureSelectAFile"/>
+	<stepInfo title="Read Source" action="ReadSource" area="DCM" controller="ImportMetadataStructureReadSource"/>
+	<stepInfo title="Set Parameters" action="SetParameters" area="DCM" controller="ImportMetadataStructureSetParameters"/>
+	<stepInfo title="Summary" action="Summary" area="DCM" controller="ImportMetadataStructureSummary"/>
+</stepInfos>
+

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+
+  <session-factory name="NHibernate.PostgreSQL">
+    <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
+    <property name="connection.driver_class">NHibernate.Driver.NpgsqlDriver</property>
+    <property name="dialect">NHibernate.Dialect.PostgreSQL82Dialect</property>
+    <!--<property name="connection.connection_string">
+      Server=localhost;
+      Database=BExIS;
+      User ID=standard;
+      Password=1;
+    </property>-->
+    <property name="adonet.batch_size">65000</property>
+      <!--The PostgreSQL protocol doesn't allow over 65535 parameters for a single statement. If you increase it, an update with more than 65535 rows will fail.-->
+    <property name="show_sql">False</property><!--set to false on production-->
+    <property name="format_sql">True</property><!--set to false on production-->
+    <property name="generate_statistics">False</property><!--set to false on production-->
+  </session-factory>
+  
+</hibernate-configuration>

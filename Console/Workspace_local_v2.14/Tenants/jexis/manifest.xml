@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Tenant id="jexis" useFallback="false">
+	<ShortName>JExIS</ShortName>
+	<Title>The Jena Experiment Information System</Title>
+	<Description>The Jena Experiment Information System</Description>
+	<Logo>brand.png</Logo>
+	<FavIcon>favicon.ico</FavIcon>
+	<Theme>iDiv_Blue</Theme>
+	<LandingPage>/</LandingPage> <!-- a relative path to an action inside the app-->
+	<MatchingRules> <!--of form: scheme://host:port all optional, all regex-->
+		<MatchingRule>(http:\/\/)?localhost:63530</MatchingRule>
+		<MatchingRule>(http:\/\/)?bx2test.inf-bb.uni-jena.de:2017</MatchingRule>
+	</MatchingRules>
+	<AllowedFileExtensions>.csv,.xml,.xsl,.xsls,.jpg,.mk4,.mp3</AllowedFileExtensions> <!-- starts with point, comma separated, no spaces -->
+	<ExtendedMenus>
+		<ExtendedMenu id="x1" label="X" url="www.bexis.uni-jena.de" target="blank"> <!--tenant IDs override the default ones, if any -->
+			<ExtendedMenu id="x11" label="X1.1" url="www.pangea.de" target="blank"/>
+			<ExtendedMenu id="x12" label="X1.2" url="fusion.cs.uni-jena.de" target="current"/>
+		</ExtendedMenu>
+	</ExtendedMenus>
+	<DBConnectionString></DBConnectionString>
+</Tenant>

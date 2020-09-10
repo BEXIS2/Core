@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<properties>
+  <dataStatus name="Data Status" viewType="dropdown" default="all" ></dataStatus>
+  <fileType name="File Type" viewType="dropdown"  default="all" ></fileType>
+  <qualityLevel name="Quality Level" viewType="dropdown"  default="all" ></qualityLevel>
+  <grassland name="Grassland" viewType="radiobutton"  default="all" ></grassland>
+  <forest name="Forest" viewType="radiobutton"  default="all" ></forest>
+  <startDate name="Startdate" viewType="rangeslider" sliderid="1" position="0" default="all"></startDate>
+  <endDate name="Enddate" viewType="rangeslider" sliderid="1" position="1" default="all"> </endDate>
+</properties>

@@ -1,0 +1,9 @@
+<stepInfos>
+	<stepInfo title="Select File" action="Step1" area="DCM" controller="Home"/>
+	<stepInfo title="Get File Information" action="Step2" area="DCM" controller="Home"/>
+	<stepInfo title="Specify Dataset" action="Step3" area="DCM" controller="Home"/>
+	<stepInfo title="Define Primary Key" action="Step4" area="DCM" controller="Home"/>
+	<stepInfo title="Validation" action="Step5" area="DCM" controller="Home"/>
+	<stepInfo title="Summary" action="Step6" area="DCM" controller="Home"/>
+</stepInfos>
+

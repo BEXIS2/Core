@@ -1,0 +1,410 @@
+<mapping name="ATTO">
+  <header>
+    <destination namespaceUri="" prefix="" sequence="" xPath="Metadata" />
+    <attributes />
+    <packages />
+    <schema abbreviation="ATTO" url="Metadata/ATTO/ATTO_MeatdataSchemaDraftVers8.xsd" />
+  </header>
+  <routes>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Title" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Title/TitleType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/StartDate" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/StartDate/StartDateType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/EndDate" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/EndDate/EndDateType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Funder" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Funder/FunderType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/FunderIdentifier" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/FunderIdentifier/FunderIdentifierType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/AwardNumber" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/AwardNumber/AwardNumberType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/AwardTitle" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/AwardTitle/AwardTitleType" sequence="ProjectType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Institutes/Institute/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Institutes/InstitutesType/Institute/instituteContact/Name/NameType" sequence="instituteContact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Institutes/Institute/URL" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Institutes/InstitutesType/Institute/instituteContact/URL/URLType" sequence="instituteContact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Institutes/Institute/Street" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Institutes/InstitutesType/Institute/instituteContact/Street/StreetType" sequence="instituteContact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Institutes/Institute/Zipcode" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Institutes/InstitutesType/Institute/instituteContact/Zipcode/ZipcodeType" sequence="instituteContact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Institutes/Institute/City" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Institutes/InstitutesType/Institute/instituteContact/City/CityType" sequence="instituteContact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/Institutes/Institute/Country" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/Institutes/InstitutesType/Institute/instituteContact/Country/CountryType" sequence="instituteContact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/Name/NameType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/Email" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/Email/EmailType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/Institute" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/Institute/InstituteType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/Street" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/Street/StreetType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/Zipcode" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/Zipcode/ZipcodeType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/City" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/City/CityType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Project/ContactPerson/Contact/Country" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Project/ProjectType/ContactPerson/ContactPersonType/Contact/contact/Country/CountryType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Title" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Title/TitleType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Language" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Language/LanguageType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Abstract" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Abstract/AbstractType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Keywords" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Keywords/KeywordsType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Indentifiers/Indentifier/IdentifierType" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Indentifiers/IndentifiersType/Indentifier/IndentifierType/IdentifierType/IdentifierTypeType" sequence="IndentifierType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Indentifiers/Indentifier/IdentifierValue" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Indentifiers/IndentifiersType/Indentifier/IndentifierType/IdentifierValue/IdentifierValueType" sequence="IndentifierType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/Name/NameType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/Email" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/Email/EmailType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/Institute" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/Institute/InstituteType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/Street" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/Street/StreetType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/Zipcode" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/Zipcode/ZipcodeType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/City" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/City/CityType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataCreators/DataCreator/Country" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataCreators/DataCreatorsType/DataCreator/contact/Country/CountryType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/Name/NameType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/Email" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/Email/EmailType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/Institute" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/Institute/InstituteType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/Street" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/Street/StreetType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/Zipcode" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/Zipcode/ZipcodeType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/City" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/City/CityType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataManagers/DataManager/Country" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataManagers/DataManagersType/DataManager/contact/Country/CountryType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/Name/NameType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/Email" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/Email/EmailType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/Institute" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/Institute/InstituteType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/Street" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/Street/StreetType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/Zipcode" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/Zipcode/ZipcodeType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/City" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/City/CityType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataOwners/DataOwner/Country" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataOwners/DataOwnersType/DataOwner/contact/Country/CountryType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/Name/NameType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/Email" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/Email/EmailType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/Institute" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/Institute/InstituteType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/Street" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/Street/StreetType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/Zipcode" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/Zipcode/ZipcodeType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/City" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/City/CityType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/DataContributors/DataContributor/Country" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/DataContributors/DataContributorsType/DataContributor/contact/Country/CountryType" sequence="contact" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Publisher" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Publisher/PublisherType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/PublicationYear" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/PublicationYear/PublicationYearType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/ResourceType" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/ResourceType/ResourceTypeType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Version" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Version/VersionType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Dataset/Format" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Dataset/DatasetType/Format/FormatType" sequence="DatasetType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/DatasetMethodDescription" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/DatasetMethodDescription/DatasetMethodDescriptionType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/DatasetSamplingDescription" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/DatasetSamplingDescription/DatasetSamplingDescriptionType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/DatasetSamplingEquipmentInfo" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/DatasetSamplingEquipmentInfo/DatasetSamplingEquipmentInfoType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/DataProcessingLevel" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/DataProcessingLevel/DataProcessingLevelType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/Layer" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/Layer/LayerType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/LayerStart" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/LayerStart/LayerStartType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/LayerEnd" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/LayerEnd/LayerEndType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/TemporalResolution" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/TemporalResolution/TemporalResolutionType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/NumberOfSamples" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/NumberOfSamples/NumberOfSamplesType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/Location" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/Location/LocationType" sequence="DataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/Abbreviations/Abbreviation/Abbreviation" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/Abbreviations/AbbreviationsType/Abbreviation/AbbreviationType/Abbreviation/AbbreviationType" sequence="AbbreviationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Data/Abbreviations/Abbreviation/Description" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Data/DataType/Abbreviations/AbbreviationsType/Abbreviation/AbbreviationType/Description/DescriptionType" sequence="AbbreviationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/DataQuality/CheckPerformed" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/DataQuality/DataQualityType/CheckPerformed/CheckPerformedType" sequence="DataQualityType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/DataQuality/Issues" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/DataQuality/DataQualityType/Issues/IssuesType" sequence="DataQualityType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/DataQuality/CurationInfo" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/DataQuality/DataQualityType/CurationInfo/CurationInfoType" sequence="DataQualityType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/PlotInfo/TotalPlots" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/PlotInfo/PlotInfoType/TotalPlots/TotalPlotsType" sequence="PlotInfoType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/PlotInfo/Plot/PlotSize" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/PlotInfo/PlotInfoType/Plot/PlotType/PlotSize/PlotSizeType" sequence="PlotType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/PlotInfo/Plot/NumberOfPlots" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/PlotInfo/PlotInfoType/Plot/PlotType/NumberOfPlots/NumberOfPlotsType" sequence="PlotType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/PlotInfo/Plot/SubPlots/SubPlotSize" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/PlotInfo/PlotInfoType/Plot/PlotType/SubPlots/SubPlotsType/SubPlotSize/SubPlotSizeType" sequence="SubPlotsType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/PlotInfo/Plot/SubPlots/NumberOfSubPlots" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/PlotInfo/PlotInfoType/Plot/PlotType/SubPlots/SubPlotsType/NumberOfSubPlots/NumberOfSubPlotsType" sequence="SubPlotsType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Software/Application/Name" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Software/SoftwareType/Application/ApplicationType/Name/NameType" sequence="ApplicationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Software/Application/Version" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Software/SoftwareType/Application/ApplicationType/Version/VersionType" sequence="ApplicationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Software/Application/Availability/CompanyName" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Software/SoftwareType/Application/ApplicationType/Availability/AvailabilityType/CompanyName/CompanyNameType" sequence="AvailabilityType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/Software/Application/Availability/URL" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/Software/SoftwareType/Application/ApplicationType/Availability/AvailabilityType/URL/URLType" sequence="AvailabilityType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/DataAccessPolicy/DataAccessPolicy" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/DataAccessPolicy/DataAccessPolicyType/DataAccessPolicy/DataAccessPolicyType" sequence="DataAccessPolicyType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/AdditionalInfo/RelatedDataset" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/AdditionalInfo/AdditionalInfoType/RelatedDataset/RelatedDatasetType" sequence="AdditionalInfoType" />
+    </route>
+    <route>
+      <source xPath="Metadata/DatasetLevelMetadata/AdditionalInfo/DatasetLevelAdditionalMetadata" />
+      <destination xPath="Metadata/DatasetLevelMetadata/DatasetLevelMetadataType/AdditionalInfo/AdditionalInfoType/DatasetLevelAdditionalMetadata/DatasetLevelAdditionalMetadataType" sequence="AdditionalInfoType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/SpatialCoverage" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/SpatialCoverage/SpatialCoverageType" sequence="EnvironmentalLevelMetadataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoreferenceSource" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoreferenceSource/GeoreferenceSourceType" sequence="EnvironmentalLevelMetadataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoreferenceRemarks" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoreferenceRemarks/GeoreferenceRemarksType" sequence="EnvironmentalLevelMetadataType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/GeoLocationName" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/GeoLocationName/GeoLocationNameType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Latitude" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Latitude/LatitudeType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Longitude" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Longitude/LongitudeType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/CoordinateReferenceSystem" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/CoordinateReferenceSystem/CoordinateReferenceSystemType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Precision" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Precision/PrecisionType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Altitude" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Altitude/AltitudeType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Depth" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Depth/DepthType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Slope" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Slope/SlopeType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Aspect" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Aspect/AspectType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/GeoLocations/GeoLocation/Habitat" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/GeoLocations/GeoLocationsType/GeoLocation/GeoLocationType/Habitat/HabitatType" sequence="GeoLocationType" />
+    </route>
+    <route>
+      <source xPath="Metadata/EnvironmentalLevelMetadata/Remarks/EnvironmentalLevelAdditionalMetadata" />
+      <destination xPath="Metadata/EnvironmentalLevelMetadata/EnvironmentalLevelMetadataType/Remarks/RemarksType/EnvironmentalLevelAdditionalMetadata/EnvironmentalLevelAdditionalMetadataType" sequence="RemarksType" />
+    </route>
+  </routes>
+</mapping>

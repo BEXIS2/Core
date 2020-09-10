@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Metadata>
+  <DatasetLevelMetadata>
+    <DatasetLevelMetadataType>
+      <Dataset>
+        <DatasetType>
+          <Title>
+            <TitleType>OH Reactivity - SEGAM Campaign</TitleType>
+          </Title>
+          <Abstract>
+            <AbstractType>Total OH reactivity measured by CRM method using an inlet at 41 m at the walk-up tower in November 2015 (strong El Nino, unusually dry and hot conditions)</AbstractType>
+          </Abstract>
+          <DataOfPhdThesis>
+            <DataOfPhdThesisType>true</DataOfPhdThesisType>
+          </DataOfPhdThesis>
+          <Keywords>
+            <KeywordsType>OH Reactivity, El Nino, SEGAM, walk-up Tower</KeywordsType>
+          </Keywords>
+          <DataCreators>
+            <DataCreatorsType>
+              <DataCreator>
+                <contact>
+                  <Fullname>
+                    <FullnameType>Eva Pfannerstill</FullnameType>
+                  </Fullname>
+                  <Email>
+                    <EmailType>eva.pfannerstill@mpic.de</EmailType>
+                  </Email>
+                  <Institute>
+                    <InstituteType>MPIC Mainz</InstituteType>
+                  </Institute>
+                </contact>
+              </DataCreator>
+            </DataCreatorsType>
+          </DataCreators>
+          <DataOwners>
+            <DataOwnersType>
+              <DataOwner>
+                <contact>
+                  <Fullname>
+                    <FullnameType>Eva Pfannerstill</FullnameType>
+                  </Fullname>
+                  <Email>
+                    <EmailType>eva.pfannerstill@mpic.de</EmailType>
+                  </Email>
+                  <Institute>
+                    <InstituteType>MPIC Mainz</InstituteType>
+                  </Institute>
+                </contact>
+              </DataOwner>
+            </DataOwnersType>
+          </DataOwners>
+          <DataContributors>
+            <DataContributorsType>
+              <DataContributor>
+                <contact>
+                  <Fullname>
+                    <FullnameType>Jonathan Williams</FullnameType>
+                  </Fullname>
+                  <Email>
+                    <EmailType>Jonathan.Williams@mpic.de</EmailType>
+                  </Email>
+                  <Institute>
+                    <InstituteType>Max Planck Institute für Chemie</InstituteType>
+                  </Institute>
+                </contact>
+              </DataContributor>
+            </DataContributorsType>
+          </DataContributors>
+          <DataClassification>
+            <DataClassificationType>Observational</DataClassificationType>
+          </DataClassification>
+          <ResourceType>
+            <ResourceTypeType>Dataset</ResourceTypeType>
+          </ResourceType>
+        </DatasetType>
+      </Dataset>
+      <Data>
+        <DataType>
+          <DatasetMethodSpecification>
+            <DatasetMethodSpecificationType>CRM method was used for measurements, data are multiplied with the dilution factor and corrections applied were: correction for humidity difference between C2/C3 steps, for ozone interference,for non-pseudo-1st-order conditions inside the reactor.</DatasetMethodSpecificationType>
+          </DatasetMethodSpecification>
+          <DatasetSamplingSpecification>
+            <DatasetSamplingSpecificationType>Sampling at 30 slpm through a 1/2" PTFE tube into the laboratory container below the tower. Sample air passed through a chemically inert pump with a teflon membrane (Neuberger KNF) at ca. 500 sccm before entering the reactor at atmospheric pressure. Inlet residence time determined by spiking with methanol was ca. 19 s. C3 (ambient air) was measured for 48 min starting from the full hour, then C2 (background) until the end of the hour.</DatasetSamplingSpecificationType>
+          </DatasetSamplingSpecification>
+          <DatasetSamplingEquipmentInfo>
+            <DatasetSamplingEquipmentInfoType>CRM instrument (developed at MPIC) and PTRMS as a detector (Ionicon, Innsbruck, Austria)</DatasetSamplingEquipmentInfoType>
+          </DatasetSamplingEquipmentInfo>
+          <DataProcessingLevel>
+            <DataProcessingLevelType>L2</DataProcessingLevelType>
+          </DataProcessingLevel>
+          <DataProcessingLevelStandards>
+            <DataProcessingLevelStandardsType>NASA</DataProcessingLevelStandardsType>
+          </DataProcessingLevelStandards>
+          <DataCollectionLayer>
+            <DataCollectionLayerType>Above ground</DataCollectionLayerType>
+          </DataCollectionLayer>
+          <StartDate>
+            <StartDateType>2015-11-10T23:00:00.000Z</StartDateType>
+          </StartDate>
+          <EndDate>
+            <EndDateType>2015-11-22T23:00:00.000Z</EndDateType>
+          </EndDate>
+          <TemporalResolution>
+            <TemporalResolutionType>8 s</TemporalResolutionType>
+          </TemporalResolution>
+          <NumberOfParameters>
+            <NumberOfParametersType>3</NumberOfParametersType>
+          </NumberOfParameters>
+          <Location>
+            <LocationType>Walk-Up Tower (S 02 08.637 W 058 59.992)</LocationType>
+          </Location>
+          <Abbreviations>
+            <AbbreviationsType>
+              <Abbreviation>
+                <AbbreviationType>
+                  <Abbreviation>
+                    <AbbreviationType>NAN</AbbreviationType>
+                  </Abbreviation>
+                  <Description>
+                    <DescriptionType>not a number, because of background measurements or calibrations</DescriptionType>
+                  </Description>
+                </AbbreviationType>
+                <AbbreviationType>
+                  <Abbreviation>
+                    <AbbreviationType>height</AbbreviationType>
+                  </Abbreviation>
+                  <Description>
+                    <DescriptionType>height above ground level</DescriptionType>
+                  </Description>
+                </AbbreviationType>
+              </Abbreviation>
+            </AbbreviationsType>
+          </Abbreviations>
+        </DataType>
+      </Data>
+      <Software>
+        <SoftwareType>
+          <Application>
+            <ApplicationType>
+              <Name>
+                <NameType>IGOR Pro</NameType>
+              </Name>
+              <Version>
+                <VersionType>6.37</VersionType>
+              </Version>
+              <Availability>
+                <AvailabilityType>
+                  <CompanyName>
+                    <CompanyNameType>Wavemetrics</CompanyNameType>
+                  </CompanyName>
+                  <URL>
+                    <URLType>https://www.wavemetrics.com/</URLType>
+                  </URL>
+                </AvailabilityType>
+              </Availability>
+            </ApplicationType>
+          </Application>
+        </SoftwareType>
+      </Software>
+    </DatasetLevelMetadataType>
+  </DatasetLevelMetadata>
+  <EnvironmentalLevelMetadata>
+    <EnvironmentalLevelMetadataType>
+      <SpatialCoverage>
+        <SpatialCoverageType>Regional</SpatialCoverageType>
+      </SpatialCoverage>
+      <GeoLocations>
+        <GeoLocationsType>
+          <GeoLocation>
+            <GeoLocationType>
+              <GeoLocationName>
+                <GeoLocationNameType>Walk-up Tower</GeoLocationNameType>
+              </GeoLocationName>
+              <Latitude>
+                <LatitudeType>59.992</LatitudeType>
+              </Latitude>
+              <Longitude>
+                <LongitudeType>-2.08</LongitudeType>
+              </Longitude>
+            </GeoLocationType>
+          </GeoLocation>
+        </GeoLocationsType>
+      </GeoLocations>
+    </EnvironmentalLevelMetadataType>
+  </EnvironmentalLevelMetadata>
+  <PublishedIn>
+    <PublishedInType>
+      <DOI>
+        <DOIType>not yet published</DOIType>
+      </DOI>
+    </PublishedInType>
+  </PublishedIn>
+  <Project>
+    <ProjectType>
+      <ProjectTitle>
+        <ProjectTitleType>SEGAM Campaign</ProjectTitleType>
+      </ProjectTitle>
+      <Funders>
+        <FundersType>
+          <Funder>
+            <FunderType>
+              <Funder>
+                <FunderType>BMBF</FunderType>
+              </Funder>
+              <AwardNumber>
+                <AwardNumberType>01LB1001A, 01LK1602B</AwardNumberType>
+              </AwardNumber>
+            </FunderType>
+            <FunderType>
+              <Funder>
+                <FunderType>Ministério da Ciência, Tecnologia e Inovação</FunderType>
+              </Funder>
+              <AwardNumber>
+                <AwardNumberType>01.11.01248.00</AwardNumberType>
+              </AwardNumber>
+            </FunderType>
+          </Funder>
+        </FundersType>
+      </Funders>
+    </ProjectType>
+  </Project>
+</Metadata>

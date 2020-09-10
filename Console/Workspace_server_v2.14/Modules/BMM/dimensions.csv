@@ -1,0 +1,38 @@
+id;name;syntax;description
+1;dimensionless;;
+2;length;L(1,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);m, cm, km
+3;mass;L(0,0)M(1,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);g, mg, kg
+4;time;L(0,0)M(0,0)T(1,0)I(0,0)?(0,0)N(0,0)J(0,0);min, s, h
+5;current;L(0,0)M(0,0)T(0,0)I(1,0)?(0,0)N(0,0)J(0,0);A
+6;temperature;L(0,0)M(0,0)T(0,0)I(0,0)?(1,0)N(0,0)J(0,0);°C, °F, °K 
+7;amount;L(0,0)M(0,0)T(0,0)I(0,0)?(0,0)N(1,0)J(0,0);mol
+8;luminous;L(0,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(1,0);cd
+9;watt;L(2,0)M(1,0)T(0,-3)I(0,0)?(0,0)N(0,0)J(0,0);W
+10;amount per time;L(0,0)M(0,0)T(0,-1)I(0,0)?(0,0)N(1,0)J(0,0);mol/s
+11;per time;L(0,0)M(0,0)T(0,-1)I(0,0)?(0,0)N(0,0)J(0,0);2/s, 5/h
+12;per area;L(0,-2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);2/m², 5/ha
+13;per mass;L(0,0)M(0,-1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);2/g, 5/kg
+14;length per time;L(1,0)M(0,0)T(0,-1)I(0,0)?(0,0)N(0,0)J(0,0);m/s, km/h
+15;area per mass;L(2,0)M(0,-1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);m²/g, ha/kg
+16;mass per area;L(0,-2)M(1,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);g/m², kg/ha
+17;mass per volume;L(0,-3)M(1,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);g/m³, kg/L
+18;volume per mass;L(3,0)M(0,-1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);m³/g, L/kg
+19;amount per mass time;L(0,0)M(0,-1)T(0,-1)I(0,0)?(0,0)N(1,0)J(0,0);mol/mg s
+20;mass per time 3;L(0,0)M(1,0)T(0,-3)I(0,0)?(0,0)N(0,0)J(0,0);
+21;length per mass;L(1,0)M(0,-1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);mm/g, m/kg 
+22;amount per mass;L(0,0)M(0,-1)T(0,0)I(0,0)?(0,0)N(1,0)J(0,0);mol/mg
+23;amount per area time;L(0,-2)M(0,0)T(0,-1)I(0,0)?(0,0)N(1,0)J(0,0);mol/mm² s
+24;area;L(2,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);m², ha, km²
+25;volume;L(3,0)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);cm³, L, m³ 
+26;pressure;L(0,-1)M(1,0)T(0,-2)I(0,0)?(0,0)N(0,0)J(0,0);P, bar 
+27;voltage;L(2,0)M(1,0)T(0,-3)I(0,-1)?(0,0)N(0,0)J(0,0);V
+28;energy;L(2,0)M(1,0)T(0,-2)I(0,0)?(0,0)N(0,0)J(0,0);J
+29;mass per time 2;L(0,0)M(1,0)T(0,-2)I(0,0)?(0,0)N(0,0)J(0,0);
+30;current time;L(0,0)M(0,0)T(1,0)I(1,0)?(0,0)N(0,0)J(0,0);A/h
+31;per length;L(0,-1)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);2/m, 5/km
+32;electrical resistance;L(2,0)M(1,0)T(0,-3)I(0,-2)?(0,0)N(0,0)J(0,0); ?
+33;electrical conductor;L(0,-3)M(0,-1)T(3,0)I(2,0)?(0,0)N(0,0)J(0,0);
+34;mass ratio;L(0,0)M(1,-1)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);g/kg
+35;volume ratio;L(3,-3)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);L/m³
+36;area ratio;L(2,-2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);m²/ha
+37;volume per area;L(3,-2)M(0,0)T(0,0)I(0,0)?(0,0)N(0,0)J(0,0);l/m²
