@@ -6,6 +6,10 @@ namespace BExIS.Security.Services.Objects
     {
         List<EntityStoreItem> GetEntities();
 
+        bool Exist(long id);
+
+        int CountEntities();
+
         string GetTitleById(long id);
 
         bool HasVersions();

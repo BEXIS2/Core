@@ -4,11 +4,25 @@
 @using System.Globalization
 @using IDIV.Modules.Mmm.UI.Models
 @using IDIV.Modules.Mmm.UI.Converter
+@using BExIS.Utils.Data.Upload
 @using Newtonsoft.Json
 
 @model List<FileInformation>
 
-@{ 
+@{
+    long id = 0;
+    bool edit = false;
+
+    if (ViewData["id"] != null)
+    {
+        id = Convert.ToInt64(ViewData["id"]);
+    }
+
+    if (ViewData["edit"] != null)
+    {
+        edit = Convert.ToBoolean(ViewData["edit"]);
+    }
+
     string imgList = "";
     double lat = -1;
     double lon = -1;
@@ -17,292 +31,303 @@
 
 <link href="@Url.Content("~/Areas/MMM/Stylesheets/MultimediaData.css")" rel="stylesheet" type="text/css" />
 <script src="@Url.Content("~/Areas/MMM/Scripts/isotope.pkgd.min.js")"></script>
-@if (Model.Count > 0)
-{
-    <table class="mmm-filter-table">
-        <tr>
-            <td class="mmm-filter">
-                <button id="showAll" class="mmm-filterbutton function left active" value="*">Show All</button>
-                <button class="mmm-filterbutton function middle" value=".video">Video</button>
-                <button class="mmm-filterbutton function middle" value=".image">Image</button>
-                <button class="mmm-filterbutton function middle" value=".audio">Audio</button>
-                <button class="mmm-filterbutton function right" value="*,.video,.audio,.image">Other</button>
-                <button class="mmm-layoutbutton function hidden">Layout</button>
-            </td>
-            @*<td>
-                <button class="function" id="mapView">Map View</button>
-            </td>*@
-            <td class="mmm-sortdropdown">
-                Sort by
-                <select class="bx-dropdown mmm-dropdown">
-                    <option value="">no Sorting</option>
-                    <option class="type" value="type,true">Type &#xf106;</option>
-                    <option class="type" value="type,false">Type &#xf107;</option>
-                    <option class="name" value="name,true">Name &#xf106;</option>
-                    <option class="name" value="name,false">Name &#xf107;</option>
-                    <option class="size" value="size,true">Size &#xf106;</option>
-                    <option class="size" value="size,false">Size &#xf107;</option>
-                </select>
-                <div class="t-arrow-down mmm-dropdownArrow"></div>
-            </td>
-        </tr>
-    </table>
-}
-else
-{
-    <span>No data uploaded.</span>
-}
 
-<div class="mmm-Container">
-    @foreach (FileInformation fi in Model)
+    <div class="row">
+        <div class="col-md-1 col-xs-1">
+            @if (edit && id > 0)
+            {
+                @Html.ActionLink("Upload", "UploadWizard", "Submit", new { area = "DCM", type = DataStructureType.Unstructured, datasetid = @id }, new { @class = "bx-button function" })
+            }
+        </div>
+    </div>
+
+
+    @if (Model.Count > 0)
     {
-        try
-        {
-            string fileSize = "";
-
-            if (Math.Round((double)fi.Size / 1000000000, 2) > 1)
-            {
-                fileSize = Math.Round((double)fi.Size / 1000000000, 2) + " GB";
-            }
-            else if (Math.Round((double)fi.Size / 1000000, 2) > 1)
-            {
-                fileSize = Math.Round((double)fi.Size / 1000000, 2) + " MB";
-            }
-            else if (Math.Round((double)fi.Size / 1000, 2) > 1)
-            {
-                fileSize = Math.Round((double)fi.Size / 1000, 2) + " KB";
-            }
-            else
-            {
-                fileSize = Math.Round((double)fi.Size / 1, 2) + " Byte";
-            }
-
-            string type = @fi.MimeType.Substring(0, fi.MimeType.IndexOf('/'));
-            <div class="mmm-mediaContainer @type">
-                <table>
-                    <tr class="hidden">
-                        <td id="Type">@type</td>
-                        <td id="Name">@fi.Name</td>
-                        <td id="Size">@fileSize</td>
-                    </tr>
-                    <tr>
-                    @switch (type)
-                    {
-                        case "video":
-                            imgList += Server.UrlEncode(fi.Path) + ",";
-                            <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
-                            <td class="mmm-mediaInfo">
-                                <table>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>@fi.Name</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Size</td>
-                                        <td>@fileSize</td>
-                                    </tr>
-                                    @if (fi.EXIF != null && fi.EXIF.Count != 0)
-                                    {
-                                        if (fi.EXIF.ContainsKey("Video"))
-                                        {
-                                            <tr>
-                                                <td>Resolution</td>
-                                                <td>@fi.EXIF["Video"]["Width"]px * @fi.EXIF["Video"]["Height"]px</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Title</td>
-                                                <td>@fi.EXIF["Video"]["Title"]</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Duration</td>
-                                                <td>@fi.EXIF["Video"]["Duration"]</td>
-                                            </tr>
-                                        }
-                                    }
-                                </table>
-                            </td>
-                            break;
-
-                        case "audio":
-                            <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
-                            <td class="mmm-mediaInfo">
-                                <table>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>@fi.Name</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Size</td>
-                                        <td>@fileSize</td>
-                                    </tr>
-                                    @if (fi.EXIF != null && fi.EXIF.Count != 0)
-                                    {
-                                        if (fi.EXIF.ContainsKey("Audio"))
-                                        {
-                                            <tr>
-                                                <td>Title</td>
-                                                <td>@fi.EXIF["Audio"]["Title"]</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Duration</td>
-                                                <td>@fi.EXIF["Audio"]["Duration"]</td>
-                                            </tr>
-                                        }
-                                    }
-                                </table>
-                            </td>
-                            break;
-
-                        case "image":
-                            imgList += Server.UrlEncode(fi.Path) + ",";
-                            <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
-                            <td class="mmm-mediaInfo">
-                                <table>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>@fi.Name</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Size</td>
-                                        <td>@fileSize</td>
-                                    </tr>
-                                    @if (fi.EXIF != null && fi.EXIF.Count != 0)
-                                    {
-                                        if (fi.EXIF.ContainsKey("JPEG"))
-                                        {
-                                            if (fi.EXIF["JPEG"].ContainsKey("Image Width") && fi.EXIF["JPEG"].ContainsKey("Image Height"))
-                                            {
-                                                <tr>
-                                                    <td>Resolution</td>
-                                                    <td>@fi.EXIF["JPEG"]["Image Width"].Substring(0, fi.EXIF["JPEG"]["Image Width"].IndexOf(' '))px * @fi.EXIF["JPEG"]["Image Height"].Substring(0, fi.EXIF["JPEG"]["Image Height"].IndexOf(' '))px</td>
-                                                </tr>
-                                            }
-                                        }
-                                        if (fi.EXIF.ContainsKey("Exif IFD0") && fi.EXIF["Exif IFD0"].ContainsKey("Date/Time"))
-                                        {
-                                            DateTime dateTime;
-                                            if (DateTime.TryParseExact(fi.EXIF["Exif IFD0"]["Date/Time"], "yyyy:MM:dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateTime))
-                                            {
-                                                <tr>
-                                                    <td>Creation Date</td>
-                                                    <td>@dateTime</td>
-                                                </tr>
-                                            }
-                                        }
-                                        if (fi.EXIF.ContainsKey("GPS"))
-                                        {
-                                            if (fi.EXIF["GPS"].ContainsKey("GPS Latitude Ref") && fi.EXIF["GPS"].ContainsKey("GPS Longitude Ref"))
-                                            {
-                                                lat = MetadataConverter.convertDegreeAngleToDouble(fi.EXIF["GPS"]["GPS Latitude Ref"] + fi.EXIF["GPS"]["GPS Latitude"]);
-                                                lon = MetadataConverter.convertDegreeAngleToDouble(fi.EXIF["GPS"]["GPS Longitude Ref"] + fi.EXIF["GPS"]["GPS Longitude"]);
-                                                <tr>
-                                                    <td>Location</td>
-                                                    <td id="location" lat="@lat" lon="@lon"><a href="https://www.google.com/maps/search/?api=1&query=@lat,@lon" target="_blank">@fi.EXIF["GPS"]["GPS Latitude"] @fi.EXIF["GPS"]["GPS Latitude Ref"], @fi.EXIF["GPS"]["GPS Longitude"] @fi.EXIF["GPS"]["GPS Longitude Ref"]</a></td>
-                                                </tr>
-                                            }
-                                            if (fi.EXIF["GPS"].ContainsKey("GPS Altitude"))
-                                            {
-                                                <tr>
-                                                    <td>Altitude</td>
-                                                    <td>@fi.EXIF["GPS"]["GPS Altitude"].Substring(0, fi.EXIF["GPS"]["GPS Altitude"].IndexOf(' '))m above @fi.EXIF["GPS"]["GPS Altitude Ref"] </td>
-                                                </tr>
-                                            }
-                                        }
-                                    }
-                                </table>
-                            </td>
-                            break;
-
-                        case "application":
-
-                            if (fi.EXIF != null && fi.EXIF.Count != 0)
-                            {
-
-                            <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="bundle"></td>
-                            <td class="mmm-mediaInfo">
-                                <table>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>@fi.Name</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Size</td>
-                                        <td>@fileSize</td>
-                                    </tr>
-                                        @if (fi.EXIF.ContainsKey("Bundle"))
-                                        {
-                                            <tr>
-                                                <td>Title</td>
-                                                <td>@fi.EXIF["Bundle"]["Name"]</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Description</td>
-                                                <td>@fi.EXIF["Bundle"]["Description"]</td>
-                                            </tr>
-                                        }
-                                </table>
-                            </td>
-                            }
-                            else
-                            {
-                            <td class="mmm-media" path ="@Server.UrlEncode(fi.Path)" type="@type"></td>
-                            <td class="mmm-mediaInfo">
-                                <table>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>@fi.Name</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Size</td>
-                                        <td>@fileSize</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            }
-                            break;
-
-                        default:
-                                <td class="mmm-media" path ="@Server.UrlEncode(fi.Path)" type="@type"></td>
-                                <td class="mmm-mediaInfo">
-                                    <table>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>@fi.Name</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Size</td>
-                                            <td>@fileSize</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            break;
-                     }
-                        <td class="mmm-functions">
-                            @if (datasetInfo.Deleteable && datasetInfo.IsLatestVersion)
-                            {
-                                <span class = "bx bx-grid-function bx fa-trash-o bx-mmm-delete" value="@fi.Path"></span>
-                            }
-                            @if (datasetInfo.Downloadable)
-                            {
-                                @Html.ActionLink(" ", "getFile", "ShowMultimediaData", new { path = @Server.UrlEncode(fi.Path) }, new { area = "MMM", @class = "bx bx-grid-function bx-download" })
-                            }
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        }
-        catch
-        {
-            <script type="text/javascript">
-                console.log('@fi.Name not found')
-            </script>
-        }
+        <table class="mmm-filter-table">
+            <tr>
+                <td class="mmm-filter">
+                    <button id="showAll" class="mmm-filterbutton function left active" value="*">Show All</button>
+                    <button class="mmm-filterbutton function middle" value=".video">Video</button>
+                    <button class="mmm-filterbutton function middle" value=".image">Image</button>
+                    <button class="mmm-filterbutton function middle" value=".audio">Audio</button>
+                    <button class="mmm-filterbutton function right" value="*,.video,.audio,.image">Other</button>
+                    <button class="mmm-layoutbutton function hidden">Layout</button>
+                </td>
+                @*<td>
+                        <button class="function" id="mapView">Map View</button>
+                    </td>*@
+                <td class="mmm-sortdropdown">
+                    Sort by
+                    <select class="bx-dropdown mmm-dropdown">
+                        <option value="">no Sorting</option>
+                        <option class="type" value="type,true">Type &#xf106;</option>
+                        <option class="type" value="type,false">Type &#xf107;</option>
+                        <option class="name" value="name,true">Name &#xf106;</option>
+                        <option class="name" value="name,false">Name &#xf107;</option>
+                        <option class="size" value="size,true">Size &#xf106;</option>
+                        <option class="size" value="size,false">Size &#xf107;</option>
+                    </select>
+                    <div class="t-arrow-down mmm-dropdownArrow"></div>
+                </td>
+            </tr>
+        </table>
     }
-</div>
+    else
+    {
+        <span>No data uploaded.</span>
+    }
+
+    <div class="mmm-Container">
+        @foreach (FileInformation fi in Model)
+        {
+            try
+            {
+                string fileSize = "";
+
+                if (Math.Round((double)fi.Size / 1000000000, 2) > 1)
+                {
+                    fileSize = Math.Round((double)fi.Size / 1000000000, 2) + " GB";
+                }
+                else if (Math.Round((double)fi.Size / 1000000, 2) > 1)
+                {
+                    fileSize = Math.Round((double)fi.Size / 1000000, 2) + " MB";
+                }
+                else if (Math.Round((double)fi.Size / 1000, 2) > 1)
+                {
+                    fileSize = Math.Round((double)fi.Size / 1000, 2) + " KB";
+                }
+                else
+                {
+                    fileSize = Math.Round((double)fi.Size / 1, 2) + " Byte";
+                }
+
+                string type = @fi.MimeType.Substring(0, fi.MimeType.IndexOf('/'));
+                <div class="mmm-mediaContainer @type">
+                    <table>
+                        <tr class="hidden">
+                            <td id="Type">@type</td>
+                            <td id="Name">@fi.Name</td>
+                            <td id="Size">@fileSize</td>
+                        </tr>
+                        <tr>
+                            @switch (type)
+                            {
+                                case "video":
+                                    imgList += Server.UrlEncode(fi.Path) + ",";
+                                    <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                    <td class="mmm-mediaInfo">
+                                        <table>
+                                            <tr>
+                                                <td>Name</td>
+                                                <td>@fi.Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Size</td>
+                                                <td>@fileSize</td>
+                                            </tr>
+                                            @if (fi.EXIF != null && fi.EXIF.Count != 0)
+                                            {
+                                                if (fi.EXIF.ContainsKey("Video"))
+                                                {
+                                                    <tr>
+                                                        <td>Resolution</td>
+                                                        <td>@fi.EXIF["Video"]["Width"]px * @fi.EXIF["Video"]["Height"]px</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Title</td>
+                                                        <td>@fi.EXIF["Video"]["Title"]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Duration</td>
+                                                        <td>@fi.EXIF["Video"]["Duration"]</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </table>
+                                    </td>
+                                    break;
+
+                                case "audio":
+                                    <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                    <td class="mmm-mediaInfo">
+                                        <table>
+                                            <tr>
+                                                <td>Name</td>
+                                                <td>@fi.Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Size</td>
+                                                <td>@fileSize</td>
+                                            </tr>
+                                            @if (fi.EXIF != null && fi.EXIF.Count != 0)
+                                            {
+                                                if (fi.EXIF.ContainsKey("Audio"))
+                                                {
+                                                    <tr>
+                                                        <td>Title</td>
+                                                        <td>@fi.EXIF["Audio"]["Title"]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Duration</td>
+                                                        <td>@fi.EXIF["Audio"]["Duration"]</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </table>
+                                    </td>
+                                    break;
+
+                                case "image":
+                                    imgList += Server.UrlEncode(fi.Path) + ",";
+                                    <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                    <td class="mmm-mediaInfo">
+                                        <table>
+                                            <tr>
+                                                <td>Name</td>
+                                                <td>@fi.Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Size</td>
+                                                <td>@fileSize</td>
+                                            </tr>
+                                            @if (fi.EXIF != null && fi.EXIF.Count != 0)
+                                            {
+                                                if (fi.EXIF.ContainsKey("JPEG"))
+                                                {
+                                                    if (fi.EXIF["JPEG"].ContainsKey("Image Width") && fi.EXIF["JPEG"].ContainsKey("Image Height"))
+                                                    {
+                                                        <tr>
+                                                            <td>Resolution</td>
+                                                            <td>@fi.EXIF["JPEG"]["Image Width"].Substring(0, fi.EXIF["JPEG"]["Image Width"].IndexOf(' '))px * @fi.EXIF["JPEG"]["Image Height"].Substring(0, fi.EXIF["JPEG"]["Image Height"].IndexOf(' '))px</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                if (fi.EXIF.ContainsKey("Exif IFD0") && fi.EXIF["Exif IFD0"].ContainsKey("Date/Time"))
+                                                {
+                                                    DateTime dateTime;
+                                                    if (DateTime.TryParseExact(fi.EXIF["Exif IFD0"]["Date/Time"], "yyyy:MM:dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateTime))
+                                                    {
+                                                        <tr>
+                                                            <td>Creation Date</td>
+                                                            <td>@dateTime</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                if (fi.EXIF.ContainsKey("GPS"))
+                                                {
+                                                    if (fi.EXIF["GPS"].ContainsKey("GPS Latitude Ref") && fi.EXIF["GPS"].ContainsKey("GPS Longitude Ref"))
+                                                    {
+                                                        lat = MetadataConverter.convertDegreeAngleToDouble(fi.EXIF["GPS"]["GPS Latitude Ref"] + fi.EXIF["GPS"]["GPS Latitude"]);
+                                                        lon = MetadataConverter.convertDegreeAngleToDouble(fi.EXIF["GPS"]["GPS Longitude Ref"] + fi.EXIF["GPS"]["GPS Longitude"]);
+                                                        <tr>
+                                                            <td>Location</td>
+                                                            <td id="location" lat="@lat" lon="@lon"><a href="https://www.google.com/maps/search/?api=1&query=@lat,@lon" target="_blank">@fi.EXIF["GPS"]["GPS Latitude"] @fi.EXIF["GPS"]["GPS Latitude Ref"], @fi.EXIF["GPS"]["GPS Longitude"] @fi.EXIF["GPS"]["GPS Longitude Ref"]</a></td>
+                                                        </tr>
+                                                    }
+                                                    if (fi.EXIF["GPS"].ContainsKey("GPS Altitude"))
+                                                    {
+                                                        <tr>
+                                                            <td>Altitude</td>
+                                                            <td>@fi.EXIF["GPS"]["GPS Altitude"].Substring(0, fi.EXIF["GPS"]["GPS Altitude"].IndexOf(' '))m above @fi.EXIF["GPS"]["GPS Altitude Ref"] </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        </table>
+                                    </td>
+                                    break;
+
+                                case "application":
+
+                                    if (fi.EXIF != null && fi.EXIF.Count != 0)
+                                    {
+
+                                        <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="bundle"></td>
+                                        <td class="mmm-mediaInfo">
+                                            <table>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>@fi.Name</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Size</td>
+                                                    <td>@fileSize</td>
+                                                </tr>
+                                                @if (fi.EXIF.ContainsKey("Bundle"))
+                                                {
+                                                    <tr>
+                                                        <td>Title</td>
+                                                        <td>@fi.EXIF["Bundle"]["Name"]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Description</td>
+                                                        <td>@fi.EXIF["Bundle"]["Description"]</td>
+                                                    </tr>
+                                                }
+                                            </table>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                        <td class="mmm-mediaInfo">
+                                            <table>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>@fi.Name</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Size</td>
+                                                    <td>@fileSize</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    }
+                                    break;
+
+                                default:
+                                    <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                    <td class="mmm-mediaInfo">
+                                        <table>
+                                            <tr>
+                                                <td>Name</td>
+                                                <td>@fi.Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Size</td>
+                                                <td>@fileSize</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    break;
+                            }
+                            <td class="mmm-functions">
+                                @if (datasetInfo.Deleteable && datasetInfo.IsLatestVersion)
+                                {
+                                    <span class="bx bx-grid-function bx fa-trash-o bx-mmm-delete" value="@fi.Path"></span>
+                                }
+                                @if (datasetInfo.Downloadable)
+                                {
+                                    @Html.ActionLink(" ", "getFile", "ShowMultimediaData", new { path = @Server.UrlEncode(fi.Path) }, new { area = "MMM", @class = "bx bx-grid-function bx-download" })
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            }
+            catch
+            {
+                <script type="text/javascript">
+                console.log('@fi.Name not found')
+                </script>
+            }
+        }
+    </div>
 
 
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
     $.ajaxSetup({ cache: false });
 
@@ -311,7 +336,7 @@ else
         imgList.splice(-1, 1);
     var test = 0;
 
-    $('.bx-mmm-delete').on('click', function () { 
+    $('.bx-mmm-delete').on('click', function () {
         var mediaContainer = $(this);
         var parameters = encodeURI('?path=' + mediaContainer.attr('value'));
         $.get('@Url.Action("deleteFile", "ShowMultimediaData")' + parameters, function (data) {
@@ -320,12 +345,12 @@ else
                 mediaContainer.closest('.mmm-mediaContainer').remove();
             }
             else {
-                alert("Can't delete file " + mediaContainer.attr('value')); 
+                alert("Can't delete file " + mediaContainer.attr('value'));
             }
             initIsotope();
         });
     });
-    
+
 
     $(function () {
         $('body').append('<div class="modal fade" id="imgModal" tabindex="-1" aria-hidden="true"><div class= "modal-body"> <div id="header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div> <div id="content"><table><tr><td class="mmm-map"><div id="map"></div></td></tr></table></div></div ></div> ');
@@ -442,11 +467,11 @@ else
 
     function layoutImgWindow()
     {
-        $('#imgModal .modal-body #content .mmm-exif div').css({ 'max-height': parseInt(window.innerHeight * 0.4) + 'px' });
-        $('#imgModal .modal-body #content .mmm-map #map').css({ 'height': parseInt(window.innerHeight * 0.4) + 'px' });
-        $('#imgModal .modal-body #content .mmm-image').css({ 'max-height': parseInt(window.innerHeight * 0.8) + 'px'});
-        $('#imgModal .modal-body #content .mmm-image img').css({ 'max-height': parseInt(window.innerHeight * 0.8) + 'px' });
-        $('#imgModal .modal-body #content .mmm-image video').css({ 'max-height': parseInt(window.innerHeight * 0.8) + 'px' });
+        $('#imgModal .modal-body #content .mmm-exif div').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
+        //$('#imgModal .modal-body #content .mmm-map #map').css({ 'height': parseInt(window.innerHeight * 0.4) + 'px' });
+        $('#imgModal .modal-body #content .mmm-image').css({ 'height': parseInt(window.innerHeight * 0.8) + 'px'});
+        $('#imgModal .modal-body #content .mmm-image img').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
+        $('#imgModal .modal-body #content .mmm-image video').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
 
         var path = $('#imgModal .modal-body #content .mmm-image').attr('path');
 
@@ -533,5 +558,5 @@ else
 
         });
     }
-</script>
-@*<script async defer src="https://maps.googleapis.com/maps/api/js?key= GOOGLE API KEY HERE &callback=initMiniMap"></script>*@
+    </script>
+    @*<script async defer src="https://maps.googleapis.com/maps/api/js?key= GOOGLE API KEY HERE &callback=initMiniMap"></script>*@

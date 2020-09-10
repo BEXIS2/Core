@@ -37,5 +37,10 @@ namespace BExIS.Security.Entities.Subjects
             get { return Name; }
             set { Name = value; }
         }
+        public virtual string FullName
+        {
+            get { return DisplayName; }
+            set { DisplayName = value; }
+        }
     }
 }

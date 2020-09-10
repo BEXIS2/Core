@@ -101,20 +101,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Instances", entityId);
         }
 
-        [GridAction]
+        [GridAction(EnableCustomBinding = false)]
         public ActionResult Instances_Select(long entityId)
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
-            //var userManager = new UserManager();
 
             try
             {
                 var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-                //var user = userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
-                //var keys = entityPermissionManager.GetKeys(user?.Id, entityId, RightType.Grant);
-                //var instances = instanceStore.GetEntities().Where(i => keys.Contains(i.Id)).Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
                 var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                
                 return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
             }
             finally
@@ -273,13 +270,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
                     var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
-
-                    // Replace account name by party name todo: check performance. If to slow retieve first all party entities and select in result
-                    Party party = partyManager.GetPartyByUser(subject.Id);
-                    if (party != null)
-                    {
-                        subject.Name = party.Name;
-                    }
 
                     subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                 }

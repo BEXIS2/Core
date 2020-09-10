@@ -145,7 +145,7 @@ namespace BExIS.Utils.Upload
                         {
                             newDtList.Add(keysValueNewDataTuple, incomingTuple); // by default, assume that the incoming tuple is new (not in the DB)
                         }
-                        string keysValueSourceDatatuple = getPrimaryKeysAsStringFromXml(existingTuple, primaryKeys);
+                        string keysValueSourceDatatuple = getPrimaryKeysAsString(existingTuple, primaryKeys);
                         if (keysValueNewDataTuple.Equals(keysValueSourceDatatuple)) // the incoming tuple exists in the DB
                         {
                             if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
@@ -223,22 +223,21 @@ namespace BExIS.Utils.Upload
         /// <param name="sourceDatatuple"></param>
         /// <returns></returns>
         //temporary solution: norman :Equal2
+        //ToDo need Tests
         private bool Equal(AbstractTuple newDatatuple, AbstractTuple sourceDatatuple)
         {
-
-            foreach (VariableValue newVariableValue in newDatatuple.VariableValues)
+            if (newDatatuple.JsonVariableValues == null && newDatatuple.VariableValues != null)
             {
-                long varID = newVariableValue.VariableId;
-
-                object ValueNew = newVariableValue.Value;
-
-                object ValueSource = GetValueXmlDocument(sourceDatatuple.XmlVariableValues, varID);
-
-                if (!ValueNew.Equals(ValueSource))
-                    return false;
+                newDatatuple.Dematerialize();
             }
 
-            return true;
+            if (sourceDatatuple.JsonVariableValues == null && sourceDatatuple.VariableValues != null)
+            {
+                sourceDatatuple.Dematerialize();
+            }
+
+            return newDatatuple.JsonVariableValues.Equals(sourceDatatuple.JsonVariableValues);
+
         }
 
         private bool Equal2(DataTuple newDatatuple, DataTuple sourceDatatuple)
@@ -677,7 +676,7 @@ namespace BExIS.Utils.Upload
                             dt = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(dtId)).FirstOrDefault();
 
                             //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
-                            pKey = pKey = getPrimaryKeysAsStringFromXml(dt, primaryKeys);
+                            pKey = pKey = getPrimaryKeysAsString(dt, primaryKeys);
 
                             if (pKey.Count() > 0)
                             {
@@ -728,7 +727,7 @@ namespace BExIS.Utils.Upload
         /// <param name="primaryKeys"></param>
         /// <returns></returns>
 
-        private string getPrimaryKeysAsString(DataTuple datatuple, List<long> primaryKeys)
+        private string getPrimaryKeysAsString(AbstractTuple datatuple, List<long> primaryKeys)
         {
             string value = "";
 
@@ -736,7 +735,7 @@ namespace BExIS.Utils.Upload
             {
                 // empty means not equals value
                 // so if value is empty add timestamp millisec
-                //datatuple.Materialize();
+                datatuple.Materialize();
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
                 if (v != null)
                     //if (!String.IsNullOrEmpty(v.ToString()))
@@ -750,54 +749,6 @@ namespace BExIS.Utils.Upload
             return value;
         }
 
-        /// <summary>
-        ///  convert primary keys to string
-        ///  returns null if a emtpy string is inside
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="datatuple"></param>
-        /// <param name="primaryKeys"></param>
-        /// <returns></returns>
-
-        private string getPrimaryKeysAsStringFromXml(AbstractTuple datatuple, List<long> primaryKeys)
-        {
-            string value = "";
-
-            foreach (long t in primaryKeys)
-            {
-                // empty means not equals value
-                // so if value is empty add timestamp millisec
-                //datatuple.Materialize();
-                object v = GetValueXmlDocument(datatuple.XmlVariableValues, t);
-                if (v != null)
-                    //if (!String.IsNullOrEmpty(v.ToString()))
-                    if (!String.IsNullOrEmpty((string)v))
-                        value += ";" + v;
-                    else
-                        return "";
-                else
-                    return "";
-            }
-            return value;
-        }
-
-        private object GetValueXmlDocument(XmlDocument xmlDoc, long variableId)
-        {
-
-            string xpath = "/Content/Item/Property[@Name='VariableId' and @value='" + variableId.ToString() + "']";
-            string xpathValue = "Property[@Name='Value']";
-
-            XmlNode element = xmlDoc.SelectNodes(xpath).Item(0);
-            string v = "";
-            if (element != null)
-            {
-                XmlNode value = element.ParentNode.SelectSingleNode(xpathValue);
-                v = value.Attributes["value"].Value;
-            }
-
-            return v;
-        }
 
         /// <summary>
         /// 

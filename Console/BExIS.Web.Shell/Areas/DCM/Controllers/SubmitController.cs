@@ -72,6 +72,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager = (TaskManager)Session["TaskManager"];
                     TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TYPE, type);
 
+                    if(datasetid>0) TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
+
                     Session["TaskManager"] = TaskManager;
                 }
                 catch (Exception e)
@@ -121,30 +123,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult FinishUpload()
         {
             TaskManager = (TaskManager)Session["TaskManager"];
-            //TaskManager.SetCurrent(null);
 
-            FinishUploadModel finishModel = new FinishUploadModel();
-            if (TaskManager != null)
-            {
-                finishModel.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                finishModel.Filename = TaskManager.Bus[TaskManager.FILENAME].ToString();
-            }
-
+            long datasetId = (long)TaskManager.Bus[TaskManager.DATASET_ID];
             Session["TaskManager"] = null;
-            try
-            {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
-                XmlDocument xmlTaskInfo = new XmlDocument();
-                xmlTaskInfo.Load(path);
 
-                Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError(String.Empty, e.Message);
-            }
+            return ShowData(datasetId);
 
-            return ShowData((long)TaskManager.Bus[TaskManager.DATASET_ID]);
         }
 
         #endregion Finish
@@ -173,6 +157,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
         }
 
+        public ActionResult ShowDashboard()
+        {
+            return RedirectToAction("Index", "Dashboard", new RouteValueDictionary { { "area", "DDM" }});
+        }
+
         #endregion Navigation options
 
         #region Helper functions
@@ -197,63 +186,36 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DataStructureManager dataStructureManager = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
 
-
             try
             {
-                ICollection<long> datasetIDs = new List<long>();
-                datasetIDs = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).ToList();
+                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).ToList();
 
+                List<ListViewItem> tempStructured = new List<ListViewItem>();
+                List<ListViewItem> tempUnStructured = new List<ListViewItem>();
 
+                var DatasetVersions = dm.GetDatasetLatestVersions(datasetIds, false);
 
-                Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
-                dmtemp = dm.GetDatasetLatestMetadataVersions();
-
-                List<ListViewItem> temp = new List<ListViewItem>();
+                foreach (var dsv in DatasetVersions)
+                {
+                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    {
+                        tempStructured.Add(new ListViewItem(dsv.Dataset.Id, dsv.Title));
+                    }
+                    else
+                    {
+                        tempUnStructured.Add(new ListViewItem(dsv.Dataset.Id, dsv.Title));
+                    }
+                }
 
                 if (dataStructureType.Equals(DataStructureType.Structured))
                 {
-                    List<StructuredDataStructure> list = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
-
-                    foreach (StructuredDataStructure sds in list)
-                    {
-                        sds.Materialize();
-
-                        foreach (Dataset d in sds.Datasets)
-                        {
-                            if (dm.IsDatasetCheckedIn(d.Id))
-                            {
-                                if (datasetIDs.Contains(d.Id))
-                                {
-                                    temp.Add(new ListViewItem(d.Id,
-                                        xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(d).Id,
-                                            NameAttributeValues.title)));
-                                }
-                            }
-                        }
-                    }
+                    return tempStructured.OrderBy(p => p.Title).ToList();
                 }
                 else
                 {
-                    List<UnStructuredDataStructure> list = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
-
-                    foreach (UnStructuredDataStructure sds in list)
-                    {
-                        foreach (Dataset d in sds.Datasets)
-                        {
-                            if (datasetIDs.Contains(d.Id))
-                            {
-                                if (dm.IsDatasetCheckedIn(d.Id))
-                                {
-                                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                    temp.Add(new ListViewItem(d.Id,
-                                        xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title)));
-                                }
-                            }
-                        }
-                    }
+                    return tempUnStructured.OrderBy(p => p.Title).ToList();
                 }
-
-                return temp.OrderBy(p => p.Title).ToList();
+  
             }
             finally
             {
@@ -323,8 +285,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // is checkedIn?
                     if (dm.IsDatasetCheckedIn(datasetid))
                     {
-                        title = xmlDatasetHelper.GetInformationFromVersion(dm.GetDatasetLatestVersion(datasetid).Id,
-                            NameAttributeValues.title);
+                        var dsv = dm.GetDatasetLatestVersion(datasetid);
+                        title = dsv.Title;
                     }
 
                     TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);

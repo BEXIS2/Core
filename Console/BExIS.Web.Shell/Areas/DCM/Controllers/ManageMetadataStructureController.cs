@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Models;
@@ -109,14 +110,43 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Save(MetadataStructureModel metadataStructureModel)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            DatasetManager datasetManager = new DatasetManager();
 
             try
             {
                 if (ModelState.IsValid)
                 {
+
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
+
                     metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
                     metadataStructureManager.Update(metadataStructure);
+
+                    //update dsv title and description if there is a change
+                    //ToDo check if there is a change in the xpaths
+                    // update datasetversion
+
+                    // get all datasetIds which using the metadata structure
+                    var datasetIds = datasetManager.DatasetRepo.Query().Where(d => d.MetadataStructure.Id.Equals(metadataStructure.Id)).Select(d=>d.Id);
+                    //gell all datasetversions of the dataset ids 
+                    var datasetVersionIds = datasetManager.DatasetVersionRepo.Query().Where(dsv => datasetIds.Contains(dsv.Dataset.Id)).Select(dsv=>dsv.Id).ToList();
+
+                    //load all titles & descriptions from versions
+                    var allTitles =xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.title);
+                    var allDescriptions = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.description);
+
+
+                    // update each datasetversion
+                    foreach (var datasetVersionId in datasetVersionIds)
+                    {
+                        // load dataset version
+                        var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                        datasetVersion.Title = allTitles.ContainsKey(datasetVersion.Id)?allTitles[datasetVersion.Id]:string.Empty;
+                        datasetVersion.Description = allDescriptions.ContainsKey(datasetVersion.Id)?allDescriptions[datasetVersion.Id]:string.Empty;
+
+                        datasetManager.UpdateDatasetVersion(datasetVersion);
+                    }
 
                     return Json(true);
                 }
@@ -130,6 +160,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 metadataStructureManager.Dispose();
+                datasetManager.Dispose();
             }
         }
 

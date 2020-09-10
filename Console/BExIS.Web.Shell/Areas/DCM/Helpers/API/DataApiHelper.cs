@@ -307,8 +307,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 
                     datasetManager.CheckInDataset(id, "via api", userName);
 
-                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                    string title = xmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                    string title = workingCopy.Title;
 
                     //send email
                     es.Send(MessageHelper.GetUpdateDatasetHeader(),

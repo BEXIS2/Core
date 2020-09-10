@@ -50,7 +50,7 @@ namespace BExIS.Modules.Sam.UI.Models
             return new EntityTreeViewItemModel()
             {
                 Id = entity.Id,
-                Name = entity.EntityType.Name,
+                Name = entity.Name,
                 Children = new List<EntityTreeViewItemModel>(),
                 ParentId = parentId
             };

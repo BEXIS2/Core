@@ -12,125 +12,59 @@
 
         <div class="uploadWizardStep_Content stepper">
 
-            <div  id="summaryLeft">
-                <table>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DatasetId) :</b>
-                    </td>
-                    <td>
-                        @Model.DatasetId
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DataStructureTitle) :</b>
+            <div class="panel panel-default">
 
-                    </td>
-                    <td>
-                        @Model.DataStructureTitle
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DataStructureId) :</b>
-
-                    </td>
-                    <td>
-                        @Model.DataStructureId
-                    </td>
-                </tr>
-                @*<tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ResearchPlanTitle)</b>
-
-                    </td>
-                    <td>
-                        @Model.ResearchPlanTitle
-                    </td>
-                </tr>*@
-                 @*<tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ResearchPlanId) :</b>
-
-                    </td>
-                    <td>
-                        @Model.ResearchPlanId
-                    </td>
-                </tr>*@
-              @*   <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.NumOfVars) :</b>
-
-                    </td>
-                    <td>
-                        @Model.NumOfVars
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                       <b>@Html.LabelFor(m=>m.NumOfRows) :</b> 
-
-                    </td>
-                    <td>
-                        @Model.NumOfRows
-                    </td>
-                </tr>*@
-            </table>
+                <div class="panel-heading">File</div>
+                <div class="panel-body">
+                    <b>@Html.LabelFor(m => m.Filename) :</b> @Model.Filename<br />
+                   <!-- <b>@Html.LabelFor(m => m.Filepath) :</b> @Model.Filepath<br />-->
+                    <b>@Html.LabelFor(m => m.Extention) :</b> @Model.Extention<br />
+                </div>
             </div>
 
-            <div id="summaryRight">
-             <table>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DatasetTitle) :</b>
-                    </td>
-                    <td>
-                        @Model.DatasetTitle
-                    </td>
-                </tr>
-                @*<tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.Owner) :</b>
-                    </td>
-                    <td>
-                        @Model.Owner
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.Author) :</b>
-
-                    </td>
-                    <td>
-                        @Model.Author
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ProjectName) :</b>
-
-                    </td>
-                    <td>
-                        @Model.ProjectName
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ProjectInstitute) :</b>
-                    </td>
-                    <td>
-                        @Model.ProjectInstitute
-                    </td>
-                </tr>*@
-             </table>
-
+            <div class="panel panel-default">
+                <div class="panel-heading">Dataset</div>
+                <div class="panel-body">
+                    <b>@Html.LabelFor(m => m.DatasetId) :</b> @Model.DatasetId <br />
+                    <b>@Html.LabelFor(m => m.DatasetTitle) :</b> @Model.DatasetTitle<br />
+                    <b>@Html.LabelFor(m => m.DatasetStatus) :</b> @Model.DatasetStatus
+                </div>
             </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Datastructure</div>
+                <div class="panel-body">
+                    <b>@Html.LabelFor(m => m.DataStructureId) :</b> @Model.DataStructureId<br />
+                    <b>@Html.LabelFor(m => m.DataStructureTitle) :</b> @Model.DataStructureTitle<br />
+                    <b>@Html.LabelFor(m => m.DataStructureType) :</b> @Model.DataStructureType
+                </div>
+            </div>
+
+            @if (Model.DataStructureType.ToLower().Equals("structured"))
+            {
+
+                <div class="panel panel-default">
+
+                    <div class="panel-heading">Upload</div>
+                    <div class="panel-body">
+                        <b>@Html.LabelFor(m => m.UploadMethod) :</b> @Model.UploadMethod<br />
+                        <b>@Html.LabelFor(m => m.NumberOfRows) :</b> @Model.NumberOfRows<br />
+                        <b>@Html.LabelFor(m => m.NumberOfVariables) :</b> @Model.NumberOfVariables<br />
+                        <b>@Html.LabelFor(m => m.PrimaryKeys) :</b> @Model.PrimaryKeys<br />
+                        <b>@Html.LabelFor(m => m.AsyncUpload) :</b> @Model.AsyncUpload
+                    </div>
+                </div>
+            }
         </div>
     </div>
-
     <div class="uploadWizardStep_Success stepper">
-        <div id="progress"></div>
+        <div id="progress">
+            @if (Model.AsyncUpload)
+            { 
+                <p>@Model.AsyncUploadMessage</p>
+            }
+
+        </div>
     </div>
     <div class="uploadWizardStep_Error stepper">
         @if (Model != null)

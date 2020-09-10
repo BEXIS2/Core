@@ -440,6 +440,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         try
                         {
                             dsv.Metadata = xmlDatasetHelper.SetInformation(dsv, metadataXml, NameAttributeValues.title, title);
+                            dsv.Title = title;
                         }
                         catch (NullReferenceException ex)
                         {
@@ -469,7 +470,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     #region excel reader
 
-                    int packageSize = 10000;
+                    int packageSize = 100000;
                     int numberOfRows = 0;
                     //HACK ?
                     TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;

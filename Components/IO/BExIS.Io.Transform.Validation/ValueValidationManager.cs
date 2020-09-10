@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
@@ -150,14 +151,14 @@ namespace BExIS.IO.Transform.Validation
         /// <param name="optional"></param>
         /// <param name="decimalCharacter"></param>
         /// <param name="pattern"></param>
-        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern = "", IEnumerable<MissingValue> missingValues = null)
+        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern = "", IEnumerable<MissingValue> missingValues = null, CultureInfo cultureInfo = null)
         {
             _name = name;
             _dataType = dataType;
             _optional = optional;
             ValidationList = new List<IValueValidation>();
             NullOrOptionalCheck = new OptionalCheck(name, dataType, optional);
-            DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter, pattern);
+            DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter, pattern, cultureInfo);
             MissingValueCheck = new MissingValueCheck(name, dataType, missingValues);
         }
     }

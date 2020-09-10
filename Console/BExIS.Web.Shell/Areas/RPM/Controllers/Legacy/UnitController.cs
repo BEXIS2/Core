@@ -12,6 +12,7 @@ using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
+using BExIS.Utils.Helpers;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult UnitManager()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Units", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Units", this.Session.GetTenant());
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
@@ -36,7 +37,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult editUnit(EditUnitModel Model, string measurementSystem, long[] checkedRecords)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Units", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Units", this.Session.GetTenant());
 
             Model.Unit.Name = cutSpaces(Model.Unit.Name);
             Model.Unit.Abbreviation = cutSpaces(Model.Unit.Abbreviation);
@@ -44,7 +45,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             Model.Unit.Dimension.Name = cutSpaces(Model.Unit.Dimension.Name);
             Model.Unit.Dimension.Specification = cutSpaces(Model.Unit.Dimension.Specification);
 
-            
             UnitManager unitManager = null;
             try
             {
@@ -81,18 +81,19 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 break;
                             }
                         }
-                  
-                        unit.Dimension = unitManager.DimensionRepo.Get(Model.Unit.Dimension.Id);                       
+
+                        unit.Dimension = unitManager.DimensionRepo.Get(Model.Unit.Dimension.Id);
                         unit = updataAssociatedDataType(unit, checkedRecords);
-                        unit = unitManager.Update(unit);                      
+                        unit = unitManager.Update(unit);
                     }
                 }
                 else
                 {
                     Session["Window"] = true;
-                    return View("UnitManager", new UnitManagerModel(Model.Unit.Id));
+
+                    //return View("UnitManager", new UnitManagerModel(Model.Unit.Id));
+                    return View("UnitManager", new UnitManagerModel(Model));
                 }
-                
             }
             finally
             {
@@ -101,13 +102,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             Session["Window"] = false;
             Session["checked"] = null;
             return RedirectToAction("UnitManager");
-
         }
 
         private bool unitValidation(Unit unit, long[] checkedRecords, UnitManager unitManager)
         {
             bool check = true;
-  
+
             List<Unit> unitList = unitManager.Repo.Get().ToList(); ;
 
             if (unit.Name == null || unit.Name == "")
@@ -183,8 +183,18 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Session["dimensionMsg"] = "Select or create an Dimension.";
                 check = false;
             }
-            
-            
+
+            if ((!String.IsNullOrEmpty(unit.Dimension.Specification) && RegExHelper.IsMatch(unit.Dimension.Specification,RegExHelper.DIMENSION_SPECIFICATION)) || String.IsNullOrEmpty(unit.Dimension.Specification))
+            {
+                Session["dimensionSpecificationMsg"] = null;
+            }
+
+            else
+            {
+                Session["dimensionSpecificationMsg"] = "not valid.";
+                check = false;
+            }
+
             return check;
         }
 
@@ -195,13 +205,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 DataTypeManager dataTypeManger = null;
                 try
                 {
-                    dataTypeManger = new DataTypeManager();                      
+                    dataTypeManger = new DataTypeManager();
                     List<DataType> newDataTypes = newDataTypeIds == null ? new List<DataType>() : dataTypeManger.GetUnitOfWork().GetReadOnlyRepository<DataType>().Query().Where(p => newDataTypeIds.Contains(p.Id)).ToList();
 
                     unit.AssociatedDataTypes = newDataTypes;
 
                     return unit;
-                                     
                 }
                 finally
                 {
@@ -215,24 +224,23 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             if (id != 0)
             {
-                EditUnitModel editUnitModel = new EditUnitModel(id);
-                if (editUnitModel.Unit != null)
+                EditUnitModel EditUnitModel = new EditUnitModel(id);
+                if (EditUnitModel.Unit != null)
                 {
-                    if (!editUnitModel.inUse)
+                    if (!EditUnitModel.inUse)
                     {
                         UnitManager unitManager = null;
                         try
                         {
                             unitManager = new UnitManager();
 
-                            unitManager.Delete(editUnitModel.Unit);
+                            unitManager.Delete(EditUnitModel.Unit);
                         }
                         finally
                         {
                             unitManager.Dispose();
                         }
                     }
-
                 }
             }
             return RedirectToAction("UnitManager");
@@ -240,8 +248,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult openUnitWindow(long id)
         {
-
-
             UnitManager unitManager = null;
             DataTypeManager dataTypeManager = null;
             UnitManagerModel Model;
@@ -253,18 +259,19 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (id != 0)
                 {
                     Model = new UnitManagerModel(id);
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Unit: " + Model.editUnitModel.Unit.Name + "(Id: " + Model.editUnitModel.Unit.Id + ")", this.Session.GetTenant());
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Unit: " + Model.EditUnitModel.Unit.Name + "(Id: " + Model.EditUnitModel.Unit.Id + ")", this.Session.GetTenant());
                     Session["nameMsg"] = null;
                     Session["abbrMsg"] = null;
                     Session["dataTypeMsg"] = null;
-                    if (Model.editUnitModel.Unit != new Unit())
+                    if (Model.EditUnitModel.Unit != new Unit())
                     {
-                        Unit temp = Model.editUnitModel.Unit;
-                        if (temp.Id != Model.editUnitModel.Unit.Id)
+                        Unit temp = Model.EditUnitModel.Unit;
+                        if (temp.Id != Model.EditUnitModel.Unit.Id)
                             Session["checked"] = null;
                     }
                     Session["Window"] = true;
                     Session["dimensionMsg"] = null;
+                    Session["dimensionSpecificationMsg"] = null;
                 }
                 else
                 {
@@ -275,6 +282,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Session["dataTypeMsg"] = null;
                     Session["Window"] = true;
                     Session["dimensionMsg"] = null;
+                    Session["dimensionSpecificationMsg"] = null;
+                    Session["checked"] = null;
                 }
             }
             finally
@@ -311,7 +320,5 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return (str);
         }
-
     }
-
 }

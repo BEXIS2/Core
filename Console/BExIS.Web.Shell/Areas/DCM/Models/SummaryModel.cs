@@ -3,47 +3,64 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Utils.Data.Upload;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
     public class SummaryModel
     {
+
+        //Dataset
         [Display(Name = "Dataset Id")]
         public int DatasetId { get; set; }
 
         [Display(Name = "Dataset Title")]
         public String  DatasetTitle { get; set; }
 
+        [Display(Name = "Dataset Status")]
+        public String DatasetStatus { get; set; }
+
+
+        //Datastructure
         [Display(Name = "Datastructure Id")]
         public int DataStructureId { get; set; }
 
         [Display(Name = "Datastructure Title")]
         public String DataStructureTitle { get; set; }
 
-        [Display(Name = "Research Plan Id")]
-        public int ResearchPlanId { get; set; }
+        [Display(Name = "Datastructure Type")]
+        public string DataStructureType { get; set; }
 
-        [Display(Name = "Research Plan Title")]
-        public String ResearchPlanTitle { get; set; }
 
-        /*
-        [Display(Name = "Dataset Owner")]
-        public String  Owner { get; set; }
+        //file
+        [Display(Name = "Name")]
+        public string Filename { get; set; }
+        [Display(Name = "Path")]
+        public string Filepath { get; set; }
+        [Display(Name = "Extention")]
+        public string Extention { get; set; }
 
-        [Display(Name = "Dataset Author")]
-        public String  Author { get; set; }
 
-        [Display(Name = "Project Name")]
-        public String  ProjectName { get; set; }
-
-        [Display(Name = "Organisation")]
-        public String  ProjectInstitute { get; set; }
-
-        [Display(Name = "Number of Variables")]
-        public int NumOfVars { get; set; }
+        //if structured
+        [Display(Name = "Upload Method")]
+        public string UploadMethod { get; set; }
 
         [Display(Name = "Number of Rows")]
-        public int NumOfRows { get; set; }*/
+        public int NumberOfRows { get; set; }
+
+        [Display(Name = "Number of Variables")]
+        public int NumberOfVariables { get; set; }
+
+        //if structred & update
+        [Display(Name = "Primary Keys")]
+        public string PrimaryKeys { get; set; }
+
+
+        //Sync or ASync updload
+        [Display(Name = "Async")]
+        public bool AsyncUpload { get; set; }
+        public string  AsyncUploadMessage { get; set; }
+
 
         public StepInfo StepInfo { get; set; }
         public List<Error> ErrorList = new List<Error>();
@@ -56,6 +73,8 @@ namespace BExIS.Modules.Dcm.UI.Models
             DataStructureId = 0;
             DatasetTitle = "";
             DataStructureTitle = "";
+            AsyncUpload = false;
+            AsyncUploadMessage = "";
         }
     }
 }

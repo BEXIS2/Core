@@ -165,10 +165,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
 
                         }
+                        catch (NotSupportedException ex) 
+                        {
+                            model.ErrorList.Add(new Error(ErrorType.Other, ex.Message));
+                        }
                         catch (Exception ex)
                         {
                             model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                         }
+
                     }
                     else
                     {

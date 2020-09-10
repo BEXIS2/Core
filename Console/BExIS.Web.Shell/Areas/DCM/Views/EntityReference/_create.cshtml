@@ -42,11 +42,18 @@
             </tr>
             <tr>
                 <td>
-                    Title
+                    <div class="row">
+                        <div class="col-xs-8">
+                            Title
+                        </div>
+                        <div id="target_preloader" class="col-xs-2"></div>
+                    </div>
                 </td>
                 <td>
+                    
                     @Html.DropDownListFor(m => m.Target, null, "Select a entity", new { @class = "bx-dropdown", disabled = "true" })
                     @Html.ValidationMessageFor(m => m.Target)
+                 
                 </td>
             </tr>
             <tr>

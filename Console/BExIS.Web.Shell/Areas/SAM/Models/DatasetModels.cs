@@ -18,7 +18,7 @@ namespace BExIS.Modules.Sam.UI.Models
             return new DatasetGridRowModel()
             {
                 Id = datasetVersion.Dataset.Id,
-                Title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title),
+                Title = datasetVersion.Title,
                 IsPublic = isPublic
             };
         }

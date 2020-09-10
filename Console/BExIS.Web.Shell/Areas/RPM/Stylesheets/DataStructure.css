@@ -57,9 +57,12 @@
 
 .bx-rpm-constrainTable .bx-rpm-label,
 .bx-rpm-attribute-container .bx-rpm-label,
-.bx-rpm-variable-container .bx-rpm-label{
+.bx-rpm-variable-container .bx-rpm-label {
     font-size: 8pt;
-    margin:0;
+    margin: 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .bx-rpm-constrainTable .bx-rpm-constrainlabel{
@@ -98,17 +101,16 @@
     margin-top:20px;
     cursor:help !important;
 }
-
 .bx-rpm-searchBar {
-    float:right;
-    text-align:right;
+    float: right;
+    text-align: right;
     display: inline-block;
 }
 
 .bx-rpm-resetSearch {
-    text-align:right;
-    font-size:8pt;
-    cursor:pointer;
+    text-align: right;
+    font-size: 8pt;
+    cursor: pointer;
 }
 
 .bx-rpm-option,
@@ -161,4 +163,10 @@
 .bx-footer#buttons{
     background-color:#ebebeb;
     margin:3px 0px 3px 0px !important;
+}
+
+.bx-rpm-filter {
+    display: block;
+    font-size: 8pt;
+    margin: 0 10px 0 0;
 }

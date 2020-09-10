@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -231,6 +232,7 @@ namespace BExIS.Web.Shell.Controllers
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             var identityUserService = new IdentityUserService();
@@ -298,6 +300,9 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            //System.Web.HttpContext.Current.Session["menu_permission"] = null; // Remove permissions for menu
+            System.Web.HttpContext.Current.Session.Abandon(); // Remove permissions for menu
             return RedirectToAction("Index", "Home");
         }
 
@@ -313,6 +318,7 @@ namespace BExIS.Web.Shell.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             var identityUserService = new IdentityUserService();
@@ -322,7 +328,7 @@ namespace BExIS.Web.Shell.Controllers
                 if (!ModelState.IsValid) return View(model);
 
 
-                var user = new User { UserName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
 
                 var result = await identityUserService.CreateAsync(user, model.Password);
                 if (result.Succeeded)

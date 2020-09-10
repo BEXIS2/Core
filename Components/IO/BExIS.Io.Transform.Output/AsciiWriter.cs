@@ -55,7 +55,7 @@ namespace BExIS.IO.Transform.Output
 
         #region constants
 
-        private static char[] specialChars = new char[] { '"', ',' };
+        //private static char[] specialChars = new char[] { '"', ',' };
 
         #endregion constants
 
@@ -381,7 +381,8 @@ namespace BExIS.IO.Transform.Output
         private string escapeValue(string value)
         {
             // modify if special characters are present
-            if (value.IndexOfAny(specialChars) != -1)
+
+            if (value.IndexOfAny(AsciiHelper.GetAllSeperator().ToArray()) != -1)
             {
                 value = "\"" + value.Replace("\"", "\"\"") + "\"";
             }

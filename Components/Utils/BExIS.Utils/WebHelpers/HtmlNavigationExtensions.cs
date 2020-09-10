@@ -2,6 +2,7 @@
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -45,7 +46,7 @@ namespace BExIS.Utils.WebHelpers
                         if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
                             sb.Append(@"/").Append(child.Attribute("action").Value);
 
-                        sb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
+                        sb.Append("' target=\"_blank\" >").Append(child.Attribute("title").Value).Append("</a></li>");
                     }
 
                     sb.Append($"</ul></li>");
@@ -195,15 +196,25 @@ namespace BExIS.Utils.WebHelpers
 
         private static bool hasOperationRigths(XElement operation, string userName)
         {
+            //get parameters for the function to check
+            string name = userName;
+            string area = operation.Attribute("area").Value.ToLower();
+            string controller = operation.Attribute("controller").Value.ToLower();
+
+            string identifier = name + "_" + area + "_" + controller;
+
+            // check if rights already stored in the session
+            if (System.Web.HttpContext.Current.Session["menu_permission"] != null && ((Dictionary<string, bool>)System.Web.HttpContext.Current.Session["menu_permission"]).ContainsKey(identifier))
+            {
+                return (bool)((Dictionary<string, bool>)System.Web.HttpContext.Current.Session["menu_permission"])[identifier];
+            }
+
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
 
             try
             {
-                //get parameters for the function to check
-                string name = userName;
-                string area = operation.Attribute("area").Value.ToLower();
-                string controller = operation.Attribute("controller").Value.ToLower();
+
                 //currently the action are not check, so we use a wildcard
                 string action = "*";//operation.Attribute("action").Value.ToLower();
 
@@ -214,7 +225,19 @@ namespace BExIS.Utils.WebHelpers
 
                 ////or user has rights
                 //if (string.IsNullOrEmpty(userName)) return false;
-                return featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
+
+                System.Web.HttpContext.Current.Session[identifier] = permission;
+
+                // check if dictionary for menu permissions exists and create it if not
+                if (System.Web.HttpContext.Current.Session["menu_permission"] == null)
+                {
+                    System.Web.HttpContext.Current.Session["menu_permission"] = new Dictionary<string, bool>();
+                }
+
+                ((Dictionary<string, bool>)System.Web.HttpContext.Current.Session["menu_permission"]).Add(identifier, permission); // add menu right for the currently logged in user to session
+
+                return permission;
             }
             catch (Exception ex)
             {

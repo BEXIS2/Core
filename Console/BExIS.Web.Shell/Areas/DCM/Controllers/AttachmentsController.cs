@@ -30,7 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View();
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult DatasetAttachements(long datasetId, long versionId)
         {
             ViewBag.datasetId = datasetId;
@@ -38,14 +38,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Read)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult Download(long datasetId, String fileName)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
             return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult Delete(long datasetId, String fileName)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
@@ -135,7 +135,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
@@ -149,16 +149,35 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
-        [BExISEntityAuthorize("Dataset", typeof(Dataset), "datasetId", RightType.Write)]
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
             var filemNames = "";
             var dm = new DatasetManager();
             var dataset = dm.GetDataset(datasetId);
             // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
+
+            DatasetVersion latestVersion = dm.GetDatasetLatestVersion(datasetId);
+            string status = DatasetStateInfo.NotValid.ToString();
+            if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
+
             if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
                 DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+
+                //set StateInfo of the previus version
+                if (datasetVersion.StateInfo == null)
+                {
+                    datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                    {
+                        State = status
+                    };
+                }
+                else
+                {
+                    datasetVersion.StateInfo.State = status;
+                }
+
 
                 foreach (var file in attachments)
                 {

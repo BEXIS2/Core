@@ -155,7 +155,7 @@
         partyTypeId = $("#ddl_PartyType").val();
         showLoading(true);
         //Retrieving custome attribute types
-        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@(Model.Party!=null ? Model.Party.Id:0), function (response, status, xhr) {
+        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + partyTypeId+'?userReg=true&partyId='+@(Model.Party!=null ? Model.Party.Id:0), function (response, status, xhr) {
             if (status == "error") {
                 $('#divPartyCustomAttr').html("");
                 alert(response);
@@ -225,6 +225,13 @@
         });
     });
 
+    $('form').submit(function () {
+    if ($(this).valid()) {
+        $(':submit', this).attr('disabled', 'disabled');
+    }
+    });
+
+
 </script>
 @if (Model.Party == null)
 {
@@ -237,7 +244,7 @@ else
     <script>
         showLoading(true);
         //Retrieving custome attribute types
-        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + @Model.Party.PartyType.Id+'?partyId='+@Model.Party.Id, function (response, status, xhr) {
+        $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + @Model.Party.PartyType.Id+'?userReg=true&partyId='+@Model.Party.Id, function (response, status, xhr) {
             if (status == "error") {
                 $('#divPartyCustomAttr').html("")
                 alert(response);

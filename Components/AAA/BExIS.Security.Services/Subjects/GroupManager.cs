@@ -74,6 +74,8 @@ namespace BExIS.Security.Services.Subjects
                         return Groups.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
 
+                    count = count = Groups.Count();
+
                     // without filter and order
                     return Groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 }
@@ -150,7 +152,7 @@ namespace BExIS.Security.Services.Subjects
             if (string.IsNullOrEmpty(role.Name))
                 return Task.FromResult(0);
 
-            if (FindByNameAsync(role.Name) != null)
+            if (FindByIdAsync(role.Id)?.Result == null)
                 return Task.FromResult(0);
 
             using (var uow = this.GetUnitOfWork())
