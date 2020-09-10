@@ -322,23 +322,35 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         private List<string> getListOfValuesFromDataStructure(StructuredDataStructure structuredDataStructure)
         {
-            using (var uow = this.GetUnitOfWork())
+            List<string> tmp = new List<string>();
+
+            foreach (var variable in structuredDataStructure.Variables)
             {
-
-                List<string> tmp = new List<string>();
-
-                foreach (var variableId in structuredDataStructure.Variables.Select(v => v.Id))
-                {
-                    var variable = uow.GetReadOnlyRepository<Variable>().Get(variableId);
-
-                    tmp.Add(variable.DataAttribute.Name);
-                    tmp.Add(variable.Label);
-                    if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
-                        tmp.Add(variable.DataAttribute.Description);
-                }
-
-                return tmp;
+                tmp.Add(variable.DataAttribute.Name);
+                tmp.Add(variable.Label);
+                if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
+                    tmp.Add(variable.DataAttribute.Description);
             }
+
+            return tmp;
+
+            //using (var uow = this.GetUnitOfWork())
+            //{
+
+            //List<string> tmp = new List<string>();
+
+            //foreach (var variableId in structuredDataStructure.Variables.Select(v => v.Id))
+            //{
+            //    var variable = uow.GetReadOnlyRepository<Variable>().Get(variableId);
+
+            //    tmp.Add(variable.DataAttribute.Name);
+            //    tmp.Add(variable.Label);
+            //    if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
+            //        tmp.Add(variable.DataAttribute.Description);
+            //}
+
+            //    return tmp;
+            //}
         }
 
         /// <summary>
@@ -859,8 +871,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <return></return>
         private void writeAutoCompleteIndex(String docId, String f, String V)
         {
-            autoCompleteIndexWriter.GetReader().Reopen();
-     
+            /*
+             * this line was commented out because it is very time intensive. after tests no further problems were found
+             */
+            //autoCompleteIndexWriter.GetReader().Reopen(); 
+
             var dataset = new Document();
             dataset.Add(new Field("id", docId.ToLower(), Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
             dataset.Add(new Field("field", f.ToLower(), Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
