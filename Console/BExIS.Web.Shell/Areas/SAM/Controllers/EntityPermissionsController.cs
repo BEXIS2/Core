@@ -170,7 +170,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 // Public Permission
-                var publicRights = entityPermissionManager.GetRights(null, entityId, instanceId);
+                var publicRights = entityPermissionManager.GetRights(subjectId: null, entityId, instanceId);
                 if (publicRights > 0)
                 {
                     entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert("Public Dataset", "", publicRights));
@@ -259,14 +259,27 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 var subjects = new List<EntityPermissionGridRowModel>();
-                using (PartyManager partyManager = new PartyManager())
-                
-                foreach (var subject in subjectsDb)
+                //using (PartyManager partyManager = new PartyManager())
+
+                //foreach (var subject in subjectsDb)
+                //{
+                //    var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
+                //    var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+
+                //    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
+                //}
+
+                var rightsDic = entityPermissionManager.GetRights(subjectsDb, entityId, instanceId);
+                var effectiveRightsDic = entityPermissionManager.GetEffectiveRights(subjectsDb, entityId, instanceId);
+
+                foreach (var item in rightsDic)
                 {
-                    var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
-                    var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+                    var subject = subjectsDb.Where(s => s.Id.Equals(item.Key)).FirstOrDefault();
+                    var rights = item.Value;
+                    var effectiveRights = effectiveRightsDic[item.Key];
 
                     subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
+
                 }
 
                 return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects, Total = count });
