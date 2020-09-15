@@ -1,4 +1,4 @@
-# BEXIS 2.14.1 Release Notes
+# BEXIS 2.14.2 Release Notes
 
 ### Bugs
 - fix database connection handling (not exceeding max. number of connections anymore - system stability) ([#628](https://github.com/BEXIS2/Core/issues/628))
@@ -7,7 +7,7 @@
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.0
+-	Version: 2.14.2
 -	Application Type: Web Application
 -	Platform: Windows
 
