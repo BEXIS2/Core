@@ -80,76 +80,72 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset id can not be 0.");
 
-            DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            EntityManager entityManager = new EntityManager();
-
-            bool isPublic = false;
-            User user = null;
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (UserManager userManager = new UserManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityManager entityManager = new EntityManager())
             {
-                #region is public
+                bool isPublic = false;
+                User user = null;
 
-                entityManager = new EntityManager();
-                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
-                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-
-                isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
-
-                #endregion is public
-
-                #region security
-
-                string token = this.Request.Headers.Authorization?.Parameter;
-
-                if (!isPublic && String.IsNullOrEmpty(token))
-                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
-
-                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-
-                if (!isPublic && user == null)
-                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
-
-                //check permissions
-
-                //entity permissions
-                if (id > 0)
+                try
                 {
-                    Dataset d = datasetManager.GetDataset(id);
-                    if (d == null)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+                    #region is public
+    
+                    long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                    entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 
-                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
-                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
+                    isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                    #endregion is public
+
+                    #region security
+
+                    string token = this.Request.Headers.Authorization?.Parameter;
+
+                    if (!isPublic && String.IsNullOrEmpty(token))
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
+
+                    user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                    if (!isPublic && user == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
+
+                    //check permissions
+
+                    //entity permissions
+                    if (id > 0)
+                    {
+                        Dataset d = datasetManager.GetDataset(id);
+                        if (d == null)
+                            return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+
+                        if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
+                            return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
+                    }
+
+                    #endregion security
+
+                    var dataset = datasetManager.GetDataset(id);
+                    if (dataset == null) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+
+                    var model = GetApiDatasetAttachmentsModel(id, datasetManager);
+
+                    using (var response = this.Request.CreateResponse(HttpStatusCode.OK))
+                    {
+                        string json = JsonConvert.SerializeObject(model);
+                        response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                        if (model != null) return response;
+
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
 
-                #endregion security
-
-                var dataset = datasetManager.GetDataset(id);
-                if (dataset == null) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
-
-                var model = GetApiDatasetAttachmentsModel(id, datasetManager);
-
-                var response = this.Request.CreateResponse(HttpStatusCode.OK);
-                string json = JsonConvert.SerializeObject(model);
-                response.Content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                if (model != null) return response;
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
-            }
-            finally
-            {
-                datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
-                entityManager.Dispose();
             }
         }
 

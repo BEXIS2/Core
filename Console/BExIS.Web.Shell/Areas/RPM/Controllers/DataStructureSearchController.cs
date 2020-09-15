@@ -187,15 +187,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             Name = Server.UrlDecode(Name);
             Description = Server.UrlDecode(Description);
-            DataStructureManager dataStructureManager = null;
-            MissingValueManager missingValueManager = null;
-            try
+
+            using(DataStructureManager dataStructureManager = new DataStructureManager())
+            using(MissingValueManager missingValueManager = new MissingValueManager())
             {
-
-                dataStructureManager = new DataStructureManager();
-                missingValueManager = new MissingValueManager();
-
-
                 if (!isStructured)
                 {
                     UnStructuredDataStructure dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<UnStructuredDataStructure>().Get(Id);
@@ -239,7 +234,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().LoadIfNot(dataStructureCopy.Variables);
                             foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
                             {
-                                variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label.Trim(), v.DefaultValue, v.MissingValue, v.Description.Trim(), v.Unit);
+                                variable = dataStructureManager.AddVariableUsage(dataStructureCopy, v.DataAttribute, v.IsValueOptional, v.Label?.Trim(), v.DefaultValue, v.MissingValue, v.Description?.Trim(), v.Unit);
                                 order.Add(variable.Id);
                                 List<MissingValue> missingValues = missingValueManager.Repo.Query(mv => mv.Variable.Id.Equals(v.Id)).ToList();
                                 foreach(MissingValue mv in missingValues)
@@ -255,10 +250,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 return PartialView("_message", new MessageModel());
             }
-            finally
-            {
-                dataStructureManager.Dispose();
-            }
+
         }
     }
 }

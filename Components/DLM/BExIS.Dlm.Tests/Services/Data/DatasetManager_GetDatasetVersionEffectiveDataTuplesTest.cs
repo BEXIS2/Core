@@ -17,6 +17,8 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+
     [TestFixture()]
     public class DatasetManager_GetDatasetVersionEffectiveDataTuplesTest
     {
@@ -145,7 +147,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var dataset = datasetManager.GetDataset(datasetId);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 //Act
@@ -186,10 +188,10 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var dataset = datasetManager.GetDataset(datasetId);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, firstDataTupleId, 1);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, firstDataTupleId, 1, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 2);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 2, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
 

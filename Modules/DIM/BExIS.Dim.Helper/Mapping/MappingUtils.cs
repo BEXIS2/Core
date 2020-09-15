@@ -549,84 +549,85 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <returns></returns>
         private static List<MappingPartyResultElemenet> getAllValuesFromSystem(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
         {
-            MappingManager _mappingManager = new MappingManager();
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyManager partyManager = new PartyManager();
-
-            List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
-
-            IEnumerable<long> parentIds = mappings.Where(m => m.Parent != null).Select(m => m.Parent.Id).Distinct();
-
-            IEnumerable<Entities.Mapping.Mapping> selectedMappings;
-
-            // all Masks are the same
-            string mask = "";
-            PartyType partyType = null;
-            List<Party> parties = null;
-
-            foreach (var pId in parentIds)
+            using (MappingManager _mappingManager = new MappingManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
             {
-                Entities.Mapping.Mapping parentMapping = _mappingManager.GetMapping(pId);
+                List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
-                selectedMappings =
-                    mappings.Where(m => m.Parent != null && m.Parent.Id.Equals(pId));
+                IEnumerable<long> parentIds = mappings.Where(m => m.Parent != null).Select(m => m.Parent.Id).Distinct();
 
-                long parentTypeId = parentMapping.Source.ElementId;
-                long sourceId = selectedMappings.FirstOrDefault().Source.ElementId;
+                IEnumerable<Entities.Mapping.Mapping> selectedMappings;
 
-                //mappings.FirstOrDefault().TransformationRule.Mask;
+                // all Masks are the same
+                string mask = "";
+                PartyType partyType = null;
+                List<Party> parties = null;
 
-                if (parentTypeId == 0)
+                foreach (var pId in parentIds)
                 {
-                    partyType =
-                        partyTypeManager.PartyTypeRepository.Query()
-                            .FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
-                    parties = partyManager.PartyRepository.Query().Where(p => p.PartyType.Equals(partyType)).ToList();
-                }
-                else
-                {
-                    partyType = partyTypeManager.PartyTypeRepository.Get(parentTypeId);
-                    parties = partyManager.PartyRepository.Query().Where(p => p.PartyType.Id.Equals(parentTypeId)).ToList();
-                }
+                    Entities.Mapping.Mapping parentMapping = _mappingManager.GetMapping(pId);
 
-                //get all mapped element ids
-                var elementIds = mappings.Select(m => m.Source.ElementId);
-                // get all attributes based on the element id list
-                var attributeValues = partyManager.PartyCustomAttributeValueRepository.Query(y => elementIds.Contains(y.CustomAttribute.Id)).ToList();
-                attributeValues = attributeValues.Where(y => y.Value.ToLower().Contains(value.ToLower())).ToList();
-                //get all party ids
-                var partyIds = attributeValues.Select(a => a.Party.Id).Distinct();
+                    selectedMappings =
+                        mappings.Where(m => m.Parent != null && m.Parent.Id.Equals(pId));
 
-                foreach (var partyId in partyIds)
-                {
-                    MappingPartyResultElemenet resultObject = new MappingPartyResultElemenet();
-                    resultObject.PartyId = partyId;
+                    long parentTypeId = parentMapping.Source.ElementId;
+                    long sourceId = selectedMappings.FirstOrDefault().Source.ElementId;
 
-                    //get mask from first mapping
-                    mask = mappings.FirstOrDefault().TransformationRule.Mask;
+                    //mappings.FirstOrDefault().TransformationRule.Mask;
 
-                    var allMappedAttrValues = partyManager.PartyCustomAttributeValueRepository.Query(y =>
-                        y.Party.Id.Equals(partyId) && elementIds.Contains(y.CustomAttribute.Id)).ToList();
-
-                    foreach (var attrValue in allMappedAttrValues)
+                    if (parentTypeId == 0)
                     {
-                        //get mapping for the attrvalue
-                        var mapping = mappings.Where(m => m.Source.ElementId.Equals(attrValue.CustomAttribute.Id)).FirstOrDefault();
-
-                        List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
-                        string placeHolderName = attrValue.CustomAttribute.Name;
-
-                        mask = setOrReplace(mask, regExResultList, placeHolderName);
-
-                        resultObject.Value = mask;
+                        partyType =
+                            partyTypeManager.PartyTypeRepository.Query()
+                                .FirstOrDefault(p => p.CustomAttributes.Any(c => c.Id.Equals(sourceId)));
+                        parties = partyManager.PartyRepository.Query().Where(p => p.PartyType.Equals(partyType)).ToList();
+                    }
+                    else
+                    {
+                        partyType = partyTypeManager.PartyTypeRepository.Get(parentTypeId);
+                        parties = partyManager.PartyRepository.Query().Where(p => p.PartyType.Id.Equals(parentTypeId)).ToList();
                     }
 
-                    if (mask.ToLower().Contains(value.ToLower()))
-                        tmp.Add(resultObject);
-                }
-            }
+                    //get all mapped element ids
+                    var elementIds = mappings.Select(m => m.Source.ElementId);
+                    // get all attributes based on the element id list
+                    var attributeValues = partyManager.PartyCustomAttributeValueRepository.Query(y => elementIds.Contains(y.CustomAttribute.Id)).ToList();
+                    attributeValues = attributeValues.Where(y => y.Value.ToLower().Contains(value.ToLower())).ToList();
+                    //get all party ids
+                    var partyIds = attributeValues.Select(a => a.Party.Id).Distinct();
 
-            return tmp;
+                    foreach (var partyId in partyIds)
+                    {
+                        MappingPartyResultElemenet resultObject = new MappingPartyResultElemenet();
+                        resultObject.PartyId = partyId;
+
+                        //get mask from first mapping
+                        mask = mappings.FirstOrDefault().TransformationRule.Mask;
+
+                        var allMappedAttrValues = partyManager.PartyCustomAttributeValueRepository.Query(y =>
+                            y.Party.Id.Equals(partyId) && elementIds.Contains(y.CustomAttribute.Id)).ToList();
+
+                        foreach (var attrValue in allMappedAttrValues)
+                        {
+                            //get mapping for the attrvalue
+                            var mapping = mappings.Where(m => m.Source.ElementId.Equals(attrValue.CustomAttribute.Id)).FirstOrDefault();
+
+                            List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
+                            string placeHolderName = attrValue.CustomAttribute.Name;
+
+                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+
+                            resultObject.Value = mask;
+                        }
+
+                        if (mask.ToLower().Contains(value.ToLower()))
+                            tmp.Add(resultObject);
+                    }
+                }
+
+                return tmp;
+            }
         }
 
         public static string GetValueFromSystem(long partyid, long targetElementId, LinkElementType targetElementType)

@@ -148,13 +148,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public bool _checkMissingValuePlaceholder(long variableId, MissingValueStruct missingValue)
         {
-            MissingValueManager missingValueManager = null;
-            DataStructureManager dataStructureManager = null;
-
-            try
+            using (MissingValueManager missingValueManager = new MissingValueManager())
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                missingValueManager = new MissingValueManager();
-                dataStructureManager = new DataStructureManager();
 
                 Variable variable = dataStructureManager.VariableRepo.Get(variableId);
                 TypeCode typecode = new TypeCode();
@@ -168,10 +164,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                 }
                 return missingValueManager.ValidatePlaceholder(typecode, missingValue.Placeholder, missingValue.Id);
-            }
-            finally
-            {
-                missingValueManager.Dispose();
             }
         }
 
