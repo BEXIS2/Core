@@ -299,6 +299,10 @@ namespace BExIS.Security.Services.Authorization
 
         public int GetEffectiveRights(long? subjectId, List<long> entityIds, long key)
         {
+            if (subjectId == null) return 0;
+
+            long id = Convert.ToInt64(subjectId);
+
             using (var uow = this.GetUnitOfWork())
             {
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
@@ -308,12 +312,12 @@ namespace BExIS.Security.Services.Authorization
                 var partyRepository = uow.GetReadOnlyRepository<Party>();
                 var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
 
-                var subject = subjectRepository.Get(subjectId).FirstOrDefault();
+                var subject = subjectRepository.Get(id);
                 List<Entity> entities = new List<Entity>();
 
-                foreach (var id in entityIds)
+                foreach (var i in entityIds)
                 {
-                    entities.Add(entityRepository.Get(id));
+                    entities.Add(entityRepository.Get(i));
                 }
 
                 return getEffectiveRights(subject, entities, key, entityPermissionRepository, partyUserRepository, partyRepository, partyRelationshipRepository);
